@@ -7,7 +7,7 @@ o Setup a new working area (Default name: WPrime_work, release:
 CMSSW_2_1_&)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-00-10)
+V00-00-15)
 
 o Compile the code
 
