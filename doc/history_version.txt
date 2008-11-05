@@ -1,0 +1,7 @@
+05-NOV-08 (Christos), V00-00-10
+================================
+First porting of the code. Contains mostly trigger-related stuff. Test
+configuration file (test/myanalysis_TeVMuon.cfg) tested on 21x MC files,
+but should work in 20x as well.
+
+
