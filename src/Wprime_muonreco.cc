@@ -21,8 +21,10 @@
 
 #include <iostream>
 #include <map>
-// using namespace edm; using namespace reco;
+
 using std::cout; using std::endl; using std::string;
+
+using namespace Wprime_muonreco_histo;
 
 /// Constructor
 Wprime_muonreco::Wprime_muonreco(const edm::ParameterSet& iConfig):
@@ -31,33 +33,14 @@ Wprime_muonreco::Wprime_muonreco(const edm::ParameterSet& iConfig):
   HLTTag_(iConfig.getParameter<edm::InputTag>( "HLTriggerResults" ) ),
   //  isoTag_(iConfig.getParameter<edm::InputTag> ("IsolationTag")),
   jetTag_(iConfig.getParameter<edm::InputTag> ("JetTag")),
-  eJetMin_(iConfig.getParameter<double>("EJetMin")),
-  nBinNMu(iConfig.getUntrackedParameter<unsigned int>("NBinNMu")),
-  minNMu(iConfig.getUntrackedParameter<double>("MinNMu")),
-  maxNMu(iConfig.getUntrackedParameter<double>("MaxNMu")),
-  nBinPtMu(iConfig.getUntrackedParameter<unsigned int>("NBinPtMu")),
-  minPtMu(iConfig.getUntrackedParameter<double>("MinPtMu")),
-  maxPtMu(iConfig.getUntrackedParameter<double>("MaxPtMu")),
-  nBinEtaMu(iConfig.getUntrackedParameter<unsigned int>("NBinEtaMu")),
-  minEtaMu(iConfig.getUntrackedParameter<double>("MinEtaMu")),
-  maxEtaMu(iConfig.getUntrackedParameter<double>("MaxEtaMu")),
-  nBinMET(iConfig.getUntrackedParameter<unsigned int>("NBinMET")),
-  minMET(iConfig.getUntrackedParameter<double>("MinMET")),
-  maxMET(iConfig.getUntrackedParameter<double>("MaxMET")),
-  nBinTMass(iConfig.getUntrackedParameter<unsigned int>("NBinTMass")),
-  minTMass(iConfig.getUntrackedParameter<double>("MinTMass")),
-  maxTMass(iConfig.getUntrackedParameter<double>("MaxTMass")),
-  nBinAcop(iConfig.getUntrackedParameter<unsigned int>("NBinAcop")),
-  minAcop(iConfig.getUntrackedParameter<double>("MinAcop")),
-  maxAcop(iConfig.getUntrackedParameter<double>("MaxAcop")),
-  nBinNJets(iConfig.getUntrackedParameter<unsigned int>("NBinNJets")),
-  minNJets(iConfig.getUntrackedParameter<double>("MinNJets")),
-  maxNJets(iConfig.getUntrackedParameter<double>("MaxNJets")),
+  tkIsoMapTag_(iConfig.getParameter<edm::InputTag> ("TkIsoMapTag")),
+  ecalIsoMapTag_(iConfig.getParameter<edm::InputTag> ("EcalIsoMapTag")),
+  hcalIsoMapTag_(iConfig.getParameter<edm::InputTag> ("HcalIsoMapTag")),
+  eJetMin_(iConfig.getParameter<double>("EtJetCut")),
   detmu_acceptance(iConfig.getParameter<double>("Detmu_acceptance")),
   muHLT_20x(iConfig.getParameter<string>("SingleMuHLT_20x")),
   muHLT_21x(iConfig.getParameter<string>("SingleMuHLT_21x")),
-  muL1(iConfig.getParameter<string>("SingleMuL1")),
-  outputFileName(iConfig.getUntrackedParameter<string>("OutputFileName"))
+  muL1(iConfig.getParameter<string>("SingleMuL1"))
 {
    //now do what ever initialization is needed
 
@@ -77,8 +60,16 @@ void Wprime_muonreco::getGenMuons(const edm::Event & iEvent)
 
   edm::Handle<edm::HepMCProduct> genEvt;
   iEvent.getByLabel("source", genEvt);
+  if(!genEvt.isValid())
+    {
+      cerr << " Did not find generator-level info using label source! " << endl;
+      abort();
+    }
   const HepMC::GenEvent * myGenEvent = genEvt->GetEvent();
   
+  // Et of single generator-level muon in event (if applicable)
+  float Et1mu=-999;
+
   for(HepMC::GenEvent::particle_const_iterator p = myGenEvent->particles_begin(); p != myGenEvent->particles_end(); ++p ) 
     { // loop over pythia particles
       if ( !( abs((*p)->pdg_id())==13 && (*p)->status()==1 ) )  continue;
@@ -90,7 +81,11 @@ void Wprime_muonreco::getGenMuons(const edm::Event & iEvent)
 
       float Et = (*p)->momentum().e() * sin((*p)->momentum().theta());
       hPtGen->Fill(Et);
+      Et1mu = Et;
     } //loop over pythia particles
+
+  if(gen_muons.size() == 1)
+    hPtGenOne->Fill(Et1mu);
 
 }
 
@@ -191,14 +186,37 @@ void Wprime_muonreco::getJets(const edm::Event & iEvent)
   // Get the Jet collection from the event
   edm::Handle<reco::CaloJetCollection> jetCollection;
   iEvent.getByLabel(jetTag_, jetCollection);
-  
-  CaloJetCollection::const_iterator jet = jetCollection->begin();
+
+  unsigned nJetsAboveThres[nBinNJets_veto] = {0};
+
+  TAxis * yaxis = hEthresNjet->GetYaxis();
+
+  // # of jets above <eJetMin_> threshold
   unsigned njets = 0;
-  for (jet=jetCollection->begin(); jet!=jetCollection->end(); ++jet) {
-    if (jet->et()>eJetMin_) 
-      ++njets;
-  }
-  hNjets->Fill(njets);
+  for (CaloJetCollection::const_iterator jet = jetCollection->begin(); 
+       jet!=jetCollection->end(); ++jet) { // loop over jets
+  
+    hJetEt->Fill(jet->et());
+    if (jet->et() > eJetMin_) ++njets;
+
+    for(unsigned ietj = 1; ietj <= nBinEtJets_veto; ++ietj)
+      { // loop over jet-Et bins
+	float Ethresh = yaxis->GetBinCenter(ietj);
+	if (jet->et() > Ethresh)   
+	  ++(nJetsAboveThres[ietj - 1]);   
+      } // loop over jet-Et bins
+
+  } // loop over jets
+
+  for(unsigned ietj = 1; ietj <= nBinEtJets_veto; ++ietj)
+    { // loop over jet-Et bins
+      float Ethresh = yaxis->GetBinCenter(ietj);
+      hEthresNjet->Fill(nJetsAboveThres[ietj - 1], Ethresh);
+    } // loop over jet-Et bins
+   
+   hNAlljets->Fill(jetCollection->size());
+   hNjetsGtEJetMin->Fill(njets);
+
 }  
 
 // do MC matching
@@ -206,7 +224,7 @@ void Wprime_muonreco::doMCmatching()
 {      
   for(unsigned i = 0; i != N_muons; ++i) 
     { // loop over reco muons 
-      TrackRef mu(muonCollection,i);
+      MuonRef mu(muonCollection,i);
 
       bool matched = false;
 
@@ -255,9 +273,17 @@ void Wprime_muonreco::getMuons(const edm::Event & iEvent)
   N_muons = muonCollection->size();
   hNMu->Fill(N_muons);
 
+  N_muons_tot += N_muons;
+  if(1 == N_muons)
+    {
+      ++(MuTrig.Nev_1mu);
+      if(genmu_acceptance)
+	++(genMuTrig.Nev_1mu);
+    }
+
   for(unsigned i = 0; i != N_muons; ++i) 
     { // loop over reco muons 
-      TrackRef mu(muonCollection,i);
+      MuonRef mu(muonCollection,i);
       met_x -= mu->px();
       met_y -= mu->py();
     } // loop over reco muons 
@@ -267,7 +293,7 @@ void Wprime_muonreco::getMuons(const edm::Event & iEvent)
   for(unsigned i = 0; i != N_muons; ++i) 
     { // loop over reco muons 
       
-      TrackRef mu(muonCollection,i);
+      MuonRef mu(muonCollection,i);
       // pt
       hPtMu->Fill(mu->pt());
       // eta
@@ -325,28 +351,109 @@ Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 // initialize histograms
 void Wprime_muonreco::init_histograms()
 {
-  hPtGen = new TH1F("ptGenMu","Pt gen mu",nBinPtMu,minPtMu,maxPtMu);
-  hPtRecoOverPtGen = new TH1F("ptRecoOverPtGen","Pt reco over Pt Gen",80,0,10);
-  //  hPtRecoVsPtGen = new TH2F("ptRecoVsPtGen","Pt reco vs pt Gen",nBinPtMu,minPtMu,maxPtMu,nBinPtMu,minPtMu,maxPtMu);
-  hPtRecoVsPtGen = new TH2F("ptRecoVsPtGen","Pt reco vs pt Gen",nBinPtMu,minPtMu, 800.0,nBinPtMu,minPtMu, 800.0);
-  //  hPtMuUnMatched = new TH1F("ptMuUnMatched","Pt mu unmatched",nBinPtMu,minPtMu,maxPtMu);
-  hPtMuUnMatched = new TH1F("ptMuUnMatched","Pt mu unmatched",80,minPtMu,200.0);
+  hPtGen = fs->make<TH1F>("ptGenMu","Pt gen mu",nBinPtMu,minPtMu,maxPtMu);
+  hPtGenJetVeto = fs->make<TH1F>("ptGenMuJetVeto","Pt gen mu Jet Veto",nBinPtMu,minPtMu,maxPtMu);
+  hPtGenOne = fs->make<TH1F>("ptGenOne","Pt gen one mc mu",nBinPtMu,minPtMu,maxPtMu);
+  hPtGenOneMatch= fs->make<TH1F>("ptGenOneMatch","Pt gen one mu reco",nBinPtMu,minPtMu,maxPtMu);
+  hPtMuOneMatch= fs->make<TH1F>("ptMuOneMatch","Pt mu one mu reco",nBinPtMu,minPtMu,maxPtMu);
+  hPtMuOneMatchJetVeto= fs->make<TH1F>("ptMuOneMatchJetVeto","Pt mu one mu reco JetVeto",nBinPtMu,minPtMu,maxPtMu);
+  hPtGenOnePtlt5Match= fs->make<TH1F>("ptGenOnePtlt5Match","Pt gen mu One reco mu Ptlt5 Matched",nBinPtMu,minPtMu,maxPtMu);
+  hPtRecoOverPtGen = fs->make<TH1F>("ptRecoOverPtGen","Pt reco over Pt Gen",200,0,30);
+  hPtRecoOverPtGenJetVeto = fs->make<TH1F>("ptRecoOverPtGenJetVeto","Pt reco over Pt Gen Jet Veto",200,0,30);
+  h1PtGen1PtReco = fs->make<TH1F>("OneptRecoOnePtGen","(1/Pt reco - 1/ Pt Gen)*PtGen",400,-1,1);
+  h1PtGen1PtRecoVsPtGen = fs->make<TH2F>("OneptRecoOnePtGenVsPtGen","(1/Pt reco - 1/ Pt Gen)*PtGen vs pt gen",nBinPtMu,minPtMu,maxPtMu,400,-1,1);
+  hPtRecoVsPtGen = fs->make<TH2F>("ptRecoVsPtGen","Pt reco vs pt Gen",nBinPtMu,minPtMu,maxPtMu,nBinPtMu,minPtMu,maxPtMu);
 
-  // hNMu    = new TH1F("NMu","Nb. muons in the event",10,0.,10.);
-  hNMu    = new TH1F("NMu","Nb. muons in the event",nBinNMu,minNMu,maxNMu);
-  //  hPtMu   = new TH1F("ptMu","Pt mu",100,0.,100.);
-  hPtMu   = new TH1F("ptMu","Pt mu",nBinPtMu,minPtMu,maxPtMu);
-  //  hEtaMu  = new TH1F("etaMu","Eta mu",50,-2.5,2.5);
-  hEtaMu  = new TH1F("etaMu","Eta mu",nBinEtaMu,minEtaMu,maxEtaMu);
-  //  hMET    = new TH1F("MET","Missing Transverse Energy (GeV)", 100,0.,100.);
-  hMET    = new TH1F("MET","Missing Transverse Energy (GeV)",nBinMET,minMET,maxMET);  
-  //  hTMass  = new TH1F("TMass","Rec. Transverse Mass (GeV)",150,0.,300.);
-  //  hTMass  = new TH1F("TMass","Rec. Transverse Mass (GeV)",100,0.,200.);
-  hTMass  = new TH1F("TMass","Rec. Transverse Mass (GeV)",nBinTMass,minTMass,maxTMass);
-  //  hAcop   = new TH1F("Acop","Mu-MET acoplanarity",50,0.,M_PI);
-  //  hNjets  = new TH1F("Njets","njets",25,0.,25.);
-  hAcop   = new TH1F("Acop","Mu-MET acoplanarity",nBinAcop,minAcop,maxAcop);
-  hNjets  = new TH1F("Njets","njets",nBinNJets,minNJets,maxNJets);
+  hPtMuUnMatched = fs->make<TH1F>("ptMuUnMatched","Pt mu unmatched",nBinPtMu,minPtMu,maxPtMu);
+  hPtMuUnMatchedJetVeto = fs->make<TH1F>("ptMuUnMatchedJetVeto","Pt mu unmatched",nBinPtMu,minPtMu,maxPtMu);
+
+  hNMu    = fs->make<TH1F>("NMu","Nb. muons in the event",10,0.,10.);
+  hPtMu   = fs->make<TH1F>("ptMu","Pt mu",nBinPtMu,minPtMu,maxPtMu);
+  hPtOneMu   = fs->make<TH1F>("ptOneMu","Pt mu",nBinPtMu,minPtMu,maxPtMu);
+  hPtMaxMu   = fs->make<TH1F>("ptMaxMu","Pt mu",nBinPtMu,minPtMu,maxPtMu);
+  hPtMuJetVeto   = fs->make<TH1F>("ptMuJetVeto","Pt mu JetVeto",nBinPtMu,minPtMu,maxPtMu);
+  hPtOneMuJetVeto   = fs->make<TH1F>("ptOneMuJetVeto","Pt mu JetVeto",nBinPtMu,minPtMu,maxPtMu);
+  hPtMaxMuJetVeto   = fs->make<TH1F>("ptMaxMuJetVeto","Pt mu JetVeto",nBinPtMu,minPtMu,maxPtMu);
+  hEtaMu  = fs->make<TH1F>("etaMu","Eta mu",50,-2.5,2.5);
+  hEtaOnePtlt5Match=fs->make<TH1F>("etaOnePtlt5Match","Eta One Pt lt 5 Match",50,-2.5,2.5);
+  hMET    = fs->make<TH1F>("MET","Missing Transverse Energy (GeV)",nBinPtMu,minPtMu,maxPtMu);  
+  hTMass  = fs->make<TH1F>("TMass","Rec. Transverse Mass (GeV)",3000,0,6000);
+  hAcop   = fs->make<TH1F>("Acop","Mu-MET acoplanarity",100,0,6.28);
+  hNAlljets  = fs->make<TH1F>("NAlljets","njets",nBinNJets, minNJets, maxNJets);
+  hNjetsGtEJetMin  = fs->make<TH1F>("Njetsgt40 ","njets e gt 40",nBinNJets, minNJets, maxNJets);
+  hEthresNjet = 
+    fs->make<TH2F>("EthresNjet ","Ethr vs NJetsSurv", 
+		   nBinNJets_veto, minNJets_veto, maxNJets_veto, 
+		   nBinEtJets_veto, minEtJets_veto, maxEtJets_veto);
+  hEthresNjet_norm =
+    fs->make<TH2F>("EthresNjet_norm ","Norm Ethr vs NJetsSurv",
+		   nBinNJets_veto, minNJets_veto, maxNJets_veto, 
+		   nBinEtJets_veto, minEtJets_veto, maxEtJets_veto);
+  hJetEt =  fs->make<TH1F>("jetsEt","jets et (GeV)",nBinEtJets,minEtJets,maxEtJets);
+
+  hHitTrack =   fs->make<TH1F>("hHitTrack","number of hits in the tracker ",400,0,100);
+  hHitMuon =   fs->make<TH1F>("hHitMuon","number of hits in the muon system ",400,0,100);
+  hHitComb =   fs->make<TH1F>("hHitComb","number of combined hits  ",400,0,100);
+  hHitCheckMu = fs->make<TH1F>("hHitChekMu","number of combined hits - number of tracker hits ",400,0,100);
+
+  hPtSumR03  = fs->make<TH1F>("ptSumR03","Sum R03 pT (GeV)",100,0.,100.);
+  hPtSumNR03 = fs->make<TH1F>("ptSumNR03","Sum pT R03/pT",100,0.,50.);
+  hTMass_PtSumR03 = fs->make<TH2F>("TMass_ptSumR03","Rec. Transverse Mass (GeV) vs Sum pT R03 (GeV)",100,0.,50.,150,0.,300.);
+
+  hPtTkIso_ConeSize = fs->make<TH2F>("TkptSum_conesize","PtSum tk (GeV) vs cone size",nBinCone,minCone,maxCone,nBinSumPt,minSumPt,maxSumPt);
+  hPtTkIsoThresh_ConeSize = fs->make<TH2F>("TkptSumThresh_conesize","PtSum tk Thresh (GeV) vs cone size",nBinCone,minCone,maxCone,nBinSumPt,minSumPt,maxSumPt);
+  hPtTkIsoThresh_ConeSize_norm = fs->make<TH2F>("TkptSumThresh_conesize_norm","PtSum tk Thresh Norm (GeV) vs cone size",nBinCone,minCone,maxCone,nBinSumPt,minSumPt,maxSumPt);
+  hPtTkIso_mmupt_ConeSize = fs->make<TH2F>("TkptSum_mmupt_conesize","PtSum tk - mu pt (GeV) vs cone size",nBinCone,minCone,maxCone,nBinSumPt,minSumPt,maxSumPt);
+  hNTkIso_ConeSize = fs->make<TH2F>("NTk_conesize","Ntk vs cone size",nBinCone,minCone,maxCone,50,0.,50.);
+  hEcalIso_ConeSize = fs->make<TH2F>("EcalEtSum_conesize","Ecal EtSum (GeV) vs cone size",nBinCone,minCone,maxCone,nBinSumPt,minSumPt,maxSumPt);
+  hHcalIso_ConeSize = fs->make<TH2F>("HcalEtsum_conesize","Hcal EtSum (GeV) vs cone size",nBinCone,minCone,maxCone,nBinSumPt,minSumPt,maxSumPt);
+
+  hMuChi2 = fs->make<TH1F>("muChi2","muChi2",100,0.,50.);
+  hTrackerMuChi2= fs->make<TH1F>("muTrackerChi2","muTrackerChi2",100,0.,50.);
+  hSAMuChi2= fs->make<TH1F>("muSAChi2","muSAChi2",100,0.,50.);
+
+  hMuChi2UnMatched = fs->make<TH1F>("muChi2UnMatched","muChi2UnMatched",100,0.,50.);
+  hTrackerMuChi2UnMatched= fs->make<TH1F>("muTrackerChi2UnMatched","muTrackerChi2UnMatched",100,0.,50.);
+  hSAMuChi2UnMatched= fs->make<TH1F>("muSAChi2UnMatched","muSAChi2UnMatched",100,0.,50.);
+
+  hMuNdf = fs->make<TH1F>("muNdf","muNdf",200,0.,100.);
+  hTrackerMuNdf= fs->make<TH1F>("muTrackerNdf","muTrackerNdf",200,0.,100.);
+  hSAMuNdf= fs->make<TH1F>("muSANdf","muSANdf",200,0.,100.);
+
+  hMuNdfUnMatched = fs->make<TH1F>("muNdfUnMatched","muNdfUnMatched",200,0.,100.);
+  hTrackerMuNdfUnMatched= fs->make<TH1F>("muTrackerNdfUnMatched","muTrackerNdfUnMatched",200,0.,100.);
+  hSAMuNdfUnMatched= fs->make<TH1F>("muSANdfUnMatched","muSANdfUnMatched",200,0.,100.);
+  
+  string TeVName[4]={"TeVstd","TeVfirstHit","TeVpicky","TeVcocktail"};
+  for (int u=0; u <4; u++){
+
+    string hname ="ptMu"; hname += TeVName[u];
+    string htit ="Pt mu "; htit += TeVName[u];
+    hPtTevMu[u]=fs->make<TH1F>(hname.c_str(),htit.c_str(),nBinPtMu,minPtMu,maxPtMu);
+
+    hname ="ptMuJetVeto"; hname += TeVName[u];
+    htit ="Pt mu Jet Veto"; htit += TeVName[u];
+    hPtTevMuJetVeto[u]=fs->make<TH1F>(hname.c_str(),htit.c_str(),nBinPtMu,minPtMu,maxPtMu);
+
+    hname = "ptGlobalRecoOverPtTevReco_"   ; hname += TeVName[u];
+    htit  = "Global muon Pt over Tev Muon pt " ; htit  += TeVName[u];
+    hPtTevMuOverPtMu[u] = fs->make<TH1F>(hname.c_str(),htit.c_str(),500,0,10);
+
+    hname = "OneptRecoOnePtGen_"   ; hname += TeVName[u];
+    htit  = "(1/Pt reco - 1/ Pt Gen)*PtGen " ; htit  += TeVName[u];
+    h1PtGen1PtRecoTevMu[u]=fs->make<TH1F>(hname.c_str(),htit.c_str(),400,-1,1);
+
+    hname = "ptRecoOverPtGen_"   ; hname += TeVName[u];
+    htit  = "Pt reco over Pt Gen " ; htit  += TeVName[u];
+    hPtTevMuOverPtGen[u] = fs->make<TH1F>(hname.c_str(),htit.c_str(),500,0,10);
+    
+    hname = "OneptRecoOnePtGenVsPtGen_"   ; hname += TeVName[u];
+    htit  = "(1/Pt reco - 1/ Pt Gen)*PtGen vs pt gen " ; htit  += TeVName[u];
+    h1PtGen1PtRecoVsPtGenTevMu[u] = fs->make<TH2F>(hname.c_str(),htit.c_str(),nBinPtMu,minPtMu,maxPtMu,400,-1,1);
+  }
+
+
+
 
   h_mcmu_pt = new TH1F("mcmu_pt", "Gen muons pt distribution", 100, 0, 500.0);
   h_mcmu_pt_hlt = new TH1F("mcmu_pt_hlt", "Gen muons pt distribution - HLT mu accepted events", 100, 0, 500.0);
@@ -379,7 +486,7 @@ void Wprime_muonreco::init_run()
 // initialize event info
 void Wprime_muonreco::init_event()
 {
-  gen_muons.clear(); N_muons = 0;
+  gen_muons.clear(); N_muons = N_muons_tot = 0;
   genmu_acceptance = muL1_acceptance = muHLT_acceptance = false;
   met_x = met_y = met = 0.0;
 }
@@ -388,41 +495,31 @@ void Wprime_muonreco::init_event()
 // ------------ method called once each job just before starting event loop  ----
 void Wprime_muonreco::beginJob(const edm::EventSetup&)
 {
-  // Create output files
-
-  outputRootFile = TFile::Open(outputFileName.c_str(), "RECREATE");
-  outputRootFile->cd();
-
   init_run();
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void Wprime_muonreco::endJob() {
-  // Write the histos to file
-  outputRootFile->cd();
 
+  for (unsigned ietj = 0; ietj != nBinEtJets; ++ietj)
+    {
+      for(unsigned jnj = 0; jnj != nBinNJets; ++jnj)
+	{
+	  double this_eff= hEthresNjet->GetBinContent(ietj,jnj)/MuTrig.Nev;
+	  hEthresNjet_norm->SetBinContent(ietj,jnj,this_eff);
+	}
+    }
+  
+  for(unsigned i = 1; i != 24; ++i) 
+    {
+      for (unsigned isumptt = 0; isumptt != 600; ++isumptt)
+	{
+	  double this_eff =hPtTkIsoThresh_ConeSize ->GetBinContent(i,isumptt)/MuTrig.Nev_1mu;
+	  hPtTkIsoThresh_ConeSize_norm->SetBinContent(i,isumptt,this_eff);
+	}
+    }
 
-  // do we really need to explicitly call h_i->Write() for every i-th histogram???
-  hPtGen->Write(); 
-  hPtRecoOverPtGen->Write(); 
-  hPtRecoVsPtGen->Write(); 
-  hPtMuUnMatched->Write(); 
-
-  hNMu->Write();
-  hPtMu->Write();
-  hEtaMu->Write();
-  hMET->Write();
-  hTMass->Write();
-  hAcop->Write();
-  hNjets->Write();
-
-  h_mcmu_pt_hlt->Write(); h_mcmu_pt->Write();
-  h_mcmu_eta_hlt->Write(); h_mcmu_eta_l1->Write(); h_mcmu_eta->Write();
-
-
-  outputRootFile->Close();
-
-  printSummary();
+    printSummary();
 }
 
 // print summary info over full job

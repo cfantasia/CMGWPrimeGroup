@@ -28,10 +28,14 @@
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 
+#include "FWCore/ServiceRegistry/interface/Service.h"
+
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "DataFormats/MuonReco/interface/Muon.h"
+#include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "SimDataFormats/HepMCProduct/interface/HepMCProduct.h"
-
+#include "PhysicsTools/UtilAlgos/interface/TFileService.h"
 
 //
 // class declaration
@@ -39,6 +43,39 @@
 class TFile;
 class TH1F;
 class TH2F;
+
+namespace Wprime_muonreco_histo
+{
+  // histogram parameters (energy/pt units: GeV)
+
+  // Muon pt distribution
+  static const unsigned  nBinPtMu = 1500;
+  static const float minPtMu = 0;
+  static const float  maxPtMu = 3000;
+
+  // jet distributions (# of jets and Et)
+  static const unsigned nBinNJets = 50;
+  static const float minNJets = -0.5;
+  static const float maxNJets = 49.5;
+  static const unsigned nBinEtJets = 150;
+  static const float minEtJets = 0;
+  static const float maxEtJets = 300;
+  // jet-activity veto (# of jets and Et)
+  static const unsigned nBinEtJets_veto = 10;
+  static const float minEtJets_veto = 0;
+  static const float maxEtJets_veto = 200;
+  static const unsigned nBinNJets_veto = 10;
+  static const float minNJets_veto = -0.5;
+  static const float maxNJets_veto = 9.5;
+
+  // cone size and SumPt for isolation
+  static const unsigned nBinCone = 20;
+  static const float minCone = 0.05;
+  static const float maxCone = 1.05;
+  static const unsigned nBinSumPt = 600;
+  static const float minSumPt = 0;
+  static const float maxSumPt = 600;
+}
 
 class Wprime_muonreco : public edm::EDAnalyzer 
 {
@@ -56,36 +93,21 @@ class Wprime_muonreco : public edm::EDAnalyzer
   edm::InputTag HLTTag_; edm::InputTag L1Tag_;
   //      edm::InputTag isoTag_;
   edm::InputTag jetTag_;
-  double eJetMin_;
-  unsigned int nBinNMu;
-  double minNMu;
-  double maxNMu;
-  unsigned int nBinPtMu;
-  double minPtMu;
-  double maxPtMu;
-  unsigned int nBinEtaMu;
-  double minEtaMu;
-  double maxEtaMu;
-  unsigned int nBinMET;
-  double minMET;
-  double maxMET;
-  unsigned int nBinTMass;
-  double minTMass;
-  double maxTMass;
-  unsigned int nBinAcop;
-  double minAcop;
-  double maxAcop;
-  unsigned int nBinNJets;
-  double minNJets;
-  double maxNJets;
+  edm::InputTag tkIsoMapTag_;
+  edm::InputTag ecalIsoMapTag_;
+  edm::InputTag hcalIsoMapTag_;
+
+  const float eJetMin_;
   
   struct trigEff {
     // key: (muon) trigger name, value: # of accepted events
     std::map<std::string, unsigned> trigger_count;
     // # of events processed
     unsigned Nev; 
+    // # of events processed with a single reconstructed muon
+    unsigned Nev_1mu; 
     // initialize
-    trigEff(){trigger_count.clear(); Nev = 0;}
+    trigEff(){trigger_count.clear(); Nev = Nev_1mu = 0;}
   };
 
   typedef std::map<std::string, unsigned>::const_iterator It;
@@ -125,33 +147,64 @@ class Wprime_muonreco : public edm::EDAnalyzer
   static bool is20x(const std::string & release_string);
 
   //    Histograms   
-  
   TH1F *hPtGen,*hPtRecoOverPtGen;
+  TH1F *hPtGenJetVeto,*hPtRecoOverPtGenJetVeto;
+  TH1F *hPtGenOne, *hPtGenOneMatch, *hPtGenOnePtlt5Match;
+  TH1F *h1PtGen1PtReco;
+  TH2F *h1PtGen1PtRecoVsPtGen;
   TH2F *hPtRecoVsPtGen;
   TH1F *hPtMuUnMatched;
-  
+  TH1F *hPtMuUnMatchedJetVeto;
+
   TH1F *hNMu;
-  TH1F *hPtMu;
-  TH1F *hEtaMu;
+  TH1F *hPtMu,*hPtMaxMu,*hPtOneMu, *hPtMuOneMatch;
+  TH1F *hPtMuJetVeto,*hPtMaxMuJetVeto,*hPtOneMuJetVeto, *hPtMuOneMatchJetVeto;
+  TH1F *hHitTrack,*hHitMuon,*hHitComb,*hHitCheckMu;
+  TH1F *hEtaMu, *hEtaOnePtlt5Match;
   TH1F *hMET;
   TH1F *hTMass;
   TH1F *hAcop;
-  TH1F *hNjets;
+  TH1F *hNAlljets;
+  TH1F *hNjetsGtEJetMin;
+  TH1F *hJetEt;
+  TH2F *hEthresNjet,*hEthresNjet_norm;
+
+  TH1F *hPtSumR03,*hPtSumNR03;
+  TH2F *hTMass_PtSumR03;
+  TH2F *hPtTkIso_ConeSize,*hPtTkIso_mmupt_ConeSize,*hNTkIso_ConeSize,*hEcalIso_ConeSize,*hHcalIso_ConeSize;
+  TH2F *hPtTkIsoThresh_ConeSize,*hPtTkIsoThresh_ConeSize_norm; 
+
+  TH1F *hMuChi2,*hTrackerMuChi2,*hSAMuChi2;
+  TH1F *hMuNdf,*hTrackerMuNdf,*hSAMuNdf;
+
+  TH1F *hMuChi2UnMatched,*hTrackerMuChi2UnMatched,*hSAMuChi2UnMatched;
+  TH1F *hMuNdfUnMatched,*hTrackerMuNdfUnMatched,*hSAMuNdfUnMatched;
+
+  TH1F *hPtTevMu[4];
+  TH1F *hPtTevMuJetVeto[4];
+  TH1F *hPtTevMuOverPtMu[4];
+
+  TH1F *h1PtGen1PtRecoTevMu[4];
+  TH2F *h1PtGen1PtRecoVsPtGenTevMu[4];
+  TH1F *hPtTevMuOverPtGen[4];
+
 
   TH1F *h_mcmu_pt, *h_mcmu_pt_hlt;
   TH1F *h_mcmu_eta, *h_mcmu_eta_hlt, *h_mcmu_eta_l1;
 
   //    Root output file
-  std::string outputFileName;
-  TFile* outputRootFile;
+  edm::Service<TFileService> fs;
 
-  edm::Handle<reco::TrackCollection> muonCollection;
+
+  edm::Handle<reco::MuonCollection> muonCollection;
   
   // # of trigger paths in HLT configuration
   unsigned N_triggers;
 
   // # of reconstructed muons per event
   unsigned N_muons;
+  // Total # of reconstructed muons in job
+  unsigned N_muons_tot;
 
   // initialize run info
   void init_run();
