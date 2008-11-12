@@ -32,8 +32,12 @@
 
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "DataFormats/TrackReco/interface/TrackToTrackMap.h"
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
+#include "DataFormats/RecoCandidate/interface/IsoDeposit.h"
+#include "DataFormats/RecoCandidate/interface/IsoDepositFwd.h"
+
 #include "SimDataFormats/HepMCProduct/interface/HepMCProduct.h"
 #include "PhysicsTools/UtilAlgos/interface/TFileService.h"
 
@@ -197,7 +201,14 @@ class Wprime_muonreco : public edm::EDAnalyzer
 
 
   edm::Handle<reco::MuonCollection> muonCollection;
-  
+  edm::Handle<reco::IsoDepositMap> tkMapH;
+  edm::Handle<reco::IsoDepositMap> ecalMapH;
+  edm::Handle<reco::IsoDepositMap> hcalMapH;
+
+  const reco::TrackToTrackMap * tevMap_default;
+  const reco::TrackToTrackMap * tevMap_1stHit;
+  const reco::TrackToTrackMap * tevMap_picky;
+
   // # of trigger paths in HLT configuration
   unsigned N_triggers;
 
@@ -236,6 +247,12 @@ class Wprime_muonreco : public edm::EDAnalyzer
 
   // get Jets
   void getJets(const edm::Event & iEvent);
+
+  // get isolation
+  void getIsolation(const edm::Event & iEvent);
+
+  // get TeV muons
+  void getTeVMuons(const edm::Event & iEvent);
 
   // get muons, update MET
   void getMuons(const edm::Event & iEvent);

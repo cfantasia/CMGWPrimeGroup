@@ -219,6 +219,40 @@ void Wprime_muonreco::getJets(const edm::Event & iEvent)
 
 }  
 
+// get Isolation
+void Wprime_muonreco::getIsolation(const edm::Event & iEvent)
+{
+  // take iso deposits for tracks 
+  // (contains (eta,phi, pt) of tracks in R<X (1.0) around each muon)
+  iEvent.getByLabel(tkIsoMapTag_, tkMapH);
+
+  // take iso deposits for ECAL 
+  // (contains (eta,phi, pt) of ecal in R<X (1.0) around each muon)
+  iEvent.getByLabel(ecalIsoMapTag_, ecalMapH);
+
+  // take iso deposits for HCAL 
+  // (contains (eta,phi, pt) of hcal in R<X (1.0) around each muon)
+  iEvent.getByLabel(hcalIsoMapTag_, hcalMapH);
+}
+
+// get TeV muons
+void Wprime_muonreco::getTeVMuons(const edm::Event & iEvent)
+{
+  edm::Handle<reco::TrackToTrackMap> tevMapH_default;
+  edm::Handle<reco::TrackToTrackMap> tevMapH_1stHit;
+  edm::Handle<reco::TrackToTrackMap> tevMapH_picky;
+
+  iEvent.getByLabel("tevMuons", "default", tevMapH_default);
+  tevMap_default = tevMapH_default.product();
+
+  iEvent.getByLabel("tevMuons", "firstHit", tevMapH_1stHit);
+  tevMap_1stHit = tevMapH_1stHit.product();
+
+  iEvent.getByLabel("tevMuons", "picky", tevMapH_picky);
+  tevMap_picky = tevMapH_picky.product();
+}
+
+
 // do MC matching
 void Wprime_muonreco::doMCmatching()
 {      
@@ -340,6 +374,8 @@ Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   getCaloMET(iEvent);
 
   getJets(iEvent);
+
+  getIsolation(iEvent);
   
   getMuons(iEvent);
 
