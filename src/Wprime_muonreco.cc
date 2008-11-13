@@ -191,13 +191,11 @@ void Wprime_muonreco::getJets(const edm::Event & iEvent)
 
   TAxis * yaxis = hEthresNjet->GetYaxis();
 
-  // # of jets above <eJetMin_> threshold
-  unsigned njets = 0;
   for (CaloJetCollection::const_iterator jet = jetCollection->begin(); 
        jet!=jetCollection->end(); ++jet) { // loop over jets
   
     hJetEt->Fill(jet->et());
-    if (jet->et() > eJetMin_) ++njets;
+    if (jet->et() > eJetMin_) ++NJetsAboveThres;
 
     for(unsigned ietj = 1; ietj <= nBinEtJets_veto; ++ietj)
       { // loop over jet-Et bins
@@ -215,7 +213,7 @@ void Wprime_muonreco::getJets(const edm::Event & iEvent)
     } // loop over jet-Et bins
    
    hNAlljets->Fill(jetCollection->size());
-   hNjetsGtEJetMin->Fill(njets);
+   hNjetsGtEJetMin->Fill(NJetsAboveThres);
 
 }  
 
@@ -324,14 +322,41 @@ void Wprime_muonreco::getMuons(const edm::Event & iEvent)
   met = sqrt(met_x*met_x +met_y*met_y);
   hMET->Fill(met);
   
+  double pt_max=-1; // highest-pt muon in event
   for(unsigned i = 0; i != N_muons; ++i) 
     { // loop over reco muons 
       
       MuonRef mu(muonCollection,i);
+      if(!(mu->isGlobalMuon()) )
+	continue; // keep only global muons
+      
+      double pt = mu->pt();
+      if (pt > pt_max) 
+	pt_max = pt;
+      
+      if(1 == N_muons)
+	{
+	  hPtOneMu->Fill(pt);
+	  if(0 == NJetsAboveThres)
+	    hPtOneMuJetVeto->Fill(pt);
+	}
+
       // pt
-      hPtMu->Fill(mu->pt());
+      hPtMu->Fill(pt);
+      if(0 == NJetsAboveThres)
+	hPtMuJetVeto->Fill(pt);
       // eta
       hEtaMu->Fill(mu->eta());
+      
+
+      // chi2, n_dof
+      hMuChi2->Fill(mu->combinedMuon()->normalizedChi2());
+      hTrackerMuChi2->Fill(mu->track()->normalizedChi2());
+      hSAMuChi2->Fill(mu->standAloneMuon()->normalizedChi2());
+      
+      hMuNdf->Fill(mu->combinedMuon()->ndof());
+      hTrackerMuNdf->Fill(mu->track()->ndof());
+      hSAMuNdf->Fill(mu->standAloneMuon()->ndof());
       
       // acoplanarity
       Geom::Phi<double> deltaphi(mu->phi()-atan2(met_y,met_x));
@@ -347,8 +372,49 @@ void Wprime_muonreco::getMuons(const edm::Event & iEvent)
       double massT = w_et*w_et - w_px*w_px - w_py*w_py;
       massT = (massT>0) ? sqrt(massT) : 0;
       hTMass->Fill(massT);
+
+      // Isolation
+     double ptsumR03 = mu->isolationR03().sumPt;
+     hPtSumR03->Fill(ptsumR03);
+     hPtSumNR03->Fill(ptsumR03/pt);
+     hTMass_PtSumR03->Fill(ptsumR03,massT);
+     
+     // General Isolation
+     const reco::IsoDeposit tkDep((*tkMapH)[mu]);
+     const reco::IsoDeposit ecalDep((*ecalMapH)[mu]);
+     const reco::IsoDeposit hcalDep((*hcalMapH)[mu]);
+     for(unsigned i = 0; i != nBinCone; ++i) 
+       { // loop over cone sizes
+	 float coneSize = minCone+i*(maxCone-minCone)/nBinCone;
+	 double ptsum_cone=tkDep.depositWithin(coneSize); 
+	 hPtTkIso_ConeSize->Fill(coneSize+0.001,ptsum_cone);
+	 double ptsum_mmupt_cone=tkDep.depositWithin(coneSize)-pt; 
+	 if(1 == N_muons)
+	   { // single reco-muon in event
+	     for(unsigned isumptt = 0; isumptt != nBinSumPt; ++isumptt){
+	       double sumpt_thresh = minSumPt + isumptt*(maxSumPt-minSumPt)/nBinSumPt;
+	       if(ptsum_cone>sumpt_thresh)
+		 // what is the 0.001 for ???
+		 hPtTkIsoThresh_ConeSize->Fill(coneSize+0.001,sumpt_thresh);
+	     }
+	   } // single reco-muon in event
+
+	 hPtTkIso_mmupt_ConeSize->Fill(coneSize+0.001,ptsum_mmupt_cone);
+	 double ntk_cone=tkDep.depositAndCountWithin(coneSize).second;
+	 hNTkIso_ConeSize->Fill(coneSize+0.001,ntk_cone);
+	 double ecetsum_cone=ecalDep.depositWithin(coneSize); 
+	 hEcalIso_ConeSize->Fill(coneSize+0.001,ecetsum_cone);
+	 double hcetsum_cone=hcalDep.depositWithin(coneSize); 
+	 hHcalIso_ConeSize->Fill(coneSize+0.001,hcetsum_cone);
+       } // loop over cone sizes
+
+
             
     } // loop over reco muons
+
+  hPtMaxMu->Fill(pt_max);
+  if(0 == NJetsAboveThres)
+    hPtMaxMuJetVeto->Fill(pt_max);
   
 }
 
@@ -522,7 +588,7 @@ void Wprime_muonreco::init_run()
 // initialize event info
 void Wprime_muonreco::init_event()
 {
-  gen_muons.clear(); N_muons = N_muons_tot = 0;
+  gen_muons.clear(); N_muons = N_muons_tot = NJetsAboveThres = 0;
   genmu_acceptance = muL1_acceptance = muHLT_acceptance = false;
   met_x = met_y = met = 0.0;
 }

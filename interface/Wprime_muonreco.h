@@ -102,6 +102,7 @@ class Wprime_muonreco : public edm::EDAnalyzer
   edm::InputTag hcalIsoMapTag_;
 
   const float eJetMin_;
+  unsigned NJetsAboveThres; // # of jets in event above eJetMin_
   
   struct trigEff {
     // key: (muon) trigger name, value: # of accepted events
