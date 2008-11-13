@@ -10,7 +10,7 @@
 
 #include "DataFormats/TrackReco/interface/Track.h"
 #include "DataFormats/JetReco/interface/CaloJet.h"
-
+#include "DataFormats/MuonReco/interface/MuonCocktails.h"
 
 #include "DataFormats/METReco/interface/CaloMET.h"
 #include "DataFormats/METReco/interface/CaloMETCollection.h"
@@ -321,7 +321,11 @@ void Wprime_muonreco::getMuons(const edm::Event & iEvent)
     } // loop over reco muons 
   met = sqrt(met_x*met_x +met_y*met_y);
   hMET->Fill(met);
-  
+}  
+
+// do muon analysis
+void Wprime_muonreco::doMuons()
+{
   double pt_max=-1; // highest-pt muon in event
   for(unsigned i = 0; i != N_muons; ++i) 
     { // loop over reco muons 
@@ -340,7 +344,7 @@ void Wprime_muonreco::getMuons(const edm::Event & iEvent)
 	  if(0 == NJetsAboveThres)
 	    hPtOneMuJetVeto->Fill(pt);
 	}
-
+      
       // pt
       hPtMu->Fill(pt);
       if(0 == NJetsAboveThres)
@@ -348,7 +352,6 @@ void Wprime_muonreco::getMuons(const edm::Event & iEvent)
       // eta
       hEtaMu->Fill(mu->eta());
       
-
       // chi2, n_dof
       hMuChi2->Fill(mu->combinedMuon()->normalizedChi2());
       hTrackerMuChi2->Fill(mu->track()->normalizedChi2());
@@ -373,41 +376,9 @@ void Wprime_muonreco::getMuons(const edm::Event & iEvent)
       massT = (massT>0) ? sqrt(massT) : 0;
       hTMass->Fill(massT);
 
-      // Isolation
-     double ptsumR03 = mu->isolationR03().sumPt;
-     hPtSumR03->Fill(ptsumR03);
-     hPtSumNR03->Fill(ptsumR03/pt);
-     hTMass_PtSumR03->Fill(ptsumR03,massT);
-     
-     // General Isolation
-     const reco::IsoDeposit tkDep((*tkMapH)[mu]);
-     const reco::IsoDeposit ecalDep((*ecalMapH)[mu]);
-     const reco::IsoDeposit hcalDep((*hcalMapH)[mu]);
-     for(unsigned i = 0; i != nBinCone; ++i) 
-       { // loop over cone sizes
-	 float coneSize = minCone+i*(maxCone-minCone)/nBinCone;
-	 double ptsum_cone=tkDep.depositWithin(coneSize); 
-	 hPtTkIso_ConeSize->Fill(coneSize+0.001,ptsum_cone);
-	 double ptsum_mmupt_cone=tkDep.depositWithin(coneSize)-pt; 
-	 if(1 == N_muons)
-	   { // single reco-muon in event
-	     for(unsigned isumptt = 0; isumptt != nBinSumPt; ++isumptt){
-	       double sumpt_thresh = minSumPt + isumptt*(maxSumPt-minSumPt)/nBinSumPt;
-	       if(ptsum_cone>sumpt_thresh)
-		 // what is the 0.001 for ???
-		 hPtTkIsoThresh_ConeSize->Fill(coneSize+0.001,sumpt_thresh);
-	     }
-	   } // single reco-muon in event
+      doIsolation(mu, massT);
 
-	 hPtTkIso_mmupt_ConeSize->Fill(coneSize+0.001,ptsum_mmupt_cone);
-	 double ntk_cone=tkDep.depositAndCountWithin(coneSize).second;
-	 hNTkIso_ConeSize->Fill(coneSize+0.001,ntk_cone);
-	 double ecetsum_cone=ecalDep.depositWithin(coneSize); 
-	 hEcalIso_ConeSize->Fill(coneSize+0.001,ecetsum_cone);
-	 double hcetsum_cone=hcalDep.depositWithin(coneSize); 
-	 hHcalIso_ConeSize->Fill(coneSize+0.001,hcetsum_cone);
-       } // loop over cone sizes
-
+      doTeVanalysis(mu);
 
             
     } // loop over reco muons
@@ -418,6 +389,90 @@ void Wprime_muonreco::getMuons(const edm::Event & iEvent)
   
 }
 
+// do TeV-muon analysis
+void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu)
+{
+  TrackToTrackMap::const_iterator iTeV_default;
+  TrackToTrackMap::const_iterator iTeV_1stHit;
+  TrackToTrackMap::const_iterator iTeV_picky;
+
+  if(is21x(RECOversion))
+    {
+      iTeV_default = tevMap_default->find(mu->globalTrack());
+      iTeV_1stHit = tevMap_1stHit->find(mu->globalTrack());
+      iTeV_picky = tevMap_picky->find(mu->globalTrack());
+    }
+  else if(is20x(RECOversion))
+    {
+      iTeV_default = tevMap_default->find(mu->combinedMuon());
+      iTeV_1stHit = tevMap_1stHit->find(mu->combinedMuon());
+      iTeV_picky = tevMap_picky->find(mu->combinedMuon());
+    }
+  else
+    {
+      cerr << " RECOversion " << RECOversion << " not supported. Sorry! " 
+	   << endl;
+      abort();
+    }
+  
+  reco::TrackRef TeVMuons[4] = {
+    iTeV_default->val, iTeV_1stHit->val, iTeV_picky->val,
+    muon::tevOptimized(*mu, *tevMap_default, 
+		       *tevMap_1stHit, *tevMap_picky)};
+  
+  for(unsigned u = 0; u != 4; ++u)
+    {
+      hPtTevMu[u]->Fill(TeVMuons[u]->pt());
+      hPtTevMuOverPtMu[u]->Fill(TeVMuons[u]->pt()/mu->pt());
+      if(0 == NJetsAboveThres)
+	hPtTevMuJetVeto[u]->Fill(TeVMuons[u]->pt());
+    }
+  
+}
+
+
+
+// do isolation
+void Wprime_muonreco::doIsolation(MuonRef mu, double massT)
+{
+  // Isolation
+  double ptsumR03 = mu->isolationR03().sumPt;
+  hPtSumR03->Fill(ptsumR03);
+  hPtSumNR03->Fill(ptsumR03/mu->pt());
+  hTMass_PtSumR03->Fill(ptsumR03, massT);
+  
+  // General Isolation
+  const reco::IsoDeposit tkDep((*tkMapH)[mu]);
+  const reco::IsoDeposit ecalDep((*ecalMapH)[mu]);
+  const reco::IsoDeposit hcalDep((*hcalMapH)[mu]);
+
+  for(unsigned i = 0; i != nBinCone; ++i) 
+    { // loop over cone sizes
+      float coneSize = minCone+i*(maxCone-minCone)/nBinCone;
+      double ptsum_cone=tkDep.depositWithin(coneSize); 
+      hPtTkIso_ConeSize->Fill(coneSize+0.001,ptsum_cone);
+      double ptsum_mmupt_cone=tkDep.depositWithin(coneSize) - mu->pt(); 
+      if(1 == N_muons)
+	{ // single reco-muon in event
+	  for(unsigned isumptt = 0; isumptt != nBinSumPt; ++isumptt){
+	    double sumpt_thresh = minSumPt + 
+	      isumptt*(maxSumPt-minSumPt)/nBinSumPt;
+	    if(ptsum_cone>sumpt_thresh)
+	      // what is the 0.001 for ???
+	      hPtTkIsoThresh_ConeSize->Fill(coneSize+0.001,sumpt_thresh);
+	  }
+	} // single reco-muon in event
+
+      hPtTkIso_mmupt_ConeSize->Fill(coneSize+0.001,ptsum_mmupt_cone);
+      double ntk_cone=tkDep.depositAndCountWithin(coneSize).second;
+      hNTkIso_ConeSize->Fill(coneSize+0.001,ntk_cone);
+      double ecetsum_cone=ecalDep.depositWithin(coneSize); 
+      hEcalIso_ConeSize->Fill(coneSize+0.001,ecetsum_cone);
+      double hcetsum_cone=hcalDep.depositWithin(coneSize); 
+      hHcalIso_ConeSize->Fill(coneSize+0.001,hcetsum_cone);
+    } // loop over cone sizes
+
+}
 
 // ------------ method called to for each event  ------------
 void
@@ -442,8 +497,10 @@ Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   getJets(iEvent);
 
   getIsolation(iEvent);
-  
+
   getMuons(iEvent);
+  getTeVMuons(iEvent);
+  doMuons();
 
   if(!realData)
     doMCmatching();

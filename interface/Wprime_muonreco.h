@@ -258,6 +258,14 @@ class Wprime_muonreco : public edm::EDAnalyzer
   // get muons, update MET
   void getMuons(const edm::Event & iEvent);
 
+  // do muon analysis
+  void doMuons();
+  // do TeV-muon analysis
+  void doTeVanalysis(reco::MuonRef mu);
+
+  // do isolation
+  void doIsolation(reco::MuonRef mu, double massT);
+
   // do MC matching
   void doMCmatching();
 };
