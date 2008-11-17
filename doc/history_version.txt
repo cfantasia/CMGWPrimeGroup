@@ -1,7 +1,20 @@
+17-NOV-08 (Christos), V00-00-30
+================================
+Added additional reconstruction code from Silvia and Alessio. CVS package
+should now have complete trigger + reconstruction code used to run 
+previous jobs. 
+
+TeV-muon reconstruction seems to be responsible for exception-throwing on
+certain events; need to add protection so that events are not skipped.
+
+
 05-NOV-08 (Christos), V00-00-16
 ================================
 First porting of the code. Contains mostly trigger-related stuff. Test
 configuration file (test/myanalysis_TeVMuon.cfg) tested on 21x MC files,
 but should work in 20x as well.
+
+
+
 
 
