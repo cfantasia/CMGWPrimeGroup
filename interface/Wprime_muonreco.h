@@ -101,6 +101,18 @@ class Wprime_muonreco : public edm::EDAnalyzer
   edm::InputTag ecalIsoMapTag_;
   edm::InputTag hcalIsoMapTag_;
 
+  struct muonTrack {
+    // reference to standard tracking
+    reco::MuonRef mu;
+    // reference to default-TeV, 1st-Hit, picky and cocktail/optimized tracking
+    reco::TrackRef TeVMuons[4];
+  };
+
+  // reference to different tracking algorithms for all good muons
+  std::vector<muonTrack> good_muons;
+
+  typedef std::vector<muonTrack>::const_iterator mIt;
+
   const float eJetMin_;
   unsigned NJetsAboveThres; // # of jets in event above eJetMin_
   
@@ -115,7 +127,7 @@ class Wprime_muonreco : public edm::EDAnalyzer
     trigEff(){trigger_count.clear(); Nev = Nev_1mu = 0;}
   };
 
-  typedef std::map<std::string, unsigned>::const_iterator It;
+  typedef std::map<std::string, unsigned>::const_iterator tIt;
 
   trigEff genMuTrig; // muon-trigger efficiency wrt generator-muons
   trigEff MuTrig; // muon-trigger efficiency for all processed events

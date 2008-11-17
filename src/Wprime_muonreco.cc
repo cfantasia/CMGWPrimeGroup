@@ -120,7 +120,7 @@ void Wprime_muonreco::getTriggers(const edm::Event & iEvent)
       
       if(accept)
 	{  // trigger <trigName> has fired in this event
-	  It it;
+	  tIt it;
 	  if(genmu_acceptance)
 	    {
 	      it = genMuTrig.trigger_count.find(trigName);
@@ -254,12 +254,19 @@ void Wprime_muonreco::getTeVMuons(const edm::Event & iEvent)
 // do MC matching
 void Wprime_muonreco::doMCmatching()
 {      
-  for(unsigned i = 0; i != N_muons; ++i) 
-    { // loop over reco muons 
-      MuonRef mu(muonCollection,i);
+  for(mIt it = good_muons.begin(); it != good_muons.end(); ++it)
+    { // loop over good reco muons 
+      
+      MuonRef mu = it->mu;
+
+      unsigned nHitsComb = mu->combinedMuon()->recHitsSize();
+      unsigned nHitsMuon = mu->standAloneMuon()->recHitsSize();
+      unsigned nHitsTracker = mu->track()->numberOfValidHits();
+      
+      double pt = mu->pt();
 
       bool matched = false;
-
+      
       for(unsigned imc = 0; imc != gen_muons.size(); ++imc)
 	{ // loop over pythia muons
 	  float etag = gen_muons[imc].momentum().eta();
@@ -271,19 +278,76 @@ void Wprime_muonreco::doMCmatching()
 	  float dr = sqrt(dphi*dphi+deta*deta);
 	  
 	  if( dr < 0.15)
-	    {
+	    { // gen-muon matched to reco-muon
 	      matched = true;
 	      float EtGen = gen_muons[imc].momentum().e() * 
 		sin(gen_muons[imc].momentum().theta());
-	      hPtRecoOverPtGen->Fill(mu->pt()/EtGen) ;
-	      hPtRecoVsPtGen ->Fill(mu->pt(),EtGen); 
-	    }
 
-	} // loop over reco muons
-      if (!matched) {hPtMuUnMatched->Fill(mu->pt()); }
+	      // examining muons with bad pt-resolution
+	      // maybe we should define these cuts in cfg file???
+	      if (fabs(pt/EtGen -1) > 0.1 && pt > 100)
+		{
+		  hHitTrack->Fill(nHitsTracker);
+		  hHitMuon->Fill(nHitsMuon);
+		  hHitComb->Fill(nHitsComb);
+		  hHitCheckMu->Fill(nHitsComb - nHitsTracker);
+		}
 
-    } // loop over pythia muons
+	      hPtRecoOverPtGen->Fill(pt/EtGen);
+	      hPtRecoVsPtGen ->Fill(pt,EtGen); 
+	      if(0 == NJetsAboveThres)
+		{
+		  hPtGenJetVeto -> Fill(EtGen);
+		  hPtRecoOverPtGenJetVeto->Fill(pt/EtGen) ;
+		}
 
+	      float deltap = (1/pt -1/EtGen)*EtGen; 
+	      h1PtGen1PtReco->Fill(deltap);
+	      h1PtGen1PtRecoVsPtGen->Fill(EtGen,deltap);
+
+	      for(unsigned u = 0; u != 4; ++u)
+		{
+		  float ptmuTeV = it->TeVMuons[u]->pt();
+		  float deltapTeV = (1/ptmuTeV -1/EtGen)*EtGen; 
+		  h1PtGen1PtRecoTevMu[u]->Fill(deltapTeV);
+		  h1PtGen1PtRecoVsPtGenTevMu[u]->Fill(EtGen,deltapTeV);
+		  hPtTevMuOverPtGen[u]->Fill(ptmuTeV/EtGen);
+		}
+	      
+	      if(1 == N_muons)
+		{ // single reco-muon
+		  hPtGenOneMatch->Fill(EtGen);
+		  hPtMuOneMatch->Fill(pt);
+
+		if(0 == NJetsAboveThres)
+		  hPtMuOneMatchJetVeto->Fill(pt);
+
+		if(pt<5) 
+		  {
+		    hPtGenOnePtlt5Match->Fill(EtGen);
+		    hEtaOnePtlt5Match->Fill(mu->eta());
+		  }
+
+		} // single reco-muon
+	      
+	    } // gen-muon matched to reco-muon
+
+	} // loop over pythia muons
+
+      if(!matched) 
+	{
+	  hPtMuUnMatched->Fill(pt); 
+	  hPtMuUnMatchedJetVeto->Fill(pt); 
+	  hMuChi2UnMatched->Fill(mu->combinedMuon()->normalizedChi2());
+	  hTrackerMuChi2UnMatched->Fill(mu->track()->normalizedChi2());
+	  hSAMuChi2UnMatched->Fill(mu->standAloneMuon()->normalizedChi2());
+	  hMuNdfUnMatched->Fill(mu->combinedMuon()->ndof());
+	  hTrackerMuNdfUnMatched->Fill(mu->track()->ndof());
+	  hSAMuNdfUnMatched->Fill(mu->standAloneMuon()->ndof());
+	}
+      
+    } // loop over good reco muons
+  
 }
 
 // get muons, update MET
@@ -330,7 +394,7 @@ void Wprime_muonreco::doMuons()
   for(unsigned i = 0; i != N_muons; ++i) 
     { // loop over reco muons 
       
-      MuonRef mu(muonCollection,i);
+      MuonRef mu(muonCollection, i);
       if(!(mu->isGlobalMuon()) )
 	continue; // keep only global muons
       
@@ -379,8 +443,7 @@ void Wprime_muonreco::doMuons()
       doIsolation(mu, massT);
 
       doTeVanalysis(mu);
-
-            
+      
     } // loop over reco muons
 
   hPtMaxMu->Fill(pt_max);
@@ -414,18 +477,22 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu)
 	   << endl;
       abort();
     }
-  
-  reco::TrackRef TeVMuons[4] = {
-    iTeV_default->val, iTeV_1stHit->val, iTeV_picky->val,
-    muon::tevOptimized(*mu, *tevMap_default, 
-		       *tevMap_1stHit, *tevMap_picky)};
+
+  muonTrack temp; 
+  temp.mu = mu;
+  temp.TeVMuons[0] = iTeV_default->val;
+  temp.TeVMuons[1] = iTeV_1stHit->val;
+  temp.TeVMuons[2] = iTeV_picky->val;
+  temp.TeVMuons[3] = muon::tevOptimized(*mu, *tevMap_default, 
+					*tevMap_1stHit, *tevMap_picky);
+  good_muons.push_back(temp);
   
   for(unsigned u = 0; u != 4; ++u)
     {
-      hPtTevMu[u]->Fill(TeVMuons[u]->pt());
-      hPtTevMuOverPtMu[u]->Fill(TeVMuons[u]->pt()/mu->pt());
+      hPtTevMu[u]->Fill(temp.TeVMuons[u]->pt());
+      hPtTevMuOverPtMu[u]->Fill(temp.TeVMuons[u]->pt()/mu->pt());
       if(0 == NJetsAboveThres)
-	hPtTevMuJetVeto[u]->Fill(TeVMuons[u]->pt());
+	hPtTevMuJetVeto[u]->Fill(temp.TeVMuons[u]->pt());
     }
   
 }
@@ -645,7 +712,8 @@ void Wprime_muonreco::init_run()
 // initialize event info
 void Wprime_muonreco::init_event()
 {
-  gen_muons.clear(); N_muons = N_muons_tot = NJetsAboveThres = 0;
+  gen_muons.clear(); good_muons.clear();
+  N_muons = N_muons_tot = NJetsAboveThres = 0;
   genmu_acceptance = muL1_acceptance = muHLT_acceptance = false;
   met_x = met_y = met = 0.0;
 }
@@ -654,6 +722,7 @@ void Wprime_muonreco::init_event()
 // ------------ method called once each job just before starting event loop  ----
 void Wprime_muonreco::beginJob(const edm::EventSetup&)
 {
+  good_muons.reserve(4); // do not really expect more muons per event...
   init_run();
 }
 
@@ -707,7 +776,7 @@ void Wprime_muonreco::printSummary2(const trigEff & trig,
   cout << longline << endl;
   cout<< description << endl << endl;
   
-  for(It it = trig.trigger_count.begin(); it != trig.trigger_count.end();
+  for(tIt it = trig.trigger_count.begin(); it != trig.trigger_count.end();
       ++it)
     {
       float eff = 1.*it->second/(trig.Nev);
