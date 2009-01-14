@@ -455,6 +455,8 @@ void Wprime_muonreco::doMuons()
 // do TeV-muon analysis
 void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu)
 {
+  if(!(mu->isGlobalMuon()) ) return; // keep only global muons
+
   TrackToTrackMap::const_iterator iTeV_default;
   TrackToTrackMap::const_iterator iTeV_1stHit;
   TrackToTrackMap::const_iterator iTeV_picky;
@@ -478,11 +480,14 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu)
       abort();
     }
 
+  if(iTeV_default == tevMap_default->end() || iTeV_1stHit == tevMap_1stHit->end() || iTeV_picky == tevMap_picky->end()){
+    cout<<"-Wprime_muonreco- Warning: No Tev muons found for this event !! "<<endl; return;}
   muonTrack temp; 
   temp.mu = mu;
   temp.TeVMuons[0] = iTeV_default->val;
   temp.TeVMuons[1] = iTeV_1stHit->val;
   temp.TeVMuons[2] = iTeV_picky->val;
+  
   temp.TeVMuons[3] = muon::tevOptimized(*mu, *tevMap_default, 
 					*tevMap_1stHit, *tevMap_picky);
   good_muons.push_back(temp);
