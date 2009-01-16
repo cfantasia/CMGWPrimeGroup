@@ -142,8 +142,9 @@ void Wprime_muonreco::getTriggers(const edm::Event & iEvent)
     }
 
 
-  for(unsigned imc = 0; imc != gen_muons.size(); ++imc)
-    { // loop over pythia muons
+  //  for(unsigned imc = 0; imc != gen_muons.size() &&; ++imc)
+  for(unsigned imc = 0; imc != gen_muons.size() && (imc==0); ++imc)
+    { // loop over pythia muons - consider only first GEN muon
       
       if(genmu_acceptance)
 	{
@@ -164,7 +165,7 @@ void Wprime_muonreco::getTriggers(const edm::Event & iEvent)
 	    }
 	}
       
-    } // loop over pythia muons
+    } // loop over pythia muons - consider only first GEN muon
 
 }
 
@@ -683,15 +684,15 @@ void Wprime_muonreco::init_histograms()
     h1PtGen1PtRecoVsPtGenTevMu[u] = fs->make<TH2F>(hname.c_str(),htit.c_str(),nBinPtMu,minPtMu,maxPtMu,400,-1,1);
   }
 
+  h_mcmu_pt = fs->make<TH1F>("mcmu_pt", "Gen muons pt distribution", 100, 0, 500.0);
+  h_mcmu_pt_hlt = fs->make<TH1F>("mcmu_pt_hlt", "Gen muons pt distribution - HLT mu accepted events", 100, 0, 500.0);
+  h_mcmu_eta = fs->make<TH1F>("mcmu_eta", "Gen muons eta distribution",100,-2.5,2.5);
+  h_mcmu_eta_hlt = fs->make<TH1F>("mcmu_eta_hlt", "Gen muons eta distribution - HLT mu accepted events",100,-2.5,2.5);
 
+  h_mcmu_eta_l1 = fs->make<TH1F>("mcmu_eta_l1", "Gen muons eta distribution - L1 mu accepted events", 100, -2.5, 2.5);
+  
+  
 
-
-  h_mcmu_pt = new TH1F("mcmu_pt", "Gen muons pt distribution", 100, 0, 500.0);
-  h_mcmu_pt_hlt = new TH1F("mcmu_pt_hlt", "Gen muons pt distribution - HLT mu accepted events", 100, 0, 500.0);
-  h_mcmu_eta = new TH1F("mcmu_eta", "Gen muons eta distribution",100,-2.5,2.5);
-  h_mcmu_eta_hlt = new TH1F("mcmu_eta_hlt", "Gen muons eta distribution - HLT mu accepted events",100,-2.5,2.5);
-
-  h_mcmu_eta_l1 = new TH1F("mcmu_eta_l1", "Gen muons eta distribution - L1 mu accepted events", 100, -2.5, 2.5);
 }
 
 const string Wprime_muonreco::INVALID_RELEASE = "invalid release number";
