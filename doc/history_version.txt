@@ -1,3 +1,8 @@
+14-JAN-09 (Alessio), V00-00-31
+==============================
+Added protection against missing global muon Ref in TeV muon map.
+
+
 17-NOV-08 (Christos), V00-00-30
 ================================
 Added additional reconstruction code from Silvia and Alessio. CVS package
