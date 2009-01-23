@@ -1,5 +1,11 @@
+23-JAN-09 (Christos), V00-00-33
+===============================
+Added filtering code and example cfg file for filtering on high-pt muons
+(any muon algorithm giving pt > 100 GeV)
+
+
 16-JAN-09 (Christos), V00-00-32
-==============================
+===============================
 Fixed persistence of trigger efficiency histograms. Fixed bug with 
 gen-muon loop in trigger eff histograms. Fixed incorrect HLT path name for
 21x release in default config file. 
