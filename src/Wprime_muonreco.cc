@@ -37,6 +37,7 @@ Wprime_muonreco::Wprime_muonreco(const edm::ParameterSet& iConfig):
   ecalIsoMapTag_(iConfig.getParameter<edm::InputTag> ("EcalIsoMapTag")),
   hcalIsoMapTag_(iConfig.getParameter<edm::InputTag> ("HcalIsoMapTag")),
   eJetMin_(iConfig.getParameter<double>("EtJetCut")),
+  ptTrackMin_(iConfig.getParameter<double>("PtTrackMin")),
   detmu_acceptance(iConfig.getParameter<double>("Detmu_acceptance")),
   muHLT_20x(iConfig.getParameter<string>("SingleMuHLT_20x")),
   muHLT_21x(iConfig.getParameter<string>("SingleMuHLT_21x")),
@@ -266,6 +267,9 @@ void Wprime_muonreco::doMCmatching()
       
       double pt = mu->pt();
 
+      double ptTrack = mu->track()->pt();
+      if(ptTrack < ptTrackMin_ ){continue;}
+
       bool matched = false;
       
       for(unsigned imc = 0; imc != gen_muons.size(); ++imc)
@@ -400,6 +404,10 @@ void Wprime_muonreco::doMuons()
 	continue; // keep only global muons
       
       double pt = mu->pt();
+
+      double ptTrack = mu->track()->pt();
+      if(ptTrack < ptTrackMin_ ){continue;}
+
       if (pt > pt_max) 
 	pt_max = pt;
       
@@ -457,6 +465,9 @@ void Wprime_muonreco::doMuons()
 void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu)
 {
   if(!(mu->isGlobalMuon()) ) return; // keep only global muons
+
+  double ptTrack = mu->track()->pt();
+  if(ptTrack < ptTrackMin_ ){return;}
 
   TrackToTrackMap::const_iterator iTeV_default;
   TrackToTrackMap::const_iterator iTeV_1stHit;
