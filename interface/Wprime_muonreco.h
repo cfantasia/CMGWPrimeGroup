@@ -113,7 +113,8 @@ class Wprime_muonreco : public edm::EDAnalyzer
 
   typedef std::vector<muonTrack>::const_iterator mIt;
 
-  const float eJetMin_;
+  const double eJetMin_;
+  const double ptTrackMin_;
   unsigned NJetsAboveThres; // # of jets in event above eJetMin_
   
   struct trigEff {
