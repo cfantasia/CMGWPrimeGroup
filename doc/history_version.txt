@@ -1,3 +1,18 @@
+02-MAR-09 (Christos), V00-00-50
+===============================
+Added first version of root-tuple making code. Classes described in
+wprimeEvent.h. 
+
+Currently including:
+- Job-level info: HLT/RECO version, sample description, # of events at
+production level
+- Event-level info: generator-level info for muons, muon-neutrinos, W and
+W'. Jets, Muons with 3 types of tracking, 5 types of isolation (9 cone
+sizes), 3 types of MET, and HLT decisions for single-muon triggers. 
+
+Look at test/myanalysis_TeVMuon.cfg for new variables required.
+
+
 02-FEB-09 (Alessio), V00-00-34
 ==============================
 Added a parameter that require a minimum muon pt 
