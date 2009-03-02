@@ -1,4 +1,6 @@
 #include "UserCode/CMGWPrimeGroup/interface/Wprime_muonreco.h"
+#include "UserCode/CMGWPrimeGroup/src/wprimeEvent_LinkDef.h"
+//
 
 // system include files
 #include <memory>
@@ -18,6 +20,7 @@
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TFile.h"
+#include "TTree.h"
 
 #include <iostream>
 #include <map>
@@ -41,49 +44,100 @@ Wprime_muonreco::Wprime_muonreco(const edm::ParameterSet& iConfig):
   detmu_acceptance(iConfig.getParameter<double>("Detmu_acceptance")),
   muHLT_20x(iConfig.getParameter<string>("SingleMuHLT_20x")),
   muHLT_21x(iConfig.getParameter<string>("SingleMuHLT_21x")),
-  muL1(iConfig.getParameter<string>("SingleMuL1"))
+  muL1(iConfig.getParameter<string>("SingleMuL1")),
+  sample_description(iConfig.getParameter<string>("description")),
+  Nprod_evt(iConfig.getParameter<int>("Nprod_evt"))
 {
    //now do what ever initialization is needed
+  tree_job = tree_event = 0;
 
+  evt = new wprime::Event(); job = new wprime::JobInfo();
+  job->sample = sample_description;
+  job->Nprod_evt = Nprod_evt;
 }
 
 
 /// Destructor
 Wprime_muonreco::~Wprime_muonreco()
 {
- 
+  if(evt) delete evt; if(job) delete job;
 }
 
 // get the generator info, populate gen_muons, set genmu_acceptance flag
-void Wprime_muonreco::getGenMuons(const edm::Event & iEvent)
+void Wprime_muonreco::getGenParticles(const edm::Event & iEvent)
 {
   if(realData)return;
 
-  edm::Handle<edm::HepMCProduct> genEvt;
-  iEvent.getByLabel("source", genEvt);
-  if(!genEvt.isValid())
-    {
-      cerr << " Did not find generator-level info using label source! " << endl;
-      abort();
-    }
-  const HepMC::GenEvent * myGenEvent = genEvt->GetEvent();
-  
   // Et of single generator-level muon in event (if applicable)
   float Et1mu=-999;
 
-  for(HepMC::GenEvent::particle_const_iterator p = myGenEvent->particles_begin(); p != myGenEvent->particles_end(); ++p ) 
-    { // loop over pythia particles
-      if ( !( abs((*p)->pdg_id())==13 && (*p)->status()==1 ) )  continue;
+  TClonesArray & mcmu = *(evt->mu_mc);
+  TClonesArray & mcneu = *(evt->neu_mc);
+  TClonesArray & mcw = *(evt->w_mc);
+  TClonesArray & mcwp = *(evt->wp_mc);
 
-      gen_muons.push_back(*(*p));
-      float eta   =(*p)->momentum().eta();
-      if(abs(eta) < detmu_acceptance)
-	genmu_acceptance = true;
+  int Nm = 0; int Nn = 0; int Nw = 0; int Nwp = 0;
 
-      float Et = (*p)->momentum().e() * sin((*p)->momentum().theta());
-      hPtGen->Fill(Et);
-      Et1mu = Et;
-    } //loop over pythia particles
+  edm::Handle<reco::GenParticleCollection> genParticles;
+  iEvent.getByLabel("genParticles", genParticles);
+  for(size_t i = 0; i != genParticles->size(); ++i) {
+    const GenParticle & p = (*genParticles)[i];
+    int id = p.pdgId(); 
+    if( abs(id)!=13 && abs(id) != 14 && abs(id) != 24 && abs(id) != 34)
+      continue; // keep only muons, neutrino, W or W'
+
+    int st = p.status(); int ch = p.charge();
+    int momid = -9999;
+
+    TLorentzVector p4(p.px(), p.py(), p.pz(),  p.energy());
+    const Candidate * mom = p.mother();
+    if(mom)
+      momid = mom->pdgId();
+
+    switch(abs(id))
+      {
+      case 13: // muon
+	new(mcmu[Nm]) wprime::MCParticle(p4, ch, momid, st);
+	++Nm;
+	
+	if(st == 1)
+	  {
+	    gen_muons.push_back(p);
+	    if(abs(p.eta())  < detmu_acceptance)
+	      genmu_acceptance = true;
+	    
+	    hPtGen->Fill(p.et());
+	    Et1mu = p.et();
+	  }
+
+	break;
+	
+      case 14: // muon-neutrino
+	new(mcneu[Nn]) wprime::MCParticle(p4, ch, momid, st);
+	++Nn;
+
+	break;
+	
+      case 24: // W
+	new(mcw[Nw]) wprime::MCParticle(p4, ch, momid, st);
+	++Nw;
+      
+	break;
+	
+      case 34: // W'
+	new(mcwp[Nwp]) wprime::MCParticle(p4, ch, momid, st);
+	++Nwp;
+	break;
+
+      default:
+	{
+	  ; // do nothing for now
+	}
+
+      } // switch (abs(id))
+
+
+  } // loop over genParticles
 
   if(gen_muons.size() == 1)
     hPtGenOne->Fill(Et1mu);
@@ -111,6 +165,8 @@ void Wprime_muonreco::getTriggers(const edm::Event & iEvent)
       HLTversion = prov.releaseVersion();
       cout << " CMSSW release used to produce trigger decisions : "
 	   << HLTversion << endl;
+
+      job->HLTversion = HLTversion;
     }
   
   // loop over triggers: extract event counts for trigger efficiencies
@@ -136,6 +192,17 @@ void Wprime_muonreco::getTriggers(const edm::Event & iEvent)
 	      (is21x(HLTversion) && trigName == muHLT_21x) )
 	    muHLT_acceptance = true;
 
+	  if(trigName == "HLT_L1MuOpen")
+	    evt->HLT_L1MuOpen = true;
+	  else if (trigName == "HLT_L1Mu")
+	    evt->HLT_L1Mu = true;
+	  else if (trigName == "HLT_Mu3")
+	    evt->HLT_Mu3 = true;
+	  else if (trigName == "HLT_Mu5")
+	    evt->HLT_Mu5 = true;
+	  else if (trigName == "HLT_Mu9")
+	    evt->HLT_Mu9 = true;
+
 	  if(trigName == muL1)
 	    muL1_acceptance = true;
 	}  // trigger <trigName> has fired in this event
@@ -149,9 +216,8 @@ void Wprime_muonreco::getTriggers(const edm::Event & iEvent)
       
       if(genmu_acceptance)
 	{
-	  float etag = gen_muons[imc].momentum().eta();
-	  float EtGen = gen_muons[imc].momentum().e() * 
-	    sin(gen_muons[imc].momentum().theta());
+	  float etag = gen_muons[imc].eta();
+	  float EtGen = gen_muons[imc].et();
 	  
 	  h_mcmu_pt->Fill(EtGen);
 	  h_mcmu_eta->Fill(etag);
@@ -180,6 +246,7 @@ void Wprime_muonreco::getCaloMET(const edm::Event & iEvent)
   CaloMETCollection::const_iterator caloMET = metCollection->begin();
   met_x += caloMET->px();
   met_y += caloMET->py();
+  evt->cal_met.Set(met_x, met_y);
 }
 
 // get Jets
@@ -193,19 +260,26 @@ void Wprime_muonreco::getJets(const edm::Event & iEvent)
 
   TAxis * yaxis = hEthresNjet->GetYaxis();
 
-  for (CaloJetCollection::const_iterator jet = jetCollection->begin(); 
-       jet!=jetCollection->end(); ++jet) { // loop over jets
-  
-    hJetEt->Fill(jet->et());
-    if (jet->et() > eJetMin_) ++NJetsAboveThres;
+  TClonesArray & jet = *(evt->jet);
+
+  int j = 0;
+  for (CaloJetCollection::const_iterator jet_ = jetCollection->begin(); 
+       jet_ !=jetCollection->end(); ++jet_) { // loop over jets
+
+    new(jet[j]) TLorentzVector(jet_->px(), jet_->py(), jet_->pz(), 
+			       jet_->energy());
+      
+    hJetEt->Fill(jet_->et());
+    if (jet_->et() > eJetMin_) ++NJetsAboveThres;
 
     for(unsigned ietj = 1; ietj <= nBinEtJets_veto; ++ietj)
       { // loop over jet-Et bins
 	float Ethresh = yaxis->GetBinCenter(ietj);
-	if (jet->et() > Ethresh)   
+	if (jet_->et() > Ethresh)   
 	  ++(nJetsAboveThres[ietj - 1]);   
       } // loop over jet-Et bins
 
+    ++j;
   } // loop over jets
 
   for(unsigned ietj = 1; ietj <= nBinEtJets_veto; ++ietj)
@@ -285,8 +359,7 @@ void Wprime_muonreco::doMCmatching()
 	  if( dr < 0.15)
 	    { // gen-muon matched to reco-muon
 	      matched = true;
-	      float EtGen = gen_muons[imc].momentum().e() * 
-		sin(gen_muons[imc].momentum().theta());
+	      float EtGen = gen_muons[imc].et();
 
 	      // examining muons with bad pt-resolution
 	      // maybe we should define these cuts in cfg file???
@@ -368,55 +441,80 @@ void Wprime_muonreco::getMuons(const edm::Event & iEvent)
       cout << " CMSSW release used to produce muon RECO : "
 	   << RECOversion << endl;
       
+      job->RECOversion = RECOversion;
     }
 
-  // # of reconstructed muons in event  
-  N_muons = muonCollection->size();
-  hNMu->Fill(N_muons);
+  // # of reconstructed muons in event (including standalone-only)
+  N_all_muons = muonCollection->size();
 
-  N_muons_tot += N_muons;
-  if(1 == N_muons)
-    {
-      ++(MuTrig.Nev_1mu);
-      if(genmu_acceptance)
-	++(genMuTrig.Nev_1mu);
-    }
+  double met_x_badmu = 0;
+  double met_y_badmu = 0;
 
-  for(unsigned i = 0; i != N_muons; ++i) 
+  for(unsigned i = 0; i != N_all_muons; ++i) 
     { // loop over reco muons 
       MuonRef mu(muonCollection,i);
-      met_x -= mu->px();
-      met_y -= mu->py();
+      if(mu->isGlobalMuon())
+	{
+	  met_x -= mu->px();
+	  met_y -= mu->py();
+	}
+      else
+	{
+	  met_x_badmu -= mu->px();
+	  met_y_badmu -= mu->py();	  
+	}
+
     } // loop over reco muons 
+
   met = sqrt(met_x*met_x +met_y*met_y);
   hMET->Fill(met);
-}  
+  
+  evt->calgmu_met.Set(met_x, met_y);
+  evt->calallmu_met.Set(met_x + met_x_badmu, met_y + met_y_badmu);  
+}
+
+// copy tracking info from reco::Track to wprime::Track
+void Wprime_muonreco::getTracking(wprime::Track & track, const reco::Track & p)
+{
+  TVector3 p3(p.px(), p.py(), p.pz());
+  track.p.SetVectM(p3, wprime::MUON_MASS);
+  track.q = p.charge();
+  track.chi2 = p.chi2();
+  track.ndof = int(p.ndof());
+  track.Ntot_hits = p.numberOfValidHits();
+  track.Ntrk_hits = -9999; // how do I determine this?
+}
 
 // do muon analysis
 void Wprime_muonreco::doMuons()
 {
   double pt_max=-1; // highest-pt muon in event
-  for(unsigned i = 0; i != N_muons; ++i) 
+
+  TClonesArray & recomu = *(evt->mu);
+
+  for(unsigned i = 0; i != N_all_muons; ++i) 
     { // loop over reco muons 
       
       MuonRef mu(muonCollection, i);
       if(!(mu->isGlobalMuon()) )
 	continue; // keep only global muons
       
+      new(recomu[N_muons]) wprime::Muon(); 
+      wprime::Muon * wpmu = (wprime::Muon *) recomu[N_muons];
+      wpmu->Nmu_hits = mu->standAloneMuon()->recHitsSize(); 
+
+      getTracking(wpmu->tracker, *(mu->track()));
+      getTracking(wpmu->global, *(mu->combinedMuon()) );
+
+      ++N_muons;
+      
       double pt = mu->pt();
 
       double ptTrack = mu->track()->pt();
       if(ptTrack < ptTrackMin_ ){continue;}
-
+      
       if (pt > pt_max) 
 	pt_max = pt;
-      
-      if(1 == N_muons)
-	{
-	  hPtOneMu->Fill(pt);
-	  if(0 == NJetsAboveThres)
-	    hPtOneMuJetVeto->Fill(pt);
-	}
       
       // pt
       hPtMu->Fill(pt);
@@ -449,20 +547,33 @@ void Wprime_muonreco::doMuons()
       massT = (massT>0) ? sqrt(massT) : 0;
       hTMass->Fill(massT);
 
-      doIsolation(mu, massT);
+      doIsolation(mu, wpmu, massT);
 
-      doTeVanalysis(mu);
+      doTeVanalysis(mu, wpmu);
       
     } // loop over reco muons
 
   hPtMaxMu->Fill(pt_max);
   if(0 == NJetsAboveThres)
     hPtMaxMuJetVeto->Fill(pt_max);
+
+  hNMu->Fill(N_muons);
+
+  if(1 == N_muons)
+    {
+      ++(MuTrig.Nev_1mu);
+      if(genmu_acceptance)
+	++(genMuTrig.Nev_1mu);
+    
+      hPtOneMu->Fill(pt_max);
+      if(0 == NJetsAboveThres)
+	hPtOneMuJetVeto->Fill(pt_max);
+    }
   
 }
 
 // do TeV-muon analysis
-void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu)
+void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu)
 {
   if(!(mu->isGlobalMuon()) ) return; // keep only global muons
 
@@ -494,6 +605,9 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu)
 
   if(iTeV_default == tevMap_default->end() || iTeV_1stHit == tevMap_1stHit->end() || iTeV_picky == tevMap_picky->end()){
     cout<<"-Wprime_muonreco- Warning: No Tev muons found for this event !! "<<endl; return;}
+
+  getTracking(wpmu->tev_1st, *(iTeV_1stHit->val) );
+
   muonTrack temp; 
   temp.mu = mu;
   temp.TeVMuons[0] = iTeV_default->val;
@@ -517,7 +631,7 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu)
 
 
 // do isolation
-void Wprime_muonreco::doIsolation(MuonRef mu, double massT)
+void Wprime_muonreco::doIsolation(MuonRef mu,  wprime::Muon * wpmu, double massT)
 {
   // Isolation
   double ptsumR03 = mu->isolationR03().sumPt;
@@ -535,7 +649,8 @@ void Wprime_muonreco::doIsolation(MuonRef mu, double massT)
       float coneSize = minCone+i*(maxCone-minCone)/nBinCone;
       double ptsum_cone=tkDep.depositWithin(coneSize); 
       hPtTkIso_ConeSize->Fill(coneSize+0.001,ptsum_cone);
-      double ptsum_mmupt_cone=tkDep.depositWithin(coneSize) - mu->pt(); 
+      wpmu->SumPtIso[i] = ptsum_cone;
+
       if(1 == N_muons)
 	{ // single reco-muon in event
 	  for(unsigned isumptt = 0; isumptt != nBinSumPt; ++isumptt){
@@ -547,13 +662,20 @@ void Wprime_muonreco::doIsolation(MuonRef mu, double massT)
 	  }
 	} // single reco-muon in event
 
+      double ptsum_mmupt_cone=tkDep.depositWithin(coneSize) - mu->pt(); 
       hPtTkIso_mmupt_ConeSize->Fill(coneSize+0.001,ptsum_mmupt_cone);
+
       double ntk_cone=tkDep.depositAndCountWithin(coneSize).second;
       hNTkIso_ConeSize->Fill(coneSize+0.001,ntk_cone);
+      wpmu->NtrkIso[i] = ntk_cone;
+
       double ecetsum_cone=ecalDep.depositWithin(coneSize); 
       hEcalIso_ConeSize->Fill(coneSize+0.001,ecetsum_cone);
+      wpmu->ECALIso[i] = ecetsum_cone;
+
       double hcetsum_cone=hcalDep.depositWithin(coneSize); 
       hHcalIso_ConeSize->Fill(coneSize+0.001,hcetsum_cone);
+      wpmu->HCALIso[i] = hcetsum_cone;
     } // loop over cone sizes
 
 }
@@ -563,11 +685,14 @@ void
 Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   init_event();
+  evt->evt_no = iEvent.id().event();
+  evt->run_no = iEvent.id().run();
+
 
   // should this be done only at begin-job/run instead???
   realData = iEvent.isRealData();
 
-  getGenMuons(iEvent);
+  getGenParticles(iEvent);
 
   ++(MuTrig.Nev); // # of processed events
   if(genmu_acceptance)
@@ -589,11 +714,17 @@ Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   if(!realData)
     doMCmatching();
 
+    tree_event->Fill();
 }
 
 // initialize histograms
 void Wprime_muonreco::init_histograms()
 {
+  tree_job = fs->make<TTree>("jobinfo", "Job/file info");
+  tree_event = fs->make<TTree>("wprime", "Wprime kinematic info per event");
+  tree_job->Branch("job", "wprime::JobInfo", &job, 8000, 2);
+  tree_event->Branch("wp", "wprime::Event", &evt, 8000, 2);
+
   hPtGen = fs->make<TH1F>("ptGenMu","Pt gen mu",nBinPtMu,minPtMu,maxPtMu);
   hPtGenJetVeto = fs->make<TH1F>("ptGenMuJetVeto","Pt gen mu Jet Veto",nBinPtMu,minPtMu,maxPtMu);
   hPtGenOne = fs->make<TH1F>("ptGenOne","Pt gen one mc mu",nBinPtMu,minPtMu,maxPtMu);
@@ -730,9 +861,16 @@ void Wprime_muonreco::init_run()
 void Wprime_muonreco::init_event()
 {
   gen_muons.clear(); good_muons.clear();
-  N_muons = N_muons_tot = NJetsAboveThres = 0;
+  N_muons = N_all_muons = NJetsAboveThres = 0;
   genmu_acceptance = muL1_acceptance = muHLT_acceptance = false;
   met_x = met_y = met = 0.0;
+
+  evt->mu_mc->Clear(); evt->neu_mc->Clear(); 
+  evt->w_mc->Clear(); evt->wp_mc->Clear(); 
+  evt->mu->Clear(); evt->jet->Clear();
+
+  evt->HLT_L1MuOpen = evt->HLT_L1Mu = evt->HLT_Mu3 = evt->HLT_Mu5 =
+    evt->HLT_Mu9 = false;
 }
 
 
@@ -765,6 +903,8 @@ void Wprime_muonreco::endJob() {
     }
 
     printSummary();
+    
+    tree_job->Fill();
 }
 
 // print summary info over full job

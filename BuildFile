@@ -4,13 +4,17 @@
 <use name=PhysicsTools/UtilAlgos>
 <use name=PhysicsTools/Utilities>
 <use name=DataFormats/MuonReco>
+<use name=DataFormats/HepMCCandidate>
+<use name=rootcore>
 <flags EDM_PLUGIN=1>
 <export>
-   <lib name=WPrimeMuonReco>
    <use name=FWCore/Framework>
    <use name=PhysicsTools/UtilAlgos>
    <use name=PhysicsTools/Utilities>
    <use name=DataFormats/MuonReco>
+   <use name=DataFormats/HepMCCandidate>
    <use name=FWCore/PluginManager>
    <use name=FWCore/ParameterSet>
+   <use name=rootcore>
+   <lib name=WPrimeMuonReco>
 </export>

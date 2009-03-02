@@ -38,13 +38,17 @@
 #include "DataFormats/RecoCandidate/interface/IsoDeposit.h"
 #include "DataFormats/RecoCandidate/interface/IsoDepositFwd.h"
 
-#include "SimDataFormats/HepMCProduct/interface/HepMCProduct.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+
 #include "PhysicsTools/UtilAlgos/interface/TFileService.h"
 
+#include "UserCode/CMGWPrimeGroup/interface/wprimeEvent.h"
+
 //
-// class declaration
+// forward class declaration
 //
 class TFile;
+class TTree;
 class TH1F;
 class TH2F;
 
@@ -73,14 +77,17 @@ namespace Wprime_muonreco_histo
   static const float maxNJets_veto = 9.5;
 
   // cone size and SumPt for isolation
-  static const unsigned nBinCone = 20;
-  static const float minCone = 0.05;
-  static const float maxCone = 1.05;
-  static const unsigned nBinSumPt = 600;
+  static const unsigned nBinCone = wprime::N_CONESIZE;
+  static const float minCone = wprime::MIN_CONE;
+  static const float maxCone = wprime::MAX_CONE;
+  static const unsigned nBinSumPt = 120;
   static const float minSumPt = 0;
   static const float maxSumPt = 600;
 }
 
+//
+// class declaration
+//
 class Wprime_muonreco : public edm::EDAnalyzer 
 {
   public:
@@ -154,17 +161,26 @@ class Wprime_muonreco : public edm::EDAnalyzer
   edm::TriggerNames triggerNames;
 
   // generator-level muons
-  std::vector<HepMC::GenParticle> gen_muons;
+  std::vector<reco::GenParticle> gen_muons;
 
   // software versions used to produce HLT and RECO
   std::string HLTversion;
   std::string RECOversion;
   static const std::string INVALID_RELEASE;
+  std::string sample_description;
+  // # of produced events before filtering
+  int Nprod_evt;
 
   static bool is21x(const std::string & release_string);
   static bool is20x(const std::string & release_string);
 
-  //    Histograms   
+  // TTree structures
+  wprime::Event * evt;
+  wprime::JobInfo * job;
+
+
+  //    Histograms, trees and all that
+  TTree *tree_job, *tree_event;
   TH1F *hPtGen,*hPtRecoOverPtGen;
   TH1F *hPtGenJetVeto,*hPtRecoOverPtGenJetVeto;
   TH1F *hPtGenOne, *hPtGenOneMatch, *hPtGenOnePtlt5Match;
@@ -228,8 +244,11 @@ class Wprime_muonreco : public edm::EDAnalyzer
 
   // # of reconstructed muons per event
   unsigned N_muons;
-  // Total # of reconstructed muons in job
-  unsigned N_muons_tot;
+  // # of all reconstructed muons per event (included standalone-only)
+  unsigned N_all_muons;
+
+  // copy tracking info from reco::Track to wprime::Track
+  void getTracking(wprime::Track & track, const reco::Track & p);
 
   // initialize run info
   void init_run();
@@ -249,7 +268,7 @@ class Wprime_muonreco : public edm::EDAnalyzer
   void printSummary2(const trigEff & trig, const std::string & description) const;
 
   // get the generator info, populate gen_muons, set genmu_acceptance flag
-  void getGenMuons(const edm::Event & iEvent);
+  void getGenParticles(const edm::Event & iEvent);
 
   // get trigger info, update muTrig/genMuTrig, set muL1/HLT_acceptance flag
   void getTriggers(const edm::Event & iEvent);
@@ -274,10 +293,10 @@ class Wprime_muonreco : public edm::EDAnalyzer
   // do muon analysis
   void doMuons();
   // do TeV-muon analysis
-  void doTeVanalysis(reco::MuonRef mu);
+  void doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu);
 
   // do isolation
-  void doIsolation(reco::MuonRef mu, double massT);
+  void doIsolation(reco::MuonRef mu,  wprime::Muon * wpmu, double massT);
 
   // do MC matching
   void doMCmatching();
