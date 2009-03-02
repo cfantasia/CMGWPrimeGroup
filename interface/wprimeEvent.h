@@ -63,9 +63,9 @@ class Track : public TObject {
    Float_t chi2;
    /// Ndof
    Int_t ndof;
-   /// # of tracker-only hits
+   /// # of tracker-only hits used by fit
    Int_t Ntrk_hits;
-   /// # of total (ie. tracker + muon) hits
+   /// # of total (ie. tracker + muon) hits used by fit
    Int_t Ntot_hits;
 
    Track();

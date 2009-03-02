@@ -482,7 +482,7 @@ void Wprime_muonreco::getTracking(wprime::Track & track, const reco::Track & p)
   track.chi2 = p.chi2();
   track.ndof = int(p.ndof());
   track.Ntot_hits = p.numberOfValidHits();
-  track.Ntrk_hits = -9999; // how do I determine this?
+  track.Ntrk_hits = p.hitPattern().numberOfValidTrackerHits();
 }
 
 // do muon analysis
