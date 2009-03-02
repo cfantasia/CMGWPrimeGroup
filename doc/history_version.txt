@@ -1,3 +1,9 @@
+02-MAR-09 (Christos), V00-00-51
+===============================
+Implemented # of tracker-hits used by fit in tracking component of
+wprime::Muon class
+
+
 02-MAR-09 (Christos), V00-00-50
 ===============================
 Added first version of root-tuple making code. Classes described in
