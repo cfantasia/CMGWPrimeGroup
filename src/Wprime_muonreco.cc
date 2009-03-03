@@ -23,9 +23,10 @@
 #include "TTree.h"
 
 #include <iostream>
+#include <fstream>
 #include <map>
 
-using std::cout; using std::endl; using std::string;
+using std::cout; using std::endl; using std::string; using std::ifstream;
 
 using namespace Wprime_muonreco_histo;
 
@@ -54,6 +55,7 @@ Wprime_muonreco::Wprime_muonreco(const edm::ParameterSet& iConfig):
   evt = new wprime::Event(); job = new wprime::JobInfo();
   job->sample = sample_description;
   job->Nprod_evt = Nprod_evt;
+  software_version = "V00-00-00";
 }
 
 
@@ -720,8 +722,13 @@ Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 // initialize histograms
 void Wprime_muonreco::init_histograms()
 {
-  tree_job = fs->make<TTree>("jobinfo", "Job/file info");
-  tree_event = fs->make<TTree>("wprime", "Wprime kinematic info per event");
+  string common_desc = " - UserCode/CMGWPrimeGroup version " + software_version;
+  string tree_title = "Job/file info" + common_desc;
+  //  tree_job = fs->make<TTree>("jobinfo", "Job/file info");
+  // tree_event = fs->make<TTree>("wprime", "Wprime kinematic info per event");
+  tree_job = fs->make<TTree>("jobinfo", tree_title.c_str());
+  tree_title = "Wprime kinematic info per event" + common_desc;
+  tree_event = fs->make<TTree>("wprime", tree_title.c_str());
   tree_job->Branch("job", "wprime::JobInfo", &job, 8000, 2);
   tree_event->Branch("wp", "wprime::Event", &evt, 8000, 2);
 
@@ -878,7 +885,33 @@ void Wprime_muonreco::init_event()
 void Wprime_muonreco::beginJob(const edm::EventSetup&)
 {
   good_muons.reserve(4); // do not really expect more muons per event...
+
+  const char * _path = getenv("CMSSW_BASE");
+  const char * _filename = "/src/UserCode/CMGWPrimeGroup/VERSION";
+
+  if(_path == 0)
+    {
+      cerr << " *** Wprime_muonreco::beginJob *** " << endl;
+      cerr << " *** Error! can't locate working directory ! ***\n";
+      cerr << " (maybe the UserCode/CMGWPrimeGroup directory is missing?)\n"
+	   << endl;
+    }
+  else
+    {
+      char verFile[1024];
+      sprintf(verFile, "%s%s", _path, _filename);
+      cout << " Found version file: " << verFile << endl;
+
+      ifstream cin; cin.open(verFile);
+      while(cin >> software_version)
+	{
+	  ; // write version # into string
+	}
+      cout << " Extracted version: " << software_version << endl;
+    }
+
   init_run();
+
 }
 
 // ------------ method called once each job just after ending the event loop  ------------

@@ -1,3 +1,9 @@
+03-MAR-09 (Christos), V00-00-52
+===============================
+Added version # in output trees (as tree title). Must remember to update
+newly added file VERSION before tagging code!
+
+
 02-MAR-09 (Christos), V00-00-51
 ===============================
 Implemented # of tracker-hits used by fit in tracking component of

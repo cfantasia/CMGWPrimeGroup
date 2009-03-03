@@ -177,7 +177,7 @@ class Wprime_muonreco : public edm::EDAnalyzer
   // TTree structures
   wprime::Event * evt;
   wprime::JobInfo * job;
-
+  std::string software_version;
 
   //    Histograms, trees and all that
   TTree *tree_job, *tree_event;
