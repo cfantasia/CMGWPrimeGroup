@@ -1,3 +1,5 @@
+(A) For producing ROOT files:
+
 (1) Copy and run the installation script: 
 UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
@@ -18,3 +20,9 @@ o Copy example config file to the top directory.
 location of the input file and run.
 
 
+
+
+(B) For reading back ROOT files:
+
+ln -s UserCode/CMGWPrimeGroup/root_macros/Make.C
+root -b Make.C
