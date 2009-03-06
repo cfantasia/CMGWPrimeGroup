@@ -1,6 +1,4 @@
 {
-  
-
   // Update the include path so that we can find wprimeEvent.cc
   TString incpath = gSystem->GetIncludePath();
   incpath.Append(" -I$CMSSW_BASE/src");

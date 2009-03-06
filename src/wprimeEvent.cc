@@ -1,4 +1,4 @@
-#include "UserCode/CMGWPrimeGroup/interface/wprimeEvent.h"
+#include "UserCode/CMGWPrimeGroup/src/wprimeEvent_LinkDef.h"
 
 using namespace wprime;
 
