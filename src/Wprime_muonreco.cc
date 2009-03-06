@@ -1,5 +1,4 @@
 #include "UserCode/CMGWPrimeGroup/interface/Wprime_muonreco.h"
-#include "UserCode/CMGWPrimeGroup/src/wprimeEvent_LinkDef.h"
 //
 
 // system include files
