@@ -14,13 +14,18 @@ using std::cout; using std::endl;
 
 int read_wprime()
 {
-  TFile *file0 = TFile::Open("wprime_1TeV.root");
+  TFile *file0 = new TFile("wprime_1TeV.root");
+  if(file0->IsZombie())
+    {
+      cerr << " *** Input file does not exist! " << endl;
+      return -1;
+    }
   TTree * wp = (TTree *) file0->Get("StdMu/wprime");
   
   if(!wp->GetBranch("wp"))
     {
       cerr << " *** Can't find wp branch! " << endl;
-      return -1;
+      return -2;
     }
 
   wprime::Event * ev = new wprime::Event();
