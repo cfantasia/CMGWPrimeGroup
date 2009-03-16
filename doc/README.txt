@@ -58,7 +58,7 @@ systematic effects.
 
 (c) loadCuts.C
 
-Comment: this is the place to define the cuts (NB; but not the actual
+Comment: this is the place to define the cuts (NB: but not the actual
 values!). The "cuts" should be called with the actual thresholds. 
 
 (d) GetDistributionGeneric.C
