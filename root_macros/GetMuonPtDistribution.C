@@ -96,22 +96,24 @@ void GetMuonPtDistribution(const vector<wprime::InputFile>& files,
 
 	    int index = 0;
 	
+	    bool eta_LT_21 = TMath::Abs(mu->global.p.Eta()) < 2.1;
+
 	    hPT[index][0]->Fill(mu->global.p.Pt(), weight);
 	    hPT[index][1]->Fill(mu->tracker.p.Pt(), weight);
 	    hPT[index][2]->Fill(mu->tev_1st.p.Pt(), weight);
 	    
 	    bool ptrange_glb = mu->global.p.Pt() >=minPtMu 
-	      && mu->global.p.Pt() <=maxPtMu;
+	      && mu->global.p.Pt() <=maxPtMu && eta_LT_21;
 	    if(ptrange_glb)
 	      survived_cut[index][0] = true;
 
 	    bool ptrange_trk = mu->tracker.p.Pt() >=minPtMu 
-	      && mu->tracker.p.Pt() <=maxPtMu;
+	      && mu->tracker.p.Pt() <=maxPtMu && eta_LT_21;
 	    if(ptrange_trk)
 	      survived_cut[index][1] = true;
 
 	    bool ptrange_tev = mu->tev_1st.p.Pt() >=minPtMu 
-	      && mu->tev_1st.p.Pt() <=maxPtMu;
+	      && mu->tev_1st.p.Pt() <=maxPtMu && eta_LT_21;
 
 	    if(ptrange_tev)
 	      survived_cut[index][2] = true;
