@@ -61,6 +61,10 @@ class Track : public TObject {
    Int_t q;
    /// chi^2
    Float_t chi2;
+   /// uncertainty on pt
+   Float_t dpt;
+   /// uncertainty on q/p
+   Float_t dq_over_p;
    /// Ndof
    Int_t ndof;
    /// # of tracker-only hits used by fit

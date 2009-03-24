@@ -481,6 +481,8 @@ void Wprime_muonreco::getTracking(wprime::Track & track, const reco::Track & p)
   track.p.SetVectM(p3, wprime::MUON_MASS);
   track.q = p.charge();
   track.chi2 = p.chi2();
+  track.dpt = p.ptError();
+  track.dq_over_p = p.qoverpError();
   track.ndof = int(p.ndof());
   track.Ntot_hits = p.numberOfValidHits();
   track.Ntrk_hits = p.hitPattern().numberOfValidTrackerHits();

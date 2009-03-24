@@ -44,7 +44,8 @@ MCParticle::~MCParticle(){}
 Track::Track()
 {
   q = 0; ndof = Ntrk_hits = Ntot_hits = -999;
-  chi2 = -9999;
+  
+  dpt = dq_over_p = chi2 = -9999;
 }
 Track::~Track(){}
 
