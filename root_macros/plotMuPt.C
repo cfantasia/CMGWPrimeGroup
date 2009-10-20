@@ -47,7 +47,7 @@ void doPlots(unsigned i, TFile * _file0)
   string algo = "glb"; 
 
   TCanvas * c1 = new TCanvas();
-  c1->SetLogy();
+  // c1->SetLogy();
   THStack *hs = new THStack("hs",desc[i].c_str());  
 
   string histo = "hPT" + algo + "_" + set_cuts[i];
@@ -120,6 +120,8 @@ void doPlots(unsigned i, TFile * _file0)
   hs->Add(top);
   hs->Add(w);
 
+  // this is needed when background is eliminated and the y-axis is linear (as opposed to log)
+  if(hs->GetMaximum() < wp10->GetMaximum())hs->SetMaximum(wp10->GetMaximum());
   hs->Draw();
   hs->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
   
