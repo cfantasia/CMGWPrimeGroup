@@ -1,3 +1,29 @@
+20-OCT-09 (Christos), V00-00-60
+================================:
+- Changes in default cuts: added |eta| < 1.8 for muon, require 
+angle(muon, jet) > pi-0.3 for "jet activity" definition
+
+- Changes in GetMuonPtDistribution.C: 
+  o added real HLT cut (used to emulate it with |eta_RECO| < 2.1 cut)
+  o change jet-activity cut to include angle between jet, muon (default
+value: pi - 0.3 rad)
+  o added |eta| < 1.8 cut for muon
+  o misc. cleanup, moving constants, analysis cuts to new file (util.C)
+
+- New macro that creates charge-asymmetry distributions for all tracking
+algorithms: GetChargePtDistribution.C (set option = 3 in
+GetDistributionGeneric.C). Macro that makes nice asymmetry plots:
+plotChargeAsym.C 
+
+- New macro that plots changes in muon-pt distributions for changes in
+various analysis cuts: plotCutTune.C Currently needs manual adjustment of
+cuts, rerunning, renaming root-tuples, etc. Should be automatized, find
+optimum values. 
+
+- New macro for making (nice) muon-pt distribution: plotMuPt2.C, with 
+individual bgd contributions added into a single histogram
+
+
 24-MAR-09 (Christos), V00-00-56
 ================================
 Added uncertainty on track pt and q/p in output root-tuple. 
