@@ -12,7 +12,7 @@ using std::string; using std::vector;
 using std::cout; using std::endl; using std::cerr;
 
 // string top_level_dir = "UserCode/CMGWPrimeGroup/"; // Alessio
-string top_level_dir = "/home/cleonido/wprime/v52/"; // Christos
+string top_level_dir = "/home/cleonido/wprime/v55/"; // Christos
 
 int checkFiles(unsigned Nfiles, vector<wprime::InputFile> & files)
 {

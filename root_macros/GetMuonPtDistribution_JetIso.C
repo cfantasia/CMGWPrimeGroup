@@ -8,17 +8,13 @@
 // wprime stuff
 #include "UserCode/CMGWPrimeGroup/interface/wprimeEvent.h"
 #include "UserCode/CMGWPrimeGroup/root_macros/input_file.h"
+#include "UserCode/CMGWPrimeGroup/root_macros/util.h"
 
 // std stuff
 #include <iostream>
 
 
 using std::cout; using std::endl; using std::vector;
-
-
-static const unsigned  nBinPtMu = 750;
-static const float minPtMu = 0;
-static const float  maxPtMu = 3000;
 
 // jet distributions (# of jets and Et)
 static const unsigned nBinNJets = 50;
@@ -35,16 +31,9 @@ static const unsigned nBinNJets_veto = 10;
 static const float minNJets_veto = -0.5;
 static const float maxNJets_veto = 9.5;
 
-// cone size and SumPt for isolation
-static const unsigned nBinCone = wprime::N_CONESIZE;
-static const float minCone = wprime::MIN_CONE;
-static const float maxCone = wprime::MAX_CONE;
 static const unsigned nBinSumPt = 120;
 static const float minSumPt = 0;
 static const float maxSumPt = 600;
-
-float PtJetCut = 80;
-float PtTrackCut = 60 ;
 
 
 void GetMuonPtDistribution_JetIso(const vector<wprime::InputFile>& files, 
@@ -103,7 +92,7 @@ void GetMuonPtDistribution_JetIso(const vector<wprime::InputFile>& files,
 	int nJetEt = 0;
 	for(int i =0 ;i != njet; ++i){
 	  TLorentzVector*	 ajet = ( TLorentzVector*) ev->jet->At(i);
-	  if ( ajet->Pt() > PtJetCut ) {nJetEt++;}
+	  if ( ajet->Pt() > EtJetCut ) {nJetEt++;}
 	}
 	if(nJetEt == 0){
 	  if(ptMaxMu > 0 ){hPtMaxMuJetVeto->Fill(ptMaxMu,files[tr].weight);}
