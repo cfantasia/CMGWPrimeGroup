@@ -9,7 +9,7 @@ exit
 fi
 
 # Definitions
-RELEASE_VERSION=CMSSW_2_1_7
+RELEASE_VERSION=CMSSW_2_1_19
 WORKING_AREA=WPrime_work
 # end definitions
 
@@ -29,7 +29,8 @@ cd $RELEASE_VERSION/src
 echo -e  "\n**************************"
 echo -e  " Checking out the code..."
 echo -e  "**************************"
-cvs -Q co -r V00-00-56 UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-00-60 UserCode/CMGWPrimeGroup
+# cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e "\n************************"
 echo -e " Done. Now will compile"
