@@ -32,3 +32,23 @@ unsigned NjetAboveThresh(float threshold, const wprime::Event * ev)
 
   return N;
 }
+
+// returns # of jets with Et above threshold with angle greater than delta_phi from muon
+unsigned NjetAboveThresh(float threshold, float delta_phi, 
+			 const wprime::Muon * mu, const wprime::Event * ev)
+{
+  unsigned N = 0;
+  
+  int njets = ev->jet->GetLast() + 1;
+  for(int j = 0; j != njets; ++j)
+    { // loop over jets
+      TLorentzVector * jet = (TLorentzVector *) ev->jet->At(j);
+      if(jet->Et() > threshold && jet->DeltaPhi(mu->tracker.p) > delta_phi)
+	++N;
+    } // loop over jets
+
+  return N;
+
+}
+
+
