@@ -10,50 +10,36 @@
 #include "UserCode/CMGWPrimeGroup/interface/wprimeEvent.h"
 #include "UserCode/CMGWPrimeGroup/root_macros/input_file.h"
 #include "UserCode/CMGWPrimeGroup/root_macros/loadCuts.h"
+#include "UserCode/CMGWPrimeGroup/root_macros/util.h"
 
 // std stuff
 #include <iostream>
 
-
 using std::cout; using std::endl; using std::vector;
 
+const int Num_histo_sets = 6; // one new set of histograms after each cut
 
-static const unsigned  nBinPtMu = 380;
-static const float minPtMu = 100;
-static const float  maxPtMu = 2000;
-
-// cone size and SumPt for isolation
-static const unsigned nBinCone = wprime::N_CONESIZE;
-static const float minCone = wprime::MIN_CONE;
-static const float maxCone = wprime::MAX_CONE;
-
-const float EtJetCut = 80;
-const float SumPtCut = 3;
-const float PtTrackCut = 60 ;
-const float OneMuPtTrackCut = 20;
-
-const int Num_histo_sets = 5; // one new set after each cut
-const int Num_trkAlgos = 3; // global, tracker, tev_1st
+const string cut_desc[Num_histo_sets]= {" HLT_Mu9:", " Pt within range:", 
+				  " 1 muon only:"," Isolation:", 
+				  " Jet Veto:", " Quality:"};
 
 TH1F * hPT[Num_histo_sets][Num_trkAlgos] = {0};
 
-string cut_desc[Num_histo_sets]= {" Pt within range:", " 1 muon only:",
-				  " Isolation:", " Jet Veto:", " Quality:"};
+static float Nexp_evt = 0;
+static float Nexp_evt_cut[Num_histo_sets][Num_trkAlgos] = {0};
 
-string algo_desc[Num_trkAlgos] = {" global", " tracker", " TeV-1st"};
+static void initHistos();
+static void saveHistos(TFile * fout, string dir);
+static void printSummary(ofstream & out, string dir);
 
-float Nexp_evt = 0;
-float Nexp_evt_cut[Num_histo_sets][Num_trkAlgos] = {0};
+static void fillHistos(int index, const wprime::Muon * mu, float weight, 
+		bool * survived_cut, bool glb_flag, bool trk_flag, 
+		bool tev_flag);
 
-void initHistos();
-void saveHistos(TFile * fout, string dir);
-void printSummary();
-void getEff(float & eff, float & deff, float Num, float Denom);
 
 void GetMuonPtDistribution(const vector<wprime::InputFile>& files, 
-			   TFile *fout, string dir)
+			   TFile *fout, string dir, ofstream & out)
 {
-
   initHistos();
   int Nfiles = files.size();
 
@@ -84,125 +70,78 @@ void GetMuonPtDistribution(const vector<wprime::InputFile>& files,
 	
        	int nmuons = ev->mu->GetLast() + 1;
 
-	bool HLT = ev->HLT_Mu5;
-
+	bool HLT = ev->HLT_Mu9;
 	bool OneMuon = (NmuAboveThresh(OneMuPtTrackCut, ev) == 1);
 
-	bool JetActivity = (NjetAboveThresh(EtJetCut, ev) > 0);
+	//	bool JetActivity = (NjetAboveThresh(EtJetCut, ev) > 0);
 
        	for(int j = 0; j != nmuons; ++j)
 	  { // loop over muons
 	    wprime::Muon * mu = (wprime::Muon *) ev->mu->At(j);
 
 	    int index = 0;
-	
-	    bool eta_LT_21 = TMath::Abs(mu->global.p.Eta()) < 2.1;
 
-	    hPT[index][0]->Fill(mu->global.p.Pt(), weight);
-	    hPT[index][1]->Fill(mu->tracker.p.Pt(), weight);
-	    hPT[index][2]->Fill(mu->tev_1st.p.Pt(), weight);
-	    
-	    bool ptrange_glb = mu->global.p.Pt() >=minPtMu 
-	      && mu->global.p.Pt() <=maxPtMu && eta_LT_21;
-	    if(ptrange_glb)
-	      survived_cut[index][0] = true;
-
-	    bool ptrange_trk = mu->tracker.p.Pt() >=minPtMu 
-	      && mu->tracker.p.Pt() <=maxPtMu && eta_LT_21;
-	    if(ptrange_trk)
-	      survived_cut[index][1] = true;
-
-	    bool ptrange_tev = mu->tev_1st.p.Pt() >=minPtMu 
-	      && mu->tev_1st.p.Pt() <=maxPtMu && eta_LT_21;
-
-	    if(ptrange_tev)
-	      survived_cut[index][2] = true;
-
-	    ++index;
-
-	    /*
 	    // trigger decision
-	    if(!HLT)continue;
-	    
-	    hPT[index][0]->Fill(mu->global.p.Pt(), weight);
-	    hPT[index][1]->Fill(mu->tracker.p.Pt(), weight);
-	    hPT[index][2]->Fill(mu->tev_1st.p.Pt(), weight);
+ 	    if(!HLT)continue;
 
-	    survived_cut[index][0] = survived_cut[index][1] = survived_cut[index][2] = true;
+	    fillHistos(index, mu, weight, survived_cut[index], 
+		       true, true, true);
+	    ++index;	    
+
+	    bool ptrange_glb = mu->global.p.Pt() >=minPtMu 
+	      && mu->global.p.Pt() <=maxPtMu;
+	    bool ptrange_trk = mu->tracker.p.Pt() >=minPtMu 
+	      && mu->tracker.p.Pt() <=maxPtMu;
+	    bool ptrange_tev = mu->tev_1st.p.Pt() >=minPtMu 
+	      && mu->tev_1st.p.Pt() <=maxPtMu;
+
+	    fillHistos(index, mu, weight, survived_cut[index], 
+		       ptrange_glb, ptrange_trk, ptrange_tev);
 	    ++index;
-	    */
-
+	    
 	    // only one muon with tracker pt above OneMuPtTrackCut
 	    if(!OneMuon)continue;
 
-	    hPT[index][0]->Fill(mu->global.p.Pt(), weight);
-	    hPT[index][1]->Fill(mu->tracker.p.Pt(), weight);
-	    hPT[index][2]->Fill(mu->tev_1st.p.Pt(), weight);
-	    // only keep muons with pt within range
-	    if(ptrange_glb)
-	      survived_cut[index][0] = true;
-	    if(ptrange_trk)
-	      survived_cut[index][1] = true;
-	    if(ptrange_tev)
-	      survived_cut[index][2] = true;
+	    fillHistos(index, mu, weight, survived_cut[index], 
+		       ptrange_glb, ptrange_trk, ptrange_tev);
 	    ++index;
 
 	    // bin-2 corresponds to delta-R = 0.3
 	    // Sum-Pt isolation: SumPtCut threshold
 	    if(mu->SumPtIso[2] > SumPtCut )continue;
-
-	    hPT[index][0]->Fill(mu->global.p.Pt(), weight);
-	    hPT[index][1]->Fill(mu->tracker.p.Pt(), weight);
-	    hPT[index][2]->Fill(mu->tev_1st.p.Pt(), weight);
-
-	    // only keep muons with pt within range
-	    if(ptrange_glb)
-	      survived_cut[index][0] = true;
-	    if(ptrange_trk)
-	      survived_cut[index][1] = true;
-	    if(ptrange_tev)
-	      survived_cut[index][2] = true;
+	    
+	    fillHistos(index, mu, weight, survived_cut[index], 
+		       ptrange_glb, ptrange_trk, ptrange_tev);
 	    ++index;
+
+	    bool JetActivity = (NjetAboveThresh(EtJetCut, Delta_Phi, 
+						mu, ev) > 0);
 
 	    // jet veto: no jet above EtJetCut
 	    if(JetActivity)continue;
 
-	    hPT[index][0]->Fill(mu->global.p.Pt(), weight);
-	    hPT[index][1]->Fill(mu->tracker.p.Pt(), weight);
-	    hPT[index][2]->Fill(mu->tev_1st.p.Pt(), weight);
-
-	    // only keep muons with pt within range
-	    if(ptrange_glb)
-	      survived_cut[index][0] = true;
-	    if(ptrange_trk)
-	      survived_cut[index][1] = true;
-	    if(ptrange_tev)
-	      survived_cut[index][2] = true;
-
+	    fillHistos(index,mu, weight, survived_cut[index], 
+		       ptrange_glb, ptrange_trk, ptrange_tev);
 	    ++index;
 
-	    // quality track: tracker pt > 60 GeV + chi^2/ndof < 10
+	    // quality track: tracker pt > 60 GeV + chi^2/ndof < 10 and |eta| < 1.8
 	    if(mu->tracker.p.Pt() < PtTrackCut)continue;
 
-	    bool check = ((mu->global.chi2 / mu->global.ndof) < 10);
-	    if(check && ptrange_glb)
-	      {
-		hPT[index][0]->Fill(mu->global.p.Pt(), weight);
-		survived_cut[index][0] = true;
-	      }
-	    check = ((mu->tracker.chi2 / mu->tracker.ndof) < 10);
-	    if(check && ptrange_trk)
-	      {
-		hPT[index][1]->Fill(mu->tracker.p.Pt(), weight);
-		survived_cut[index][1] = true;
-	      }
-	    check = ((mu->tev_1st.chi2 / mu->tev_1st.ndof) < 10);
-	    if(check && ptrange_tev)
-	      {
-		hPT[index][2]->Fill(mu->tev_1st.p.Pt(), weight);
-		survived_cut[index][2] = true;
-	      }
+	    bool check_glb = ((mu->global.chi2 / mu->global.ndof)<Chi2Cut)
+	      && TMath::Abs(mu->global.p.Eta()) < Muon_Eta_Cut;
+
+	    bool check_trk = ((mu->tracker.chi2 / mu->tracker.ndof) 
+			      < Chi2Cut)
+	      && TMath::Abs(mu->tracker.p.Eta()) < Muon_Eta_Cut;
 	    
+	    bool	check_tev = ((mu->tev_1st.chi2 / mu->tev_1st.ndof) 
+				     < Chi2Cut)
+	      && TMath::Abs(mu->tev_1st.p.Eta()) < Muon_Eta_Cut;
+
+	    fillHistos(index, mu, weight, survived_cut[index], 
+		       ptrange_glb && check_glb, ptrange_trk && check_trk,
+		       ptrange_tev && check_tev);
+	    ++index;
 
 	  } // loop over muons
 
@@ -223,19 +162,24 @@ void GetMuonPtDistribution(const vector<wprime::InputFile>& files,
     
   } //end loop over files
 
-  printSummary();
+  printSummary(out, dir);
   saveHistos(fout, dir);
 }
 
-void printSummary()
-{
-  cout << " Total # of expected events = " << Nexp_evt << endl;
+#include <fstream> 
 
+void printSummary(ofstream & out, string dir)
+{ 
+  cout << " Total # of expected events = " << Nexp_evt << endl;
   for(int j = 0; j != Num_trkAlgos; ++j)
     {
       cout << "\n Algorithm:" << algo_desc[j] << endl;
       for(int i = 0; i != Num_histo_sets; ++i)
 	{
+	  if(i == Num_histo_sets - 1)
+	    out << algo_desc[j] << " " << dir << " " 
+		<< Nexp_evt_cut[i][j] << endl;
+
 	  cout << cut_desc[i] << " expected evts = " << Nexp_evt_cut[i][j];
 	  float eff, deff;
 	  if(i == 0)
@@ -249,12 +193,6 @@ void printSummary()
 	} // loop over different cuts
     } // loop over tracking algorithms 
 
-}
-
-void getEff(float & eff, float & deff, float Num, float Denom)
-{
-  eff = Num/Denom;
-  deff = TMath::Sqrt(eff * (1-eff)/Denom);
 }
 
 void saveHistos(TFile * fout, string dir)
@@ -272,35 +210,73 @@ void saveHistos(TFile * fout, string dir)
 void initHistos()
 {
   int index = 0;
-  hPT[index][0] = new TH1F("hPTglb_all","Global Muon Pt",nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][1] = new TH1F("hPTtrk_all","Tracker Muon Pt",nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2] = new TH1F("hPTtev_all","TeV-1st Muon Pt",nBinPtMu,minPtMu,maxPtMu);
+  
+  hPT[index][0]= new TH1F("hPTglb_trig","Global Muon Pt with HLT",
+			  nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][1]= new TH1F("hPTtrk_trig","Tracker Muon Pt with HLT",
+			  nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][2]= new TH1F("hPTtev_trig","TeV-1st Muon Pt with HLT",
+			  nBinPtMu,minPtMu,maxPtMu);
+  ++index;
+    
+  hPT[index][0] = new TH1F("hPTglb_all","Global Muon Pt",
+			   nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][1] = new TH1F("hPTtrk_all","Tracker Muon Pt",
+			   nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][2] = new TH1F("hPTtev_all","TeV-1st Muon Pt",
+			   nBinPtMu,minPtMu,maxPtMu);
   ++index;
   
-  /*
-    hPT[index][0]= new TH1F("hPTglb_trig","Global Muon Pt with HLT",nBinPtMu,minPtMu,maxPtMu);
-    hPT[index][0]= new TH1F("hPTtrk_trig","Tracker Muon Pt with HLT",nBinPtMu,minPtMu,maxPtMu);
-    hPT[index][0]= new TH1F("hPTtev_trig","TeV-1st Muon Pt with HLT",nBinPtMu,minPtMu,maxPtMu);
-    ++index;
-  */
+  hPT[index][0]= new TH1F("hPTglb_1mu","Global Muon Pt 1 muon",
+			  nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][1]= new TH1F("hPTtrk_1mu","Tracker Muon Pt 1 muon",
+			  nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][2]= new TH1F("hPTtev_1mu","TeV-1st Muon Pt 1 muon",
+			  nBinPtMu,minPtMu,maxPtMu);
+  ++index;
 
-  hPT[index][0]= new TH1F("hPTglb_1mu","Global Muon Pt 1 muon",nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][1]= new TH1F("hPTtrk_1mu","Tracker Muon Pt 1 muon",nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2]= new TH1F("hPTtev_1mu","TeV-1st Muon Pt 1 muon",nBinPtMu,minPtMu,maxPtMu);
-  ++index;
-
-  hPT[index][0]= new TH1F("hPTglb_iso","Global Muon Pt iso",nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][1]= new TH1F("hPTtrk_iso","Tracker Muon Pt iso",nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2]= new TH1F("hPTtev_iso","TeV-1st Muon Pt iso",nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][0]= new TH1F("hPTglb_iso","Global Muon Pt iso",
+			  nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][1]= new TH1F("hPTtrk_iso","Tracker Muon Pt iso",
+			  nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][2]= new TH1F("hPTtev_iso","TeV-1st Muon Pt iso",
+			  nBinPtMu,minPtMu,maxPtMu);
   ++index;
   
-  hPT[index][0]= new TH1F("hPTglb_jveto","Global Muon Pt jet veto",nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][1]= new TH1F("hPTtrk_jveto","Tracker Muon Pt jet veto",nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2]= new TH1F("hPTtev_jveto","TeV-1st Muon Pt jet veto",nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][0]= new TH1F("hPTglb_jveto","Global Muon Pt jet veto",
+			  nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][1]= new TH1F("hPTtrk_jveto","Tracker Muon Pt jet veto",
+			  nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][2]= new TH1F("hPTtev_jveto","TeV-1st Muon Pt jet veto",
+			  nBinPtMu,minPtMu,maxPtMu);
   ++index;
   
-  hPT[index][0]= new TH1F("hPTglb_qual","Global Muon Pt qual",nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][1]= new TH1F("hPTtrk_qual","Tracker Muon Pt qual",nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2] = new TH1F("hPTtev_qual","TeV-1st Muon Pt qual",nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][0]= new TH1F("hPTglb_qual","Global Muon Pt qual",
+			  nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][1]= new TH1F("hPTtrk_qual","Tracker Muon Pt qual",
+			  nBinPtMu,minPtMu,maxPtMu);
+  hPT[index][2] = new TH1F("hPTtev_qual","TeV-1st Muon Pt qual",
+			   nBinPtMu,minPtMu,maxPtMu);
   ++index;
 }
+
+void fillHistos(int index, const wprime::Muon * mu, float weight, 
+		bool * survived_cut, bool glb_flag, bool trk_flag,bool tev_flag)
+{
+  if(glb_flag)
+    {
+      hPT[index][0]->Fill(mu->global.p.Pt(), weight);
+      survived_cut[0] = true;
+    }
+  if(trk_flag)
+    {
+      hPT[index][1]->Fill(mu->tracker.p.Pt(), weight);
+      survived_cut[1] = true;
+    }
+  if(tev_flag)
+    {
+      hPT[index][2]->Fill(mu->tev_1st.p.Pt(), weight);
+      survived_cut[2] = true;
+    }
+}
+
