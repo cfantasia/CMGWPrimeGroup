@@ -22,7 +22,14 @@ void doPlots(unsigned i, TFile * _file0);
 
 void plotMuPt()
 {
-  TFile *_file0 = TFile::Open("Wprime_analysis_V54.root");
+  string input_file = "Wprime_analysis_V54.root";
+  TFile *_file0 = TFile::Open(input_file.c_str());
+  if(!_file0 || _file0->IsZombie())
+    {
+      cout << " *** Ooops! Cannot find input file " << input_file << endl;
+      return;
+    }
+
   gStyle->SetOptStat(00000);
   for(unsigned i = 0; i != 5; ++i)
     doPlots(i, _file0);
@@ -47,7 +54,7 @@ void doPlots(unsigned i, TFile * _file0)
   string algo = "glb"; 
 
   TCanvas * c1 = new TCanvas();
-  // c1->SetLogy();
+  c1->SetLogy();
   THStack *hs = new THStack("hs",desc[i].c_str());  
 
   string histo = "hPT" + algo + "_" + set_cuts[i];
