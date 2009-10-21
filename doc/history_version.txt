@@ -1,7 +1,9 @@
 21-OCT-09 (Christos), V00-00-61
 ===============================
 Removed obsolete histogram-making. All analyses are now based on custom
-ROOT-tuples. 
+ROOT-tuples. Cleaned-up code validated with root-tuple containing 6k 
+wprime events: no changes observed when compared with root-tuple made with
+V00-00-56. 
 
 
 20-OCT-09 (Christos), V00-00-60
