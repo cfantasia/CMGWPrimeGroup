@@ -1,6 +1,8 @@
-========================================
-(A) For producing ROOT files ("ntuples"):
-========================================
+=========================================================================
+(A) Step 1: Producing ROOT-tuples
+    (Code runs on RECO and produces custom ROOT-tuples with MC, RECO and
+    HLT info) 
+=========================================================================
 
 (1) Copy and run the installation script: 
 UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
@@ -21,13 +23,16 @@ o Copy example config file to the top directory.
 (2) You can now modify the parameters in configuration file, change the
 location of the input file and run.
 
+[NB: Custom ROOT-tuples produced for  W' and bacgkround samples with
+V00-00-50 can be found at /castor/cern.ch/user/c/cleonido/v55/]
 
 
 
-
-============================================
-(B) For reading back ROOT files ("ntuples"):
-============================================
+=========================================================================
+(B) Step 2: Analyzing custom ROOT-tuples
+    (Code runs on output of previous step; applies analysis cuts and
+produces histograms (muon-pt, charge asymmetries, etc)
+=========================================================================
 
 (1) Example #1 (very simple)
 
@@ -37,7 +42,7 @@ root -b Make_example.C
 It will run read_wprime.C. The code demonstrates how to access muon
 candidates in the Event and prints out some kinematic info.
 
-==================================================================
+-----------------------------------------------------------------
 
 
 (2) Example #2 (more involved)
@@ -45,11 +50,14 @@ candidates in the Event and prints out some kinematic info.
 ln -s UserCode/CMGWPrimeGroup/root_macros/Make.C
 root -b Make.C
 
-The macro will compile and load the following files:
+The macro will compile and load the following files 
+(directory: UserCode/CMGWPrimeGroup/root_macros):
+
 (a) loadInputFiles.C 
 
-Comment: loads input files. Location of top-level directory with input
-files to be specified with string top_level_dir at top of file.
+Comment: loads input files (W' and W, QCD, Z/DY, ttbar). Location of
+top-level directory with input files to be specified with string
+top_level_dir at top of file. 
 
 (b) loadCrossSections.C
 
@@ -79,7 +87,8 @@ modifying/adding new functions!
 (f) GetMuonPtDistribution_JetIso.C
 
 Comment: Makes distributions for muon-pt and # of muons in event with and
-without cuts on jet-activity and isolation. 
+without cuts on jet-activity and isolation. (Obsolete file, should we
+remove?)
 
 (g) GetMuonPtDistribution.C
 
