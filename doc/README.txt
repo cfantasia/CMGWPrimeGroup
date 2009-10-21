@@ -13,7 +13,7 @@ o Setup a new working area (Default name: WPrime_work, release:
 CMSSW_2_1_19)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-00-61)
+V00-00-65)
 
 o Compile the code
 
@@ -96,6 +96,9 @@ Comment: Makes distributions for muon-pt for various cuts (default
 values). To see plots with nice colors, legends, etc. run afterwards
   o plotMuPt.C to see signal + individual bgd contributions
   o plotMuPt2.C to see signal +  total bgd contributions
+
+[NB: To fit the muon-pt spectrum see separate instructions at
+UserCode/CMGWPrimeGroup/fitting/README_mupt_fits.txt]
 
 
 (h) GetChargePtDistribution.C

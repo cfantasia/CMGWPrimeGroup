@@ -1,3 +1,9 @@
+21-OCT-09 (Christos), V00-00-65
+===============================
+Added fitting code used for CMS AN-2009/157. Details and instructions at 
+UserCode/CMGWPrimeGroup/fitting/README_mupt_fits.txt
+
+
 21-OCT-09 (Christos), V00-00-61
 ===============================
 Removed obsolete histogram-making. All analyses are now based on custom
