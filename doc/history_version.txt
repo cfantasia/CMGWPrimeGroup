@@ -1,5 +1,11 @@
+21-OCT-09 (Christos), V00-00-61
+===============================
+Removed obsolete histogram-making. All analyses are now based on custom
+ROOT-tuples. 
+
+
 20-OCT-09 (Christos), V00-00-60
-================================:
+================================
 - Changes in default cuts: added |eta| < 1.8 for muon, require 
 angle(muon, jet) > pi-0.3 for "jet activity" definition
 

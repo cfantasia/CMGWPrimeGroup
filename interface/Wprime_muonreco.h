@@ -49,40 +49,14 @@
 //
 class TFile;
 class TTree;
-class TH1F;
-class TH2F;
 
 namespace Wprime_muonreco_histo
 {
-  // histogram parameters (energy/pt units: GeV)
-
-  // Muon pt distribution
-  static const unsigned  nBinPtMu = 1500;
-  static const float minPtMu = 0;
-  static const float  maxPtMu = 3000;
-
-  // jet distributions (# of jets and Et)
-  static const unsigned nBinNJets = 50;
-  static const float minNJets = -0.5;
-  static const float maxNJets = 49.5;
-  static const unsigned nBinEtJets = 150;
-  static const float minEtJets = 0;
-  static const float maxEtJets = 300;
-  // jet-activity veto (# of jets and Et)
-  static const unsigned nBinEtJets_veto = 10;
-  static const float minEtJets_veto = 0;
-  static const float maxEtJets_veto = 200;
-  static const unsigned nBinNJets_veto = 10;
-  static const float minNJets_veto = -0.5;
-  static const float maxNJets_veto = 9.5;
-
+ 
   // cone size and SumPt for isolation
   static const unsigned nBinCone = wprime::N_CONESIZE;
   static const float minCone = wprime::MIN_CONE;
   static const float maxCone = wprime::MAX_CONE;
-  static const unsigned nBinSumPt = 120;
-  static const float minSumPt = 0;
-  static const float maxSumPt = 600;
 }
 
 //
@@ -115,15 +89,8 @@ class Wprime_muonreco : public edm::EDAnalyzer
     reco::TrackRef TeVMuons[4];
   };
 
-  // reference to different tracking algorithms for all good muons
-  std::vector<muonTrack> good_muons;
-
   typedef std::vector<muonTrack>::const_iterator mIt;
 
-  const double eJetMin_;
-  const double ptTrackMin_;
-  unsigned NJetsAboveThres; // # of jets in event above eJetMin_
-  
   struct trigEff {
     // key: (muon) trigger name, value: # of accepted events
     std::map<std::string, unsigned> trigger_count;
@@ -181,50 +148,6 @@ class Wprime_muonreco : public edm::EDAnalyzer
 
   //    Histograms, trees and all that
   TTree *tree_job, *tree_event;
-  TH1F *hPtGen,*hPtRecoOverPtGen;
-  TH1F *hPtGenJetVeto,*hPtRecoOverPtGenJetVeto;
-  TH1F *hPtGenOne, *hPtGenOneMatch, *hPtGenOnePtlt5Match;
-  TH1F *h1PtGen1PtReco;
-  TH2F *h1PtGen1PtRecoVsPtGen;
-  TH2F *hPtRecoVsPtGen;
-  TH1F *hPtMuUnMatched;
-  TH1F *hPtMuUnMatchedJetVeto;
-
-  TH1F *hNMu;
-  TH1F *hPtMu,*hPtMaxMu,*hPtOneMu, *hPtMuOneMatch;
-  TH1F *hPtMuJetVeto,*hPtMaxMuJetVeto,*hPtOneMuJetVeto, *hPtMuOneMatchJetVeto;
-  TH1F *hHitTrack,*hHitMuon,*hHitComb,*hHitCheckMu;
-  TH1F *hEtaMu, *hEtaOnePtlt5Match;
-  TH1F *hMET;
-  TH1F *hTMass;
-  TH1F *hAcop;
-  TH1F *hNAlljets;
-  TH1F *hNjetsGtEJetMin;
-  TH1F *hJetEt;
-  TH2F *hEthresNjet,*hEthresNjet_norm;
-
-  TH1F *hPtSumR03,*hPtSumNR03;
-  TH2F *hTMass_PtSumR03;
-  TH2F *hPtTkIso_ConeSize,*hPtTkIso_mmupt_ConeSize,*hNTkIso_ConeSize,*hEcalIso_ConeSize,*hHcalIso_ConeSize;
-  TH2F *hPtTkIsoThresh_ConeSize,*hPtTkIsoThresh_ConeSize_norm; 
-
-  TH1F *hMuChi2,*hTrackerMuChi2,*hSAMuChi2;
-  TH1F *hMuNdf,*hTrackerMuNdf,*hSAMuNdf;
-
-  TH1F *hMuChi2UnMatched,*hTrackerMuChi2UnMatched,*hSAMuChi2UnMatched;
-  TH1F *hMuNdfUnMatched,*hTrackerMuNdfUnMatched,*hSAMuNdfUnMatched;
-
-  TH1F *hPtTevMu[4];
-  TH1F *hPtTevMuJetVeto[4];
-  TH1F *hPtTevMuOverPtMu[4];
-
-  TH1F *h1PtGen1PtRecoTevMu[4];
-  TH2F *h1PtGen1PtRecoVsPtGenTevMu[4];
-  TH1F *hPtTevMuOverPtGen[4];
-
-
-  TH1F *h_mcmu_pt, *h_mcmu_pt_hlt;
-  TH1F *h_mcmu_eta, *h_mcmu_eta_hlt, *h_mcmu_eta_l1;
 
   //    Root output file
   edm::Service<TFileService> fs;
@@ -296,8 +219,6 @@ class Wprime_muonreco : public edm::EDAnalyzer
   void doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu);
 
   // do isolation
-  void doIsolation(reco::MuonRef mu,  wprime::Muon * wpmu, double massT);
+  void doIsolation(reco::MuonRef mu,  wprime::Muon * wpmu);
 
-  // do MC matching
-  void doMCmatching();
 };
