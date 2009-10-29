@@ -370,7 +370,7 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu)
   TrackToTrackMap::const_iterator iTeV_1stHit;
   TrackToTrackMap::const_iterator iTeV_picky;
 
-  if(is21x(RECOversion))
+  if(is21x(RECOversion) || is22x(RECOversion))
     {
       iTeV_default = tevMap_default->find(mu->globalTrack());
       iTeV_1stHit = tevMap_1stHit->find(mu->globalTrack());
@@ -386,11 +386,17 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu)
     {
       cerr << " RECOversion " << RECOversion << " not supported. Sorry! " 
 	   << endl;
-      abort();
+            abort();
     }
 
-  if(iTeV_default == tevMap_default->end() || iTeV_1stHit == tevMap_1stHit->end() || iTeV_picky == tevMap_picky->end()){
-    cout<<"-Wprime_muonreco- Warning: No Tev muons found for this event !! "<<endl; return;}
+  if(iTeV_default == tevMap_default->end() 
+     || iTeV_1stHit == tevMap_1stHit->end() 
+     || iTeV_picky == tevMap_picky->end())
+    {
+      cout << "-Wprime_muonreco- Warning: No Tev muons found for this event !! "
+	   << endl; 
+      return;
+    }
 
   getTracking(wpmu->tev_1st, *(iTeV_1stHit->val) );
 
@@ -475,6 +481,11 @@ const string Wprime_muonreco::INVALID_RELEASE = "invalid release number";
 bool Wprime_muonreco::is21x(const string & release_string)
 {
   return (release_string.find("CMSSW_2_1_") != string::npos);
+}
+
+bool Wprime_muonreco::is22x(const string & release_string)
+{
+  return (release_string.find("CMSSW_2_2_") != string::npos);
 }
 
 bool Wprime_muonreco::is20x(const string & release_string)

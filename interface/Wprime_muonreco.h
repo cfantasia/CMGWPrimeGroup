@@ -138,6 +138,7 @@ class Wprime_muonreco : public edm::EDAnalyzer
   // # of produced events before filtering
   int Nprod_evt;
 
+  static bool is22x(const std::string & release_string);
   static bool is21x(const std::string & release_string);
   static bool is20x(const std::string & release_string);
 
