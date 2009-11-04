@@ -29,7 +29,7 @@ cd $RELEASE_VERSION/src
 echo -e  "\n**************************"
 echo -e  " Checking out the code..."
 echo -e  "**************************"
-cvs -Q co -r V00-00-66 UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-00-67 UserCode/CMGWPrimeGroup
 # cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e "\n************************"
@@ -48,4 +48,4 @@ echo -e " Done compiling UserCode/CMGWPrimeGroup"
 echo -e " Now making symbolic link to example config file"
 echo -e "*************************************************"
 echo -e " \n"
-ln -s UserCode/CMGWPrimeGroup/test/myanalysis_TeVMuon.cfg .
+ln -s UserCode/CMGWPrimeGroup/test/myanalysis_TeVMuon_cfg.py .

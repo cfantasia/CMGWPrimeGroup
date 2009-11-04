@@ -1,3 +1,14 @@
+04-NOV-09 (Christos), V00-00-67
+===============================
+Same as V00-00-66, with the addition of a test configuration file in 
+python format (made it default example for macro/setup_Wprime.sh)
+
+
+29-OCT-09 (Christos), V00-00-66
+===============================
+Added support for 2_2_x RECO (Wprime_muonreco producer)
+
+
 21-OCT-09 (Christos), V00-00-65
 ===============================
 Added fitting code used for CMS AN-2009/157. Details and instructions at 
