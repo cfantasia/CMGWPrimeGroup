@@ -19,7 +19,7 @@ string algo;
 // histogram title;
 string desc;
 
-bool plot_without_qual_cuts = true;
+bool plot_without_qual_cuts = false;
 
 string set_cuts;
 
@@ -33,7 +33,7 @@ void plotMuPt2()
   else
     set_cuts = "qual"; // pick histograms after all quality cuts have been applied
     
-  string input_file = "Wprime_analysis_V54.root";
+  string input_file = "Wprime_analysis.root";
   TFile *_file0 = TFile::Open(input_file.c_str());
   if(!_file0 || _file0->IsZombie())
     {

@@ -80,7 +80,7 @@ int fitSigBgd(unsigned mass_option, unsigned N_EXP)
 
   gStyle->SetFillColor(1);
   
-  string input_file = "Wprime_analysis_V54.root";
+  string input_file = "Wprime_analysis.root";
   string resolution_file = "gsmear.root";
 
   file0 = TFile::Open(input_file.c_str());
