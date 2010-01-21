@@ -230,8 +230,8 @@ Double_t smeared_sig(Double_t * x, Double_t * par)
 
 Double_t myBgd(Double_t * x, Double_t * par)
 {
-  return myRBW(x, par);
-  //return myLandau(x, par);
+  //return myRBW(x, par);
+  return myLandau(x, par);
 }
 
 Double_t mySigBgd(Double_t * x, Double_t * par)
