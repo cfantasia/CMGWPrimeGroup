@@ -30,7 +30,7 @@ For the combined (Sig+Bgd) spectrum: using mySigBgd = smeared_sig + myBgd
 
 High-level macro that 
 o reads reference muon-pt histograms for signal and background
-sources from input file (default: Wprime_analysis_V54.root) 
+sources from input file (default: Wprime_analysis.root) 
 o reads muon-pt resolution histograms (default: from gsmear.root)
 o sets up output ROOT file storing fit results
 o runs fitSigBgd_eventLoop macro that does the real fitting work
