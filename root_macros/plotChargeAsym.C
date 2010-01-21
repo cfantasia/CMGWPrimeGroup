@@ -42,7 +42,7 @@ TH1F * tot[N_algos] = {0};
 
 void plotChargeAsym()
 {
-  string input_file = "Wprime_analysis_V54.root";
+  string input_file = "Wprime_analysis.root";
   TFile *_file0 = TFile::Open(input_file.c_str());
   if(!_file0 || _file0->IsZombie())
     {
