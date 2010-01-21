@@ -40,7 +40,7 @@ const bool use_wprime_mass_limits = false;
 const float upper_wprime_mass_limit = 2500; // in GeV
 
 // choose whether to fix fudge factor (see CMS AN-2009/157 for details)
-const bool fixFudge = false; // relative increase of W' width in fit
+const bool fixFudge = true; // relative increase of W' width in fit
 // initial (or fixed) value for fudge factor
 const float Fudge = 2.0; // relative increase of W' width
 
