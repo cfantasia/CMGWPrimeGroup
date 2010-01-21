@@ -11,8 +11,11 @@
 using std::string; using std::vector;
 using std::cout; using std::endl; using std::cerr;
 
-// string top_level_dir = "UserCode/CMGWPrimeGroup/"; // Alessio
-string top_level_dir = "/home/cleonido/wprime/v55/"; // Christos
+// default directory is top_level_dir_flag1 (corresponding to detector_conditions = 1 in Make.C)
+const string top_level_dir_flag1 = "/home/cleonido/wprime/v55/";
+const string top_level_dir_flag2 = "/home/cleonido/wprime/v66_50pb-1_hack/";
+
+string top_level_dir = "";
 
 int checkFiles(unsigned Nfiles, vector<wprime::InputFile> & files)
 {
@@ -26,8 +29,12 @@ int checkFiles(unsigned Nfiles, vector<wprime::InputFile> & files)
 }
 
 void loadInputFiles(string file_desc, vector<wprime::InputFile> & files, 
-		   float lumiPb)
+		    float lumiPb, unsigned int detector_conditions)
+// see Make.C for description of detector_conditions flag
 {
+  // default is detector_conditions = 1
+  top_level_dir = top_level_dir_flag1;
+
   int Nfiles = -1;
   cout << "\n Processing " << file_desc << " files " << endl << endl;
 
@@ -71,17 +78,37 @@ void loadInputFiles(string file_desc, vector<wprime::InputFile> & files,
   // ==========================================================================
   else if(file_desc == "W")
     {
-      const int NfilesW = 22;
-      Nfiles = NfilesW;
-      if(checkFiles(Nfiles, files))
-	return;
-
-      string lowW[NfilesW]={"0", "200", "250", "300", "350", "400", "450", "500", "600", "700", "800", "900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900"};
-      string highW[NfilesW]={"200", "250", "300", "350", "400", "450", "500", "600", "700", "800", "900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900","2000"};
-  
-      for(int i = 0; i != Nfiles; ++i)
-	files[i].pathname = top_level_dir + string("Wmunu_219_Ideal_Minv_")+lowW[i]+string("_")+highW[i]+string(".root");
       
+      if(detector_conditions == 1){
+
+	const int NfilesW = 22;
+	Nfiles = NfilesW;
+	if(checkFiles(Nfiles, files))
+	  return;
+	
+	string lowW[NfilesW]={"0", "200", "250", "300", "350", "400", "450", "500", "600", "700", "800", "900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900"};
+	string highW[NfilesW]={"200", "250", "300", "350", "400", "450", "500", "600", "700", "800", "900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900","2000"};
+	
+	for(int i = 0; i != Nfiles; ++i)
+	  files[i].pathname = top_level_dir + string("Wmunu_219_Ideal_Minv_")+lowW[i]+string("_")+highW[i]+string(".root");
+	
+      }
+      else if(detector_conditions == 2){
+	top_level_dir = top_level_dir_flag2;
+
+	const int NfilesW = 4;
+	Nfiles = NfilesW;
+	if(checkFiles(Nfiles, files))
+	  return;
+	
+	string index[NfilesW]={"1", "2", "3", "4"};
+	
+	for(int i = 0; i != Nfiles; ++i)
+	  files[i].pathname = top_level_dir + string("Wmunu_2212_50pb-1_") +index[i] +
+	    string(".root");
+	
+      }
+     
     } // W
   // ==========================================================================
   else if(file_desc == "Top")
@@ -98,6 +125,9 @@ void loadInputFiles(string file_desc, vector<wprime::InputFile> & files,
   else if(file_desc == "wprime10"  || file_desc == "wprime15" ||
 	  file_desc == "wprime20")
     {
+      if(detector_conditions == 2)
+	top_level_dir = top_level_dir_flag2;
+
       const int NfilesWprime = 1;
       Nfiles = NfilesWprime;
       if(checkFiles(Nfiles, files))
