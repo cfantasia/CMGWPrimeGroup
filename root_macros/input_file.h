@@ -11,7 +11,7 @@ namespace wprime{
   struct InputFile
   {
     float x_sect; // cross-section in pb
-    int Nprod_evt; // # of events produced
+    int Nprod_evt; // # of events produced (before any analysis cuts or other filtering)
     float weight; // cross-section * integrated luminosity / (# of events produced)
     std::string pathname;
     std::string description; // sample description
