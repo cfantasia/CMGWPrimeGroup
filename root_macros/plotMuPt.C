@@ -22,7 +22,7 @@ void doPlots(unsigned i, TFile * _file0);
 
 void plotMuPt()
 {
-  string input_file = "Wprime_analysis_V54.root";
+  string input_file = "Wprime_analysis.root";
   TFile *_file0 = TFile::Open(input_file.c_str());
   if(!_file0 || _file0->IsZombie())
     {
@@ -129,6 +129,9 @@ void doPlots(unsigned i, TFile * _file0)
 
   // this is needed when background is eliminated and the y-axis is linear (as opposed to log)
   if(hs->GetMaximum() < wp10->GetMaximum())hs->SetMaximum(wp10->GetMaximum());
+  // this is needed when background is zero in the tails and wprime (say at 2.0 TeV) is not displayed
+  if(hs->GetMinimum() < 0.01)hs->SetMinimum(0.01);
+
   hs->Draw();
   hs->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
   
