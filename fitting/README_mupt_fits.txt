@@ -7,16 +7,37 @@ Must run Step-2, Example #2 with option = 2 set in file
 GetDistributionGeneric.C 
 
 
+=======================================================
+Before you start, you may consider making these changes:
+(a)
+- cp gsmear_IDEAL.root gsmear.root for running on IDEAL wprime samples
+- cp gsmear_50PB-1.root gsmear.root for running in 50 pb^-1 wprime samples
+
+(b)
+- switch to appropriate description of background in function myBgd in
+ file fitting/fit_wprime.cpp: myRBW (ie. Relativistic Breit-Wigner) works
+better for IDEAL W sample, whereas myLandau (i.e. Landau) works better for
+50 pb^-1 W sample.
+=======================================================
+
+
+
+
+
 Description of files used for fits of muon-pt spectrum:
 =======================================================
-(1) fit_wprime.h, cpp 
 
+(1) fit_wprime.h, cpp  
 Fitting functions for bacgkround & signal muon-pt distributions. The
 functions are normalized, and one of their parameters returns the # of
 events in the fitting region (typically: p[0]). 
 
 For background: using landau, exponential or relativistic Breit-Wigner
-(RBW). Default background function: RBW (set in myBgd). 
+(myRBW). myRBW (ie. Relativistic Breit-Wigner) works better for IDEAL W
+sample, whereas myLandau (i.e. Landau) works better for 50 pb^-1 W sample.
+
+Default background function: myLandau (set in myBgd)
+--> Make sure to change to myRBW if running on IDEAL samples!
 
 For signal: using smeared_sig, performing a convolution of mySig with
 muon-pt resolution. mySig is performing a convolution over the RBW space
@@ -32,6 +53,8 @@ High-level macro that
 o reads reference muon-pt histograms for signal and background
 sources from input file (default: Wprime_analysis.root) 
 o reads muon-pt resolution histograms (default: from gsmear.root)
+--> make sure this is a copy of either gsmear_IDEAL.root or
+gsmear_50PB-1.root) 
 o sets up output ROOT file storing fit results
 o runs fitSigBgd_eventLoop macro that does the real fitting work
 

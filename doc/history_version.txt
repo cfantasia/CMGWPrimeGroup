@@ -1,3 +1,21 @@
+21-JAN-10 (Christos), V00-00-70
+===============================
+(1) Added support for running on misaligned Wprime and W samples (for the
+rest of background: top, QCD, Z/DY we still use IDEAL alignment)
+
+(2) Added support for fittings mis-aligned samples. Warning! User must
+(a) switch to the appropriate resolution ROOT file 
+(ie. cp gsmear_IDEAL.root gsmear.root, or
+     cp gsmear_50PB-1.root gsmear.root)
+
+(b) switch to appropriate description of background in function myBgd in
+ file fitting/fit_wprime.cpp: myRBW (ie. Relativistic Breit-Wigner) works
+better for IDEAL W sample, whereas myLandau (i.e. Landau) works better for
+50 pb^-1 W sample.
+
+(3) Several other minor improvements
+
+
 04-NOV-09 (Christos), V00-00-67
 ===============================
 Same as V00-00-66, with the addition of a test configuration file in 
