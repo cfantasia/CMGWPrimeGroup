@@ -23,8 +23,21 @@ o Copy example config file to the top directory.
 (2) You can now modify the parameters in configuration file, change the
 location of the input file and run.
 
-[NB: Custom ROOT-tuples produced for  W' and bacgkround samples with
-V00-00-50 can be found at /castor/cern.ch/user/c/cleonido/v55/]
+
+
+NB: Custom ROOT-tuples produced with 
+
+(a) 21x IDEAL RECO for W' and bacgkround samples with V00-00-50 can be
+found at /castor/cern.ch/user/c/cleonido/v55/
+
+(b) 22x 50pb^-1 RECO for W' and W with V00-00-67 can be found at
+ /castor/cern.ch/user/c/cleonido/v66_50pb-1_hack/
+
+The "hack" refers to the reversion of this format change:
+http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/CMGWPrimeGroup/interface/wprimeEvent.h?r1=1.2&r2=1.3
+so that we can combine the mis-aligned root-tuples with the ideal
+non-W background in (a) above
+
 
 
 
@@ -53,11 +66,15 @@ root -b Make.C
 The macro will compile and load the following files 
 (directory: UserCode/CMGWPrimeGroup/root_macros):
 
+Flag: "detector_conditions"; Set to 1 (IDEAL) or 2 (50 pb^-1 for W and W',
+IDEAL for top, QCD and Z/DY) 
+
+
 (a) loadInputFiles.C 
 
 Comment: loads input files (W' and W, QCD, Z/DY, ttbar). Location of
 top-level directory with input files to be specified with string
-top_level_dir at top of file. 
+top_level_dir_flag1 (_flag2) at top of file. 
 
 (b) loadCrossSections.C
 
