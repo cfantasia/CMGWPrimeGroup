@@ -1,3 +1,13 @@
+11-MAR-10 (Christos), V00-00-71
+===============================
+- Added macro fitting/plot_sigbgd.C: Accesses ROOT file created by
+fitSigBgd_eventLoop.C, and plots data distribution, along with fitting
+function and fit results 
+
+- Added python files for the processing of 2_2_12 Wprime (1, 1.5, 2 TeV)
+and W->mu samples reconstructed with 50 pb^-1 AlCa tag
+
+
 21-JAN-10 (Christos), V00-00-70
 ===============================
 (1) Added support for running on misaligned Wprime and W samples (for the

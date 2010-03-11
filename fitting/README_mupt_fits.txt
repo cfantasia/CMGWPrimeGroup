@@ -91,3 +91,8 @@ Driver for running the program (i.e. "root runFit.C")
 Options for user: # of pseudo-experiments, mass value
 
 
+(7) plot_sigbgd.C
+
+Accesses ROOT file created by fitSigBgd_eventLoop.C, and plots data
+distribution, along with fitting function and fit results
+
