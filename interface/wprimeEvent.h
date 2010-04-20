@@ -121,12 +121,8 @@ class Event : public TObject {
    Bool_t HLT_Mu5;
    Bool_t HLT_Mu9;
    
-   /// CaloTower MET
-   TVector2 cal_met;
-   /// CaloTower + Global Muon MET
-   TVector2 calgmu_met;
-   /// CaloTower + Global + standalone-only Muon MET
-   TVector2 calallmu_met;
+   /// Particle-Flow MET
+   TVector2 pfmet;
 
    /// Jets (class: TLorentzVector)
    TClonesArray * jet;

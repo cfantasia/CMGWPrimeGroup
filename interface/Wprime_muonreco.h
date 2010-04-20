@@ -74,7 +74,7 @@ class Wprime_muonreco : public edm::EDAnalyzer
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
   virtual void endJob() ;
   edm::InputTag muonTag_;
-  edm::InputTag metTag_;
+  edm::InputTag pfmetTag_;
   edm::InputTag HLTTag_; edm::InputTag L1Tag_;
   //      edm::InputTag isoTag_;
   edm::InputTag jetTag_;
@@ -138,6 +138,7 @@ class Wprime_muonreco : public edm::EDAnalyzer
   // # of produced events before filtering
   int Nprod_evt;
 
+  static bool is31x(const std::string & release_string);
   static bool is22x(const std::string & release_string);
   static bool is21x(const std::string & release_string);
   static bool is20x(const std::string & release_string);
@@ -199,8 +200,8 @@ class Wprime_muonreco : public edm::EDAnalyzer
 
   double met_x, met_y, met;
 
-  // get Calo-MET, initialize MET
-  void getCaloMET(const edm::Event & iEvent);
+  // get ParticleFlow-MET
+  void getPFMET(const edm::Event & iEvent);
 
   // get Jets
   void getJets(const edm::Event & iEvent);

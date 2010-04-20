@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("Demo2")
 process.source = cms.Source("PoolSource",
     # replace input file with one you want to use
- fileNames = cms.untracked.vstring('file:/home/cleonido/wprime/wprime_1.0/218_RECO_IDEAL/0055C643-B0B1-DD11-AEAB-001E0B47E400.root')
+ fileNames = cms.untracked.vstring('file:/home/cleonido/wprime/Summer09MC/W/F866EB68-E39C-DE11-8F01-00145EDD7879.root')
 )
 
 # Number of events to process
@@ -17,7 +17,7 @@ process.StdMu = cms.EDFilter("Wprime_muonreco",
 
     # input tags defined here
     MuonTag = cms.InputTag("muons"),
-    MetTag = cms.InputTag("met"),
+    pfMetTag = cms.InputTag("pfMet"),
     JetTag = cms.InputTag("iterativeCone5CaloJets"),
     TkIsoMapTag = cms.InputTag("muIsoDepositTk"),
     EcalIsoMapTag = cms.InputTag("muIsoDepositCalByAssociatorTowers","ecal"),
@@ -31,9 +31,10 @@ process.StdMu = cms.EDFilter("Wprime_muonreco",
 
 
     # sample description
-    description = cms.string('Wprime 1 TeV'),
+    description = cms.string('W->mu at 7 TeV'),
+#    description = cms.string('Wprime 1 TeV'),
     #     # of produced events (before filtering)
-    Nprod_evt = cms.int32(6000),
+    Nprod_evt = cms.int32(8818), # = 6543 (# of events)/0.742 (pythia eff)
 
     # "golden" single-muon trigger name
     SingleMuHLT_20x = cms.string('HLT1MuonNonIso9'),
@@ -48,7 +49,8 @@ process.StdMu = cms.EDFilter("Wprime_muonreco",
 
 process.TFileService = cms.Service("TFileService",
     #       fileName = cms.string('TeVMuon_startupV4.root')
-   fileName = cms.string('wprime_1TeV.root')
+   fileName = cms.string('Wmu_31x_IDEAL_7TeV_1.root')
+#   fileName = cms.string('wprime_1TeV.root')
 )
 
 process.p = cms.Path(process.StdMu)

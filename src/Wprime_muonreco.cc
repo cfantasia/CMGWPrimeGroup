@@ -13,8 +13,8 @@
 #include "DataFormats/JetReco/interface/CaloJet.h"
 #include "DataFormats/MuonReco/interface/MuonCocktails.h"
 
-#include "DataFormats/METReco/interface/CaloMET.h"
-#include "DataFormats/METReco/interface/CaloMETCollection.h"
+#include "DataFormats/METReco/interface/PFMET.h"
+#include "DataFormats/METReco/interface/PFMETCollection.h"
 
 #include "TH1F.h"
 #include "TH2F.h"
@@ -32,7 +32,7 @@ using namespace Wprime_muonreco_histo;
 /// Constructor
 Wprime_muonreco::Wprime_muonreco(const edm::ParameterSet& iConfig):
   muonTag_(iConfig.getParameter<edm::InputTag> ("MuonTag")),
-  metTag_(iConfig.getParameter<edm::InputTag> ("MetTag")),
+  pfmetTag_(iConfig.getParameter<edm::InputTag> ("pfMetTag")),
   HLTTag_(iConfig.getParameter<edm::InputTag>( "HLTriggerResults" ) ),
   //  isoTag_(iConfig.getParameter<edm::InputTag> ("IsolationTag")),
   jetTag_(iConfig.getParameter<edm::InputTag> ("JetTag")),
@@ -202,17 +202,17 @@ void Wprime_muonreco::getTriggers(const edm::Event & iEvent)
 
 }
 
-// get Calo-MET, initialize MET
-void Wprime_muonreco::getCaloMET(const edm::Event & iEvent)
+// get Particle-Flow MET
+void Wprime_muonreco::getPFMET(const edm::Event & iEvent)
 {
   // Get the MET collection from the event
-  edm::Handle<reco::CaloMETCollection> metCollection;
-  iEvent.getByLabel(metTag_, metCollection);
+  edm::Handle<reco::PFMETCollection> pfmetCollection;
+  iEvent.getByLabel(pfmetTag_, pfmetCollection);
   
-  CaloMETCollection::const_iterator caloMET = metCollection->begin();
-  met_x += caloMET->px();
-  met_y += caloMET->py();
-  evt->cal_met.Set(met_x, met_y);
+  PFMETCollection::const_iterator pfMET = pfmetCollection->begin();
+  met_x += pfMET->px();
+  met_y += pfMET->py();
+  evt->pfmet.Set(met_x, met_y);
 }
 
 // get Jets
@@ -268,7 +268,7 @@ void Wprime_muonreco::getTeVMuons(const edm::Event & iEvent)
   tevMap_picky = tevMapH_picky.product();
 }
 
-// get muons, update MET
+// get muons
 void Wprime_muonreco::getMuons(const edm::Event & iEvent)
 {
   // Get the Muon Track collection from the event
@@ -286,28 +286,6 @@ void Wprime_muonreco::getMuons(const edm::Event & iEvent)
 
   // # of reconstructed muons in event (including standalone-only)
   N_all_muons = muonCollection->size();
-
-  double met_x_badmu = 0;
-  double met_y_badmu = 0;
-
-  for(unsigned i = 0; i != N_all_muons; ++i) 
-    { // loop over reco muons 
-      MuonRef mu(muonCollection,i);
-      if(mu->isGlobalMuon())
-	{
-	  met_x -= mu->px();
-	  met_y -= mu->py();
-	}
-      else
-	{
-	  met_x_badmu -= mu->px();
-	  met_y_badmu -= mu->py();	  
-	}
-
-    } // loop over reco muons 
-
-  evt->calgmu_met.Set(met_x, met_y);
-  evt->calallmu_met.Set(met_x + met_x_badmu, met_y + met_y_badmu);  
 }
 
 // copy tracking info from reco::Track to wprime::Track
@@ -370,7 +348,7 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu)
   TrackToTrackMap::const_iterator iTeV_1stHit;
   TrackToTrackMap::const_iterator iTeV_picky;
 
-  if(is21x(RECOversion) || is22x(RECOversion))
+  if(is21x(RECOversion) || is22x(RECOversion) || is31x(RECOversion))
     {
       iTeV_default = tevMap_default->find(mu->globalTrack());
       iTeV_1stHit = tevMap_1stHit->find(mu->globalTrack());
@@ -451,7 +429,7 @@ Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   getTriggers(iEvent);
 
-  getCaloMET(iEvent);
+  getPFMET(iEvent);
 
   getJets(iEvent);
 
@@ -481,6 +459,11 @@ const string Wprime_muonreco::INVALID_RELEASE = "invalid release number";
 bool Wprime_muonreco::is21x(const string & release_string)
 {
   return (release_string.find("CMSSW_2_1_") != string::npos);
+}
+
+bool Wprime_muonreco::is31x(const string & release_string)
+{
+  return (release_string.find("CMSSW_3_1_") != string::npos);
 }
 
 bool Wprime_muonreco::is22x(const string & release_string)
