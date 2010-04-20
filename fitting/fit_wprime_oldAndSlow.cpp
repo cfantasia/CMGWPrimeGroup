@@ -2,9 +2,6 @@
 #include <TF1.h>
 #include <TMath.h>
 #include <iostream>
-#include <map>
-#include <cmath>
-#include <vector>
 
 #include "fit_wprime.h"
 
@@ -17,7 +14,7 @@ using std::string; using std::cout; using std::endl;
 // In certain cases the plot appears with some weird resonance that goes away
 // for a finer bin-size (e.g. 1.9 GeV). Haven't been able to debug this yet
 //const float rbw_bin_size = 5.0;
-const Double_t rbw_bin_size = 1.9;
+ const float rbw_bin_size = 1.9;
 
 // lower, upper limits for (non-smeared or MC-truth) muon Pt distributions
 const float PTMIN = 100; const float PTMAX = 1500;
@@ -25,36 +22,10 @@ const float PTMIN = 100; const float PTMAX = 1500;
 // ****** SETTINGS FOR ADVANCED USERS - END *********
 
 
-const Double_t epsilon_dp = 0.5; // 0.01;
-const Double_t epsilon_dm = 0.01; // 0.01;
-const Double_t epsilon_dg = 0.01; // 0.01;
-
-
-// cache here value returned by mySig (modulo some parameterization)
-// given pt, mass and width, in order to speed up MINUIT minimization
-struct rbw_point{ 
-  unsigned p; // muon pt
-  unsigned m; // Wprime mass
-  unsigned g; // Wprime width fudge factor
-  rbw_point(unsigned p_, unsigned m_, unsigned g_)
-  {p = p_; m = m_; g = g_;}
-};
-
-struct lt_rbw_point
-{
-  bool operator()(const rbw_point & s1, const rbw_point &s2) const
-  {
-    return ( (s1.p < s2.p) || ((s1.p == s2.p) && (s1.m < s2.m)) 
-	     || ((s1.p == s2.p) && (s1.m == s2.m) && (s1.g < s2.g)));
-  }
-};
-
-static std::map<rbw_point, Double_t, lt_rbw_point> rbw_weight;
-typedef std::map<rbw_point, Double_t, lt_rbw_point>::iterator It;
 
 // must be defined in global scope because they are needed by static function
-Double_t minRBW = 0;
-Double_t maxRBW = 0;
+float minRBW = 0;
+float maxRBW = 0;
 
 // to be set by caller, should be equal to histogram bin-size we fit
 float BIN_SIZE = 0; 
@@ -73,23 +44,8 @@ TF1 * rbw_aux = 0;
 // the integral between fXMIN, fXMAX, so we can normalize myLandau
 TF1 * landau_aux = 0;
 
-// fast inverse square root (from wikipedia!)
-float InvSqrt(float x)
-{
-  union {
-    float f;
-    int i;
-  } tmp;
-  tmp.f = x;
-  tmp.i = 0x5f3759df - (tmp.i >> 1);
-  float y = tmp.f;
-  return y * (1.5f - 0.5f * x * y * y);
-}
-
-
 const Double_t epsilon = 0.00001;
 // this is the "auxiliary", non-normalized relativistic Breight Wigner function; 
-// (ie. it is normalized for [0, infinity) only)
 Double_t RBW_aux(Double_t * x, Double_t * par)
 {
   // protect numerator (and integral of RBW)
@@ -102,7 +58,7 @@ Double_t RBW_aux(Double_t * x, Double_t * par)
   Double_t part2 = par[1]*par[2];
   Double_t denom = part1*part1 + part2*part2;
   if (denom != 0)
-    ret = 2*par[0]*par[1]*part2*TMath::InvPi()/denom;
+    ret = 2*par[0]*par[1]*part2/denom/TMath::Pi();
   return ret;
 }
 
@@ -115,14 +71,13 @@ Double_t mySig_aux(Double_t * x, Double_t * par)
   // par[0]: scale, par[1]: energy
   if(par[1] > 0)
     {
-      Double_t invpar1 = 1.0/par[1];
-      Double_t arg = 2*x[0]*invpar1; // factor of 2 is because M_W = 2*E_mu
+      Double_t arg = 2*x[0]/par[1]; // factor of 2 is because M_W = 2*E_mu
       if(TMath::Abs(arg) <= 1)
 	{
 	  Double_t sinsq = arg*arg; Double_t arg2 = 1 - sinsq;
 	  if(arg2 > 0)
 	    // (1.5/par[1]) is normalization factor so that integral is 1
-	    ret = 1.5*par[0]*arg*(2 - sinsq)*invpar1*InvSqrt(arg2);
+	    ret = 1.5*par[0]*arg*(2 - sinsq)/TMath::Sqrt(arg2)/par[1];
 	}
     }
   return ret;
@@ -160,7 +115,7 @@ Double_t mySig(Double_t * x, Double_t * par)
   Double_t width = par[2]*(4./3.) * width_W * (par[1]/mass_W);
   //  width = par[2]; if(par[2] < 0)return 0;
 
-  float delta = std::sqrt(float(30*par[1]*width));
+  float delta = TMath::Sqrt(30*par[1]*width);
   minRBW = TMath::Max(0.0, par[1] - delta);
   maxRBW = par[1]+delta;
 
@@ -171,32 +126,18 @@ Double_t mySig(Double_t * x, Double_t * par)
   Double_t par_aux[3] = {1, par[1], width};
 
   Double_t ret = 0;
-
-  int x1 = int(x[0]/epsilon_dp); int y1 = int(par[1]/epsilon_dm); 
-  int z1 = int(par[2]/epsilon_dg);
-  rbw_point a(x1, y1, z1);
-  It it = rbw_weight.find(a);
-  if(it == rbw_weight.end())
+  // loop over Energy bins
+  for(unsigned i = 1; i <= Nbins_rbw; ++i)
     {
-      Double_t Energy = minRBW - 0.5*rbw_bin_size;
-      // loop over Energy bins
-      for(unsigned i = 1; i <= Nbins_rbw; ++i)
-	{
-	  // find Energy at middle of bin
-	  Energy += rbw_bin_size;
-	  
-	  // weight contribution according to RBW function
-	  Double_t weight =rbw_bin_size*rbw_aux->EvalPar(&Energy, par_aux);
-	  // weight contribution according to Jacobian-edge-like function
-	  Double_t par_aux2[2] = {1, Energy};
-	  ret += mysig_aux->EvalPar(x, par_aux2)*weight;
-	}
-      rbw_weight[a] = ret;
+      // find Energy at middle of bin
+      Double_t Energy = minRBW + (i-1)*rbw_bin_size + rbw_bin_size/2;
 
+      // weight contribution according to RBW function
+      Double_t weight=rbw_bin_size*rbw_aux->EvalPar(&Energy, par_aux);
+      // weight contribution according to Jacobian-edge-like function
+      Double_t par_aux2[2] = {1, Energy};
+      ret += mysig_aux->EvalPar(x, par_aux2)*weight;
     }
-  else
-    ret = it->second;
-  
   return par[0]*ret*BIN_SIZE;
 }
 

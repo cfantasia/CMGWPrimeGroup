@@ -72,9 +72,10 @@ void cleanup(Results * result, TFile * output_file)
 // N_EXP: # of pseudo-experiments
 int fitSigBgd(unsigned mass_option, unsigned N_EXP)
 {
-  if(mass_option != 1 && mass_option != 2)
+  if(mass_option != 1 && mass_option != 2 && mass_option != 3)
     {
-      cout << " Ooops! Only understand option=1 (1.0 TeV) or 2 (1.5) TeV"<< endl;
+      cout << " Ooops! Only understand " << 
+	" option=1 (1.0 TeV) or 2 (1.5 TeV) or 3 (2.0 TeV)"<< endl;
       abort();
     }
 
@@ -109,6 +110,10 @@ int fitSigBgd(unsigned mass_option, unsigned N_EXP)
       file_name = "output_1.5TeV.root";
       tree_name += "1.5 TeV wprime experiments";
       break;
+    case 3:
+      file_name = "output_2.0TeV.root";
+      tree_name += "2.0 TeV wprime experiments";
+      break;
     default:
       ; // do nothing
     }
@@ -116,6 +121,7 @@ int fitSigBgd(unsigned mass_option, unsigned N_EXP)
   TFile * output_file = new TFile(file_name.c_str(), "recreate");
   TTree * root_tree = new TTree("tree", tree_name.c_str());
   root_tree->SetDirectory(output_file);
+  //  TVirtualFitter::SetDefaultFitter("Fumili2");
   TVirtualFitter::SetDefaultFitter("Minuit");
   
   Results * result = new Results();

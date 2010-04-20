@@ -4,7 +4,7 @@
   incpath.Append(pwd.c_str());
   gSystem->SetIncludePath(incpath.Data());
 
-  const unsigned mass_option = 1; //  1: 1.0 TeV, 2: 1.5 TeV
+  const unsigned mass_option = 1; //  1: 1.0 TeV, 2: 1.5 TeV, 3: 2.0 TeV
   const unsigned N_EXP = 1; // # of pseudo-experiments
 
   // compile code

@@ -25,6 +25,7 @@ class Results : public TObject {
    /// integral of bgd function in fit range		
      /// float bgd_tot; 
    /// Sig parameters
+   Int_t Nsig_input; 
    float mass;
    float dmass;
    float width;

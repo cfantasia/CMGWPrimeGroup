@@ -26,6 +26,8 @@ TF1 * ftot = 0;
 
 float Ntot = 0;
 
+Int_t Nsig_input = 0;
+
 static int npoints = -999;
 static int status = -9999;
 
@@ -43,6 +45,7 @@ void getResults(Results * result, TF1 * f, int exp_no)
   result->p0 = f->GetParameter(0);  result->dp0 = f->GetParError(0);
   result->p1 = f->GetParameter(1);  result->dp1 = f->GetParError(1);
   result->p2 = f->GetParameter(2);  result->dp2 = f->GetParError(2);
+  result->Nsig_input = Nsig_input;
   result->Nsig = f->GetParameter(3); result->dNsig = f->GetParError(3); 
   result->mass = f->GetParameter(4); result->dmass = f->GetParError(4); 
   //  result->width = f->GetParameter(5); result->dwidth = f->GetParError(5); 
@@ -69,13 +72,15 @@ void makeHistogram(TH1F * & makeThis, const char * hname, const char * htitle,
   makeThis->AddDirectory(0);
 }
 
-void populateHistogram(TH1F * makeThis, unsigned N, TH1F * likeThis)
+void populateHistogram(TH1F * makeThis, unsigned N, TH1F * likeThis, 
+		       bool store_Nsig_input)
 {
   // add poisson flucturation in the # of events for i-th pseudo-experiment
   TF1 f("mypoiss", "TMath::Poisson(x, [0])", 0, 5.*N);
   f.SetParameter(0, N);
   unsigned N2 = unsigned(f.GetRandom());
-
+  if(store_Nsig_input)
+    Nsig_input = N2;
   for(unsigned j = 0; j != N2; ++j)
     makeThis->Fill(likeThis->GetRandom());
 }
@@ -227,8 +232,11 @@ void fitSigBgd_eventLoop(unsigned mass_option, const unsigned * N_evt2gen,
   float diff = wprime->GetBinWidth(0) - bgd->GetBinWidth(0);
   assert(TMath::Abs(diff) < very_small);
 
-  populateHistogram(wprime, N_evt2gen[wprime_index], ref[wprime_index]);
-  populateHistogram(bgd, N_evt2gen[3], ref[3]);
+  bool store_Nsig_input = true;
+  populateHistogram(wprime, N_evt2gen[wprime_index], ref[wprime_index],
+		    store_Nsig_input);
+  store_Nsig_input = false;
+  populateHistogram(bgd, N_evt2gen[3], ref[3], store_Nsig_input);
 
   htitle = desc[algo_option] + htitle_wp;
   // this is the total (signal + background) distribution 
@@ -264,6 +272,8 @@ void fitSigBgd_eventLoop(unsigned mass_option, const unsigned * N_evt2gen,
     mass = 1000;
   else if(mass_option == 2)
     mass = 1500;
+  else if(mass_option == 3)
+    mass = 2000;
 
   ftot = new TF1("ftot", mySigBgd, fXMIN, fXMAX, NPARAM_FIT);
   ftot->SetParameters(Ntot, fXMIN, 93, evt_sig, mass, Fudge);
@@ -288,9 +298,8 @@ void fitSigBgd_eventLoop(unsigned mass_option, const unsigned * N_evt2gen,
   else
     ftot->SetParError(5, 0.1);
   
-  //  if(exp_no == 2)
-  //    {
-      TCanvas * c1 = new TCanvas();
+  //    if(exp_no == 2)
+  //      {
 
       if(doFits)
 	{
@@ -298,7 +307,8 @@ void fitSigBgd_eventLoop(unsigned mass_option, const unsigned * N_evt2gen,
 	  getResults(result, ftot, exp_no);
 	}
 
-
+#if 0
+      TCanvas * c1 = new TCanvas();
       tot->SetMarkerStyle(4);
       tot->Draw("e");
       ftot->Draw("same");
@@ -324,7 +334,11 @@ void fitSigBgd_eventLoop(unsigned mass_option, const unsigned * N_evt2gen,
       c1->SetLogy(false);
       c1->SaveAs("muonpt_fit_lin.gif");     
       delete c1;
-      //    }
+
+#endif
+
+
+      //     }
 
       delete bgd;
       delete wprime;
