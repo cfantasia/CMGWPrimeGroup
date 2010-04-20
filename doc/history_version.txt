@@ -1,3 +1,32 @@
+20-APR-10 (Christos), V00-00-80
+===============================
+(1) Changes in analyzer:
+- Can now analyze Summer09/31x MC samples (tested with 3_3_6 release)
+
+- Removed storing of Calo-MET, switched to pfMET 
+
+
+(2) Changes in fitting code:
+- Significant boost in speed of fit convergence.
+
+  Details:
+  o Speed improvement is approximately a factor of ~5 (exact number 
+depends on signal statistics) 
+  o Achieved by caching some of the intermediate signal function
+calculations in custom map structure.  
+  o New code (switched on by default) in file fit_wprime_newAndFast.cpp,
+old code kept for reference (fit_wprime_oldAndSlow.cpp). 
+
+
+- Now keeping track of (Poisson-varying) input # of signal events when
+repeating fits in large # of pseudo-experiments 
+
+
+- Can now handle fits for Wprime mass of 2.0 TeV (in addition to 1.0, 1.5
+TeV) 
+
+
+
 11-MAR-10 (Christos), V00-00-71
 ===============================
 - Added macro fitting/plot_sigbgd.C: Accesses ROOT file created by
