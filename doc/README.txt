@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V80, release:
+o Setup a new working area (Default name: V85, release:
 CMSSW_3_3_6)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-00-80)
+V00-00-85)
 
 o Compile the code
 
@@ -82,32 +82,20 @@ Comment: must update # of produced events if using a different MC
 production. This is the place to modify the cross-section if need to study
 systematic effects.
 
-(c) loadCuts.C
+(c) loadCutsAndThresholds.C (.h)
 
-Comment: this is the place to define the cuts (NB: but not the actual
-values!). The "cuts" should be called with the actual thresholds. 
+Comment: this is the place to define the cuts and the actual threshold
+values. 
 
-(d) util.C
-
-Comment: this is the place where the actual values for the cuts are
-defined. 
-
-(e) GetDistributionGeneric.C
+(d) GetDistributionGeneric.C
 
 Comment: Wrapper that calls 
-o GetMuonPtDistribution_JetIso.C (option = 1), or
-o GetMuonPtDistribution.C (option = 2), or
-o GetChargePtDistribution.C. (option = 3)
-Make sure to preserve the number and the types of arguments when
-modifying/adding new functions! 
+o GetMuonPtDistribution (option = 1), or
+o GetChargePtDistribution (option = 2)
 
-(f) GetMuonPtDistribution_JetIso.C
+Details:
 
-Comment: Makes distributions for muon-pt and # of muons in event with and
-without cuts on jet-activity and isolation. (Obsolete file, should we
-remove?)
-
-(g) GetMuonPtDistribution.C
+(d1) GetMuonPtDistribution
 
 Comment: Makes distributions for muon-pt for various cuts (default
 values). To see plots with nice colors, legends, etc. run afterwards
@@ -118,7 +106,7 @@ values). To see plots with nice colors, legends, etc. run afterwards
 UserCode/CMGWPrimeGroup/fitting/README_mupt_fits.txt]
 
 
-(h) GetChargePtDistribution.C
+(d2) GetChargePtDistribution
 
 Comment: Makes distributions for charge asymmetry for various cuts 
 (default values). To see nice plots, run macro plotChargeAsym.C

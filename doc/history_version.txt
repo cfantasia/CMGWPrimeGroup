@@ -1,3 +1,20 @@
+22-APR-10 (Edgar, Christos), V00-00-85
+======================================
+Cleanup of root-macros (contained in and driven by 
+UserCode/CMGWPrimeGroup/root_macros/Make.C)
+for easier maintainability and in preparation for new cut-optimization 
+code
+
+
+Note on data-format change (pfMET) introduced in V00-00-80:
+----------------------------------------------------------
+This does not introduce any backwards incompatibility when reading old
+root-tuples. However, the speed will be significantly slower, as ROOT 
+tries to work around the change. To correct for this inconvenience, one 
+can temporarily overwrite UserCode/CMGWPrimeGroup/interface/wprimeEvent.h
+with an earlier-than-V00-00-80 version if reading older files. 
+
+
 20-APR-10 (Christos), V00-00-80
 ===============================
 (1) Changes in analyzer:
