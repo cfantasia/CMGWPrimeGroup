@@ -90,8 +90,8 @@ TH1F* hNMu, *hPtMaxMu, *hPtMaxMuTrackVeto,
 TH1F * hPTplus[Num_trkAlgos] = {0};
 TH1F * hPTminus[Num_trkAlgos] = {0};
 // ++++++++++++++++++++++++++++++++Useful constants
-// if 1, get just the final counts, if 2 get final counts and
-// the counts second to last, and so on.
+// if 1, create charge-asymmetry histograms after all cuts
+// if 2, also create histograms before last cut, and so on
 const int Num_histo_sets_chargePt = 1; 
 
 
@@ -141,7 +141,8 @@ bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh, float et_jet_cut
 				 float delta_phi, const wprime::Muon* the_mu,
 				 const wprime::Event* ev);
 
-// check if muon satisfies quality requirements for all tracking algorithms, fill goodQual
+// check if muon satisfies quality requirements for all tracking algorithms, 
+// fill goodQual
 void CheckQuality(const wprime::Muon* mu, bool goodQual[],
 		  float pttrk_cut, float chi2_cut, float muon_etacut);
 
