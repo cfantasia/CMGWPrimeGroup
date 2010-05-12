@@ -19,6 +19,7 @@
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h" 
+#include "FWCore/Framework/interface/Frameworkfwd.h" 
 #include "FWCore/Framework/interface/TriggerNames.h"
 
 #include "FWCore/ParameterSet/interface/InputTag.h"
@@ -40,7 +41,7 @@
 
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
-#include "PhysicsTools/UtilAlgos/interface/TFileService.h"
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
 
 #include "UserCode/CMGWPrimeGroup/interface/wprimeEvent.h"
 
@@ -70,7 +71,10 @@ class Wprime_muonreco : public edm::EDAnalyzer
   
   
   private:
-  virtual void beginJob(const edm::EventSetup&) ;
+  bool firstEventInRun;
+  virtual void beginJob() ;
+  virtual void beginRun(edm::Run const &, edm::EventSetup const &);
+  virtual void endRun(edm::Run const &, edm::EventSetup const &);
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
   virtual void endJob() ;
   edm::InputTag muonTag_;
@@ -99,7 +103,8 @@ class Wprime_muonreco : public edm::EDAnalyzer
     // # of events processed with a single reconstructed muon
     unsigned Nev_1mu; 
     // initialize
-    trigEff(){trigger_count.clear(); Nev = Nev_1mu = 0;}
+    void clear(){trigger_count.clear(); Nev = Nev_1mu = 0;}
+    trigEff(){clear();}
   };
 
   typedef std::map<std::string, unsigned>::const_iterator tIt;
@@ -113,19 +118,12 @@ class Wprime_muonreco : public edm::EDAnalyzer
   // (at least one) generated muon within detector acceptance 
   // (defined as |eta|< detmu_acceptance)
   bool genmu_acceptance;
-  // whether event has been accepted by single non-isolated muon (L1 and HL) trigger
-  bool muL1_acceptance;
-  bool muHLT_acceptance;
-
-  // "golden" single-muon trigger names
-  std::string muHLT_20x;
-  std::string muHLT_21x;
-  std::string muL1;
 
   // whether this is real-data
   bool realData;
 
-  edm::TriggerNames triggerNames;
+  std::vector<std::string> triggerNames;
+  typedef std::vector<std::string>::const_iterator It;
 
   // generator-level muons
   std::vector<reco::GenParticle> gen_muons;
@@ -138,18 +136,14 @@ class Wprime_muonreco : public edm::EDAnalyzer
   // # of produced events before filtering
   int Nprod_evt;
 
-  static bool is31x(const std::string & release_string);
-  static bool is22x(const std::string & release_string);
-  static bool is21x(const std::string & release_string);
-  static bool is20x(const std::string & release_string);
-
   // TTree structures
   wprime::Event * evt;
   wprime::JobInfo * job;
+  wprime::RunInfo * run;
   std::string software_version;
 
   //    Histograms, trees and all that
-  TTree *tree_job, *tree_event;
+  TTree *tree_job, *tree_run, *tree_event;
 
   //    Root output file
   edm::Service<TFileService> fs;
@@ -176,7 +170,7 @@ class Wprime_muonreco : public edm::EDAnalyzer
   void getTracking(wprime::Track & track, const reco::Track & p);
 
   // initialize run info
-  void init_run();
+  void init_run(const edm::Event& iEvent);
 
   // initialize event info
   void init_event();
@@ -184,8 +178,8 @@ class Wprime_muonreco : public edm::EDAnalyzer
   // initialize histograms
   void init_histograms();
 
-  // initialize trigger structure
-  void init_trigger(const edm::Handle<edm::TriggerResults> & hltresults);
+  // check trigger is there (at beginRun)
+  void check_trigger(const edm::Event & iEvent);
   
   // print summary info over full job
   void printSummary() const;
@@ -195,7 +189,7 @@ class Wprime_muonreco : public edm::EDAnalyzer
   // get the generator info, populate gen_muons, set genmu_acceptance flag
   void getGenParticles(const edm::Event & iEvent);
 
-  // get trigger info, update muTrig/genMuTrig, set muL1/HLT_acceptance flag
+  // get trigger info, update muTrig/genMuTrig
   void getTriggers(const edm::Event & iEvent);
 
   double met_x, met_y, met;

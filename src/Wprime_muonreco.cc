@@ -12,9 +12,12 @@
 #include "DataFormats/TrackReco/interface/Track.h"
 #include "DataFormats/JetReco/interface/CaloJet.h"
 #include "DataFormats/MuonReco/interface/MuonCocktails.h"
+#include "DataFormats/MuonReco/interface/MuonSelectors.h"
 
 #include "DataFormats/METReco/interface/PFMET.h"
 #include "DataFormats/METReco/interface/PFMETCollection.h"
+
+#include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
 
 #include "TH1F.h"
 #include "TH2F.h"
@@ -40,26 +43,25 @@ Wprime_muonreco::Wprime_muonreco(const edm::ParameterSet& iConfig):
   ecalIsoMapTag_(iConfig.getParameter<edm::InputTag> ("EcalIsoMapTag")),
   hcalIsoMapTag_(iConfig.getParameter<edm::InputTag> ("HcalIsoMapTag")),
   detmu_acceptance(iConfig.getParameter<double>("Detmu_acceptance")),
-  muHLT_20x(iConfig.getParameter<string>("SingleMuHLT_20x")),
-  muHLT_21x(iConfig.getParameter<string>("SingleMuHLT_21x")),
-  muL1(iConfig.getParameter<string>("SingleMuL1")),
   sample_description(iConfig.getParameter<string>("description")),
   Nprod_evt(iConfig.getParameter<int>("Nprod_evt"))
 {
    //now do what ever initialization is needed
-  tree_job = tree_event = 0;
+  tree_job = tree_run = tree_event = 0;
 
   evt = new wprime::Event(); job = new wprime::JobInfo();
+  run = new wprime::RunInfo();
   job->sample = sample_description;
   job->Nprod_evt = Nprod_evt;
   software_version = "V00-00-00";
+  firstEventInRun = false;
 }
 
 
 /// Destructor
 Wprime_muonreco::~Wprime_muonreco()
 {
-  if(evt) delete evt; if(job) delete job;
+  if(evt) delete evt; if(job) delete job; if(run) delete run;
 }
 
 // get the generator info, populate gen_muons, set genmu_acceptance flag
@@ -135,70 +137,60 @@ void Wprime_muonreco::getGenParticles(const edm::Event & iEvent)
 
 }
 
-// get trigger info, update MuTrig/genMuTrig, set muL1/HLT_acceptance flag
+// get trigger info, update MuTrig/genMuTrig
 void Wprime_muonreco::getTriggers(const edm::Event & iEvent)
 {
-
   edm::Handle<edm::TriggerResults> hltresults;
   iEvent.getByLabel(HLTTag_,hltresults);
-  
-  if (! hltresults.isValid() ) 
-    { 
-      cerr << "  -- No HLTRESULTS" << endl; 
-      abort(); // what is the proper way of handling this??? skip run?
-    }
-  
-  // shouldn't this be done at begin-job instead???
-  if(triggerNames.size() == 0)
-    {
-      init_trigger(hltresults);
-      const edm::Provenance & prov = iEvent.getProvenance(hltresults.id());
-      HLTversion = prov.releaseVersion();
-      cout << " CMSSW release used to produce trigger decisions : "
-	   << HLTversion << endl;
 
-      job->HLTversion = HLTversion;
-    }
-  
-  // loop over triggers: extract event counts for trigger efficiencies
-  for (unsigned int itrig = 0; itrig != N_triggers; ++itrig)
-    {
-      string trigName = triggerNames.triggerName(itrig);
-      bool accept = hltresults->accept(itrig);
+  It trig = triggerNames.begin();
+  for (unsigned itrig = 0; itrig != N_triggers; ++itrig)
+    { // loop over triggers
+      string trigName = *trig; ++trig;
       
+      // skip loop for non-muon triggers....
+      // the trigger class name (i.e. Muon) should be release-dependent ???
+      if(trigName.find("Mu") == string::npos)continue; // in 21x and later
+      //      if(trigName.find("HLT1Muon") == string::npos)continue; // in 20x
+      
+      bool accept = hltresults->accept(itrig);
+
+      // this is where we keep statistics (to be printed out at end of job)
       if(accept)
-	{  // trigger <trigName> has fired in this event
+	{ // extract event counts for trigger efficiencies
 	  tIt it;
 	  if(genmu_acceptance)
 	    {
 	      it = genMuTrig.trigger_count.find(trigName);
 	      if(it != genMuTrig.trigger_count.end())
 		(genMuTrig.trigger_count[trigName])++; 
+	      else
+		genMuTrig.trigger_count[trigName] = 1;
 	    }
 	  it = MuTrig.trigger_count.find(trigName);
 	  if(it != MuTrig.trigger_count.end())
-	    (MuTrig.trigger_count[trigName])++; 
-	  
-	  if( (is20x(HLTversion) && trigName == muHLT_20x) ||
-	      (is21x(HLTversion) && trigName == muHLT_21x) )
-	    muHLT_acceptance = true;
+	    (MuTrig.trigger_count[trigName])++;
+	  else
+	    MuTrig.trigger_count[trigName] = 1;
+	} // extract event counts for trigger efficiencies
 
-	  if(trigName == "HLT_L1MuOpen")
-	    evt->HLT_L1MuOpen = true;
-	  else if (trigName == "HLT_L1Mu")
-	    evt->HLT_L1Mu = true;
-	  else if (trigName == "HLT_Mu3")
-	    evt->HLT_Mu3 = true;
-	  else if (trigName == "HLT_Mu5")
-	    evt->HLT_Mu5 = true;
-	  else if (trigName == "HLT_Mu9")
-	    evt->HLT_Mu9 = true;
-
-	  if(trigName == muL1)
-	    muL1_acceptance = true;
-	}  // trigger <trigName> has fired in this event
-      
-    }
+      if(trigName == "HLT_L1MuOpen")
+	evt->HLT_L1MuOpen = accept? 1 : 0;
+      else if (trigName == "HLT_L1Mu")
+	evt->HLT_L1Mu = accept? 1 : 0;
+      else if (trigName == "HLT_Mu3")
+	evt->HLT_Mu3 = accept? 1 : 0;
+      else if (trigName == "HLT_Mu5")
+	evt->HLT_Mu5 = accept? 1 : 0;
+      else if (trigName == "HLT_Mu9")
+	evt->HLT_Mu9 = accept? 1 : 0;
+      else if (trigName == "HLT_L2Mu5")
+	evt->HLT_L2Mu5 = accept? 1 : 0;
+      else if (trigName == "HLT_L2Mu9")
+	    evt->HLT_L2Mu9 = accept? 1 : 0;
+      else if (trigName == "HLT_L2Mu11")
+	evt->HLT_L2Mu11 = accept? 1 : 0;
+    } // loop over triggers
 
 }
 
@@ -295,9 +287,13 @@ void Wprime_muonreco::getTracking(wprime::Track & track, const reco::Track & p)
   track.p.SetVectM(p3, wprime::MUON_MASS);
   track.q = p.charge();
   track.chi2 = p.chi2();
+  track.d0 = p.d0();
+  track.dd0 = p.d0Error();
   track.dpt = p.ptError();
   track.dq_over_p = p.qoverpError();
   track.ndof = int(p.ndof());
+  track.Nstrip_layer = p.hitPattern().stripLayersWithMeasurement();
+  track.Npixel_layer = p.hitPattern().pixelLayersWithMeasurement();
   track.Ntot_hits = p.numberOfValidHits();
   track.Ntrk_hits = p.hitPattern().numberOfValidTrackerHits();
 }
@@ -310,7 +306,7 @@ void Wprime_muonreco::doMuons()
   for(unsigned i = 0; i != N_all_muons; ++i) 
     { // loop over reco muons 
       
-      MuonRef mu(muonCollection, i);
+      reco::MuonRef mu(muonCollection, i);
       if(!(mu->isGlobalMuon()) )
 	continue; // keep only global muons
       
@@ -320,6 +316,14 @@ void Wprime_muonreco::doMuons()
 
       getTracking(wpmu->tracker, *(mu->track()));
       getTracking(wpmu->global, *(mu->combinedMuon()) );
+
+      wpmu->GlobalMuonPromptTight = muon::isGoodMuon(*mu, muon::GlobalMuonPromptTight);
+      wpmu->TMLastStationLoose = muon::isGoodMuon(*mu, muon::TMLastStationLoose);
+      wpmu->TMLastStationTight = muon::isGoodMuon(*mu, muon::TMLastStationTight);
+      wpmu->AllGlobalMuons = muon::isGoodMuon(*mu, muon::AllGlobalMuons);
+      wpmu->AllStandAloneMuons = muon::isGoodMuon(*mu, muon::AllStandAloneMuons);
+      wpmu->AllTrackerMuons = muon::isGoodMuon(*mu, muon::AllTrackerMuons);
+
 
       ++N_muons;
       
@@ -348,24 +352,9 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu)
   TrackToTrackMap::const_iterator iTeV_1stHit;
   TrackToTrackMap::const_iterator iTeV_picky;
 
-  if(is21x(RECOversion) || is22x(RECOversion) || is31x(RECOversion))
-    {
-      iTeV_default = tevMap_default->find(mu->globalTrack());
-      iTeV_1stHit = tevMap_1stHit->find(mu->globalTrack());
-      iTeV_picky = tevMap_picky->find(mu->globalTrack());
-    }
-  else if(is20x(RECOversion))
-    {
-      iTeV_default = tevMap_default->find(mu->combinedMuon());
-      iTeV_1stHit = tevMap_1stHit->find(mu->combinedMuon());
-      iTeV_picky = tevMap_picky->find(mu->combinedMuon());
-    }
-  else
-    {
-      cerr << " RECOversion " << RECOversion << " not supported. Sorry! " 
-	   << endl;
-            abort();
-    }
+  iTeV_default = tevMap_default->find(mu->globalTrack());
+  iTeV_1stHit = tevMap_1stHit->find(mu->globalTrack());
+  iTeV_picky = tevMap_picky->find(mu->globalTrack());
 
   if(iTeV_default == tevMap_default->end() 
      || iTeV_1stHit == tevMap_1stHit->end() 
@@ -383,7 +372,7 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu)
 
 
 // do isolation
-void Wprime_muonreco::doIsolation(MuonRef mu,  wprime::Muon * wpmu)
+void Wprime_muonreco::doIsolation(reco::MuonRef mu,  wprime::Muon * wpmu)
 {
   // General Isolation
   const reco::IsoDeposit tkDep((*tkMapH)[mu]);
@@ -412,13 +401,16 @@ void Wprime_muonreco::doIsolation(MuonRef mu,  wprime::Muon * wpmu)
 void
 Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
+  if(firstEventInRun)
+    {
+      init_run(iEvent);
+      firstEventInRun = false;
+    }
+
   init_event();
   evt->evt_no = iEvent.id().event();
   evt->run_no = iEvent.id().run();
-
-
-  // should this be done only at begin-job/run instead???
-  realData = iEvent.isRealData();
+  evt->LS_no  = iEvent.id().luminosityBlock();
 
   getGenParticles(iEvent);
 
@@ -426,6 +418,8 @@ Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   if(genmu_acceptance)
     // # of processed events with gen-muon within det.acceptance
     ++(genMuTrig.Nev);
+
+  ++(run->Nproc_evt);
 
   getTriggers(iEvent);
 
@@ -446,42 +440,25 @@ Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 void Wprime_muonreco::init_histograms()
 {
   string common_desc = " - UserCode/CMGWPrimeGroup version " + software_version;
-  string tree_title = "Job/file info" + common_desc;
+  string tree_title = "Job info" + common_desc;
   tree_job = fs->make<TTree>("jobinfo", tree_title.c_str());
+  tree_title = "Run info" + common_desc;
+  tree_run = fs->make<TTree>("runinfo", tree_title.c_str());
   tree_title = "Wprime kinematic info per event" + common_desc;
   tree_event = fs->make<TTree>("wprime", tree_title.c_str());
+
   tree_job->Branch("job", "wprime::JobInfo", &job, 8000, 2);
+  tree_run->Branch("run", "wprime::RunInfo", &run, 8000, 2);
   tree_event->Branch("wp", "wprime::Event", &evt, 8000, 2);
 }
 
 const string Wprime_muonreco::INVALID_RELEASE = "invalid release number";
 
-bool Wprime_muonreco::is21x(const string & release_string)
+// initialize run info
+void Wprime_muonreco::init_run(const edm::Event& iEvent)
 {
-  return (release_string.find("CMSSW_2_1_") != string::npos);
-}
-
-bool Wprime_muonreco::is31x(const string & release_string)
-{
-  return (release_string.find("CMSSW_3_1_") != string::npos);
-}
-
-bool Wprime_muonreco::is22x(const string & release_string)
-{
-  return (release_string.find("CMSSW_2_2_") != string::npos);
-}
-
-bool Wprime_muonreco::is20x(const string & release_string)
-{
-  return (release_string.find("CMSSW_2_0_") != string::npos);
-}
-
-// initialize job info
-void Wprime_muonreco::init_run()
-{
-  N_triggers = 0; realData = false;
-  HLTversion = RECOversion = INVALID_RELEASE;
-  init_histograms();
+  realData = iEvent.isRealData();
+  check_trigger(iEvent);
 }
 
 // initialize event info
@@ -489,20 +466,20 @@ void Wprime_muonreco::init_event()
 {
   gen_muons.clear();
   N_muons = N_all_muons = 0;
-  genmu_acceptance = muL1_acceptance = muHLT_acceptance = false;
+  genmu_acceptance = false;
   met_x = met_y = met = 0.0;
 
   evt->mu_mc->Clear(); evt->neu_mc->Clear(); 
   evt->w_mc->Clear(); evt->wp_mc->Clear(); 
   evt->mu->Clear(); evt->jet->Clear();
 
-  evt->HLT_L1MuOpen = evt->HLT_L1Mu = evt->HLT_Mu3 = evt->HLT_Mu5 =
-    evt->HLT_Mu9 = false;
+  evt->reset_triggers();
+ 
 }
 
 
 // ------------ method called once each job just before starting event loop  ----
-void Wprime_muonreco::beginJob(const edm::EventSetup&)
+void Wprime_muonreco::beginJob()
 {
   const char * _path = getenv("CMSSW_BASE");
   const char * _filename = "/src/UserCode/CMGWPrimeGroup/VERSION";
@@ -528,15 +505,49 @@ void Wprime_muonreco::beginJob(const edm::EventSetup&)
       cout << " Extracted version: " << software_version << endl;
     }
 
-  init_run();
+  HLTversion = RECOversion = INVALID_RELEASE;
 
+  genMuTrig.clear(); MuTrig.clear();
+  init_histograms();
+ 
+}
+
+void Wprime_muonreco::endRun(edm::Run const &, edm::EventSetup const &)
+{
+  cout << " Wprime_muonreco::endRun: completed run " << run->run_no 
+       << ", processed " << run->Nproc_evt << " events " << endl;
+  tree_run->Fill();
+}
+
+void Wprime_muonreco::beginRun(edm::Run const & iRun, 
+			       edm::EventSetup const & iSetup)
+{
+  firstEventInRun = true;
+
+  HLTConfigProvider hltConfig;
+  bool changed(true);
+  if(! hltConfig.init(iRun, iSetup, HLTTag_.process(), changed))
+    {
+      cerr << "  -- Failed to init HLT Config" << endl; 
+      abort(); // what is the proper way of handling this??? skip run?
+    }
+ 
+  triggerNames = hltConfig.triggerNames();
+  N_triggers = hltConfig.size();
+  run->HLTmenu = hltConfig.tableName();
+
+  run->run_no = iRun.run(); 
+  run->Nproc_evt = 0;
+
+  cout << "\n Run # " << run->run_no << " recorderd with HLT menu " 
+       << run->HLTmenu << endl;
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void Wprime_muonreco::endJob() {
 
-    printSummary();    
-    tree_job->Fill();
+  printSummary();
+  tree_job->Fill();
 }
 
 // print summary info over full job
@@ -547,13 +558,16 @@ void Wprime_muonreco::printSummary() const
        << " within |eta| < " << detmu_acceptance  << endl;
   
   std::ostringstream description; 
-  description << " Trigger efficiencies for events\n w/ gen-muon within det. acceptance (" << genMuTrig.Nev << " events processed) :";
+  string disclaimer = " WITHOUT confirming that all trigger paths have been enabled for all runs";
+  description << " Trigger efficiencies for events\n w/ gen-muon within det. acceptance (" << genMuTrig.Nev << " events processed)\n";
+  description<< disclaimer << endl;
   if(!realData)
     printSummary2(genMuTrig, description.str());
 
   description.str(""); // interesting way to clear the description content...
   description << " Trigger efficiencies for all events (" << MuTrig.Nev 
-		<< " events processed) :";
+		<< " events processed)\n";
+  description<< disclaimer << endl;
   printSummary2(MuTrig, description.str());
 }
 
@@ -577,25 +591,24 @@ void Wprime_muonreco::printSummary2(const trigEff & trig,
   cout << endl;
 }
 
-// initialize trigger structure
-void Wprime_muonreco::init_trigger(const edm::Handle<edm::TriggerResults> & 
-				   hltresults)
+// check trigger is there (at beginRun)
+void Wprime_muonreco::check_trigger(const edm::Event & iEvent)
 {
-  N_triggers = hltresults->size();
-  triggerNames.init(*hltresults);
-
-  for (unsigned int itrig = 0; itrig != N_triggers; ++itrig)
-    {
-      string trigName = triggerNames.triggerName(itrig);
-      // the trigger class name (i.e. Muon) should be release-dependent ???
-      if(trigName.find("Mu") != string::npos) // in 21x
-	//      if(trigName.find("HLT1Muon") != string::npos) // in 20x
-	{
-	  if(!realData)genMuTrig.trigger_count[trigName] = 0;
-	  MuTrig.trigger_count[trigName] = 0;
-	}
+  edm::Handle<edm::TriggerResults> hltresults;
+  iEvent.getByLabel(HLTTag_,hltresults);
+  
+  if (! hltresults.isValid() ) 
+    { 
+      cerr << "  -- No HLTRESULTS" << endl; 
+      abort(); // what is the proper way of handling this??? skip run?
     }
-
+    
+  const edm::Provenance & prov = iEvent.getProvenance(hltresults.id());
+  HLTversion = prov.releaseVersion();
+  cout << " CMSSW release used to produce trigger decisions: "
+       << HLTversion << endl;
+  
+  run->HLTversion = HLTversion;
 }
 
 
