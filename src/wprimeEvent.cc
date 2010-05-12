@@ -21,9 +21,15 @@ Event::~Event()
 }
 
 
+RunInfo::RunInfo()
+{
+  HLTmenu = HLTversion = "invalid"; run_no = Nproc_evt = -999;
+}
+RunInfo::~RunInfo(){}
+
 JobInfo::JobInfo()
 { 
-  HLTversion = RECOversion = sample = "invalid"; Nprod_evt = 0;
+  RECOversion = sample = "invalid"; Nprod_evt = 0;
 }
 JobInfo::~JobInfo(){}
 

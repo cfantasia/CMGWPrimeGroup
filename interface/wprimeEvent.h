@@ -16,11 +16,9 @@ namespace wprime{
 /// class containing per-job (or file) Wprime info
 class JobInfo : public TObject {
  public: 
-  /// HLT version
-   std::string HLTversion;
    /// RECO version
    std::string RECOversion;
-   /// sample type (e.g. QCD50_80)
+   /// sample type (e.g. "QCD50_80" or "Spring10 collisions")
    std::string sample;
    /// # of events produced BEFORE filtering
    Int_t Nprod_evt;
@@ -28,8 +26,27 @@ class JobInfo : public TObject {
    JobInfo();
    ~JobInfo();
 	  
-    ClassDef(JobInfo, 1);
+    ClassDef(JobInfo, 1)
 
+};
+
+/// class containing per-run Wprime info
+class RunInfo : public TObject {
+ public: 
+   /// HLT version
+   std::string HLTversion;
+   /// HLT menu (ConfDB) name
+   std::string HLTmenu;
+   /// run number
+   Int_t run_no;
+   /// # of events processed
+   Int_t Nproc_evt;
+
+   RunInfo();
+   ~RunInfo();
+	  
+    ClassDef(RunInfo, 1)
+      
 };
 
 /// class containing info for MC-truth particles
@@ -61,12 +78,20 @@ class Track : public TObject {
    Int_t q;
    /// chi^2
    Float_t chi2;
+   /// d0 
+   Float_t d0;
+   /// uncertainty on d0 
+   Float_t dd0;
    /// uncertainty on pt
    Float_t dpt;
    /// uncertainty on q/p
    Float_t dq_over_p;
    /// Ndof
    Int_t ndof;
+   /// # of siStrip layers used by fit
+   Int_t Nstrip_layer;
+   /// # of pixel layers used by fit
+   Int_t Npixel_layer;
    /// # of tracker-only hits used by fit
    Int_t Ntrk_hits;
    /// # of total (ie. tracker + muon) hits used by fit
@@ -98,7 +123,15 @@ class Muon : public TObject {
    Track tracker;
    Track global;
    Track tev_1st;
-    
+
+   // quality flags
+   Bool_t GlobalMuonPromptTight;
+   Bool_t TMLastStationLoose;
+   Bool_t TMLastStationTight;
+   Bool_t AllGlobalMuons;
+   Bool_t AllStandAloneMuons;
+   Bool_t AllTrackerMuons;
+
    Muon();
    ~Muon();
     
@@ -113,14 +146,23 @@ class Event : public TObject {
    Int_t evt_no;
    /// run #
    Int_t run_no;
+   /// luminosity section (aka block)
+   Int_t LS_no;
      
-   /// trigger decisions
-   Bool_t HLT_L1MuOpen;
-   Bool_t HLT_L1Mu;
-   Bool_t HLT_Mu3;
-   Bool_t HLT_Mu5;
-   Bool_t HLT_Mu9;
+   /// trigger decisions: -1: did not run, 0: fail, 1: accept
+   signed char HLT_L1MuOpen;
+   signed char HLT_L1Mu;
+   signed char HLT_Mu3;
+   signed char HLT_Mu5;
+   signed char HLT_Mu9;
+   signed char HLT_L2Mu5;
+   signed char HLT_L2Mu9;
+   signed char HLT_L2Mu11;
    
+   
+   void reset_triggers()
+   {HLT_L1MuOpen = HLT_L1Mu = HLT_Mu3 = HLT_Mu5 = HLT_Mu9 = HLT_L2Mu5
+       = HLT_L2Mu9 = HLT_L2Mu11 = -1;}
    /// Particle-Flow MET
    TVector2 pfmet;
 
