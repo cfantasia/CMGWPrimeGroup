@@ -103,7 +103,7 @@ bool PassedHLT(const wprime::Event* ev)
 #endif
   
   // here the triggers that are to be used
-  bool HLT = ev->HLT_Mu9;
+  bool HLT = (ev->HLT_Mu9 == 1);
   return HLT;
 }//-------PassedHLT()
 
