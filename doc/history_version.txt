@@ -1,3 +1,35 @@
+12-MAY-10 (Christos), V00-01-00
+===============================
+Several changes to be able to deal with Collisions10 data:
+o Switched to 3_5_8 as default working release
+  (minor modifications to deal with new location of include files, etc.)
+
+o Analyzer can now handle running over skims/list of files spanning 
+  several runs;  Trigger menu/names updated at beginRun;
+
+o Additional info added in root-tuples per run:
+  - HLT sw release and ConfDB menu name
+  - # of events processed/analyzed in run
+
+o Additional info added in root-tuple per muon track 
+  (for all tracking algorithms)
+   - d0 and delta-d0
+   - # of siStrip and pixel layers used by fit
+   - quality flags: GlobalMuonPromptTight, TMLastStationsLoose, 
+     TMLastStationsTight, AllGlobalMuons, AllStandAloneMuons, AllTrackerMuons
+
+o Additional info added in root-tuple per event
+   - New trigger bits: HLT_L2Mu5, HLT_L2Mu9, HLT_L2Mu11
+   - Changed trigger decisions from "bool" to "signed char", in order to
+     record three states: -1 (did not run), 0 (fail), 1 (accept); NB: triggers
+     that are disabled (prescale = 0) are still recorded as 0/fail 
+     (need to fix this)
+
+o Removed support for 2_0_x releases
+
+o Misc. cleanup
+
+
 22-APR-10 (Edgar, Christos), V00-00-85
 ======================================
 Cleanup of root-macros (contained in and driven by 
