@@ -320,6 +320,7 @@ void Wprime_muonreco::doMuons()
       wpmu->GlobalMuonPromptTight = muon::isGoodMuon(*mu, muon::GlobalMuonPromptTight);
       wpmu->TMLastStationLoose = muon::isGoodMuon(*mu, muon::TMLastStationLoose);
       wpmu->TMLastStationTight = muon::isGoodMuon(*mu, muon::TMLastStationTight);
+      wpmu->TMLastStationAngTight = muon::isGoodMuon(*mu, muon::TMLastStationAngTight);
       wpmu->AllGlobalMuons = muon::isGoodMuon(*mu, muon::AllGlobalMuons);
       wpmu->AllStandAloneMuons = muon::isGoodMuon(*mu, muon::AllStandAloneMuons);
       wpmu->AllTrackerMuons = muon::isGoodMuon(*mu, muon::AllTrackerMuons);

@@ -1,3 +1,8 @@
+18-MAY-10 (Christos), V00-01-01
+===============================
+Added one more flag for each muon track: TMLastStationAngTight
+
+
 12-MAY-10 (Christos), V00-01-00
 ===============================
 Several changes to be able to deal with Collisions10 data:
@@ -15,8 +20,8 @@ o Additional info added in root-tuple per muon track
   (for all tracking algorithms)
    - d0 and delta-d0
    - # of siStrip and pixel layers used by fit
-   - quality flags: GlobalMuonPromptTight, TMLastStationsLoose, 
-     TMLastStationsTight, AllGlobalMuons, AllStandAloneMuons, AllTrackerMuons
+   - quality flags: GlobalMuonPromptTight, TMLastStationLoose, 
+     TMLastStationTight, AllGlobalMuons, AllStandAloneMuons, AllTrackerMuons
 
 o Additional info added in root-tuple per event
    - New trigger bits: HLT_L2Mu5, HLT_L2Mu9, HLT_L2Mu11

@@ -128,6 +128,7 @@ class Muon : public TObject {
    Bool_t GlobalMuonPromptTight;
    Bool_t TMLastStationLoose;
    Bool_t TMLastStationTight;
+   Bool_t TMLastStationAngTight;
    Bool_t AllGlobalMuons;
    Bool_t AllStandAloneMuons;
    Bool_t AllTrackerMuons;
