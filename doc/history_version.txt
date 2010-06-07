@@ -1,3 +1,13 @@
+07-JUN-10 (Christos), V00-01-02
+===============================
+Added few more parameters to the root-tuple 
+(inspired by the EWK requests on W->muon reconstruction needed for dta):
+
+- Per muon: # of stations contributing muon segments to track 
+- Per track(ing algorithm): # of (valid) pixel, siStrip hits used in track
+
+
+
 18-MAY-10 (Christos), V00-01-01
 ===============================
 Added one more flag for each muon track: TMLastStationAngTight
