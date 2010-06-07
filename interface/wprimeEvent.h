@@ -92,6 +92,10 @@ class Track : public TObject {
    Int_t Nstrip_layer;
    /// # of pixel layers used by fit
    Int_t Npixel_layer;
+   /// # of siStrip hits used by fit
+   Int_t NsiStrip_hits;
+   /// # of pixel hits used by fit
+   Int_t Npixel_hits;
    /// # of tracker-only hits used by fit
    Int_t Ntrk_hits;
    /// # of total (ie. tracker + muon) hits used by fit
@@ -113,6 +117,9 @@ class Muon : public TObject {
  public: 
   /// # of standalone-muon hits
    Int_t Nmu_hits;
+   /// # of chambers with matched segments 
+   /// (ie. # of muon stations contributing segments to the track)
+   Int_t Nmatches;
    /// isolation for different cone sizes;
    Float_t SumPtIso[N_CONESIZE];
    Float_t NtrkIso[N_CONESIZE];

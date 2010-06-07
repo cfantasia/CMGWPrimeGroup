@@ -294,6 +294,8 @@ void Wprime_muonreco::getTracking(wprime::Track & track, const reco::Track & p)
   track.ndof = int(p.ndof());
   track.Nstrip_layer = p.hitPattern().stripLayersWithMeasurement();
   track.Npixel_layer = p.hitPattern().pixelLayersWithMeasurement();
+  track.NsiStrip_hits = p.hitPattern().numberOfValidStripHits();
+  track.Npixel_hits = p.hitPattern().numberOfValidPixelHits();
   track.Ntot_hits = p.numberOfValidHits();
   track.Ntrk_hits = p.hitPattern().numberOfValidTrackerHits();
 }
@@ -313,6 +315,7 @@ void Wprime_muonreco::doMuons()
       new(recomu[N_muons]) wprime::Muon(); 
       wprime::Muon * wpmu = (wprime::Muon *) recomu[N_muons];
       wpmu->Nmu_hits = mu->standAloneMuon()->recHitsSize(); 
+      wpmu->Nmatches = mu->numberOfMatches();
 
       getTracking(wpmu->tracker, *(mu->track()));
       getTracking(wpmu->global, *(mu->combinedMuon()) );
