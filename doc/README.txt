@@ -13,7 +13,7 @@ o Setup a new working area (Default name: V102, release:
 CMSSW_3_5_8)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-01-02)
+V00-01-03)
 
 o Compile the code
 
@@ -66,8 +66,16 @@ root -b Make.C
 The macro will compile and load the following files 
 (directory: UserCode/CMGWPrimeGroup/root_macros):
 
-Flag: "detector_conditions"; Set to 1 (IDEAL) or 2 (50 pb^-1 for W and W',
-IDEAL for top, QCD and Z/DY) 
+(pre-a) run.C
+
+The driver that runs the rest of the functions.
+
+Flag #1: "detector_conditions"; 
+Set to 1 (IDEAL) or 2 (50 pb^-1 for W and W',IDEAL for top, QCD and Z/DY) 
+
+Flag #2: "option":
+Set to 1 (default) for muon-pt distribution
+Set to 2 for charge-asymmetry distribution
 
 
 (a) loadInputFiles.C 

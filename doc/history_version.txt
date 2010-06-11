@@ -1,3 +1,12 @@
+11-JUN-10 (Christos), V00-01-03
+===============================
+- Fix compilation problems with macro root_macros/Make.C when running on
+SLC5 machines
+
+- Fix warning showed up with new ROOT version/SLC5
+
+- Small documenation improvements
+
 07-JUN-10 (Christos), V00-01-02
 ===============================
 Added few more parameters to the root-tuple 
