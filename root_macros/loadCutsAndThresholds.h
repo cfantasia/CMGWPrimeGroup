@@ -50,7 +50,7 @@ const unsigned  nBinPtMu = 45; // 400; // 45; // 18; 200; 380;
 const float minPtMu = 100; // 100;
 const float  maxPtMu = 1500; // 800; 2000;
 // +++++++++++++++++++++++++Declare histograms 
-TH1F * hPT[Num_histo_sets][Num_trkAlgos] = {0};
+TH1F * hPT[Num_histo_sets][Num_trkAlgos] = {{0}};
 
 
 

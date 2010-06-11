@@ -396,7 +396,7 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
   gatherFileBasicInfo(file, ev, nevents, weight);
   
   // counter for (unweighted) events after cuts
-  int Num_surv_cut[Num_histo_sets][Num_trkAlgos] = {0};
+  int Num_surv_cut[Num_histo_sets][Num_trkAlgos] = {{0}};
   
   //Loop over events:
   for(int i = 0; i != nevents; ++i){ // event loop
@@ -511,7 +511,7 @@ void GetDistributionGeneric(const vector<wprime::InputFile>& files,
   
   //initialize counters to be used in studies
   float Nexp_evt = 0;
-  float Nexp_evt_cut[Num_histo_sets][Num_trkAlgos] = {0};
+  float Nexp_evt_cut[Num_histo_sets][Num_trkAlgos] = {{0}};
 
   //loop over background and signal files
   for(int tr = 0; tr != Nfiles; ++tr){//loop over files
