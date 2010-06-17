@@ -1,3 +1,10 @@
+17-JUN-10 (Christos), V00-01-05
+===============================
+#include change (FWCore/Framework/interface/TriggerNames.h to 
+FWCore/Common/interface/TriggerNames.h) in order to be able to install in
+36x release/process 36x data.
+
+
 11-JUN-10 (Christos), V00-01-03
 ===============================
 - Fix compilation problems with macro root_macros/Make.C when running on
