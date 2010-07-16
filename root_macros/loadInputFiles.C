@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <fstream>
 
 #include <TTree.h>
 #include <TFile.h>
@@ -11,187 +12,109 @@
 using std::string; using std::vector;
 using std::cout; using std::endl; using std::cerr;
 
-// default directory is top_level_dir_flag1 (corresponding to detector_conditions = 1 in Make.C)
-const string top_level_dir_flag1 = "/home/cleonido/wprime/v55/";
-const string top_level_dir_flag2 = "/home/cleonido/wprime/v66_50pb-1_hack/";
+void parseLine(const string & new_line, wprime::InputFile * in_file);
 
 string top_level_dir = "";
 
-int checkFiles(unsigned Nfiles, vector<wprime::InputFile> & files)
+void loadInputFiles(vector<wprime::InputFile> & files, float lumiPb)
 {
-  if(Nfiles != files.size())
+  ifstream topdir_file("UserCode/CMGWPrimeGroup/config/top_directory.txt");
+  getline(topdir_file, top_level_dir);
+  if(top_level_dir.empty())
     {
-      cerr << " *** Expected " << Nfiles << " files, got "
-	   << files.size() << " instead..." << endl;
-      return -1;
-    }  
-  return 0;
-}
-
-void loadInputFiles(string file_desc, vector<wprime::InputFile> & files, 
-		    float lumiPb, unsigned int detector_conditions)
-// see Make.C for description of detector_conditions flag
-{
-  // default is detector_conditions = 1
-  top_level_dir = top_level_dir_flag1;
-
-  int Nfiles = -1;
-  cout << "\n Processing " << file_desc << " files " << endl << endl;
-
-  // ==========================================================================
-  if(file_desc == "QCD")
-    {
-      const int NfilesQCD = 9;
-      Nfiles = NfilesQCD;
-      if(checkFiles(Nfiles, files))
-	return;
-
-      string low[NfilesQCD]= 
-	{"100", "150", "200", "300", "400", "600", "800", "1200", "1600"};
-      string high[NfilesQCD]=
-	{"150", "200", "300", "400", "600", "800","1200", "1600", "up"};
-  
-      for(int i = 0; i != Nfiles; ++i)
-	{
-	  files[i].pathname = top_level_dir + string("QCD_")+low[i]+string("_")+high[i]+string("_212_Ideal_Minv_ptGlobMu.root");
-	}
-      
-    } // QCD
-
-  // ==========================================================================
-  else if(file_desc == "Z")
-    {
-      const int NfilesZ = 11;
-      Nfiles = NfilesZ;        
-      if(checkFiles(Nfiles, files))
-	return;
-      
-      string lowZ[NfilesZ] = {"30", "110","200", "300", "400", "500", "600", "700", "800", "900", "1000"};
-  
-      for(int i = 0; i != Nfiles; ++i)
-	{
-	  files[i].pathname = top_level_dir + string("Z_212_Ideal_Minv_ptGlobalMu_pt")+lowZ[i]+string(".root");
-	}
-      
-    } // Z
-
-  // ==========================================================================
-  else if(file_desc == "W")
-    {
-      
-      if(detector_conditions == 1){
-
-	const int NfilesW = 22;
-	Nfiles = NfilesW;
-	if(checkFiles(Nfiles, files))
-	  return;
-	
-	string lowW[NfilesW]={"0", "200", "250", "300", "350", "400", "450", "500", "600", "700", "800", "900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900"};
-	string highW[NfilesW]={"200", "250", "300", "350", "400", "450", "500", "600", "700", "800", "900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900","2000"};
-	
-	for(int i = 0; i != Nfiles; ++i)
-	  files[i].pathname = top_level_dir + string("Wmunu_219_Ideal_Minv_")+lowW[i]+string("_")+highW[i]+string(".root");
-	
-      }
-      else if(detector_conditions == 2){
-	top_level_dir = top_level_dir_flag2;
-
-	const int NfilesW = 4;
-	Nfiles = NfilesW;
-	if(checkFiles(Nfiles, files))
-	  return;
-	
-	string index[NfilesW]={"1", "2", "3", "4"};
-	
-	for(int i = 0; i != Nfiles; ++i)
-	  files[i].pathname = top_level_dir + string("Wmunu_2212_50pb-1_") +index[i] +
-	    string(".root");
-	
-      }
-     
-    } // W
-  // ==========================================================================
-  else if(file_desc == "Top")
-    {
-      const int NfilesTop = 1;
-      Nfiles = NfilesTop;
-      if(checkFiles(Nfiles, files))
-	return;
-
-      files[0].pathname = top_level_dir + string("TTbar_Minv_PtMuGlobal.root");
-      
-    } // Top
-  // ==========================================================================
-  else if(file_desc == "wprime10"  || file_desc == "wprime15" ||
-	  file_desc == "wprime20")
-    {
-      if(detector_conditions == 2)
-	top_level_dir = top_level_dir_flag2;
-
-      const int NfilesWprime = 1;
-      Nfiles = NfilesWprime;
-      if(checkFiles(Nfiles, files))
-	return;
-
-      if(file_desc == "wprime10")
-	 files[0].pathname = top_level_dir + string("wprime_1TeV.root");
-      else if(file_desc == "wprime15")
-	files[0].pathname = top_level_dir + string("wprime_1.5TeV.root");
-      else if(file_desc == "wprime20")
-	files[0].pathname = top_level_dir + string("wprime_2TeV.root");
-      
-    } // Top
-  // ==========================================================================
-  else
-    {
-      cerr << " Unknown file description " << file_desc << endl;
+      cerr << " *** Failed to load top level directory! " << endl;
       return;
     }
 
-  // ==========================================================================
+  cout << "\n Reading root-tuples from directory " << top_level_dir << endl;
+  cout << " Applying weights to get distributions for " << lumiPb << " pb^-1"
+       << endl << endl;
 
-  for(int i = 0; i != Nfiles; ++i)
-    { // loop over input files
+  ifstream in("UserCode/CMGWPrimeGroup/config/samples_cross_sections.txt");
+  string new_line; wprime::InputFile * new_file = 0;
+  while(getline(in, new_line))
+    {
+      // if DONE, we are done!
+      if(new_line == "DONE")break;
 
-      string pathname = files[i].pathname;
-      files[i].weight = lumiPb*(files[i].x_sect)/(files[i].Nprod_evt);
+      if(new_line.find("samplename = ") != string::npos)
+	// new file found! create structure to put in info
+	new_file = new wprime::InputFile();
+      
+      if(!new_line.empty())
+	parseLine(new_line, new_file);
+      else
+	{
+	  new_file->weight = lumiPb*(new_file->x_sect)
+	    /(new_file->Nprod_evt);
+	  cout << "; Weight to be applied on " << new_file->samplename
+	       << " sample = " << new_file->weight << endl << endl;
+	  // all info should now be logged in; check!
+	  new_file->checkFile();
+	  // if we made it here, everything looks good: add to vector of MC samples
+	  files.push_back(*new_file);
+	  // release memory
+	  delete new_file;
+	}
+    }
+}
+
+void parseLine(const string & new_line, wprime::InputFile * in_file)
+{
+  unsigned int i = 0;
+  i = new_line.find("samplename = ");
+  if(i != string::npos)
+    {
+      in_file->samplename = new_line.substr(13, new_line.length() - 13);
+      return;
+    }
+
+  i = new_line.find("description = ");
+  if(i != string::npos)
+    {
+      in_file->description = new_line.substr(14, new_line.length() - 14);
+      return;
+    }
+
+  i = new_line.find("pathname = ");
+  if(i != string::npos)
+    {
+      string pathname = top_level_dir + new_line.substr(11, new_line.length() - 11);
+      in_file->pathname = pathname;
 
       TFile * file = new TFile(pathname.c_str());
       if(!(file->IsOpen()))
 	{
 	  cerr <<" *** Missing file: "<< pathname << " !!! "<<endl; 
-	  continue;
+	  return;
 	}
-      files[i].tree = (TTree *) file->Get("StdMu/wprime");
-      if(! files[i].tree->GetBranch("wp"))
+      in_file->tree = (TTree *) file->Get("StdMu/wprime");
+      if(! in_file->tree->GetBranch("wp"))
 	{
 	  cerr << " *** Can't find wp branch in file: " << pathname<< endl;
-	  files[i].tree = 0;
-	  continue;
+	  in_file->tree = 0;
+	  return;
 	}
-      TTree * jb = (TTree *) file->Get("StdMu/jobinfo");
-      if(! jb->GetBranch("job"))
-	{
-	  cerr << " *** Can't find job branch in file: " << pathname<< endl;
-	  continue;
-	}
-      wprime::JobInfo * job = new wprime::JobInfo();
-      jb->SetBranchAddress("job", &job); jb->GetEntry(0);
-
-      cout << " Opened file: " << job->sample;
-      //      cout << " RECO version = " << job->RECOversion
-      //	   << " HLT version = " << job->HLTversion << endl;
-      cout << ",  # of entries = " << files[i].tree->GetEntries() 
-	   << ", weight = " << files[i].weight << endl;
-
-      files[i].description = job->sample;
-
-      if(files[i].Nprod_evt != job->Nprod_evt)
-	cout << " *** Oooops! ROOT file has Nprod_evt = " << job->Nprod_evt
-	     << ", expected to find " << files[i].Nprod_evt << endl;
       
+      cout << " Opened file: " << in_file->samplename;
+      cout << " (" << in_file->description << ") " << endl;
+      cout << " # of entries = " << in_file->tree->GetEntries();
 
-    } // loop over input files
-      
-  return;
+      return;
+    }
+
+  i = new_line.find("x-section = ");
+  if(i != string::npos)
+    {
+      in_file->x_sect = atof(new_line.substr(12, new_line.length() - 12).c_str());
+      return;
+    }
+
+  i = new_line.find("Nprod_evt = ");
+  if(i != string::npos)
+    {
+      in_file->Nprod_evt = atoi(new_line.substr(12, new_line.length() - 12).c_str());
+      return;
+    }
+  
 }
