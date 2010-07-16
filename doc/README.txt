@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V105, release:
+o Setup a new working area (Default name: V110, release:
 CMSSW_3_6_3)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-01-05)
+V00-01-10)
 
 o Compile the code
 
@@ -25,19 +25,13 @@ location of the input file and run.
 
 
 
-NB: Custom ROOT-tuples produced with 
+NB: Custom ROOT-tuples produced with 31x (Spring10 STARTUP) can be found 
 
-(a) 21x IDEAL RECO for W' and bacgkround samples with V00-00-50 can be
-found at /castor/cern.ch/user/c/cleonido/v55/
+(a) in /castor/cern.ch//user/g/goys/Wprime/3_6_1/Filter/ for 
+filtered (muon pt>100 GeV) bacgkround 
 
-(b) 22x 50pb^-1 RECO for W' and W with V00-00-67 can be found at
- /castor/cern.ch/user/c/cleonido/v66_50pb-1_hack/
-
-The "hack" refers to the reversion of this format change:
-http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/CMGWPrimeGroup/interface/wprimeEvent.h?r1=1.2&r2=1.3
-so that we can combine the mis-aligned root-tuples with the ideal
-non-W background in (a) above
-
+(b) in /castor/cern.ch/user/d/dsperka/wprime_munu/Spring10MC/ for signal
+(Wprime->mu nu) for masses: 0.8, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5 and 2.0 TeV
 
 
 
@@ -66,29 +60,23 @@ root -b Make.C
 The macro will compile and load the following files 
 (directory: UserCode/CMGWPrimeGroup/root_macros):
 
-(pre-a) run.C
+(a) run.C
 
 The driver that runs the rest of the functions.
 
-Flag #1: "detector_conditions"; 
-Set to 1 (IDEAL) or 2 (50 pb^-1 for W and W',IDEAL for top, QCD and Z/DY) 
-
-Flag #2: "option":
+"option":
 Set to 1 (default) for muon-pt distribution
 Set to 2 for charge-asymmetry distribution
 
 
-(a) loadInputFiles.C 
+(b) loadInputFiles.C 
 
 Comment: loads input files (W' and W, QCD, Z/DY, ttbar). Location of
-top-level directory with input files to be specified with string
-top_level_dir_flag1 (_flag2) at top of file. 
-
-(b) loadCrossSections.C
-
-Comment: must update # of produced events if using a different MC
-production. This is the place to modify the cross-section if need to study
-systematic effects.
+top-level directory with input files to be specified in text file 
+top_directory.txt (located in UserCode/CMGWPrimeGroup/config/). The
+parameters for all input MC files (description, cross-section, # of events
+produced etc), can be found in text file samples_cross_sections.txt (in 
+the same directory). 
 
 (c) loadCutsAndThresholds.C (.h)
 

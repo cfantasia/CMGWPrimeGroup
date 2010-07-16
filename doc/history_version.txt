@@ -1,3 +1,18 @@
+16-JUL-10 (Christos), V00-01-10
+===============================
+Adapted code to deal with new Spring10 MC samples at sqrt(s) = 7 TeV. 
+
+ROOT-tuples (made with V00-01-05) can be found in castor and should be
+copied into directory specifed in text/configuration file
+UserCode/CMGWPrimeGroup/config/top_directory.txt (must be edited by user)
+
+Description of MC samples, cross-sections, # of events, etc can be found
+in text/configuration file
+UserCode/CMGWPrimeGroup/config/samples_cross_sections.txt 
+
+More details at UserCode/CMGWPrimeGroup/doc/README.txt
+
+
 17-JUN-10 (Christos), V00-01-05
 ===============================
 #include change (FWCore/Framework/interface/TriggerNames.h to 
