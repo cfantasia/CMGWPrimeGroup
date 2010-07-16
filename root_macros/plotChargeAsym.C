@@ -197,18 +197,18 @@ void getHistos(TFile * _file0, string algo, bool plus_flag)
   if(badHisto(top, "Top"))
     return;
   
-  string histo10 = "wprime10/" + histo;
+  string histo10 = "wprime1.0/" + histo;
   wp10 = (TH1F* )_file0->Get(histo10.c_str());
-  if(badHisto(wp10, "wprime10"))
+  if(badHisto(wp10, "wprime1.0"))
     return;
   
-  string histo15 = "wprime15/" + histo;
+  string histo15 = "wprime1.5/" + histo;
   wp15 = (TH1F* )_file0->Get(histo15.c_str());
-  if(badHisto(wp15, "wprime15"))
+  if(badHisto(wp15, "wprime1.5"))
     return;
   
-  string histo20 = "wprime20/" + histo;
+  string histo20 = "wprime2.0/" + histo;
   wp20 = (TH1F* )_file0->Get(histo20.c_str());
-  if(badHisto(wp20, "wprime20"))
+  if(badHisto(wp20, "wprime2.0"))
     return;
 }

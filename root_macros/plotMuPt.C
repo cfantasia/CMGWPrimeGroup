@@ -12,11 +12,15 @@ using std::string; using std::cout; using std::endl;
 
 
 string set_cuts[5] = {"all", "1mu", "iso", "jveto", "qual"};
-string desc[5] = {"Global muons, no cuts", 
-		  "Global muons, after one-muon-only requirement",
-		  "Global muons, after isolation cut", 
-		  "Global muons, after jet-activity veto", 
-		  "Global muons, after quality cuts"};
+
+// select tracking algorithm
+// 1: global muons, 2: tracker-only, 3: tracker + 1st muon station
+const unsigned tracking_option = 3;
+
+string cut_desc[5] = {", no cuts", ", after one-muon-only requirement",
+		      ", after isolation cut", 
+		      ", after jet-activity veto", 
+		      ", after quality cuts"};
 
 void doPlots(unsigned i, TFile * _file0);
 
@@ -51,11 +55,30 @@ void doPlots(unsigned i, TFile * _file0)
 
   //  gStyle->Reset();
   gStyle->SetFillColor(1);
-  string algo = "glb"; 
+
+
+  string algo; string desc;
+  if (tracking_option == 1)
+    {
+      algo = "glb"; // global muons
+      desc =  "Global muons";
+    }
+  else if (tracking_option == 2)
+    {
+      algo = "trk"; // tracker-only muons
+      desc =  "Tracker-only muons";
+    }
+  else if (tracking_option == 3)
+    {
+      algo = "tev"; // tracker + 1st muon-station muons
+      desc =  "TPFMS muons";
+    }
+
+  desc += cut_desc[i] + " (100 pb^{-1})";
 
   TCanvas * c1 = new TCanvas();
   c1->SetLogy();
-  THStack *hs = new THStack("hs",desc[i].c_str());  
+  THStack *hs = new THStack("hs",desc.c_str());  
 
   string histo = "hPT" + algo + "_" + set_cuts[i];
   string histoW = "W/" + histo;
@@ -78,19 +101,19 @@ void doPlots(unsigned i, TFile * _file0)
   if(badHisto(top, "Top"))
     return;
 
-  string histo10 = "wprime10/" + histo;
+  string histo10 = "wprime1.0/" + histo;
   TH1F * wp10 = (TH1F* )_file0->Get(histo10.c_str());
-  if(badHisto(wp10, "wprime10"))
+  if(badHisto(wp10, "wprime1.0"))
     return;
 
-  string histo15 = "wprime15/" + histo;
+  string histo15 = "wprime1.5/" + histo;
   TH1F * wp15 = (TH1F* )_file0->Get(histo15.c_str());
-  if(badHisto(wp15, "wprime15"))
+  if(badHisto(wp15, "wprime1.5"))
     return;
 
-  string histo20 = "wprime20/" + histo;
+  string histo20 = "wprime2.0/" + histo;
   TH1F * wp20 = (TH1F* )_file0->Get(histo20.c_str());
-  if(badHisto(wp20, "wprime20"))
+  if(badHisto(wp20, "wprime2.0"))
     return;
 
   top->SetLineColor(kMagenta);

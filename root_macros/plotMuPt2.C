@@ -11,7 +11,7 @@ using std::string; using std::cout; using std::endl;
 
 // select tracking algorithm
 // 1: global muons, 2: tracker-only, 3: tracker + 1st muon station
-const unsigned tracking_option = 1;
+const unsigned tracking_option = 3;
 
 // algorithm description
 string algo; 
@@ -47,21 +47,22 @@ void plotMuPt2()
     {
       algo = "glb"; // global muons
       if(plot_without_qual_cuts)
-	desc =  "Global muons, before quality cuts, ideal detector";
+	desc =  "Global muons, before quality cuts";
       else
-	desc =  "Global muons, after quality cuts, ideal detector";
+	desc =  "Global muons, after quality cuts";
 
     }
   else if (tracking_option == 2)
     {
       algo = "trk"; // tracker-only muons
-      desc =  "Tracker-only muons"; 	
+      desc =  "Tracker-only muons, after quality cuts";
     }
   else if (tracking_option == 3)
     {
       algo = "tev"; // tracker + 1st muon-station muons
-      desc =  "TPFMS muons"; 	
+      desc =  "TPFMS muons, after quality cuts";
     }
+  desc += " (STARTUP, 100 pb^{-1})";
   doPlots(_file0);
 }
 
@@ -107,19 +108,19 @@ void doPlots(TFile * _file0)
   if(badHisto(top, "Top"))
     return;
 
-  string histo10 = "wprime10/" + histo;
+  string histo10 = "wprime1.0/" + histo;
   TH1F * wp10 = (TH1F* )_file0->Get(histo10.c_str());
-  if(badHisto(wp10, "wprime10"))
+  if(badHisto(wp10, "wprime1.0"))
     return;
 
-  string histo15 = "wprime15/" + histo;
+  string histo15 = "wprime1.5/" + histo;
   TH1F * wp15 = (TH1F* )_file0->Get(histo15.c_str());
-  if(badHisto(wp15, "wprime15"))
+  if(badHisto(wp15, "wprime1.5"))
     return;
 
-  string histo20 = "wprime20/" + histo;
+  string histo20 = "wprime2.0/" + histo;
   TH1F * wp20 = (TH1F* )_file0->Get(histo20.c_str());
-  if(badHisto(wp20, "wprime20"))
+  if(badHisto(wp20, "wprime2.0"))
     return;
 
   // this is the total background distribution (W + QCD + top + Z/DY)
@@ -132,6 +133,7 @@ void doPlots(TFile * _file0)
   bgd->Add(w);
 
   bgd->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
+  if(bgd->GetMinimum() < 0.01)bgd->SetMinimum(0.01);
   bgd->Draw();
  
 
