@@ -42,12 +42,12 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
 
 
 //--------------------------------------------------------------------------
-void printSummary_MuonPt(ofstream & out, const string& dir, 
+void printSummary_MuonPt(ofstream & out, const string& sample, 
                          float Nexp_evt, 
 			 const float Nexp_evt_cut[][Num_trkAlgos])
 //------------------------------------------------------------------------
 {
-    cout << "\n Sample: " << dir << endl;
+    cout << "\n Sample: " << sample << endl;
     cout << " Total # of expected events = " << Nexp_evt << endl;
 
     for (int mual = 0; mual<Num_trkAlgos; ++mual){
@@ -56,7 +56,7 @@ void printSummary_MuonPt(ofstream & out, const string& dir,
 
 	//print in a txt file the final total number of events
 	if(i == Num_histo_sets - 1)
-	  out << algo_desc_long[mual] << " " << dir << " " 
+	  out << algo_desc_long[mual] << " " << sample << " " 
 	      << Nexp_evt_cut[i][mual] << endl;
 	
 	cout << " Cut # " << i << ": " << cuts_desc_long[i] 
@@ -336,13 +336,13 @@ void saveHistos_MuonChargePt()
 
 
 //------------------------------------------------------------------------
-void saveHistos(TFile * fout, string dir, int option)
+void saveHistos(TFile * fout, string sample, int option)
 {
 //------------------------------------------------------------------------
 
   fout->cd(); 
-  fout->mkdir(dir.c_str()); 
-  fout->cd(dir.c_str());
+  fout->mkdir(sample.c_str()); 
+  fout->cd(sample.c_str());
 
   if(option == 1) saveHistos_MuonPt();
   else if(option == 2) saveHistos_MuonChargePt();
@@ -494,8 +494,8 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
 
 
 //---------------------------------------------------------------------------
-void GetDistributionGeneric(const vector<wprime::InputFile>& files, 
-                            TFile *fout, string dir, ofstream & out, 
+void GetDistributionGeneric(const wprime::InputFile & file, 
+                            TFile *fout, ofstream & out, 
                             const int option = 1, 
 			    const bool highestPtMuonOnly = true)
 {
@@ -507,39 +507,32 @@ void GetDistributionGeneric(const vector<wprime::InputFile>& files,
   // Define histograms according to the type of study
   defineHistos(option);
   
-  int Nfiles = files.size();
-  
   //initialize counters to be used in studies
   float Nexp_evt = 0;
   float Nexp_evt_cut[Num_histo_sets][Num_trkAlgos] = {{0}};
 
-  //loop over background and signal files
-  for(int tr = 0; tr != Nfiles; ++tr){//loop over files
+  if(!file.tree)
+    return;
 
-    if(!files[tr].tree)
-      continue;
-    cout << " Processing sample " << files[tr].description << endl;
+  cout << "\n Processing sample " << file.description << endl;
     
-    if (option == 1 || option == 2) 
-      GetMuonPtDistribution(files[tr], Nexp_evt_cut, Nexp_evt,option,
-			    highestPtMuonOnly);
-    else 
-      {
-	cout << " Option " << option << " is invalid, quiting..." << endl;
-	abort();
-      }
-    
-  }//loop over files
-  
+  if (option == 1 || option == 2) 
+    GetMuonPtDistribution(file, Nexp_evt_cut, Nexp_evt,option,
+			  highestPtMuonOnly);
+  else 
+    {
+      cout << " Option " << option << " is invalid, quiting..." << endl;
+      abort();
+    }
   
   // Print the results if needed according to study case
   if (option == 1 || option == 2) 
-    printSummary_MuonPt(out, dir, Nexp_evt, Nexp_evt_cut);
+    printSummary_MuonPt(out, file.samplename, Nexp_evt, Nexp_evt_cut);
   else  
     cout << " Nothing to print for this study " << endl;
-
+  
   //save histograms according to study case
-  saveHistos(fout,dir,option);  
+  saveHistos(fout, file.samplename, option);  
 }
 
 
