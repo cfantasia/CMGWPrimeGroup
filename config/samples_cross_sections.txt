@@ -70,4 +70,10 @@ x-section = 0.0115
 pathname = wprime_2.0TeV.root
 Nprod_evt = 10100
 
+samplename = data
+description = Muon pt > 10 GeV skim, 255 nb^-1
+x-section = 1
+pathname = MuSkim_255nb.root
+Nprod_evt = 1
+
 DONE
