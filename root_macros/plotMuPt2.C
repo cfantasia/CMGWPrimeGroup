@@ -123,6 +123,11 @@ void doPlots(TFile * _file0)
   if(badHisto(wp20, "wprime2.0"))
     return;
 
+  string hdata = "data/" + histo;
+  TH1F * data = (TH1F*) _file0->Get(hdata.c_str());
+  if(badHisto(data, "data"))
+    return;
+
   // this is the total background distribution (W + QCD + top + Z/DY)
   TH1F * bgd = new TH1F("tot_bgd", desc.c_str(), 
 			top->GetNbinsX(), top->GetXaxis()->GetXmin(), 
@@ -132,9 +137,12 @@ void doPlots(TFile * _file0)
   bgd->Add(top);
   bgd->Add(w);
 
-  bgd->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
-  if(bgd->GetMinimum() < 0.01)bgd->SetMinimum(0.01);
-  bgd->Draw();
+  data->SetMarkerStyle(4);
+  data->SetMarkerSize(1.3);
+  data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
+  if(data->GetMinimum() < 0.01)data->SetMinimum(0.01);
+  data->Draw("e");
+  bgd->Draw("same");
  
 
 
@@ -164,6 +172,7 @@ void doPlots(TFile * _file0)
   lg->AddEntry(wp10, "W ' (1.0 TeV)", "F");
   lg->AddEntry(wp15, "W ' (1.5 TeV)", "F");
   lg->AddEntry(wp20, "W ' (2.0 TeV)", "F");
+  lg->AddEntry(data, "data (255 nb^{-1})", "LP");
   lg->Draw();
   
   string file; string file2;

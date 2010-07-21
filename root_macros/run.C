@@ -20,7 +20,8 @@ extern void loadInputFiles(vector<wprime::InputFile> & files, float lumiPb);
 
 void run()
 {
-  float lumiPb = 100; // in pb^-1
+  //  float lumiPb = 100; // in pb^-1
+  float lumiPb = 0.255; // in pb^-1
 
   TFile *fout = new TFile("Wprime_analysis.root","recreate");
 

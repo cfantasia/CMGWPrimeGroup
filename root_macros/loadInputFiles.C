@@ -45,8 +45,11 @@ void loadInputFiles(vector<wprime::InputFile> & files, float lumiPb)
 	parseLine(new_line, new_file);
       else
 	{
-	  new_file->weight = lumiPb*(new_file->x_sect)
-	    /(new_file->Nprod_evt);
+	  if(new_file->samplename != "data")
+	    new_file->weight = lumiPb*(new_file->x_sect)
+	      /(new_file->Nprod_evt);
+	  else
+	    new_file->weight = 1;
 	  cout << "; Weight to be applied on " << new_file->samplename
 	       << " sample = " << new_file->weight << endl << endl;
 	  // all info should now be logged in; check!

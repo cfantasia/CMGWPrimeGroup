@@ -116,6 +116,11 @@ void doPlots(unsigned i, TFile * _file0)
   if(badHisto(wp20, "wprime2.0"))
     return;
 
+  string hdata = "data/" + histo;
+  TH1F * data = (TH1F*) _file0->Get(hdata.c_str());
+  if(badHisto(data, "data"))
+    return;
+
   top->SetLineColor(kMagenta);
   z->SetLineColor(kCyan);
   qcd->SetLineColor(kBlack);
@@ -152,11 +157,16 @@ void doPlots(unsigned i, TFile * _file0)
 
   // this is needed when background is eliminated and the y-axis is linear (as opposed to log)
   if(hs->GetMaximum() < wp10->GetMaximum())hs->SetMaximum(wp10->GetMaximum());
+  if(data->GetMaximum() < wp10->GetMaximum())data->SetMaximum(wp10->GetMaximum());
   // this is needed when background is zero in the tails and wprime (say at 2.0 TeV) is not displayed
   if(hs->GetMinimum() < 0.01)hs->SetMinimum(0.01);
+  if(data->GetMinimum() < 0.01)data->SetMinimum(0.01);
 
-  hs->Draw();
-  hs->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
+  data->SetMarkerStyle(4);
+  data->SetMarkerSize(1.3);
+  data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
+  data->Draw("e");
+  hs->Draw("same");
   
   wp10->Draw("same");
   wp15->Draw("same");
@@ -173,6 +183,7 @@ void doPlots(unsigned i, TFile * _file0)
   lg->AddEntry(wp10, "W ' (1.0 TeV)", "F");
   lg->AddEntry(wp15, "W ' (1.5 TeV)", "F");
   lg->AddEntry(wp20, "W ' (2.0 TeV)", "F");
+  lg->AddEntry(data, "data (255 nb^{-1})", "LP");
   lg->Draw();
 
   string file = set_cuts[i] + ".gif";
