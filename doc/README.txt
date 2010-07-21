@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V110, release:
+o Setup a new working area (Default name: V111, release:
 CMSSW_3_6_3)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-01-10)
+V00-01-11)
 
 o Compile the code
 
@@ -25,7 +25,7 @@ location of the input file and run.
 
 
 
-NB: Custom ROOT-tuples produced with 31x (Spring10 STARTUP) can be found 
+NB#1 Custom ROOT-tuples produced with 31x (Spring10 STARTUP) can be found 
 
 (a) in /castor/cern.ch//user/g/goys/Wprime/3_6_1/Filter/ for 
 filtered (muon pt>100 GeV) bacgkround 
@@ -33,6 +33,9 @@ filtered (muon pt>100 GeV) bacgkround
 (b) in /castor/cern.ch/user/d/dsperka/wprime_munu/Spring10MC/ for signal
 (Wprime->mu nu) for masses: 0.8, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5 and 2.0 TeV
 
+NB#2 Custom ROOT-tuples produced with 36x for a muon skim with pt > 10 GeV
+can be found at:
+/castor/cern.ch/user/d/dsperka/wprime_munu/MuSkim_255nb.root
 
 
 =========================================================================
@@ -71,7 +74,7 @@ Set to 2 for charge-asymmetry distribution
 
 (b) loadInputFiles.C 
 
-Comment: loads input files (W' and W, QCD, Z/DY, ttbar). Location of
+Comment: loads input files (W' and W, QCD, Z/DY, ttbar, data). Location of
 top-level directory with input files to be specified in text file 
 top_directory.txt (located in UserCode/CMGWPrimeGroup/config/). The
 parameters for all input MC files (description, cross-section, # of events
