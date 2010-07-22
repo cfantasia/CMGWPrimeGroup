@@ -156,12 +156,12 @@ void doPlots(unsigned i, TFile * _file0)
   hs->Add(w);
 
   // this is needed when background is eliminated and the y-axis is linear (as opposed to log)
-  if(hs->GetMaximum() < wp10->GetMaximum())hs->SetMaximum(wp10->GetMaximum());
   if(data->GetMaximum() < wp10->GetMaximum())data->SetMaximum(wp10->GetMaximum());
   // this is needed when background is zero in the tails and wprime (say at 2.0 TeV) is not displayed
-  if(hs->GetMinimum() < 0.01)hs->SetMinimum(0.01);
-  if(data->GetMinimum() < 0.01)data->SetMinimum(0.01);
+  if(data->GetMinimum() < 0.00001)data->SetMinimum(0.00001);
 
+  if (i == 4)
+    data->SetTitle("TPFMS p_{T} distribution");
   data->SetMarkerStyle(4);
   data->SetMarkerSize(1.3);
   data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");

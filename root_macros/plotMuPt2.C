@@ -137,10 +137,11 @@ void doPlots(TFile * _file0)
   bgd->Add(top);
   bgd->Add(w);
 
+  data->SetTitle("TPFMS p_{T} distribution");
   data->SetMarkerStyle(4);
   data->SetMarkerSize(1.3);
   data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
-  if(data->GetMinimum() < 0.01)data->SetMinimum(0.01);
+  if(data->GetMinimum() < 0.00001)data->SetMinimum(0.00001);
   data->Draw("e");
   bgd->Draw("same");
  
