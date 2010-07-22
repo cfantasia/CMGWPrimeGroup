@@ -204,6 +204,13 @@ void CheckQuality(const wprime::Muon* mu,
   
   bool isHard = mu->tracker.p.Pt() >= pttrk_cut;
   bool checkqual = false;
+  // recommendation on muon-ID by muon POG: 
+  // - GlobalMuonPromptTight + Global + Tracker muon
+  // - # of hits in tracker track >= 11
+  // - |IP of tracker track| < 0.2 cm
+  bool muonID = mu->GlobalMuonPromptTight && (mu->tracker.Ntrk_hits >= 11)
+    && (TMath::Abs(mu->tracker.d0) < 0.2) && mu->AllTrackerMuons
+    && mu->AllGlobalMuons;
 
   checkqual = ((mu->global.chi2 / mu->global.ndof)<chi2_cut)
     && TMath::Abs(mu->global.p.Eta()) < muon_etacut;
@@ -211,7 +218,7 @@ void CheckQuality(const wprime::Muon* mu,
   // old value: muon's pt within range
   // new value: old value .AND. quality cuts
 
-  goodQual[0] = goodQual[0] && checkqual && isHard;
+  goodQual[0] = goodQual[0] && checkqual && isHard && muonID;
 
 
 
@@ -219,7 +226,7 @@ void CheckQuality(const wprime::Muon* mu,
 	       < chi2_cut)
     && TMath::Abs(mu->tracker.p.Eta()) < muon_etacut;
  
-  goodQual[1] = goodQual[1] && checkqual && isHard;
+  goodQual[1] = goodQual[1] && checkqual && isHard && muonID;
 
 
 
@@ -227,7 +234,7 @@ void CheckQuality(const wprime::Muon* mu,
 	       < chi2_cut) 
     && TMath::Abs(mu->tev_1st.p.Eta()) < muon_etacut;
 
-  goodQual[2] = goodQual[2] && checkqual && isHard;  
+  goodQual[2] = goodQual[2] && checkqual && isHard && muonID;
 
 }//------HasQuality
 
