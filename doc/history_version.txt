@@ -1,5 +1,14 @@
 22-JUL-10 (Christos), V00-01-11
 ===============================
+- Incorporated Muon POG recommendations in muon-selection cuts
+(loadCutsAndThresholds.C) 
+
+- Small adjustments in plot-making macros to include more Wprime mass
+points for illustration
+
+
+22-JUL-10 (Christos), V00-01-12
+===============================
 Added (muon skim) data ROOT-file corresponding to 255 nb^-1 (updated 
 files: config/samples_cross_sections.txt, root_macros/loadInputFiles.C,
 plotMuPt.C, plotMuPt2.C, run.C)

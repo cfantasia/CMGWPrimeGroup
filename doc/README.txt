@@ -13,7 +13,7 @@ o Setup a new working area (Default name: V111, release:
 CMSSW_3_6_3)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-01-11)
+V00-01-12)
 
 o Compile the code
 
