@@ -475,6 +475,38 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
       CheckQuality(theMu, fill_entry, PtTrackCut, Chi2Cut,Muon_Eta_Cut);
       tabulateMe(Num_surv_cut, cut_index, weight, theMu, fill_entry,
 		 option, accountme);
+
+#if dumpHighPtMuons
+      if(file.samplename == "data")
+	{
+	  if(theMu->tracker.p.Pt() > minPtMu)
+	    {
+	      cout << " Run # = " << ev->run_no << " Event # = " 
+		   << ev->evt_no << " LS = " << ev->LS_no << endl;
+	      cout << " glb pt = " << theMu->global.p.Pt()
+		   << " trk pt = " << theMu->tracker.p.Pt()
+		   << " tev pt = " << theMu->tev_1st.p.Pt() << endl;
+	      cout << " glb dpt = " << theMu->global.dpt
+		   << " trk pt = " << theMu->tracker.dpt
+		   << " tev pt = " << theMu->tev_1st.dpt << endl;
+	      cout << " eta =  " << theMu->tracker.p.Eta()
+		   << " phi = " << theMu->tracker.p.Phi() << endl;
+	      cout << " # of strip layers = " << theMu->tracker.Nstrip_layer << ", # of pixel layers = " << theMu->tracker.Npixel_layer << endl;
+	      cout << " # of strip hits = " << theMu->tracker.NsiStrip_hits
+		   << " # of pixel hits = " << theMu->tracker.Npixel_hits
+		   << " # of muon hits = " << theMu->Nmu_hits << endl;
+	      cout << " Global: " << theMu->AllGlobalMuons
+		   << " Tracker: " << theMu->AllTrackerMuons
+		   << " Standalone: " << theMu->AllStandAloneMuons
+		   << " Global prompt tight: " << theMu->GlobalMuonPromptTight << endl;
+	      cout << " Survives all cuts? ";
+	      for(int i = 0; i != Num_trkAlgos; ++i)
+		cout << algo_desc_short[i] << ": " << fill_entry[i]
+		     << " ";
+	      cout << endl << endl;
+	    }
+	}
+#endif
       
     }//muon loop
     
