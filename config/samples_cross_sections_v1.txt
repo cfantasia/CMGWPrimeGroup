@@ -17,10 +17,10 @@ pathname = Zmumu.root
 Nprod_evt = 2111269
 
 samplename = Top
-description = MC@NLO inclusive t-tbar
-x-section = 149.8
-pathname = TTbarNLO.root
-Nprod_evt = 993160
+description = PYTHIA inclusive t-tbar; using NLO cross-section
+x-section = 148.9
+pathname = TTbar.root
+Nprod_evt = 632010
 
 samplename = wprime0.8
 description = Wprime->munu, Mass = 0.8 TeV
