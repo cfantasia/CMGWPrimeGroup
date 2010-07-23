@@ -1,3 +1,17 @@
+23-JUL-10 (Christos), V00-01-14
+===============================
+(a) Switch default TTbar MC file to MC@NLO.
+New configuration: samples_cross_sections.txt
+(copy at samples_cross_sections_v2.txt)
+Old configuration: samples_cross_sections_v1.txt
+
+(b) Add (debug) flag for printing info on high-pt muons (flag
+dumpHighPtMuons to be set in loadCutsAndThresholds.h)
+
+(c) Add definition of relative muon isolation loadCutsAndThresholds.h/C;
+not used by default)
+
+
 22-JUL-10 (Christos), V00-01-13
 ===============================
 - Incorporated Muon POG recommendations in muon-selection cuts
