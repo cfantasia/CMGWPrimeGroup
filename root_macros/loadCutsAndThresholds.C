@@ -171,6 +171,22 @@ bool SumPtIsolation(const wprime::Muon* the_mu,
 }// SumPtIsolation
 
 
+// same as above for relative isolation
+//-------------------------------------------------------------------
+bool RelSumPtIsolation(const wprime::Muon* the_mu, 
+		    unsigned detR_iso_index,
+                    float rel_sum_pt_cut)
+{
+//-------------------------------------------------------------------
+#if debugmemore
+  cout << " Processing RelSumPtIsolation() " << endl;
+#endif
+
+  return (the_mu->SumPtIso[detR_iso_index]/the_mu->tracker.p.Pt())
+    <= rel_sum_pt_cut;
+}// SumPtIsolation
+
+
 
 // true if energetic Jet(s) found back to back with muon 
 //-------------------------------------------------------------------
