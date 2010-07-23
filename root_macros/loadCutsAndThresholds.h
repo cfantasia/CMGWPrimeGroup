@@ -44,6 +44,7 @@ const string cuts_desc_long[Num_histo_sets]= {"HLT_Mu9,", "Pt within range,",
 
 #define debugme  0
 #define debugmemore 0
+#define dumpHighPtMuons 0
 
 // +++++++++++++++++++++++++++++++muon-pt histogram parameters
 const unsigned  nBinPtMu = 45; // 400; // 45; // 18; 200; 380; 
@@ -135,6 +136,11 @@ bool OnlyOneHighTrackPtMuon(const wprime::Event* ev, float one_mu_pt_trkcut);
 bool SumPtIsolation(const wprime::Muon* the_mu, 
                     unsigned detR_iso_index,
                     float sum_pt_cut);
+
+// same as above for relative isolation
+bool RelSumPtIsolation(const wprime::Muon* the_mu, unsigned detR_iso_index,
+		       float rel_sum_pt_cut);
+
 
 // true if energetic Jet(s) found back to back with muon 
 bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh, float et_jet_cut,
