@@ -19,8 +19,6 @@
 
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
 
-#include "TH1F.h"
-#include "TH2F.h"
 #include "TFile.h"
 #include "TTree.h"
 
@@ -300,6 +298,19 @@ void Wprime_muonreco::getTracking(wprime::Track & track, const reco::Track & p)
   track.Ntrk_hits = p.hitPattern().numberOfValidTrackerHits();
 }
 
+// fill in with dummy values when there is no track
+void Wprime_muonreco::getNullTracking(wprime::Track & track)
+{
+  float wrong = -99999;
+  TVector3 p3(wrong, wrong, wrong);
+  track.p.SetVectM(p3, wrong);
+  track.q = wrong;
+  track.chi2 = track.d0 = track.dd0 = track.dpt = track.dq_over_p = wrong;
+  track.ndof = track.Nstrip_layer = track.Npixel_layer = 
+    track.NsiStrip_hits = track.Npixel_hits = track.Ntot_hits = 
+    track.Ntrk_hits = -1;
+}
+
 // do muon analysis
 void Wprime_muonreco::doMuons()
 {
@@ -347,6 +358,38 @@ void Wprime_muonreco::doMuons()
   
 }
 
+// get TMR track, from 
+// http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SUSYBSMAnalysis/Zprime2muAnalysis/src/MuonCocktails.cc?revision=1.1&view=markup
+const reco::TrackRef Wprime_muonreco::getTMR(const reco::TrackRef& trackerTrack,
+					     const reco::TrackRef& fmsTrack,
+					     const double cut) 
+{
+  double probTK  = 0;
+  double probFMS = 0;
+  
+  if (trackerTrack.isNonnull() && trackerTrack->numberOfValidHits())
+    probTK = muon::trackProbability(trackerTrack);
+  if (fmsTrack.isNonnull() && fmsTrack->numberOfValidHits())
+    probFMS = muon::trackProbability(fmsTrack);
+  
+  bool TKok  = probTK > 0;
+  bool FMSok = probFMS > 0;
+
+  if (TKok && FMSok) {
+    if (probFMS - probTK > cut)
+      return trackerTrack;
+    else
+      return fmsTrack;
+  }
+  else if (FMSok)
+    return fmsTrack;
+  else if (TKok)
+    return trackerTrack;
+  else
+    return reco::TrackRef();
+}
+
+
 // do TeV-muon analysis
 void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu)
 {
@@ -360,16 +403,30 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu)
   iTeV_1stHit = tevMap_1stHit->find(mu->globalTrack());
   iTeV_picky = tevMap_picky->find(mu->globalTrack());
 
-  if(iTeV_default == tevMap_default->end() 
-     || iTeV_1stHit == tevMap_1stHit->end() 
-     || iTeV_picky == tevMap_picky->end())
-    {
-      cout << "-Wprime_muonreco- Warning: No Tev muons found for this event !! "
-	   << endl; 
-      return;
-    }
+  if(iTeV_1stHit == tevMap_1stHit->end())
+    getNullTracking(wpmu->tpfms);
+  else
+    getTracking(wpmu->tpfms, *(iTeV_1stHit->val) );
 
-  getTracking(wpmu->tev_1st, *(iTeV_1stHit->val) );
+  if(iTeV_picky == tevMap_picky->end())
+    getNullTracking(wpmu->picky);
+  else
+    getTracking(wpmu->picky, *(iTeV_picky->val) );
+
+  reco::TrackRef cocktail = 
+    muon::tevOptimized(mu->combinedMuon(), mu->track(), *tevMap_default, 
+		       *tevMap_1stHit, *tevMap_picky);
+
+  if(cocktail.isNonnull())
+    getTracking(wpmu->cocktail, *cocktail);
+  else
+    getNullTracking(wpmu->cocktail);
+
+  reco::TrackRef tmr = getTMR(mu->track(), iTeV_1stHit->val);
+  if(tmr.isNonnull())
+    getTracking(wpmu->tmr, *tmr);
+  else
+    getNullTracking(wpmu->tmr);
 
 }
 
