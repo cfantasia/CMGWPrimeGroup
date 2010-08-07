@@ -126,10 +126,14 @@ class Muon : public TObject {
    Float_t ECALIso[N_CONESIZE];
    Float_t HCALIso[N_CONESIZE];
    // tracking information obtained with 
-   // tracker-only, global-fit or TeV-1st muon station algorithms 
+   // tracker-only, global-fit, TPFMS (tracker plus first muon station)
+   // picky, cocktail and TMR algorithms 
    Track tracker;
    Track global;
-   Track tev_1st;
+   Track tpfms;
+   Track picky;
+   Track cocktail;
+   Track tmr;
 
    // quality flags
    Bool_t GlobalMuonPromptTight;

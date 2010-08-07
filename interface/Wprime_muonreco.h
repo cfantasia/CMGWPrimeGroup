@@ -166,8 +166,18 @@ class Wprime_muonreco : public edm::EDAnalyzer
   // # of all reconstructed muons per event (included standalone-only)
   unsigned N_all_muons;
 
+// get TMR track, from 
+// http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SUSYBSMAnalysis/Zprime2muAnalysis/src/MuonCocktails.cc?revision=1.1&view=markup
+  const reco::TrackRef getTMR(const reco::TrackRef& trackerTrack,
+			      const reco::TrackRef& fmsTrack,
+			      const double cut = 4.0) ;
+
+
   // copy tracking info from reco::Track to wprime::Track
   void getTracking(wprime::Track & track, const reco::Track & p);
+
+  // fill in with dummy values when there is no track
+  void getNullTracking(wprime::Track & track);
 
   // initialize run info
   void init_run(const edm::Event& iEvent);
