@@ -1,3 +1,13 @@
+07-AUG-10 (Christos), V00-01-20
+===============================
+(a) Added more TeV (ie. high-pt) muon algorithms to root-tuple makes (muon
+structures0: picky, cocktail and TMR (DYT not added yet, available since
+380 release); Renamed "tev_1st" to more appropriate "tpfms".
+
+(b) Now keeping events for which TeV muon algorithms fail (~3% of real 
+data muons processed with 3_6_x having pt > 10 GeV)
+
+
 23-JUL-10 (Christos), V00-01-14
 ===============================
 (a) Switch default TTbar MC file to MC@NLO.
