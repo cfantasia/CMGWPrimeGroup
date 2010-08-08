@@ -403,30 +403,45 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu)
   iTeV_1stHit = tevMap_1stHit->find(mu->globalTrack());
   iTeV_picky = tevMap_picky->find(mu->globalTrack());
 
+  bool TeVfailed = false;
+
   if(iTeV_1stHit == tevMap_1stHit->end())
-    getNullTracking(wpmu->tpfms);
+    {
+      getNullTracking(wpmu->tpfms);
+      TeVfailed = true;
+    }
   else
     getTracking(wpmu->tpfms, *(iTeV_1stHit->val) );
 
   if(iTeV_picky == tevMap_picky->end())
-    getNullTracking(wpmu->picky);
+    {
+      getNullTracking(wpmu->picky);
+      TeVfailed = true;
+    }
   else
     getTracking(wpmu->picky, *(iTeV_picky->val) );
 
-  reco::TrackRef cocktail = 
-    muon::tevOptimized(mu->combinedMuon(), mu->track(), *tevMap_default, 
-		       *tevMap_1stHit, *tevMap_picky);
 
-  if(cocktail.isNonnull())
-    getTracking(wpmu->cocktail, *cocktail);
+  if(TeVfailed)
+    {
+      getNullTracking(wpmu->cocktail);
+    }
   else
-    getNullTracking(wpmu->cocktail);
+    {
+      reco::TrackRef cocktail = 
+	muon::tevOptimized(mu->combinedMuon(), mu->track(), 
+			   *tevMap_default, *tevMap_1stHit, 
+			   *tevMap_picky);
+      getTracking(wpmu->cocktail, *cocktail);
+    }
 
-  reco::TrackRef tmr = getTMR(mu->track(), iTeV_1stHit->val);
-  if(tmr.isNonnull())
-    getTracking(wpmu->tmr, *tmr);
-  else
+  if(iTeV_1stHit == tevMap_1stHit->end())
     getNullTracking(wpmu->tmr);
+  else
+    {
+      reco::TrackRef tmr = getTMR(mu->track(), iTeV_1stHit->val);
+      getTracking(wpmu->tmr, *tmr);
+    }
 
 }
 
