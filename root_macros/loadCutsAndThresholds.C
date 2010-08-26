@@ -134,8 +134,17 @@ void CheckMuonPtInRange(const wprime::Muon* mu, bool isThere[],
   isThere[1] = mu->tracker.p.Pt() >=min_MuPt 
     && mu->tracker.p.Pt() <=max_MuPt;
 
-  isThere[2] = mu->tev_1st.p.Pt() >=min_MuPt 
-    && mu->tev_1st.p.Pt() <=max_MuPt;
+  isThere[2] = mu->tpfms.p.Pt() >=min_MuPt 
+    && mu->tpfms.p.Pt() <=max_MuPt;
+
+  isThere[3] = mu->cocktail.p.Pt() >=min_MuPt 
+    && mu->cocktail.p.Pt() <=max_MuPt;
+
+  isThere[4] = mu->picky.p.Pt() >=min_MuPt 
+    && mu->picky.p.Pt() <=max_MuPt;
+
+  isThere[5] = mu->tmr.p.Pt() >=min_MuPt 
+    && mu->tmr.p.Pt() <=max_MuPt;
 
 }//-------IsMuonPtInRange
 
@@ -188,6 +197,27 @@ bool RelSumPtIsolation(const wprime::Muon* the_mu,
 
 
 
+// combined Trk+ECAL+HCAL relative isolation
+//-------------------------------------------------------------------
+bool CombRelIsolation(const wprime::Muon* the_mu, 
+                       unsigned detR_iso_index,
+                       float rel_combiso_cut)
+{
+//-------------------------------------------------------------------
+#if debugmemore
+  cout << " Processing CombRelIsolation() " << endl;
+#endif
+
+  return (
+      (the_mu->SumPtIso[detR_iso_index]+
+       the_mu->ECALIso[detR_iso_index]+
+       the_mu->HCALIso[detR_iso_index])/the_mu->tracker.p.Pt())
+      <= rel_combiso_cut;
+}// CombRelIsolation
+
+
+
+
 // true if energetic Jet(s) found back to back with muon 
 //-------------------------------------------------------------------
 bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh,
@@ -224,12 +254,28 @@ void CheckQuality(const wprime::Muon* mu,
   // - GlobalMuonPromptTight + Global + Tracker muon
   // - # of hits in tracker track >= 11
   // - |IP of tracker track| < 0.2 cm
-  bool muonID = mu->GlobalMuonPromptTight && (mu->tracker.Ntrk_hits >= 11)
+ 
+  /*
+  bool muonID = mu->GlobalMuonPromptTight && 
+            (mu->tracker.Ntrk_hits >= 11)
     && (TMath::Abs(mu->tracker.d0) < 0.2) && mu->AllTrackerMuons
     && mu->AllGlobalMuons;
+*/
 
+
+  bool muonID = //mu->GlobalMuonPromptTight && 
+      //((mu->global.chi2 / mu->global.ndof)<chi2_cut) &&
+      ((mu->tracker.Npixel_layer+mu->tracker.Nstrip_layer) >= 10)
+      && (TMath::Abs(mu->tracker.d0) < 0.2) && mu->AllTrackerMuons
+      && mu->AllGlobalMuons;
+  
+  
+  
+  
   checkqual = ((mu->global.chi2 / mu->global.ndof)<chi2_cut)
-    && TMath::Abs(mu->global.p.Eta()) < muon_etacut;
+      && TMath::Abs(mu->global.p.Eta()) < muon_etacut;
+  
+
 
   // old value: muon's pt within range
   // new value: old value .AND. quality cuts
@@ -246,11 +292,32 @@ void CheckQuality(const wprime::Muon* mu,
 
 
 
-  checkqual = ((mu->tev_1st.chi2 / mu->tev_1st.ndof) 
+  checkqual = ((mu->tpfms.chi2 / mu->tpfms.ndof) 
 	       < chi2_cut) 
-    && TMath::Abs(mu->tev_1st.p.Eta()) < muon_etacut;
+    && TMath::Abs(mu->tpfms.p.Eta()) < muon_etacut;
 
   goodQual[2] = goodQual[2] && checkqual && isHard && muonID;
+
+
+  checkqual = ((mu->cocktail.chi2 / mu->cocktail.ndof) 
+	       < chi2_cut) 
+    && TMath::Abs(mu->cocktail.p.Eta()) < muon_etacut;
+
+  goodQual[3] = goodQual[3] && checkqual && isHard && muonID;
+
+
+  checkqual = ((mu->picky.chi2 / mu->picky.ndof) 
+	       < chi2_cut) 
+    && TMath::Abs(mu->picky.p.Eta()) < muon_etacut;
+
+  goodQual[4] = goodQual[4] && checkqual && isHard && muonID;
+
+
+  checkqual = ((mu->tmr.chi2 / mu->tmr.ndof) 
+	       < chi2_cut) 
+    && TMath::Abs(mu->tmr.p.Eta()) < muon_etacut;
+
+  goodQual[5] = goodQual[5] && checkqual && isHard && muonID;
 
 }//------HasQuality
 

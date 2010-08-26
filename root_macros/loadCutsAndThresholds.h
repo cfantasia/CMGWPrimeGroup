@@ -20,10 +20,13 @@
 // $$$$$$$$$$$$$$$$$$$$$$$ Main Study
 // +++++++++++++++++++++++++++++++Analysis Thresholds:
 const float EtJetCut = 100; 
+//const float EtJetCut = 1000; 
 const unsigned MaxNjetsAboveThresh = 0;
 const float SumPtCut = 10; // Cone DeltaR =0.3; 
+const float CombRelCut = 0.15; // Cone DeltaR =0.3; 
 const unsigned deltaRIsoIndex = 2; //for the isolation container
 const float PtTrackCut = 60 ;
+//const float PtTrackCut = 25 ;
 const float OneMuPtTrackCut = 20; 
 const float Chi2Cut = 10;
 const float Delta_Phi = TMath::Pi() - 0.3;//min angle muon/jet for jet veto
@@ -31,25 +34,28 @@ const float Muon_Eta_Cut = 1.8;
 
 // ++++++++++++++++++++++++++++++++Useful constants
 const int Num_histo_sets = 6; // one new set of histograms after each cut
-const int Num_trkAlgos = 3; // global, tracker, tev_1st
+const int Num_trkAlgos = 6; // global, tracker, tev_1st
 
 // use this for histogram names
-const string algo_desc_short[Num_trkAlgos] = {"gbl","trk","tev"};
+const string algo_desc_short[Num_trkAlgos] = {"gbl","trk","tev","ctail","picky","tmr"};
 const string cuts_desc_short[Num_histo_sets] = {"hlt","1mu","ptrange","iso", "jet", "qual"};
 // use this for histogram descriptions
-const string algo_desc_long[Num_trkAlgos] = {"global", "tracker", "TPFMS"};
+const string algo_desc_long[Num_trkAlgos] = {"global", "tracker", "TPFMS","cocktail","picky","TMR"};
 const string cuts_desc_long[Num_histo_sets]= {"HLT_Mu9,", "Pt within range,", 
 					     "1 muon only,","Isolation,", 
 					     "Jet Veto,", "Quality,"};
 
 #define debugme  0
 #define debugmemore 0
-#define dumpHighPtMuons 0
+#define dumpHighPtMuons 1
 
 // +++++++++++++++++++++++++++++++muon-pt histogram parameters
 const unsigned  nBinPtMu = 45; // 400; // 45; // 18; 200; 380; 
+//const unsigned  nBinPtMu = 50; // 400; // 45; // 18; 200; 380; 
 const float minPtMu = 100; // 100;
+//const float minPtMu = 30; // 100;
 const float  maxPtMu = 1500; // 800; 2000;
+//const float  maxPtMu = 1500; // 800; 2000;
 // +++++++++++++++++++++++++Declare histograms 
 TH1F * hPT[Num_histo_sets][Num_trkAlgos] = {{0}};
 
@@ -141,6 +147,11 @@ bool SumPtIsolation(const wprime::Muon* the_mu,
 bool RelSumPtIsolation(const wprime::Muon* the_mu, unsigned detR_iso_index,
 		       float rel_sum_pt_cut);
 
+
+// combined relative isolation
+bool CombRelIsolation(const wprime::Muon* the_mu, 
+                       unsigned detR_iso_index,
+                      float rel_combiso_cut);
 
 // true if energetic Jet(s) found back to back with muon 
 bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh, float et_jet_cut,
