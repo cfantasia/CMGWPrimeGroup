@@ -20,13 +20,11 @@
 // $$$$$$$$$$$$$$$$$$$$$$$ Main Study
 // +++++++++++++++++++++++++++++++Analysis Thresholds:
 const float EtJetCut = 100; 
-//const float EtJetCut = 1000; 
 const unsigned MaxNjetsAboveThresh = 0;
 const float SumPtCut = 10; // Cone DeltaR =0.3; 
 const float CombRelCut = 0.15; // Cone DeltaR =0.3; 
 const unsigned deltaRIsoIndex = 2; //for the isolation container
 const float PtTrackCut = 60 ;
-//const float PtTrackCut = 25 ;
 const float OneMuPtTrackCut = 20; 
 const float Chi2Cut = 10;
 const float Delta_Phi = TMath::Pi() - 0.3;//min angle muon/jet for jet veto
@@ -34,10 +32,10 @@ const float Muon_Eta_Cut = 1.8;
 
 // ++++++++++++++++++++++++++++++++Useful constants
 const int Num_histo_sets = 6; // one new set of histograms after each cut
-const int Num_trkAlgos = 6; // global, tracker, tev_1st
+const int Num_trkAlgos = 6; // global, tracker, tpfms, cocktail, picky, tmr
 
 // use this for histogram names
-const string algo_desc_short[Num_trkAlgos] = {"gbl","trk","tev","ctail","picky","tmr"};
+const string algo_desc_short[Num_trkAlgos] = {"gbl","trk","tpfms","ckt","pic","tmr"};
 const string cuts_desc_short[Num_histo_sets] = {"hlt","1mu","ptrange","iso", "jet", "qual"};
 // use this for histogram descriptions
 const string algo_desc_long[Num_trkAlgos] = {"global", "tracker", "TPFMS","cocktail","picky","TMR"};
@@ -47,52 +45,17 @@ const string cuts_desc_long[Num_histo_sets]= {"HLT_Mu9,", "Pt within range,",
 
 #define debugme  0
 #define debugmemore 0
-#define dumpHighPtMuons 1
+#define dumpHighPtMuons 0
 
 // +++++++++++++++++++++++++++++++muon-pt histogram parameters
 const unsigned  nBinPtMu = 45; // 400; // 45; // 18; 200; 380; 
-//const unsigned  nBinPtMu = 50; // 400; // 45; // 18; 200; 380; 
 const float minPtMu = 100; // 100;
-//const float minPtMu = 30; // 100;
 const float  maxPtMu = 1500; // 800; 2000;
-//const float  maxPtMu = 1500; // 800; 2000;
 // +++++++++++++++++++++++++Declare histograms 
 TH1F * hPT[Num_histo_sets][Num_trkAlgos] = {{0}};
 
 
-
-
-
-
-// $$$$$$$$$$$$$$$$$$$$$$$ JetIso study (option = 2)
-
-// ++++++++++++++++ JetIso study: jet distributions (# of jets and Et)
-static const unsigned nBinNJets = 50;
-static const float minNJets = -0.5;
-static const float maxNJets = 49.5;
-static const unsigned nBinEtJets = 150;
-static const float minEtJets = 0;
-static const float maxEtJets = 300;
-// ++++++++++++++++ JetIso study: jet-activity veto (# of jets and Et)
-static const unsigned nBinEtJets_veto = 10;
-static const float minEtJets_veto = 0;
-static const float maxEtJets_veto = 200;
-static const unsigned nBinNJets_veto = 10;
-static const float minNJets_veto = -0.5;
-static const float maxNJets_veto = 9.5;
-static const unsigned nBinSumPt = 120;
-static const float minSumPt = 0;
-static const float maxSumPt = 600;
-// +++++++++++++++++++++++++Declare histograms
-TH1F* hNMu, *hPtMaxMu, *hPtMaxMuTrackVeto, 
-    *hPtMaxMuJetVeto, *hPtMaxMuTrackVetoJetVeto;
-
-
-
-
-
-
-// $$$$$$$$$$$$$$$$$$$$$ Charge Asymmetry (option = 3)
+// $$$$$$$$$$$$$$$$$$$$$ Charge Asymmetry (option = 2)
 // +++++++++++++++++++++++++Declare histograms
 TH1F * hPTplus[Num_trkAlgos] = {0};
 TH1F * hPTminus[Num_trkAlgos] = {0};
@@ -142,11 +105,6 @@ bool OnlyOneHighTrackPtMuon(const wprime::Event* ev, float one_mu_pt_trkcut);
 bool SumPtIsolation(const wprime::Muon* the_mu, 
                     unsigned detR_iso_index,
                     float sum_pt_cut);
-
-// same as above for relative isolation
-bool RelSumPtIsolation(const wprime::Muon* the_mu, unsigned detR_iso_index,
-		       float rel_sum_pt_cut);
-
 
 // combined relative isolation
 bool CombRelIsolation(const wprime::Muon* the_mu, 

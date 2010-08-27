@@ -130,7 +130,6 @@ void CheckMuonPtInRange(const wprime::Muon* mu, bool isThere[],
   isThere[0] = mu->global.p.Pt() >=min_MuPt 
     && mu->global.p.Pt() <=max_MuPt;
 
-  
   isThere[1] = mu->tracker.p.Pt() >=min_MuPt 
     && mu->tracker.p.Pt() <=max_MuPt;
 
@@ -178,23 +177,6 @@ bool SumPtIsolation(const wprime::Muon* the_mu,
 
   return the_mu->SumPtIso[detR_iso_index] <= sum_pt_cut;
 }// SumPtIsolation
-
-
-// same as above for relative isolation
-//-------------------------------------------------------------------
-bool RelSumPtIsolation(const wprime::Muon* the_mu, 
-		    unsigned detR_iso_index,
-                    float rel_sum_pt_cut)
-{
-//-------------------------------------------------------------------
-#if debugmemore
-  cout << " Processing RelSumPtIsolation() " << endl;
-#endif
-
-  return (the_mu->SumPtIso[detR_iso_index]/the_mu->tracker.p.Pt())
-    <= rel_sum_pt_cut;
-}// SumPtIsolation
-
 
 
 // combined Trk+ECAL+HCAL relative isolation
@@ -263,31 +245,23 @@ void CheckQuality(const wprime::Muon* mu,
 */
 
 
-  bool muonID = //mu->GlobalMuonPromptTight && 
-      //((mu->global.chi2 / mu->global.ndof)<chi2_cut) &&
-      ((mu->tracker.Npixel_layer+mu->tracker.Nstrip_layer) >= 10)
-      && (TMath::Abs(mu->tracker.d0) < 0.2) && mu->AllTrackerMuons
-      && mu->AllGlobalMuons;
+  bool muonID = 
+    ((mu->tracker.Npixel_layer + mu->tracker.Nstrip_layer) >= 10)
+    && (TMath::Abs(mu->tracker.d0) < 0.2) && mu->AllTrackerMuons
+    && mu->AllGlobalMuons;
   
-  
-  
-  
+   
   checkqual = ((mu->global.chi2 / mu->global.ndof)<chi2_cut)
       && TMath::Abs(mu->global.p.Eta()) < muon_etacut;
   
-
-
   // old value: muon's pt within range
   // new value: old value .AND. quality cuts
-
   goodQual[0] = goodQual[0] && checkqual && isHard && muonID;
-
 
 
   checkqual = ((mu->tracker.chi2 / mu->tracker.ndof) 
 	       < chi2_cut)
     && TMath::Abs(mu->tracker.p.Eta()) < muon_etacut;
- 
   goodQual[1] = goodQual[1] && checkqual && isHard && muonID;
 
 
@@ -295,9 +269,7 @@ void CheckQuality(const wprime::Muon* mu,
   checkqual = ((mu->tpfms.chi2 / mu->tpfms.ndof) 
 	       < chi2_cut) 
     && TMath::Abs(mu->tpfms.p.Eta()) < muon_etacut;
-
   goodQual[2] = goodQual[2] && checkqual && isHard && muonID;
-
 
   checkqual = ((mu->cocktail.chi2 / mu->cocktail.ndof) 
 	       < chi2_cut) 
