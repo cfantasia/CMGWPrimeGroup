@@ -93,7 +93,7 @@ void defineHistos_MuonPt()
 			  nBinPtMu,minPtMu,maxPtMu);
   hPT[index][1]= new TH1F("hPTtrk_trig","Tracker Muon Pt with HLT",
 			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2]= new TH1F("hPTtev_trig","TPFMS Muon Pt with HLT",
+  hPT[index][2]= new TH1F("hPTtpfms_trig","TPFMS Muon Pt with HLT",
 			  nBinPtMu,minPtMu,maxPtMu);
   hPT[index][3]= new TH1F("hPTctail_trig","Cocktail Muon Pt with HLT",
 			  nBinPtMu,minPtMu,maxPtMu);
@@ -109,7 +109,7 @@ void defineHistos_MuonPt()
  			   nBinPtMu,minPtMu,maxPtMu);
   hPT[index][1] = new TH1F("hPTtrk_all","Tracker Muon Pt",
  			   nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2] = new TH1F("hPTtev_all","TPFMS Muon Pt",
+  hPT[index][2] = new TH1F("hPTtpfms_all","TPFMS Muon Pt",
  			   nBinPtMu,minPtMu,maxPtMu);
   hPT[index][3]= new TH1F("hPTctail_all","Cocktail Muon Pt with HLT",
 			  nBinPtMu,minPtMu,maxPtMu);
@@ -123,7 +123,7 @@ void defineHistos_MuonPt()
 			  nBinPtMu,minPtMu,maxPtMu);
   hPT[index][1]= new TH1F("hPTtrk_1mu","Tracker Muon Pt 1 muon",
 			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2]= new TH1F("hPTtev_1mu","TPFMS Muon Pt 1 muon",
+  hPT[index][2]= new TH1F("hPTtpfms_1mu","TPFMS Muon Pt 1 muon",
 			  nBinPtMu,minPtMu,maxPtMu);
   hPT[index][3]= new TH1F("hPTctail_1mu","Cocktail Muon Pt 1 muon",
 			  nBinPtMu,minPtMu,maxPtMu);
@@ -137,7 +137,7 @@ void defineHistos_MuonPt()
 			  nBinPtMu,minPtMu,maxPtMu);
   hPT[index][1]= new TH1F("hPTtrk_iso","Tracker Muon Pt iso",
 			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2]= new TH1F("hPTtev_iso","TPFMS Muon Pt iso",
+  hPT[index][2]= new TH1F("hPTtpfms_iso","TPFMS Muon Pt iso",
 			  nBinPtMu,minPtMu,maxPtMu);
   hPT[index][3]= new TH1F("hPTctail_iso","Cocktail Muon Pt iso",
 			  nBinPtMu,minPtMu,maxPtMu);
@@ -151,7 +151,7 @@ void defineHistos_MuonPt()
 			  nBinPtMu,minPtMu,maxPtMu);
   hPT[index][1]= new TH1F("hPTtrk_jveto","Tracker Muon Pt jet veto",
 			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2]= new TH1F("hPTtev_jveto","TPFMS Muon Pt jet veto",
+  hPT[index][2]= new TH1F("hPTtpfms_jveto","TPFMS Muon Pt jet veto",
 			  nBinPtMu,minPtMu,maxPtMu);
   hPT[index][3]= new TH1F("hPTctail_jveto","Cocktail Muon Pt jet veto",
 			  nBinPtMu,minPtMu,maxPtMu);
@@ -165,7 +165,7 @@ void defineHistos_MuonPt()
 			  nBinPtMu,minPtMu,maxPtMu);
   hPT[index][1]= new TH1F("hPTtrk_qual","Tracker Muon Pt qual",
 			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2] = new TH1F("hPTtev_qual","TPFMS Muon Pt qual",
+  hPT[index][2] = new TH1F("hPTtpfms_qual","TPFMS Muon Pt qual",
 			   nBinPtMu,minPtMu,maxPtMu);
   hPT[index][3]= new TH1F("hPTctail_qual","Cocktail Muon Pt qual",
 			  nBinPtMu,minPtMu,maxPtMu);
@@ -189,14 +189,14 @@ void defineHistos_MuonChargePt()
 		       nBinPtMu,minPtMu,maxPtMu);
   hPTplus[1]= new TH1F("hPTtrk_plus","(+) Tracker Muon Pt qual",
 		       nBinPtMu,minPtMu,maxPtMu);
-  hPTplus[2] = new TH1F("hPTtev_plus","(+) TPFMS Muon Pt qual",
+  hPTplus[2] = new TH1F("hPTtpfms_plus","(+) TPFMS Muon Pt qual",
 			nBinPtMu,minPtMu,maxPtMu);
   
   hPTminus[0]= new TH1F("hPTglb_minus","(-) Global Muon Pt qual",
 			nBinPtMu,minPtMu,maxPtMu);
   hPTminus[1]= new TH1F("hPTtrk_minus","(-) Tracker Muon Pt qual",
 			nBinPtMu,minPtMu,maxPtMu);
-  hPTminus[2] = new TH1F("hPTtev_minus","(-) TPFMS Muon Pt qual",
+  hPTminus[2] = new TH1F("hPTtpfms_minus","(-) TPFMS Muon Pt qual",
 			 nBinPtMu,minPtMu,maxPtMu);
   return;
 
@@ -550,13 +550,13 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
 		   << ev->evt_no << " LS = " << ev->LS_no << endl;
 	      cout << " glb pt = " << theMu->global.p.Pt()
 		   << " trk pt = " << theMu->tracker.p.Pt()
-		   << " tev pt = " << theMu->tpfms.p.Pt()
+		   << " tpfms pt = " << theMu->tpfms.p.Pt()
 		   << " ctail pt = " << theMu->cocktail.p.Pt()
 		   << " picky pt = " << theMu->picky.p.Pt()
 		   << " tmr pt = " << theMu->tmr.p.Pt() << endl;
 	      cout << " glb dpt = " << theMu->global.dpt
 		   << " trk dpt = " << theMu->tracker.dpt
-		   << " tev dpt = " << theMu->tpfms.dpt
+		   << " tpfms dpt = " << theMu->tpfms.dpt
 		   << " ctail dpt = " << theMu->cocktail.dpt
 		   << " picky dpt = " << theMu->picky.dpt
 		   << " tmr dpt = " << theMu->tmr.dpt << endl;
