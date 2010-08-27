@@ -29,13 +29,6 @@ process.StdMu = cms.EDFilter("Wprime_muonreco",
     # muon-detector eta acceptance
     Detmu_acceptance = cms.double(2.4),
 
-
-    # sample description
-    description = cms.string('W->mu at 7 TeV'),
-#    description = cms.string('Wprime 1 TeV'),
-    #     # of produced events (before filtering)
-    Nprod_evt = cms.int32(8818), # = 6543 (# of events)/0.742 (pythia eff)
-
 )
 
 process.TFileService = cms.Service("TFileService",
