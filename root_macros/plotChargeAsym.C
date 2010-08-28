@@ -9,15 +9,11 @@
 #include <string>
 #include <iostream>
 
+#include "wprime_histo_constants.h"
+
 using std::string; using std::cout; using std::endl;
 
 enum MASS_POINT {NoSig = 0, OneTeV, OneFiveTeV, TwoTeV};
-enum ALGO_TYPE {GLOBAL = 0, TRACKER, TRK_1ST};
-
-const unsigned N_algos = 3;
-string algos[N_algos] = {"glb", "trk", "tev"};
-string desc_algo[N_algos] = {" Global Muons", "Tracker-only Muons",
-			"Tracker + 1st station Muons"};
 
 const unsigned N_masses = 4;  // no signal, 1.0 TeV, 1.5 TeV, 2.0 TeV
 string desc_mass[N_masses] = {"No signal", "1.0 TeV", "1.5 TeV", "2.0 TeV"};
@@ -35,10 +31,10 @@ void getHistos(TFile * _file0, string algo, bool plus_flag);
 void doPlots(TFile * _file0, MASS_POINT mass_i, unsigned algo_j, bool plus_flag);
 
 // total (sig + bgd) distributions
-TH1F * tot_plus[N_algos] = {0};
-TH1F * tot_minus[N_algos] = {0};
-TH1F * asym[N_algos] = {0};
-TH1F * tot[N_algos] = {0};
+TH1F * tot_plus[Num_trkAlgos] = {0};
+TH1F * tot_minus[Num_trkAlgos] = {0};
+TH1F * asym[Num_trkAlgos] = {0};
+TH1F * tot[Num_trkAlgos] = {0};
 
 void plotChargeAsym()
 {
@@ -54,23 +50,23 @@ void plotChargeAsym()
 
   for(unsigned i = 0; i != N_masses; ++i) // loop over mass points
     {
-      for(unsigned j = 0; j != N_algos; ++j)
+      for(int j = 0; j != Num_trkAlgos; ++j)
 	{  // loop over algorithms
 	  doPlots(_file0, MASS_POINT(i), j, true); // positive charge
 	  doPlots(_file0, MASS_POINT(i), j, false); // negative charge
 
 	  char hname[128]; string htitle;
 
-	  sprintf(hname, "tot_%s_%d", algos[j].c_str(), i);
-	  htitle = "Total distribution for " + desc_algo[j] + " (" + 
+	  sprintf(hname, "tot_%s_%d", algo_desc_short[j].c_str(), i);
+	  htitle = "Total distribution for " + algo_desc_long[j] + " (" + 
 	    desc_mass[i] + ")";
 	  tot[j] = new TH1F(hname, htitle.c_str(), 
 			    tot_plus[j]->GetNbinsX(),
 			    tot_plus[j]->fXaxis.GetXmin(),
 			    tot_plus[j]->fXaxis.GetXmax());
  	  tot[j]->Add(tot_plus[j], tot_minus[j]);
-	  sprintf(hname, "asym_%s_%d", algos[j].c_str(), i);
-	  htitle = "Charged asymmetry for " + desc_algo[j] + " (" + 
+	  sprintf(hname, "asym_%s_%d", algo_desc_short[j].c_str(), i);
+	  htitle = "Charged asymmetry for " + algo_desc_long[j] + " (" + 
 	    desc_mass[i] + ")";
 	  asym[j] = (TH1F *) tot_plus[j]->GetAsymmetry(tot_minus[j]);
 	  asym[j]->SetName(hname);
@@ -115,7 +111,7 @@ bool badHisto(TH1F * h, string s)
 void doPlots(TFile * _file0, MASS_POINT mass_i, unsigned algo_j, bool plus_flag)
 {
 
-  getHistos(_file0, algos[algo_j], plus_flag);
+  getHistos(_file0, algo_desc_short[algo_j], plus_flag);
 
   // do this only once per file (therefore: for one mass point)
   if(mass_i == NoSig)
@@ -127,15 +123,15 @@ void doPlots(TFile * _file0, MASS_POINT mass_i, unsigned algo_j, bool plus_flag)
   char hname[128]; string htitle;
   if(plus_flag)
     {
-      sprintf(hname, "plus_%s_%d", algos[algo_j].c_str(), int(mass_i));
+      sprintf(hname, "plus_%s_%d", algo_desc_short[algo_j].c_str(), int(mass_i));
       htitle = "Positively";
     }
   else
     {
-      sprintf(hname, "minus_%s_%d", algos[algo_j].c_str(), int(mass_i));
+      sprintf(hname, "minus_%s_%d", algo_desc_short[algo_j].c_str(), int(mass_i));
       htitle = "Negatively";
     }
-  htitle += " charged distribution for " + desc_algo[algo_j] + " (" + 
+  htitle += " charged distribution for " + algo_desc_long[algo_j] + " (" + 
     desc_mass[int(mass_i)] + ")";
   TH1F * htemp = new TH1F(hname, htitle.c_str(), w->GetNbinsX(), 
 			  w->fXaxis.GetXmin(), w->fXaxis.GetXmax());
