@@ -8,24 +8,20 @@
 #include <string>
 #include <iostream>
 
+#include "wprime_histo_constants.h"
+
 using std::string; using std::cout; using std::endl;
 
-
-string set_cuts[5] = {"all", "1mu", "iso", "jveto", "qual"};
-
 // select tracking algorithm
-// 1: global muons, 2: tracker-only, 3: tracker + 1st muon station
-const unsigned tracking_option = 3;
-
-string cut_desc[5] = {", no cuts", ", after one-muon-only requirement",
-		      ", after isolation cut", 
-		      ", after jet-activity veto", 
-		      ", after quality cuts"};
+// from 0 to Num_trkAlgos-1 (see wprime_histo_constants.h)
+const unsigned tracking_option = 2;
 
 void doPlots(unsigned i, TFile * _file0);
 
 void plotMuPt()
 {
+  assert(tracking_option >=0 && tracking_option <= Num_trkAlgos-1);
+
   string input_file = "Wprime_analysis.root";
   TFile *_file0 = TFile::Open(input_file.c_str());
   if(!_file0 || _file0->IsZombie())
@@ -35,7 +31,7 @@ void plotMuPt()
     }
 
   gStyle->SetOptStat(00000);
-  for(unsigned i = 0; i != 5; ++i)
+  for(int i = 0; i != Num_histo_sets; ++i)
     doPlots(i, _file0);
 }
 
@@ -50,6 +46,7 @@ bool badHisto(TH1F * h, string s)
   return false;
 }
 
+// i must be between 0 and Num_histo_sets-1
 void doPlots(unsigned i, TFile * _file0)
 {
 
@@ -57,30 +54,15 @@ void doPlots(unsigned i, TFile * _file0)
   gStyle->SetFillColor(1);
 
 
-  string algo; string desc;
-  if (tracking_option == 1)
-    {
-      algo = "glb"; // global muons
-      desc =  "Global muons";
-    }
-  else if (tracking_option == 2)
-    {
-      algo = "trk"; // tracker-only muons
-      desc =  "Tracker-only muons";
-    }
-  else if (tracking_option == 3)
-    {
-      algo = "tev"; // tracker + 1st muon-station muons
-      desc =  "TPFMS muons";
-    }
-
-  desc += cut_desc[i] + " (100 pb^{-1})";
+  string algo = algo_desc_short[tracking_option]; 
+  string desc = algo_desc_long[tracking_option] + " muons, " + 
+    cuts_desc_long[i] + " (0.84 pb^{-1})";
 
   TCanvas * c1 = new TCanvas();
   c1->SetLogy();
   THStack *hs = new THStack("hs",desc.c_str());  
 
-  string histo = "hPT" + algo + "_" + set_cuts[i];
+  string histo = "hPT" + algo + "_" + cuts_desc_short[i];
   string histoW = "W/" + histo;
   TH1F * w = (TH1F* ) _file0->Get(histoW.c_str());
   if(badHisto(w, "W"))
@@ -160,8 +142,11 @@ void doPlots(unsigned i, TFile * _file0)
   // this is needed when background is zero in the tails and wprime (say at 2.0 TeV) is not displayed
   if(data->GetMinimum() < 0.00001)data->SetMinimum(0.00001);
 
-  if (i == 4)
-    data->SetTitle("TPFMS p_{T} distribution");
+  if (i == Num_histo_sets-1)
+    {
+      string new_title = algo_desc_long[tracking_option] + " p_{T} distribution";
+      data->SetTitle(new_title.c_str());
+    }
   data->SetMarkerStyle(4);
   data->SetMarkerSize(1.3);
   data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
@@ -183,10 +168,10 @@ void doPlots(unsigned i, TFile * _file0)
   lg->AddEntry(wp10, "W ' (1.0 TeV)", "F");
   lg->AddEntry(wp15, "W ' (1.5 TeV)", "F");
   lg->AddEntry(wp20, "W ' (2.0 TeV)", "F");
-  lg->AddEntry(data, "data (255 nb^{-1})", "LP");
+  lg->AddEntry(data, "data (0.84 pb^{-1})", "LP");
   lg->Draw();
 
-  string file = set_cuts[i] + ".gif";
+  string file = cuts_desc_short[i] + ".gif";
   c1->SaveAs(file.c_str());
   //  delete c1;
 

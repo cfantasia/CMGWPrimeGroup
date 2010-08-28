@@ -7,11 +7,13 @@
 #include <string>
 #include <iostream>
 
+#include "wprime_histo_constants.h"
+
 using std::string; using std::cout; using std::endl;
 
 // select tracking algorithm
-// 1: global muons, 2: tracker-only, 3: tracker + 1st muon station
-const unsigned tracking_option = 3;
+// from 0 to Num_trkAlgos-1 (see wprime_histo_constants.h)
+const unsigned tracking_option = 2;
 
 // algorithm description
 string algo; 
@@ -27,11 +29,14 @@ void doPlots(TFile * _file0);
 
 void plotMuPt2()
 {
+  assert(Num_histo_sets == 6);
 
   if(plot_without_qual_cuts)
-    set_cuts = "jveto";  // pick histograms before quality cuts have been applied
+    // pick histograms before quality cuts have been applied
+    set_cuts = cuts_desc_short[4];  
   else
-    set_cuts = "qual"; // pick histograms after all quality cuts have been applied
+    // pick histograms after all quality cuts have been applied
+    set_cuts = cuts_desc_short[5];  
     
   string input_file = "Wprime_analysis.root";
   TFile *_file0 = TFile::Open(input_file.c_str());
@@ -42,27 +47,15 @@ void plotMuPt2()
     }
 
   gStyle->SetOptStat(00000);
-  
-  if (tracking_option == 1)
-    {
-      algo = "glb"; // global muons
-      if(plot_without_qual_cuts)
-	desc =  "Global muons, before quality cuts";
-      else
-	desc =  "Global muons, after quality cuts";
 
-    }
-  else if (tracking_option == 2)
-    {
-      algo = "trk"; // tracker-only muons
-      desc =  "Tracker-only muons, after quality cuts";
-    }
-  else if (tracking_option == 3)
-    {
-      algo = "tev"; // tracker + 1st muon-station muons
-      desc =  "TPFMS muons, after quality cuts";
-    }
-  desc += " (STARTUP, 100 pb^{-1})";
+  algo = algo_desc_short[tracking_option];
+  desc = algo_desc_long[tracking_option] + " muons";
+  if(plot_without_qual_cuts)
+    desc +=  ", before quality cuts";
+  else
+    desc +=  ", after quality cuts";
+
+  desc += " (STARTUP, 0.84 pb^{-1})";
   doPlots(_file0);
 }
 
@@ -137,7 +130,8 @@ void doPlots(TFile * _file0)
   bgd->Add(top);
   bgd->Add(w);
 
-  data->SetTitle("TPFMS p_{T} distribution");
+  string new_title = algo_desc_long[tracking_option] + " p_{T} distribution";
+  data->SetTitle(new_title.c_str());
   data->SetMarkerStyle(4);
   data->SetMarkerSize(1.3);
   data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
@@ -173,7 +167,7 @@ void doPlots(TFile * _file0)
   lg->AddEntry(wp10, "W ' (1.0 TeV)", "F");
   lg->AddEntry(wp15, "W ' (1.5 TeV)", "F");
   lg->AddEntry(wp20, "W ' (2.0 TeV)", "F");
-  lg->AddEntry(data, "data (255 nb^{-1})", "LP");
+  lg->AddEntry(data, "data (0.84 pb^{-1})", "LP");
   lg->Draw();
   
   string file; string file2;
