@@ -60,7 +60,7 @@ void printSummary_MuonPt(ofstream & out, const string& sample,
 	      << Nexp_evt_cut[i][mual] << endl;
 	
 	cout << " Cut # " << i << ": " << cuts_desc_long[i] 
-	     <<" expected # of evts = " << Nexp_evt_cut[i][mual];
+	     <<", expected # of evts = " << Nexp_evt_cut[i][mual];
 	
 	//calculate efficiencies
 	float eff, deff;
@@ -87,92 +87,14 @@ void defineHistos_MuonPt()
 #if debugme
   cout << " define Muon pT histos" << endl;
 #endif
-  
-  int index = 0;
-  hPT[index][0]= new TH1F("hPTglb_trig","Global Muon Pt with HLT",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][1]= new TH1F("hPTtrk_trig","Tracker Muon Pt with HLT",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2]= new TH1F("hPTtpfms_trig","TPFMS Muon Pt with HLT",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][3]= new TH1F("hPTctail_trig","Cocktail Muon Pt with HLT",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][4]= new TH1F("hPTpicky_trig","Picky Muon Pt with HLT",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][5]= new TH1F("hPTtmr_trig","TMR Muon Pt with HLT",
-			  nBinPtMu,minPtMu,maxPtMu);
 
-  
-
-  ++index;   
-  hPT[index][0] = new TH1F("hPTglb_all","Global Muon Pt",
- 			   nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][1] = new TH1F("hPTtrk_all","Tracker Muon Pt",
- 			   nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2] = new TH1F("hPTtpfms_all","TPFMS Muon Pt",
- 			   nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][3]= new TH1F("hPTctail_all","Cocktail Muon Pt with HLT",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][4]= new TH1F("hPTpicky_all","Picky Muon Pt with HLT",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][5]= new TH1F("hPTtmr_all","TMR Muon Pt with HLT",
-			  nBinPtMu,minPtMu,maxPtMu);
-
-  ++index;
-  hPT[index][0]= new TH1F("hPTglb_1mu","Global Muon Pt 1 muon",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][1]= new TH1F("hPTtrk_1mu","Tracker Muon Pt 1 muon",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2]= new TH1F("hPTtpfms_1mu","TPFMS Muon Pt 1 muon",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][3]= new TH1F("hPTctail_1mu","Cocktail Muon Pt 1 muon",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][4]= new TH1F("hPTpicky_1mu","Picky Muon Pt 1 muon",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][5]= new TH1F("hPTtmr_1mu","TMR Muon Pt 1 muon",
-			  nBinPtMu,minPtMu,maxPtMu);
-  
-  ++index;
-  hPT[index][0]= new TH1F("hPTglb_iso","Global Muon Pt iso",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][1]= new TH1F("hPTtrk_iso","Tracker Muon Pt iso",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2]= new TH1F("hPTtpfms_iso","TPFMS Muon Pt iso",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][3]= new TH1F("hPTctail_iso","Cocktail Muon Pt iso",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][4]= new TH1F("hPTpicky_iso","Picky Muon Pt iso",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][5]= new TH1F("hPTtmr_iso","TMR Muon Pt iso",
-			  nBinPtMu,minPtMu,maxPtMu);
-  
-  ++index;  
-  hPT[index][0]= new TH1F("hPTglb_jveto","Global Muon Pt jet veto",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][1]= new TH1F("hPTtrk_jveto","Tracker Muon Pt jet veto",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2]= new TH1F("hPTtpfms_jveto","TPFMS Muon Pt jet veto",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][3]= new TH1F("hPTctail_jveto","Cocktail Muon Pt jet veto",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][4]= new TH1F("hPTpicky_jveto","Picky Muon Pt jet veto",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][5]= new TH1F("hPTtmr_jveto","TMR Muon Pt jet veto",
-			  nBinPtMu,minPtMu,maxPtMu);
-  
-  ++index;  
-  hPT[index][0]= new TH1F("hPTglb_qual","Global Muon Pt qual",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][1]= new TH1F("hPTtrk_qual","Tracker Muon Pt qual",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][2] = new TH1F("hPTtpfms_qual","TPFMS Muon Pt qual",
-			   nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][3]= new TH1F("hPTctail_qual","Cocktail Muon Pt qual",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][4]= new TH1F("hPTpicky_qual","Picky Muon Pt qual",
-			  nBinPtMu,minPtMu,maxPtMu);
-  hPT[index][5]= new TH1F("hPTtmr_qual","TMR Muon Pt qual",
-			  nBinPtMu,minPtMu,maxPtMu);
+  for(int cut = 0; cut != Num_histo_sets; ++cut)
+    for(int algo = 0; algo != Num_trkAlgos; ++algo)
+      {
+	string name = "hPT" + algo_desc_short[algo] + "_" + cuts_desc_short[cut];
+	string title = algo_desc_long[algo] + " muon p_{T} with " + cuts_desc_long[cut];
+	hPT[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinPtMu,minPtMu,maxPtMu);
+      }
   
 }//---------defineMuonPtHistos()
 
@@ -184,20 +106,17 @@ void defineHistos_MuonChargePt()
 #if debugme
   cout << " define histos MuonChargePt " << endl;
 #endif
+
+  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+    {
+      string name = "hPT" + algo_desc_short[algo] + "_" + "plus";
+      string title = " (+) " + algo_desc_long[algo] + " muon p_{T} qual ";
+      hPTplus[algo] = new TH1F(name.c_str(), title.c_str(), nBinPtMu,minPtMu,maxPtMu);
+      name = "hPT" + algo_desc_short[algo] + "_" + "minus";
+      title = " (-) " + algo_desc_long[algo] + " muon p_{T} qual ";
+      hPTminus[algo] = new TH1F(name.c_str(), title.c_str(), nBinPtMu,minPtMu,maxPtMu);
+    }
     
-  hPTplus[0]= new TH1F("hPTglb_plus","(+) Global Muon Pt qual",
-		       nBinPtMu,minPtMu,maxPtMu);
-  hPTplus[1]= new TH1F("hPTtrk_plus","(+) Tracker Muon Pt qual",
-		       nBinPtMu,minPtMu,maxPtMu);
-  hPTplus[2] = new TH1F("hPTtpfms_plus","(+) TPFMS Muon Pt qual",
-			nBinPtMu,minPtMu,maxPtMu);
-  
-  hPTminus[0]= new TH1F("hPTglb_minus","(-) Global Muon Pt qual",
-			nBinPtMu,minPtMu,maxPtMu);
-  hPTminus[1]= new TH1F("hPTtrk_minus","(-) Tracker Muon Pt qual",
-			nBinPtMu,minPtMu,maxPtMu);
-  hPTminus[2] = new TH1F("hPTtpfms_minus","(-) TPFMS Muon Pt qual",
-			 nBinPtMu,minPtMu,maxPtMu);
   return;
 
 }//------defineHistos_MuonChargePt
