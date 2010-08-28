@@ -8,15 +8,18 @@
 // (exponential, landau, RBW) for pT < 150; limit fit to region above fXMIN
 // fXMAX should be something reasonable (ie. up to when we run out of statistics)
 const float fXMIN = 164;
-const float fXMAX = 850; // 1200;//850;
+const float fXMAX = 1200; // 850; // 1200;//850;
 // in GeV
-const Double_t width_W = 2.141;
+const Double_t width_W = 2.196;
 const Double_t mass_W = 80.398;
 
 // set bin-size, should be equal to histogram bin-size we fit
 void setBinSize(float bin_size);
 // set resolution function
 void setResolution(TH1F * g);
+
+// set landau (true) or RBW (false) background
+void setLandauBgd(bool flag);
 
 // this is the "auxiliary", non-normalized relativistic Breight Wigner function; 
 Double_t RBW_aux(Double_t * x, Double_t * par);
