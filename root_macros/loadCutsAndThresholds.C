@@ -84,7 +84,8 @@ unsigned NjetAboveThresh(float threshold, float delta_phi,
   for(int j = 0; j != njets; ++j)
     { // loop over jets
       TLorentzVector * jet = (TLorentzVector *) ev->jet->At(j);
-      if(jet->Et() >threshold && jet->DeltaPhi(mu->tracker.p) > delta_phi)
+      if(jet->Et() >threshold && 
+	 TMath::Abs(jet->DeltaPhi(mu->tracker.p)) > delta_phi)
 	++N;
     } // loop over jets
   
