@@ -50,7 +50,7 @@ void printSummary_MuonPt(ofstream & out, const string& sample,
     cout << "\n Sample: " << sample << endl;
     cout << " Total # of expected events = " << Nexp_evt << endl;
 
-    for (int mual = 0; mual<Num_trkAlgos; ++mual){
+    for (int mual = 0; mual != Num_trkAlgos; ++mual){
       cout << " Algorithm: " << algo_desc_long[mual] << endl;
       for(int i = 0; i < Num_histo_sets; ++i){
 
