@@ -54,7 +54,7 @@ typedef std::map<rbw_point, Double_t, lt_rbw_point>::iterator It;
 
 // must be defined in global scope because they are needed by static function
 Double_t minRBW = 0;
-Double_t maxRBW = 0;
+Double_t maxRBW = 3000;
 
 // to be set by caller, should be equal to histogram bin-size we fit
 float BIN_SIZE = 0; 
@@ -63,6 +63,10 @@ void setBinSize(float bin_size){BIN_SIZE = bin_size;}
 TH1F * gsmear; 
 // set resolution function
 void setResolution(TH1F * g){gsmear = g;}
+
+bool landauFlag = false;
+// set landau (true) or RBW (false) background
+void setLandauBgd(bool flag){landauFlag = flag;}
 
 // static functions; to be initialized in initFunc
 // auxiliary RBW function for background
@@ -149,6 +153,7 @@ static TF1 * mysig_aux = new TF1("mysig_aux", mySig_aux, PTMIN, PTMAX, 2);
 
 // convolution of (a) dN/dcos(theta) = (1 + costheta^2) [or (1 +- costheta)^2]
 // and (b) relativistic Breit Wigner
+// this is considered unnormalized, except if it is integrated between 0, infinity
 Double_t mySig(Double_t * x, Double_t * par)
 {
   // par[0]: scale, par[1]: Mass, par[2]: "fudge" factor to increase width
@@ -160,9 +165,12 @@ Double_t mySig(Double_t * x, Double_t * par)
   Double_t width = par[2]*(4./3.) * width_W * (par[1]/mass_W);
   //  width = par[2]; if(par[2] < 0)return 0;
 
+#if 0
   float delta = std::sqrt(float(30*par[1]*width));
   minRBW = TMath::Max(0.0, par[1] - delta);
   maxRBW = par[1]+delta;
+  //  cout << " minRBW = " << minRBW << " maxRBW =  " << maxRBW << endl;
+#endif
 
   unsigned Nbins_rbw = int((maxRBW - minRBW)/rbw_bin_size);
   static TF1 rbw_aux_tmp("rbw_aux", RBW_aux, minRBW, maxRBW, 3);
@@ -289,8 +297,10 @@ Double_t smeared_sig(Double_t * x, Double_t * par)
 
 Double_t myBgd(Double_t * x, Double_t * par)
 {
-  return myRBW(x, par);
-  //return myLandau(x, par);
+  if(landauFlag)
+    return myLandau(x, par);
+  else
+    return myRBW(x, par);
 }
 
 Double_t mySigBgd(Double_t * x, Double_t * par)
