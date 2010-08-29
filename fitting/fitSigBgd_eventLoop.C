@@ -5,6 +5,7 @@
 #include <TCanvas.h>
 #include <TRandom.h>
 #include <TMinuit.h>
+#include <TLatex.h>
 #include <TVirtualFitter.h>
 
 #include <string>
@@ -14,6 +15,7 @@
 #include "fit_wprime.h"
 #include "common_fit.h"
 #include "Results.h"
+#include "../root_macros/wprime_histo_constants.h"
 
 using std::string; using std::cout; using std::endl;
 
@@ -32,7 +34,13 @@ static int npoints = -999;
 static int status = -9999;
 
 // # of function parameters to be employed for fit
-const unsigned NPARAM_FIT = 6;
+unsigned NPARAM_FIT = 0;
+
+// signal-free (mass_option=0) corresponds to highest available mass point (2.0 TeV)
+float all_masses[mass_points] = {2200, 800, 1000, 1100, 1200, 1300, 1400,
+				 1500, 2000};
+
+void setNPARAM_FIT(unsigned num){NPARAM_FIT = num;}
 
 // get fit results, store in Results structure
 void getResults(Results * result, TF1 * f, int exp_no)
@@ -52,7 +60,8 @@ void getResults(Results * result, TF1 * f, int exp_no)
   result->f = f->GetParameter(5); result->df = f->GetParError(5); 
 
   cout << " =================== Results: ==========================" << endl;
-  cout << " Nsig = " << result->Nsig << " +- " << result->dNsig << endl;
+  cout << " Nsig = " << result->Nsig << " +- " << result->dNsig;
+  cout << " (Input: " << result->Nsig_input << ") " << endl;
   cout << " Mass = " << result->mass << " +- " << result->dmass << endl;
   cout << " f = " << result->f << " +- " << result->df << endl;
   cout << " Chi2/Ndof = " << result->chi2 << "/" << result->Ndof 
@@ -75,6 +84,7 @@ void makeHistogram(TH1F * & makeThis, const char * hname, const char * htitle,
 void populateHistogram(TH1F * makeThis, unsigned N, TH1F * likeThis, 
 		       bool store_Nsig_input)
 {
+  if (N==0)return;
   // add poisson flucturation in the # of events for i-th pseudo-experiment
   TF1 f("mypoiss", "TMath::Poisson(x, [0])", 0, 5.*N);
   f.SetParameter(0, N);
@@ -119,8 +129,9 @@ void myFCN(Int_t& /*nPar*/, Double_t * /*grad*/, Double_t &fval, Double_t *par,
   fval = chi2;
 }
 
-void fitIt()
+void fitIt(TH1F * data, TF1 * theory)
 {
+  tot = data; ftot = theory;
   if(custom_chi2)
     {
       TVirtualFitter * fitter = TVirtualFitter::Fitter(0,NPARAM_FIT);
@@ -133,16 +144,23 @@ void fitIt()
 	  fitter->SetParameter(0, ftot->GetParName(0), 
 			       ftot->GetParameter(0), 0, Ntot, Ntot);
 	}
-      if(fixFudge)
+
+      fitter->SetParameter(1, ftot->GetParName(1), ftot->GetParameter(1),
+      			   0, fXMIN, fXMIN);
+
+      if(NPARAM_FIT > 3)
 	{
-	  fitter->SetParameter(5, ftot->GetParName(5), 
-			       ftot->GetParameter(5), 0, Fudge, Fudge);
-	}
-      if(use_wprime_mass_limits)
-	{
-	  fitter->SetParameter(4, ftot->GetParName(4), 
-			       ftot->GetParameter(4), 20, 
-			       0, upper_wprime_mass_limit);
+	  if(fixFudge)
+	    {
+	      fitter->SetParameter(5, ftot->GetParName(5), 
+				   ftot->GetParameter(5),0, Fudge, Fudge);
+	    }
+	  if(use_wprime_mass_limits)
+	    {
+	      fitter->SetParameter(4, ftot->GetParName(4), 
+				   ftot->GetParameter(4), 20, 
+				   0, upper_wprime_mass_limit);
+	    }
 	}
       
       fitter->SetFCN(myFCN);
@@ -174,7 +192,7 @@ void fitIt()
 	  fitter->ExecuteCommand("SET LIM", arglist, 3);
 	}
 
-      if(fixFudge)
+      if(fixFudge && NPARAM_FIT > 3)
 	{
 	  // fix "fudge factor" for W' width
 	  arglist[0] = 6;
@@ -210,46 +228,90 @@ void fitIt()
   else
     { // use MINUIT built-in log-likelihood
       tot->Fit(ftot, "LRV");
+      double chi2, edm, errdef; 
+      int nvpar, nparx;
+      cout << " status = " << TVirtualFitter::Fitter(tot)->GetStats(chi2,edm,errdef,nvpar,nparx) << endl;
+      cout << " Chi2/Ndof = " << chi2 << "/" <<npoints-nvpar << endl;
     }
 
 }
 
-// TH1F * ref[num_ref_points] = {wp10_orig, wp15_orig, wp20_orig, bgd_orig};
-void fitSigBgd_eventLoop(unsigned mass_option, const unsigned * N_evt2gen, 
-			 Results * result, TH1F ** ref, int exp_no)
+void doPlots(TH1F * data, TF1 * theory, bool bgdOnlyFit)
 {
-  int wprime_index = mass_option - 1; 
-  assert(wprime_index >= 0 && wprime_index <= 2);
 
-  string htitle = "Muon Pt"; string htitle_wp = histo_desc[wprime_index];
+  TF1 fbgd("mybgd", myBgd, fXMIN, fXMAX, 3);
+  fbgd.SetParameters(theory->GetParameter(0) -theory->GetParameter(3),
+		     theory->GetParameter(1), theory->GetParameter(2));
+  TF1 fsig("mysig", smeared_sig, fXMIN, fXMAX, 3);
+  fsig.SetParameters(theory->GetParameter(3), theory->GetParameter(4),
+		     theory->GetParameter(5));
 
-  htitle += htitle_wp;
-  makeHistogram(wprime, "wprime", htitle.c_str(), ref[wprime_index]);
-  htitle = "Muon Pt, Bgd-only";
-  makeHistogram(bgd, "bgd", htitle.c_str(), ref[3]);
+  if(!bgdOnlyFit)
+    {
+      Double_t par[3] ={theory->GetParameter(3), theory->GetParameter(4),
+			theory->GetParameter(5)};
+      cout << " Nsig in [" << fXMIN << ", " << fXMAX << "] GeV = " 
+       << fsig.Integral(fXMIN, fXMAX, par, 0.1)/data->GetBinWidth(0)
+	   << endl;
+    }
 
-  float very_small = 0.001;
-  float diff = wprime->GetBinWidth(0) - bgd->GetBinWidth(0);
-  assert(TMath::Abs(diff) < very_small);
+  data->SetMarkerStyle(4);
+  data->GetXaxis()->SetTitle("p_{T} (GeV/c)");  
+  data->SetTitle("W ' #rightarrow #mu#nu p_{T}");
+  fsig.SetLineColor(kRed);
+  fbgd.SetLineColor(kBlue);
+  string desc = "CMS Preliminary"; string desc2 = " 100 pb^{-1}";
 
-  bool store_Nsig_input = true;
-  populateHistogram(wprime, N_evt2gen[wprime_index], ref[wprime_index],
-		    store_Nsig_input);
-  store_Nsig_input = false;
-  populateHistogram(bgd, N_evt2gen[3], ref[3], store_Nsig_input);
+  TCanvas * c1 = new TCanvas();
+  data->GetXaxis()->SetRangeUser(fXMIN, fXMAX);
+  data->Draw("e");
+  theory->Draw("same");
+  fbgd.Draw("same");
+  if(!bgdOnlyFit)
+    fsig.Draw("same");
+  
+  TLatex * l1 = new TLatex(500, 15, desc.c_str());
+  l1->SetTextSize(0.06); 
+  TLatex * l4 = new TLatex(500, 22, desc.c_str());
+  l4->SetTextSize(0.06); 
+  TLatex * l3 = new TLatex(600, 15, desc2.c_str());
+  l3->SetTextSize(0.05);
+  TLatex * l2 = new TLatex(600, 10, desc2.c_str());
+  l2->SetTextSize(0.05); 
 
-  htitle = desc[algo_option] + htitle_wp;
-  // this is the total (signal + background) distribution 
-  // (wprime and W + QCD + top + Z/DY)
-  makeHistogram(tot, "tot", htitle.c_str(), ref[3]);
-  tot->Add(bgd);
-  tot->Add(wprime);
-  tot->GetXaxis()->SetRangeUser(fXMIN, fXMAX);
+  l1->Draw(); l2->Draw();
+  c1->SetLogy();
+  c1->SaveAs("muonpt_fit_log.gif");     
+  c1->SetLogy(false);
 
-  TAxis *xaxis = tot->GetXaxis();
-  int bin_first = xaxis->FindBin(fXMIN); int bin_last = xaxis->FindBin(fXMAX);
-  Ntot = tot->Integral(bin_first, bin_last);
+  delete c1;
+  c1 = new TCanvas();
+  data->GetXaxis()->SetRangeUser(fXMIN, fXMAX);
+  data->Draw("e");
+  theory->Draw("same");
+  fbgd.Draw("same");
+  fsig.Draw("same");
+  l4->Draw(); l3->Draw();
+  c1->SaveAs("muonpt_fit_lin.gif");     
+  delete c1;
 
+
+  data->GetListOfFunctions()->Add(&fbgd);
+  data->GetListOfFunctions()->Add(&fsig);
+
+  TFile * fout = new TFile("fit_sigbgd.root", "recreate");
+  data->Write();
+  fout->Close();
+
+}
+
+void fitData(TH1F * data, TF1 * & theory, Results * result, int exp_no, 
+	     float mass, float evt_sig, bool bgdOnlyFit)
+{
+  TAxis *xaxis = data->GetXaxis();
+  int bin_first = xaxis->FindBin(fXMIN); 
+  int bin_last = xaxis->FindBin(fXMAX);
+  Ntot = data->Integral(bin_first, bin_last);
   // need to check that fXMIN, fXMAX are near bin boundaries, otherwise Ntot
   // may not give correct # of signal+background events under fitting region
   // if fixNtot = true. Should add an explicit check maybe? Print on screen for now
@@ -263,87 +325,125 @@ void fitSigBgd_eventLoop(unsigned mass_option, const unsigned * N_evt2gen,
 
   cout << " Total # of events within bin range = " << Ntot << endl;
 
+  setBinSize(data->GetBinWidth(0));
+  setLandauBgd(isBgdLandau);
+  
+  if(bgdOnlyFit)
+    {
+      theory = new TF1("ftot", myBgd, fXMIN, fXMAX, NPARAM_FIT);
+      theory->SetParameters(Ntot, fXMIN, 93.0);
+    }
+  else
+    {
+      theory = new TF1("ftot", mySigBgd, fXMIN, fXMAX, NPARAM_FIT);
+      theory->SetParameters(Ntot, fXMIN, 93.0, evt_sig, mass, Fudge);
+      theory->SetParName(3, "W ' evt count");
+      theory->SetParName(4, "W ' Mass");
+      theory->SetParName(5, "W ' Width scale factor");
+    }
 
-  setBinSize(wprime->GetBinWidth(0));
-
-  float mass = -999; float evt_sig = 1.0*N_evt2gen[wprime_index];
-
-  if(mass_option == 1)
-    mass = 1000;
-  else if(mass_option == 2)
-    mass = 1500;
-  else if(mass_option == 3)
-    mass = 2000;
-
-  ftot = new TF1("ftot", mySigBgd, fXMIN, fXMAX, NPARAM_FIT);
-  ftot->SetParameters(Ntot, fXMIN, 93, evt_sig, mass, Fudge);
-  ftot->SetParName(0, "Total evt count");
-  ftot->SetParName(1, "Bgd RBW M");
-  ftot->SetParName(2, "Bgd RBW  #Gamma");
-  ftot->SetParName(3, "W ' evt count");
-  ftot->SetParName(4, "W ' Mass");
-  ftot->SetParName(5, "f");
+  theory->SetParName(0, "Total evt count");
+  if(isBgdLandau)
+    {
+      theory->SetParName(1, "Landau mpv");
+      theory->SetParName(2, "Landau sigma");
+    }
+  else
+    {
+      theory->SetParName(1, "Bgd RBW M");
+      theory->SetParName(2, "Bgd RBW  #Gamma");
+    }
 
   for(unsigned i = 0; i != NPARAM_FIT; ++i)
-    ftot->SetParError(i, 20);
+    theory->SetParError(i, 20);
 
   if(fixNtot)
-    ftot->FixParameter(0, Ntot);
+    theory->FixParameter(0, Ntot);
 
-  if(use_wprime_mass_limits)
-    ftot->SetParLimits(4, 0, upper_wprime_mass_limit);
+  theory->FixParameter(1, fXMIN);
 
-  if(fixFudge)
-    ftot->FixParameter(5, Fudge);
-  else
-    ftot->SetParError(5, 0.1);
-  
-  //    if(exp_no == 2)
-  //      {
+  if(!bgdOnlyFit)
+    {
+      if(use_wprime_mass_limits)
+	theory->SetParLimits(4, 0, upper_wprime_mass_limit);
+      
+      if(fixFudge)
+	theory->FixParameter(5, Fudge);
+      else
+	theory->SetParError(5, 0.1);
+    }
+
+  if(exp_no > -1)
+    //if(exp_no == 3)
+    {
 
       if(doFits)
 	{
-	  fitIt();
-	  getResults(result, ftot, exp_no);
+	  fitIt(data, theory);
+	  getResults(result, theory, exp_no);
 	}
-
-#if 0
-      TCanvas * c1 = new TCanvas();
-      tot->SetMarkerStyle(4);
-      tot->Draw("e");
-      ftot->Draw("same");
-      TF1 fbgd("mybgd", myBgd, fXMIN, fXMAX, 3);
-      fbgd.SetParameters(ftot->GetParameter(0) - ftot->GetParameter(3),
-			ftot->GetParameter(1), ftot->GetParameter(2));
-      fbgd.SetLineColor(kBlue);
-      TF1 fsig("mysig", smeared_sig, fXMIN, fXMAX, 3);
-      fsig.SetParameters(ftot->GetParameter(3), ftot->GetParameter(4),
-			 ftot->GetParameter(5));
-      fsig.SetLineColor(kRed);
-      fbgd.Draw("same");
-      fsig.Draw("same");
-
-      tot->GetListOfFunctions()->Add(&fbgd);
-      tot->GetListOfFunctions()->Add(&fsig);
-      TFile * fout = new TFile("fit_sigbgd.root", "recreate");
-      tot->Write();
-      fout->Close();
-
-      c1->SetLogy();
-      c1->SaveAs("muonpt_fit.gif");     
-      c1->SetLogy(false);
-      c1->SaveAs("muonpt_fit_lin.gif");     
-      delete c1;
-
-#endif
-
-
-      //     }
-
-      delete bgd;
-      delete wprime;
-      delete tot;
-      if(!custom_chi2)
-	delete ftot;
   
+      cout << " Nsig = " << result->Nsig << " (" << 100.*result->Nsig/Ntot 
+	   << "% of total = " << Ntot << ")" << endl;
+      doPlots(data, theory, bgdOnlyFit);
+    }
+  
+  if(!custom_chi2)
+    delete theory;  
+}
+
+
+
+// signal-free histogram corresponds to highest mass point (2.0 TeV)
+// this is only for consistency, as no signal is added for mass_option=0
+//TH1F * ref_hist[num_ref_plots] = {wp20_orig, wp08_orig, wp10_orig, 
+//			    wp11_orig, wp12_orig, wp13_orig, 
+//			    wp14_orig, wp15_orig, wp20_orig, 
+//			    bgd_orig};
+void fitSigBgd_eventLoop(unsigned mass_option, const unsigned * N_evt2gen, 
+			 Results * result, TH1F ** ref, int exp_no, 
+			 bool bgdOnlyFit)
+{
+  // if true (false) do background-only (signal+background) fit
+  if(bgdOnlyFit)
+    setNPARAM_FIT(3);
+  else
+    setNPARAM_FIT(6);
+
+  assert(mass_option <= 8);
+
+  string htitle = "Muon Pt"; string htitle_wp = histo_desc[mass_option];
+
+  htitle += htitle_wp;
+  makeHistogram(wprime, "wprime", htitle.c_str(), ref[mass_option]);
+  htitle = "Muon Pt, Bgd-only";
+  makeHistogram(bgd, "bgd", htitle.c_str(), ref[3]);
+
+  float very_small = 0.001;
+  float diff = wprime->GetBinWidth(0) - bgd->GetBinWidth(0);
+  assert(TMath::Abs(diff) < very_small);
+
+  bool store_Nsig_input = true;
+  populateHistogram(wprime, N_evt2gen[mass_option], ref[mass_option],
+		    store_Nsig_input);
+  store_Nsig_input = false;
+  populateHistogram(bgd, N_evt2gen[9], ref[9], store_Nsig_input);
+
+  float evt_sig = 1.0*N_evt2gen[mass_option];
+  float mass = all_masses[mass_option];
+
+  htitle = algo_desc_long[algo_option] + htitle_wp;
+  // this is the total (signal + background) distribution 
+  // (wprime and W + QCD + top + Z/DY)
+  TH1F * data = 0;
+  makeHistogram(data, "tot", htitle.c_str(), ref[3]);
+  data->Add(bgd);
+  if(mass_option > 0)
+    data->Add(wprime);
+
+  TF1 * theory = 0;
+  fitData(data, theory, result, exp_no, mass, evt_sig, bgdOnlyFit);
+
+  delete wprime; delete bgd;
+
 }
