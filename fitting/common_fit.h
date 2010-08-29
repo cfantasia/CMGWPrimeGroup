@@ -1,10 +1,6 @@
 #ifndef _common_fit_h_
 #define _common_fit_h_
 
-const unsigned N_algos = 3; // global, tracker, tracker + 1st muon station
-string desc[N_algos] = {" Global muons ", " Tracker-only muons ",
-			" Tracker + 1st Muon muons - "};
-
 // signal-free, 0.8, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 2.0 TeV
 const unsigned mass_points = 9; 
 const unsigned num_ref_plots = mass_points + 1; // equals to wprime points + bgd 
