@@ -13,7 +13,7 @@ o Setup a new working area (Default name: V121, release:
 CMSSW_3_6_3)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-01-21)
+V00-01-30)
 
 o Compile the code
 
@@ -25,17 +25,24 @@ location of the input file and run.
 
 
 
-NB#1 Custom ROOT-tuples produced with 31x (Spring10 STARTUP) can be found 
+NB The following ustom ROOT-tuples produced with 356 (Spring10 STARTUP) 
 
-(a) in /castor/cern.ch//user/g/goys/Wprime/3_6_1/Filter/ for 
-filtered (muon pt>100 GeV) bacgkround 
+- filtered (muon pt>100 GeV) MC bacgkround 
+- Wprime->munu MC signal for masses: 0.8, 1.0, 1.1, 1.2, 1.3, 1.4, 
+  1.5 and 2.0 TeV 
+- collision data  for a muon skim with pt > 10 GeV
 
-(b) in /castor/cern.ch/user/d/dsperka/wprime_munu/Spring10MC/ for signal
-(Wprime->mu nu) for masses: 0.8, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5 and 2.0 TeV
 
-NB#2 Custom ROOT-tuples produced with 36x for a muon skim with pt > 10 GeV
-can be found at:
-/castor/cern.ch/user/d/dsperka/wprime_munu/MuSkim_255nb.root
+can be found in
+
+(a) /castor/cern.ch/user/c/cleonido/wprime/v121/ (made with V00-01-21, and
+0.84 pb^-1 of real data; use
+UserCode/CMGWprimeGroup/config/samples_cross_sections_v3.txt) 
+
+(b) /castor/cern.ch/user/c/cleonido/wprime/v105/ (made with V00-01-05, and
+255 nb^-1 of real data; use
+UserCode/CMGWprimeGroup/config/samples_cross_sections_v2.txt) 
+
 
 
 =========================================================================

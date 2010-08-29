@@ -1,3 +1,36 @@
+29-AUG-10 (Christos, Edgar), V00-01-30
+=======================================
+(a) Updated macros to accommodate additional tracking algorithms 
+(cocktail, picky, TMR). Input root-tuples made with V00-01-21 are 
+available at castor (see UserCode/CMGWPrimeCode/doc/README.txt for 
+details)
+
+(b) Selection cuts:
+  o default cut: switched to relative combined isolation
+  o default cut: switched from minimum # of tracker hits to minimum # of
+tracker layers (where tracker:= pixel + silicon)
+  o bugfix in determining angle between jet and muon in jet-veto cut:
+angle(jet, mu) should have been |angle(jet, mu)|
+
+(c) Fitting:
+  o Some structural changes to facilitate studies of ensembles of
+pseudo-experiments, and to also deal with fits of real data
+  o Tuning of fit parameters
+  o Updated W width to newer PDG value (2.141 -> 2.196 GeV)
+  o Changed default value of Wprime width "fudge" factor (2.0 -> 1.0)
+  o Changed default resolution to that of TPFMS algorithm
+
+(d) Misc:
+  o Updated data root-tuples made by Boston (0.255 nb^-1 -> 0.84 pb^-1)
+  o Updated file with resolution histograms made with START3X and 3_5_6
+Wprime samples
+  o Removed (obsolete option=2) JetIso constants from
+loadCutsAndTresholds.h) 
+  o Removed (not-used) relative-pt isolation function to avoid confusion
+  o Cleanup example py file by removing unnecessary parameters
+
+
+
 08-AUG-10 (Christos), V00-01-21
 ===============================
 Added protection against cases for which TeV tracking has failed.
