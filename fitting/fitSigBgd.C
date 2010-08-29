@@ -138,7 +138,6 @@ int fitSigBgd(unsigned mass_option, unsigned N_EXP, bool bgdOnlyFit)
   Results * result = new Results();
   root_tree->Branch("myTuple", "Results", &result, 8000, 2);
   
-  //  for(unsigned i = 0; i != N_algos; ++i)
   getInputHistograms();
   makeReferenceHistograms();
   setResolution(g0[mass_option]);
@@ -251,7 +250,7 @@ void getInputHistograms()
 void makeReferenceHistograms()
 {
   string histo_name = "bgd" + algo_desc_short[algo_option];
-  string histo_title = "Bgd-only" + desc[algo_option]; 
+  string histo_title = "Bgd-only" + algo_desc_long[algo_option]; 
   bgd_orig = new TH1F(histo_name.c_str(), histo_title.c_str(), 
 		 top_orig->GetNbinsX(), top_orig->GetXaxis()->GetXmin(), 
 		 top_orig->GetXaxis()->GetXmax());
