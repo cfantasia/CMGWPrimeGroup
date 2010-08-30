@@ -13,7 +13,7 @@ o Setup a new working area (Default name: V121, release:
 CMSSW_3_6_3)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-01-30)
+V00-01-31)
 
 o Compile the code
 
@@ -36,8 +36,8 @@ NB The following ustom ROOT-tuples produced with 356 (Spring10 STARTUP)
 can be found in
 
 (a) /castor/cern.ch/user/c/cleonido/wprime/v121/ (made with V00-01-21, and
-0.84 pb^-1 of real data; use
-UserCode/CMGWprimeGroup/config/samples_cross_sections_v3.txt) 
+1.32 pb^-1 of real data; use
+UserCode/CMGWprimeGroup/config/samples_cross_sections_v4.txt) 
 
 (b) /castor/cern.ch/user/c/cleonido/wprime/v105/ (made with V00-01-05, and
 255 nb^-1 of real data; use
