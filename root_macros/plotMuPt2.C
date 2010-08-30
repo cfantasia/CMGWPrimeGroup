@@ -55,7 +55,7 @@ void plotMuPt2()
   else
     desc +=  ", after quality cuts";
 
-  desc += " (STARTUP, 0.84 pb^{-1})";
+  desc += " (STARTUP, 1.32 pb^{-1})";
   doPlots(_file0);
 }
 
@@ -167,7 +167,7 @@ void doPlots(TFile * _file0)
   lg->AddEntry(wp10, "W ' (1.0 TeV)", "F");
   lg->AddEntry(wp15, "W ' (1.5 TeV)", "F");
   lg->AddEntry(wp20, "W ' (2.0 TeV)", "F");
-  lg->AddEntry(data, "data (0.84 pb^{-1})", "LP");
+  lg->AddEntry(data, "data (1.32 pb^{-1})", "LP");
   lg->Draw();
   
   string file; string file2;
