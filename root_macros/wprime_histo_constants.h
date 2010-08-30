@@ -7,7 +7,7 @@ const int Num_trkAlgos = 6; // global, tracker, tpfms, cocktail, picky, tmr
 
 // use this for histogram names
 const string algo_desc_short[Num_trkAlgos] = {"gbl","trk","tpfms","ckt","pic","tmr"};
-const string cuts_desc_short[Num_histo_sets] = {"hlt","1mu","ptrange","iso", "jet", "qual"};
+const string cuts_desc_short[Num_histo_sets] = {"hlt","ptrange","1mu","iso", "jet", "qual"};
 // use this for histogram descriptions
 const string algo_desc_long[Num_trkAlgos] = {"global", "tracker", "TPFMS","cocktail","picky","TMR"};
 const string cuts_desc_long[Num_histo_sets]= {"HLT_Mu9", "Pt within range", 
