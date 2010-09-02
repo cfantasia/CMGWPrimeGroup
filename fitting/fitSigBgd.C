@@ -31,8 +31,9 @@ string data_desc2[mass_points] =
   {"signal-free", "0.8 TeV", "1.0 TeV", "1.1 TeV", "1.2 TeV", "1.3 TeV", 
    "1.4 TeV", "1.5 TeV", "2.0 TeV"};
 
-// resolution for signal-free same as highest mass point one
-string gname_pre[mass_points] = {"g15", "g08", "g10", "g11", "g12",
+// resolution for signal-free sample same as for highest mass point one 
+// w/o any expected event yield for currentl luminosity (is this reasonable?)
+string gname_pre[mass_points] = {"g11", "g08", "g10", "g11", "g12",
 				 "g13", "g14", "g15", "g20"};
 
 // this corresponds to the histogram after all cuts have been applied
@@ -143,7 +144,7 @@ int fitSigBgd(unsigned mass_option, unsigned N_EXP, bool bgdOnlyFit)
   setResolution(g0[mass_option]);
   // signal-free histogram corresponds to highest mass point (2.0 TeV)
   // this is only for consistency, as no signal is added for mass_option=0
-  TH1F * ref_hist[num_ref_plots] = {wp20_orig, wp08_orig, wp10_orig, 
+  TH1F * ref_hist[num_ref_plots] = {wp11_orig, wp08_orig, wp10_orig, 
 				    wp11_orig, wp12_orig, wp13_orig, 
 				    wp14_orig, wp15_orig, wp20_orig, 
 				    bgd_orig};
@@ -263,7 +264,8 @@ void makeReferenceHistograms()
 
   // # of events to generate per sample
   assert(num_ref_plots == 10);
-  float k = integ_lumi/100;
+// use to scale histograms in Wprime_analysis.root (assume: correspond to 100 pb^-1)
+  float k = integ_lumi/100; 
   N_evt2gen[0] = 1;
   N_evt2gen[1] = int(wp08_orig->Integral()*k + 0.5);
   N_evt2gen[2] = int(wp10_orig->Integral()*k + 0.5);
