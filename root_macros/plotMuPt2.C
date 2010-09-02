@@ -21,23 +21,10 @@ string algo;
 // histogram title;
 string desc;
 
-bool plot_without_qual_cuts = false;
-
-string set_cuts;
-
 void doPlots(TFile * _file0);
 
 void plotMuPt2()
 {
-  assert(Num_histo_sets == 6);
-
-  if(plot_without_qual_cuts)
-    // pick histograms before quality cuts have been applied
-    set_cuts = cuts_desc_short[4];  
-  else
-    // pick histograms after all quality cuts have been applied
-    set_cuts = cuts_desc_short[5];  
-    
   string input_file = "Wprime_analysis.root";
   TFile *_file0 = TFile::Open(input_file.c_str());
   if(!_file0 || _file0->IsZombie())
@@ -49,13 +36,7 @@ void plotMuPt2()
   gStyle->SetOptStat(00000);
 
   algo = algo_desc_short[tracking_option];
-  desc = algo_desc_long[tracking_option] + " muons";
-  if(plot_without_qual_cuts)
-    desc +=  ", before quality cuts";
-  else
-    desc +=  ", after quality cuts";
-
-  desc += " (STARTUP, 1.32 pb^{-1})";
+  desc = algo_desc_long[tracking_option] + " muons  (STARTUP, 1.32 pb^{-1})";
   doPlots(_file0);
 }
 
@@ -80,7 +61,7 @@ void doPlots(TFile * _file0)
   TCanvas * c1 = new TCanvas();
   c1->SetLogy();
 
-  string histo = "hPT" + algo + "_" + set_cuts;
+  string histo = "hPT" + algo + "_" + final_histo_desc;
   string histoW = "W/" + histo;
   TH1F * w = (TH1F* ) _file0->Get(histoW.c_str());
   if(badHisto(w, "W"))
@@ -170,17 +151,8 @@ void doPlots(TFile * _file0)
   lg->AddEntry(data, "data (1.32 pb^{-1})", "LP");
   lg->Draw();
   
-  string file; string file2;
-  if(plot_without_qual_cuts)  
-    {
-      file = "MuonPt_noqual.gif";
-      file2 = "MuonPt_noqual.eps";
-    }
-  else
-    {
-      file = "MuonPt_qual.gif";
-      file2 = "MuonPt_qual.eps";
-    }
+  string file = "MuonPt_qual.gif";
+  string file2 = "MuonPt_qual.eps";
 
   c1->SaveAs(file.c_str());
   c1->SaveAs(file2.c_str());
