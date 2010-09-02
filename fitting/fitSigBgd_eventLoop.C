@@ -37,7 +37,7 @@ static int status = -9999;
 unsigned NPARAM_FIT = 0;
 
 // signal-free (mass_option=0) corresponds to highest available mass point (2.0 TeV)
-float all_masses[mass_points] = {2200, 800, 1000, 1100, 1200, 1300, 1400,
+float all_masses[mass_points] = {1100, 800, 1000, 1100, 1200, 1300, 1400,
 				 1500, 2000};
 
 void setNPARAM_FIT(unsigned num){NPARAM_FIT = num;}
@@ -145,8 +145,8 @@ void fitIt(TH1F * data, TF1 * theory)
 			       ftot->GetParameter(0), 0, Ntot, Ntot);
 	}
 
-      fitter->SetParameter(1, ftot->GetParName(1), ftot->GetParameter(1),
-      			   0, fXMIN, fXMIN);
+      //      fitter->SetParameter(1, ftot->GetParName(1), ftot->GetParameter(1),
+      //			   0, fXMIN, fXMIN);
 
       if(NPARAM_FIT > 3)
 	{
@@ -308,6 +308,11 @@ void doPlots(TH1F * data, TF1 * theory, bool bgdOnlyFit)
 void fitData(TH1F * data, TF1 * & theory, Results * result, int exp_no, 
 	     float mass, float evt_sig, bool bgdOnlyFit)
 {
+  if(bgdOnlyFit)
+    setNPARAM_FIT(3);
+  else
+    setNPARAM_FIT(6);
+
   TAxis *xaxis = data->GetXaxis();
   int bin_first = xaxis->FindBin(fXMIN); 
   int bin_last = xaxis->FindBin(fXMAX);
@@ -360,7 +365,7 @@ void fitData(TH1F * data, TF1 * & theory, Results * result, int exp_no,
   if(fixNtot)
     theory->FixParameter(0, Ntot);
 
-  theory->FixParameter(1, fXMIN);
+  //  theory->FixParameter(1, fXMIN);
 
   if(!bgdOnlyFit)
     {
@@ -405,10 +410,6 @@ void fitSigBgd_eventLoop(unsigned mass_option, const unsigned * N_evt2gen,
 			 bool bgdOnlyFit)
 {
   // if true (false) do background-only (signal+background) fit
-  if(bgdOnlyFit)
-    setNPARAM_FIT(3);
-  else
-    setNPARAM_FIT(6);
 
   assert(mass_option <= 8);
 
