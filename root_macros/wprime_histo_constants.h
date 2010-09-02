@@ -14,4 +14,8 @@ const string cuts_desc_long[Num_histo_sets]= {"HLT_Mu9", "Pt within range",
 					     "1 muon only","Isolation", 
 					     "Jet Veto", "Quality"};
 
+
+// last histogram after all cuts to be used for fit
+const string final_histo_desc = cuts_desc_short[Num_histo_sets - 1];
+
 #endif // #ifndef _wprime_histo_constants_h__
