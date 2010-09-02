@@ -1,3 +1,33 @@
+02-SEP-10 (Christos), V00-01-32
+================================
+
+Fitting code tuning:
+--------------------
+o Defined "mass point" to be used for fits of (early) data or
+background-only MC distributions. The value determines the initial value 
+of the mass in the fit, but more importantly, the resolution
+function. Should we set to (mass value of) expected limit of Wprime reach?
+Someting to think about...
+
+o Switched default background function to RBW for description of muon pt
+spectrum
+
+o Fix 1st parameter of background function (whether RBW or Landau)
+
+o Fix logic that will allow fit of data distributions (ie. without MC 
+info)
+
+o Added fitting macros for data distributions
+
+o Make sure correct histogram is used for fit even if we reverse cut ordering
+
+o Increased default # of bins to help define shape of muon-pt spectrum
+around 100 GeV
+
+ROOT macros:
+o Make sure correct plot is made even if we reverse cut ordering
+
+
 30-AUG-10 (Christos, Edgar), V00-01-31
 =======================================
 - Fix histogram label ordering (first pt-range, then single-muon)
