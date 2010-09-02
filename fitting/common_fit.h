@@ -14,8 +14,9 @@ const string histo_desc[num_ref_plots] =
 // Fit settings for users begin here
 // ==================================
 
-// set integrated luminosity (NB: W MC-statistics are enough for up to ~100 pb^-1)
-const float integ_lumi = 100.0; // in pb^-1
+// set integrated luminosity (NB: W MC-statistics are enough for up to ~100 pb^-1
+// use to scale histograms in Wprime_analysis.root (assume: correspond to 100 pb^-1)
+const float integ_lumi = 1.32; // in pb^-1
 
 // select algorithm option
 const unsigned algo_option = 2; // 0: "glb", 1: "trk", 2: "tpfms", 3: "ckt", "pic", "tmr"
@@ -39,7 +40,7 @@ const bool use_wprime_mass_limits = false;
 const float upper_wprime_mass_limit = 2500; // in GeV
 
 // if true, background is modeled by Landau, otherwise by RBW
-const bool isBgdLandau = true;
+const bool isBgdLandau = false;
 
 // choose whether to fix fudge factor (see CMS AN-2009/157 for details)
 const bool fixFudge = true; // relative increase of W' width in fit
