@@ -36,9 +36,6 @@ string data_desc2[mass_points] =
 string gname_pre[mass_points] = {"g11", "g08", "g10", "g11", "g12",
 				 "g13", "g14", "g15", "g20"};
 
-// this corresponds to the histogram after all cuts have been applied
-string set_cuts = "qual";
-
 void getInputHistograms();
 void makeReferenceHistograms();
 
@@ -171,7 +168,8 @@ int fitSigBgd(unsigned mass_option, unsigned N_EXP, bool bgdOnlyFit)
 
 void getInputHistograms()
 {
-  string histo = "hPT" + algo_desc_short[algo_option] + "_" + set_cuts;
+  string histo = "hPT" + algo_desc_short[algo_option] + "_"
+    + final_histo_desc;
 
   string histoW = "W/" + histo;
   w_orig = (TH1F* ) file0->Get(histoW.c_str());

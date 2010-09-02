@@ -21,9 +21,6 @@
 
 using std::string; using std::cout; using std::endl;
 
-// this corresponds to the histogram after all cuts have been applied
-string set_cuts = "qual";
-
 void getInputHistograms();
 
 extern void fitData(TH1F * data, TF1 * & theory, Results * result, int exp_no, float mass, float evt_sig, bool bgdOnlyFit);
@@ -105,7 +102,9 @@ int fitSigBgd_data()
 
 void getInputHistograms()
 {
-  string histo = "data/hPT" + algo_desc_short[algo_option] + "_" + set_cuts;
+  string histo = "data/hPT" + algo_desc_short[algo_option] + "_" + 
+    final_histo_desc;
+
   data = (TH1F* ) file0->Get(histo.c_str());
   if(badHisto(data, "data"))
     return;
