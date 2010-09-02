@@ -36,10 +36,6 @@ static int status = -9999;
 // # of function parameters to be employed for fit
 unsigned NPARAM_FIT = 0;
 
-// signal-free (mass_option=0) corresponds to highest available mass point (2.0 TeV)
-float all_masses[mass_points] = {1100, 800, 1000, 1100, 1200, 1300, 1400,
-				 1500, 2000};
-
 void setNPARAM_FIT(unsigned num){NPARAM_FIT = num;}
 
 // get fit results, store in Results structure
@@ -399,7 +395,7 @@ void fitData(TH1F * data, TF1 * & theory, Results * result, int exp_no,
 
 
 
-// signal-free histogram corresponds to highest mass point (2.0 TeV)
+// signal-free histogram corresponds to <mass_point_for_data>
 // this is only for consistency, as no signal is added for mass_option=0
 //TH1F * ref_hist[num_ref_plots] = {wp20_orig, wp08_orig, wp10_orig, 
 //			    wp11_orig, wp12_orig, wp13_orig, 
@@ -409,16 +405,18 @@ void fitSigBgd_eventLoop(unsigned mass_option, const unsigned * N_evt2gen,
 			 Results * result, TH1F ** ref, int exp_no, 
 			 bool bgdOnlyFit)
 {
-  // if true (false) do background-only (signal+background) fit
+  // bgdOnlyFit: if true (false) do background-only (signal+background) fit
 
-  assert(mass_option <= 8);
+
+  // variable defined only to make things clearer when reading the code
+  const unsigned bgd_index = num_ref_plots - 1;
 
   string htitle = "Muon Pt"; string htitle_wp = histo_desc[mass_option];
 
   htitle += htitle_wp;
   makeHistogram(wprime, "wprime", htitle.c_str(), ref[mass_option]);
   htitle = "Muon Pt, Bgd-only";
-  makeHistogram(bgd, "bgd", htitle.c_str(), ref[3]);
+  makeHistogram(bgd, "bgd", htitle.c_str(), ref[bgd_index]);
 
   float very_small = 0.001;
   float diff = wprime->GetBinWidth(0) - bgd->GetBinWidth(0);
@@ -428,16 +426,21 @@ void fitSigBgd_eventLoop(unsigned mass_option, const unsigned * N_evt2gen,
   populateHistogram(wprime, N_evt2gen[mass_option], ref[mass_option],
 		    store_Nsig_input);
   store_Nsig_input = false;
-  populateHistogram(bgd, N_evt2gen[9], ref[9], store_Nsig_input);
+  populateHistogram(bgd, N_evt2gen[bgd_index], ref[bgd_index], 
+		    store_Nsig_input);
 
   float evt_sig = 1.0*N_evt2gen[mass_option];
-  float mass = all_masses[mass_option];
+  float mass = -9999;
+  if(mass_option == 0)
+    mass = all_masses[mass_point_for_data];
+  else
+    mass = all_masses[mass_option];
 
   htitle = algo_desc_long[algo_option] + htitle_wp;
   // this is the total (signal + background) distribution 
   // (wprime and W + QCD + top + Z/DY)
   TH1F * data = 0;
-  makeHistogram(data, "tot", htitle.c_str(), ref[3]);
+  makeHistogram(data, "tot", htitle.c_str(), ref[bgd_index]);
   data->Add(bgd);
   if(mass_option > 0)
     data->Add(wprime);

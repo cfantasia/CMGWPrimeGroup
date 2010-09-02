@@ -111,7 +111,7 @@ void getInputHistograms()
 
   string suffix = algo_desc_short[algo_option];
   // need to specify what wprime mass point to be used for resolution function
-  string gname = "g11_" + suffix;
+  string gname = gname_pre[mass_point_for_data] + "_" + suffix;
   g0 = (TH1F* )gfile->Get(gname.c_str());
   if(badHisto(g0, gname.c_str()))
     return;

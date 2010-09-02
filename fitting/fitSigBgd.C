@@ -24,18 +24,6 @@ using std::string; using std::cout; using std::endl;
 // signal-free, W'(0.8,1.0,1.1,1.2,1.3,1.4,1.5,2.0 TeV), Bgd
 unsigned N_evt2gen[num_ref_plots]; 
 
-string data_desc[mass_points] = {"NoSignal", "0.8TeV", "1.0TeV", "1.1TeV",
-				 "1.2TeV", "1.3TeV", "1.4TeV", "1.5TeV",
-				 "2.0TeV"};
-string data_desc2[mass_points] = 
-  {"signal-free", "0.8 TeV", "1.0 TeV", "1.1 TeV", "1.2 TeV", "1.3 TeV", 
-   "1.4 TeV", "1.5 TeV", "2.0 TeV"};
-
-// resolution for signal-free sample same as for highest mass point one 
-// w/o any expected event yield for currentl luminosity (is this reasonable?)
-string gname_pre[mass_points] = {"g11", "g08", "g10", "g11", "g12",
-				 "g13", "g14", "g15", "g20"};
-
 void getInputHistograms();
 void makeReferenceHistograms();
 
@@ -124,7 +112,7 @@ int fitSigBgd(unsigned mass_option, unsigned N_EXP, bool bgdOnlyFit)
 
   string file_name = "output_" + data_desc[mass_option] + "_" + 
     bgdOnly_suffix + ".root";
-  string tree_name = "Fit results for " + data_desc2[mass_option] + 
+  string tree_name = "Fit results for " + histo_desc[mass_option] + 
     " wprime experiments";
 
   TFile * output_file = new TFile(file_name.c_str(), "recreate");
@@ -139,12 +127,14 @@ int fitSigBgd(unsigned mass_option, unsigned N_EXP, bool bgdOnlyFit)
   getInputHistograms();
   makeReferenceHistograms();
   setResolution(g0[mass_option]);
-  // signal-free histogram corresponds to highest mass point (2.0 TeV)
-  // this is only for consistency, as no signal is added for mass_option=0
-  TH1F * ref_hist[num_ref_plots] = {wp11_orig, wp08_orig, wp10_orig, 
+
+  TH1F * ref_hist[num_ref_plots] = {0, wp08_orig, wp10_orig, 
 				    wp11_orig, wp12_orig, wp13_orig, 
 				    wp14_orig, wp15_orig, wp20_orig, 
 				    bgd_orig};
+  // signal-free histogram corresponds to highest mass point (2.0 TeV)
+  // this is only for consistency, as no signal is added for mass_option=0
+  ref_hist[0] = ref_hist[mass_point_for_data];
 
   for(unsigned exp_no = 1; exp_no <= N_EXP; ++exp_no)
     { // loop over pseudo-experiments
@@ -238,7 +228,10 @@ void getInputHistograms()
   // i=0 corresponds to signal-free distribution
   for(unsigned i = 0; i < mass_points; ++i)
     {
-      gname = gname_pre[i] + "_" + suffix;
+      string tmp = gname_pre[i];
+      if (i == 0) tmp = gname_pre[mass_point_for_data];
+
+      gname = tmp + "_" + suffix;
       g0[i] = (TH1F* )gfile->Get(gname.c_str());
       if(badHisto(g0[i], gname))
 	return;
