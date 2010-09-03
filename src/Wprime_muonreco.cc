@@ -32,6 +32,8 @@ using namespace Wprime_muonreco_histo;
 
 /// Constructor
 Wprime_muonreco::Wprime_muonreco(const edm::ParameterSet& iConfig):
+  pvTag_(iConfig.getParameter<edm::InputTag> ("pvTag")),
+  pvBSTag_(iConfig.getParameter<edm::InputTag> ("pvBSTag")),
   muonTag_(iConfig.getParameter<edm::InputTag> ("MuonTag")),
   pfmetTag_(iConfig.getParameter<edm::InputTag> ("pfMetTag")),
   HLTTag_(iConfig.getParameter<edm::InputTag>( "HLTriggerResults" ) ),
@@ -41,8 +43,7 @@ Wprime_muonreco::Wprime_muonreco(const edm::ParameterSet& iConfig):
   ecalIsoMapTag_(iConfig.getParameter<edm::InputTag> ("EcalIsoMapTag")),
   hcalIsoMapTag_(iConfig.getParameter<edm::InputTag> ("HcalIsoMapTag")),
   detmu_acceptance(iConfig.getParameter<double>("Detmu_acceptance")),
-  sample_description(iConfig.getParameter<string>("description")),
-  Nprod_evt(iConfig.getParameter<int>("Nprod_evt"))
+  sample_description(iConfig.getParameter<string>("description"))
 {
    //now do what ever initialization is needed
   tree_job = tree_run = tree_event = 0;
@@ -50,7 +51,6 @@ Wprime_muonreco::Wprime_muonreco(const edm::ParameterSet& iConfig):
   evt = new wprime::Event(); job = new wprime::JobInfo();
   run = new wprime::RunInfo();
   job->sample = sample_description;
-  job->Nprod_evt = Nprod_evt;
   software_version = "V00-00-00";
   firstEventInRun = false;
 }
@@ -180,14 +180,22 @@ void Wprime_muonreco::getTriggers(const edm::Event & iEvent)
 	evt->HLT_Mu3 = accept? 1 : 0;
       else if (trigName == "HLT_Mu5")
 	evt->HLT_Mu5 = accept? 1 : 0;
+      else if (trigName == "HLT_Mu7")
+	evt->HLT_Mu7 = accept? 1 : 0;
       else if (trigName == "HLT_Mu9")
 	evt->HLT_Mu9 = accept? 1 : 0;
+      else if (trigName == "HLT_Mu11")
+	evt->HLT_Mu11 = accept? 1 : 0;
       else if (trigName == "HLT_L2Mu5")
 	evt->HLT_L2Mu5 = accept? 1 : 0;
       else if (trigName == "HLT_L2Mu9")
 	    evt->HLT_L2Mu9 = accept? 1 : 0;
       else if (trigName == "HLT_L2Mu11")
 	evt->HLT_L2Mu11 = accept? 1 : 0;
+      else if (trigName == "HLT_L2Mu15")
+	evt->HLT_L2Mu15 = accept? 1 : 0;
+      else if (trigName == "HLT_L2Mu25")
+	evt->HLT_L2Mu25 = accept? 1 : 0;
     } // loop over triggers
 
 }
@@ -258,6 +266,15 @@ void Wprime_muonreco::getTeVMuons(const edm::Event & iEvent)
   tevMap_picky = tevMapH_picky.product();
 }
 
+// get primary vertex info
+void Wprime_muonreco::getPVs(const edm::Event & iEvent)
+{
+  iEvent.getByLabel(pvTag_, pvCollection);
+  iEvent.getByLabel(pvBSTag_, pvBSCollection);
+  evt->Npv = pvCollection->size();
+  evt->NpvBS = pvBSCollection->size();
+}
+
 // get muons
 void Wprime_muonreco::getMuons(const edm::Event & iEvent)
 {
@@ -292,8 +309,11 @@ void Wprime_muonreco::getTracking(wprime::Track & track, const reco::Track & p)
   track.ndof = int(p.ndof());
   track.Nstrip_layer = p.hitPattern().stripLayersWithMeasurement();
   track.Npixel_layer = p.hitPattern().pixelLayersWithMeasurement();
+  track.Nstrip_layerNoMeas = p.hitPattern().stripLayersWithoutMeasurement();
+  track.Npixel_layerNoMeas = p.hitPattern().pixelLayersWithoutMeasurement();
   track.NsiStrip_hits = p.hitPattern().numberOfValidStripHits();
   track.Npixel_hits = p.hitPattern().numberOfValidPixelHits();
+  track.Nmuon_hits = p.hitPattern().numberOfValidMuonHits();
   track.Ntot_hits = p.numberOfValidHits();
   track.Ntrk_hits = p.hitPattern().numberOfValidTrackerHits();
 }
@@ -307,8 +327,9 @@ void Wprime_muonreco::getNullTracking(wprime::Track & track)
   track.q = wrong;
   track.chi2 = track.d0 = track.dd0 = track.dpt = track.dq_over_p = wrong;
   track.ndof = track.Nstrip_layer = track.Npixel_layer = 
-    track.NsiStrip_hits = track.Npixel_hits = track.Ntot_hits = 
-    track.Ntrk_hits = -1;
+    track.Nstrip_layerNoMeas = track.Npixel_layerNoMeas = 
+    track.NsiStrip_hits = track.Npixel_hits = track.Nmuon_hits = 
+    track.Ntot_hits = track.Ntrk_hits = -1;
 }
 
 // do muon analysis
@@ -498,6 +519,8 @@ Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   ++(run->Nproc_evt);
 
   getTriggers(iEvent);
+
+  getPVs(iEvent);
 
   getPFMET(iEvent);
 

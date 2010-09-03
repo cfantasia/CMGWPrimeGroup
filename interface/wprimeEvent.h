@@ -20,8 +20,6 @@ class JobInfo : public TObject {
    std::string RECOversion;
    /// sample type (e.g. "QCD50_80" or "Spring10 collisions")
    std::string sample;
-   /// # of events produced BEFORE filtering
-   Int_t Nprod_evt;
 	  
    JobInfo();
    ~JobInfo();
@@ -92,10 +90,16 @@ class Track : public TObject {
    Int_t Nstrip_layer;
    /// # of pixel layers used by fit
    Int_t Npixel_layer;
+   /// # of siStrip layers without measurement
+   Int_t Nstrip_layerNoMeas;
+   /// # of pixel layers without measurement
+   Int_t Npixel_layerNoMeas;
    /// # of siStrip hits used by fit
    Int_t NsiStrip_hits;
    /// # of pixel hits used by fit
    Int_t Npixel_hits;
+   /// # of muon hits used by fit
+   Int_t Nmuon_hits;
    /// # of tracker-only hits used by fit
    Int_t Ntrk_hits;
    /// # of total (ie. tracker + muon) hits used by fit
@@ -160,21 +164,31 @@ class Event : public TObject {
    Int_t run_no;
    /// luminosity section (aka block)
    Int_t LS_no;
+
+   /// # of primary vertices
+   Int_t Npv;
+   /// # of primary vertices with beam-spot
+   Int_t NpvBS;
      
    /// trigger decisions: -1: did not run, 0: fail, 1: accept
    signed char HLT_L1MuOpen;
    signed char HLT_L1Mu;
    signed char HLT_Mu3;
    signed char HLT_Mu5;
+   signed char HLT_Mu7;
    signed char HLT_Mu9;
+   signed char HLT_Mu11;
    signed char HLT_L2Mu5;
    signed char HLT_L2Mu9;
    signed char HLT_L2Mu11;
+   signed char HLT_L2Mu15;
+   signed char HLT_L2Mu25;
    
    
    void reset_triggers()
-   {HLT_L1MuOpen = HLT_L1Mu = HLT_Mu3 = HLT_Mu5 = HLT_Mu9 = HLT_L2Mu5
-       = HLT_L2Mu9 = HLT_L2Mu11 = -1;}
+   {HLT_L1MuOpen = HLT_L1Mu = HLT_Mu3 = HLT_Mu5 = HLT_Mu7 = HLT_Mu9 = 
+       HLT_Mu11 = HLT_L2Mu5 = HLT_L2Mu9 = HLT_L2Mu11 = HLT_L2Mu15 = 
+       HLT_L2Mu25 = -1;}
    /// Particle-Flow MET
    TVector2 pfmet;
 
