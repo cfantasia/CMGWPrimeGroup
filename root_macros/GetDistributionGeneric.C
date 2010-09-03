@@ -483,8 +483,11 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
 		   << " phi = " << theMu->tracker.p.Phi() << endl;
 	      cout << " # of strip layers = " << theMu->tracker.Nstrip_layer << ", # of pixel layers = " << theMu->tracker.Npixel_layer << endl;
 	      cout << " # of strip hits = " << theMu->tracker.NsiStrip_hits
+	      cout << " # of strip layers w/o measurement = " << theMu->tracker.Nstrip_layerNoMeas << ", # of pixel layers w/o measurement= " << theMu->tracker.Npixel_layerNoMeas << endl;
+	      cout << " # of strip hits = " << theMu->tracker.NsiStrip_hits
 		   << " # of pixel hits = " << theMu->tracker.Npixel_hits
-		   << " # of muon hits = " << theMu->Nmu_hits << endl;
+		   << " # of muon hits = " << theMu->tracker.Nmuon_hits
+		   << " # of standalone muon hits = " << theMu->Nmu_hits << endl;
 	      cout << " Global: " << theMu->AllGlobalMuons
 		   << " Tracker: " << theMu->AllTrackerMuons
 		   << " Standalone: " << theMu->AllStandAloneMuons
