@@ -3,7 +3,8 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("Demo2")
 process.source = cms.Source("PoolSource",
     # replace input file with one you want to use
- fileNames = cms.untracked.vstring('file:/home/cleonido/wprime/Summer09MC/W/F866EB68-E39C-DE11-8F01-00145EDD7879.root')
+ #fileNames = cms.untracked.vstring('file:/home/cleonido/wprime/Summer09MC/W/F866EB68-E39C-DE11-8F01-00145EDD7879.root')
+ fileNames = cms.untracked.vstring('file:/tmp/WprimeMuSkim_46_3_gAm.root')
 )
 
 # Number of events to process
@@ -16,6 +17,8 @@ process.maxEvents = cms.untracked.PSet(
 process.StdMu = cms.EDFilter("Wprime_muonreco",
 
     # input tags defined here
+    pvTag = cms.InputTag("offlinePrimaryVertices"),
+    pvBSTag = cms.InputTag("offlinePrimaryVerticesWithBS"),
     MuonTag = cms.InputTag("muons"),
     pfMetTag = cms.InputTag("pfMet"),
     JetTag = cms.InputTag("iterativeCone5CaloJets"),
@@ -26,14 +29,17 @@ process.StdMu = cms.EDFilter("Wprime_muonreco",
     HLTriggerResults = cms.InputTag("TriggerResults","","HLT"),
      #	InputTag HLTriggerResults = "TriggerResults::HLT2"
 
+   # sample description
+    description = cms.string('Single Muon 7 TeV data skim with pt > 10 GeV'),
+
     # muon-detector eta acceptance
-    Detmu_acceptance = cms.double(2.4),
+    Detmu_acceptance = cms.double(2.4)
 
 )
 
 process.TFileService = cms.Service("TFileService",
-    #       fileName = cms.string('TeVMuon_startupV4.root')
-   fileName = cms.string('Wmu_31x_IDEAL_7TeV_1.root')
+   fileName = cms.string('HighPtMuon_7TeV_Run2010.root')
+#   fileName = cms.string('Wmu_31x_IDEAL_7TeV_1.root')
 #   fileName = cms.string('wprime_1TeV.root')
 )
 

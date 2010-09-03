@@ -1,3 +1,25 @@
+03-SEP-10 (Christos), V00-01-40
+===============================
+(1) Data format changes:
+o Added per tracking algorithm (wprime::Track):
+  - Nstrip_layerNoMeas (# of siStrip layers without measurement)
+  - Npixel_layerNoMeas (# of pixel layers without measurement)
+  - Nmuon hits (# of muon hits used by fit)
+
+o Added more trigger bits (wprime::Event): 
+  HLT_Mu7, HLT_Mu11, HLT_L2Mu15, HLT_L2Mu25
+
+o Added # of primary vertices (wprime::Event) calculated with and without
+beamspot info [NB: Example py file has been updated!]
+
+o Removed wprime::JobInfo::Nprod_evt (no longer used/filled, as it is
+provided in text configuration file) [NB: Example py file has been 
+updated!]
+
+
+(2) Cleaned-up example py files
+
+
 02-SEP-10 (Christos), V00-01-32
 ================================
 

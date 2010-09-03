@@ -26,6 +26,8 @@ process.maxEvents = cms.untracked.PSet(
 process.StdMu = cms.EDFilter("Wprime_muonreco",
 
     # input tags defined here
+    pvTag = cms.InputTag("offlinePrimaryVertices"),
+    pvBSTag = cms.InputTag("offlinePrimaryVerticesWithBS"),
     MuonTag = cms.InputTag("muons"),
     MetTag = cms.InputTag("met"),
     JetTag = cms.InputTag("iterativeCone5CaloJets"),
@@ -41,18 +43,7 @@ process.StdMu = cms.EDFilter("Wprime_muonreco",
 
 
     # sample description
-    description = cms.string('Wprime 1.5 TeV'),
-    #     # of produced events (before filtering)
-    Nprod_evt = cms.int32(6000),
-
-    # "golden" single-muon trigger name
-    SingleMuHLT_20x = cms.string('HLT1MuonNonIso9'),
-    SingleMuL1 = cms.string('HLT_L1Mu'),
-    SingleMuHLT_21x = cms.string('HLT_Mu9'),
-
-    # generic trigger name containing single muons
-    AnyMuHLT_20x = cms.string('HLT1Muon'),
-    AnyMuHLT_21x = cms.string('Mu'),
+    description = cms.string('Wprime 1.5 TeV')
 
 )
 
