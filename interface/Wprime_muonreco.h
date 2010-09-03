@@ -36,6 +36,8 @@
 #include "DataFormats/TrackReco/interface/TrackToTrackMap.h"
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
 #include "DataFormats/RecoCandidate/interface/IsoDeposit.h"
 #include "DataFormats/RecoCandidate/interface/IsoDepositFwd.h"
 
@@ -77,6 +79,8 @@ class Wprime_muonreco : public edm::EDAnalyzer
   virtual void endRun(edm::Run const &, edm::EventSetup const &);
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
   virtual void endJob() ;
+  edm::InputTag pvTag_;
+  edm::InputTag pvBSTag_;
   edm::InputTag muonTag_;
   edm::InputTag pfmetTag_;
   edm::InputTag HLTTag_; edm::InputTag L1Tag_;
@@ -133,8 +137,6 @@ class Wprime_muonreco : public edm::EDAnalyzer
   std::string RECOversion;
   static const std::string INVALID_RELEASE;
   std::string sample_description;
-  // # of produced events before filtering
-  int Nprod_evt;
 
   // TTree structures
   wprime::Event * evt;
@@ -149,6 +151,8 @@ class Wprime_muonreco : public edm::EDAnalyzer
   edm::Service<TFileService> fs;
 
 
+  edm::Handle<reco::VertexCollection> pvCollection;
+  edm::Handle<reco::VertexCollection> pvBSCollection;
   edm::Handle<reco::MuonCollection> muonCollection;
   edm::Handle<reco::IsoDepositMap> tkMapH;
   edm::Handle<reco::IsoDepositMap> ecalMapH;
@@ -201,6 +205,9 @@ class Wprime_muonreco : public edm::EDAnalyzer
 
   // get trigger info, update muTrig/genMuTrig
   void getTriggers(const edm::Event & iEvent);
+
+  // get primary vertex info
+  void getPVs(const edm::Event & iEvent);
 
   double met_x, met_y, met;
 
