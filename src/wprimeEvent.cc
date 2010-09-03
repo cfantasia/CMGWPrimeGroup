@@ -29,7 +29,7 @@ RunInfo::~RunInfo(){}
 
 JobInfo::JobInfo()
 { 
-  RECOversion = sample = "invalid"; Nprod_evt = 0;
+  RECOversion = sample = "invalid";
 }
 JobInfo::~JobInfo(){}
 
