@@ -29,7 +29,7 @@ const float PtTrackCut = 60 ;
 const float OneMuPtTrackCut = 20; 
 const float Chi2Cut = 10;
 const float Delta_Phi = TMath::Pi() - 0.3;//min angle muon/jet for jet veto
-const float Muon_Eta_Cut = 1.8;
+const float Muon_Eta_Cut = 2.1;
 
 #define debugme  0
 #define debugmemore 0
@@ -39,9 +39,33 @@ const float Muon_Eta_Cut = 1.8;
 const unsigned  nBinPtMu = 140;//45; // 400; // 45; // 18; 200; 380; 
 const float minPtMu = 100; // 100;
 const float  maxPtMu = 1500; // 800; 2000;
+// +++++++++++++++++++++++++++++++muon-eta histogram parameters
+const unsigned nBinEtaMu = 28;
+const float minEtaMu = -2.4;
+const float maxEtaMu = 2.4;
+// +++++++++++++++++++++++++++++++muon-phi histogram parameters
+const unsigned nBinPhiMu = 18;
+const float minPhiMu = -3.6;
+const float maxPhiMu = 3.6;
+// +++++++++++++++++++++++++++++++muon-jet delphi histogram parameters
+const unsigned nBinDPhiMu = 35;
+const float minDPhiMu = 0;
+const float maxDPhiMu = 3.5;
+// +++++++++++++++++++++++++++++++muon  iso histogram parameters
+const unsigned nBinIsoMu = 25;
+const float minIsoMu = 0;
+const float maxIsoMu = 0.5;
+// +++++++++++++++++++++++++++++++tmass histogram parameters
+const unsigned nBinTmMu = 195;
+const float minTmMu = 50;
+const float maxTmMu = 2000;
 // +++++++++++++++++++++++++Declare histograms 
 TH1F * hPT[Num_histo_sets][Num_trkAlgos] = {{0}};
-
+TH1F * hETA[Num_histo_sets][Num_trkAlgos] = {{0}};
+TH1F * hPHI[Num_histo_sets][Num_trkAlgos] = {{0}};
+TH1F * hMJDPHI[Num_histo_sets][Num_trkAlgos] = {{0}};
+TH1F * hISO[Num_histo_sets][Num_trkAlgos] = {{0}};
+TH1F * hTM[Num_histo_sets][Num_trkAlgos] = {{0}};
 
 // $$$$$$$$$$$$$$$$$$$$$ Charge Asymmetry (option = 2)
 // +++++++++++++++++++++++++Declare histograms
@@ -64,6 +88,18 @@ void getEff(float & eff, float & deff, float Num, float Denom);
 
 // Get the hardest muon (based on tracker-pt) [theMu is the index in ev->mu array]
 void GetTheHardestMuon(const wprime::Event * ev, int & theMu);
+
+///returns DeltaPhi between an object and the leading jet in the event
+float XJetDPhi(const TLorentzVector& lv, const wprime::Event * ev);
+
+//transverse mass of an object with a met object
+float TMass(const TLorentzVector& lv, const TVector2& themet);
+
+// returns muon tracker isolation
+float SumPtIsolation(const wprime::Muon* the_mu, unsigned detR_iso_index);
+
+//computes muon combined relative isolation value
+float CombRelIsolation(const wprime::Muon* the_mu,unsigned detR_iso_index);
 
 // returns # of (global) muons with tracker-pt above <tracker_muon_pt>
 unsigned NmuAboveThresh(float tracker_muon_pt, const wprime::Event * ev);
@@ -90,14 +126,8 @@ void CheckMuonPtInRange(const wprime::Muon* mu, bool isThere[],
 bool OnlyOneHighTrackPtMuon(const wprime::Event* ev, float one_mu_pt_trkcut);
 
 // true if isolation requirements satisfied for muon
-bool SumPtIsolation(const wprime::Muon* the_mu, 
-                    unsigned detR_iso_index,
-                    float sum_pt_cut);
-
-// combined relative isolation
-bool CombRelIsolation(const wprime::Muon* the_mu, 
-                       unsigned detR_iso_index,
-                      float rel_combiso_cut);
+bool Isolation(const wprime::Muon* the_mu, unsigned detR_iso_index, 
+               float iso_cut);
 
 // true if energetic Jet(s) found back to back with muon 
 bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh, float et_jet_cut,

@@ -12,6 +12,8 @@ void getEff(float & eff, float & deff,float Num,float Denom)
   deff = TMath::Sqrt(eff * (1-eff)/Denom);
 }//---------------getEff
 
+
+
 // Get the hardest muon (based on tracker-pt) [iMu is the index in ev->mu array]
 //------------------------------------------------------------------------
 void GetTheHardestMuon(const wprime::Event * ev, int & iMu)
@@ -33,6 +35,76 @@ void GetTheHardestMuon(const wprime::Event * ev, int & iMu)
 }//-----GetTheHardestMuon
 
 
+// returns SumPtIsolation
+//-------------------------------------------------------------------
+float SumPtIsolation(const wprime::Muon* the_mu, 
+                     unsigned detR_iso_index)
+{
+//-------------------------------------------------------------------
+
+  return the_mu->SumPtIso[detR_iso_index];
+
+}//------ SumPtIsolation
+
+
+
+//computes the combined rel isolation value
+//-------------------------------------------------------------------
+float CombRelIsolation(const wprime::Muon* the_mu,
+                       unsigned detR_iso_index)
+{
+//-------------------------------------------------------------------    
+
+  return (
+      (the_mu->SumPtIso[detR_iso_index]+
+       the_mu->ECALIso[detR_iso_index]+
+       the_mu->HCALIso[detR_iso_index])/the_mu->tracker.p.Pt()
+      );
+  
+      
+}//-------- CombRelIsolation
+
+
+
+//returns Abs(DeltaPhi) between an object(TLorentzVector)
+// and the leading jet in the event
+//------------------------------------------------------------------------
+float XJetDPhi(const TLorentzVector& lv, const wprime::Event * ev)
+{
+//------------------------------------------------------------------------
+
+ float dphi = -1;
+  
+  int njets = ev->jet->GetLast() + 1;
+  if (njets > 0){ 
+      TLorentzVector * jet = (TLorentzVector *) ev->jet->At(0);
+      dphi = jet->DeltaPhi(lv);
+    }
+  
+  
+  return TMath::Abs(dphi);
+
+}//-------------------XJetDPhi
+
+
+
+//transverse mass with a given MET object (TVector2)
+//------------------------------------------------------------------------
+float TMass(const TLorentzVector& lv, const TVector2& themet)
+{
+//------------------------------------------------------------------------
+
+    float tmass = 0;
+    float cdphi = TMath::Cos(lv.Phi()-themet.Phi());
+    float tmass_sqr = 2*lv.Pt()*themet.Mod()*(1-cdphi);
+    tmass = (tmass_sqr>0) ? sqrt(tmass_sqr) : 0;
+  
+    return tmass;
+
+}//-------------------TMass
+
+
+
 // returns # of (global) muons with tracker-pt above <tracker_muon_pt>
 //------------------------------------------------------------------------
 unsigned NmuAboveThresh(float tracker_muon_pt, const wprime::Event * ev)
@@ -51,6 +123,8 @@ unsigned NmuAboveThresh(float tracker_muon_pt, const wprime::Event * ev)
 
   return N;
 }//------------NumAboveThresh
+
+
 
 // returns # of jets with Et above threshold
 //------------------------------------------------------------------------
@@ -94,6 +168,7 @@ unsigned NjetAboveThresh(float threshold, float delta_phi,
 }//-----------------NjetAboveThresh
 
 
+
 // true if HLT conditions are met
 //-------------------------------------------------------------------
 bool PassedHLT(const wprime::Event* ev)
@@ -107,6 +182,7 @@ bool PassedHLT(const wprime::Event* ev)
   bool HLT = (ev->HLT_Mu9 == 1);
   return HLT;
 }//-------PassedHLT()
+
 
 
 // check if muon is in pt-range for the different algorithms, fill isThere
@@ -164,39 +240,20 @@ bool OnlyOneHighTrackPtMuon(const wprime::Event* ev, float one_mu_pt_trkcut)
 
 
 
-
 // true if isolation requirements satisfied for muon
 //-------------------------------------------------------------------
-bool SumPtIsolation(const wprime::Muon* the_mu, 
-		    unsigned detR_iso_index,
-                    float sum_pt_cut)
+bool Isolation(const wprime::Muon* the_mu, unsigned detR_iso_index,
+               float iso_cut)
 {
 //-------------------------------------------------------------------
 #if debugmemore
-  cout << " Processing SumPtIsolation() " << endl;
+  cout << " Processing Isolation() " << endl;
 #endif
 
-  return the_mu->SumPtIso[detR_iso_index] <= sum_pt_cut;
-}// SumPtIsolation
+  return (CombRelIsolation(the_mu,detR_iso_index) <= iso_cut);
+  //return (SumPtIsolation(theMu,detR_iso_index) <= iso_cut);
 
-
-// combined Trk+ECAL+HCAL relative isolation
-//-------------------------------------------------------------------
-bool CombRelIsolation(const wprime::Muon* the_mu, 
-                       unsigned detR_iso_index,
-                       float rel_combiso_cut)
-{
-//-------------------------------------------------------------------
-#if debugmemore
-  cout << " Processing CombRelIsolation() " << endl;
-#endif
-
-  return (
-      (the_mu->SumPtIso[detR_iso_index]+
-       the_mu->ECALIso[detR_iso_index]+
-       the_mu->HCALIso[detR_iso_index])/the_mu->tracker.p.Pt())
-      <= rel_combiso_cut;
-}// CombRelIsolation
+}//--------Isolation
 
 
 
@@ -220,6 +277,7 @@ bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh,
 
 
 
+
 // check if muon satisfies quality requirements for all tracking algorithms, fill goodQual
 //-------------------------------------------------------------------
 void CheckQuality(const wprime::Muon* mu, 
@@ -230,26 +288,33 @@ void CheckQuality(const wprime::Muon* mu,
 #if debugmemore
   cout << " Processing HasQuality() " << endl;
 #endif
+
+  //See twiki: https://twiki.cern.ch/twiki/bin/view/CMS/ExoticaWprime
+  //for the latest quality cuts
   
+  //This is consider now an old cut. Put on-hold for the moment
   bool isHard = mu->tracker.p.Pt() >= pttrk_cut;
+  isHard = true;
+
   bool checkqual = false;
-  // recommendation on muon-ID by muon POG: 
-  // - GlobalMuonPromptTight + Global + Tracker muon
-  // - # of hits in tracker track >= 11
-  // - |IP of tracker track| < 0.2 cm
+  
+  //This cut is on-hold. In the barrel, it
+  // is effectively the same as using
+  //# hits in the tracker:
+  //
+  //((mu->tracker.Npixel_layer + mu->tracker.Nstrip_layer) >= 10)
+  //    && ((mu->tracker.Npixel_layerNoMeas + 
+  //         mu->tracker.Nstrip_layerNoMeas) < 5)
  
-  /*
-  bool muonID = mu->GlobalMuonPromptTight && 
-            (mu->tracker.Ntrk_hits >= 11)
-    && (TMath::Abs(mu->tracker.d0) < 0.2) && mu->AllTrackerMuons
-    && mu->AllGlobalMuons;
-*/
-
-
   bool muonID = 
-    ((mu->tracker.Npixel_layer + mu->tracker.Nstrip_layer) >= 10)
-    && (TMath::Abs(mu->tracker.d0) < 0.2) && mu->AllTrackerMuons
-    && mu->AllGlobalMuons;
+      (mu->tracker.Ntrk_hits > 10)
+      && (TMath::Abs(mu->tracker.d0) < 0.2) 
+      && mu->AllTrackerMuons
+      && mu->AllGlobalMuons  
+      && mu->global.Nmuon_hits > 0
+      && mu->Nmatches > 1
+      && mu->tracker.Npixel_hits > 0
+      ;
   
    
   checkqual = ((mu->global.chi2 / mu->global.ndof)<chi2_cut)

@@ -18,17 +18,38 @@ void printSummary_MuonPt(ofstream & out, const string& dir,
                          float Nexp_evt, 
 			 const float Nexp_evt_cut[][Num_trkAlgos]);
 void defineHistos_MuonPt();
+void defineHistos_MuonEta();
+void defineHistos_MuonPhi();
+void defineHistos_MuonJetDPhi();
+void defineHistos_MuonIso();
+void defineHistos_TMass();
 void defineHistos_MuonChargePt();
 void defineHistos(int option);
 void tabulateMe(int Num_surv_cut[][Num_trkAlgos], int& cut_index, 
-		float weight, const wprime::Muon* mu,
+		float weight,const wprime::Event* ev, const wprime::Muon* mu,
                 const bool fill_entry[], int option, 
 		bool accountme[][Num_trkAlgos]);
 void fillHistos_MuonPt(int index, float weight,const wprime::Muon* mu,
                        const bool fill_entry[]);
+void fillHistos_MuonEta(int index, float weight,const wprime::Muon* mu,
+                       const bool fill_entry[]);
+void fillHistos_MuonPhi(int index, float weight,const wprime::Muon* mu,
+                        const bool fill_entry[]);
+
+void fillHistos_MuonJetDPhi(int index, float weight,
+                        const wprime::Event * ev,
+                        const wprime::Muon* mu,
+                            const bool fill_entry[]);
+void fillHistos_TMass(int index, float weight,
+                        const wprime::Event * ev,
+                        const wprime::Muon* mu,
+                            const bool fill_entry[]);
+void fillHistos_MuonIso(int index, float weight,
+                        const wprime::Muon* mu,
+                            const bool fill_entry[]);
 void fillHistos_MuonChargePt(int index, float weight,const wprime::Muon* mu,
 			     const bool fill_entry[]);
-void saveHistos_MuonPt();
+void saveHistos_MainAnalysis();
 void saveHistos_MuonChargePt();
 void saveHistos(TFile * fout, string dir, int option);
 void gatherFileBasicInfo(const wprime::InputFile& file,
@@ -99,6 +120,106 @@ void defineHistos_MuonPt()
 }//---------defineMuonPtHistos()
 
 
+
+//--------------------------------------------------------------
+void defineHistos_TMass()
+{
+//--------------------------------------------------------------
+#if debugme
+  cout << " define TMass histos" << endl;
+#endif
+
+  for(int cut = 0; cut != Num_histo_sets; ++cut)
+    for(int algo = 0; algo != Num_trkAlgos; ++algo)
+      {
+	string name = "hTM" + algo_desc_short[algo] + "_" + cuts_desc_short[cut];
+	string title = algo_desc_long[algo] + " Transv. Mass with " + cuts_desc_long[cut];
+	hTM[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinTmMu,minTmMu,maxTmMu);
+      }
+  
+}//---------defineMuonPtHistos()
+
+
+
+//--------------------------------------------------------------
+void defineHistos_MuonEta()
+{
+//--------------------------------------------------------------
+#if debugme
+  cout << " define Muon ETA histos" << endl;
+#endif
+
+  for(int cut = 0; cut != Num_histo_sets; ++cut)
+    for(int algo = 0; algo != Num_trkAlgos; ++algo)
+      {
+	string name = "hETA" + algo_desc_short[algo] + "_" + cuts_desc_short[cut];
+	string title = algo_desc_long[algo] + " muon #eta with " + cuts_desc_long[cut];
+	hETA[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinEtaMu,minEtaMu,maxEtaMu);
+      }
+  
+}//---------defineMuonEtaHistos()
+
+
+
+//--------------------------------------------------------------
+void defineHistos_MuonPhi()
+{
+//--------------------------------------------------------------
+#if debugme
+  cout << " define Muon PHI histos" << endl;
+#endif
+
+  for(int cut = 0; cut != Num_histo_sets; ++cut)
+    for(int algo = 0; algo != Num_trkAlgos; ++algo)
+      {
+	string name = "hPHI" + algo_desc_short[algo] + "_" + cuts_desc_short[cut];
+	string title = algo_desc_long[algo] + " muon #phi with " + cuts_desc_long[cut];
+	hPHI[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinPhiMu,minPhiMu,maxPhiMu);
+      }
+  
+}//---------defineMuonPhiHistos()
+
+
+
+//--------------------------------------------------------------
+void defineHistos_MuonJetDPhi()
+{
+//--------------------------------------------------------------
+#if debugme
+  cout << " define Muon-Jet DPhi histos" << endl;
+#endif
+
+  for(int cut = 0; cut != Num_histo_sets; ++cut)
+    for(int algo = 0; algo != Num_trkAlgos; ++algo)
+      {
+	string name = "hMJDPHI" + algo_desc_short[algo] + "_" + cuts_desc_short[cut];
+	string title = algo_desc_long[algo] + " muon-jet #Delta#phi with " + cuts_desc_long[cut];
+	hMJDPHI[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinDPhiMu,minDPhiMu,maxDPhiMu);
+      }
+  
+}//---------defineMuonJetDPhiHistos()
+
+
+
+//--------------------------------------------------------------
+void defineHistos_MuonIso()
+{
+//--------------------------------------------------------------
+#if debugme
+  cout << " define Muon ISO histos" << endl;
+#endif
+
+  for(int cut = 0; cut != Num_histo_sets; ++cut)
+    for(int algo = 0; algo != Num_trkAlgos; ++algo)
+      {
+	string name = "hISO" + algo_desc_short[algo] + "_" + cuts_desc_short[cut];
+	string title = algo_desc_long[algo] + " muon isol with " + cuts_desc_long[cut];
+	hISO[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinIsoMu,minIsoMu,maxIsoMu);
+      }
+  
+}//---------defineMuonPhiHistos()
+
+
 //--------------------------------------------------------------
 void defineHistos_MuonChargePt()
 {
@@ -130,18 +251,25 @@ void defineHistos(int option)
 //--------------------------------------------------------------
 
 #if debugme
-  cout << " define histos with option = " << option<<endl;
+    cout << " define histos with option = " << option<<endl;
 #endif
 
-  if(option == 1) 
-    defineHistos_MuonPt();
-  else if(option == 2) 
-    defineHistos_MuonChargePt();
-  else 
+    if(option == 1){
+        defineHistos_MuonPt();
+        defineHistos_MuonEta();
+        defineHistos_MuonPhi();
+        defineHistos_MuonJetDPhi();
+        defineHistos_MuonIso();
+        defineHistos_TMass();
+    }
+    
+    else if(option == 2) 
+        defineHistos_MuonChargePt();
+    else 
     {
-      cout << " WARNING!!! No histos were defined for option = " << option  
-	   << endl;
-      return;
+        cout << " WARNING!!! No histos were defined for option = " << option  
+             << endl;
+        return;
     }
 
 }//----defineHistos()
@@ -151,9 +279,10 @@ void defineHistos(int option)
 //TODO: Improve flexibility
 //-----------------------------------------------------------
 void tabulateMe(int Num_surv_cut[][Num_trkAlgos], int& cut_index, 
-		float weight, const wprime::Muon* mu,
+                float weight, const wprime::Event * ev,
+                const wprime::Muon* mu,
                 const bool fill_entry[], int option,
-		bool accountme[][Num_trkAlgos])
+                bool accountme[][Num_trkAlgos])
 {
 //-----------------------------------------------------------
 #if debugme
@@ -171,8 +300,14 @@ void tabulateMe(int Num_surv_cut[][Num_trkAlgos], int& cut_index,
       }
   
   //fill the histograms
-  if(option == 1) 
+  if(option == 1) {
     fillHistos_MuonPt(cut_index,weight,mu, fill_entry);
+    fillHistos_MuonEta(cut_index,weight,mu, fill_entry);
+    fillHistos_MuonPhi(cut_index,weight,mu, fill_entry);
+    fillHistos_MuonJetDPhi(cut_index,weight, ev, mu, fill_entry);
+    fillHistos_MuonIso(cut_index,weight, mu, fill_entry);
+    fillHistos_TMass(cut_index,weight, ev, mu, fill_entry);
+  }
   else if(option == 2) 
     fillHistos_MuonChargePt(cut_index, weight, mu, fill_entry);
   else 
@@ -224,6 +359,193 @@ void fillHistos_MuonPt(int index, float weight,const wprime::Muon* mu,
     hPT[index][5]->Fill(mu->tmr.p.Pt(), weight);
   
 }//fillHistos_MuonPt
+
+
+//-----------------------------------------------------------
+void fillHistos_MuonEta(int index, float weight,const wprime::Muon* mu,
+                       const bool fill_entry[])
+{
+//-----------------------------------------------------------
+
+  if(!mu) {
+#if debugme
+    cout << " No muon found in the event " << endl;
+#endif
+    return;
+  }
+  
+  if(fill_entry[0])
+    hETA[index][0]->Fill(mu->global.p.Eta(), weight);
+  
+  if(fill_entry[1])
+    hETA[index][1]->Fill(mu->tracker.p.Eta(), weight);
+  
+  if(fill_entry[2])
+    hETA[index][2]->Fill(mu->tpfms.p.Eta(), weight);
+
+  if(fill_entry[3])
+    hETA[index][3]->Fill(mu->cocktail.p.Eta(), weight);
+
+  if(fill_entry[4])
+    hETA[index][4]->Fill(mu->picky.p.Eta(), weight);
+
+  if(fill_entry[5])
+    hETA[index][5]->Fill(mu->tmr.p.Eta(), weight);
+  
+}//fillHistos_MuonEta
+
+
+
+
+//-----------------------------------------------------------
+void fillHistos_MuonPhi(int index, float weight,const wprime::Muon* mu,
+                       const bool fill_entry[])
+{
+//-----------------------------------------------------------
+
+  if(!mu) {
+#if debugme
+    cout << " No muon found in the event " << endl;
+#endif
+    return;
+  }
+  
+  if(fill_entry[0])
+    hPHI[index][0]->Fill(mu->global.p.Phi(), weight);
+  
+  if(fill_entry[1])
+    hPHI[index][1]->Fill(mu->tracker.p.Phi(), weight);
+  
+  if(fill_entry[2])
+    hPHI[index][2]->Fill(mu->tpfms.p.Phi(), weight);
+
+  if(fill_entry[3])
+    hPHI[index][3]->Fill(mu->cocktail.p.Phi(), weight);
+
+  if(fill_entry[4])
+    hPHI[index][4]->Fill(mu->picky.p.Phi(), weight);
+
+  if(fill_entry[5])
+    hPHI[index][5]->Fill(mu->tmr.p.Phi(), weight);
+  
+}//fillHistos_MuonPhi
+
+
+
+
+//-----------------------------------------------------------
+void fillHistos_MuonJetDPhi(int index, float weight,
+                        const wprime::Event * ev,
+                        const wprime::Muon* mu,
+                       const bool fill_entry[])
+{
+//-----------------------------------------------------------
+
+  if(!mu) {
+#if debugme
+    cout << " No muon found in the event " << endl;
+#endif
+    return;
+  }
+  
+  if(fill_entry[0])
+    hMJDPHI[index][0]->Fill(XJetDPhi(mu->global.p, ev), weight);
+  
+  if(fill_entry[1])
+    hMJDPHI[index][1]->Fill(XJetDPhi(mu->tracker.p, ev), weight);
+  
+  if(fill_entry[2])
+    hMJDPHI[index][2]->Fill(XJetDPhi(mu->tpfms.p, ev), weight);
+
+  if(fill_entry[3])
+    hMJDPHI[index][3]->Fill(XJetDPhi(mu->cocktail.p, ev), weight);
+
+  if(fill_entry[4])
+    hMJDPHI[index][4]->Fill(XJetDPhi(mu->picky.p, ev), weight);
+
+  if(fill_entry[5])
+    hMJDPHI[index][5]->Fill(XJetDPhi(mu->tmr.p, ev), weight);
+  
+}//fillHistos_MuonJetDPhi
+
+
+
+//-----------------------------------------------------------
+void fillHistos_TMass(int index, float weight,
+                        const wprime::Event * ev,
+                        const wprime::Muon* mu,
+                       const bool fill_entry[])
+{
+//-----------------------------------------------------------
+
+  if(!mu) {
+#if debugme
+    cout << " No muon found in the event " << endl;
+#endif
+    return;
+  }
+  
+  //for now just fill for global as we are not sure
+  //how the met corrections are done
+  if(fill_entry[0])
+    hTM[index][0]->Fill(TMass(mu->global.p, ev->pfmet), weight);
+  
+  if(fill_entry[1])
+    hTM[index][1]->Fill(TMass(mu->tracker.p, ev->pfmet), weight);
+  
+  if(fill_entry[2])
+    hTM[index][2]->Fill(TMass(mu->tpfms.p, ev->pfmet), weight);
+
+  if(fill_entry[3])
+    hTM[index][3]->Fill(TMass(mu->cocktail.p, ev->pfmet), weight);
+
+  if(fill_entry[4])
+    hTM[index][4]->Fill(TMass(mu->picky.p, ev->pfmet), weight);
+
+  if(fill_entry[5])
+    hTM[index][5]->Fill(TMass(mu->tmr.p, ev->pfmet), weight);
+  
+}//fillHistos_TMass
+
+
+//-----------------------------------------------------------
+void fillHistos_MuonIso(int index, float weight,
+                        const wprime::Muon* mu,
+                       const bool fill_entry[])
+{
+//-----------------------------------------------------------
+
+  if(!mu) {
+#if debugme
+    cout << " No muon found in the event " << endl;
+#endif
+    return;
+  }
+  
+  if(fill_entry[0])
+      hISO[index][0]->Fill(CombRelIsolation(mu, deltaRIsoIndex),weight);
+  
+  if(fill_entry[1])
+    hISO[index][1]->Fill(CombRelIsolation(mu, deltaRIsoIndex), weight);
+  
+  if(fill_entry[2])
+    hISO[index][2]->Fill(CombRelIsolation(mu, deltaRIsoIndex), weight);
+
+  if(fill_entry[3])
+    hISO[index][3]->Fill(CombRelIsolation(mu, deltaRIsoIndex), weight);
+
+  if(fill_entry[4])
+    hISO[index][4]->Fill(CombRelIsolation(mu, deltaRIsoIndex), weight);
+
+  if(fill_entry[5])
+    hISO[index][5]->Fill(CombRelIsolation(mu, deltaRIsoIndex), weight);
+  
+}//fillHistos_MuonIso
+
+
+
+
+
 
 
 //Fill Histograms
@@ -286,20 +608,24 @@ void fillHistos_MuonChargePt(int index, float weight, const wprime::Muon* mu,
 
 
 //------------------------------------------------------------------------
-void saveHistos_MuonPt()
+void saveHistos_MainAnalysis()
 {
 //------------------------------------------------------------------------
 #if debugme
   cout << " Saving MuonPt histos " << endl;
 #endif
-    
   for(int i = 0; i != Num_histo_sets; ++i)
-    for(int j = 0; j != Num_trkAlgos; ++j)
-      hPT[i][j]->Write();
+      for(int j = 0; j != Num_trkAlgos; ++j){
+        hPT[i][j]->Write();
+        hETA[i][j]->Write(); 
+        hPHI[i][j]->Write();  
+        hMJDPHI[i][j]->Write();
+        hISO[i][j]->Write();   
+        hTM[i][j]->Write();
+      }
+}//-----saveHistos_MainAnalysis()
   
-}//-----saveHistos_MuonPt
-
-
+        
 //------------------------------------------------------------------------
 void saveHistos_MuonChargePt()
 {
@@ -326,7 +652,8 @@ void saveHistos(TFile * fout, string sample, int option)
   fout->mkdir(sample.c_str()); 
   fout->cd(sample.c_str());
 
-  if(option == 1) saveHistos_MuonPt();
+  if(option == 1) saveHistos_MainAnalysis();
+
   else if(option == 2) saveHistos_MuonChargePt();
   else 
     {
@@ -360,10 +687,6 @@ void gatherFileBasicInfo(const wprime::InputFile& file,
 
 
 //Main Analysis study
-// TODO: Maybe rename the method to a more general one because
-// in principle we can plot any variable in the event with this function, 
-// not only muon pT. The tabulateMe function can be re-written to
-// be a templated function.
 //---------------------------------------------------------------------------
 void GetMuonPtDistribution(const wprime::InputFile& file, 
 			   float Nexp_evt_cut[][Num_trkAlgos],
@@ -429,43 +752,44 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
       // apply cuts
       //>>>>>>>>>>CUT 1
       if (!PassedHLT(ev)) continue;
-      tabulateMe(Num_surv_cut, cut_index, weight, theMu, fill_entry,
+      tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, fill_entry,
 		 option, accountme);
       
       //>>>>>>>>>>CUT 2
       CheckMuonPtInRange(theMu, fill_entry, minPtMu, maxPtMu);
-      tabulateMe(Num_surv_cut, cut_index, weight, theMu, fill_entry,
+      tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, fill_entry,
 		 option, accountme);
-       
+
+             //>>>>>>>>>>CUT 6
+      CheckQuality(theMu, fill_entry, PtTrackCut, Chi2Cut,Muon_Eta_Cut);
+      tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, fill_entry,
+		 option, accountme);
+
       //>>>>>>>>>>CUT 3
       if (!OnlyOneHighTrackPtMuon(ev, OneMuPtTrackCut)) continue;
-      tabulateMe(Num_surv_cut, cut_index, weight, theMu, fill_entry,
+      tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, fill_entry,
 		 option, accountme);
       
       //>>>>>>>>>>CUT 4
-      //if (!SumPtIsolation(theMu, deltaRIsoIndex, SumPtCut)) continue;
-      if (!CombRelIsolation(theMu, deltaRIsoIndex, CombRelCut)) continue;
-      tabulateMe(Num_surv_cut, cut_index, weight, theMu, fill_entry,
+      if (!Isolation(theMu, deltaRIsoIndex, CombRelCut)) continue;
+      tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, fill_entry,
 		 option, accountme);
 
       //>>>>>>>>>>CUT 5
       if (ExceedMaxNumJetsOpposedToMu(MaxNjetsAboveThresh, EtJetCut, 
 				      Delta_Phi, theMu,ev)) continue;
-      tabulateMe(Num_surv_cut, cut_index, weight, theMu, fill_entry,
+      tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, fill_entry,
                  option, accountme);
 
       
-      //>>>>>>>>>>CUT 6
-      CheckQuality(theMu, fill_entry, PtTrackCut, Chi2Cut,Muon_Eta_Cut);
-      tabulateMe(Num_surv_cut, cut_index, weight, theMu, fill_entry,
-		 option, accountme);
+
 
 #if dumpHighPtMuons
       if(file.samplename == "data")
 	{
 	  if(theMu->tracker.p.Pt() > minPtMu)
 	    {
-	      cout << " Run # = " << ev->run_no << " Event # = " 
+	     cout << " Run # = " << ev->run_no << " Event # = " 
 		   << ev->evt_no << " LS = " << ev->LS_no << endl;
 	      cout << " glb pt = " << theMu->global.p.Pt()
 		   << " trk pt = " << theMu->tracker.p.Pt()
@@ -482,8 +806,8 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
 	      cout << " eta =  " << theMu->tracker.p.Eta()
 		   << " phi = " << theMu->tracker.p.Phi() << endl;
 	      cout << " # of strip layers = " << theMu->tracker.Nstrip_layer << ", # of pixel layers = " << theMu->tracker.Npixel_layer << endl;
-	      cout << " # of strip hits = " << theMu->tracker.NsiStrip_hits
-	      cout << " # of strip layers w/o measurement = " << theMu->tracker.Nstrip_layerNoMeas << ", # of pixel layers w/o measurement= " << theMu->tracker.Npixel_layerNoMeas << endl;
+	      cout << " # of strip hits = " << theMu->tracker.NsiStrip_hits<<endl;
+          cout << " # of strip layers w/o measurement = " << theMu->tracker.Nstrip_layerNoMeas << ", # of pixel layers w/o measurement= " << theMu->tracker.Npixel_layerNoMeas << endl;
 	      cout << " # of strip hits = " << theMu->tracker.NsiStrip_hits
 		   << " # of pixel hits = " << theMu->tracker.Npixel_hits
 		   << " # of muon hits = " << theMu->tracker.Nmuon_hits
@@ -497,6 +821,7 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
 		cout << algo_desc_short[i] << ": " << fill_entry[i]
 		     << " ";
 	      cout << endl << endl;
+
 	    }
 	}
 #endif
