@@ -36,7 +36,7 @@ void plotMuPt2()
   gStyle->SetOptStat(00000);
 
   algo = algo_desc_short[tracking_option];
-  desc = algo_desc_long[tracking_option] + " muons  (STARTUP, 1.32 pb^{-1})";
+  desc = algo_desc_long[tracking_option] + " muons  (STARTUP, 2.88 pb^{-1})";
   doPlots(_file0);
 }
 
@@ -148,7 +148,7 @@ void doPlots(TFile * _file0)
   lg->AddEntry(wp10, "W ' (1.0 TeV)", "F");
   lg->AddEntry(wp15, "W ' (1.5 TeV)", "F");
   lg->AddEntry(wp20, "W ' (2.0 TeV)", "F");
-  lg->AddEntry(data, "data (1.32 pb^{-1})", "LP");
+  lg->AddEntry(data, "data (2.88 pb^{-1})", "LP");
   lg->Draw();
   
   string file = "MuonPt_qual.gif";
