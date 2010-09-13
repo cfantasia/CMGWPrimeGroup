@@ -29,7 +29,7 @@ const float PtTrackCut = 60 ;
 const float OneMuPtTrackCut = 20; 
 const float Chi2Cut = 10;
 const float Delta_Phi = TMath::Pi() - 0.3;//min angle muon/jet for jet veto
-const float Muon_Eta_Cut = 2.1;
+const float Muon_Eta_Cut = 1.8;
 
 #define debugme  0
 #define debugmemore 0
