@@ -760,22 +760,22 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
       tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, fill_entry,
 		 option, accountme);
 
-             //>>>>>>>>>>CUT 6
+             //>>>>>>>>>>CUT 3
       CheckQuality(theMu, fill_entry, PtTrackCut, Chi2Cut,Muon_Eta_Cut);
       tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, fill_entry,
 		 option, accountme);
 
-      //>>>>>>>>>>CUT 3
+      //>>>>>>>>>>CUT 4
       if (!OnlyOneHighTrackPtMuon(ev, OneMuPtTrackCut)) continue;
       tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, fill_entry,
 		 option, accountme);
       
-      //>>>>>>>>>>CUT 4
+      //>>>>>>>>>>CUT 5
       if (!Isolation(theMu, deltaRIsoIndex, CombRelCut)) continue;
       tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, fill_entry,
 		 option, accountme);
 
-      //>>>>>>>>>>CUT 5
+      //>>>>>>>>>>CUT 6
       if (ExceedMaxNumJetsOpposedToMu(MaxNjetsAboveThresh, EtJetCut, 
 				      Delta_Phi, theMu,ev)) continue;
       tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, fill_entry,
