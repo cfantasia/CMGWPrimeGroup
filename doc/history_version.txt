@@ -1,3 +1,20 @@
+13-SEP-10 (Edgar, Christos), V00-01-45
+======================================
+o Updated data root-tuples made by Boston (1.32 pb^-1 -> 2.88 pb^-1)
+
+o Place muon quality cut at beginning of selection chain since it seems to
+be necessary to obtain an acceptable MC-data matching
+
+o Added more muon kinematic plots: eta, phi, JetDeltaPhi, isolation,
+transverse mass (NB: transverse mass is using pfMET and is therefore
+correct only for global muon tracking)
+
+o Switch to Exotica muon recommendations for quality cuts; Other cuts, 
+such as # of siStrip/pixel layers used in the fit, need to be studied
+further, but they seem to be making a small difference.
+
+
+
 03-SEP-10 (Christos), V00-01-40
 ===============================
 (1) Data format changes:
