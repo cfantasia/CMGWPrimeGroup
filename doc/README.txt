@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V145, release:
+o Setup a new working area (Default name: V146, release:
 CMSSW_3_6_3)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-01-45)
+V00-01-46)
 
 o Compile the code
 
@@ -36,8 +36,8 @@ NB The following ustom ROOT-tuples produced with 356 (Spring10 STARTUP)
 can be found in
 
 (a) /castor/cern.ch/user/c/cleonido/wprime/v140/ (made with V00-01-40, and
-2.88 pb^-1 of real data; use
-UserCode/CMGWprimeGroup/config/samples_cross_sections_v5.txt) 
+3.08 pb^-1 of real data; use
+UserCode/CMGWprimeGroup/config/samples_cross_sections_v6.txt) 
 
 (b) /castor/cern.ch/user/c/cleonido/wprime/v121/ (made with V00-01-21, and
 1.32 pb^-1 of real data; use

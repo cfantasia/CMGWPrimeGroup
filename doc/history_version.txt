@@ -1,3 +1,17 @@
+27-SEP-10 (Christos), V00-01-46
+===============================
+o Updated data root-tuples (3.077 pb^-1)
+
+o IMPORTANT: integrated luminosity for single-muon collision data is now
+extracted from data description in file samples_cross_sections.txt . This
+value 
+  (a) is used to scale the MC distributions to match the data
+  (b) is stored in Wprime_analysis.root file in single-bin histogram 
+named "lumi_ipb" (units: inverst picobarns)
+  (c) is used by plotting/fitting macros to determine how the 
+MC histograms have been scaled and create e.g. "data, XYZ pb^{-1}" labels
+
+
 13-SEP-10 (Edgar, Christos), V00-01-45
 ======================================
 o Updated data root-tuples made by Boston (1.32 pb^-1 -> 2.88 pb^-1)
