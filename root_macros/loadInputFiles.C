@@ -12,11 +12,12 @@
 using std::string; using std::vector;
 using std::cout; using std::endl; using std::cerr;
 
-void parseLine(const string & new_line, wprime::InputFile * in_file);
+void parseLine(const string & new_line, wprime::InputFile * in_file, 
+	       float & lumi_ipb);
 
 string top_level_dir = "";
 
-void loadInputFiles(vector<wprime::InputFile> & files, float lumiPb)
+void loadInputFiles(vector<wprime::InputFile> & files, float & lumiPb)
 {
   ifstream topdir_file("UserCode/CMGWPrimeGroup/config/top_directory.txt");
   getline(topdir_file, top_level_dir);
@@ -27,8 +28,6 @@ void loadInputFiles(vector<wprime::InputFile> & files, float lumiPb)
     }
 
   cout << "\n Reading root-tuples from directory " << top_level_dir << endl;
-  cout << " Applying weights to get distributions for " << lumiPb << " pb^-1"
-       << endl << endl;
 
   ifstream in("UserCode/CMGWPrimeGroup/config/samples_cross_sections.txt");
   string new_line; wprime::InputFile * new_file = 0;
@@ -42,7 +41,7 @@ void loadInputFiles(vector<wprime::InputFile> & files, float lumiPb)
 	new_file = new wprime::InputFile();
       
       if(!new_line.empty())
-	parseLine(new_line, new_file);
+	parseLine(new_line, new_file, lumiPb);
       else
 	{
 	  if(new_file->samplename != "data")
@@ -62,7 +61,8 @@ void loadInputFiles(vector<wprime::InputFile> & files, float lumiPb)
     }
 }
 
-void parseLine(const string & new_line, wprime::InputFile * in_file)
+void parseLine(const string & new_line, wprime::InputFile * in_file, 
+	       float & lumi_ipb)
 {
   unsigned int i = 0;
   i = new_line.find("samplename = ");
@@ -76,6 +76,28 @@ void parseLine(const string & new_line, wprime::InputFile * in_file)
   if(i != string::npos)
     {
       in_file->description = new_line.substr(14, new_line.length() - 14);
+
+      // this is where we extract the integrated luminosity
+      // from the description of the data sample; expect something like
+      // "blah-blah-blah random description, XYZ pb^-1" ==> XYZ is what we want
+      // NB: the data sample must appear first in samples_cross_sections.txt !
+      if(lumi_ipb < 0)
+	{
+	  unsigned int begin = in_file->description.find(",") + 2;
+	  unsigned int end = in_file->description.find("pb^-1");
+	  string integ_lumi = in_file->description.substr(begin, end-begin);
+	  lumi_ipb = atof(integ_lumi.c_str());
+
+	  cout << "\n Will apply weights to MC samples to get distributions for "
+	       << lumi_ipb << " pb^-1" << endl << endl;
+	  if(lumi_ipb <= 0)
+	    {
+	      cout << " *** Oops, read in \"" << integ_lumi 
+		   << "\" which I failed to parse! Please seek help... " 
+		   << endl;
+	      abort();
+	    }
+	}
       return;
     }
 

@@ -36,8 +36,10 @@ float all_masses[mass_points] = {-9999, 800, 1000, 1100, 1200, 1300, 1400,
 // Fit settings for users begin here
 // ==================================
 
-// set integrated luminosity (NB: W MC-statistics are enough for up to ~100 pb^-1
-// use to scale histograms in Wprime_analysis.root (assume: correspond to 100 pb^-1)
+// Set integrated luminosity for toy-MC ensemble studies 
+// Will use this value to scale histograms in Wprime_analysis.root 
+// by comparing with reference contained in "lumi_ipb" histogram
+// (NB: W MC-statistics are enough for up to ~100 pb^-1)
 const float integ_lumi = 100.0; // in pb^-1
 
 // select algorithm option

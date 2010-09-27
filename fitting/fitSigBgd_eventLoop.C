@@ -36,6 +36,9 @@ static int status = -9999;
 // # of function parameters to be employed for fit
 unsigned NPARAM_FIT = 0;
 
+float Lumi_ipb = -1;
+void setLumi_ipb(float lumi){Lumi_ipb = lumi;}
+
 void setNPARAM_FIT(unsigned num){NPARAM_FIT = num;}
 
 // get fit results, store in Results structure
@@ -256,7 +259,9 @@ void doPlots(TH1F * data, TF1 * theory, bool bgdOnlyFit)
   data->SetTitle("W ' #rightarrow #mu#nu p_{T}");
   fsig.SetLineColor(kRed);
   fbgd.SetLineColor(kBlue);
-  string desc = "CMS Preliminary"; string desc2 = " 100 pb^{-1}";
+  string desc = "CMS Preliminary"; 
+  char temp[1024]; sprintf(temp, " %4.2f pb^{-1}", Lumi_ipb);
+  string desc2 = temp;
 
   TCanvas * c1 = new TCanvas();
   data->GetXaxis()->SetRangeUser(fXMIN, fXMAX);

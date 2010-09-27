@@ -22,6 +22,12 @@ void plot_sigbgd()
   
   gStyle->SetOptStat(0);
 
+  TFile * file = TFile::Open("Wprime_analysis.root");
+  string histo_lumi = "lumi_ipb";
+  TH1F * lumi_ipb = (TH1F* )file->Get(histo_lumi.c_str());
+  float Lumi_ipb = lumi_ipb->GetBinContent(1);
+  file->Close();
+
   char filein[256]; char fileout[256];
   string energy = ""; string fudge = "";
   string en = "";
@@ -62,7 +68,7 @@ void plot_sigbgd()
 
   tot->Draw(); gPad->Update();
 
-  char desc[512]; sprintf(desc, "100 pb^{-1}");
+  char desc[512]; sprintf(desc, " %4.2f pb^{-1}", Lumi_ipb);
   char desc1[512]; 
   if(f_option == 1)
     sprintf(desc1, "f = 1.0");

@@ -31,6 +31,9 @@ extern void fitSigBgd_eventLoop(unsigned mass_option, const unsigned * N_evt2gen
 				Results * result, TH1F ** ref, int exp_no,
 				bool bgdOnlyFit);
 
+extern void setLumi_ipb(float lumi);
+
+
 TFile * file0 = 0;
 TFile * gfile = 0;
 
@@ -49,6 +52,8 @@ TH1F * wp14_orig = 0;
 TH1F * wp15_orig = 0;
 TH1F * wp20_orig = 0;
 TH1F * bgd_orig = 0;
+
+TH1F * lumi_ipb = 0;
 
 // resolution function
 TH1F * g0[mass_points] = {0};
@@ -158,6 +163,11 @@ int fitSigBgd(unsigned mass_option, unsigned N_EXP, bool bgdOnlyFit)
 
 void getInputHistograms()
 {
+  string histo_lumi = "lumi_ipb";
+  lumi_ipb = (TH1F* )file0->Get(histo_lumi.c_str());
+  if(badHisto(lumi_ipb, histo_lumi))
+    return;
+
   string histo = "hPT" + algo_desc_short[algo_option] + "_"
     + final_histo_desc;
 
@@ -255,8 +265,12 @@ void makeReferenceHistograms()
 
   // # of events to generate per sample
   assert(num_ref_plots == 10);
-// use to scale histograms in Wprime_analysis.root (assume: correspond to 100 pb^-1)
-  float k = integ_lumi/100; 
+
+  setLumi_ipb(lumi_ipb->GetBinContent(1));
+// use to scale histograms in Wprime_analysis.root
+  float k = integ_lumi/lumi_ipb->GetBinContent(1); 
+  cout << " MC distributions made with " << lumi_ipb->GetBinContent(1)
+       << " pb^{-1}, scale factor = " << k << endl;
   N_evt2gen[0] = 1;
   N_evt2gen[1] = int(wp08_orig->Integral()*k + 0.5);
   N_evt2gen[2] = int(wp10_orig->Integral()*k + 0.5);

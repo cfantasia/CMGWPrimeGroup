@@ -1,5 +1,6 @@
 #include <TROOT.h>
 #include <TFile.h>
+#include <TH1F.h>
 
 #include <string>
 #include <vector>
@@ -16,12 +17,11 @@ extern void GetDistributionGeneric(const wprime::InputFile & file,
 				   const int option = 1, 
 				   const bool highestPtMuonOnly = true);
 
-extern void loadInputFiles(vector<wprime::InputFile> & files, float lumiPb);
+extern void loadInputFiles(vector<wprime::InputFile> & files, float & lumiPb);
 
 void run()
 {
-  //  float lumiPb = 100; // in pb^-1
-  float lumiPb = 2.880; // in pb^-1
+  float lumiPb = -1; // in pb^-1, to be retrieved from samples_cross_sections.txt
 
   TFile *fout = new TFile("Wprime_analysis.root","recreate");
 
@@ -47,6 +47,12 @@ void run()
   vector<wprime::InputFile>::const_iterator it;
   for(it = all_files.begin(); it != all_files.end(); ++it)
     GetDistributionGeneric(*it, fout, out, option, highestPtMuonOnly);
+
+  TH1F * h = new TH1F("lumi_ipb", "Integrated luminosity in pb^{-1}", 1, 0, 1);
+  h->SetBinContent(1, lumiPb);
+
+  fout->cd();
+  h->Write();
 
   out.close(); 
   fout->Close();

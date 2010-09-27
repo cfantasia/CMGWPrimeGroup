@@ -24,6 +24,7 @@ using std::string; using std::cout; using std::endl;
 void getInputHistograms();
 
 extern void fitData(TH1F * data, TF1 * & theory, Results * result, int exp_no, float mass, float evt_sig, bool bgdOnlyFit);
+extern void setLumi_ipb(float lumi);
 
 TFile * file0 = 0;
 TFile * gfile = 0;
@@ -50,6 +51,7 @@ void cleanup(Results * result, TFile * output_file)
 
 TH1F * data = 0;
 TF1 * theory = 0;
+TH1F * lumi_ipb = 0;
 
 int fitSigBgd_data()
 {
@@ -87,6 +89,7 @@ int fitSigBgd_data()
   
   getInputHistograms();
   setResolution(g0);
+  setLumi_ipb(lumi_ipb->GetBinContent(1));
 
   float mass = 1100; float evt_sig = 1.0; bool bgdOnlyFit = false;
   fitData(data, theory, result, 0, mass, evt_sig, bgdOnlyFit);
@@ -102,6 +105,11 @@ int fitSigBgd_data()
 
 void getInputHistograms()
 {
+  string histo_lumi = "lumi_ipb";
+  lumi_ipb = (TH1F* )file0->Get(histo_lumi.c_str());
+  if(badHisto(lumi_ipb, histo_lumi))
+    return;
+
   string histo = "data/hPT" + algo_desc_short[algo_option] + "_" + 
     final_histo_desc;
 

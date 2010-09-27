@@ -18,6 +18,8 @@ const unsigned tracking_option = 2;
 
 void doPlots(unsigned i, TFile * _file0);
 
+float Lumi_ipb = -1;
+
 void plotMuPt()
 {
   assert(tracking_option >=0 && tracking_option <= Num_trkAlgos-1);
@@ -29,6 +31,10 @@ void plotMuPt()
       cout << " *** Ooops! Cannot find input file " << input_file << endl;
       return;
     }
+
+  string histo_lumi = "lumi_ipb";
+  TH1F * lumi_ipb = (TH1F* )_file0->Get(histo_lumi.c_str());
+  Lumi_ipb = lumi_ipb->GetBinContent(1);
 
   gStyle->SetOptStat(00000);
   for(int i = 0; i != Num_histo_sets; ++i)
@@ -55,8 +61,9 @@ void doPlots(unsigned i, TFile * _file0)
 
 
   string algo = algo_desc_short[tracking_option]; 
+  char temp[1024]; sprintf(temp, " (%4.2f pb^{-1})", Lumi_ipb);
   string desc = algo_desc_long[tracking_option] + " muons, " + 
-    cuts_desc_long[i] + " (2.88 pb^{-1})";
+    cuts_desc_long[i] + temp;
 
   TCanvas * c1 = new TCanvas();
   c1->SetLogy();
@@ -156,6 +163,8 @@ void doPlots(unsigned i, TFile * _file0)
   wp10->Draw("same");
   wp15->Draw("same");
   wp20->Draw("same");
+
+  char temp2[1024]; sprintf(temp2, " data (%4.2f pb^{-1})", Lumi_ipb);
   
   TLegend * lg = new TLegend(0.59, 0.67, 0.89, 0.89);
   lg->SetTextSize(0.03);
@@ -168,7 +177,7 @@ void doPlots(unsigned i, TFile * _file0)
   lg->AddEntry(wp10, "W ' (1.0 TeV)", "F");
   lg->AddEntry(wp15, "W ' (1.5 TeV)", "F");
   lg->AddEntry(wp20, "W ' (2.0 TeV)", "F");
-  lg->AddEntry(data, "data (2.88 pb^{-1})", "LP");
+  lg->AddEntry(data, temp2, "LP");
   lg->Draw();
 
   string file = cuts_desc_short[i] + ".gif";

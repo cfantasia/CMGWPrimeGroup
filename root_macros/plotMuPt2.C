@@ -23,6 +23,8 @@ string desc;
 
 void doPlots(TFile * _file0);
 
+float Lumi_ipb = -1;
+
 void plotMuPt2()
 {
   string input_file = "Wprime_analysis.root";
@@ -33,10 +35,15 @@ void plotMuPt2()
       return;
     }
 
+  string histo_lumi = "lumi_ipb";
+  TH1F * lumi_ipb = (TH1F* )_file0->Get(histo_lumi.c_str());
+  Lumi_ipb = lumi_ipb->GetBinContent(1);
+
   gStyle->SetOptStat(00000);
 
   algo = algo_desc_short[tracking_option];
-  desc = algo_desc_long[tracking_option] + " muons  (STARTUP, 2.88 pb^{-1})";
+  char temp[1024]; sprintf(temp, " muons  (STARTUP, %4.2f pb^{-1})", Lumi_ipb);
+  desc = algo_desc_long[tracking_option] + temp;
   doPlots(_file0);
 }
 
@@ -140,6 +147,8 @@ void doPlots(TFile * _file0)
   wp15->Draw("same");
   wp20->Draw("same");
 
+  char temp2[1024]; sprintf(temp2, " data (%4.2f pb^{-1})", Lumi_ipb);
+
   TLegend * lg = new TLegend(0.59, 0.67, 0.89, 0.89);
   lg->SetTextSize(0.03);
   lg->SetBorderSize(0);
@@ -148,7 +157,7 @@ void doPlots(TFile * _file0)
   lg->AddEntry(wp10, "W ' (1.0 TeV)", "F");
   lg->AddEntry(wp15, "W ' (1.5 TeV)", "F");
   lg->AddEntry(wp20, "W ' (2.0 TeV)", "F");
-  lg->AddEntry(data, "data (2.88 pb^{-1})", "LP");
+  lg->AddEntry(data, temp2, "LP");
   lg->Draw();
   
   string file = "MuonPt_qual.gif";
