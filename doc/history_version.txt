@@ -1,3 +1,15 @@
+30-SEP-10 (Christos), V00-01-47
+===============================
+(a) Simplified the plot-making macros (loop over algorithms instead of
+copying  + pasting) in order to make it easier to add/remove tracking
+algorithms 
+
+(b) "Simplified" structure of selection-cut loop in order to make it 
+easier to make changes in the order of selection cuts (e.g. putting the
+quality cut at  the end to study which cuts eliminate high-pt muon
+candidates).  
+
+
 27-SEP-10 (Christos), V00-01-46
 ===============================
 o Updated data root-tuples (3.077 pb^-1)
