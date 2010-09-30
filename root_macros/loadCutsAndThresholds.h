@@ -33,7 +33,7 @@ const float Muon_Eta_Cut = 1.8;
 
 #define debugme  0
 #define debugmemore 0
-#define dumpHighPtMuons 1
+#define dumpHighPtMuons 0
 
 // +++++++++++++++++++++++++++++++muon-pt histogram parameters
 const unsigned  nBinPtMu = 140;//45; // 400; // 45; // 18; 200; 380; 
