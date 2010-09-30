@@ -171,7 +171,7 @@ unsigned NjetAboveThresh(float threshold, float delta_phi,
 
 // true if HLT conditions are met
 //-------------------------------------------------------------------
-bool PassedHLT(const wprime::Event* ev)
+bool PassedHLT(const wprime::Event* ev, const wprime::Muon*, bool [])
 {
   //-------------------------------------------------------------------
 #if debugmemore
@@ -186,13 +186,13 @@ bool PassedHLT(const wprime::Event* ev)
 
 
 // check if muon is in pt-range for the different algorithms, fill isThere
+// always returns true if muon != NULL
 //-------------------------------------------------------------------
-void CheckMuonPtInRange(const wprime::Muon* mu, bool isThere[],
-			float min_MuPt, float max_MuPt)
+bool MuonPtWithinRange(const wprime::Event*, const wprime::Muon* mu, bool isThere[])
 {
 //-------------------------------------------------------------------
 #if debugmemore
-  cout << " Processing IsMuonPtInRange() " << endl;
+  cout << " Processing MuonPtWithinRange() " << endl;
 #endif
   
   // Make sure there is a muon
@@ -201,61 +201,61 @@ void CheckMuonPtInRange(const wprime::Muon* mu, bool isThere[],
       for(int i = 0; i != Num_trkAlgos; ++i)
 	isThere[i] = false;
 
-      return;
+      return false;
     }
 
-  isThere[0] = mu->global.p.Pt() >=min_MuPt 
-    && mu->global.p.Pt() <=max_MuPt;
+  const TLorentzVector * P[Num_trkAlgos] = {
+    &(mu->global.p), &(mu->tracker.p), &(mu->tpfms.p), &(mu->cocktail.p),
+    &(mu->picky.p),  &(mu->tmr.p)};
 
-  isThere[1] = mu->tracker.p.Pt() >=min_MuPt 
-    && mu->tracker.p.Pt() <=max_MuPt;
+  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+    {
+      float pt = (P[algo])->Pt();
+      isThere[algo] = (pt >= minPtMu && pt <= maxPtMu);
+    }
 
-  isThere[2] = mu->tpfms.p.Pt() >=min_MuPt 
-    && mu->tpfms.p.Pt() <=max_MuPt;
+  return true;
 
-  isThere[3] = mu->cocktail.p.Pt() >=min_MuPt 
-    && mu->cocktail.p.Pt() <=max_MuPt;
-
-  isThere[4] = mu->picky.p.Pt() >=min_MuPt 
-    && mu->picky.p.Pt() <=max_MuPt;
-
-  isThere[5] = mu->tmr.p.Pt() >=min_MuPt 
-    && mu->tmr.p.Pt() <=max_MuPt;
-
-}//-------IsMuonPtInRange
+}//-------MuonPtWithinRange
 
 
 
 // true if only one muon with track pT > the threshold
 //-------------------------------------------------------------------
-bool OnlyOneHighTrackPtMuon(const wprime::Event* ev, float one_mu_pt_trkcut)
+bool OnlyOneHighTrackPtMuon(const wprime::Event* ev, const wprime::Muon*, bool [])
 {
 //-------------------------------------------------------------------
 #if debugmemore
  cout << " Processing OnlyOneHighTrackPtMuon() " << endl;
 #endif
 
- return (NmuAboveThresh(one_mu_pt_trkcut, ev) == 1);
+ return (NmuAboveThresh(OneMuPtTrackCut, ev) == 1);
 }//----------ThereIsOneMuonOnly
 
 
 
 // true if isolation requirements satisfied for muon
 //-------------------------------------------------------------------
-bool Isolation(const wprime::Muon* the_mu, unsigned detR_iso_index,
-               float iso_cut)
+bool IsolatedMuon(const wprime::Event*, const wprime::Muon* the_mu, bool [])
 {
 //-------------------------------------------------------------------
 #if debugmemore
-  cout << " Processing Isolation() " << endl;
+  cout << " Processing IsolatedMuon() " << endl;
 #endif
 
-  return (CombRelIsolation(the_mu,detR_iso_index) <= iso_cut);
-  //return (SumPtIsolation(theMu,detR_iso_index) <= iso_cut);
+  return (CombRelIsolation(the_mu,deltaRIsoIndex) <= CombRelCut);
+  //return (SumPtIsolation(theMu,deltaRIsoIndex) <= iso_cut);
 
-}//--------Isolation
+}//--------IsolatedMuon
 
-
+// true if there is no significant jet activity in event
+// (wrapper for ExceedMaxNumJetsOpposedToMu)
+bool NoJetActivity(const wprime::Event* ev, const wprime::Muon* the_mu, bool [])
+//-------------------------------------------------------------------
+{
+  return !ExceedMaxNumJetsOpposedToMu(MaxNjetsAboveThresh, EtJetCut, 
+				      Delta_Phi, the_mu,ev);
+} // --------------NoJetActivity
 
 
 // true if energetic Jet(s) found back to back with muon 
@@ -278,22 +278,21 @@ bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh,
 
 
 
-// check if muon satisfies quality requirements for all tracking algorithms, fill goodQual
+// check if muon satisfies quality requirements for all tracking algorithms.
+// fill goodQual; always return true
 //-------------------------------------------------------------------
-void CheckQuality(const wprime::Muon* mu, 
-		  bool goodQual[], float pttrk_cut,
-		  float chi2_cut, float muon_etacut)
+bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu, bool goodQual[])
 {
 //-------------------------------------------------------------------
 #if debugmemore
-  cout << " Processing HasQuality() " << endl;
+  cout << " Processing GoodQualityMuon() " << endl;
 #endif
 
   //See twiki: https://twiki.cern.ch/twiki/bin/view/CMS/ExoticaWprime
   //for the latest quality cuts
   
   //This is consider now an old cut. Put on-hold for the moment
-  bool isHard = mu->tracker.p.Pt() >= pttrk_cut;
+  bool isHard = mu->tracker.p.Pt() >= PtTrackCut;
   isHard = true;
 
   bool checkqual = false;
@@ -316,48 +315,22 @@ void CheckQuality(const wprime::Muon* mu,
       && mu->tracker.Npixel_hits > 0
       ;
   
-   
-  checkqual = ((mu->global.chi2 / mu->global.ndof)<chi2_cut)
-      && TMath::Abs(mu->global.p.Eta()) < muon_etacut;
-  
-  // old value: muon's pt within range
-  // new value: old value .AND. quality cuts
-  goodQual[0] = goodQual[0] && checkqual && isHard && muonID;
+  const wprime::Track * tk[Num_trkAlgos] = {
+    &(mu->global), &(mu->tracker), &(mu->tpfms), &(mu->cocktail),
+    &(mu->picky),  &(mu->tmr)};
 
+  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+    {
+      checkqual = (( (tk[algo])->chi2 / (tk[algo])->ndof) < Chi2Cut)
+	&& TMath::Abs( (tk[algo])->p.Eta()) < Muon_Eta_Cut;
 
-  checkqual = ((mu->tracker.chi2 / mu->tracker.ndof) 
-	       < chi2_cut)
-    && TMath::Abs(mu->tracker.p.Eta()) < muon_etacut;
-  goodQual[1] = goodQual[1] && checkqual && isHard && muonID;
+      // old value: muon's pt within range
+      // new value: old value .AND. quality cuts
+      goodQual[algo] = goodQual[algo] && checkqual && isHard && muonID;
+    }
+  return true;
 
-
-
-  checkqual = ((mu->tpfms.chi2 / mu->tpfms.ndof) 
-	       < chi2_cut) 
-    && TMath::Abs(mu->tpfms.p.Eta()) < muon_etacut;
-  goodQual[2] = goodQual[2] && checkqual && isHard && muonID;
-
-  checkqual = ((mu->cocktail.chi2 / mu->cocktail.ndof) 
-	       < chi2_cut) 
-    && TMath::Abs(mu->cocktail.p.Eta()) < muon_etacut;
-
-  goodQual[3] = goodQual[3] && checkqual && isHard && muonID;
-
-
-  checkqual = ((mu->picky.chi2 / mu->picky.ndof) 
-	       < chi2_cut) 
-    && TMath::Abs(mu->picky.p.Eta()) < muon_etacut;
-
-  goodQual[4] = goodQual[4] && checkqual && isHard && muonID;
-
-
-  checkqual = ((mu->tmr.chi2 / mu->tmr.ndof) 
-	       < chi2_cut) 
-    && TMath::Abs(mu->tmr.p.Eta()) < muon_etacut;
-
-  goodQual[5] = goodQual[5] && checkqual && isHard && muonID;
-
-}//------HasQuality
+}//------GoodQualityMuon
 
 
 

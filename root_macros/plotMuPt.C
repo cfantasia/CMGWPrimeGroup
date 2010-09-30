@@ -37,7 +37,7 @@ void plotMuPt()
   Lumi_ipb = lumi_ipb->GetBinContent(1);
 
   gStyle->SetOptStat(00000);
-  for(int i = 0; i != Num_histo_sets; ++i)
+  for(int i = 0; i != Num_selection_cuts; ++i)
     doPlots(i, _file0);
 }
 
@@ -52,7 +52,7 @@ bool badHisto(TH1F * h, string s)
   return false;
 }
 
-// i must be between 0 and Num_histo_sets-1
+// i must be between 0 and Num_selection_cuts-1
 void doPlots(unsigned i, TFile * _file0)
 {
 
@@ -149,7 +149,7 @@ void doPlots(unsigned i, TFile * _file0)
   // this is needed when background is zero in the tails and wprime (say at 2.0 TeV) is not displayed
   if(data->GetMinimum() < 0.00001)data->SetMinimum(0.00001);
 
-  if (i == Num_histo_sets-1)
+  if (i == Num_selection_cuts-1)
     {
       string new_title = algo_desc_long[tracking_option] + " p_{T} distribution";
       data->SetTitle(new_title.c_str());

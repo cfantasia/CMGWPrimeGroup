@@ -33,12 +33,12 @@ const float Muon_Eta_Cut = 1.8;
 
 #define debugme  0
 #define debugmemore 0
-#define dumpHighPtMuons 0
+#define dumpHighPtMuons 1
 
 // +++++++++++++++++++++++++++++++muon-pt histogram parameters
 const unsigned  nBinPtMu = 140;//45; // 400; // 45; // 18; 200; 380; 
 const float minPtMu = 100; // 100;
-const float  maxPtMu = 1500; // 800; 2000;
+const float  maxPtMu = 450; // 800; 2000;
 // +++++++++++++++++++++++++++++++muon-eta histogram parameters
 const unsigned nBinEtaMu = 28;
 const float minEtaMu = -2.4;
@@ -60,12 +60,12 @@ const unsigned nBinTmMu = 195;
 const float minTmMu = 50;
 const float maxTmMu = 2000;
 // +++++++++++++++++++++++++Declare histograms 
-TH1F * hPT[Num_histo_sets][Num_trkAlgos] = {{0}};
-TH1F * hETA[Num_histo_sets][Num_trkAlgos] = {{0}};
-TH1F * hPHI[Num_histo_sets][Num_trkAlgos] = {{0}};
-TH1F * hMJDPHI[Num_histo_sets][Num_trkAlgos] = {{0}};
-TH1F * hISO[Num_histo_sets][Num_trkAlgos] = {{0}};
-TH1F * hTM[Num_histo_sets][Num_trkAlgos] = {{0}};
+TH1F * hPT[Num_selection_cuts][Num_trkAlgos] = {{0}};
+TH1F * hETA[Num_selection_cuts][Num_trkAlgos] = {{0}};
+TH1F * hPHI[Num_selection_cuts][Num_trkAlgos] = {{0}};
+TH1F * hMJDPHI[Num_selection_cuts][Num_trkAlgos] = {{0}};
+TH1F * hISO[Num_selection_cuts][Num_trkAlgos] = {{0}};
+TH1F * hTM[Num_selection_cuts][Num_trkAlgos] = {{0}};
 
 // $$$$$$$$$$$$$$$$$$$$$ Charge Asymmetry (option = 2)
 // +++++++++++++++++++++++++Declare histograms
@@ -116,18 +116,24 @@ unsigned NjetAboveThresh(float threshold, float delta_phi,
 
 // +++++++++++++++++++++++++ Declare cut methods
 // true if HLT conditions are met
-bool PassedHLT(const wprime::Event* ev);
+bool PassedHLT(const wprime::Event* ev, const wprime::Muon*, bool []);
 
-// check if muon is in pt-range for the different algorithms, fill isThere
-void CheckMuonPtInRange(const wprime::Muon* mu, bool isThere[],
-			float min_MuPt, float max_MuPt);
+// check if muon is in pt-range for the different algorithms, fill isThere;
+// always returns true if muon != NULL
+bool MuonPtWithinRange(const wprime::Event*, const wprime::Muon* mu, 
+		       bool isThere[]);
 
 // true if only one muon with track pT > the threshold
-bool OnlyOneHighTrackPtMuon(const wprime::Event* ev, float one_mu_pt_trkcut);
+bool OnlyOneHighTrackPtMuon(const wprime::Event* ev, const wprime::Muon*, 
+			    bool []);
 
 // true if isolation requirements satisfied for muon
-bool Isolation(const wprime::Muon* the_mu, unsigned detR_iso_index, 
-               float iso_cut);
+bool IsolatedMuon(const wprime::Event*, const wprime::Muon* the_mu, bool []);
+
+// true if there is no significant jet activity in event
+// (wrapper for ExceedMaxNumJetsOpposedToMu)
+bool NoJetActivity(const wprime::Event* ev, const wprime::Muon* the_mu, 
+		   bool []);
 
 // true if energetic Jet(s) found back to back with muon 
 bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh, float et_jet_cut,
@@ -135,9 +141,9 @@ bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh, float et_jet_cut
 				 const wprime::Event* ev);
 
 // check if muon satisfies quality requirements for all tracking algorithms, 
-// fill goodQual
-void CheckQuality(const wprime::Muon* mu, bool goodQual[],
-		  float pttrk_cut, float chi2_cut, float muon_etacut);
+// fill goodQual; always returns true
+bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu, 
+		     bool goodQual[]);
 
 
 #endif // #define _load_cuts_h__
