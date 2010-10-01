@@ -680,36 +680,71 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
 
 }//-----------GetMuonPtDistribution()      
 
+void printMe(const string & desc, const wprime::Muon* theMu)
+{
+  const wprime::Track * Tk[Num_trkAlgos] = {
+    &(theMu->global), &(theMu->tracker), &(theMu->tpfms), &(theMu->cocktail),
+    &(theMu->picky),  &(theMu->tmr)};
+
+  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+    {
+      if(desc == "  pt = ")
+	cout << " " << algo_desc_short[algo] << desc << (Tk[algo])->p.Pt();
+      else if(desc == " dpt = ")
+	cout << " " << algo_desc_short[algo] << desc << (Tk[algo])->dpt;
+      else if(desc == "layers")
+	{
+	  cout << " " << algo_desc_short[algo] << ": (" 
+	       << (Tk[algo])->Nstrip_layer << ", " 
+	       << (Tk[algo])->Npixel_layer << ") ";	  
+	}
+      else if(desc == "layersNoMeas")
+	{
+	  cout << " " << algo_desc_short[algo] << ": (" 
+	       << (Tk[algo])->Nstrip_layerNoMeas << ", " 
+	       << (Tk[algo])->Npixel_layerNoMeas << ") ";	  
+	}
+      else if(desc == "hits")
+	{
+	  cout << " " << algo_desc_short[algo] << ": (" 
+	       << (Tk[algo])->NsiStrip_hits << ", " 
+	       << (Tk[algo])->Npixel_hits 
+	       << ", " << (Tk[algo])->Nmuon_hits << ") ";
+	}
+      else if(desc == "chi2")
+	{
+	  cout << " " << algo_desc_short[algo] << ": " 
+	       << (Tk[algo])->chi2 << "/" << (Tk[algo])->ndof;
+	}
+      else
+	{
+	  cout << " Oops! Do not understand desc = " << desc << endl;
+	  abort();
+	}
+    }
+  cout << endl;
+}
+
 void printHighPtMuon(const wprime::Event * ev, const wprime::Muon* theMu,
 		     const bool fill_entry[])
 {
   cout << " Run # = " << ev->run_no << " Event # = " 
        << ev->evt_no << " LS = " << ev->LS_no << endl;
-  cout << " glb pt = " << theMu->global.p.Pt()
-       << " trk pt = " << theMu->tracker.p.Pt()
-       << " tpfms pt = " << theMu->tpfms.p.Pt()
-       << " ctail pt = " << theMu->cocktail.p.Pt()
-       << " picky pt = " << theMu->picky.p.Pt()
-       << " tmr pt = " << theMu->tmr.p.Pt() << endl;
-  cout << " glb dpt = " << theMu->global.dpt
-       << " trk dpt = " << theMu->tracker.dpt
-       << " tpfms dpt = " << theMu->tpfms.dpt
-       << " ctail dpt = " << theMu->cocktail.dpt
-       << " picky dpt = " << theMu->picky.dpt
-       << " tmr dpt = " << theMu->tmr.dpt << endl;
-  cout << " eta =  " << theMu->tracker.p.Eta()
-       << " phi = " << theMu->tracker.p.Phi() << endl;
-  cout << " # of strip layers = " << theMu->tracker.Nstrip_layer 
-       << ", # of pixel layers = " << theMu->tracker.Npixel_layer << endl;
-  cout << " # of strip hits = " << theMu->tracker.NsiStrip_hits<<endl;
-  cout << " # of strip layers w/o measurement = " 
-       << theMu->tracker.Nstrip_layerNoMeas 
-       << ", # of pixel layers w/o measurement= " 
-       << theMu->tracker.Npixel_layerNoMeas << endl;
-  cout << " # of strip hits = " << theMu->tracker.NsiStrip_hits
-       << " # of pixel hits = " << theMu->tracker.Npixel_hits
-       << " # of muon hits = " << theMu->tracker.Nmuon_hits
-       << " # of standalone muon hits = " << theMu->Nmu_hits << endl;
+
+
+  printMe("  pt = ", theMu);
+  printMe(" dpt = ", theMu);
+  cout << " # of layers: (strip, pixel) " << endl;
+  printMe("layers", theMu);
+  cout << " # of layers w/o measurement: (strip, pixel) " << endl;
+  printMe("layersNoMeas", theMu);
+  cout << " # of hits (strip, pixel, muon) " << endl;
+  printMe("hits", theMu);
+  cout << " Chi2/Ndof " << endl;
+  printMe("chi2", theMu);
+  cout << " Tracker eta =  " << theMu->tracker.p.Eta()
+       << ", Tracker phi = " << theMu->tracker.p.Phi() << endl;
+  cout << " # of standalone muon hits = " << theMu->Nmu_hits << endl;
   cout << " Global: " << theMu->AllGlobalMuons
        << " Tracker: " << theMu->AllTrackerMuons
        << " Standalone: " << theMu->AllStandAloneMuons
