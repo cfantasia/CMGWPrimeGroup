@@ -12,7 +12,7 @@
 using std::cout; using std::endl;
 using std::vector; using std::string;
 
-extern void GetDistributionGeneric(const wprime::InputFile & file, 
+extern void GetDistributionGeneric(wprime::InputFile & file, 
 				   TFile *fout, ofstream & out, 
 				   const int option = 1, 
 				   const bool highestPtMuonOnly = true);
@@ -44,7 +44,7 @@ void run()
 
   loadInputFiles(all_files, lumiPb);
   
-  vector<wprime::InputFile>::const_iterator it;
+  vector<wprime::InputFile>::iterator it;
   for(it = all_files.begin(); it != all_files.end(); ++it)
     GetDistributionGeneric(*it, fout, out, option, highestPtMuonOnly);
 
@@ -56,4 +56,31 @@ void run()
 
   out.close(); 
   fout->Close();
+
+  for (int mual = 0; mual != Num_trkAlgos; ++mual)
+    { // loop over tracking algorithms
+      cout << " --------------------------------------------" << endl;
+      cout << " " << algo_desc_long[mual] << " muon reconstruction" << endl;
+      cout << " # of events after all selection cuts for " << lumiPb << " pb^-1:"
+	   << endl;
+      float N_SM = 0; 
+      vector<wprime::InputFile>::const_iterator it;
+      for(it = all_files.begin(); it != all_files.end(); ++it)
+	{ // loop over samples
+	  string sample = (*it).samplename;
+	  cout << " " << sample << ": " << (*it).N_aftercuts[mual]
+	       << " (eff = " << 100.*((*it).eff[mual]) 
+	       << " +- " << 100.*((*it).deff[mual])
+	       << " %) " << endl;
+	  if(sample == "W" || sample == "QCD" || sample == "Z" || 
+	     sample == "Top")
+	    N_SM += (*it).N_aftercuts[mual];
+
+	  if(sample == "Top")
+	    cout << " Total # of SM (W + QCD + Z + Top) events: " << N_SM << endl;
+	  
+	} // loop over samples
+
+    } // loop over tracking algorithms
+
 }
