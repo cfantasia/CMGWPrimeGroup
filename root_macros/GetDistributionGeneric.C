@@ -18,9 +18,8 @@ using std::cout; using std::endl; using std::string; using std::map;
 //methods in this macro:
 void printHighPtMuon(const wprime::Event * ev, const wprime::Muon* mu,
 		     const bool fill_entry[]);
-void printSummary_MuonPt(ofstream & out, const string& dir, 
-                         float Nexp_evt, 
-			 const float Nexp_evt_cut[][Num_trkAlgos]);
+void printSummary_MuonPt(ofstream & out, wprime::InputFile & file,
+                         float Nexp_evt,const float Nexp_evt_cut[][Num_trkAlgos]);
 void defineHistos_MuonPt();
 void defineHistos_MuonEta();
 void defineHistos_MuonPhi();
@@ -62,40 +61,41 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
 
 
 //--------------------------------------------------------------------------
-void printSummary_MuonPt(ofstream & out, const string& sample, 
-                         float Nexp_evt, 
-			 const float Nexp_evt_cut[][Num_trkAlgos])
+void printSummary_MuonPt(ofstream & out, wprime::InputFile & file,
+                         float Nexp_evt, const float Nexp_evt_cut[][Num_trkAlgos])
 //------------------------------------------------------------------------
 {
-    cout << "\n Sample: " << sample << endl;
-    cout << " Total # of expected events = " << Nexp_evt << endl;
+  out << "\n Sample: " << file.samplename << endl;
+  out << " Total # of expected events = " << Nexp_evt << endl;
 
-    for (int mual = 0; mual != Num_trkAlgos; ++mual){
-      cout << " Algorithm: " << algo_desc_long[mual] << endl;
-      for(int i = 0; i < Num_selection_cuts; ++i){
+  for (int mual = 0; mual != Num_trkAlgos; ++mual){
+    out << " Algorithm: " << algo_desc_long[mual] << endl;
+    float eff, deff;
+      
+    for(int i = 0; i != Num_selection_cuts; ++i){
+      
+      out << " Cut # " << i << ": " << cuts_desc_long[i] 
+	  <<", expected # of evts = " << Nexp_evt_cut[i][mual];
 
-	//print in a txt file the final total number of events
-	if(i == Num_selection_cuts - 1)
-	  out << algo_desc_long[mual] << " " << sample << " " 
-	      << Nexp_evt_cut[i][mual] << endl;
-	
-	cout << " Cut # " << i << ": " << cuts_desc_long[i] 
-	     <<", expected # of evts = " << Nexp_evt_cut[i][mual];
-	
-	//calculate efficiencies
-	float eff, deff;
-	if(i == 0)
-	  getEff(eff, deff, Nexp_evt_cut[i][mual], Nexp_evt);
-	else
-	  getEff(eff, deff, Nexp_evt_cut[i][mual], 
-		 Nexp_evt_cut[i-1][mual]);
-	cout << ", Relative eff = "<<eff*100 << " +- " << deff*100 << "%";
-	getEff(eff, deff, Nexp_evt_cut[i][mual], Nexp_evt);
-	cout << ", Absolute eff = "<< eff*100 << " +- " << deff*100 << "%"
-	     << endl;
-            
-      } // loop over different cuts
-    }//loop over different muon algos
+      //calculate efficiencies
+      if(i == 0)
+	getEff(eff, deff, Nexp_evt_cut[i][mual]/(file.weight), 
+	       Nexp_evt/(file.weight));
+      else
+	getEff(eff, deff, Nexp_evt_cut[i][mual]/(file.weight), 
+	       Nexp_evt_cut[i-1][mual]/(file.weight));
+      out << ", Relative eff = "<<eff*100 << " +- " << deff*100 << "%";
+      getEff(eff, deff, Nexp_evt_cut[i][mual]/(file.weight), 
+	     Nexp_evt/(file.weight));
+      out << ", Absolute eff = "<< eff*100 << " +- " << deff*100 << "%"
+	   << endl;
+    } // loop over different cuts
+    
+    file.N_aftercuts[mual] = Nexp_evt_cut[Num_selection_cuts-1][mual];
+    file.eff[mual] = eff;
+    file.deff[mual] = deff;
+
+  }//loop over different muon algos
 
 }//------------- printSummary_MuonPt()
 
@@ -517,53 +517,9 @@ void gatherFileBasicInfo(const wprime::InputFile& file,
   file.tree->SetBranchAddress("wp", &ev);
   nevents = file.tree->GetEntries();
   weight = file.weight;
-#if debugme
   cout << " Number of events in the file = " << nevents << endl;
-#endif
 }//---------gatherFileBasicInfo()
 
-
-// function signature: expects the event, a muon and an array with length equal to 
-// Num_trkAlgos, to be updated with true/false, depending on selection cut;
-//
-// the function returs false if rest of selection cuts should be skipped (e.g. when
-// the trigger has falied the event, or there are more than one muons in the event,
-// or the jet-activity is vetoing the event; should return true if the rest of the 
-// cuts should be executed (e.g. when quality cuts fail only for one particular
-// tracking algorithm)
-typedef bool (*funcPtr)(const wprime::Event *, const wprime::Muon*, bool * );
-
-// key: cuts_desc_short[i], value: function pointer corresponding to selection cut
-typedef map<string, funcPtr> selection_map;
-
-
-// determine before event-loop the order in which cuts are to be executed
-void setupCutOrder(selection_map & cuts)
-{
-  cout << "\n Cuts will be applied in this order: " << endl;
-  for(int cut_i = 0; cut_i != Num_selection_cuts; ++cut_i)
-    { // loop over selection cuts
-      string arg = cuts_desc_short[cut_i];
-      cout << " Cut #" << (cut_i+1) << ": " << cuts_desc_long[cut_i]
-	   << " (" << arg << ") " << endl;
-      
-      if(arg == "hlt")cuts[arg] = &PassedHLT;
-      else if(arg == "ptrange")cuts[arg] = &MuonPtWithinRange;
-      else if(arg == "qual")cuts[arg] = &GoodQualityMuon;
-      else if(arg == "1mu")cuts[arg] = &OnlyOneHighTrackPtMuon;
-      else if(arg == "iso")cuts[arg] = &IsolatedMuon;
-      else if(arg == "jet")cuts[arg] = &NoJetActivity;
-      else
-	{
-	  cout << " Oops! Don't understand how to prepare for cut nicknamed as "
-	       << arg << endl;
-	  abort();
-	}
-    } // loop over selection cuts
-
-  cout << endl;
-
-}
 
 //Main Analysis study
 //---------------------------------------------------------------------------
@@ -732,6 +688,8 @@ void printHighPtMuon(const wprime::Event * ev, const wprime::Muon* theMu,
        << ev->evt_no << " LS = " << ev->LS_no << endl;
 
 
+  cout << " pfMET = " << ev->pfmet.Mod() << endl;
+  cout << " M_T = " << TMass(theMu->global.p, ev->pfmet) << endl;
   printMe("  pt = ", theMu);
   printMe(" dpt = ", theMu);
   cout << " # of layers: (strip, pixel) " << endl;
@@ -760,7 +718,7 @@ void printHighPtMuon(const wprime::Event * ev, const wprime::Muon* theMu,
 
 
 //---------------------------------------------------------------------------
-void GetDistributionGeneric(const wprime::InputFile & file, 
+void GetDistributionGeneric(wprime::InputFile & file, 
                             TFile *fout, ofstream & out, 
                             const int option = 1, 
 			    const bool highestPtMuonOnly = true)
@@ -780,7 +738,7 @@ void GetDistributionGeneric(const wprime::InputFile & file,
   if(!file.tree)
     return;
 
-  cout << "\n Processing sample " << file.description << endl;
+  cout << " Processing sample " << file.description << endl;
   
   if (option == 1 || option == 2) 
     GetMuonPtDistribution(file, Nexp_evt_cut, Nexp_evt,option,
@@ -793,7 +751,7 @@ void GetDistributionGeneric(const wprime::InputFile & file,
   
   // Print the results if needed according to study case
   if (option == 1 || option == 2) 
-    printSummary_MuonPt(out, file.samplename, Nexp_evt, Nexp_evt_cut);
+    printSummary_MuonPt(out, file, Nexp_evt, Nexp_evt_cut);
   else  
     cout << " Nothing to print for this study " << endl;
   
