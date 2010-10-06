@@ -56,9 +56,9 @@ const unsigned nBinIsoMu = 25;
 const float minIsoMu = 0;
 const float maxIsoMu = 0.5;
 // +++++++++++++++++++++++++++++++tmass histogram parameters
-const unsigned nBinTmMu = 195;
-const float minTmMu = 50;
-const float maxTmMu = 2000;
+const unsigned nBinTmMu = 140;
+const float minTmMu = 100;
+const float maxTmMu = 600;
 // +++++++++++++++++++++++++Declare histograms 
 TH1F * hPT[Num_selection_cuts][Num_trkAlgos] = {{0}};
 TH1F * hETA[Num_selection_cuts][Num_trkAlgos] = {{0}};
@@ -145,5 +145,21 @@ bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh, float et_jet_cut
 bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu, 
 		     bool goodQual[]);
 
+
+// function signature: expects the event, a muon and an array with length equal to 
+// Num_trkAlgos, to be updated with true/false, depending on selection cut;
+//
+// the function returs false if rest of selection cuts should be skipped (e.g. when
+// the trigger has falied the event, or there are more than one muons in the event,
+// or the jet-activity is vetoing the event; should return true if the rest of the 
+// cuts should be executed (e.g. when quality cuts fail only for one particular
+// tracking algorithm)
+typedef bool (*funcPtr)(const wprime::Event *, const wprime::Muon*, bool * );
+
+// key: cuts_desc_short[i], value: function pointer corresponding to selection cut
+typedef map<string, funcPtr> selection_map;
+
+// determine before event-loop the order in which cuts are to be executed
+void setupCutOrder(selection_map & cuts);
 
 #endif // #define _load_cuts_h__
