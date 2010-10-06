@@ -253,6 +253,14 @@ bool IsolatedMuon(const wprime::Event*, const wprime::Muon* the_mu, bool [])
 bool NoJetActivity(const wprime::Event* ev, const wprime::Muon* the_mu, bool [])
 //-------------------------------------------------------------------
 {
+#if 0
+  float ratio = the_mu->tracker.p.Pt()/(ev->pfmet.Mod());
+  if(ratio < 0.5 || ratio > 1.5) return false;
+  TVector2 etaphi(the_mu->tracker.p.Eta(), the_mu->tracker.p.Phi());
+  float delta_phi = ev->pfmet.DeltaPhi(etaphi);
+  if(TMath::Abs(delta_phi) < 1.0)return false;
+  else return true;
+#endif
   return !ExceedMaxNumJetsOpposedToMu(MaxNjetsAboveThresh, EtJetCut, 
 				      Delta_Phi, the_mu,ev);
 } // --------------NoJetActivity
@@ -333,5 +341,35 @@ bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu, bool goodQual
 }//------GoodQualityMuon
 
 
+// determine before event-loop the order in which cuts are to be executed
+void setupCutOrder(selection_map & cuts)
+{
+#if debugme
+  cout << "\n Cuts will be applied in this order: " << endl;
+#endif
 
+  for(int cut_i = 0; cut_i != Num_selection_cuts; ++cut_i)
+    { // loop over selection cuts
+      string arg = cuts_desc_short[cut_i];
+#if debugme
+      cout << " Cut #" << (cut_i+1) << ": " << cuts_desc_long[cut_i]
+	   << " (" << arg << ") " << endl;
+#endif      
+      if(arg == "hlt")cuts[arg] = &PassedHLT;
+      else if(arg == "ptrange")cuts[arg] = &MuonPtWithinRange;
+      else if(arg == "qual")cuts[arg] = &GoodQualityMuon;
+      else if(arg == "1mu")cuts[arg] = &OnlyOneHighTrackPtMuon;
+      else if(arg == "iso")cuts[arg] = &IsolatedMuon;
+      else if(arg == "jet")cuts[arg] = &NoJetActivity;
+      else
+	{
+	  cout << " Oops! Don't understand how to prepare for cut nicknamed as "
+	       << arg << endl;
+	  abort();
+	}
+    } // loop over selection cuts
+
+  cout << endl;
+
+}
 
