@@ -1,3 +1,19 @@
+01-OCT-10 (Christos), V00-01-49
+===============================
+(a) Improvements:
+- When running over data + MC samples, code will now print out summary for #
+of expected MC events (signal + background) and total # of events observed
+- Will now skip processing if some file is misspelled/missing
+- More precise (pre-weighting) calculation of selection cut efficiencies
+
+(b) Miscelaneous:
+- Histogram parameter tuning to match current data
+- Some early work on Delta-phi(mu, MET) and MuPt-over-MET cuts
+- Moved most of the printout to text file to reduce screen cluster
+
+
+
+
 01-OCT-10 (Christos), V00-01-48
 ===============================
 Add more info when printing out events with high-pt muons
