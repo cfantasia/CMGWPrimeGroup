@@ -111,7 +111,7 @@ void parseLine(const string & new_line, wprime::InputFile * in_file,
       if(!(file->IsOpen()))
 	{
 	  cerr <<" *** Missing file: "<< pathname << " !!! "<<endl; 
-	  return;
+	  abort();
 	}
       in_file->tree = (TTree *) file->Get("StdMu/wprime");
       if(! in_file->tree->GetBranch("wp"))
