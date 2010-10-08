@@ -13,11 +13,9 @@ const std::string algo_desc_short[Num_trkAlgos] = {"gbl","trk","tpfms","ckt","pi
 const std::string algo_desc_long[Num_trkAlgos] = {"global", "tracker", "TPFMS","cocktail","picky","TMR"};
 
 
-//const string cuts_desc_short[Num_selection_cuts] =
-//{"hlt","ptrange","1mu","iso", "jet", "qual"};
+// use this for histogram names
 const std::string cuts_desc_short[Num_selection_cuts] = {"hlt","ptrange", "qual","1mu","iso", "jet"};
-//const string cuts_desc_long[Num_selection_cuts]= {"HLT_Mu9", "Pt within
-//range", "1 muon only","Isolation", "Jet Veto", "Quality"};
+// use this for histogram descriptions
 const std::string cuts_desc_long[Num_selection_cuts]= {"HLT_Mu9", "Pt within range", "Quality", "1 muon only","Isolation", "Jet Veto"};
 
 // last histogram after all cuts to be used for fit
