@@ -256,9 +256,9 @@ bool NoJetActivity(const wprime::Event* ev, const wprime::Muon* the_mu, bool [])
 #if 0
   float ratio = the_mu->tracker.p.Pt()/(ev->pfmet.Mod());
   if(ratio < 0.5 || ratio > 1.5) return false;
-  TVector2 etaphi(the_mu->tracker.p.Eta(), the_mu->tracker.p.Phi());
-  float delta_phi = ev->pfmet.DeltaPhi(etaphi);
-  if(TMath::Abs(delta_phi) < 1.0)return false;
+  TVector2 muon_T(the_mu->tracker.p.Px(), the_mu->tracker.p.Py());
+  float delta_phi = ev->pfmet.DeltaPhi(muon_T);
+  if(TMath::Abs(delta_phi) < 2.5)return false;
   else return true;
 #endif
   return !ExceedMaxNumJetsOpposedToMu(MaxNjetsAboveThresh, EtJetCut, 
