@@ -1,3 +1,15 @@
+08-OCT-10 (Christos), V00-01-50
+===============================
+Fix DeltaPhi(muon, MET) cut; disabled by default!
+
+To replace current jet-activity veto cut by combination of
+(a) Mu-pt/MET and (b) Delta-phi(muon, MET), 
+change "#if 0" to "#if 1" in source code of function bool NoJetActivity;
+this is meant as a temporary hack till we have a better way of producing 
+Muon-Pt and Mu+MET transverse mass distributions with different cuts
+
+
+
 01-OCT-10 (Christos), V00-01-49
 ===============================
 (a) Improvements:
