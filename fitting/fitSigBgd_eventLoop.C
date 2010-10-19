@@ -337,12 +337,12 @@ void fitData(TH1F * data, TF1 * & theory, Results * result, int exp_no,
   if(bgdOnlyFit)
     {
       theory = new TF1("ftot", myBgd, fXMIN, fXMAX, NPARAM_FIT);
-      theory->SetParameters(Ntot, fXMIN, 93.0);
+      theory->SetParameters(Ntot, fXMIN, 10.0);
     }
   else
     {
       theory = new TF1("ftot", mySigBgd, fXMIN, fXMAX, NPARAM_FIT);
-      theory->SetParameters(Ntot, fXMIN, 93.0, evt_sig, mass, Fudge);
+      theory->SetParameters(Ntot, fXMIN, 10.0, evt_sig, mass, Fudge);
       theory->SetParName(3, "W ' evt count");
       theory->SetParName(4, "W ' Mass");
       theory->SetParName(5, "W ' Width scale factor");

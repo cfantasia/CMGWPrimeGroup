@@ -16,8 +16,8 @@ using std::string; using std::cout; using std::endl;
 // 5.0 GeV works fine for most fits
 // In certain cases the plot appears with some weird resonance that goes away
 // for a finer bin-size (e.g. 1.9 GeV). Haven't been able to debug this yet
-//const float rbw_bin_size = 5.0;
-const Double_t rbw_bin_size = 1.9;
+const float rbw_bin_size = 5.0;
+//const Double_t rbw_bin_size = 1.9;
 
 // lower, upper limits for (non-smeared or MC-truth) muon Pt distributions
 const float PTMIN = 100; const float PTMAX = 1500;

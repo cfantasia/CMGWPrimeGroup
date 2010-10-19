@@ -94,6 +94,7 @@ void plot_sigbgd()
   TCanvas * c1 = new TCanvas();
   c1->SetLogy(1);
 
+  tot->SetMinimum(0.01);
   tot->Draw("e");
   lo->Draw();
 
