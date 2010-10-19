@@ -1,3 +1,38 @@
+19-OCT-10 (Christos), V00-01-55
+===============================
+
+1. Selection cuts:
+(a) HLT: Now also considering HLT_Mu11 (ie. .OR. of HLT_Mu9 and HLT_Mu11)
+NB: proper trigger treatment to come up at next iteration
+
+(b) Jet-activity veto: Loosened up (default) angle between muon and jet from
+pi-0.3 to pi/2 
+NB: this is a temporary hack to get a better MC-data matching when
+using LO W->mu samples; Proper solution is to improve jet-activity veto
+definition to take into account jet-multiplicity observed in the data!
+
+
+2. Fitting code:
+- Default value of integ. luminosity corresponds to latest data
+- Switched default resolution distributions to ones made with default sets
+of cuts found in V00-01-55
+- Tune fitting range to match latest data
+
+
+3. Plotting macros:
+- Now plotting both muon-pt and Mt distributions
+(macros renamed from plotMuPt(2).C to plotMuPtandMT(2).C)
+- Updated color-code, FillColor style
+- Switched to cocktail algorithm as default
+
+
+4. Misc:
+- Updated data root-tuples to 10.82 pb^-1 processed with 38X (brought to
+you by Boston)
+- Ensure upper pt-cut does not reject events
+- Fine-tuning of histograms binning to match latest data
+
+
 08-OCT-10 (Christos), V00-01-50
 ===============================
 Fix DeltaPhi(muon, MET) cut; disabled by default!

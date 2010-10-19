@@ -36,14 +36,18 @@ NB The following ustom ROOT-tuples produced with 356 (Spring10 STARTUP)
 can be found in
 
 (a) /castor/cern.ch/user/c/cleonido/wprime/v140/ (made with V00-01-40, and
-3.08 pb^-1 of real data; use
+10.82 pb^-1 of real data processed with 38X; use
+UserCode/CMGWprimeGroup/config/samples_cross_sections_v7.txt) 
+
+(b) /castor/cern.ch/user/c/cleonido/wprime/v140/ (made with V00-01-40, and
+3.08 pb^-1 of real data processed with 36X; use
 UserCode/CMGWprimeGroup/config/samples_cross_sections_v6.txt) 
 
-(b) /castor/cern.ch/user/c/cleonido/wprime/v121/ (made with V00-01-21, and
+(c) /castor/cern.ch/user/c/cleonido/wprime/v121/ (made with V00-01-21, and
 1.32 pb^-1 of real data; use
 UserCode/CMGWprimeGroup/config/samples_cross_sections_v4.txt) 
 
-(c) /castor/cern.ch/user/c/cleonido/wprime/v105/ (made with V00-01-05, and
+(d) /castor/cern.ch/user/c/cleonido/wprime/v105/ (made with V00-01-05, and
 255 nb^-1 of real data; use
 UserCode/CMGWprimeGroup/config/samples_cross_sections_v2.txt) 
 
@@ -107,10 +111,11 @@ Details:
 
 (d1) GetMuonPtDistribution
 
-Comment: Makes distributions for muon-pt for various cuts (default
-values). To see plots with nice colors, legends, etc. run afterwards
-  o plotMuPt.C to see signal + individual bgd contributions
-  o plotMuPt2.C to see signal +  total bgd contributions
+Comment: Makes distributions for muon-pt and transverse mass for various
+cuts (default values). To see plots with nice colors, legends, etc. run
+afterwards 
+  o plotMuPtandMT.C to see signal + individual bgd contributions
+  o plotMuPtandMT2.C to see signal +  total bgd contributions
 
 [NB: To fit the muon-pt spectrum see separate instructions at
 UserCode/CMGWPrimeGroup/fitting/README_mupt_fits.txt]

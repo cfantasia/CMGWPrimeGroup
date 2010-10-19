@@ -13,7 +13,9 @@ Before you start, you may consider making these changes:
 - cp gsmear_IDEAL_22x.root gsmear.root for running on IDEAL 22x wprime samples
 - cp gsmear_50PB-1_22x.root gsmear.root for running on 50 pb^-1 22x wprime samples
 - cp gsmear_START3X_356.root gsmear.root for running on START3x 356 wprime
-samples (default)
+samples (uses MC-tuned definition for jet-activity veto and only HLT_Mu9)
+- cp gsmear_START3x_356_V00-01-55_cuts.root gsmear.root for running on
+START3x 356 wprime samples (using cuts found in V00-01-55 - default)
 
 =======================================================
 
