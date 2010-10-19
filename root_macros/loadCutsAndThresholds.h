@@ -28,7 +28,8 @@ const unsigned deltaRIsoIndex = 2; //for the isolation container
 const float PtTrackCut = 60 ;
 const float OneMuPtTrackCut = 20; 
 const float Chi2Cut = 10;
-const float Delta_Phi = TMath::Pi() - 0.3;//min angle muon/jet for jet veto
+//const float Delta_Phi = TMath::Pi() - 0.3;//min angle muon/jet for jet veto
+const float Delta_Phi = TMath::Pi()/2;//min angle muon/jet for jet veto
 const float Muon_Eta_Cut = 1.8;
 
 #define debugme  0
@@ -36,9 +37,9 @@ const float Muon_Eta_Cut = 1.8;
 #define dumpHighPtMuons 0
 
 // +++++++++++++++++++++++++++++++muon-pt histogram parameters
-const unsigned  nBinPtMu = 140;//45; // 400; // 45; // 18; 200; 380; 
+const unsigned  nBinPtMu = 180;//45; // 400; // 45; // 18; 200; 380; 
 const float minPtMu = 100; // 100;
-const float  maxPtMu = 450; // 800; 2000;
+const float  maxPtMu = 700; // 800; 2000;
 // +++++++++++++++++++++++++++++++muon-eta histogram parameters
 const unsigned nBinEtaMu = 28;
 const float minEtaMu = -2.4;
@@ -56,8 +57,8 @@ const unsigned nBinIsoMu = 25;
 const float minIsoMu = 0;
 const float maxIsoMu = 0.5;
 // +++++++++++++++++++++++++++++++tmass histogram parameters
-const unsigned nBinTmMu = 140;
-const float minTmMu = 100;
+const unsigned nBinTmMu = 160;
+const float minTmMu = 200;
 const float maxTmMu = 600;
 // +++++++++++++++++++++++++Declare histograms 
 TH1F * hPT[Num_selection_cuts][Num_trkAlgos] = {{0}};
