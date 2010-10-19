@@ -179,7 +179,7 @@ bool PassedHLT(const wprime::Event* ev, const wprime::Muon*, bool [])
 #endif
   
   // here the triggers that are to be used
-  bool HLT = (ev->HLT_Mu9 == 1);
+  bool HLT = (ev->HLT_Mu9 == 1) || (ev->HLT_Mu11 == 1);
   return HLT;
 }//-------PassedHLT()
 
@@ -211,7 +211,7 @@ bool MuonPtWithinRange(const wprime::Event*, const wprime::Muon* mu, bool isTher
   for(int algo = 0; algo != Num_trkAlgos; ++algo)
     {
       float pt = (P[algo])->Pt();
-      isThere[algo] = (pt >= minPtMu && pt <= maxPtMu);
+      isThere[algo] = (pt >= minPtMu);
     }
 
   return true;
@@ -253,6 +253,7 @@ bool IsolatedMuon(const wprime::Event*, const wprime::Muon* the_mu, bool [])
 bool NoJetActivity(const wprime::Event* ev, const wprime::Muon* the_mu, bool [])
 //-------------------------------------------------------------------
 {
+  //  if(TMass(the_mu->global.p, ev->pfmet) < 200)return false;
 #if 0
   float ratio = the_mu->tracker.p.Pt()/(ev->pfmet.Mod());
   if(ratio < 0.5 || ratio > 1.5) return false;
@@ -263,8 +264,8 @@ bool NoJetActivity(const wprime::Event* ev, const wprime::Muon* the_mu, bool [])
 #endif
   return !ExceedMaxNumJetsOpposedToMu(MaxNjetsAboveThresh, EtJetCut, 
 				      Delta_Phi, the_mu,ev);
-} // --------------NoJetActivity
 
+} // --------------NoJetActivity
 
 // true if energetic Jet(s) found back to back with muon 
 //-------------------------------------------------------------------
