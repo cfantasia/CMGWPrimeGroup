@@ -13,7 +13,8 @@ using std::string; using std::cout; using std::endl;
 
 // select tracking algorithm
 // from 0 to Num_trkAlgos-1 (see wprime_histo_constants.h)
-const unsigned tracking_option = 2;
+// NB: this is currently common for Muon-pt and transverse mass distributions
+const unsigned tracking_option = 3;
 
 // algorithm description
 string algo; 
@@ -21,12 +22,15 @@ string algo;
 // histogram title;
 string desc;
 
-void doPlots(TFile * _file0);
+
+void doPlots(TFile * _file0, int option);
 
 float Lumi_ipb = -1;
 
-void plotMuPt2()
+void plotMuPtandMT2()
 {
+  assert(tracking_option >=0 && tracking_option <= Num_trkAlgos-1);
+
   string input_file = "Wprime_analysis.root";
   TFile *_file0 = TFile::Open(input_file.c_str());
   if(!_file0 || _file0->IsZombie())
@@ -44,7 +48,9 @@ void plotMuPt2()
   algo = algo_desc_short[tracking_option];
   char temp[1024]; sprintf(temp, " muons  (STARTUP, %4.2f pb^{-1})", Lumi_ipb);
   desc = algo_desc_long[tracking_option] + temp;
-  doPlots(_file0);
+  doPlots(_file0, 1); // muon-pt
+  doPlots(_file0, 2); // transverse mass
+
 }
 
 bool badHisto(TH1F * h, string s)
@@ -58,7 +64,8 @@ bool badHisto(TH1F * h, string s)
   return false;
 }
 
-void doPlots(TFile * _file0)
+// option = 1 (muon-pt), option = 2 (transverse mass)
+void doPlots(TFile * _file0, int option)
 {
 
   //  gStyle->Reset();
@@ -68,7 +75,13 @@ void doPlots(TFile * _file0)
   TCanvas * c1 = new TCanvas();
   c1->SetLogy();
 
-  string histo = "hPT" + algo + "_" + final_histo_desc;
+  string prefix = "";
+  if(option == 1)
+    prefix = "hPT";
+  else if(option == 2)
+    prefix = "hTM";
+
+  string histo = prefix + algo + "_" + final_histo_desc;
   string histoW = "W/" + histo;
   TH1F * w = (TH1F* ) _file0->Get(histoW.c_str());
   if(badHisto(w, "W"))
@@ -109,8 +122,13 @@ void doPlots(TFile * _file0)
   if(badHisto(data, "data"))
     return;
 
+  string hname = "tot_bgd";
+  if(option == 1)
+    hname += "_mupt";
+  else if(option == 2)
+    hname += "_TM";
   // this is the total background distribution (W + QCD + top + Z/DY)
-  TH1F * bgd = new TH1F("tot_bgd", desc.c_str(), 
+  TH1F * bgd = new TH1F(hname.c_str(), desc.c_str(), 
 			top->GetNbinsX(), top->GetXaxis()->GetXmin(), 
 			top->GetXaxis()->GetXmax());
   bgd->Add(z);
@@ -118,30 +136,48 @@ void doPlots(TFile * _file0)
   bgd->Add(top);
   bgd->Add(w);
 
-  string new_title = algo_desc_long[tracking_option] + " p_{T} distribution";
+  string desc = "";
+  if(option == 1)
+    desc = " p_{T} distribution";
+  else if(option == 2)
+    desc = " muon + pfMET M_{T} distribution";
+  string new_title = algo_desc_long[tracking_option] + desc;
   data->SetTitle(new_title.c_str());
   data->SetMarkerStyle(4);
   data->SetMarkerSize(1.3);
-  data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
+  if(option == 1)
+    {
+      data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
+      data->GetXaxis()->SetRangeUser(100, 300);
+    }
+  else if(option == 2)
+    {
+      data->GetXaxis()->SetTitle("M_{T} (GeV/c^{2})");
+      data->GetXaxis()->SetRangeUser(200, 600);
+    }
+
   if(data->GetMinimum() < 0.00001)data->SetMinimum(0.00001);
   data->Draw("e");
   bgd->Draw("same");
  
 
 
-  const int fill_style_sig = 3956;
+  const int fill_style_sig = 3001;
+  const int fill_style_bgd = 3001;
 
+  bgd->SetLineColor(kAzure+1);
   wp10->SetLineColor(kRed);
-  wp15->SetLineColor(kGreen);
-  wp20->SetLineColor(kBlue);
+  wp15->SetLineColor(kRed+1);
+  wp20->SetLineColor(kRed+2);
+  bgd->SetFillColor(kAzure+1);
   wp10->SetFillColor(kRed);
-  wp15->SetFillColor(kGreen);
-  wp20->SetFillColor(kBlue);
-
+  wp15->SetFillColor(kRed+1);
+  wp20->SetFillColor(kRed+2);
+  bgd->SetFillStyle(fill_style_bgd);
   wp10->SetFillStyle(fill_style_sig);
   wp15->SetFillStyle(fill_style_sig);
   wp20->SetFillStyle(fill_style_sig);
-  
+ 
    
   wp10->Draw("same");
   wp15->Draw("same");
@@ -160,11 +196,16 @@ void doPlots(TFile * _file0)
   lg->AddEntry(data, temp2, "LP");
   lg->Draw();
   
-  string file = "MuonPt_qual.gif";
-  string file2 = "MuonPt_qual.eps";
+  string desc2 = "";
+  if(option == 1)
+    desc2 = "MuPt";
+  else
+    desc2 = "TM";
+  char temp3[1024]; sprintf(temp3, "_%4.2fipb", Lumi_ipb);
+  string file = desc2 + temp3 + ".gif";
 
   c1->SaveAs(file.c_str());
-  c1->SaveAs(file2.c_str());
+  //  c1->SaveAs(file2.c_str());
   //  delete c1;
 
 }

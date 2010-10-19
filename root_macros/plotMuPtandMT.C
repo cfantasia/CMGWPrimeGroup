@@ -14,13 +14,14 @@ using std::string; using std::cout; using std::endl;
 
 // select tracking algorithm
 // from 0 to Num_trkAlgos-1 (see wprime_histo_constants.h)
+// NB: this is currently common for Muon-pt and transverse mass distributions
 const unsigned tracking_option = 3;
 
-void doPlots(unsigned i, TFile * _file0);
+void doPlots(unsigned i, TFile * _file0, int option);
 
 float Lumi_ipb = -1;
 
-void plotMuPt()
+void plotMuPtandMT()
 {
   assert(tracking_option >=0 && tracking_option <= Num_trkAlgos-1);
 
@@ -38,7 +39,10 @@ void plotMuPt()
 
   gStyle->SetOptStat(00000);
   for(int i = 0; i != Num_selection_cuts; ++i)
-    doPlots(i, _file0);
+    {    
+      doPlots(i, _file0, 1); // muon-pt
+      doPlots(i, _file0, 2); // transverse mass
+    }
 }
 
 bool badHisto(TH1F * h, string s)
@@ -53,7 +57,8 @@ bool badHisto(TH1F * h, string s)
 }
 
 // i must be between 0 and Num_selection_cuts-1
-void doPlots(unsigned i, TFile * _file0)
+// option = 1 (muon-pt), option = 2 (transverse mass)
+void doPlots(unsigned i, TFile * _file0, int option)
 {
 
   //  gStyle->Reset();
@@ -69,7 +74,13 @@ void doPlots(unsigned i, TFile * _file0)
   c1->SetLogy();
   THStack *hs = new THStack("hs",desc.c_str());  
 
-  string histo = "hPT" + algo + "_" + cuts_desc_short[i];
+  string prefix = "";
+  if(option == 1)
+    prefix = "hPT";
+  else if(option == 2)
+    prefix = "hTM";
+
+  string histo = prefix + algo + "_" + cuts_desc_short[i];
   string histoW = "W/" + histo;
   TH1F * w = (TH1F* ) _file0->Get(histoW.c_str());
   if(badHisto(w, "W"))
@@ -151,13 +162,26 @@ void doPlots(unsigned i, TFile * _file0)
 
   if (i == Num_selection_cuts-1)
     {
-      string new_title = algo_desc_long[tracking_option] + " p_{T} distribution";
+      string desc = "";
+      if(option == 1)
+	desc = " p_{T} distribution";
+      else if(option == 2)
+	desc = " muon + pfMET M_{T} distribution";
+      string new_title = algo_desc_long[tracking_option] + desc;
       data->SetTitle(new_title.c_str());
     }
   data->SetMarkerStyle(20);
   data->SetMarkerSize(1.3);
-  data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
-  data->GetXaxis()->SetRangeUser(100, 300);
+  if(option == 1)
+    {
+      data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
+      data->GetXaxis()->SetRangeUser(100, 300);
+    }
+  else if(option == 2)
+    {
+      data->GetXaxis()->SetTitle("M_{T} (GeV/c^{2})");
+      data->GetXaxis()->SetRangeUser(200, 600);
+    }
   data->Draw("e");
   hs->Draw("same");
   
@@ -181,7 +205,13 @@ void doPlots(unsigned i, TFile * _file0)
   lg->AddEntry(data, temp2, "LP");
   lg->Draw();
 
-  string file = cuts_desc_short[i] + ".gif";
+  string desc2 = "";
+  if(option == 1)
+    desc2 = "MuPt";
+  else
+    desc2 = "TM";
+  char temp3[1024]; sprintf(temp3, "_%4.2fipb_", Lumi_ipb);
+  string file = desc2 + temp3 + cuts_desc_short[i] + ".gif";
   c1->SaveAs(file.c_str());
   //  delete c1;
 
