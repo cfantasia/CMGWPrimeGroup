@@ -40,7 +40,8 @@ float all_masses[mass_points] = {-9999, 800, 1000, 1100, 1200, 1300, 1400,
 // Will use this value to scale histograms in Wprime_analysis.root 
 // by comparing with reference contained in "lumi_ipb" histogram
 // (NB: W MC-statistics are enough for up to ~100 pb^-1)
-const float integ_lumi = 100.0; // in pb^-1
+//const float integ_lumi = 100.0; // in pb^-1
+const float integ_lumi = 10.82; // in pb^-1
 
 // select algorithm option
 const unsigned algo_option = 2; // 0: "glb", 1: "trk", 2: "tpfms", 3: "ckt", "pic", "tmr"
