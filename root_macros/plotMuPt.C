@@ -14,7 +14,7 @@ using std::string; using std::cout; using std::endl;
 
 // select tracking algorithm
 // from 0 to Num_trkAlgos-1 (see wprime_histo_constants.h)
-const unsigned tracking_option = 2;
+const unsigned tracking_option = 3;
 
 void doPlots(unsigned i, TFile * _file0);
 
@@ -111,24 +111,24 @@ void doPlots(unsigned i, TFile * _file0)
     return;
 
   top->SetLineColor(kMagenta);
-  z->SetLineColor(kCyan);
-  qcd->SetLineColor(kBlack);
-  w->SetLineColor(kOrange);
+  z->SetLineColor(kOrange);
+  qcd->SetLineColor(kGray+2);
+  w->SetLineColor(kAzure+1);
   wp10->SetLineColor(kRed);
-  wp15->SetLineColor(kGreen);
-  wp20->SetLineColor(kBlue);
+  wp15->SetLineColor(kRed+1);
+  wp20->SetLineColor(kRed+2);
   
 
   top->SetFillColor(kMagenta);
-  z->SetFillColor(kCyan);
-  qcd->SetFillColor(kBlack);
-  w->SetFillColor(kOrange);
+  z->SetFillColor(kOrange);
+  qcd->SetFillColor(kGray+2);
+  w->SetFillColor(kAzure+1);
   wp10->SetFillColor(kRed);
-  wp15->SetFillColor(kGreen);
-  wp20->SetFillColor(kBlue);
+  wp15->SetFillColor(kRed+1);
+  wp20->SetFillColor(kRed+2);
 
-  const int fill_style_bgd = 3544;
-  const int fill_style_sig = 3956;
+  const int fill_style_bgd = 3001;
+  const int fill_style_sig = 3001;
 
   top->SetFillStyle(fill_style_bgd);
   z->SetFillStyle(fill_style_bgd);
@@ -154,9 +154,10 @@ void doPlots(unsigned i, TFile * _file0)
       string new_title = algo_desc_long[tracking_option] + " p_{T} distribution";
       data->SetTitle(new_title.c_str());
     }
-  data->SetMarkerStyle(4);
+  data->SetMarkerStyle(20);
   data->SetMarkerSize(1.3);
   data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
+  data->GetXaxis()->SetRangeUser(100, 300);
   data->Draw("e");
   hs->Draw("same");
   
