@@ -13,7 +13,7 @@
 //
 // Original Author:  Alessio GHEZZI
 //         Created:  Thu Aug  7 14:48:54 CEST 2008
-// $Id$
+// $Id: MyHighPtMuonFilter.cc,v 1.1 2009/01/23 10:46:34 cleonido Exp $
 //
 //
 
@@ -30,7 +30,7 @@
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-#include "FWCore/ParameterSet/interface/InputTag.h"
+#include "FWCore/Utilities/interface/InputTag.h"
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "DataFormats/Common/interface/Handle.h"
