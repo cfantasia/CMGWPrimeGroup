@@ -2,7 +2,6 @@ import FWCore.ParameterSet.Config as cms
 
 process = cms.Process("Demo2")
 
-
 #The global tag is needed if the option extractL1Prescales is set to True
 #Just switch to False if this is not needed or if there is some problem
 process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
@@ -17,17 +16,18 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use
-    fileNames = cms.untracked.vstring("file:/home/cleonido/wprime/wprime_1.0/2212_RECO_50PB-1/WPrimeReDigi2212_DIGI_L1_DIGI2RAW_RAW2DIGI_RECO_50PBMU_V1_100.root",
-                                      "file:/home/cleonido/wprime/wprime_1.0/2212_RECO_50PB-1/WPrimeReDigi2212_DIGI_L1_DIGI2RAW_RAW2DIGI_RECO_50PBMU_V1_112.root",
-                                      "file:/home/cleonido/wprime/wprime_1.0/2212_RECO_50PB-1/WPrimeReDigi2212_DIGI_L1_DIGI2RAW_RAW2DIGI_RECO_50PBMU_V1_104.root",
-                                      "file:/home/cleonido/wprime/wprime_1.0/2212_RECO_50PB-1/WPrimeReDigi2212_DIGI_L1_DIGI2RAW_RAW2DIGI_RECO_50PBMU_V1_23.root",
-                                      "file:/home/cleonido/wprime/wprime_1.0/2212_RECO_50PB-1/WPrimeReDigi2212_DIGI_L1_DIGI2RAW_RAW2DIGI_RECO_50PBMU_V1_57.root",
-                                      "file:/home/cleonido/wprime/wprime_1.0/2212_RECO_50PB-1/WPrimeReDigi2212_DIGI_L1_DIGI2RAW_RAW2DIGI_RECO_50PBMU_V1_32.root"
-                                      )
-#    fileNames = cms.untracked.vstring(
-#    "rfio:/castor/cern.ch/user/g/goys/Wprime/2_2_12/Wnew_1/skim/outfilter_1_1.root",
-#    "rfio:/castor/cern.ch/user/g/goys/Wprime/2_2_12/Wnew_1/skim/outfilter_1_2.root",
-#    )
+#    fileNames = cms.untracked.vstring('file:/home/cleonido/wprime/wprime_1.0/218_RECO_IDEAL/0055C643-B0B1-DD11-AEAB-001E0B47E400.root')
+    fileNames = cms.untracked.vstring(
+    "rfio:/castor/cern.ch/user/g/goys/Wprime/2_2_12/Wnew_1/skim/outfilter_1_1.root",
+    "rfio:/castor/cern.ch/user/g/goys/Wprime/2_2_12/Wnew_1/skim/outfilter_1_2.root",
+    "rfio:/castor/cern.ch/user/g/goys/Wprime/2_2_12/Wnew_1/skim/outfilter_1_3.root",
+    "rfio:/castor/cern.ch/user/g/goys/Wprime/2_2_12/Wnew_1/skim/outfilter_1_4.root",
+    "rfio:/castor/cern.ch/user/g/goys/Wprime/2_2_12/Wnew_1/skim/outfilter_1_5.root",
+    "rfio:/castor/cern.ch/user/g/goys/Wprime/2_2_12/Wnew_1/skim/outfilter_1_6.root",
+    "rfio:/castor/cern.ch/user/g/goys/Wprime/2_2_12/Wnew_1/skim/outfilter_1_7.root",
+    "rfio:/castor/cern.ch/user/g/goys/Wprime/2_2_12/Wnew_1/skim/outfilter_1_8.root",
+    "rfio:/castor/cern.ch/user/g/goys/Wprime/2_2_12/Wnew_1/skim/outfilter_1_9.root"
+    )
 )
 
 # Number of events to process
@@ -37,15 +37,14 @@ process.maxEvents = cms.untracked.PSet(
 )
 
 # configuration for Wprime muon reconstruction
-process.primaryVertexFilter = cms.EDFilter("VertexSelector",
+process.primaryVertexFilter = cms.EDAnalyzer("VertexSelector",
                                            src = cms.InputTag("offlinePrimaryVertices"),
                                            cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2"), # tracksSize() > 3 for the older cut
                                            filter = cms.bool(True),
                                            # otherwise it won't filter the events, just produce an empty vertex collection.
                                            )
 
-
-process.StdMu = cms.EDAnalyzer("Wprime_muonreco",
+process.StdMu = cms.EDFilter("Wprime_muonreco",
 
     # input tags defined here
     pvTag = cms.InputTag("offlinePrimaryVertices"),
@@ -61,7 +60,7 @@ process.StdMu = cms.EDAnalyzer("Wprime_muonreco",
 
     HLTriggerResults = cms.InputTag("TriggerResults","","HLT"),
      #	InputTag HLTriggerResults = "TriggerResults::HLT2"
-   #this needs a global tag above.
+    #this needs a global tag above.
     #By default, the HLT prescales are extracted
     extractL1Prescales = cms.bool(True),
     triggerConditions = cms.vstring('HLT_L1MuOpen',
@@ -119,13 +118,14 @@ process.StdMu = cms.EDAnalyzer("Wprime_muonreco",
 
 
     # sample description
-    description = cms.string('Wprime 1 TeV')
+    description = cms.string('W'),
+
 )
 
 process.TFileService = cms.Service("TFileService",
     #       fileName = cms.string('TeVMuon_startupV4.root')
-     fileName = cms.string('/home/cleonido/wprime/v66_50pb-1_hack/wprime_1TeV.root')
-#  fileName = cms.string('/afs/cern.ch/user/c/cleonido/scratch0/w_50pb-1_1.root')  
+    # fileName = cms.string('wprime_1TeV.root')
+ fileName = cms.string('/afs/cern.ch/user/c/cleonido/scratch0/Wmunu_2212_50pb-1_1.root')  
 )
 
 process.p = cms.Path(process.StdMu)
