@@ -40,10 +40,13 @@
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 #include "DataFormats/RecoCandidate/interface/IsoDeposit.h"
 #include "DataFormats/RecoCandidate/interface/IsoDepositFwd.h"
+#include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
+
+#include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
 
 #include "UserCode/CMGWPrimeGroup/interface/wprimeEvent.h"
 
@@ -74,6 +77,10 @@ class Wprime_muonreco : public edm::EDAnalyzer
   
   private:
   bool firstEventInRun;
+  bool extractL1prescales;
+  std::vector<std::string> triggexpressions;
+    
+    
   virtual void beginJob() ;
   virtual void beginRun(edm::Run const &, edm::EventSetup const &);
   virtual void endRun(edm::Run const &, edm::EventSetup const &);
@@ -82,10 +89,12 @@ class Wprime_muonreco : public edm::EDAnalyzer
   edm::InputTag pvTag_;
   edm::InputTag pvBSTag_;
   edm::InputTag muonTag_;
+  std::string tevMuonLabel_;
   edm::InputTag pfmetTag_;
   edm::InputTag HLTTag_; edm::InputTag L1Tag_;
   //      edm::InputTag isoTag_;
-  edm::InputTag jetTag_;
+  edm::InputTag caloJetTag_;
+  edm::InputTag pfJetTag_;
   edm::InputTag tkIsoMapTag_;
   edm::InputTag ecalIsoMapTag_;
   edm::InputTag hcalIsoMapTag_;
@@ -93,8 +102,8 @@ class Wprime_muonreco : public edm::EDAnalyzer
   struct muonTrack {
     // reference to standard tracking
     reco::MuonRef mu;
-    // reference to default-TeV, 1st-Hit, picky and cocktail/optimized tracking
-    reco::TrackRef TeVMuons[4];
+    // reference to default-TeV, 1st-Hit, picky, dyt and cocktail/optimized tracking
+    reco::TrackRef TeVMuons[5];
   };
 
   typedef std::vector<muonTrack>::const_iterator mIt;
@@ -126,8 +135,14 @@ class Wprime_muonreco : public edm::EDAnalyzer
   // whether this is real-data
   bool realData;
 
+  //trigger info
+  const bool getL1prescales;
+  const std::vector<std::string> expressions;
+  std::map<unsigned int, std::string> m_triggers;
+  HLTConfigProvider hltConfig;
+  unsigned nhlt;
   std::vector<std::string> triggerNames;
-  typedef std::vector<std::string>::const_iterator It;
+  //  typedef std::vector<std::string>::const_iterator It;
 
   // generator-level muons
   std::vector<reco::GenParticle> gen_muons;
@@ -157,10 +172,12 @@ class Wprime_muonreco : public edm::EDAnalyzer
   edm::Handle<reco::IsoDepositMap> tkMapH;
   edm::Handle<reco::IsoDepositMap> ecalMapH;
   edm::Handle<reco::IsoDepositMap> hcalMapH;
+  edm::Handle<reco::BeamSpot> beamSpotHandle;
 
   const reco::TrackToTrackMap * tevMap_default;
   const reco::TrackToTrackMap * tevMap_1stHit;
   const reco::TrackToTrackMap * tevMap_picky;
+  const reco::TrackToTrackMap * tevMap_dyt;
 
   // # of trigger paths in HLT configuration
   unsigned N_triggers;
@@ -204,7 +221,7 @@ class Wprime_muonreco : public edm::EDAnalyzer
   void getGenParticles(const edm::Event & iEvent);
 
   // get trigger info, update muTrig/genMuTrig
-  void getTriggers(const edm::Event & iEvent);
+  void getTriggers(const edm::Event & iEvent, const edm::EventSetup& iSetup);
 
   // get primary vertex info
   void getPVs(const edm::Event & iEvent);
@@ -234,4 +251,6 @@ class Wprime_muonreco : public edm::EDAnalyzer
   // do isolation
   void doIsolation(reco::MuonRef mu,  wprime::Muon * wpmu);
 
+  void getBeamSpot(const edm::Event & iEvent);
+  void correct_d0(const reco::Track & track, float & d0, float & d0sigma);
 };

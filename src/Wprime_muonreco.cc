@@ -4,6 +4,7 @@
 // system include files
 #include <memory>
 #include <cmath>
+#include <boost/foreach.hpp>
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 
@@ -16,14 +17,18 @@
 
 #include "DataFormats/METReco/interface/PFMET.h"
 #include "DataFormats/METReco/interface/PFMETCollection.h"
+#include "DataFormats/JetReco/interface/PFJetCollection.h"
+#include "DataFormats/Common/interface/View.h"
+#include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 
-#include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
+#include "FWCore/Utilities/interface/RegexMatch.h"
 
 #include "TFile.h"
 #include "TTree.h"
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <map>
 
 using std::cout; using std::endl; using std::string; using std::ifstream;
@@ -35,14 +40,18 @@ Wprime_muonreco::Wprime_muonreco(const edm::ParameterSet& iConfig):
   pvTag_(iConfig.getParameter<edm::InputTag> ("pvTag")),
   pvBSTag_(iConfig.getParameter<edm::InputTag> ("pvBSTag")),
   muonTag_(iConfig.getParameter<edm::InputTag> ("MuonTag")),
+  tevMuonLabel_(iConfig.getParameter<string> ("tevMuonLabel")),
   pfmetTag_(iConfig.getParameter<edm::InputTag> ("pfMetTag")),
   HLTTag_(iConfig.getParameter<edm::InputTag>( "HLTriggerResults" ) ),
   //  isoTag_(iConfig.getParameter<edm::InputTag> ("IsolationTag")),
-  jetTag_(iConfig.getParameter<edm::InputTag> ("JetTag")),
+  caloJetTag_(iConfig.getParameter<edm::InputTag> ("caloJetTag")),
+  pfJetTag_(iConfig.getParameter<edm::InputTag> ("pfJetTag")),
   tkIsoMapTag_(iConfig.getParameter<edm::InputTag> ("TkIsoMapTag")),
   ecalIsoMapTag_(iConfig.getParameter<edm::InputTag> ("EcalIsoMapTag")),
   hcalIsoMapTag_(iConfig.getParameter<edm::InputTag> ("HcalIsoMapTag")),
   detmu_acceptance(iConfig.getParameter<double>("Detmu_acceptance")),
+  getL1prescales(iConfig.getParameter<bool>("extractL1Prescales")),
+  expressions(iConfig.getParameter<std::vector<string> >("triggerConditions")),
   sample_description(iConfig.getParameter<string>("description"))
 {
    //now do what ever initialization is needed
@@ -53,6 +62,8 @@ Wprime_muonreco::Wprime_muonreco(const edm::ParameterSet& iConfig):
   job->sample = sample_description;
   software_version = "V00-00-00";
   firstEventInRun = false;
+  extractL1prescales = getL1prescales;
+  triggexpressions = expressions;
 }
 
 
@@ -136,68 +147,76 @@ void Wprime_muonreco::getGenParticles(const edm::Event & iEvent)
 }
 
 // get trigger info, update MuTrig/genMuTrig
-void Wprime_muonreco::getTriggers(const edm::Event & iEvent)
+void Wprime_muonreco::getTriggers(const edm::Event & iEvent,
+				  const edm::EventSetup& iSetup)
 {
   edm::Handle<edm::TriggerResults> hltresults;
   iEvent.getByLabel(HLTTag_,hltresults);
 
-  It trig = triggerNames.begin();
-  for (unsigned itrig = 0; itrig != N_triggers; ++itrig)
-    { // loop over triggers
-      string trigName = *trig; ++trig;
-      
-      // skip loop for non-muon triggers....
-      // the trigger class name (i.e. Muon) should be release-dependent ???
-      if(trigName.find("Mu") == string::npos)continue; // in 21x and later
-      //      if(trigName.find("HLT1Muon") == string::npos)continue; // in 20x
-      
-      bool accept = hltresults->accept(itrig);
+  // sanity check
+  assert(hltresults->size()==hltConfig.size());
 
-      // this is where we keep statistics (to be printed out at end of job)
-      if(accept)
-	{ // extract event counts for trigger efficiencies
-	  tIt it;
-	  if(genmu_acceptance)
-	    {
-	      it = genMuTrig.trigger_count.find(trigName);
-	      if(it != genMuTrig.trigger_count.end())
-		(genMuTrig.trigger_count[trigName])++; 
-	      else
-		genMuTrig.trigger_count[trigName] = 1;
-	    }
-	  it = MuTrig.trigger_count.find(trigName);
-	  if(it != MuTrig.trigger_count.end())
-	    (MuTrig.trigger_count[trigName])++;
-	  else
-	    MuTrig.trigger_count[trigName] = 1;
-	} // extract event counts for trigger efficiencies
+  TClonesArray & thehlt = *(evt->hlt);
 
-      if(trigName == "HLT_L1MuOpen")
-	evt->HLT_L1MuOpen = accept? 1 : 0;
-      else if (trigName == "HLT_L1Mu")
-	evt->HLT_L1Mu = accept? 1 : 0;
-      else if (trigName == "HLT_Mu3")
-	evt->HLT_Mu3 = accept? 1 : 0;
-      else if (trigName == "HLT_Mu5")
-	evt->HLT_Mu5 = accept? 1 : 0;
-      else if (trigName == "HLT_Mu7")
-	evt->HLT_Mu7 = accept? 1 : 0;
-      else if (trigName == "HLT_Mu9")
-	evt->HLT_Mu9 = accept? 1 : 0;
-      else if (trigName == "HLT_Mu11")
-	evt->HLT_Mu11 = accept? 1 : 0;
-      else if (trigName == "HLT_L2Mu5")
-	evt->HLT_L2Mu5 = accept? 1 : 0;
-      else if (trigName == "HLT_L2Mu9")
-	    evt->HLT_L2Mu9 = accept? 1 : 0;
-      else if (trigName == "HLT_L2Mu11")
-	evt->HLT_L2Mu11 = accept? 1 : 0;
-      else if (trigName == "HLT_L2Mu15")
-	evt->HLT_L2Mu15 = accept? 1 : 0;
-      else if (trigName == "HLT_L2Mu25")
-	evt->HLT_L2Mu25 = accept? 1 : 0;
-    } // loop over triggers
+  //loop over the triggers of interest for this run
+  for(std::map<unsigned int,std::string>::const_iterator itinfo =
+	m_triggers.begin(), itinfoend = m_triggers.end();
+      itinfo != itinfoend;++itinfo){
+    //get the name of the guy
+    string trigName = itinfo->second; 
+    //did it fire?
+    bool accept = hltresults->accept(itinfo->first);
+    //get l1 and hlt prescales
+    //First decide whether to get L1 prescales too, besides HLT prescales
+    //-1 means error in retrieving this (L1T or HLT) prescale
+    std::pair<int,int> prescales;
+    if (extractL1prescales){
+      const std::pair<int,int> presc(hltConfig.prescaleValues(iEvent,
+							      iSetup,
+							      trigName));
+      prescales.first = presc.first;
+      prescales.second = presc.second;
+    }
+    else{
+      unsigned int hlt_prescale = hltConfig.prescaleValue(iEvent,
+							  iSetup,
+							  trigName);
+      prescales.first = -1;
+      prescales.second = int(hlt_prescale);
+    }
+    
 
+    // this is where we keep statistics (to be printed out at end of job)
+    if(accept)
+      { // extract event counts for trigger efficiencies
+	tIt it;
+	if(genmu_acceptance)
+          {
+	    it = genMuTrig.trigger_count.find(trigName);
+	    if(it != genMuTrig.trigger_count.end())
+	      (genMuTrig.trigger_count[trigName])++; 
+	    else
+	      genMuTrig.trigger_count[trigName] = 1;
+          }
+	it = MuTrig.trigger_count.find(trigName);
+	if(it != MuTrig.trigger_count.end())
+	  (MuTrig.trigger_count[trigName])++;
+	else
+	  MuTrig.trigger_count[trigName] = 1;
+      } // extract event counts for trigger efficiencies
+    
+    //set the info in the tree
+    new(thehlt[nhlt]) wprime::TrigInfo();
+    wprime::TrigInfo * wphlt = (wprime::TrigInfo *) thehlt[nhlt];
+    wphlt->fired = accept ? 1 : 0;
+    wphlt->l1pre = prescales.first;
+    wphlt->hltpre = prescales.second;
+    wphlt->name = trigName;
+    
+    ++nhlt;
+    
+  }//loop over map with trig info
+ 
 }
 
 // get Particle-Flow MET
@@ -211,27 +230,105 @@ void Wprime_muonreco::getPFMET(const edm::Event & iEvent)
   met_x += pfMET->px();
   met_y += pfMET->py();
   evt->pfmet.Set(met_x, met_y);
+
+  //----Loop over PFCandidates to get the hardest muon and put its
+  //pT back to the MET TVector2; create a new object
+  edm::Handle<edm::View<Candidate> > PFCandidates;
+  iEvent.getByLabel("particleFlow",PFCandidates);
+  int nmuon = 0;
+  edm::View<reco::Candidate>::const_iterator iParticle;
+  edm::View<reco::Candidate>::const_iterator ihardestPFMu;
+  double pTtemp = 0;
+  for( iParticle = (PFCandidates.product())->begin() ; 
+       iParticle != (PFCandidates.product())->end() ; ++iParticle ){
+    
+    const Candidate* candidate = &(*iParticle);
+    if (candidate) {
+      const PFCandidate* pfCandidate = 
+	dynamic_cast<const PFCandidate*> (candidate);
+      if (pfCandidate){
+	//check that it is a muon
+	if (!(pfCandidate->particleId() == 3)) continue;
+#if 0
+	const double c_theta = iParticle->theta();
+	const double c_e     = iParticle->energy();
+	const double c_et    = c_e*sin(c_theta);
+	// check pt from default muon
+	reco::MuonRef muref = pfCandidate->muonRef();
+	double m_pt = 999999;
+	double m_et = 999999;
+	if (muref.isNonnull()){
+	  m_pt = muref->pt();
+	  m_et = muref->et();
+	}
+	// check pt from the tracker
+	reco::TrackRef trackRef = pfCandidate->trackRef();
+	const reco::Track& track = *trackRef;
+	double t_pt = track.pt();
+	 cout<<" mu No. "<<nmuon<<
+	   "\t pfpt = "<<pfCandidate->pt()<<
+	   "\t pfEt1 = "<<c_et<<
+	   "\t pfEt2 = "<<pfCandidate->et()<<
+	   "\tm_pt = "<<m_pt<<
+	   "\tm_et = "<<m_et<<
+	      "\tt_pt = "<<t_pt<<endl;
+#endif
+	 if ( pfCandidate->pt() > pTtemp){
+	   ihardestPFMu = iParticle;
+	   pTtemp = pfCandidate->pt();
+	 }
+	 ++nmuon;
+         
+      }//pfCandidate
+    }//if candidate
+  }//loop over PFCandidates
+  
+  //Add back the pT for the hardest muon if found.
+  if (nmuon > 0){
+    const Candidate* mycandidate = &(*ihardestPFMu);
+    const PFCandidate* mypfCandidate = 
+      dynamic_cast<const PFCandidate*> (mycandidate);
+    met_x += mypfCandidate->px();
+    met_y += mypfCandidate->py();
+    evt->pfmetaddmu.Set(met_x,met_y);
+  }//if nmuon >0
+  else evt->pfmetaddmu.Set(met_x,met_y);
+  
 }
 
 // get Jets
 void Wprime_muonreco::getJets(const edm::Event & iEvent)
 {
-  // Get the Jet collection from the event
-  edm::Handle<reco::CaloJetCollection> jetCollection;
-  iEvent.getByLabel(jetTag_, jetCollection);
+  // Get the Jet collections from the event
+  edm::Handle<reco::CaloJetCollection> jetCaloCollection;
+  iEvent.getByLabel(caloJetTag_, jetCaloCollection);
+  edm::Handle<reco::PFJetCollection> jetPFCollection;
+  iEvent.getByLabel(pfJetTag_, jetPFCollection);
 
-  TClonesArray & jet = *(evt->jet);
+  TClonesArray & cjet = *(evt->jet);
+  TClonesArray & pfjet = *(evt->pfjet);
 
+  //get calo jets
   int j = 0;
-  for (CaloJetCollection::const_iterator jet_ = jetCollection->begin(); 
-       jet_ !=jetCollection->end(); ++jet_) { // loop over jets
-
-    new(jet[j]) TLorentzVector(jet_->px(), jet_->py(), jet_->pz(), 
-			       jet_->energy());
+  for (CaloJetCollection::const_iterator jet_ = jetCaloCollection->begin(); 
+       jet_ !=jetCaloCollection->end(); ++jet_) { // loop over jets
+    
+    new(cjet[j]) TLorentzVector(jet_->px(), jet_->py(), jet_->pz(), 
+				jet_->energy());
     ++j;
-  } // loop over jets
-
-}  
+  } // loop over calojets
+  
+  
+  //get pf jets
+  j = 0;
+  for (PFJetCollection::const_iterator jet_ = jetPFCollection->begin(); 
+       jet_ !=jetPFCollection->end(); ++jet_) { // loop over jets
+    
+    new(pfjet[j]) TLorentzVector(jet_->px(), jet_->py(), jet_->pz(), 
+                                 jet_->energy());
+    ++j;
+  } // loop over pfjets 
+} 
 
 // get Isolation
 void Wprime_muonreco::getIsolation(const edm::Event & iEvent)
@@ -255,15 +352,19 @@ void Wprime_muonreco::getTeVMuons(const edm::Event & iEvent)
   edm::Handle<reco::TrackToTrackMap> tevMapH_default;
   edm::Handle<reco::TrackToTrackMap> tevMapH_1stHit;
   edm::Handle<reco::TrackToTrackMap> tevMapH_picky;
+  edm::Handle<reco::TrackToTrackMap> tevMapH_dyt;
 
-  iEvent.getByLabel("tevMuons", "default", tevMapH_default);
+  iEvent.getByLabel(tevMuonLabel_, "default", tevMapH_default);
   tevMap_default = tevMapH_default.product();
 
-  iEvent.getByLabel("tevMuons", "firstHit", tevMapH_1stHit);
+  iEvent.getByLabel(tevMuonLabel_, "firstHit", tevMapH_1stHit);
   tevMap_1stHit = tevMapH_1stHit.product();
 
-  iEvent.getByLabel("tevMuons", "picky", tevMapH_picky);
+  iEvent.getByLabel(tevMuonLabel_, "picky", tevMapH_picky);
   tevMap_picky = tevMapH_picky.product();
+
+  iEvent.getByLabel(tevMuonLabel_, "dyt", tevMapH_dyt);
+  tevMap_dyt = tevMapH_dyt.product();
 }
 
 // get primary vertex info
@@ -302,8 +403,9 @@ void Wprime_muonreco::getTracking(wprime::Track & track, const reco::Track & p)
   track.p.SetVectM(p3, wprime::MUON_MASS);
   track.q = p.charge();
   track.chi2 = p.chi2();
-  track.d0 = p.d0();
-  track.dd0 = p.d0Error();
+  track.d0_default = p.d0();
+  track.dd0_default = p.d0Error();
+  correct_d0(p, track.d0, track.dd0);
   track.dpt = p.ptError();
   track.dq_over_p = p.qoverpError();
   track.ndof = int(p.ndof());
@@ -325,7 +427,8 @@ void Wprime_muonreco::getNullTracking(wprime::Track & track)
   TVector3 p3(wrong, wrong, wrong);
   track.p.SetVectM(p3, wrong);
   track.q = wrong;
-  track.chi2 = track.d0 = track.dd0 = track.dpt = track.dq_over_p = wrong;
+  track.chi2 = track.d0 = track.d0_default = track.dd0_default = 
+    track.dpt = track.dq_over_p = wrong;
   track.ndof = track.Nstrip_layer = track.Npixel_layer = 
     track.Nstrip_layerNoMeas = track.Npixel_layerNoMeas = 
     track.NsiStrip_hits = track.Npixel_hits = track.Nmuon_hits = 
@@ -419,10 +522,12 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu)
   TrackToTrackMap::const_iterator iTeV_default;
   TrackToTrackMap::const_iterator iTeV_1stHit;
   TrackToTrackMap::const_iterator iTeV_picky;
+  TrackToTrackMap::const_iterator iTeV_dyt;
 
   iTeV_default = tevMap_default->find(mu->globalTrack());
   iTeV_1stHit = tevMap_1stHit->find(mu->globalTrack());
   iTeV_picky = tevMap_picky->find(mu->globalTrack());
+  iTeV_dyt = tevMap_dyt->find(mu->globalTrack());
 
   bool TeVfailed = false;
 
@@ -442,6 +547,13 @@ void Wprime_muonreco::doTeVanalysis(reco::MuonRef mu, wprime::Muon * wpmu)
   else
     getTracking(wpmu->picky, *(iTeV_picky->val) );
 
+  if(iTeV_dyt == tevMap_dyt->end())
+    {
+      getNullTracking(wpmu->dyt);
+      TeVfailed = true;
+    }
+  else
+    getTracking(wpmu->dyt, *(iTeV_dyt->val) );
 
   if(TeVfailed)
     {
@@ -518,7 +630,7 @@ Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   ++(run->Nproc_evt);
 
-  getTriggers(iEvent);
+  getTriggers(iEvent,iSetup);
 
   getPVs(iEvent);
 
@@ -528,6 +640,7 @@ Wprime_muonreco::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
   getIsolation(iEvent);
 
+  getBeamSpot(iEvent);
   getMuons(iEvent);
   getTeVMuons(iEvent);
   doMuons();
@@ -565,14 +678,15 @@ void Wprime_muonreco::init_event()
 {
   gen_muons.clear();
   N_muons = N_all_muons = 0;
+  nhlt = 0;
   genmu_acceptance = false;
   met_x = met_y = met = 0.0;
 
   evt->mu_mc->Clear(); evt->neu_mc->Clear(); 
   evt->w_mc->Clear(); evt->wp_mc->Clear(); 
-  evt->mu->Clear(); evt->jet->Clear();
-
-  evt->reset_triggers();
+  evt->mu->Clear(); 
+  evt->jet->Clear(); evt->pfjet->Clear();
+  evt->hlt->Clear();
  
 }
 
@@ -623,7 +737,6 @@ void Wprime_muonreco::beginRun(edm::Run const & iRun,
 {
   firstEventInRun = true;
 
-  HLTConfigProvider hltConfig;
   bool changed(true);
   if(! hltConfig.init(iRun, iSetup, HLTTag_.process(), changed))
     {
@@ -631,18 +744,38 @@ void Wprime_muonreco::beginRun(edm::Run const & iRun,
       abort(); // what is the proper way of handling this??? skip run?
     }
  
-  triggerNames = hltConfig.triggerNames();
-  N_triggers = hltConfig.size();
-  run->HLTmenu = hltConfig.tableName();
+  // collect the triggers of interest according to config input
+  m_triggers.clear();
+  for (unsigned int i = 0; i < expressions.size(); ++i){
+    
+    const std::vector< std::vector<std::string>::const_iterator > & matches = 
+      edm::regexMatch(hltConfig.triggerNames(), expressions[i]);
+    
+    BOOST_FOREACH(const std::vector<std::string>::const_iterator & match, matches){
+      unsigned int index = hltConfig.triggerIndex(*match);
+      assert(index < hltConfig.size());
+      std::map<unsigned int, std::string>::const_iterator mit = 
+	m_triggers.find(index);
+      if (mit != m_triggers.end()) { 
+	cout << " Trigger " << *match
+	     << " was already considered (your wildcarding is overlapping)\n"
+	     << " don't panic, it's ok, I will skip the double entry..."<<endl;
+	continue;
+      } 
+      m_triggers.insert( std::make_pair(index , *match) );
+    }
+  }// collect triggers of interest
 
+  run->HLTmenu = hltConfig.tableName();
+  
   run->run_no = iRun.run(); 
   run->Nproc_evt = 0;
-
+  
   cout << "\n Run # " << run->run_no << " recorderd with HLT menu " 
        << run->HLTmenu << endl;
 }
 
-// ------------ method called once each job just after ending the event loop  ------------
+// --------- method called once each job just after ending the event loop  ------------
 void Wprime_muonreco::endJob() {
 
   printSummary();
@@ -710,6 +843,21 @@ void Wprime_muonreco::check_trigger(const edm::Event & iEvent)
   run->HLTversion = HLTversion;
 }
 
+void Wprime_muonreco::getBeamSpot(const edm::Event & iEvent) {
+  iEvent.getByLabel("offlineBeamSpot", beamSpotHandle);
+  if(!beamSpotHandle.isValid()) {
+    edm::LogInfo("MyAnalyzer") << " No beam spot available from EventSetup \n";
+  }
+}
+
+void Wprime_muonreco::correct_d0(const reco::Track & track, float & d0, float & d0sigma) {
+  reco::BeamSpot beamSpot = *beamSpotHandle;
+  d0 = -1.*track.dxy(beamSpot.position());
+
+  // circular transverse beam width in MC. In data widthX ~ widthY, let's wait and see
+  d0sigma = sqrt( track.d0Error() * track.d0Error() + 0.5* beamSpot.BeamWidthX()*beamSpot.BeamWidthX() + 0.5* beamSpot.BeamWidthY()*beamSpot.BeamWidthY() );
+
+}  
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(Wprime_muonreco);

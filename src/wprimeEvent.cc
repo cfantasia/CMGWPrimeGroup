@@ -5,7 +5,9 @@ using namespace wprime;
 // constructor
 Event::Event()
 {
+  hlt = new TClonesArray("wprime::TrigInfo");
   jet = new TClonesArray("TLorentzVector");
+  pfjet = new TClonesArray("TLorentzVector");
   mu = new TClonesArray("wprime::Muon");
   mu_mc = new TClonesArray("wprime::MCParticle");
   neu_mc = new TClonesArray("wprime::MCParticle");
@@ -16,10 +18,15 @@ Event::Event()
 // destructor
 Event::~Event()
 {
-  delete jet; delete mu; 
+  delete hlt; delete jet; delete pfjet; delete mu; 
   delete mu_mc; delete neu_mc; delete w_mc; delete wp_mc; 
 }
 
+TrigInfo::TrigInfo()
+{
+  fired = l1pre = hltpre = 0; name = "invalid";
+}
+TrigInfo::~TrigInfo(){}
 
 RunInfo::RunInfo()
 {
