@@ -44,7 +44,7 @@ float all_masses[mass_points] = {-9999, 800, 1000, 1100, 1200, 1300, 1400,
 const float integ_lumi = 10.82; // in pb^-1
 
 // select algorithm option
-const unsigned algo_option = 2; // 0: "glb", 1: "trk", 2: "tpfms", 3: "ckt", "pic", "tmr"
+const unsigned algo_option = 3; // 0: "glb", 1: "trk", 2: "tpfms", 3: "ckt", "pic", "tmr"
 
 // choose whether to perform fit
 const bool doFits = true; // if false: produce only plots, no fitting
