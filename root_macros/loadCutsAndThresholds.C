@@ -315,13 +315,14 @@ bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu, bool goodQual
   //         mu->tracker.Nstrip_layerNoMeas) < 5)
  
   bool muonID = 
-      (mu->tracker.Ntrk_hits > 10)
-      && (TMath::Abs(mu->tracker.d0) < 0.2) 
-      && mu->AllTrackerMuons
-      && mu->AllGlobalMuons  
-      && mu->global.Nmuon_hits > 0
-      && mu->Nmatches > 1
-      && mu->tracker.Npixel_hits > 0
+    (mu->tracker.Ntrk_hits > 10)
+    && (TMath::Abs(mu->tracker.d0) < 0.2) 
+    && mu->AllTrackerMuons
+    && mu->AllGlobalMuons  
+    && mu->global.Nmuon_hits > 0
+    && mu->Nmatches > 1
+    && mu->global.Npixel_hits > 0
+    && ((mu->global.chi2)/(mu->global.ndof) < Chi2Cut)
       ;
   
   const wprime::Track * tk[Num_trkAlgos] = {
@@ -330,9 +331,9 @@ bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu, bool goodQual
 
   for(int algo = 0; algo != Num_trkAlgos; ++algo)
     {
-      checkqual = (( (tk[algo])->chi2 / (tk[algo])->ndof) < Chi2Cut)
-	&& TMath::Abs( (tk[algo])->p.Eta()) < Muon_Eta_Cut;
-
+      checkqual = //(( (tk[algo])->chi2 / (tk[algo])->ndof) < Chi2Cut) &&
+	TMath::Abs( (tk[algo])->p.Eta()) < Muon_Eta_Cut;
+      
       // old value: muon's pt within range
       // new value: old value .AND. quality cuts
       goodQual[algo] = goodQual[algo] && checkqual && isHard && muonID;
