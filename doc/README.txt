@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V155, release:
-CMSSW_3_6_3)
+o Setup a new working area (Default name: V160, release:
+CMSSW_3_8_5)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-01-55)
+V00-01-60)
 
 o Compile the code
 

@@ -4,8 +4,10 @@
 <use name=CommonTools/UtilAlgos>
 <use name=PhysicsTools/Utilities>
 <use name=DataFormats/MuonReco>
+<use name=DataFormats/BeamSpot>
 <use name=DataFormats/HepMCCandidate>
 <use name=HLTrigger/HLTcore>
+<use name=DataFormats/ParticleFlowCandidate>
 <use name=rootcore>
 <flags EDM_PLUGIN=1>
 <export>
@@ -13,7 +15,9 @@
    <use name=PhysicsTools/UtilAlgos>
    <use name=PhysicsTools/Utilities>
    <use name=DataFormats/MuonReco>
+   <use name=DataFormats/BeamSpot>
    <use name=DataFormats/HepMCCandidate>
+   <use name=DataFormats/ParticleFlowCandidate>
    <use name=FWCore/PluginManager>
    <use name=FWCore/ParameterSet>
    <use name=rootcore>

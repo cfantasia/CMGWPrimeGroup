@@ -1,3 +1,55 @@
+25-OCT-10 (Edgar, Chad, Silvia, Christos), V00-01-60
+====================================================
+
+Information stored in root-tuples:
+(1) Complete revamp of trigger information stored. Now storing L1/HLT
+prescales and # of trigger paths configured via python file. 
+
+(2) Added new entry for (pf)MET after adding back muon-pt of highest-pt
+muon in event. This will allow us to re-calculated offline the (pf)MET for
+any of the dedicated TeV muon reconstruction algorithms offline. 
+
+(3) Now storing two sets of jet collections in event: by default, these 
+are ak5PFJets and ak5CaloJets.
+
+(4) Now storing DYT muon tracking in event (for each muon).
+
+(5) Now correctly storing muon track d0 (and uncertainty) wrt BeamSpot 
+[but continue storing original variables wrt (0,0) as a reference]
+
+
+Analysis:
+(1) Muon ID: Following Exotica Muon recommendations, have implemented following
+changes:
+(a) now considering universally global algorithm's chi2/Ndof (used to
+consider corresponding chi2/Ndof in loop over reconstructors/fitters)
+(b) now considering # of pixel hits used in global fit (used to be
+tracker-only fit)
+[MISSING: update root-macros to deal with DYT, new collections of jets, MET
+for various muon-pt reconstructors, new way trigger info is stored]
+
+Fitting:
+(1) Fit now uses distributions and pt-resolution corresponding to cocktail
+algorithm as default  
+[MISSING: update gsmear.root file with resolutions for new set of analysis
+cuts] 
+
+
+Misc:
+(1) Updated location of header files so that code can compile in 3_8_X
+environment
+
+(2) Now applying vertexing filtering when creating root-tuples (cfg added in
+example python files). Used to be applied during skimming. 
+[MISSING: clean up py files, maybe by grouping common configuration
+options, e.g. trigger?]
+
+(3) Added skimming/filtering configurations for MC (pt > 100 GeV) and data
+(pt > 25 GeV). 
+ 
+
+
+
 19-OCT-10 (Christos), V00-01-55
 ===============================
 
