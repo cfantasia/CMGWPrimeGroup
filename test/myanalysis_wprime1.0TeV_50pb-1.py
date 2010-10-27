@@ -70,14 +70,14 @@ process.StdMu = cms.EDAnalyzer("Wprime_muonreco",
                                     'HLT_L1Mu_v*',
                                     'HLT_L2Mu5',
                                     'HLT_L2Mu5_v*',
-                                    'HLT_L2Mu9'
-                                    'HLT_L2Mu9_v*'
-                                    'HLT_L2Mu11'
-                                    'HLT_L2Mu11_v*'
-                                    'HLT_L2Mu15'
-                                    'HLT_L2Mu15_v*'
-                                    'HLT_L2Mu25'
-                                    'HLT_L2Mu25_v*'
+                                    'HLT_L2Mu9',
+                                    'HLT_L2Mu9_v*',
+                                    'HLT_L2Mu11',
+                                    'HLT_L2Mu11_v*',
+                                    'HLT_L2Mu15',
+                                    'HLT_L2Mu15_v*',
+                                    'HLT_L2Mu25',
+                                    'HLT_L2Mu25_v*',
                                     'HLT_Mu3',
                                     'HLT_Mu3_v*',
                                     'HLT_Mu5',
