@@ -1,3 +1,8 @@
+27-OCT-10 (Edgar, Christos), V00-01-61
+======================================
+Fixing missing commas for L2MU triggers in example configuration files
+
+
 25-OCT-10 (Edgar, Chad, Silvia, Christos), V00-01-60
 ====================================================
 
