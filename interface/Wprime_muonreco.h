@@ -22,7 +22,7 @@
 #include "FWCore/Framework/interface/Frameworkfwd.h" 
 #include "FWCore/Common/interface/TriggerNames.h"
 
-#include "FWCore/ParameterSet/interface/InputTag.h"
+#include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "FWCore/Utilities/interface/EDMException.h"
