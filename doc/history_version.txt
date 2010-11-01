@@ -1,3 +1,30 @@
+01-NOV-10 (Christos)
+===============================
+V00-01-55_branch: Branch based on V00-01-55 (ie V00-01-40-compatible data
+formats)  
+
+V00-01-55_BR-01:
+o updating data-files to 21.78ipb (made by Boston, CIEMAT, UCLA)
+
+o incorporated following changes from V00-01-60:
+
+Analysis:
+(1) Muon ID: Following Exotica Muon recommendations, have implemented
+following changes:
+(a) now considering universally global algorithm's chi2/Ndof (used to
+consider corresponding chi2/Ndof in loop over reconstructors/fitters)
+(b) now considering # of pixel hits used in global fit (used to be
+tracker-only fit) 
+
+Fitting:
+(1) Fit now uses distributions and pt-resolution corresponding to cocktail
+algorithm as default  
+ 
+Misc:
+(1) Updated location of header files so that code can compile in 3_8_X
+environmen t
+
+
 19-OCT-10 (Christos), V00-01-55
 ===============================
 
