@@ -1,3 +1,13 @@
+02-NOV-10 (Chad), V00-01-70
+===========================
+New data-format changes:
+- Added tracker inner & outer positions (rho and z)
+- Added all layers hit in the hit pattern (valid + invalid)
+
+Will make branch based on V00-01-61 to analyze root-tuples made with
+V00-01-61 (work in progress)
+
+
 27-OCT-10 (Edgar, Christos), V00-01-61
 ======================================
 Fixing missing commas for L2MU triggers in example configuration files
