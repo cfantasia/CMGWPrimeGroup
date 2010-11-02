@@ -418,6 +418,12 @@ void Wprime_muonreco::getTracking(wprime::Track & track, const reco::Track & p)
   track.Nmuon_hits = p.hitPattern().numberOfValidMuonHits();
   track.Ntot_hits = p.numberOfValidHits();
   track.Ntrk_hits = p.hitPattern().numberOfValidTrackerHits();
+  track.outerposition_rho = p.outerPosition().rho();
+  track.outerposition_z = p.outerPosition().z();
+  track.innerposition_rho = p.innerPosition().rho();
+  track.innerposition_z = p.innerPosition().z();
+  track.Nlayers_all = getlayers(p);
+
 }
 
 // fill in with dummy values when there is no track
@@ -858,6 +864,33 @@ void Wprime_muonreco::correct_d0(const reco::Track & track, float & d0, float & 
   d0sigma = sqrt( track.d0Error() * track.d0Error() + 0.5* beamSpot.BeamWidthX()*beamSpot.BeamWidthX() + 0.5* beamSpot.BeamWidthY()*beamSpot.BeamWidthY() );
 
 }  
+
+int  Wprime_muonreco::getlayers(const reco::Track & track) {
+  int hit_type=0;
+  int stereo=0;
+  int subsub=0;
+  int sub=0;
+  int tkmu=0;
+  int suba2[6]={0,3,5,9,12,18};  
+  bool layera[27];
+  for(int i=0; i<27; i++) { layera[i]=false;}
+  const reco::HitPattern& p = track.hitPattern();    
+  // loop over the hits of the track
+  for (int i=0; i<p.numberOfHits(); i++) {
+    uint32_t hit = p.getHitPattern(i);      
+    hit_type=hit&0x3; hit=hit>>2;
+    stereo=hit&0x1; hit=hit>>1;
+    subsub=hit&0xf; hit=hit>>4;
+    sub=hit&0x7; hit=hit>>3;
+    tkmu=hit&0x1;
+    layera[suba2[sub-1]+subsub-1]=true;
+  }
+  int nlayers=0;
+  for(int i=0; i<27; i++) {
+    if(layera[i]) nlayers++;
+  }
+  return nlayers;
+}
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(Wprime_muonreco);

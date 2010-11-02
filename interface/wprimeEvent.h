@@ -127,6 +127,16 @@ class Track : public TObject {
    Int_t Ntrk_hits;
    /// # of total (ie. tracker + muon) hits used by fit
    Int_t Ntot_hits;
+   /// # of layers valid+invalid
+   Int_t Nlayers_all;
+   /// outer position rho
+   Float_t outerposition_rho;
+   /// outer position z
+   Float_t outerposition_z;
+   /// inner position rho
+   Float_t innerposition_rho;
+   /// inner position z
+   Float_t innerposition_z;
 
    Track();
    ~Track();

@@ -253,4 +253,5 @@ class Wprime_muonreco : public edm::EDAnalyzer
 
   void getBeamSpot(const edm::Event & iEvent);
   void correct_d0(const reco::Track & track, float & d0, float & d0sigma);
+  int getlayers(const reco::Track & track);
 };

@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process("Demo2")
+process = cms.Process("Demo3")
 
 #The global tag is needed if the option extractL1Prescales is set to True
 #Just switch to False if this is not needed or if there is some problem
@@ -19,11 +19,11 @@ process.source = cms.Source("PoolSource",
     # replace input file with one you want to use
  #fileNames = cms.untracked.vstring('file:/home/cleonido/wprime/Summer09MC/W/F866EB68-E39C-DE11-8F01-00145EDD7879.root')
 # fileNames = cms.untracked.vstring('file:/tmp/WprimeMuSkim_46_3_gAm.root')
-                            fileNames = cms.untracked.vstring(
+#                            fileNames = cms.untracked.vstring(
                                # 'file:/localdata/data_repo/wprime_munu/temp/WprimeMuSkim_89_1_Uqm.root',
-                                                              'file:/localdata/data_repo/wprime_munu/temp/WprimeMuSkim_9_1_XYU.root')
+#                                                              'file:/localdata/data_repo/wprime_munu/temp/WprimeMuSkim_9_1_XYU.root')
                             #fileNames = cms.untracked.vstring('file:/localdata/data_repo/wprime_munu/temp/wprime_RECO_1000GeV_2_1_ZXU.root')
-#                            fileNames = cms.untracked.vstring('file:/home/work_jarvis/data_2010B_fix.root')
+                            fileNames = cms.untracked.vstring('rfio:/castor/cern.ch/user/j/jarvis/CMSSW385/analysis2/filelistxaa.root')
 )
 
 # Number of events to process
