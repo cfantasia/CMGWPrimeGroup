@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V161, release:
+o Setup a new working area (Default name: V161_branch, release:
 CMSSW_3_8_5)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-01-61)
+V00-01-61-BR-01)
 
 o Compile the code
 
@@ -25,31 +25,25 @@ location of the input file and run.
 
 
 
-NB The following ustom ROOT-tuples produced with 356 (Spring10 STARTUP) 
-
+NB The following custom ROOT-tuples
 - filtered (muon pt>100 GeV) MC bacgkround 
-- Wprime->munu MC signal for masses: 0.8, 1.0, 1.1, 1.2, 1.3, 1.4, 
-  1.5 and 2.0 TeV 
-- collision data  for a muon skim with pt > 10 GeV
+- Wprime->munu MC signal for masses: 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 
+1.2, 1.3, 1.4, 1.5 and 2.0 TeV 
+- collision data for a muon skim with pt > 25 GeV
 
 
 can be found in
 
-(a) /castor/cern.ch/user/c/cleonido/wprime/v140/ (made with V00-01-40, and
-10.82 pb^-1 of real data processed with 38X; use
-UserCode/CMGWprimeGroup/config/samples_cross_sections_v7.txt) 
+(a) /castor/cern.ch/user/c/cleonido/wprime/v161/ (made with V00-01-61, and
+o 21.78 pb^-1 of real data processed with 38X
+o MC samples are processed with 38x (Fall10)
+Use UserCode/CMGWprimeGroup/config/samples_cross_sections_v8.txt) 
 
-(b) /castor/cern.ch/user/c/cleonido/wprime/v140/ (made with V00-01-40, and
-3.08 pb^-1 of real data processed with 36X; use
-UserCode/CMGWprimeGroup/config/samples_cross_sections_v6.txt) 
 
-(c) /castor/cern.ch/user/c/cleonido/wprime/v121/ (made with V00-01-21, and
-1.32 pb^-1 of real data; use
-UserCode/CMGWprimeGroup/config/samples_cross_sections_v4.txt) 
-
-(d) /castor/cern.ch/user/c/cleonido/wprime/v105/ (made with V00-01-05, and
-255 nb^-1 of real data; use
-UserCode/CMGWprimeGroup/config/samples_cross_sections_v2.txt) 
+(b) /castor/cern.ch/user/c/cleonido/wprime/v140/ (made with V00-01-40)
+o 10.82 pb^-1 of real data processed with 38X
+o MC samples are processed with 356 (Spring10)
+Use UserCode/CMGWprimeGroup/config/samples_cross_sections_v7.txt) 
 
 
 
@@ -83,7 +77,7 @@ The macro will compile and load the following files
 The driver that runs the rest of the functions.
 
 "option":
-Set to 1 (default) for muon-pt distribution
+Set to 1 (default) for muon-pt and Mt distributions
 Set to 2 for charge-asymmetry distribution
 
 

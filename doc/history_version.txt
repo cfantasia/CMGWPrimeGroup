@@ -1,3 +1,73 @@
+04-NOV-10 (Edgar, Chad, Christos)
+=================================
+
+V00-01-61_branch: Branch based on V00-01-61 (ie. V00-01-60-compatible data
+formats). Will eventually merge changes with HEAD. 
+
+V00-01-61-BR-01:
+----------------
+(1) Adapted selection cuts in root macros to take into account changes
+introduced in V00-01-60. In particular:
+
+(a) Now considering any HLT_Mu* trigger (up to 25 GeV) that is 
+unprescaled, whether name contains a version number ("_v*") or not (we 
+used to consider HLT muons only up to 11 GeV in the previous tags)
+
+(b) Now properly correcting pfMET [and M_T] depending on the choice of the
+high-pt muon algorithm (ie. different MET for each muon reconstructor!)
+
+(c) Jet-activity veto now uses ak5PFJets by default (used to be
+ak5CaloJets) 
+
+(d) Added DYT muon reconstruction parsing (when making distributions and
+for fitting code)
+
+(e) NB: starting with V160 root-tuples, d0 cuts are calculated wrt 
+beamspot (used to be wrt 0,0). The old d0 cut (|d0_(0,0)| < 0.2) had no
+real impact on 36x/38x data or 36x MC. But it did have a big inefficiency
+for 38x W' samples; it looks like the beamspot smearing blew up in 38X
+MC - dunno why.
+
+
+(2) Changed quality cut from 
+"tracker.Ntrk_hits > 10" and "|mu->tracker.d0| < 0.2" 
+to  
+"global.Ntrk_hits > 10" and "|mu->global.d0| < 0.2",
+
+to be in line with the ExoticaMuon recommendations (at least for now)
+
+
+(3) Several modifications in the way distributions + expected event counts
+are produced (popular request):
+
+(a) ROOT macro now creates muon-pt (transverse mass) distributions by 
+using the jet-activity veto (pt/MET and DeltaPhi(pt, MET) ) cut(s).
+(b) Expected event-counts are reported separately for the two parallel 
+sets of cuts. 
+(c) Doing this only for cocktail algorithm by default (can be switched to
+different algorithm or for several algorithms at the time, see
+root_macros/wprime_histo_constants.h)
+(d) Event-counts are reported for multiple pt (Mt) thresholds on the 
+screen and text file. Current default values: 100, 200, 300 (200, 300, 
+500) GeV for Muon-pt (Mt). 
+
+
+(4) Updated data root-tuples to latest set produced by w'->mu group:
+Runs: 132440-148864, for a total of 21.883 ipb.
+
+
+(5) Switched MC samples to 38X/Fall10 MC production. Added more mass 
+points for signal: 0.6, 0.7 and 0.9 TeV (all below the current
+limit!). Support added in code making distributions and fitting macros. 
+
+
+Still missing:
+(a) Need to update ROOT file with MC muon-pt resolutions for 38X/Fall10MC
+Wprime samples + latest quality cuts
+(b) Need to add top MC sample, and option of switching to POWHEG. 
+
+
+
 27-OCT-10 (Edgar, Christos), V00-01-61
 ======================================
 Fixing missing commas for L2MU triggers in example configuration files
@@ -11,7 +81,7 @@ Information stored in root-tuples:
 prescales and # of trigger paths configured via python file. 
 
 (2) Added new entry for (pf)MET after adding back muon-pt of highest-pt
-muon in event. This will allow us to re-calculated offline the (pf)MET for
+muon in event. This will allow us to re-calculate offline the (pf)MET for
 any of the dedicated TeV muon reconstruction algorithms offline. 
 
 (3) Now storing two sets of jet collections in event: by default, these 
