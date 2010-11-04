@@ -8,6 +8,7 @@
 #include <fstream>
 
 #include "UserCode/CMGWPrimeGroup/root_macros/input_file.h"
+#include "UserCode/CMGWPrimeGroup/root_macros/loadCutsAndThresholds.h"
 
 using std::cout; using std::endl;
 using std::vector; using std::string;
@@ -57,30 +58,54 @@ void run()
   out.close(); 
   fout->Close();
 
-  for (int mual = 0; mual != Num_trkAlgos; ++mual)
-    { // loop over tracking algorithms
+
+  for(int f = 0; f != Num_flavors; ++f){ // loop over pt & mt
+
+    cout << "\n" << FLAVOR_NAME[f] << endl;
+    
+    for (int mual = MuAlgo_MIN; mual <= MuAlgo_MAX; ++mual){
+      // loop over tracking algorithms
       cout << " --------------------------------------------" << endl;
       cout << " " << algo_desc_long[mual] << " muon reconstruction" << endl;
-      cout << " # of events after all selection cuts for " << lumiPb << " pb^-1:"
+      cout << " # of events after selection cuts for " << lumiPb << " pb^-1:"
 	   << endl;
-      float N_SM = 0; 
-      vector<wprime::InputFile>::const_iterator it;
-      for(it = all_files.begin(); it != all_files.end(); ++it)
-	{ // loop over samples
-	  string sample = (*it).samplename;
-	  cout << " " << sample << ": " << (*it).N_aftercuts[mual]
-	       << " (eff = " << 100.*((*it).eff[mual]) 
-	       << " +- " << 100.*((*it).deff[mual])
-	       << " %) " << endl;
-	  if(sample == "W" || sample == "QCD" || sample == "Z" || 
-	     sample == "Top")
-	    N_SM += (*it).N_aftercuts[mual];
 
-	  if(sample == "Top")
-	    cout << " Total # of SM (W + QCD + Z + Top) events: " << N_SM << endl;
-	  
-	} // loop over samples
+      int thresh_counter = -1;
+      for(int i = THRESH_MIN; i <= THRESH_MAX; ++i){
+	++thresh_counter;
+	if (PT_INDEX == f)
+	  cout << "\n Muon-pt > " << PtThreshold[thresh_counter];
+	else if(MT_INDEX == f)
+	  cout << "\n Mt > " << MtThreshold[thresh_counter];
+	else
+	  abort();
+	cout << " GeV " << endl;
+
+	float N_SM = 0; 
+	vector<wprime::InputFile>::const_iterator it;
+	for(it = all_files.begin(); it != all_files.end(); ++it)
+	  { // loop over samples
+	    string sample = (*it).samplename;
+	    cout<< " "<< sample << ": " << (*it).Nexp_evt_cut[i][mual][f]
+		<< " (eff = " << 100.*((*it).eff[i][mual][f]) 
+		<< " +- " << 100.*((*it).deff[i][mual][f])
+		<< " %) " << endl;
+
+	    if(sample == "W" || sample == "QCD" || sample == "Z" || 
+	       sample == "Top")
+	      N_SM += (*it).Nexp_evt_cut[i][mual][f];
+	    
+	    //	    if(sample == "Top")
+	    if(sample == "Z")
+	      //	      cout << " Total # of SM (W + QCD + Z + Top) events: " 
+	      cout << " Total # of SM (W + QCD + Z + but-no-Top) events: " 
+		   << N_SM << endl;	 
+	  } // loop over samples
+
+      } // loop over thresholds
 
     } // loop over tracking algorithms
+
+  } // loop over pt & mt
 
 }

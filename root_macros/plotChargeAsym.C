@@ -50,7 +50,8 @@ void plotChargeAsym()
 
   for(unsigned i = 0; i != N_masses; ++i) // loop over mass points
     {
-      for(int j = 0; j != Num_trkAlgos; ++j)
+
+      for (int j = MuAlgo_MIN; j <= MuAlgo_MAX; ++j)
 	{  // loop over algorithms
 	  doPlots(_file0, MASS_POINT(i), j, true); // positive charge
 	  doPlots(_file0, MASS_POINT(i), j, false); // negative charge

@@ -17,9 +17,8 @@ using std::cout; using std::endl; using std::string; using std::map;
 
 //methods in this macro:
 void printHighPtMuon(const wprime::Event * ev, const wprime::Muon* mu,
-		     const bool fill_entry[]);
-void printSummary_MuonPt(ofstream & out, wprime::InputFile & file,
-                         float Nexp_evt,const float Nexp_evt_cut[][Num_trkAlgos]);
+		     const bool fill_entry[][Num_trkAlgos]);
+void printSummary_MuonPt(ofstream& out, wprime::InputFile & file, float Nexp_evt);
 void defineHistos_MuonPt();
 void defineHistos_MuonEta();
 void defineHistos_MuonPhi();
@@ -28,25 +27,28 @@ void defineHistos_MuonIso();
 void defineHistos_TMass();
 void defineHistos_MuonChargePt();
 void defineHistos(int option);
-void tabulateMe(int Num_surv_cut[][Num_trkAlgos], int& cut_index, 
+void tabulateMe(int Num_surv_cut[][Num_trkAlgos][Num_flavors], int& cut_index, 
 		float weight,const wprime::Event* ev, const wprime::Muon* mu,
-                const bool fill_entry[], int option, 
-		bool accountme[][Num_trkAlgos]);
+                const bool fill_entry[][Num_trkAlgos], int option, 
+		bool accountme[][Num_trkAlgos][Num_flavors]);
 void fillHistos_MuonPt(int index, float weight, const TLorentzVector **p,
-                       const bool fill_entry[]);
+                       const bool fill_entry[][Num_trkAlgos]);
 void fillHistos_MuonEta(int index, float weight, const TLorentzVector **p,
-                       const bool fill_entry[]);
+                       const bool fill_entry[][Num_trkAlgos]);
 void fillHistos_MuonPhi(int index, float weight, const TLorentzVector **p,
-                        const bool fill_entry[]);
+                        const bool fill_entry[][Num_trkAlgos]);
 
 void fillHistos_MuonJetDPhi(int index, float weight, const wprime::Event * ev,
-                        const TLorentzVector **p, const bool fill_entry[]);
+                        const TLorentzVector **p, 
+			    const bool fill_entry[][Num_trkAlgos]);
 void fillHistos_TMass(int index, float weight, const wprime::Event * ev,
-		      const TLorentzVector **p, const bool fill_entry[]);
+		      const TLorentzVector **p, 
+		      const bool fill_entry[][Num_trkAlgos]);
 void fillHistos_MuonIso(int index, float weight, const wprime::Muon* mu,
-			const bool fill_entry[]);
+			const bool fill_entry[][Num_trkAlgos]);
 void fillHistos_MuonChargePt(int index, float weight, const Int_t * Q, 
-			     const TLorentzVector **p,const bool fill_entry[]);
+			     const TLorentzVector **p,
+			     const bool fill_entry[][Num_trkAlgos]);
 void saveHistos_MainAnalysis();
 void saveHistos_MuonChargePt();
 void saveHistos(TFile * fout, string dir, int option);
@@ -54,49 +56,54 @@ void gatherFileBasicInfo(const wprime::InputFile& file,
                          wprime::Event*& ev, int & nevents, float & weight);
 
 // Studies:
-void GetMuonPtDistribution(const wprime::InputFile& file, 
-			   float Nexp_evt_cut[][Num_trkAlgos],
-                           float & Nexp_evt, int option,
-			   bool highestPtMuonOnly);
+void GetMuonPtDistribution(wprime::InputFile& file, float & Nexp_evt, 
+			   int option, bool highestPtMuonOnly);
 
 
 //--------------------------------------------------------------------------
-void printSummary_MuonPt(ofstream & out, wprime::InputFile & file,
-                         float Nexp_evt, const float Nexp_evt_cut[][Num_trkAlgos])
+void printSummary_MuonPt(ofstream & out, wprime::InputFile & file, float Nexp_evt)
 //------------------------------------------------------------------------
 {
   out << "\n Sample: " << file.samplename << endl;
   out << " Total # of expected events = " << Nexp_evt << endl;
+  
+  for(int f = 0; f != Num_flavors; ++f)
+    { // loop over pt & mt
 
-  for (int mual = 0; mual != Num_trkAlgos; ++mual){
-    out << " Algorithm: " << algo_desc_long[mual] << endl;
-    float eff, deff;
-      
-    for(int i = 0; i != Num_selection_cuts; ++i){
-      
-      out << " Cut # " << i << ": " << cuts_desc_long[i] 
-	  <<", expected # of evts = " << Nexp_evt_cut[i][mual];
+      out << FLAVOR_NAME[f] << endl;
 
-      //calculate efficiencies
-      if(i == 0)
-	getEff(eff, deff, Nexp_evt_cut[i][mual]/(file.weight), 
-	       Nexp_evt/(file.weight));
-      else
-	getEff(eff, deff, Nexp_evt_cut[i][mual]/(file.weight), 
-	       Nexp_evt_cut[i-1][mual]/(file.weight));
-      out << ", Relative eff = "<<eff*100 << " +- " << deff*100 << "%";
-      getEff(eff, deff, Nexp_evt_cut[i][mual]/(file.weight), 
-	     Nexp_evt/(file.weight));
-      out << ", Absolute eff = "<< eff*100 << " +- " << deff*100 << "%"
-	   << endl;
-    } // loop over different cuts
-    
-    file.N_aftercuts[mual] = Nexp_evt_cut[Num_selection_cuts-1][mual];
-    file.eff[mual] = eff;
-    file.deff[mual] = deff;
+      for (int mual = MuAlgo_MIN; mual <= MuAlgo_MAX; ++mual){
+	out << " Algorithm: " << algo_desc_long[mual] << endl;
+	float eff, deff;
+	
+	for(int i = 0; i != Num_selection_cuts; ++i){
+	  
+	  out << " Cut # " << i << ": " << cuts_desc_long[i] 
+	      <<", expected # of evts = " << file.Nexp_evt_cut[i][mual][f];
+	  
+	  //calculate efficiencies
+	  if(i == 0)
+	    getEff(eff, deff, file.Nexp_evt_cut[i][mual][f]/(file.weight),
+		   Nexp_evt/(file.weight));
+	  else
+	    getEff(eff, deff, file.Nexp_evt_cut[i][mual][f]/(file.weight),
+		   file.Nexp_evt_cut[i-1][mual][f]/(file.weight));
+	  out << ", Relative eff = "<<eff*100 << " +- " << deff*100 << "%";
+	  getEff(eff, deff, file.Nexp_evt_cut[i][mual][f]/(file.weight), 
+		 Nexp_evt/(file.weight));
+	  out << ", Absolute eff = "<< eff*100 << " +- " << deff*100 << "%"
+	      << endl;
+	  
+	  file.eff[i][mual][f] = eff;
+	  file.deff[i][mual][f] = deff;
 
-  }//loop over different muon algos
+	} // loop over different cuts
+	
+      }//loop over different muon algos
 
+    } // loop over pt & mt
+
+  
 }//------------- printSummary_MuonPt()
 
 
@@ -109,11 +116,14 @@ void defineHistos_MuonPt()
 #endif
 
   for(int cut = 0; cut != Num_selection_cuts; ++cut)
-    for(int algo = 0; algo != Num_trkAlgos; ++algo)
+    for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
       {
-	string name = "hPT" + algo_desc_short[algo] + "_" + cuts_desc_short[cut];
-	string title = algo_desc_long[algo] + " muon p_{T} with " + cuts_desc_long[cut];
-	hPT[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinPtMu,minPtMu,maxPtMu);
+	string name = "hPT" + algo_desc_short[algo] + "_" + 
+	  cuts_desc_short[cut];
+	string title = algo_desc_long[algo] + " muon p_{T} with " + 
+	  cuts_desc_long[cut];
+	hPT[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinPtMu,
+				  minPtMu,maxPtMu);
       }
   
 }//---------defineMuonPtHistos()
@@ -129,11 +139,14 @@ void defineHistos_TMass()
 #endif
 
   for(int cut = 0; cut != Num_selection_cuts; ++cut)
-    for(int algo = 0; algo != Num_trkAlgos; ++algo)
+    for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
       {
-	string name = "hTM" + algo_desc_short[algo] + "_" + cuts_desc_short[cut];
-	string title = algo_desc_long[algo] + " Transv. Mass with " + cuts_desc_long[cut];
-	hTM[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinTmMu,minTmMu,maxTmMu);
+	string name = "hTM" + algo_desc_short[algo] + "_" 
+	  + cuts_desc_short[cut];
+	string title = algo_desc_long[algo] + " Transv. Mass with " 
+	  + cuts_desc_long[cut];
+	hTM[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinTmMu,
+				  minTmMu,maxTmMu);
       }
   
 }//---------defineMuonPtHistos()
@@ -149,11 +162,14 @@ void defineHistos_MuonEta()
 #endif
 
   for(int cut = 0; cut != Num_selection_cuts; ++cut)
-    for(int algo = 0; algo != Num_trkAlgos; ++algo)
+    for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
       {
-	string name = "hETA" + algo_desc_short[algo] + "_" + cuts_desc_short[cut];
-	string title = algo_desc_long[algo] + " muon #eta with " + cuts_desc_long[cut];
-	hETA[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinEtaMu,minEtaMu,maxEtaMu);
+	string name = "hETA" + algo_desc_short[algo] + "_" 
+	  + cuts_desc_short[cut];
+	string title = algo_desc_long[algo] + " muon #eta with " 
+	  + cuts_desc_long[cut];
+	hETA[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinEtaMu,
+				   minEtaMu,maxEtaMu);
       }
   
 }//---------defineMuonEtaHistos()
@@ -169,11 +185,14 @@ void defineHistos_MuonPhi()
 #endif
 
   for(int cut = 0; cut != Num_selection_cuts; ++cut)
-    for(int algo = 0; algo != Num_trkAlgos; ++algo)
+    for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
       {
-	string name = "hPHI" + algo_desc_short[algo] + "_" + cuts_desc_short[cut];
-	string title = algo_desc_long[algo] + " muon #phi with " + cuts_desc_long[cut];
-	hPHI[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinPhiMu,minPhiMu,maxPhiMu);
+	string name = "hPHI" + algo_desc_short[algo] + "_" + 
+	  cuts_desc_short[cut];
+	string title = algo_desc_long[algo] + " muon #phi with " + 
+	  cuts_desc_long[cut];
+	hPHI[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinPhiMu,
+				   minPhiMu,maxPhiMu);
       }
   
 }//---------defineMuonPhiHistos()
@@ -189,11 +208,14 @@ void defineHistos_MuonJetDPhi()
 #endif
 
   for(int cut = 0; cut != Num_selection_cuts; ++cut)
-    for(int algo = 0; algo != Num_trkAlgos; ++algo)
+    for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
       {
-	string name = "hMJDPHI" + algo_desc_short[algo] + "_" + cuts_desc_short[cut];
-	string title = algo_desc_long[algo] + " muon-jet #Delta#phi with " + cuts_desc_long[cut];
-	hMJDPHI[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinDPhiMu,minDPhiMu,maxDPhiMu);
+	string name = "hMJDPHI" + algo_desc_short[algo] + "_" + 
+	  cuts_desc_short[cut];
+	string title = algo_desc_long[algo] + " muon-jet #Delta#phi with " + 
+	  cuts_desc_long[cut];
+	hMJDPHI[cut][algo] = new TH1F(name.c_str(), title.c_str(), 
+				      nBinDPhiMu,minDPhiMu,maxDPhiMu);
       }
   
 }//---------defineMuonJetDPhiHistos()
@@ -209,11 +231,14 @@ void defineHistos_MuonIso()
 #endif
 
   for(int cut = 0; cut != Num_selection_cuts; ++cut)
-    for(int algo = 0; algo != Num_trkAlgos; ++algo)
+    for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
       {
-	string name = "hISO" + algo_desc_short[algo] + "_" + cuts_desc_short[cut];
-	string title = algo_desc_long[algo] + " muon isol with " + cuts_desc_long[cut];
-	hISO[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinIsoMu,minIsoMu,maxIsoMu);
+	string name = "hISO" + algo_desc_short[algo] + "_" + 
+	  cuts_desc_short[cut];
+	string title = algo_desc_long[algo] + " muon isol with " + 
+	  cuts_desc_long[cut];
+	hISO[cut][algo] = new TH1F(name.c_str(), title.c_str(), nBinIsoMu,
+				   minIsoMu,maxIsoMu);
       }
   
 }//---------defineMuonPhiHistos()
@@ -227,14 +252,16 @@ void defineHistos_MuonChargePt()
   cout << " define histos MuonChargePt " << endl;
 #endif
 
-  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+  for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
     {
       string name = "hPT" + algo_desc_short[algo] + "_" + "plus";
       string title = " (+) " + algo_desc_long[algo] + " muon p_{T} qual ";
-      hPTplus[algo] = new TH1F(name.c_str(), title.c_str(), nBinPtMu,minPtMu,maxPtMu);
+      hPTplus[algo] = new TH1F(name.c_str(), title.c_str(), nBinPtMu,
+			       minPtMu,maxPtMu);
       name = "hPT" + algo_desc_short[algo] + "_" + "minus";
       title = " (-) " + algo_desc_long[algo] + " muon p_{T} qual ";
-      hPTminus[algo] = new TH1F(name.c_str(), title.c_str(), nBinPtMu,minPtMu,maxPtMu);
+      hPTminus[algo] = new TH1F(name.c_str(), title.c_str(), nBinPtMu,
+				minPtMu,maxPtMu);
     }
     
   return;
@@ -277,11 +304,11 @@ void defineHistos(int option)
 //tabulate results after the cut has been passed
 //TODO: Improve flexibility
 //-----------------------------------------------------------
-void tabulateMe(int Num_surv_cut[][Num_trkAlgos], int& cut_index, 
+void tabulateMe(int Num_surv_cut[][Num_trkAlgos][Num_flavors], int& cut_index, 
                 float weight, const wprime::Event * ev,
                 const wprime::Muon* mu,
-                const bool fill_entry[], int option,
-                bool accountme[][Num_trkAlgos])
+                const bool fill_entry[][Num_trkAlgos], int option,
+                bool accountme[][Num_trkAlgos][Num_flavors])
 {
 //-----------------------------------------------------------
 #if debugme
@@ -291,16 +318,17 @@ void tabulateMe(int Num_surv_cut[][Num_trkAlgos], int& cut_index,
   //if the accountme switch is on,
   //increase the number of events passing the cuts
   //and turn the switch off so we don't count more than once per event
-  for(int j = 0; j != Num_trkAlgos; ++j)
-    if (accountme[cut_index][j] && fill_entry[j]) 
-      {
-	++(Num_surv_cut[cut_index][j]);
-	accountme[cut_index][j] = false;
-      }
+  for(int f = 0; f != Num_flavors; ++f)
+    for(int mual = MuAlgo_MIN; mual <= MuAlgo_MAX; ++mual)
+      if (accountme[cut_index][mual][f] && fill_entry[f][mual]) 
+	{
+	  ++(Num_surv_cut[cut_index][mual][f]);
+	  accountme[cut_index][mual][f] = false;
+	}
   
   const TLorentzVector * P[Num_trkAlgos] = {
     &(mu->global.p), &(mu->tracker.p), &(mu->tpfms.p), &(mu->cocktail.p),
-    &(mu->picky.p),  &(mu->tmr.p)};
+    &(mu->picky.p),  &(mu->tmr.p), &(mu->dyt.p)};
 
   //fill the histograms
   if(option == 1) {
@@ -315,7 +343,7 @@ void tabulateMe(int Num_surv_cut[][Num_trkAlgos], int& cut_index,
     {
       const Int_t charge[Num_trkAlgos] = {
 	mu->global.q, mu->tracker.q, mu->tpfms.q, mu->cocktail.q,
-	mu->picky.q, mu->tmr.q};
+	mu->picky.q, mu->tmr.q, mu->dyt.q};
       
       fillHistos_MuonChargePt(cut_index, weight, charge, P, fill_entry);
     }
@@ -333,12 +361,12 @@ void tabulateMe(int Num_surv_cut[][Num_trkAlgos], int& cut_index,
 //Fill Histograms
 //-----------------------------------------------------------
 void fillHistos_MuonPt(int index, float weight, const TLorentzVector **p,
-                       const bool fill_entry[])
+                       const bool fill_entry[][Num_trkAlgos])
 {
 //-----------------------------------------------------------
-  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+  for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
     {
-      if(fill_entry[algo])
+      if(fill_entry[PT_INDEX][algo])
 	hPT[index][algo]->Fill( (p[algo])->Pt(), weight);
     }
    
@@ -347,24 +375,24 @@ void fillHistos_MuonPt(int index, float weight, const TLorentzVector **p,
 
 //-----------------------------------------------------------
 void fillHistos_MuonEta(int index, float weight, const TLorentzVector **p,
-                       const bool fill_entry[])
+			const bool fill_entry[][Num_trkAlgos])
 {
 //-----------------------------------------------------------
-  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+  for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
     {
-      if(fill_entry[algo])
+      if(fill_entry[PT_INDEX][algo])
 	hETA[index][algo]->Fill( (p[algo])->Eta(), weight);
     }
 }//fillHistos_MuonEta
 
 //-----------------------------------------------------------
 void fillHistos_MuonPhi(int index, float weight, const TLorentzVector **p,
-                       const bool fill_entry[])
+			const bool fill_entry[][Num_trkAlgos])
 {
 //-----------------------------------------------------------
-  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+  for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
     {
-      if(fill_entry[algo])
+      if(fill_entry[PT_INDEX][algo])
 	hPHI[index][algo]->Fill( (p[algo])->Phi(), weight);
     }
 
@@ -372,12 +400,13 @@ void fillHistos_MuonPhi(int index, float weight, const TLorentzVector **p,
 
 //-----------------------------------------------------------
 void fillHistos_MuonJetDPhi(int index, float weight, const wprime::Event * ev,
-			    const TLorentzVector **p, const bool fill_entry[])
+			    const TLorentzVector **p, 
+			    const bool fill_entry[][Num_trkAlgos])
 {
 //-----------------------------------------------------------
-  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+  for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
     {
-      if(fill_entry[algo])
+      if(fill_entry[PT_INDEX][algo])
 	hMJDPHI[index][algo]->Fill( XJetDPhi(*(p[algo]), ev), weight);
     }
   
@@ -385,24 +414,25 @@ void fillHistos_MuonJetDPhi(int index, float weight, const wprime::Event * ev,
 
 //-----------------------------------------------------------
 void fillHistos_TMass(int index, float weight, const wprime::Event * ev,
-		      const TLorentzVector **p, const bool fill_entry[])
+		      const TLorentzVector **p, 
+		      const bool fill_entry[][Num_trkAlgos])
 {
 //-----------------------------------------------------------
 
-// NB: this is most likely correct only for global muons; 
-// corrections to (pf)MET are needed for the rest of the tracking algorithms
-  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+  for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
     {
-      if(fill_entry[algo])
-	hTM[index][algo]->Fill(TMass( *(p[algo]), ev->pfmet), weight);
-    }
+      if(fill_entry[MT_INDEX][algo])
+	hTM[index][algo]->Fill(TMass( *(p[algo]), 
+				      getNewMET(ev, *(p[algo]))), 
+			       weight);
+}
 
 }//fillHistos_TMass
 
 
 //-----------------------------------------------------------
 void fillHistos_MuonIso(int index, float weight, const wprime::Muon* mu,
-                       const bool fill_entry[])
+			const bool fill_entry[][Num_trkAlgos])
 {
 //-----------------------------------------------------------
 
@@ -413,26 +443,27 @@ void fillHistos_MuonIso(int index, float weight, const wprime::Muon* mu,
     return;
   }
 
-  for(int algo = 0; algo != Num_trkAlgos; ++algo){
-    if(fill_entry[algo])
+  for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo){
+    if(fill_entry[PT_INDEX][algo])
       hISO[index][algo]->Fill(CombRelIsolation(mu,deltaRIsoIndex),weight);
-  }
+    }
   
 }//fillHistos_MuonIso
 
 //Fill Histograms
 //-----------------------------------------------------------
 void fillHistos_MuonChargePt(int index, float weight, const Int_t * Q, 
-			     const TLorentzVector **p, const bool fill_entry[])
+			     const TLorentzVector **p, 
+			     const bool fill_entry[][Num_trkAlgos])
 {
 //-----------------------------------------------------------
 
   //only fill the required histograms
   if (index < (Num_selection_cuts - Num_histo_sets_chargePt)) return;
 
-  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+  for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
     {
-      if(fill_entry[algo])
+      if(fill_entry[PT_INDEX][algo])
 	{
 	  if(Q[algo] > 0)
 	    hPTplus[algo]->Fill( (p[algo])->Pt(), weight);
@@ -453,13 +484,14 @@ void saveHistos_MainAnalysis()
   cout << " Saving MuonPt histos " << endl;
 #endif
   for(int i = 0; i != Num_selection_cuts; ++i)
-      for(int j = 0; j != Num_trkAlgos; ++j){
-        hPT[i][j]->Write();
-        hETA[i][j]->Write(); 
-        hPHI[i][j]->Write();  
-        hMJDPHI[i][j]->Write();
-        hISO[i][j]->Write();   
-        hTM[i][j]->Write();
+    for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
+      {
+        hPT[i][algo]->Write();
+        hETA[i][algo]->Write(); 
+        hPHI[i][algo]->Write();  
+        hMJDPHI[i][algo]->Write();
+        hISO[i][algo]->Write();   
+        hTM[i][algo]->Write();
       }
 }//-----saveHistos_MainAnalysis()
   
@@ -472,10 +504,10 @@ void saveHistos_MuonChargePt()
   cout << " Saving MuonChargePt histos " << endl;
 #endif
     
-  for(int j = 0; j != Num_trkAlgos; ++j)
+  for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
     {
-      hPTplus[j]->Write();
-      hPTminus[j]->Write();
+      hPTplus[algo]->Write();
+      hPTminus[algo]->Write();
     }
   return;
 }//-----saveHistos_MuonPtJetIso
@@ -523,10 +555,8 @@ void gatherFileBasicInfo(const wprime::InputFile& file,
 
 //Main Analysis study
 //---------------------------------------------------------------------------
-void GetMuonPtDistribution(const wprime::InputFile& file, 
-			   float Nexp_evt_cut[][Num_trkAlgos],
-                           float & Nexp_evt, int option,
-			   bool highestPtMuonOnly)
+void GetMuonPtDistribution(wprime::InputFile& file, float & Nexp_evt, 
+			   int option, bool highestPtMuonOnly)
 {
 //---------------------------------------------------------------------------
 
@@ -536,7 +566,7 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
   gatherFileBasicInfo(file, ev, nevents, weight);
   
   // counter for (unweighted) events after cuts
-  int Num_surv_cut[Num_selection_cuts][Num_trkAlgos] = {{0}};
+  int Num_surv_cut[Num_selection_cuts][Num_trkAlgos][Num_flavors] = {{{0}}};
 
   // the idea is to be able to swap selection cuts without having to modify both
   // the algo_desc_short array AND the code looping over the cuts 
@@ -557,10 +587,11 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
     // this will ensure that we increase Num_surv_cut maximum once per evet
     // whereas we nevertheless fill the histograms 
     // for every muon surviving the i-th cut
-    bool accountme[Num_selection_cuts][Num_trkAlgos];
-    for(int mm = 0; mm != Num_selection_cuts; ++mm)
-      for(int nn = 0; nn != Num_trkAlgos; ++nn)
-	accountme[mm][nn] = true;
+    bool accountme[Num_selection_cuts][Num_trkAlgos][Num_flavors];
+    for(int f = 0; f != Num_flavors; ++f)
+      for(int cut = 0; cut != Num_selection_cuts; ++cut)
+	for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
+	  accountme[cut][algo][f] = true;
     
     int iMuMin = 0; int iMuMax = ev->mu->GetLast() + 1;
     
@@ -584,40 +615,45 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
 #endif
       //get the muon
       theMu = (wprime::Muon *) ev->mu->At(mi);
-
-      bool fill_entry[Num_trkAlgos] = {true, true, true, true, true, true};
+      
+      bool fill_entry[Num_flavors][Num_trkAlgos];
+      for(int f = 0; f != Num_flavors; ++f)
+	for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
+	  fill_entry[f][algo] = true;
 
 #if dumpHighPtMuons
       bool HighPtMuon = false;
 #endif
-
+      
       for(int cut_index = 0; cut_index != Num_selection_cuts; ++cut_index)
 	{ // loop over selection cuts
 	  string arg = cuts_desc_short[cut_index];
-
+	  
 	  // call to function [as implemented in setupCutOder]
-	  bool survived_cut = (cuts[arg])(ev, theMu, fill_entry);
+	  bool * goodPt = &fill_entry[PT_INDEX][0];
+	  bool * goodMt = &fill_entry[MT_INDEX][0];
+	  bool survived_cut=(cuts[arg])(ev, theMu, goodPt, goodMt);
 	  if(!survived_cut)break; // skip rest of selection cuts
-
+	  
 	  tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, 
 		     fill_entry, option, accountme);
-
+	  
 #if dumpHighPtMuons
-	  if(file.samplename == "data" && cut_index == Num_selection_cuts-1)
+	  if(file.samplename=="data" && cut_index == Num_selection_cuts-1)
 	    {
-	      for(int i = 0; i != Num_trkAlgos; ++i)
-		if(fill_entry[i])
+	      for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
+		if(fill_entry[PT_INDEX][algo])
 		  {
 		    HighPtMuon = true;
 		    break;
 		  }
-
+	      
 	      //	      if(HighPtMuon || ev->run_no == 143657)
 	      if(HighPtMuon)
 		printHighPtMuon(ev, theMu, fill_entry);
 	    }
 #endif      
-
+	  
 	} // loop over selection cuts
 
     } //muon loop
@@ -625,10 +661,11 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
   } //event loop
   
   //Number of expected events for each cut (weighted)
-  for(int ii = 0; ii != Num_selection_cuts; ++ii)
-    for(int mual = 0; mual != Num_trkAlgos; ++mual)
-      Nexp_evt_cut[ii][mual] += Num_surv_cut[ii][mual] * weight;
-  
+  for(int f = 0; f != Num_flavors; ++f)
+    for(int cut = 0; cut != Num_selection_cuts; ++cut)
+      for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
+	file.Nexp_evt_cut[cut][algo][f] += Num_surv_cut[cut][algo][f] * weight;
+
   //total # of events (before any cuts)
   Nexp_evt += nevents * weight; 
   
@@ -639,13 +676,13 @@ void GetMuonPtDistribution(const wprime::InputFile& file,
 void printMe(const string & desc, const wprime::Muon* theMu)
 {
   const wprime::Track * Tk[Num_trkAlgos] = {
-    &(theMu->global), &(theMu->tracker), &(theMu->tpfms), &(theMu->cocktail),
-    &(theMu->picky),  &(theMu->tmr)};
-
-  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+    &(theMu->global), &(theMu->tracker), &(theMu->tpfms), 
+    &(theMu->cocktail), &(theMu->picky),  &(theMu->tmr), &(theMu->dyt)};
+  
+  for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
     {
       if(desc == "  pt = ")
-	cout << " " << algo_desc_short[algo] << desc << (Tk[algo])->p.Pt();
+	cout << " " <<algo_desc_short[algo] << desc << (Tk[algo])->p.Pt();
       else if(desc == " dpt = ")
 	cout << " " << algo_desc_short[algo] << desc << (Tk[algo])->dpt;
       else if(desc == "layers")
@@ -682,14 +719,19 @@ void printMe(const string & desc, const wprime::Muon* theMu)
 }
 
 void printHighPtMuon(const wprime::Event * ev, const wprime::Muon* theMu,
-		     const bool fill_entry[])
+		     const bool fill_entry[][Num_trkAlgos])
 {
   cout << " Run # = " << ev->run_no << " Event # = " 
        << ev->evt_no << " LS = " << ev->LS_no << endl;
 
 
-  cout << " pfMET = " << ev->pfmet.Mod() << endl;
-  cout << " M_T = " << TMass(theMu->global.p, ev->pfmet) << endl;
+  cout << " default pfMET = " << ev->pfmet.Mod() << endl;
+  TVector2 met = getNewMET(ev, theMu->global.p);
+  cout << " pfMET for global = " << met.Mod() << endl;
+  cout << " M_T for global = " << TMass(theMu->global.p, met) << endl;
+  met = getNewMET(ev, theMu->cocktail.p);
+  cout << " pfMET for cocktail = " << met.Mod() << endl;
+  cout << " M_T for cocktail = " << TMass(theMu->cocktail.p, met) << endl;
   printMe("  pt = ", theMu);
   printMe(" dpt = ", theMu);
   cout << " # of layers: (strip, pixel) " << endl;
@@ -709,8 +751,9 @@ void printHighPtMuon(const wprime::Event * ev, const wprime::Muon* theMu,
        << " Global prompt tight: " << theMu->GlobalMuonPromptTight << endl;
 
   cout << " Survives all cuts? ";
-  for(int i = 0; i != Num_trkAlgos; ++i)
-    cout << algo_desc_short[i] << ": " << fill_entry[i]
+  for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
+    cout << algo_desc_short[algo] << ": PT = "<< fill_entry[PT_INDEX][algo]
+	 << ": MT = " << fill_entry[MT_INDEX][algo]
 	 << " ";
   cout << endl << endl;
   
@@ -731,9 +774,8 @@ void GetDistributionGeneric(wprime::InputFile & file,
   // Define histograms according to the type of study
   defineHistos(option);
   
-  //initialize counters to be used in studies
+  //initialize expected-event counter
   float Nexp_evt = 0;
-  float Nexp_evt_cut[Num_selection_cuts][Num_trkAlgos] = {{0}};
 
   if(!file.tree)
     return;
@@ -741,8 +783,7 @@ void GetDistributionGeneric(wprime::InputFile & file,
   cout << " Processing sample " << file.description << endl;
   
   if (option == 1 || option == 2) 
-    GetMuonPtDistribution(file, Nexp_evt_cut, Nexp_evt,option,
-			  highestPtMuonOnly);
+    GetMuonPtDistribution(file, Nexp_evt,option, highestPtMuonOnly);
   else 
     {
       cout << " Option " << option << " is invalid, quiting..." << endl;
@@ -751,7 +792,7 @@ void GetDistributionGeneric(wprime::InputFile & file,
   
   // Print the results if needed according to study case
   if (option == 1 || option == 2) 
-    printSummary_MuonPt(out, file, Nexp_evt, Nexp_evt_cut);
+    printSummary_MuonPt(out, file, Nexp_evt);
   else  
     cout << " Nothing to print for this study " << endl;
   

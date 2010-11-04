@@ -2,6 +2,10 @@
 
 #include "UserCode/CMGWPrimeGroup/root_macros/loadCutsAndThresholds.h"
 
+vector<string> exactTriggers;
+vector<string> versionedTriggers;
+
+int PtMtCutIndex = -1;
 
 // Calculate efficiencies
 //------------------------------------------------------------------------
@@ -75,9 +79,9 @@ float XJetDPhi(const TLorentzVector& lv, const wprime::Event * ev)
 
  float dphi = -1;
   
-  int njets = ev->jet->GetLast() + 1;
+  int njets = ev->pfjet->GetLast() + 1;
   if (njets > 0){ 
-      TLorentzVector * jet = (TLorentzVector *) ev->jet->At(0);
+      TLorentzVector * jet = (TLorentzVector *) ev->pfjet->At(0);
       dphi = jet->DeltaPhi(lv);
     }
   
@@ -103,6 +107,14 @@ float TMass(const TLorentzVector& lv, const TVector2& themet)
 
 }//-------------------TMass
 
+// get newMET by subtracting from pfmetaddmu the px, py components 
+// of the corresponding high-pt muon algorithm
+// (ie. different MET for each muon reconstructor!)
+TVector2 getNewMET(const wprime::Event * ev, const TLorentzVector & mu_p)
+{
+  return TVector2(ev->pfmetaddmu.Px() - mu_p.Px(), 
+		  ev->pfmetaddmu.Py() - mu_p.Py());
+}
 
 
 // returns # of (global) muons with tracker-pt above <tracker_muon_pt>
@@ -132,10 +144,10 @@ unsigned NjetAboveThresh(float threshold, const wprime::Event * ev)
 {
   unsigned N = 0;
   
-  int njets = ev->jet->GetLast() + 1;
+  int njets = ev->pfjet->GetLast() + 1;
   for(int j = 0; j != njets; ++j)
     { // loop over jets
-      TLorentzVector * jet = (TLorentzVector *) ev->jet->At(j);
+      TLorentzVector * jet = (TLorentzVector *) ev->pfjet->At(j);
       if(jet->Et() > threshold)
 	++N;
     } // loop over jets
@@ -154,10 +166,10 @@ unsigned NjetAboveThresh(float threshold, float delta_phi,
   //------------------------------------------------------------------------
   unsigned N = 0;
   
-  int njets = ev->jet->GetLast() + 1;
+  int njets = ev->pfjet->GetLast() + 1;
   for(int j = 0; j != njets; ++j)
     { // loop over jets
-      TLorentzVector * jet = (TLorentzVector *) ev->jet->At(j);
+      TLorentzVector * jet = (TLorentzVector *) ev->pfjet->At(j);
       if(jet->Et() >threshold && 
 	 TMath::Abs(jet->DeltaPhi(mu->tracker.p)) > delta_phi)
 	++N;
@@ -171,58 +183,104 @@ unsigned NjetAboveThresh(float threshold, float delta_phi,
 
 // true if HLT conditions are met
 //-------------------------------------------------------------------
-bool PassedHLT(const wprime::Event* ev, const wprime::Muon*, bool [])
+bool PassedHLT(const wprime::Event* ev, const wprime::Muon*, bool [], bool [])
 {
   //-------------------------------------------------------------------
 #if debugmemore
   cout << " Executing PassedHLT()" << endl;
 #endif
   
-  // here the triggers that are to be used
-  bool HLT = (ev->HLT_Mu9 == 1) || (ev->HLT_Mu11 == 1);
-  return HLT;
+  if(exactTriggers.empty())
+    {
+      char exact[1024]; char versioned[1024];
+      // consider all HLT_Mu triggers up to 25 GeV
+      for(int thr = 9; thr <= 25; thr += 2) 
+	{
+	  sprintf(exact, "HLT_Mu%d", thr);
+	  sprintf(versioned, "HLT_Mu%d_v", thr);
+	  exactTriggers.push_back(exact);
+	  versionedTriggers.push_back(versioned);
+	}
+    }
+
+  int nhlt = ev->hlt->GetLast() + 1;
+
+  vector<string>::const_iterator it = exactTriggers.begin();
+  vector<string>::const_iterator it2 = versionedTriggers.begin();
+  
+  while(it != exactTriggers.end() && it2 != versionedTriggers.end())
+    { // loop over desired triggers
+
+      for(int j = 0; j!= nhlt;++j){ // loop over triggers stored in event
+	wprime::TrigInfo * trig = (wprime::TrigInfo *) ev->hlt->At(j);
+	string name = trig->name.c_str();
+	
+	if(trig->fired != 1 || trig->hltpre != 1)continue;
+	
+	if((name == *it) || (name.find(*it2) != string::npos))
+	  return true;
+    
+      } //loop over triggers stored in event
+
+      ++it; ++it2;
+
+    } // loop over desired triggers
+
+  return false;
+
+
 }//-------PassedHLT()
 
 
 
-// check if muon is in pt-range for the different algorithms, fill isThere
+// check if muon is in pt/Mt-range for the different algorithms, fill isThere
 // always returns true if muon != NULL
 //-------------------------------------------------------------------
-bool MuonPtWithinRange(const wprime::Event*, const wprime::Muon* mu, bool isThere[])
+bool MuonPtMtWithinRange(const wprime::Event* ev, const wprime::Muon* mu, 
+		       bool isTherePt[], bool isThereMt[])
 {
 //-------------------------------------------------------------------
 #if debugmemore
-  cout << " Processing MuonPtWithinRange() " << endl;
+  cout << " Processing MuonPtMtWithinRange() " << endl;
 #endif
-  
+
+  ++PtMtCutIndex; 
+  if(PtMtCutIndex == NumPtMtThresholds)PtMtCutIndex = 0;
+
   // Make sure there is a muon
   if(mu == 0) 
     {
-      for(int i = 0; i != Num_trkAlgos; ++i)
-	isThere[i] = false;
-
+      for (int mual = MuAlgo_MIN; mual <= MuAlgo_MAX; ++mual)
+	{
+	  isTherePt[mual] = isThereMt[mual] = false;
+	}
       return false;
     }
-
+  
   const TLorentzVector * P[Num_trkAlgos] = {
     &(mu->global.p), &(mu->tracker.p), &(mu->tpfms.p), &(mu->cocktail.p),
-    &(mu->picky.p),  &(mu->tmr.p)};
-
-  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+    &(mu->picky.p),  &(mu->tmr.p), &(mu->dyt.p)};
+  
+  for (int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
     {
+      TVector2 MET = getNewMET(ev, *(P[algo]));
+      
       float pt = (P[algo])->Pt();
-      isThere[algo] = (pt >= minPtMu);
+      float Mt = TMass(*P[algo], MET);
+      
+      isTherePt[algo] = isTherePt[algo] &&(pt>=PtThreshold[PtMtCutIndex]);
+      isThereMt[algo] = isThereMt[algo] &&(Mt>=MtThreshold[PtMtCutIndex]);
     }
-
+  
   return true;
-
+  
 }//-------MuonPtWithinRange
-
 
 
 // true if only one muon with track pT > the threshold
 //-------------------------------------------------------------------
-bool OnlyOneHighTrackPtMuon(const wprime::Event* ev, const wprime::Muon*, bool [])
+bool OnlyOneHighTrackPtMuon(const wprime::Event* ev, const wprime::Muon*, 
+			    bool [], bool [])
 {
 //-------------------------------------------------------------------
 #if debugmemore
@@ -236,7 +294,8 @@ bool OnlyOneHighTrackPtMuon(const wprime::Event* ev, const wprime::Muon*, bool [
 
 // true if isolation requirements satisfied for muon
 //-------------------------------------------------------------------
-bool IsolatedMuon(const wprime::Event*, const wprime::Muon* the_mu, bool [])
+bool IsolatedMuon(const wprime::Event*, const wprime::Muon* the_mu, 
+		  bool [], bool [])
 {
 //-------------------------------------------------------------------
 #if debugmemore
@@ -248,23 +307,58 @@ bool IsolatedMuon(const wprime::Event*, const wprime::Muon* the_mu, bool [])
 
 }//--------IsolatedMuon
 
+// check if muon, MET pass kinematic cuts, update goodQualMt (always return true)
+bool KinematicCuts(const wprime::Event* ev, const wprime::Muon* mu, 
+		   bool goodQualMt[])
+{
+#if debugmemore
+  cout << " Processing KinematicCuts() " << endl;
+#endif
+
+  const TLorentzVector * P[Num_trkAlgos] = {
+    &(mu->global.p), &(mu->tracker.p), &(mu->tpfms.p), &(mu->cocktail.p),
+    &(mu->picky.p),  &(mu->tmr.p), &(mu->dyt.p)};
+  
+  for (int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
+    {
+      if(!goodQualMt[algo])continue; // this is only for CPU-savings
+
+      TVector2 MET = getNewMET(ev, *(P[algo]));
+      float ratio = P[algo]->Pt()/MET.Mod();
+
+      TVector2 muon_T(P[algo]->Px(), P[algo]->Py());
+      float delta_phi = MET.DeltaPhi(muon_T);
+
+      if(ratio < 0.5 || ratio > 1.5 || TMath::Abs(delta_phi) < 2.5)
+	goodQualMt[algo] = false;
+
+    }
+
+  return true;      
+}
+
+// call NoJetActivity for muon-pt analysis and KinematicCuts for Mt analysis
+bool NoJetActivityKinematicCuts(const wprime::Event* ev, const wprime::Muon* mu,
+				bool goodQualPt[], bool goodQualMt[])
+{
+  if(!NoJetActivity(ev, mu))
+    {
+      for (int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
+	goodQualPt[algo] = false;
+    }
+  KinematicCuts(ev, mu, goodQualMt);
+
+  return true;
+}
+
+
 // true if there is no significant jet activity in event
 // (wrapper for ExceedMaxNumJetsOpposedToMu)
-bool NoJetActivity(const wprime::Event* ev, const wprime::Muon* the_mu, bool [])
+bool NoJetActivity(const wprime::Event* ev, const wprime::Muon* the_mu)
 //-------------------------------------------------------------------
 {
-  //  if(TMass(the_mu->global.p, ev->pfmet) < 200)return false;
-#if 0
-  float ratio = the_mu->tracker.p.Pt()/(ev->pfmet.Mod());
-  if(ratio < 0.5 || ratio > 1.5) return false;
-  TVector2 muon_T(the_mu->tracker.p.Px(), the_mu->tracker.p.Py());
-  float delta_phi = ev->pfmet.DeltaPhi(muon_T);
-  if(TMath::Abs(delta_phi) < 2.5)return false;
-  else return true;
-#endif
   return !ExceedMaxNumJetsOpposedToMu(MaxNjetsAboveThresh, EtJetCut, 
 				      Delta_Phi, the_mu,ev);
-
 } // --------------NoJetActivity
 
 // true if energetic Jet(s) found back to back with muon 
@@ -290,7 +384,8 @@ bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh,
 // check if muon satisfies quality requirements for all tracking algorithms.
 // fill goodQual; always return true
 //-------------------------------------------------------------------
-bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu, bool goodQual[])
+bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu, 
+		     bool goodQualPt[], bool goodQualMt[])
 {
 //-------------------------------------------------------------------
 #if debugmemore
@@ -315,8 +410,8 @@ bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu, bool goodQual
   //         mu->tracker.Nstrip_layerNoMeas) < 5)
  
   bool muonID = 
-    (mu->tracker.Ntrk_hits > 10)
-    && (TMath::Abs(mu->tracker.d0) < 0.2) 
+    (mu->global.Ntrk_hits > 10)
+    && (TMath::Abs(mu->global.d0) < 0.2) 
     && mu->AllTrackerMuons
     && mu->AllGlobalMuons  
     && mu->global.Nmuon_hits > 0
@@ -327,16 +422,17 @@ bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu, bool goodQual
   
   const wprime::Track * tk[Num_trkAlgos] = {
     &(mu->global), &(mu->tracker), &(mu->tpfms), &(mu->cocktail),
-    &(mu->picky),  &(mu->tmr)};
+    &(mu->picky),  &(mu->tmr), &(mu->dyt)};
 
-  for(int algo = 0; algo != Num_trkAlgos; ++algo)
+  for (int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
     {
       checkqual = //(( (tk[algo])->chi2 / (tk[algo])->ndof) < Chi2Cut) &&
 	TMath::Abs( (tk[algo])->p.Eta()) < Muon_Eta_Cut;
       
       // old value: muon's pt within range
       // new value: old value .AND. quality cuts
-      goodQual[algo] = goodQual[algo] && checkqual && isHard && muonID;
+      goodQualPt[algo] = goodQualPt[algo]&& checkqual && isHard && muonID;
+      goodQualMt[algo] = goodQualMt[algo]&& checkqual && isHard && muonID;
     }
   return true;
 
@@ -356,13 +452,14 @@ void setupCutOrder(selection_map & cuts)
 #if debugme
       cout << " Cut #" << (cut_i+1) << ": " << cuts_desc_long[cut_i]
 	   << " (" << arg << ") " << endl;
-#endif      
+#endif
       if(arg == "hlt")cuts[arg] = &PassedHLT;
-      else if(arg == "ptrange")cuts[arg] = &MuonPtWithinRange;
+      else if(arg == "thr1" || arg == "thr2" || arg == "thr3")
+	cuts[arg] = &MuonPtMtWithinRange;
       else if(arg == "qual")cuts[arg] = &GoodQualityMuon;
       else if(arg == "1mu")cuts[arg] = &OnlyOneHighTrackPtMuon;
       else if(arg == "iso")cuts[arg] = &IsolatedMuon;
-      else if(arg == "jet")cuts[arg] = &NoJetActivity;
+      else if(arg == "jetmet")cuts[arg] = &NoJetActivityKinematicCuts;
       else
 	{
 	  cout << " Oops! Don't understand how to prepare for cut nicknamed as "

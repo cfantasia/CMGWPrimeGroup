@@ -18,6 +18,11 @@
 #include "UserCode/CMGWPrimeGroup/root_macros/wprime_histo_constants.h"
 
 
+const int NumPtMtThresholds = 3;
+
+float PtThreshold[NumPtMtThresholds] = {100, 200, 300};
+float MtThreshold[NumPtMtThresholds] = {200, 300, 500};
+
 // $$$$$$$$$$$$$$$$$$$$$$$ Main Study
 // +++++++++++++++++++++++++++++++Analysis Thresholds:
 const float EtJetCut = 100; 
@@ -38,7 +43,7 @@ const float Muon_Eta_Cut = 1.8;
 
 // +++++++++++++++++++++++++++++++muon-pt histogram parameters
 const unsigned  nBinPtMu = 180;//45; // 400; // 45; // 18; 200; 380; 
-const float minPtMu = 100; // 100;
+const float minPtMu = PtThreshold[0]; // 100;
 const float  maxPtMu = 700; // 800; 2000;
 // +++++++++++++++++++++++++++++++muon-eta histogram parameters
 const unsigned nBinEtaMu = 28;
@@ -58,7 +63,7 @@ const float minIsoMu = 0;
 const float maxIsoMu = 0.5;
 // +++++++++++++++++++++++++++++++tmass histogram parameters
 const unsigned nBinTmMu = 160;
-const float minTmMu = 200;
+const float minTmMu = MtThreshold[0];
 const float maxTmMu = 600;
 // +++++++++++++++++++++++++Declare histograms 
 TH1F * hPT[Num_selection_cuts][Num_trkAlgos] = {{0}};
@@ -96,6 +101,11 @@ float XJetDPhi(const TLorentzVector& lv, const wprime::Event * ev);
 //transverse mass of an object with a met object
 float TMass(const TLorentzVector& lv, const TVector2& themet);
 
+// get newMET by subtracting from pfmetaddmu the px, py components 
+// of the corresponding high-pt muon algorithm
+// (ie. different MET for each muon reconstructor!)
+TVector2 getNewMET(const wprime::Event * ev, const TLorentzVector & mu_p);
+
 // returns muon tracker isolation
 float SumPtIsolation(const wprime::Muon* the_mu, unsigned detR_iso_index);
 
@@ -117,24 +127,24 @@ unsigned NjetAboveThresh(float threshold, float delta_phi,
 
 // +++++++++++++++++++++++++ Declare cut methods
 // true if HLT conditions are met
-bool PassedHLT(const wprime::Event* ev, const wprime::Muon*, bool []);
+bool PassedHLT(const wprime::Event* ev, const wprime::Muon*, bool [], bool []);
 
-// check if muon is in pt-range for the different algorithms, fill isThere;
+// check if muon is in pt/Mt-range for the different algorithms, fill isThere;
 // always returns true if muon != NULL
-bool MuonPtWithinRange(const wprime::Event*, const wprime::Muon* mu, 
-		       bool isThere[]);
+bool MuonPtMtWithinRange(const wprime::Event*, const wprime::Muon* mu, 
+		       bool isTherePt[], bool isThereMt[]);
 
 // true if only one muon with track pT > the threshold
 bool OnlyOneHighTrackPtMuon(const wprime::Event* ev, const wprime::Muon*, 
-			    bool []);
+			    bool [], bool []);
 
 // true if isolation requirements satisfied for muon
-bool IsolatedMuon(const wprime::Event*, const wprime::Muon* the_mu, bool []);
+bool IsolatedMuon(const wprime::Event*, const wprime::Muon* the_mu, 
+		  bool [], bool []);
 
 // true if there is no significant jet activity in event
 // (wrapper for ExceedMaxNumJetsOpposedToMu)
-bool NoJetActivity(const wprime::Event* ev, const wprime::Muon* the_mu, 
-		   bool []);
+bool NoJetActivity(const wprime::Event* ev, const wprime::Muon* the_mu);
 
 // true if energetic Jet(s) found back to back with muon 
 bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh, float et_jet_cut,
@@ -144,23 +154,34 @@ bool ExceedMaxNumJetsOpposedToMu(unsigned max_jets_aboveThresh, float et_jet_cut
 // check if muon satisfies quality requirements for all tracking algorithms, 
 // fill goodQual; always returns true
 bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu, 
-		     bool goodQual[]);
+		     bool goodQualPt[], bool goodQualMt[]);
 
 
-// function signature: expects the event, a muon and an array with length equal to 
+// function signature: expects the event, a muon and two arrays w/ length equal to 
 // Num_trkAlgos, to be updated with true/false, depending on selection cut;
+// PT_INDEX (MT_INDEX) corresponds to muon-pt (Mt) cuts
 //
 // the function returs false if rest of selection cuts should be skipped (e.g. when
 // the trigger has falied the event, or there are more than one muons in the event,
 // or the jet-activity is vetoing the event; should return true if the rest of the 
 // cuts should be executed (e.g. when quality cuts fail only for one particular
 // tracking algorithm)
-typedef bool (*funcPtr)(const wprime::Event *, const wprime::Muon*, bool * );
+typedef bool (*funcPtr)(const wprime::Event *, const wprime::Muon*, 
+			bool *, bool *);
 
 // key: cuts_desc_short[i], value: function pointer corresponding to selection cut
 typedef map<string, funcPtr> selection_map;
 
 // determine before event-loop the order in which cuts are to be executed
 void setupCutOrder(selection_map & cuts);
+
+// check if muon, MET pass kinematic cuts, update goodQualMt (always return true)
+bool KinematicCuts(const wprime::Event* ev, const wprime::Muon* mu, 
+		   bool goodQualMt[]);
+
+// call NoJetActivity for muon-pt analysis or KinematicCuts for Mt analysis
+bool NoJetActivityKinematicCuts(const wprime::Event* ev,
+				const wprime::Muon* mu,
+				bool [], bool goodQualMt[]);
 
 #endif // #define _load_cuts_h__
