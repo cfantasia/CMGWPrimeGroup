@@ -21,7 +21,7 @@
 
 using std::string; using std::cout; using std::endl;
 
-// signal-free, W'(0.8,1.0,1.1,1.2,1.3,1.4,1.5,2.0 TeV), Bgd
+// see common_fit.h for the mass points to which this array corresponds
 unsigned N_evt2gen[num_ref_plots]; 
 
 void getInputHistograms();
@@ -76,15 +76,14 @@ void cleanup(Results * result, TFile * output_file)
   delete output_file;
 }
 
-// mass_option 0: no signal, 1: 0.8, 2: 1.0 TeV, 3: 1.1 TeV, 4: 1.2 TeV, 5: 1.3 TeV
-// , 6: 1.4 TeV, 7: 1.5 TeV, 8: 2.0 TeV
+// see common_fit.h for the mass points to which mass_option corresponds
 // N_EXP: # of pseudo-experiments
 int fitSigBgd(unsigned mass_option, unsigned N_EXP, bool bgdOnlyFit)
 {
-  if(mass_option > 8)
+  if(mass_option > 11)
     {
       cout << " Ooops! Only understand " << 
-	" option = 0 (no signal) through 8 (2.0 TeV) "<< endl;
+	" option = 0 (no signal) through 11 (2.0 TeV) "<< endl;
       abort();
     }
 
@@ -137,7 +136,7 @@ int fitSigBgd(unsigned mass_option, unsigned N_EXP, bool bgdOnlyFit)
 				    wp11_orig, wp12_orig, wp13_orig, 
 				    wp14_orig, wp15_orig, wp20_orig, 
 				    bgd_orig};
-  // signal-free histogram corresponds to highest mass point (2.0 TeV)
+  // signal-free histogram corresponds to <mass_point_for_data> (see common_fit.h)
   // this is only for consistency, as no signal is added for mass_option=0
   ref_hist[0] = ref_hist[mass_point_for_data];
 
