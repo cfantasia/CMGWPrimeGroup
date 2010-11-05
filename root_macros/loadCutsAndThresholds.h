@@ -18,10 +18,6 @@
 #include "UserCode/CMGWPrimeGroup/root_macros/wprime_histo_constants.h"
 
 
-const int NumPtMtThresholds = 3;
-
-float PtThreshold[NumPtMtThresholds] = {100, 200, 300};
-float MtThreshold[NumPtMtThresholds] = {200, 300, 500};
 
 // $$$$$$$$$$$$$$$$$$$$$$$ Main Study
 // +++++++++++++++++++++++++++++++Analysis Thresholds:

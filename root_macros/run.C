@@ -71,8 +71,10 @@ void run()
 	   << endl;
 
       int thresh_counter = -1;
-      for(int i = THRESH_MIN; i <= THRESH_MAX; ++i){
+      for(int i = 0; i != NumPtMtThresholds; ++i){
+	int index = ThreshIndices[i];
 	++thresh_counter;
+
 	if (PT_INDEX == f)
 	  cout << "\n Muon-pt > " << PtThreshold[thresh_counter];
 	else if(MT_INDEX == f)
@@ -86,19 +88,18 @@ void run()
 	for(it = all_files.begin(); it != all_files.end(); ++it)
 	  { // loop over samples
 	    string sample = (*it).samplename;
-	    cout<< " "<< sample << ": " << (*it).Nexp_evt_cut[i][mual][f]
-		<< " (eff = " << 100.*((*it).eff[i][mual][f]) 
-		<< " +- " << 100.*((*it).deff[i][mual][f])
+	    cout<< " "<< sample << ": " 
+		<< (*it).Nexp_evt_cut[index][mual][f]
+		<< " (eff = " << 100.*((*it).eff[index][mual][f]) 
+		<< " +- " << 100.*((*it).deff[index][mual][f])
 		<< " %) " << endl;
 
 	    if(sample == "W" || sample == "QCD" || sample == "Z" || 
 	       sample == "Top")
-	      N_SM += (*it).Nexp_evt_cut[i][mual][f];
+	      N_SM += (*it).Nexp_evt_cut[index][mual][f];
 	    
-	    //	    if(sample == "Top")
-	    if(sample == "Z")
-	      //	      cout << " Total # of SM (W + QCD + Z + Top) events: " 
-	      cout << " Total # of SM (W + QCD + Z + but-no-Top) events: " 
+	    if(sample == "Top")
+	      cout << " Total # of SM (W + QCD + Z + Top) events: " 
 		   << N_SM << endl;	 
 	  } // loop over samples
 

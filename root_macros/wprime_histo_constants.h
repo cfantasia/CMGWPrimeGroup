@@ -18,9 +18,13 @@ const string FLAVOR_NAME[Num_flavors] = {" Muon-pt analysis", " Mt analysis"};
 const int MuAlgo_MIN = 3;
 const int MuAlgo_MAX = 3;
 
-// lower, upper limits for cuts that specify Pt/Mt thresholds
-const int THRESH_MIN = 5;
-const int THRESH_MAX = 7;
+const int NumPtMtThresholds = 3;
+
+float PtThreshold[NumPtMtThresholds] = {100, 140, 200};
+float MtThreshold[NumPtMtThresholds] = {200, 300, 500};
+
+// cut-indices for the <NumPtMtThresholds> thresholds
+int ThreshIndices[NumPtMtThresholds] = {5, 6, 7};
 
 // use this for histogram names
 const std::string algo_desc_short[Num_trkAlgos] = {"gbl","trk","tpfms","ckt","pic","tmr","dyt"};
@@ -33,6 +37,6 @@ const std::string cuts_desc_short[Num_selection_cuts] = {"hlt","qual","1mu","iso
 const std::string cuts_desc_long[Num_selection_cuts]= {"Single-muon HLT", "Quality", "1 muon only","Isolation", "Jet Veto OR kinematic cuts", "Threshold 1", "Threshold 2", "Threshold 3"}; 
 
 // last histogram after all cuts to be used for fit
-const std::string final_histo_desc = cuts_desc_short[Num_selection_cuts - 1];
+const std::string final_histo_desc = cuts_desc_short[ThreshIndices[0]];
 
 #endif // #ifndef _wprime_histo_constants_h__
