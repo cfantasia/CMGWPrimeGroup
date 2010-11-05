@@ -79,9 +79,9 @@ float XJetDPhi(const TLorentzVector& lv, const wprime::Event * ev)
 
  float dphi = -1;
   
-  int njets = ev->pfjet->GetLast() + 1;
+  int njets = ev->jet->GetLast() + 1;
   if (njets > 0){ 
-      TLorentzVector * jet = (TLorentzVector *) ev->pfjet->At(0);
+      TLorentzVector * jet = (TLorentzVector *) ev->jet->At(0);
       dphi = jet->DeltaPhi(lv);
     }
   
@@ -144,10 +144,10 @@ unsigned NjetAboveThresh(float threshold, const wprime::Event * ev)
 {
   unsigned N = 0;
   
-  int njets = ev->pfjet->GetLast() + 1;
+  int njets = ev->jet->GetLast() + 1;
   for(int j = 0; j != njets; ++j)
     { // loop over jets
-      TLorentzVector * jet = (TLorentzVector *) ev->pfjet->At(j);
+      TLorentzVector * jet = (TLorentzVector *) ev->jet->At(j);
       if(jet->Et() > threshold)
 	++N;
     } // loop over jets
@@ -166,10 +166,10 @@ unsigned NjetAboveThresh(float threshold, float delta_phi,
   //------------------------------------------------------------------------
   unsigned N = 0;
   
-  int njets = ev->pfjet->GetLast() + 1;
+  int njets = ev->jet->GetLast() + 1;
   for(int j = 0; j != njets; ++j)
     { // loop over jets
-      TLorentzVector * jet = (TLorentzVector *) ev->pfjet->At(j);
+      TLorentzVector * jet = (TLorentzVector *) ev->jet->At(j);
       if(jet->Et() >threshold && 
 	 TMath::Abs(jet->DeltaPhi(mu->tracker.p)) > delta_phi)
 	++N;
