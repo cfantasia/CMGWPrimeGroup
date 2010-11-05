@@ -13,7 +13,7 @@ o Setup a new working area (Default name: V161_branch, release:
 CMSSW_3_8_5)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-01-61-BR-01)
+V00-01-61-BR-02)
 
 o Compile the code
 
@@ -37,7 +37,12 @@ can be found in
 (a) /castor/cern.ch/user/c/cleonido/wprime/v161/ (made with V00-01-61, and
 o 21.78 pb^-1 of real data processed with 38X
 o MC samples are processed with 38x (Fall10)
-Use UserCode/CMGWprimeGroup/config/samples_cross_sections_v8.txt) 
+Use UserCode/CMGWprimeGroup/config/samples_cross_sections_v8/v9.txt)
+
+v8: W and DY are from PYTHIA, with cross-sections scaled to NLO (W) and
+POWHEG (DY) 
+v9: W and DY are from POWHEG, with W cross-section scaled to NLO
+ 
 
 
 (b) /castor/cern.ch/user/c/cleonido/wprime/v140/ (made with V00-01-40)

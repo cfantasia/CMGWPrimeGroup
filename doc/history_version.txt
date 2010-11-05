@@ -1,3 +1,24 @@
+05-NOV-10 (Christos)
+====================
+
+V00-01-61-BR-02:
+----------------
+(1) Temporarily added Top (MC@NLO) 36X sample till we get hold of a 38X
+version. Configurations for two sets of samples prepared:
+- samples_cross_sections_v8.txt: W and DY are from PYTHIA, with
+cross-sections scaled to NLO (W) and POWHEG (DY)
+- samples_cross_sections_v9.txt: W and DY are from POWHEG, with
+W cross-section scaled to NLO
+
+
+(2) Switched back to CaloJets for jet-activity veto. PFJets are calibrated
+differently and need separate study/optimization
+
+(3) Small macro tuning to allow swapping of Pt/Mt thresholds with 
+rest of selection cuts 
+
+
+
 04-NOV-10 (Edgar, Chad, Christos)
 =================================
 
