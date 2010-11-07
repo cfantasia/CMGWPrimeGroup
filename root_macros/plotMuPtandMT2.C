@@ -148,7 +148,7 @@ void doPlots(TFile * _file0, int option)
   if(option == 1)
     {
       data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
-      data->GetXaxis()->SetRangeUser(100, 300);
+      data->GetXaxis()->SetRangeUser(100, 400);
     }
   else if(option == 2)
     {
