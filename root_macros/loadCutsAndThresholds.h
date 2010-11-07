@@ -38,7 +38,7 @@ const float Muon_Eta_Cut = 1.8;
 #define dumpHighPtMuons 0
 
 // +++++++++++++++++++++++++++++++muon-pt histogram parameters
-const unsigned  nBinPtMu = 180;//45; // 400; // 45; // 18; 200; 380; 
+const unsigned  nBinPtMu = 270;//45; // 400; // 45; // 18; 200; 380; 
 const float minPtMu = PtThreshold[0]; // 100;
 const float  maxPtMu = 700; // 800; 2000;
 // +++++++++++++++++++++++++++++++muon-eta histogram parameters

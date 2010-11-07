@@ -271,7 +271,7 @@ bool MuonPtMtWithinRange(const wprime::Event* ev, const wprime::Muon* mu,
       isTherePt[algo] = isTherePt[algo] &&(pt>=PtThreshold[PtMtCutIndex]);
       isThereMt[algo] = isThereMt[algo] &&(Mt>=MtThreshold[PtMtCutIndex]);
     }
-  
+
   return true;
   
 }//-------MuonPtWithinRange
@@ -454,7 +454,9 @@ void setupCutOrder(selection_map & cuts)
 	   << " (" << arg << ") " << endl;
 #endif
       if(arg == "hlt")cuts[arg] = &PassedHLT;
-      else if(arg == "thr1" || arg == "thr2" || arg == "thr3")
+      else if(arg == "thr1" || arg == "thr2" || arg == "thr3" ||
+	      arg == "thr4" || arg == "thr5" || arg == "thr6" ||
+	      arg == "thr7" || arg == "thr8")
 	cuts[arg] = &MuonPtMtWithinRange;
       else if(arg == "qual")cuts[arg] = &GoodQualityMuon;
       else if(arg == "1mu")cuts[arg] = &OnlyOneHighTrackPtMuon;
