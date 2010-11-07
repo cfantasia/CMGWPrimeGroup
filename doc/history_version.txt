@@ -1,5 +1,23 @@
-05-NOV-10 (Christos)
+07-NOV-10 (Christos)
 ====================
+
+V00-01-61-BR-03:
+----------------
+(1) Updated configurations for MC samples with following combinations:
+
+v8: W and DY are from PYTHIA, with cross-sections scaled to NLO (W) and
+POWHEG (DY), and ttbar is NLO/36X [DEFAULT]
+v9: W and DY are from POWHEG, with W cross-section scaled to NLO, and 
+ttbar is NLO/36X [DEFAULT]
+v10: W, DY, top are from PYTHIA, with cross-sections scaled to NLO (W, 
+top) and POWHEG (DY)
+
+
+(2) Added histograms + event-count summary for more muon-pt/Mt thresholds
+
+(3) Updated muon-pt range of histograms
+
+
 
 V00-01-61-BR-02:
 ----------------
