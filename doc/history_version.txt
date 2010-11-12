@@ -1,3 +1,33 @@
+12-NOV-10 (Carmen, Christos, Edgar, Silvia)
+===========================================
+
+V00-01-61-BR-04:
+-----------------
+(1) Updated data root-tuple to 34.20 ipb (made by Carmen, Edgar)
+
+(2) Added another configuration v8b: same as v8, except that Pythia W->mu
+sample contains pileup (default for now)
+
+(3) Changed default jet-activity veto cut (100 GeV -> 50 GeV) based on
+study by Carmen. Better MC-data matching for muon-pt spectrum.
+
+(4) Minor tuning of histogram binning and pt/Mt threshold sets for which
+event-count summary is produced (based on current best-guess for paper
+needs). 
+
+(5) Updated fitting code to handle additional mass points introduced in
+V00-01-61-BR-01. Updated (muon-pt) resolution distributions with default
+cuts contained in V00-01-61-BR-03. 
+
+(6) Added CL95 macro for exclusion limit calculation (from Exotica twiki,
+adapted by Darren Poigh). Code needs to be updated to automatically grab
+needed information for produced histograms. Till then: user must 
+provide
+- estimated # of background events in signal region
+- signal efficiencies for all mass points after all selection cuts
+
+
+
 07-NOV-10 (Christos)
 ====================
 
