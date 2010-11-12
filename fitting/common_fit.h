@@ -45,7 +45,7 @@ float all_masses[mass_points] = {-9999, 600, 700, 800, 900, 1000, 1100,
 // by comparing with reference contained in "lumi_ipb" histogram
 // (NB: W MC-statistics are enough for up to ~100 pb^-1)
 //const float integ_lumi = 100.0; // in pb^-1
-const float integ_lumi = 21.78; // in pb^-1
+const float integ_lumi = 34.20; // in pb^-1
 
 // select algorithm option
 // 0: "glb", 1: "trk", 2: "tpfms", 3: "ckt", 4: "pic", 5: "tmr", 6: "dyt"
