@@ -140,7 +140,7 @@ void doPlots(TFile * _file0, int option)
   if(option == 1)
     desc = " p_{T} distribution";
   else if(option == 2)
-    desc = " muon + pfMET M_{T} distribution";
+    desc = " muon + (ckt-corrected) pfMET M_{T} distribution";
   string new_title = algo_desc_long[tracking_option] + desc;
   data->SetTitle(new_title.c_str());
   data->SetMarkerStyle(4);
@@ -148,12 +148,12 @@ void doPlots(TFile * _file0, int option)
   if(option == 1)
     {
       data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
-      data->GetXaxis()->SetRangeUser(100, 400);
+      data->GetXaxis()->SetRangeUser(100, 500);
     }
   else if(option == 2)
     {
       data->GetXaxis()->SetTitle("M_{T} (GeV/c^{2})");
-      data->GetXaxis()->SetRangeUser(200, 600);
+      data->GetXaxis()->SetRangeUser(200, 800);
     }
 
   if(data->GetMinimum() < 0.00001)data->SetMinimum(0.00001);
