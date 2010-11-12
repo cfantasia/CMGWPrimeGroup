@@ -91,7 +91,7 @@ int fitSigBgd_data()
   setResolution(g0);
   setLumi_ipb(lumi_ipb->GetBinContent(1));
 
-  float mass = 1100; float evt_sig = 1.0; bool bgdOnlyFit = false;
+  float mass = 1100; float evt_sig = 1.0; bool bgdOnlyFit = true;
   fitData(data, theory, result, 0, mass, evt_sig, bgdOnlyFit);
   root_tree->Fill();
   root_tree->AutoSave();
