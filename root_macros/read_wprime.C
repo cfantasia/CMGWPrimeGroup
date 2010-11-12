@@ -52,7 +52,7 @@ int read_wprime()
 	       << endl;
 	  cout << " tracker pt = " << mu->tracker.p.Pt()
 	       << ", global pt = " << mu->global.p.Pt()
-	       << ", tev 1st pt = " << mu->tev_1st.p.Pt() << endl;
+	       << ", tev 1st pt = " << mu->tpfms.p.Pt() << endl;
 
 	} // loop over muons
 
