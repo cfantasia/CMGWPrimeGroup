@@ -8,7 +8,7 @@
 // (exponential, landau, RBW) for pT < 150; limit fit to region above fXMIN
 // fXMAX should be something reasonable (ie. up to when we run out of statistics)
 const float fXMIN = 120;
-const float fXMAX = 700; // 850; // 1200;//850;
+const float fXMAX = 800; // 850; // 1200;//850;
 // in GeV
 const Double_t width_W = 2.196;
 const Double_t mass_W = 80.398;
