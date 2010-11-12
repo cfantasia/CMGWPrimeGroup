@@ -41,7 +41,7 @@ int read_wprime()
       cout << " ==============================================================\n";
       cout << " Event = " << i << " Evt # " << ev->evt_no << " run # " 
 	   << ev->run_no << endl;
-      cout << " HLT_Mu5 = " << bool(ev->HLT_Mu5) << endl;
+      //      cout << " HLT_Mu5 = " << bool(ev->HLT_Mu5) << endl;
       int nmuons = ev->mu->GetLast() + 1;
 	cout << " # of muons = " << nmuons << endl;
 
