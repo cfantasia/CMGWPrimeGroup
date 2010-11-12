@@ -55,20 +55,21 @@ void run()
   fout->cd();
   h->Write();
 
-  out.close();
   fout->Close();
 
+  cout << " Please find event-count summary after selection cuts in file " 
+       << outfile << endl;
 
-  cout << "\n\n Event count summary " << endl;
+  out << "\n\n\n Event count summary " << endl;
   for(int f = 0; f != Num_flavors; ++f){ // loop over pt & mt
 
-    cout << "\n" << FLAVOR_NAME[f] << endl;
+    out << "\n" << FLAVOR_NAME[f] << endl;
     
     for (int mual = MuAlgo_MIN; mual <= MuAlgo_MAX; ++mual){
       // loop over tracking algorithms
-      cout << " --------------------------------------------" << endl;
-      cout << " " << algo_desc_long[mual] << " muon reconstruction" << endl;
-      cout << " # of events after selection cuts for " << lumiPb << " pb^-1:"
+      out << " --------------------------------------------" << endl;
+      out << " " << algo_desc_long[mual] << " muon reconstruction" << endl;
+      out << " # of events after selection cuts for " << lumiPb << " pb^-1:"
 	   << endl;
 
       int thresh_counter = -1;
@@ -77,19 +78,19 @@ void run()
 	++thresh_counter;
 
 	if (PT_INDEX == f)
-	  cout << "\n Muon-pt > " << PtThreshold[thresh_counter];
+	  out << "\n Muon-pt > " << PtThreshold[thresh_counter];
 	else if(MT_INDEX == f)
-	  cout << "\n Mt > " << MtThreshold[thresh_counter];
+	  out << "\n Mt > " << MtThreshold[thresh_counter];
 	else
 	  abort();
-	cout << " GeV " << endl;
+	out << " GeV " << endl;
 
 	float N_SM = 0; 
 	vector<wprime::InputFile>::const_iterator it;
 	for(it = all_files.begin(); it != all_files.end(); ++it)
 	  { // loop over samples
 	    string sample = (*it).samplename;
-	    cout<< " "<< sample << ": " 
+	    out<< " "<< sample << ": " 
 		<< (*it).Nexp_evt_cut[index][mual][f]
 		<< " (eff = " << 100.*((*it).eff[index][mual][f]) 
 		<< " +- " << 100.*((*it).deff[index][mual][f])
@@ -100,7 +101,7 @@ void run()
 	      N_SM += (*it).Nexp_evt_cut[index][mual][f];
 	    
 	    if(sample == "Top")
-	      cout << " Total # of SM (W + QCD + Z + Top) events: " 
+	      out << " Total # of SM (W + QCD + Z + Top) events: " 
 		   << N_SM << endl;	 
 	  } // loop over samples
 
@@ -109,5 +110,8 @@ void run()
     } // loop over tracking algorithms
 
   } // loop over pt & mt
+
+  out.close();
+
 
 }
