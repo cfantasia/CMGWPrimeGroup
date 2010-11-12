@@ -454,9 +454,7 @@ void setupCutOrder(selection_map & cuts)
 	   << " (" << arg << ") " << endl;
 #endif
       if(arg == "hlt")cuts[arg] = &PassedHLT;
-      else if(arg == "thr1" || arg == "thr2" || arg == "thr3" ||
-	      arg == "thr4" || arg == "thr5" || arg == "thr6" ||
-	      arg == "thr7" || arg == "thr8")
+      else if(arg.find("thr") != string::npos)
 	cuts[arg] = &MuonPtMtWithinRange;
       else if(arg == "qual")cuts[arg] = &GoodQualityMuon;
       else if(arg == "1mu")cuts[arg] = &OnlyOneHighTrackPtMuon;
