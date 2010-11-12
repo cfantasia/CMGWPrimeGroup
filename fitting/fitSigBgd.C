@@ -43,7 +43,10 @@ TH1F * w_orig = 0;
 TH1F * qcd_orig = 0;
 TH1F * z_orig = 0;
 TH1F * top_orig = 0;
+TH1F * wp06_orig = 0;
+TH1F * wp07_orig = 0;
 TH1F * wp08_orig = 0;
+TH1F * wp09_orig = 0;
 TH1F * wp10_orig = 0;
 TH1F * wp11_orig = 0;
 TH1F * wp12_orig = 0;
@@ -132,7 +135,8 @@ int fitSigBgd(unsigned mass_option, unsigned N_EXP, bool bgdOnlyFit)
   makeReferenceHistograms();
   setResolution(g0[mass_option]);
 
-  TH1F * ref_hist[num_ref_plots] = {0, wp08_orig, wp10_orig, 
+  TH1F * ref_hist[num_ref_plots] = {0, wp06_orig, wp07_orig, wp08_orig, 
+				    wp09_orig, wp10_orig, 
 				    wp11_orig, wp12_orig, wp13_orig, 
 				    wp14_orig, wp15_orig, wp20_orig, 
 				    bgd_orig};
@@ -190,9 +194,24 @@ void getInputHistograms()
   if(badHisto(top_orig, "Top"))
     return;
 
+  string histo06 = "wprime0.6/" + histo;
+  wp06_orig = (TH1F* )file0->Get(histo06.c_str());
+  if(badHisto(wp06_orig, "wprime0.6"))
+    return;
+
+  string histo07 = "wprime0.7/" + histo;
+  wp07_orig = (TH1F* )file0->Get(histo07.c_str());
+  if(badHisto(wp07_orig, "wprime0.7"))
+    return;
+
   string histo08 = "wprime0.8/" + histo;
   wp08_orig = (TH1F* )file0->Get(histo08.c_str());
   if(badHisto(wp08_orig, "wprime0.8"))
+    return;
+
+  string histo09 = "wprime0.9/" + histo;
+  wp09_orig = (TH1F* )file0->Get(histo09.c_str());
+  if(badHisto(wp09_orig, "wprime0.9"))
     return;
 
   string histo10 = "wprime1.0/" + histo;
@@ -263,7 +282,7 @@ void makeReferenceHistograms()
   bgd_orig->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
 
   // # of events to generate per sample
-  assert(num_ref_plots == 10);
+  assert(num_ref_plots == 13);
 
   setLumi_ipb(lumi_ipb->GetBinContent(1));
 // use to scale histograms in Wprime_analysis.root
@@ -271,15 +290,18 @@ void makeReferenceHistograms()
   cout << " MC distributions made with " << lumi_ipb->GetBinContent(1)
        << " pb^{-1}, scale factor = " << k << endl;
   N_evt2gen[0] = 1;
-  N_evt2gen[1] = int(wp08_orig->Integral()*k + 0.5);
-  N_evt2gen[2] = int(wp10_orig->Integral()*k + 0.5);
-  N_evt2gen[3] = int(wp11_orig->Integral()*k + 0.5);
-  N_evt2gen[4] = int(wp12_orig->Integral()*k + 0.5);
-  N_evt2gen[5] = int(wp13_orig->Integral()*k + 0.5);
-  N_evt2gen[6] = int(wp14_orig->Integral()*k + 0.5);
-  N_evt2gen[7] = int(wp15_orig->Integral()*k + 0.5);
-  N_evt2gen[8] = int(wp20_orig->Integral()*k + 0.5);
-  N_evt2gen[9] = int((w_orig->Integral() + qcd_orig->Integral()
+  N_evt2gen[1] = int(wp06_orig->Integral()*k + 0.5);
+  N_evt2gen[2] = int(wp07_orig->Integral()*k + 0.5);
+  N_evt2gen[3] = int(wp08_orig->Integral()*k + 0.5);
+  N_evt2gen[4] = int(wp09_orig->Integral()*k + 0.5);
+  N_evt2gen[5] = int(wp10_orig->Integral()*k + 0.5);
+  N_evt2gen[6] = int(wp11_orig->Integral()*k + 0.5);
+  N_evt2gen[7] = int(wp12_orig->Integral()*k + 0.5);
+  N_evt2gen[8] = int(wp13_orig->Integral()*k + 0.5);
+  N_evt2gen[9] = int(wp14_orig->Integral()*k + 0.5);
+  N_evt2gen[10] = int(wp15_orig->Integral()*k + 0.5);
+  N_evt2gen[11] = int(wp20_orig->Integral()*k + 0.5);
+  N_evt2gen[12] = int((w_orig->Integral() + qcd_orig->Integral()
 		      + z_orig->Integral() + top_orig->Integral())*k + 0.5);
   
   float xmin = wp10_orig->GetXaxis()->GetXmin();
