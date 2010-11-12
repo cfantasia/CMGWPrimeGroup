@@ -21,7 +21,7 @@
 
 // $$$$$$$$$$$$$$$$$$$$$$$ Main Study
 // +++++++++++++++++++++++++++++++Analysis Thresholds:
-const float EtJetCut = 100; 
+const float EtJetCut = 50; 
 const unsigned MaxNjetsAboveThresh = 0;
 const float SumPtCut = 10; // Cone DeltaR =0.3; 
 const float CombRelCut = 0.15; // Cone DeltaR =0.3; 
@@ -38,9 +38,9 @@ const float Muon_Eta_Cut = 1.8;
 #define dumpHighPtMuons 0
 
 // +++++++++++++++++++++++++++++++muon-pt histogram parameters
-const unsigned  nBinPtMu = 270;//45; // 400; // 45; // 18; 200; 380; 
+const unsigned  nBinPtMu = 140;//45; // 400; // 45; // 18; 200; 380; 
 const float minPtMu = PtThreshold[0]; // 100;
-const float  maxPtMu = 700; // 800; 2000;
+const float  maxPtMu = 800; // 800; 2000;
 // +++++++++++++++++++++++++++++++muon-eta histogram parameters
 const unsigned nBinEtaMu = 28;
 const float minEtaMu = -2.4;
@@ -58,9 +58,9 @@ const unsigned nBinIsoMu = 25;
 const float minIsoMu = 0;
 const float maxIsoMu = 0.5;
 // +++++++++++++++++++++++++++++++tmass histogram parameters
-const unsigned nBinTmMu = 160;
+const unsigned nBinTmMu = 56;
 const float minTmMu = MtThreshold[0];
-const float maxTmMu = 600;
+const float maxTmMu = 900;
 // +++++++++++++++++++++++++Declare histograms 
 TH1F * hPT[Num_selection_cuts][Num_trkAlgos] = {{0}};
 TH1F * hETA[Num_selection_cuts][Num_trkAlgos] = {{0}};
