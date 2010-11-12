@@ -55,10 +55,11 @@ void run()
   fout->cd();
   h->Write();
 
-  out.close(); 
+  out.close();
   fout->Close();
 
 
+  cout << "\n\n Event count summary " << endl;
   for(int f = 0; f != Num_flavors; ++f){ // loop over pt & mt
 
     cout << "\n" << FLAVOR_NAME[f] << endl;
