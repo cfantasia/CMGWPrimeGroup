@@ -1,3 +1,43 @@
+19-NOV-10 (Christos, Edgar, Silvia)
+===================================
+V00-01-61-BR-05:
+-----------------
+(1) Tuning of analysis cuts:
+muon        :  |eta|<1.8 --> 2.1
+pt/MET ratio:  0.5<r<1.5 --> 0.4<r<1.5
+single-muon :  threshold on 2nd muon 20 GeV -> 25 GeV
+PV-filtering:  removed
+d0 cut      :  0.2 cm -> 0.02 cm
+
+
+(2) Hadronic-recoil correction of MET/Mt for W->mu: implementation based 
+on EWK working code. To switch on/off use flag "doRecoilCorrectionForW"
+(file loadCutsAndThresholds.h). Improves MC-data matching for 
+Mt ~< 200-300 GeV, does not really have an impact on tail of Mt
+distribution.  
+
+
+(3) New root-tuples available (copies can be found at
+/castor/cern.ch/user/c/cleonido/wprime/V161/):
+
+o Recreated data and W' samples (w/o PV-filtering)
+
+o Added W->mu with 15 <pt(mu)<100 GeV. This allows us to compare the W peak
+between MC and data (which looks quite nice actually! Try running plotMuPtandMT2.C!)
+
+Default configuration switched to one using POWHEG for W/Z (v9)
+
+STILL MISSING: 
+- W->tau, DY->tau
+- 38x/NLO top
+
+
+(4) Selection efficiencies: now using as reference/denominator (not the #
+of events in the file, but) the original # of produced events. Therefore,
+(in)efficiencies will also be including skimming selection + detector acceptance. 
+
+
+
 12-NOV-10 (Carmen, Christos, Edgar, Silvia)
 ===========================================
 

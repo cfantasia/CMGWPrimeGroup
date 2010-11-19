@@ -42,9 +42,8 @@ Use UserCode/CMGWprimeGroup/config/samples_cross_sections_v8/v8b/v9/10.txt)
 v8: W and DY are from PYTHIA, with cross-sections scaled to NLO (W) and
 POWHEG (DY), and ttbar is NLO/36X 
 v8b: Same as v8, , except that Pythia W->mu sample contains pileup 
-[DEFAULT FOR NOW] 
 v9: W and DY are from POWHEG, with W cross-section scaled to NLO, and 
-ttbar is NLO/36X [DEFAULT]
+ttbar is NLO/36X [DEFAULT FOR NOW]
 v10: W, DY, top are from PYTHIA, with cross-sections scaled to NLO (W, 
 top) and POWHEG (DY)
  
@@ -65,7 +64,7 @@ produces histograms (muon-pt, charge asymmetries, etc)
 
 (1) Example #1 (very simple)
 
-ln -s UserCode/CMGWPrimeGroup/root_macros/Make_example.C
+ln -s UserCode/CMGWPrimeGroup/root_macros/Make_example.C .
 root -b Make_example.C
 
 It will run read_wprime.C. The code demonstrates how to access muon
@@ -76,7 +75,8 @@ candidates in the Event and prints out some kinematic info.
 
 (2) Example #2 (more involved)
 
-ln -s UserCode/CMGWPrimeGroup/root_macros/Make.C
+ln -s UserCode/CMGWPrimeGroup/root_macros/Make.C .
+ln -s UserCode/CMGWprimeGroup/root_macros/ZMET_data.root .
 root -b Make.C
 
 The macro will compile and load the following files 

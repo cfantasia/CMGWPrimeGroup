@@ -29,7 +29,7 @@ cd $RELEASE_VERSION/src
 echo -e  "\n**************************"
 echo -e  " Checking out the code..."
 echo -e  "**************************"
-cvs -Q co -r V00-01-61-BR-04 UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-01-61-BR-05 UserCode/CMGWPrimeGroup
 # cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e "\n************************"
@@ -46,6 +46,9 @@ scramv1 b # (lots of output here, but nothing to worry about)
 echo -e "\n*************************************************"
 echo -e " Done compiling UserCode/CMGWPrimeGroup"
 echo -e " Now making symbolic link to example config file"
+echo -e " and example ROOT macro for running on data"
 echo -e "*************************************************"
 echo -e " \n"
 ln -s UserCode/CMGWPrimeGroup/test/myanalysis_TeVMuon_cfg.py .
+ln -s UserCode/CMGWPrimeGroup/root_macros/Make.C .
+ln -s UserCode/CMGWprimeGroup/root_macros/ZMET_data.root .
