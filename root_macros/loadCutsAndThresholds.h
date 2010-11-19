@@ -8,6 +8,8 @@
 #include <TTree.h>
 #include <TMath.h>
 #include <TH1F.h>
+#include <TH1D.h>
+#include <TH2D.h>
 
 #include <iostream>
 #include <fstream>
@@ -27,11 +29,12 @@ const float SumPtCut = 10; // Cone DeltaR =0.3;
 const float CombRelCut = 0.15; // Cone DeltaR =0.3; 
 const unsigned deltaRIsoIndex = 2; //for the isolation container
 const float PtTrackCut = 60 ;
-const float OneMuPtTrackCut = 20; 
+const float OneMuPtTrackCut = 25; 
 const float Chi2Cut = 10;
 //const float Delta_Phi = TMath::Pi() - 0.3;//min angle muon/jet for jet veto
 const float Delta_Phi = TMath::Pi()/2;//min angle muon/jet for jet veto
-const float Muon_Eta_Cut = 1.8;
+const float Muon_Eta_Cut = 2.1;
+const bool doRecoilCorrectionForW = true;
 
 #define debugme  0
 #define debugmemore 0
@@ -58,9 +61,9 @@ const unsigned nBinIsoMu = 25;
 const float minIsoMu = 0;
 const float maxIsoMu = 0.5;
 // +++++++++++++++++++++++++++++++tmass histogram parameters
-const unsigned nBinTmMu = 56;
+const unsigned nBinTmMu = 600;
 const float minTmMu = MtThreshold[0];
-const float maxTmMu = 900;
+const float maxTmMu = 1700;
 // +++++++++++++++++++++++++Declare histograms 
 TH1F * hPT[Num_selection_cuts][Num_trkAlgos] = {{0}};
 TH1F * hETA[Num_selection_cuts][Num_trkAlgos] = {{0}};
@@ -158,7 +161,7 @@ bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu,
 // PT_INDEX (MT_INDEX) corresponds to muon-pt (Mt) cuts
 //
 // the function returs false if rest of selection cuts should be skipped (e.g. when
-// the trigger has falied the event, or there are more than one muons in the event,
+// the trigger has failed the event, or there are more than one muons in the event,
 // or the jet-activity is vetoing the event; should return true if the rest of the 
 // cuts should be executed (e.g. when quality cuts fail only for one particular
 // tracking algorithm)
@@ -179,5 +182,10 @@ bool KinematicCuts(const wprime::Event* ev, const wprime::Muon* mu,
 bool NoJetActivityKinematicCuts(const wprime::Event* ev,
 				const wprime::Muon* mu,
 				bool [], bool goodQualMt[]);
+
+void setRecoilPerp(TH1D * h);
+void setRecoilParalvsVBPt(TH2D * hh);
+void setApplyCorrection(bool flag);
+void setRecoilProjections();
 
 #endif // #define _load_cuts_h__

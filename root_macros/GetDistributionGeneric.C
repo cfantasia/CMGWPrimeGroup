@@ -2,6 +2,7 @@
 #include <TROOT.h>
 #include <TClonesArray.h>
 #include <TFile.h>
+#include <TDirectoryFile.h>
 #include <TTree.h>
 #include <TMath.h>
 #include <TH1F.h>
@@ -15,6 +16,9 @@
 
 using std::cout; using std::endl; using std::string; using std::map;
 
+TH2D* hh = 0;
+TH1D* h = 0;
+  
 //methods in this macro:
 void printHighPtMuon(const wprime::Event * ev, const wprime::Muon* mu,
 		     const bool fill_entry[][Num_trkAlgos]);
@@ -88,10 +92,10 @@ void printSummary_MuonPt(ofstream & out, wprime::InputFile & file, float Nexp_ev
 	  else
 	    getEff(eff, deff, file.Nexp_evt_cut[i][mual][f]/(file.weight),
 		   file.Nexp_evt_cut[i-1][mual][f]/(file.weight));
-	  out << ", Relative eff = "<<eff*100 << " +- " << deff*100 << "%";
+	  out << ", Relative eff = "<<eff << " +- " << deff;
 	  getEff(eff, deff, file.Nexp_evt_cut[i][mual][f]/(file.weight), 
 		 Nexp_evt/(file.weight));
-	  out << ", Absolute eff = "<< eff*100 << " +- " << deff*100 << "%"
+	  out << ", Absolute eff = "<< eff << " +- " << deff
 	      << endl;
 	  
 	  file.eff[i][mual][f] = eff;
@@ -564,7 +568,7 @@ void GetMuonPtDistribution(wprime::InputFile& file, float & Nexp_evt,
   wprime::Event * ev = 0;
   int nevents = 0; float weight = 0.0;
   gatherFileBasicInfo(file, ev, nevents, weight);
-  
+
   // counter for (unweighted) events after cuts
   int Num_surv_cut[Num_selection_cuts][Num_trkAlgos][Num_flavors] = {{{0}}};
 
@@ -573,13 +577,14 @@ void GetMuonPtDistribution(wprime::InputFile& file, float & Nexp_evt,
   // in the very same order
   selection_map cuts;
   setupCutOrder(cuts);
+  bool shouldCorrectMt = ((file.samplename=="W" || file.samplename=="Wlowpt") && doRecoilCorrectionForW);
+  setApplyCorrection(shouldCorrectMt);
 
   // Loop over events 
   for(int i = 0; i != nevents; ++i){ // event loop
 #if debugme
     cout << " ########## Processing event #: " << i+1 << endl;
 #endif
-    
     file.tree->GetEntry(i);
     
     // switch to help us keep track of whether a muon has already
@@ -594,7 +599,6 @@ void GetMuonPtDistribution(wprime::InputFile& file, float & Nexp_evt,
 	  accountme[cut][algo][f] = true;
     
     int iMuMin = 0; int iMuMax = ev->mu->GetLast() + 1;
-    
     int iMu = -1;
     if(highestPtMuonOnly)
       {
@@ -637,12 +641,12 @@ void GetMuonPtDistribution(wprime::InputFile& file, float & Nexp_evt,
 	  
 	  tabulateMe(Num_surv_cut, cut_index, weight, ev, theMu, 
 		     fill_entry, option, accountme);
-	  
+
 #if dumpHighPtMuons
 	  if(file.samplename=="data" && cut_index == Num_selection_cuts-1)
 	    {
 	      for(int algo = MuAlgo_MIN; algo <= MuAlgo_MAX; ++algo)
-		if(fill_entry[PT_INDEX][algo])
+		if(fill_entry[MT_INDEX][algo])
 		  {
 		    HighPtMuon = true;
 		    break;
@@ -667,7 +671,8 @@ void GetMuonPtDistribution(wprime::InputFile& file, float & Nexp_evt,
 	file.Nexp_evt_cut[cut][algo][f] += Num_surv_cut[cut][algo][f] * weight;
 
   //total # of events (before any cuts)
-  Nexp_evt += nevents * weight; 
+  //  Nexp_evt += nevents * weight; // instead of using as denominator # of events in file
+  Nexp_evt += file.Nprod_evt * weight; // better to use original # of events
   
   delete ev;
 
@@ -759,6 +764,30 @@ void printHighPtMuon(const wprime::Event * ev, const wprime::Muon* theMu,
   
 }
 
+void setupZMETcorrection()
+{
+  if(!h || !hh)
+    {
+      string filename = "ZMET_data.root";
+      // open the Z data file with info about recoil
+      TFile* File = new TFile(filename.c_str(), "READONLY");
+      if(!File || File->IsZombie())
+	{
+	  cerr << " **** Oops! Missing file " << filename << endl;
+	  cerr << " Exiting... " << endl;
+	  abort();
+	}
+      TDirectoryFile * demo=(TDirectoryFile*)File->Get("pflow");
+      hh = (TH2D*)demo->Get("hMETParalvsVBPt");
+      hh->SetName("hh");
+      h = (TH1D*)demo->Get("hMETPerp");
+      h->SetName("h");
+      
+      setRecoilPerp(h);
+      setRecoilParalvsVBPt(hh);
+      setRecoilProjections();
+    }
+}
 
 //---------------------------------------------------------------------------
 void GetDistributionGeneric(wprime::InputFile & file, 
@@ -782,6 +811,8 @@ void GetDistributionGeneric(wprime::InputFile & file,
 
   cout << " Processing sample " << file.description << endl;
   
+  setupZMETcorrection();
+
   if (option == 1 || option == 2) 
     GetMuonPtDistribution(file, Nexp_evt,option, highestPtMuonOnly);
   else 

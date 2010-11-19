@@ -7,6 +7,36 @@ vector<string> versionedTriggers;
 
 int PtMtCutIndex = -1;
 
+bool applyCorrection = false;
+
+TH1D * hRecoilPerp = 0;
+TH2D * hRecoilParalvsVBPt = 0;
+TH1D ** histRecoilParal = NULL;
+
+void setRecoilPerp(TH1D * h){hRecoilPerp = h;}
+void setRecoilParalvsVBPt(TH2D * hh){hRecoilParalvsVBPt = hh;}
+void setApplyCorrection(bool flag){applyCorrection = flag;}
+
+void setRecoilProjections()
+{
+  assert(hRecoilParalvsVBPt != 0);
+  assert(histRecoilParal == 0);
+  int N = hRecoilParalvsVBPt->GetXaxis()->GetNbins();
+  histRecoilParal = new TH1D *[N];
+
+  for(int bin_no = 1; bin_no <= N; ++bin_no)
+    {
+      // Get projection in the W pt bin
+      histRecoilParal[bin_no-1] = new TH1D(*(hRecoilParalvsVBPt->ProjectionY("_pbinWpt_paral", bin_no, bin_no)));
+
+      if(histRecoilParal[bin_no-1]->Integral()==0) {
+	cout << " *** Couldn't correct for recoil for bin_no = " << bin_no
+	     << endl;
+
+      }
+    }
+}
+
 // Calculate efficiencies
 //------------------------------------------------------------------------
 void getEff(float & eff, float & deff,float Num,float Denom)
@@ -110,12 +140,62 @@ float TMass(const TLorentzVector& lv, const TVector2& themet)
 // get newMET by subtracting from pfmetaddmu the px, py components 
 // of the corresponding high-pt muon algorithm
 // (ie. different MET for each muon reconstructor!)
-TVector2 getNewMET(const wprime::Event * ev, const TLorentzVector & mu_p)
+TVector2 getNewMET_simple(const wprime::Event * ev, const TLorentzVector & mu_p)
 {
   return TVector2(ev->pfmetaddmu.Px() - mu_p.Px(), 
 		  ev->pfmetaddmu.Py() - mu_p.Py());
 }
 
+// Get new MET from Z data
+// if applyCorrection = true, will correct MET according to hadronic activity 
+// from Z->mumu reconstructed events
+TVector2 getNewMET(const wprime::Event * ev, const TLorentzVector & mu_p) 
+{    
+  if (!applyCorrection)
+    return getNewMET_simple(ev, mu_p);
+
+  int nW = ev->w_mc->GetLast() + 1;
+  TLorentzVector * W_p4 = 0;
+  for(int j = 0; j != nW; ++j)
+    {
+      wprime::MCParticle * w = (wprime::MCParticle *) ev->w_mc->At(j);
+      if(w->status != 3)continue;
+      W_p4 = &(w->p);
+    }
+
+  // correct the MET by taking into account hadronic recoil for given W pt
+
+  // Find bin corresponding to W pt
+  int binWpt = (hRecoilParalvsVBPt->GetXaxis())->FindBin(W_p4->Pt());
+  // protect against outliers: EITHER use the last bin OR return MET w/o correction
+  if(binWpt > hRecoilParalvsVBPt->GetXaxis()->GetNbins())
+    binWpt = hRecoilParalvsVBPt->GetXaxis()->GetNbins();
+  //    return getNewMET_simple(ev, mu_p);
+
+
+#if 0
+  double pt_mean_paral = histRecoilParal[binWpt-1]->GetMean();
+  double pt_sigma_paral = histRecoilParal[binWpt-1]->GetRMS();
+  double pt_mean_perp = hRecoilPerp->GetMean();
+  double pt_sigma_perp = hRecoilPerp->GetRMS();
+#endif
+
+  // Shoot random MET (parallel) from the Z histograms
+  double dataSampledMETParal= histRecoilParal[binWpt-1]->GetRandom();
+  // Shoot perpendicular component
+  double dataSampledMETPerp = hRecoilPerp->GetRandom();
+
+  // Rotate back from system in which the boson is in the x axis
+  double cosW = W_p4->Px()/W_p4->Pt();
+  double sinW = W_p4->Py()/W_p4->Pt();
+  double dataSampledMEx = 
+    cosW*dataSampledMETParal - sinW*dataSampledMETPerp;
+  double dataSampledMEy = 
+    sinW*dataSampledMETParal + cosW*dataSampledMETPerp;
+  double dataMEx = dataSampledMEx - mu_p.Px();
+  double dataMEy = dataSampledMEy - mu_p.Py();
+  return TVector2(dataMEx,dataMEy);
+}
 
 // returns # of (global) muons with tracker-pt above <tracker_muon_pt>
 //------------------------------------------------------------------------
@@ -189,7 +269,7 @@ bool PassedHLT(const wprime::Event* ev, const wprime::Muon*, bool [], bool [])
 #if debugmemore
   cout << " Executing PassedHLT()" << endl;
 #endif
-  
+
   if(exactTriggers.empty())
     {
       char exact[1024]; char versioned[1024];
@@ -329,7 +409,7 @@ bool KinematicCuts(const wprime::Event* ev, const wprime::Muon* mu,
       TVector2 muon_T(P[algo]->Px(), P[algo]->Py());
       float delta_phi = MET.DeltaPhi(muon_T);
 
-      if(ratio < 0.5 || ratio > 1.5 || TMath::Abs(delta_phi) < 2.5)
+      if(ratio < 0.4 || ratio > 1.5 || TMath::Abs(delta_phi) < 2.5)
 	goodQualMt[algo] = false;
 
     }
@@ -396,22 +476,13 @@ bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu,
   //for the latest quality cuts
   
   //This is consider now an old cut. Put on-hold for the moment
-  bool isHard = mu->tracker.p.Pt() >= PtTrackCut;
-  isHard = true;
+  //  bool isHard = mu->tracker.p.Pt() >= PtTrackCut;
 
   bool checkqual = false;
   
-  //This cut is on-hold. In the barrel, it
-  // is effectively the same as using
-  //# hits in the tracker:
-  //
-  //((mu->tracker.Npixel_layer + mu->tracker.Nstrip_layer) >= 10)
-  //    && ((mu->tracker.Npixel_layerNoMeas + 
-  //         mu->tracker.Nstrip_layerNoMeas) < 5)
- 
   bool muonID = 
     (mu->global.Ntrk_hits > 10)
-    && (TMath::Abs(mu->global.d0) < 0.2) 
+    && (TMath::Abs(mu->global.d0) < 0.02) 
     && mu->AllTrackerMuons
     && mu->AllGlobalMuons  
     && mu->global.Nmuon_hits > 0
@@ -431,8 +502,8 @@ bool GoodQualityMuon(const wprime::Event*, const wprime::Muon* mu,
       
       // old value: muon's pt within range
       // new value: old value .AND. quality cuts
-      goodQualPt[algo] = goodQualPt[algo]&& checkqual && isHard && muonID;
-      goodQualMt[algo] = goodQualMt[algo]&& checkqual && isHard && muonID;
+      goodQualPt[algo] = goodQualPt[algo]&& checkqual && muonID;
+      goodQualMt[algo] = goodQualMt[algo]&& checkqual && muonID;
     }
   return true;
 
