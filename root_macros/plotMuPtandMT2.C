@@ -87,6 +87,11 @@ void doPlots(TFile * _file0, int option)
   if(badHisto(w, "W"))
     return;
 
+  string histoWlpt = "Wlowpt/" + histo;
+  TH1F * wlpt = (TH1F* ) _file0->Get(histoWlpt.c_str());
+  if(badHisto(wlpt, "Wlowpt"))
+      return;
+
   string histoQ = "QCD/" + histo;
   TH1F * qcd = (TH1F* )_file0->Get(histoQ.c_str());
   if(badHisto(qcd, "QCD"))
@@ -135,6 +140,7 @@ void doPlots(TFile * _file0, int option)
   bgd->Add(qcd);  
   bgd->Add(top);
   bgd->Add(w);
+  bgd->Add(wlpt);
 
   string desc = "";
   if(option == 1)
@@ -143,17 +149,18 @@ void doPlots(TFile * _file0, int option)
     desc = " muon + (ckt-corrected) pfMET M_{T} distribution";
   string new_title = algo_desc_long[tracking_option] + desc;
   data->SetTitle(new_title.c_str());
-  data->SetMarkerStyle(4);
-  data->SetMarkerSize(1.3);
+  //  data->SetMarkerStyle(4);
+  // data->SetMarkerSize(1.3);
+  data->SetMarkerStyle(8);
   if(option == 1)
     {
       data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
-      data->GetXaxis()->SetRangeUser(100, 500);
+      data->GetXaxis()->SetRangeUser(25, 500);
     }
   else if(option == 2)
     {
       data->GetXaxis()->SetTitle("M_{T} (GeV/c^{2})");
-      data->GetXaxis()->SetRangeUser(200, 800);
+      data->GetXaxis()->SetRangeUser(40, 1000);
     }
 
   if(data->GetMinimum() < 0.00001)data->SetMinimum(0.00001);
