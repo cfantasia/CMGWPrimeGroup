@@ -96,8 +96,8 @@ void run()
 		<< " +- " << 100.*((*it).deff[index][mual][f])
 		<< " %) " << endl;
 
-	    if(sample == "W" || sample == "QCD" || sample == "Z" || 
-	       sample == "Top")
+	    if(sample == "W" || sample == "Wlowpt" || sample == "QCD" 
+	       || sample == "Z" || sample == "Top")
 	      N_SM += (*it).Nexp_evt_cut[index][mual][f];
 	    
 	    if(sample == "Top")
