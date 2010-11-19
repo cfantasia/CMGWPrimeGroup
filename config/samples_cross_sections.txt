@@ -1,14 +1,20 @@
 samplename = data
 description = Muon pt > 25 GeV skim, 34.2 pb^-1
 x-section = 1
-pathname = MuSkim_V161_34.2ipb_132440-149294.root
+pathname = MuSkim_V161_NoVtxFilter_34.2ipb_132440-149294.root
 Nprod_evt = 1
 
 samplename = W
-description = PYTHIA W->munu with PU without eta cut; using NLO cross-section
+description = POWHEG W->munu without eta cut; using NLO cross-section
 x-section = 10312
-pathname = WPUPythia.root
-Nprod_evt = 5126330
+pathname = WPowheg.root
+Nprod_evt = 3987868
+
+samplename = Wlowpt
+description = PYTHIA W->munu without eta cut; 15 < pt(mu) < 100 GeV skim
+x-section = 10312
+pathname = WPythia15.root
+Nprod_evt = 500000
 
 samplename = QCD
 description = PYTHIA InclusiveMu15 with GEN muon-pt > 15 GeV, pthat > 20 GeV,|eta|<2.5
@@ -17,10 +23,10 @@ pathname = QCD_EnrPtH20_Pt15.root
 Nprod_evt = 29504866
 
 samplename = Z
-description = PYTHIA Z->mumu with M_mumu > 20 GeV; using POWHEG cross-section
+description = POWHEG Z->mumu with M_mumu > 20 GeV
 x-section = 1614
-pathname = DY_M20.root
-Nprod_evt = 2289913
+pathname = DYPowheg_M20.root
+Nprod_evt = 1998931
 
 samplename = Top
 description = MC@NLO inclusive t-tbar
