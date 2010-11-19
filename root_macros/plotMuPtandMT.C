@@ -86,6 +86,11 @@ void doPlots(unsigned i, TFile * _file0, int option)
   if(badHisto(w, "W"))
     return;
 
+  string histoWlpt = "Wlowpt/" + histo;
+  TH1F * wlpt = (TH1F* ) _file0->Get(histoWlpt.c_str());
+  if(badHisto(wlpt, "Wlowpt"))
+    return;
+
   string histoQ = "QCD/" + histo;
   TH1F * qcd = (TH1F* )_file0->Get(histoQ.c_str());
   if(badHisto(qcd, "QCD"))
@@ -125,6 +130,7 @@ void doPlots(unsigned i, TFile * _file0, int option)
   z->SetLineColor(kOrange);
   qcd->SetLineColor(kGray+2);
   w->SetLineColor(kAzure+1);
+  wlpt->SetLineColor(kAzure+1);
   wp10->SetLineColor(kRed);
   wp15->SetLineColor(kRed+1);
   wp20->SetLineColor(kRed+2);
@@ -134,6 +140,7 @@ void doPlots(unsigned i, TFile * _file0, int option)
   z->SetFillColor(kOrange);
   qcd->SetFillColor(kGray+2);
   w->SetFillColor(kAzure+1);
+  wlpt->SetFillColor(kAzure+1);
   wp10->SetFillColor(kRed);
   wp15->SetFillColor(kRed+1);
   wp20->SetFillColor(kRed+2);
@@ -145,6 +152,7 @@ void doPlots(unsigned i, TFile * _file0, int option)
   z->SetFillStyle(fill_style_bgd);
   qcd->SetFillStyle(fill_style_bgd);
   w->SetFillStyle(fill_style_bgd);
+  wlpt->SetFillStyle(fill_style_bgd);
   
   wp10->SetFillStyle(fill_style_sig);
   wp15->SetFillStyle(fill_style_sig);
@@ -154,6 +162,8 @@ void doPlots(unsigned i, TFile * _file0, int option)
   hs->Add(qcd);  
   hs->Add(top);
   hs->Add(w);
+  hs->Add(wlpt);
+  
 
   // this is needed when background is eliminated and the y-axis is linear (as opposed to log)
   if(data->GetMaximum() < wp10->GetMaximum())data->SetMaximum(wp10->GetMaximum());
@@ -170,17 +180,18 @@ void doPlots(unsigned i, TFile * _file0, int option)
       string new_title = algo_desc_long[tracking_option] + desc;
       data->SetTitle(new_title.c_str());
     }
-  data->SetMarkerStyle(20);
-  data->SetMarkerSize(1.3);
+  data->SetMarkerStyle(8);
+  //  data->SetMarkerStyle(20);
+  // data->SetMarkerSize(1.3);
   if(option == 1)
     {
       data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
-      data->GetXaxis()->SetRangeUser(100, 500);
+      data->GetXaxis()->SetRangeUser(25, 600);
     }
   else if(option == 2)
     {
       data->GetXaxis()->SetTitle("M_{T} (GeV/c^{2})");
-      data->GetXaxis()->SetRangeUser(200, 800);
+      data->GetXaxis()->SetRangeUser(40, 1000);
     }
   data->Draw("e");
   hs->Draw("same");
