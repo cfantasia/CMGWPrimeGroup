@@ -1,3 +1,17 @@
+23-NOV-10 (Christos, Silvia)
+============================
+V00-01-61-BR-06:
+-----------------
+Updated cross-section values for W/Z/DY (NNLO) and ttbar
+(NLO). Configuration files modified accordingly. New versions contain: 
+
+v8 : W and Z/DY are from PYTHIA, and ttbar is from Madgraph. W/Z/DY 
+(ttbar) cross-sections are scaled to NNLO (NLO)
+v8b: Same as v8, except that Pythia W->mu sample contains pileup 
+v9 : Same as v8, excpet that W and Z/DY are from POWHEG [DEFAULT]
+v10: Obsolete version, removed
+
+
 19-NOV-10 (Christos, Edgar, Silvia)
 ===================================
 V00-01-61-BR-05:

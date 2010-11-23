@@ -13,7 +13,7 @@ o Setup a new working area (Default name: V161_branch, release:
 CMSSW_3_8_5)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-01-61-BR-04)
+V00-01-61-BR-06)
 
 o Compile the code
 
@@ -37,16 +37,12 @@ can be found in
 (a) /castor/cern.ch/user/c/cleonido/wprime/v161/ (made with V00-01-61, and
 o 34.20 pb^-1 of real data processed with 38X
 o MC samples are processed with 38x (Fall10)
-Use UserCode/CMGWprimeGroup/config/samples_cross_sections_v8/v8b/v9/10.txt)
+Use UserCode/CMGWprimeGroup/config/samples_cross_sections_v8/v8b/v9.txt)
 
-v8: W and DY are from PYTHIA, with cross-sections scaled to NLO (W) and
-POWHEG (DY), and ttbar is NLO/36X 
-v8b: Same as v8, , except that Pythia W->mu sample contains pileup 
-v9: W and DY are from POWHEG, with W cross-section scaled to NLO, and 
-ttbar is NLO/36X [DEFAULT FOR NOW]
-v10: W, DY, top are from PYTHIA, with cross-sections scaled to NLO (W, 
-top) and POWHEG (DY)
- 
+v8 : W and Z/DY are from PYTHIA, and ttbar is from Madgraph. W/Z/DY 
+(ttbar) cross-sections are scaled to NNLO (NLO)
+v8b: Same as v8, except that Pythia W->mu sample contains pileup 
+v9 :  Same as v8, excpet that W and Z/DY are from POWHEG [DEFAULT]
 
 
 (b) /castor/cern.ch/user/c/cleonido/wprime/v140/ (made with V00-01-40)
