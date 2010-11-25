@@ -1,3 +1,23 @@
+23-NOV-10 (Christos)
+====================
+V00-01-61-BR-07:
+-----------------
+
+Fixed bug introduced in code with tag V00-01-61-BR-05.
+
+Bug description: the problem gets triggered when the hadronic recoil
+correction is enabled (for W->mu MC samples). The code calculates a new
+random MET/Mt value each time a new Mt threshold is considered for 
+updating the event-counts. Which means that one can have the same muon-pt
+and different MET/Mt every time the program checks if its Mt is (say) 
+above 300 or 600 GeV. This can lead to a few % difference between what is
+stored in the histograms and is printed out at the end of the job.  
+
+The bug has been fixed by splitting the MET into a hadronic and a muon
+contribution, and by making sure the hadronic component gets corrected (if
+needed) maximum once for each event.
+
+
 23-NOV-10 (Christos, Silvia)
 ============================
 V00-01-61-BR-06:
