@@ -8,6 +8,9 @@ vector<string> versionedTriggers;
 int PtMtCutIndex = -1;
 
 bool applyCorrection = false;
+bool hadronicMETcalculated = false;
+
+TVector2 hadronicMETcached;
 
 TH1D * hRecoilPerp = 0;
 TH2D * hRecoilParalvsVBPt = 0;
@@ -16,6 +19,7 @@ TH1D ** histRecoilParal = NULL;
 void setRecoilPerp(TH1D * h){hRecoilPerp = h;}
 void setRecoilParalvsVBPt(TH2D * hh){hRecoilParalvsVBPt = hh;}
 void setApplyCorrection(bool flag){applyCorrection = flag;}
+void setHadronicMETCalculated(bool flag){hadronicMETcalculated = flag;}
 
 void setRecoilProjections()
 {
@@ -137,22 +141,17 @@ float TMass(const TLorentzVector& lv, const TVector2& themet)
 
 }//-------------------TMass
 
-// get newMET by subtracting from pfmetaddmu the px, py components 
-// of the corresponding high-pt muon algorithm
-// (ie. different MET for each muon reconstructor!)
-TVector2 getNewMET_simple(const wprime::Event * ev, const TLorentzVector & mu_p)
-{
-  return TVector2(ev->pfmetaddmu.Px() - mu_p.Px(), 
-		  ev->pfmetaddmu.Py() - mu_p.Py());
-}
 
-// Get new MET from Z data
-// if applyCorrection = true, will correct MET according to hadronic activity 
-// from Z->mumu reconstructed events
-TVector2 getNewMET(const wprime::Event * ev, const TLorentzVector & mu_p) 
-{    
+// get hadronic MET component (that needs to be corrected 
+// if applyCorrection=true)from Z data; this will be done according to hadronic 
+// activity from Z->mumu reconstructed events
+TVector2 getHadronicMET(const wprime::Event * ev)
+{
   if (!applyCorrection)
-    return getNewMET_simple(ev, mu_p);
+    return ev->pfmetaddmu;
+
+  if(hadronicMETcalculated)
+    return hadronicMETcached;
 
   int nW = ev->w_mc->GetLast() + 1;
   TLorentzVector * W_p4 = 0;
@@ -163,14 +162,13 @@ TVector2 getNewMET(const wprime::Event * ev, const TLorentzVector & mu_p)
       W_p4 = &(w->p);
     }
 
-  // correct the MET by taking into account hadronic recoil for given W pt
+  // correct hadronic MET by taking into account recoil for given W pt
 
   // Find bin corresponding to W pt
   int binWpt = (hRecoilParalvsVBPt->GetXaxis())->FindBin(W_p4->Pt());
   // protect against outliers: EITHER use the last bin OR return MET w/o correction
   if(binWpt > hRecoilParalvsVBPt->GetXaxis()->GetNbins())
     binWpt = hRecoilParalvsVBPt->GetXaxis()->GetNbins();
-  //    return getNewMET_simple(ev, mu_p);
 
 
 #if 0
@@ -192,10 +190,25 @@ TVector2 getNewMET(const wprime::Event * ev, const TLorentzVector & mu_p)
     cosW*dataSampledMETParal - sinW*dataSampledMETPerp;
   double dataSampledMEy = 
     sinW*dataSampledMETParal + cosW*dataSampledMETPerp;
-  double dataMEx = dataSampledMEx - mu_p.Px();
-  double dataMEy = dataSampledMEy - mu_p.Py();
-  return TVector2(dataMEx,dataMEy);
+
+  hadronicMETcached.Set(dataSampledMEx, dataSampledMEy);
+  setHadronicMETCalculated(true);
+  return hadronicMETcached;    
 }
+
+
+// Get new MET: there are two corrections to be made:
+// (a) the hadronic MET component (that needs to be corrected 
+// if applyCorrection=true)from Z data; this will be done according to hadronic 
+// activity from Z->mumu reconstructed events
+// (b) the muon-pt component that needs to be updated if we switch to one
+// of the dedicated high-pt muon reconstructors
+TVector2 getNewMET(const wprime::Event * ev, const TLorentzVector & mu_p) 
+{    
+
+  return getHadronicMET(ev) - TVector2(mu_p.Px(), mu_p.Py());
+}
+
 
 // returns # of (global) muons with tracker-pt above <tracker_muon_pt>
 //------------------------------------------------------------------------

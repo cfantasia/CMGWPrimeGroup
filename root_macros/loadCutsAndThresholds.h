@@ -61,7 +61,7 @@ const unsigned nBinIsoMu = 25;
 const float minIsoMu = 0;
 const float maxIsoMu = 0.5;
 // +++++++++++++++++++++++++++++++tmass histogram parameters
-const unsigned nBinTmMu = 600;
+const unsigned nBinTmMu = 680;
 const float minTmMu = MtThreshold[0];
 const float maxTmMu = 1700;
 // +++++++++++++++++++++++++Declare histograms 
@@ -100,9 +100,17 @@ float XJetDPhi(const TLorentzVector& lv, const wprime::Event * ev);
 //transverse mass of an object with a met object
 float TMass(const TLorentzVector& lv, const TVector2& themet);
 
-// get newMET by subtracting from pfmetaddmu the px, py components 
-// of the corresponding high-pt muon algorithm
-// (ie. different MET for each muon reconstructor!)
+// get hadronic MET component (that needs to be corrected 
+// if applyCorrection=true)from Z data; this will be done according to hadronic 
+// activity from Z->mumu reconstructed events
+TVector2 getHadronicMET(const wprime::Event * ev);
+
+// Get new MET: there are two corrections to be made:
+// (a) the hadronic MET component (that needs to be corrected 
+// if applyCorrection=true)from Z data; this will be done according to hadronic 
+// activity from Z->mumu reconstructed events
+// (b) the muon-pt component that needs to be updated if we switch to one
+// of the dedicated high-pt muon reconstructors
 TVector2 getNewMET(const wprime::Event * ev, const TLorentzVector & mu_p);
 
 // returns muon tracker isolation
@@ -187,5 +195,6 @@ void setRecoilPerp(TH1D * h);
 void setRecoilParalvsVBPt(TH2D * hh);
 void setApplyCorrection(bool flag);
 void setRecoilProjections();
+void setHadronicMETCalculated(bool flag);
 
 #endif // #define _load_cuts_h__
