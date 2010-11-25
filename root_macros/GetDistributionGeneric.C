@@ -577,7 +577,9 @@ void GetMuonPtDistribution(wprime::InputFile& file, float & Nexp_evt,
   // in the very same order
   selection_map cuts;
   setupCutOrder(cuts);
-  bool shouldCorrectMt = ((file.samplename=="W" || file.samplename=="Wlowpt") && doRecoilCorrectionForW);
+  bool shouldCorrectMt = 
+    ((file.samplename=="W" || file.samplename=="Wlowpt") 
+     && doRecoilCorrectionForW);
   setApplyCorrection(shouldCorrectMt);
 
   // Loop over events 
@@ -586,7 +588,8 @@ void GetMuonPtDistribution(wprime::InputFile& file, float & Nexp_evt,
     cout << " ########## Processing event #: " << i+1 << endl;
 #endif
     file.tree->GetEntry(i);
-    
+    setHadronicMETCalculated(false);
+
     // switch to help us keep track of whether a muon has already
     // been found in current event surviving the ith-cut;
     // this will ensure that we increase Num_surv_cut maximum once per evet
