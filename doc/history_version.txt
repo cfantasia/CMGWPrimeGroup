@@ -1,3 +1,17 @@
+17-JAN-11 (Christos)
+====================
+V00-01-61-BR-08:
+-----------------
+
+(a) Updated data root-tuple (Nov 4th reprocessing, 36.1 ipb) provided by
+Carmen & Silvia.
+
+(b) Updated exclusion limit macro for latest dataset and background
+estimations (statistics/muon_exclusion_limit_Mt.C)
+
+(c) Added new plots: data-to-MC ratio for muon-pt and Mu+MET distributions
+
+
 23-NOV-10 (Christos)
 ====================
 V00-01-61-BR-07:

@@ -13,7 +13,7 @@ o Setup a new working area (Default name: V161_branch, release:
 CMSSW_3_8_5)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-01-61-BR-06)
+V00-01-61-BR-08)
 
 o Compile the code
 
@@ -35,7 +35,7 @@ NB The following custom ROOT-tuples
 can be found in
 
 (a) /castor/cern.ch/user/c/cleonido/wprime/v161/ (made with V00-01-61, and
-o 34.20 pb^-1 of real data processed with 38X
+o 36.1 pb^-1 of real data processed with 38X (November 4th reprocessing)
 o MC samples are processed with 38x (Fall10)
 Use UserCode/CMGWprimeGroup/config/samples_cross_sections_v8/v8b/v9.txt)
 
