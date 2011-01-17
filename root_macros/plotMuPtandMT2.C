@@ -3,6 +3,8 @@
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <TStyle.h>
+#include <TLine.h>
+#include <TLatex.h>
 
 #include <string>
 #include <iostream>
@@ -128,10 +130,17 @@ void doPlots(TFile * _file0, int option)
     return;
 
   string hname = "tot_bgd";
+  string hname2 = "ratio";
   if(option == 1)
-    hname += "_mupt";
+    {
+      hname += "_mupt";
+      hname2 += "_mupt";
+    }
   else if(option == 2)
-    hname += "_TM";
+    {
+      hname += "_TM";
+      hname2 += "_TM";
+    }
   // this is the total background distribution (W + QCD + top + Z/DY)
   TH1F * bgd = new TH1F(hname.c_str(), desc.c_str(), 
 			top->GetNbinsX(), top->GetXaxis()->GetXmin(), 
@@ -143,24 +152,38 @@ void doPlots(TFile * _file0, int option)
   bgd->Add(wlpt);
 
   string desc = "";
+  string desc3 = " Data-to-MC ratio of ";
   if(option == 1)
     desc = " p_{T} distribution";
   else if(option == 2)
-    desc = " muon + (ckt-corrected) pfMET M_{T} distribution";
+    //    desc = " muon + (ckt-corrected) pfMET M_{T} distribution";
+    desc = " M_{T} distribution";
+  desc3 += desc;
   string new_title = algo_desc_long[tracking_option] + desc;
   data->SetTitle(new_title.c_str());
   //  data->SetMarkerStyle(4);
   // data->SetMarkerSize(1.3);
   data->SetMarkerStyle(8);
+
+  TH1F * ratio = new TH1F(hname2.c_str(), desc3.c_str(),
+			  data->GetNbinsX(),
+			  data->GetXaxis()->GetXmin(), 
+			  data->GetXaxis()->GetXmax());
+
+
   if(option == 1)
     {
       data->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
       data->GetXaxis()->SetRangeUser(25, 500);
+      ratio->GetXaxis()->SetTitle("Muon p_{T} (GeV/c)");
+      ratio->GetXaxis()->SetRangeUser(25, 500);
     }
   else if(option == 2)
     {
       data->GetXaxis()->SetTitle("M_{T} (GeV/c^{2})");
       data->GetXaxis()->SetRangeUser(40, 1000);
+      ratio->GetXaxis()->SetTitle("M_{T} (GeV/c^{2})");
+      ratio->GetXaxis()->SetRangeUser(50, 600);
     }
 
   if(data->GetMinimum() < 0.00001)data->SetMinimum(0.00001);
@@ -212,6 +235,32 @@ void doPlots(TFile * _file0, int option)
   string file = desc2 + temp3 + ".gif";
 
   c1->SaveAs(file.c_str());
+
+  
+  data->Sumw2();
+  bgd->Sumw2();
+  ratio->Divide(data, bgd);
+  ratio->SetMaximum(6);
+  ratio->SetMinimum(-4);
+  ratio->SetMarkerStyle(4);
+  ratio->SetMarkerSize(1.3);
+
+  c1 = new TCanvas();
+  ratio->Draw();
+  string desc11 = "CMS Preliminary 2010"; 
+  char temp22[1024]; 
+  sprintf(temp22, "L_{int} = %4.2f pb^{-1}, #sqrt{s} = 7 TeV", Lumi_ipb);
+  string desc22 = temp22;
+
+
+  TLatex * l1 = new TLatex(130, -1.9, desc11.c_str());
+  l1->SetTextSize(0.04); 
+  TLatex * l2 = new TLatex(100, -3.0, desc22.c_str());
+  l2->SetTextSize(0.04); 
+  l1->Draw(); l2->Draw();
+
+  TLine * line = new TLine(50, 1, 600, 1);
+  line->Draw();
   //  c1->SaveAs(file2.c_str());
   //  delete c1;
 
