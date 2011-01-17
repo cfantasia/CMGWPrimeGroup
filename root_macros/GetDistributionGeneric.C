@@ -674,8 +674,8 @@ void GetMuonPtDistribution(wprime::InputFile& file, float & Nexp_evt,
 	file.Nexp_evt_cut[cut][algo][f] += Num_surv_cut[cut][algo][f] * weight;
 
   //total # of events (before any cuts)
-  //  Nexp_evt += nevents * weight; // instead of using as denominator # of events in file
-  Nexp_evt += file.Nprod_evt * weight; // better to use original # of events
+  Nexp_evt += nevents * weight; // instead of using as denominator # of events in file
+  //Nexp_evt += file.Nprod_evt * weight; // better to use original # of events
   
   delete ev;
 

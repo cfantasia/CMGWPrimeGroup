@@ -20,8 +20,8 @@ const int MuAlgo_MAX = 3;
 
 const int NumPtMtThresholds = 9;
 
-float PtThreshold[NumPtMtThresholds] = {0, 25, 50, 100, 120, 200, 300, 350, 400};
-float MtThreshold[NumPtMtThresholds] = {0, 50, 100, 200, 300, 350, 400, 500, 600};
+float PtThreshold[NumPtMtThresholds] = {0, 50, 75, 100, 120, 200, 300, 350, 400};
+float MtThreshold[NumPtMtThresholds] = {0, 100, 150, 200, 300, 350, 400, 500, 600};
 
 // cut-indices for the <NumPtMtThresholds> thresholds
 int ThreshIndices[NumPtMtThresholds] = {5, 6, 7, 8, 9, 10, 11, 12, 13};
