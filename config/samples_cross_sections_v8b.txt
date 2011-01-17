@@ -1,7 +1,7 @@
 samplename = data
-description = Muon pt > 25 GeV skim, 34.2 pb^-1
+description = Muon pt > 25 GeV skim, 36.1 pb^-1
 x-section = 1
-pathname = MuSkim_V161_NoVtxFilter_34.2ipb_132440-149294.root
+pathname = Data.Nov4.root
 Nprod_evt = 1
 
 samplename = W
