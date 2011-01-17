@@ -94,37 +94,38 @@ void muon_exclusion_limit_Mt( int backgroundModel_ = 2, double BackgroundError_ 
 
   int Nsignal = 11;
 
-  double intLumi = 34.2;
+  double intLumi = 36.1;
 
   int data = 0;
-  double bkg = 0.41;//0.8;
-  double bkg_err = 0.16;//0.5;
+  double bkg = 0.54; // collision-ony background
+  double bkg_err = 0.15;
+  bkg = 0.62; // collision + cosmics background
 
   double sig_eff[Nsignal];
-  sig_eff[0] = 8.71954;
-  sig_eff[1] = 29.7693;
-  sig_eff[2] = 42.5314;
-  sig_eff[3] = 50.4212;
-  sig_eff[4] = 55.0591;
-  sig_eff[5] = 59.2349;
-  sig_eff[6] = 61.3258;
-  sig_eff[7] = 63.4093;
-  sig_eff[8] = 65.2728;
-  sig_eff[9] = 64.7904;
-  sig_eff[10] = 62.2263;
+  sig_eff[0] = 9.01818;
+  sig_eff[1] = 30.2364;
+  sig_eff[2] = 43.0636;
+  sig_eff[3] = 51.1909;
+  sig_eff[4] = 55.9727;
+  sig_eff[5] = 60.1091;
+  sig_eff[6] = 62.0909;
+  sig_eff[7] = 64.2;
+  sig_eff[8] = 66.2818;
+  sig_eff[9] = 65.6636;
+  sig_eff[10] = 63.2455;
 
   double sig_eff_err[Nsignal];
-  sig_eff_err[0] = 0.27;
-  sig_eff_err[1] = 0.437479;
-  sig_eff_err[2] = 0.473128;
-  sig_eff_err[3] = 0.478457;
-  sig_eff_err[4] = 0.475997;
-  sig_eff_err[5] = 0.470113;
-  sig_eff_err[6] = 0.465995;
-  sig_eff_err[7] = 0.460757;
-  sig_eff_err[8] = 0.455919;
-  sig_eff_err[9] = 0.456936;
-  sig_eff_err[10] = 0.464055;
+  sig_eff_err[0] = 0.273112;
+  sig_eff_err[1] = 0.437908;
+  sig_eff_err[2] = 0.472122;
+  sig_eff_err[3] = 0.476596;
+  sig_eff_err[4] = 0.473318;
+  sig_eff_err[5] = 0.466886;
+  sig_eff_err[6] = 0.462583;
+  sig_eff_err[7] = 0.457102;
+  sig_eff_err[8] = 0.450747;
+  sig_eff_err[9] = 0.452734;
+  sig_eff_err[10] = 0.459699;
 
   for( int j=0; j<Nsignal; j++ ){
     sig_eff[j] *= 0.01;
@@ -147,17 +148,17 @@ void muon_exclusion_limit_Mt( int backgroundModel_ = 2, double BackgroundError_ 
   bool usegaus = false;
 
   double xsec[Nsignal];
-  xsec[0] = 6.28;
-  xsec[1] = 3.23;
-  xsec[2] = 1.838;
-  xsec[3] = 1.06;
-  xsec[4] = 0.64;
-  xsec[5] = 0.397;
-  xsec[6] = 0.257;
-  xsec[7] = 0.167;
-  xsec[8] = 0.106;
-  xsec[9] = 0.077;
-  xsec[10] = 0.0115;
+  xsec[0] = 8.29;
+  xsec[1] = 4.26;
+  xsec[2] = 2.43;
+  xsec[3] = 1.39;
+  xsec[4] = 0.838;
+  xsec[5] = 0.516;
+  xsec[6] = 0.334;
+  xsec[7] = 0.215;
+  xsec[8] = 0.136;
+  xsec[9] = 0.0986;
+  xsec[10] = 0.0145;
 
 
   double mass[Nsignal];
