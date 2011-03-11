@@ -34,7 +34,7 @@ NB The following TEST ttbar PAT-tuple (600 events) produced with
 387 (START38_V13_v1) can be found in  
 /castor/cern.ch/user/c/cleonido/wprime/V200
 
-Input file used: /castor/cern.ch/cms/store/relval/CMSSW_3_8_6/RelValTTbar/GEN-SIM-RECO/START38_V13-v1/0068/
+Input file used: /castor/cern.ch/cms/store/relval/CMSSW_3_8_6/RelValTTbar/GEN-SIM-RECO/START38_V13-v1/0068/98EA8C65-25E8-DF11-B0A0-0018F3D095F8.root
 
 
 
