@@ -1,0 +1,17 @@
+<use   name="root"/>
+<use   name="boost"/>
+<use   name="rootcintex"/>
+<use   name="DataFormats/FWLite"/>
+<use   name="DataFormats/Luminosity"/>
+<use   name="DataFormats/PatCandidates"/>
+<use   name="FWCore/FWLite"/>
+<use   name="FWCore/Framework"/>
+<use   name="FWCore/PythonParameterSet"/>
+<use   name="CommonTools/Utils"/>
+<use   name="PhysicsTools/FWLite"/>
+<use   name="PhysicsTools/Utilities"/>
+<use   name="PhysicsTools/PatUtils"/>
+<use   name="UserCode/CMGWPrimeGroup"/>
+<environment>
+  <bin   file="WPrimeAnalyzer.cc"></bin>
+</environment>
