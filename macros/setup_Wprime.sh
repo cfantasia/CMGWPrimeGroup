@@ -31,8 +31,8 @@ echo -e  " Checking out the code..."
 echo -e  "**************************"
 cvs -Q co -r $RELEASE_VERSION DataFormats/PatCandidates
 cvs -Q co -r $RELEASE_VERSION PhysicsTools/PatAlgos
-#cvs -Q co -r V00-02-00 UserCode/CMGWPrimeGroup
-cvs -Q co UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-02-00 UserCode/CMGWPrimeGroup
+# cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"
 echo -e  " Hack PAT Muon content to include high-pt reconstructors..."
@@ -58,7 +58,6 @@ source /afs/cern.ch/cms/sw/cmsset_default.sh
 #cmsenv
 scramv1 runtime -sh
 scramv1 b -j 4 # (lots of output here, but nothing to worry about)
-#cd ../../../
 
 echo -e "\n*************************************************"
 echo -e " Done compiling UserCode/CMGWPrimeGroup"
