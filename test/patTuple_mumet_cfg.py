@@ -59,10 +59,28 @@ addPFCandidates(process, 'particleFlow')
 #                 )
 
 
+### Prune the GEN particle collection ###
+process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+process.prunedGenParticles = cms.EDProducer("GenParticlePruner",
+                                            src = cms.InputTag("genParticles"),
+                                            select = cms.vstring(
+    "drop  *",
+    #keeps all particles from the hard matrix element
+    "keep status = 3",
+    #keeps all stable muons (13) and electrons (11) + neutrinos (14, 12)
+    # + W (24) + W' (34)  and their (direct) mothers.
+    "+keep (abs(pdgId) = 11 | abs(pdgId) = 13 | abs(pdgId) = 12 | abs(pdgId) = 14 | abs(pdgId) = 24 | abs(pdgId) = 34) & status = 1"
+    )
+)
+
+
+
 ## let it run
 process.p = cms.Path(
-    process.patDefaultSequence
-    )
+#    process.patDefaultSequence
+    process.patDefaultSequence *
+    process.prunedGenParticles
+)
 
 ## ------------------------------------------------------
 #  In addition you usually want to change the following
@@ -83,7 +101,8 @@ process.out.outputCommands = [
     'keep *_patMETs*_*_*',
     'keep *_selectedPatPFParticles*_*_*',
     # GEN
-    'keep recoGenParticles_genParticles*_*_*',
+    'keep *_prunedGenParticles_*_*',
+#    'keep recoGenParticles_genParticles*_*_*',
     'keep GenEventInfoProduct_*_*_*',
     'keep GenRunInfoProduct_*_*_*',
     # TRIGGER
