@@ -1,3 +1,10 @@
+1?-MAR-11 (Christos), V00-02-??
+===============================
+PAT-tuple making for mu+MET: prune GenParticle collection to only include 
+muons/electrons/neutrinos/W/W', plus, all particles from the hard matrix 
+element 
+
+
 11-MAR-11 (Christos), V00-02-00
 ===============================
 Swithing to PAT formats (read README.txt for details). Work in progress. 
