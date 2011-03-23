@@ -40,13 +40,14 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
   outputFile_  = cfg.getParameter<string  >("outputFile" );
   reportAfter_ = cfg.getParameter<unsigned int>("reportAfter");
   maxEvents_   = cfg.getParameter<int>("maxEvents") ;
+  genParticles_ = cfg.getParameter<edm::InputTag>("genParticles" );
   doRecoilCorrectionForW_ = cfg.getParameter<bool>("doRecoilCorrectionForW");
   runMuMETAnalysis_ = cfg.getParameter<bool>("runMuMETAnalysis" );
   runElMETAnalysis_ = cfg.getParameter<bool>("runElMETAnalysis" );
   runWZAnalysis_ = cfg.getParameter<bool>("runWZAnalysis" );
   runTBAnalysis_ = cfg.getParameter<bool>("runTBAnalysis" );
 
-  wprimeUtil = new WPrimeUtil(outputFile_.c_str());
+  wprimeUtil = new WPrimeUtil(outputFile_.c_str(), genParticles_);
 
   if(runMuMETAnalysis_)
     muMETAnalyzer = new MuMETAnalyzer(cfg, wprimeUtil);

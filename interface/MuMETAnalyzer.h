@@ -52,8 +52,7 @@ class MuMETAnalyzer
   edm::Handle<pat::MuonCollection > muons;
   // Handle to the (pf)MET collection
   edm::Handle<pat::METCollection > met;
-
-  // keeps track of selection efficiencies for all input samples & cuts
+   // keeps track of selection efficiencies for all input samples & cuts
   wprime::SampleStat stats;
 
   // true if TrackRef for chosen high-pt muon reconstructor is null;

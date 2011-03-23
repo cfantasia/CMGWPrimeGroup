@@ -51,6 +51,8 @@ class WPrimeFinder
 
   bool doRecoilCorrectionForW_;
 
+  edm::InputTag genParticles_;
+
   MuMETAnalyzer * muMETAnalyzer;
   WPrimeUtil * wprimeUtil;
 

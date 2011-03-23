@@ -1,9 +1,11 @@
-1?-MAR-11 (Christos), V00-02-??
+23-MAR-11 (Christos), V00-02-01
 ===============================
 PAT-tuple making for mu+MET: prune GenParticle collection to only include 
 muons/electrons/neutrinos/W/W', plus, all particles from the hard matrix 
 element 
 
+Now using MC-truth info for W for correcting hadronic coponent of MET for 
+mu+MET Mt distributions 
 
 11-MAR-11 (Christos), V00-02-00
 ===============================

@@ -6,6 +6,7 @@
 
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/FWLite/interface/Event.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
 #include "UserCode/CMGWPrimeGroup/interface/util.h"
 
@@ -23,7 +24,8 @@ class TH2D;
 class WPrimeUtil
 {
  public:
-  WPrimeUtil(const char * out_filename);
+  WPrimeUtil(const char * out_filename, edm::InputTag genParticles);
+
   ~WPrimeUtil();
 
   fwlite::TFileService * getFileService(){return fs;}
@@ -90,6 +92,11 @@ class WPrimeUtil
   bool hadronicMETcalculated_; // want to calculate this max. once per event
 
   TVector2 hadronicMETcached;
+
+  edm::InputTag genParticles_;
+ // Handle to GenParticleCollectiom>
+  edm::Handle<reco::GenParticleCollection> genParticles;
+
 
 };
 

@@ -7,7 +7,7 @@
 using std::cout; using std::cerr; using std::endl;
 using std::string;
 
-WPrimeUtil::WPrimeUtil(const char * out_filename)
+WPrimeUtil::WPrimeUtil(const char * out_filename, edm::InputTag genParticles)
 {
   fs = new fwlite::TFileService(out_filename);
 
@@ -15,6 +15,7 @@ WPrimeUtil::WPrimeUtil(const char * out_filename)
   hRecoilParalvsVBPt = 0;
   histRecoilParal = NULL;
   lumi_ipb = -1;
+  genParticles_ = genParticles;
 
   setupZMETcorrection();
 
@@ -201,26 +202,27 @@ TVector2 WPrimeUtil::getHadronicMET(edm::EventBase const & event)
   if(hadronicMETcalculated_)
     return hadronicMETcached;
 
-  // this needs to change to use MC-truth info for W event
-#if 0
-  int nW = ev->w_mc->GetLast() + 1;
-  TLorentzVector * W_p4 = 0;
-  for(int j = 0; j != nW; ++j)
-    {
-      wprime::MCParticle * w = (wprime::MCParticle *) ev->w_mc->At(j);
-      if(w->status != 3)continue;
-      W_p4 = &(w->p);
-    }
-#endif
+  assert(event.isRealData() == false);
 
+  size_t W_index = -1;
+  event.getByLabel(genParticles_, genParticles);
+  for(size_t i = 0; i != genParticles->size(); ++i) {
+    const reco::GenParticle & W_p = (*genParticles)[i];
+    if (W_p.pdgId() == 24 && W_p.status() == 3)
+      {
+	W_index = i;
+	break;
+      }
+  } // loop over genParticles
+
+  assert(W_index >= 0);
+  const reco::GenParticle & W_p = (*genParticles)[W_index];
 
   // correct hadronic MET by taking into account recoil for given W pt
-
+  
   // Find bin corresponding to W pt
-  //////  int binWpt = (hRecoilParalvsVBPt->GetXaxis())->FindBin(W_p4->Pt());
+  int binWpt = (hRecoilParalvsVBPt->GetXaxis())->FindBin(W_p.pt());
 
-  // temporary hack till W_p4 is properly defined
-  int binWpt = 0;
   // protect against outliers: EITHER use the last bin OR return MET w/o correction
   if(binWpt > hRecoilParalvsVBPt->GetXaxis()->GetNbins())
     binWpt = hRecoilParalvsVBPt->GetXaxis()->GetNbins();
@@ -231,12 +233,9 @@ TVector2 WPrimeUtil::getHadronicMET(edm::EventBase const & event)
   double dataSampledMETPerp = hRecoilPerp->GetRandom();
   
   // Rotate back from system in which the boson is in the x axis
-  //  double cosW = W_p4->Px()/W_p4->Pt();
-  //double sinW = W_p4->Py()/W_p4->Pt();
+  double cosW = W_p.px()/W_p.pt();
+  double sinW = W_p.py()/W_p.pt();
   
-  // temporary hack till W_4 is defined
-  double cosW = 0.5;
-  double sinW = TMath::Sqrt(1 - cosW*cosW);
   double dataSampledMEx = 
     cosW*dataSampledMETParal - sinW*dataSampledMETPerp;
   double dataSampledMEy = 
