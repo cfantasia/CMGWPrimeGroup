@@ -13,7 +13,7 @@ o Setup a new working area (Default name: V200, release:
 CMSSW_3_8_7)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-00)
+V00-02-01)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos 

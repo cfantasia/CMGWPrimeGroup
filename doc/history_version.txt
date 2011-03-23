@@ -5,7 +5,23 @@ muons/electrons/neutrinos/W/W', plus, all particles from the hard matrix
 element 
 
 Now using MC-truth info for W for correcting hadronic coponent of MET for 
-mu+MET Mt distributions 
+mu+MET Mt distributions (HAS NOT BEEN TESTED: LACKING W SAMPLES!)
+
+Currently missing/known issues:
+
+(a) Mu+MET analyzer:
+  o Need to retrieve HLT decisions; Edgar had done an excellent job when
+running on RECO; not sure how to convert this code for running on
+PAT-tuples (or if some HLT info is missing to start with)
+  o Not all muon quality cuts have been implemented. This is basically
+because I am uncertain how to retrieve this info, or whether the PAT muon
+classes need to be (further) modified
+  o Print/dump info for high-pt muons (ie. for debugging)
+
+(b) Missing analyzers for El+MET, WZ, tb, ...
+
+NB: I think I have a way of retrieving HEEP electrons from the original AOD/RECO file. 
+
 
 11-MAR-11 (Christos), V00-02-00
 ===============================
