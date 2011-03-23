@@ -27,6 +27,7 @@ process.WprimeAnalyzer = cms.PSet(
     muons = cms.InputTag('cleanPatMuons'),
     met   = cms.InputTag('patMETsPF'),
     particleFlow = cms.InputTag('selectedPatPFParticles'),
+    genParticles = cms.InputTag('prunedGenParticles'),
     #
     muonReconstructor = cms.int32(3), ## see mumet_histo_constants.h
     muonPtThreshold   = cms.double(10), ## in GeV
