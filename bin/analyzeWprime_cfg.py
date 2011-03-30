@@ -24,7 +24,7 @@ process.WprimeAnalyzer = cms.PSet(
     runWZAnalysis    = cms.bool(False),
     runTBAnalysis    = cms.bool(False),
     ## input specific for this analyzer
-    muons = cms.InputTag('cleanPatMuons'),
+    muons = cms.InputTag('selectedPatMuons'),
     met   = cms.InputTag('patMETsPF'),
     particleFlow = cms.InputTag('selectedPatPFParticles'),
     genParticles = cms.InputTag('prunedGenParticles'),
