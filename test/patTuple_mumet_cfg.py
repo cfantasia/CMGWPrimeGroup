@@ -73,6 +73,7 @@ process.prunedGenParticles = cms.EDProducer("GenParticlePruner",
     )
 )
 
+process.selectedPatMuons.cut = "pt > 25. & abs(eta) < 2.5"
 
 
 ## let it run
@@ -91,13 +92,14 @@ process.p = cms.Path(
 #                                         ##
 process.source.fileNames = [          ##
     '/store/relval/CMSSW_3_8_6/RelValTTbar/GEN-SIM-RECO/START38_V13-v1/0068/98EA8C65-25E8-DF11-B0A0-0018F3D095F8.root'
+#    '/store/relval/CMSSW_3_8_6/RelValTTbar/GEN-SIM-RECO/START38_V13-v1/0065/2856A4C7-B5E7-DF11-BE1D-00304867BFA8.root'
     ]                                     ##  (e.g. 'file:AOD.root')
 #                                         ##
 process.maxEvents.input = 1000        ##  (e.g. -1 to run on all events)
 #                                         ##
 process.out.outputCommands = [
     # RECO
-    'keep *_cleanPatMuons*_*_*',
+    'keep *_selectedPatMuons*_*_*',
     'keep *_patMETs*_*_*',
     'keep *_selectedPatPFParticles*_*_*',
     # GEN
