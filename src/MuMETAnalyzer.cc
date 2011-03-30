@@ -566,11 +566,9 @@ bool MuMETAnalyzer::goodQualityMuon(bool * goodQual, int theMu, edm::EventBase c
 
   bool muon_hits = glb->hitPattern().numberOfValidTrackerHits() > 10
     && glb->hitPattern().numberOfValidMuonHits() > 0
-    && glb->hitPattern().numberOfValidPixelHits() > 0;
+    && glb->hitPattern().numberOfValidPixelHits() > 0
+    && (*muons)[theMu].numberOfMatches() > 1;
 
-  // NB: also need to implement reco::Muon::numberOfMatches() > 1
-  // how do I do this?
-  
   TVector3 p3(glb->px(), glb->py(), glb->pz());
 
   bool checkqual = (glb->chi2()/glb->ndof() / chi2Cut_)
