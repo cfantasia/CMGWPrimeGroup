@@ -75,7 +75,6 @@ process.prunedGenParticles = cms.EDProducer("GenParticlePruner",
 
 process.selectedPatMuons.cut = "pt > 25. & abs(eta) < 2.5"
 
-
 ## let it run
 process.p = cms.Path(
 #    process.patDefaultSequence
@@ -109,8 +108,11 @@ process.out.outputCommands = [
     'keep GenRunInfoProduct_*_*_*',
     # TRIGGER
     'keep edmTriggerResults_TriggerResults*_*_*',
-    'keep *_hltTriggerSummaryAOD_*_*'        
+    'keep *_hltTriggerSummaryAOD_*_*'
      ]
+
+process.out.SelectEvents = process.selectedPatMuons.cut
+
 #                                         ##
 #   process.out.fileName = ...            ##  (e.g. 'myTuple.root')
 #                                         ##
