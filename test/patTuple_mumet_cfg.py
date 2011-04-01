@@ -75,11 +75,17 @@ process.prunedGenParticles = cms.EDProducer("GenParticlePruner",
 
 process.selectedPatMuons.cut = "pt > 25. & abs(eta) < 2.5"
 
+process.highPtMuonFilter = cms.EDFilter("CandViewCountFilter",
+                                src = cms.InputTag("selectedPatMuons"),
+                                minNumber = cms.uint32(1)
+                                )
+
 ## let it run
 process.p = cms.Path(
 #    process.patDefaultSequence
     process.patDefaultSequence *
-    process.prunedGenParticles
+    process.prunedGenParticles * 
+    process.highPtMuonFilter
 )
 
 ## ------------------------------------------------------
@@ -111,7 +117,9 @@ process.out.outputCommands = [
     'keep *_hltTriggerSummaryAOD_*_*'
      ]
 
-process.out.SelectEvents = process.selectedPatMuons.cut
+process.out.SelectEvents = cms.untracked.PSet(
+    SelectEvents = cms.vstring('p')
+    )
 
 #                                         ##
 #   process.out.fileName = ...            ##  (e.g. 'myTuple.root')
