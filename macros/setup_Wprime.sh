@@ -10,7 +10,7 @@ fi
 
 # Definitions
 RELEASE_VERSION=CMSSW_3_8_7
-WORKING_AREA=V201
+WORKING_AREA=V202
 # end definitions
 
 export RELEASE_VERSION WORKING_AREA
@@ -31,7 +31,7 @@ echo -e  " Checking out the code..."
 echo -e  "**************************"
 cvs -Q co -r $RELEASE_VERSION DataFormats/PatCandidates
 cvs -Q co -r $RELEASE_VERSION PhysicsTools/PatAlgos
-cvs -Q co -r V00-02-01 UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-02-02 UserCode/CMGWPrimeGroup
 # cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"

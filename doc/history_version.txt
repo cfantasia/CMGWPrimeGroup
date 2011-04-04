@@ -1,3 +1,13 @@
+04-APR-11 (Christos), V00-02-02
+===============================
+
+(a) PAT-tuple making: add pt>25 , |eta|<2.5 filters for muons, switch from
+"clean" to "selected" PAT muons (test/patTuple_mumet_cfg.py)
+
+(b) Analysis: add reco::Muon::numberOfMatches() > 1 condition in muon
+quality definition 
+
+
 23-MAR-11 (Christos), V00-02-01
 ===============================
 PAT-tuple making for mu+MET: prune GenParticle collection to only include 
