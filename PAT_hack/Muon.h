@@ -1,5 +1,5 @@
 //
-// $Id: Muon.h,v 1.32 2010/05/12 12:31:38 rwolf Exp $
+// $Id: Muon.h,v 1.34 2010/09/29 13:24:25 wreece Exp $
 //
 
 #ifndef DataFormats_PatCandidates_Muon_h
@@ -17,7 +17,7 @@
 
   \author   Steven Lowette, Giovanni Petrucciani, Frederic Ronga, Colin Bernet
 
-  \version  $Id: Muon.h,v 1.32 2010/05/12 12:31:38 rwolf Exp $
+  \version  $Id: Muon.h,v 1.34 2010/09/29 13:24:25 wreece Exp $
 */
 
 #include "DataFormats/MuonReco/interface/Muon.h"
@@ -90,31 +90,32 @@ namespace pat {
       /// muon MET corrections for tcMET; returns the muon correction struct if embedded during pat tuple production or an empty element
       reco::MuonMETCorrectionData tcMETMuonCorrs() const {return (embeddedTCMETMuonCorrs_ ? tcMETMuonCorrs_.front() : reco::MuonMETCorrectionData());};
       void embedTcMETMuonCorrs(const reco::MuonMETCorrectionData& t);
-      
+
       // ---- methods for TeV refit tracks ----
       /// reference to Track reconstructed using hits in the tracker + "good" muon hits
-	reco::TrackRef pickyMuon() const;
-	void setPickyMuon(const reco::TrackRef& t) { pickyMuonRef_ = t; }
-	/// reference to Track reconstructed using hits in the tracker + info from the first muon station that has hits
-	reco::TrackRef tpfmsMuon() const;
-	void setTpfmsMuon(const reco::TrackRef& t) { tpfmsMuonRef_ = t; }
-	reco::TrackRef defaultTeVMuon() const;
-	void setDefaultTeVMuon(const reco::TrackRef& t) { defaultTeVMuonRef_ = t; }
-	reco::TrackRef dytMuon() const;
-	void setDytMuon(const reco::TrackRef& t) { dytMuonRef_ = t; }
-	reco::TrackRef cocktailMuon() const;
-	void setCocktailMuon(const reco::TrackRef& t) { cocktailMuonRef_ = t; }
-
-	/// embed reference to the above picky Track
-	void embedPickyMuon();
-        /// embed reference to the above tpfms Track
-	void embedTpfmsMuon();
-	/// embed reference to the above default TeV Track
-	void embedDefaultTeVMuon();
-	/// embed reference to the above dyt Track
-	void embedDytMuon();
-	/// embed reference to the above cocktail Track
-	void embedCocktailMuon();
+      reco::TrackRef pickyMuon() const;
+      void setPickyMuon(const reco::TrackRef& t) { pickyMuonRef_ = t; }
+      /// reference to Track reconstructed using hits in the tracker + info from the first muon station that has hits
+      reco::TrackRef tpfmsMuon() const;
+      void setTpfmsMuon(const reco::TrackRef& t) { tpfmsMuonRef_ = t; }
+      reco::TrackRef defaultTeVMuon() const;
+      void setDefaultTeVMuon(const reco::TrackRef& t) { defaultTeVMuonRef_ = t; }
+      reco::TrackRef dytMuon() const;
+      void setDytMuon(const reco::TrackRef& t) { dytMuonRef_ = t; }
+      reco::TrackRef cocktailMuon() const;
+      void setCocktailMuon(const reco::TrackRef& t) { cocktailMuonRef_ = t; }
+      
+      
+      /// embed reference to the above picky Track
+      void embedPickyMuon();
+      /// embed reference to the above tpfms Track
+      void embedTpfmsMuon();
+      /// embed reference to the above default TeV Track
+      void embedDefaultTeVMuon();
+      /// embed reference to the above dyt Track
+      void embedDytMuon();
+      /// embed reference to the above cocktail Track
+      void embedCocktailMuon();
 
       // ---- PF specific methods ----
       /// reference to the source IsolatedPFCandidates
@@ -126,6 +127,12 @@ namespace pat {
       } 
       /// embed the IsolatedPFCandidate pointed to by pfCandidateRef_
       void embedPFCandidate();
+      /// get the number of non-null PF candidates
+      size_t numberOfSourceCandidatePtrs() const { 
+	return pfCandidateRef_.isNonnull() ? 1 : 0;
+      }
+      /// get the candidate pointer with index i
+      reco::CandidatePtr sourceCandidatePtr( size_type i ) const;
 
       // ---- methods for accessing muon identification ----
       /// accessor for the various muon id algorithms currently defined
@@ -160,13 +167,38 @@ namespace pat {
       /// global tracks. If the global track is present these should
       /// not be set, but the "getters" will return the appropriate
       /// value. The exception is dB which requires the beamline
-      /// as external input. 
-
-      /// dB gives the impact parameter wrt the beamline.
-      double dB() const;
-      double edB() const;
-      void   setDB ( double dB, double edB ) 
-      { dB_ = dB; edB_ = edB; cachedDB_ = true; }
+      //  as external input. 
+	
+	// ---- embed various impact parameters with errors ----
+	//
+	// example:
+	//
+	//    // this will return the muon inner track
+	//    // transverse impact parameter
+	//    // relative to the primary vertex
+	//    muon->dB(pat::Muon::PV2D);
+	//
+	//    // this will return the uncertainty
+	//    // on the muon inner track
+	//    // transverse impact parameter
+	//    // relative to the primary vertex
+	//    // or -1.0 if there is no valid PV in the event
+	//    muon->edB(pat::Muon::PV2D);
+	//
+	// IpType defines the type of the impact parameter
+	// None is default and reverts to old behavior controlled by 
+	// patMuons.usePV = True/False
+	typedef enum IPTYPE 
+	  {
+	    None = 0, PV2D = 1, PV3D = 2, BS2D = 3, BS3D = 4
+	  } IpType; 
+	void initImpactParameters(void); // init IP defaults in a constructor
+	double dB(IpType type = None) const;
+	double edB(IpType type = None) const;
+	void   setDB ( double dB, double edB, IpType type = None ) 
+	{ dB_ = dB; edB_ = edB; if (type == None) cachedDB_ = true;
+	  ip_[type] = dB; eip_[type] = edB; cachedIP_[type] = true;}
+	
 
       /// numberOfValidHits returns the number of valid hits on the global track.
       unsigned int numberOfValidHits() const;
@@ -235,10 +267,17 @@ namespace pat {
       // V+Jets group selection variables. 
       bool    cachedNormChi2_;         /// has the normalized chi2 been cached?
       bool    cachedDB_;               /// has the dB been cached?
+
       bool    cachedNumberOfValidHits_;/// has the numberOfValidHits been cached?
       double  normChi2_;               /// globalTrack->chi2() / globalTrack->ndof()
       double  dB_;                     /// dB and edB are the impact parameter at the primary vertex,
-      double  edB_;                    /// and its uncertainty as recommended by the tracking group
+      double  edB_;                    // and its uncertainty as recommended by the tracking group
+
+      // ---- cached impact parameters ----
+      std::vector<bool>    cachedIP_;  // has the IP (former dB) been cached?
+      std::vector<double>  ip_;        // dB and edB are the impact parameter at the primary vertex,
+      std::vector<double>  eip_;       // and its uncertainty as recommended by the tracking group
+
       unsigned int  numberOfValidHits_;/// globalTrack->numberOfValidHits()
 
   };

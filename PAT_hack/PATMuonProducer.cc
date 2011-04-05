@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.cc,v 1.39 2010/07/28 13:07:53 srappocc Exp $
+// $Id: PATMuonProducer.cc,v 1.41 2010/09/14 15:20:20 kukartse Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -137,6 +137,11 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
   edm::Handle<edm::View<reco::Muon> > muons;
   iEvent.getByLabel(muonSrc_, muons);
 
+  if (iEvent.isRealData()){
+    addGenMatch_ = false;
+    embedGenMatch_ = false;
+  }
+
   // get the ESHandle for the transient track builder,
   // if needed for high level selection embedding
   edm::ESHandle<TransientTrackBuilder> trackBuilder;
@@ -167,9 +172,11 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
   // OR primary vertex, depending on user selection
   reco::TrackBase::Point beamPoint(0,0,0);
   reco::Vertex primaryVertex;
+  reco::BeamSpot beamSpot;
+  bool beamSpotIsValid = false;
+  bool primaryVertexIsValid = false;
   if ( embedHighLevelSelection_ ) {
     // get the beamspot
-    reco::BeamSpot beamSpot;
     edm::Handle<reco::BeamSpot> beamSpotHandle;
     iEvent.getByLabel(beamLineSrc_, beamSpotHandle);
 
@@ -177,24 +184,23 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
     edm::Handle< std::vector<reco::Vertex> > pvHandle;
     iEvent.getByLabel( pvSrc_, pvHandle );
 
-    if( !usePV_ ) {
-      if( beamSpotHandle.isValid() ){
-	beamSpot = *beamSpotHandle;
-      } else{
-	edm::LogError("DataNotAvailable")
-	  << "No beam spot available from EventSetup, not adding high level selection \n";
-      }
-      beamPoint = reco::TrackBase::Point ( beamSpot.x0(), beamSpot.y0(), beamSpot.z0() );
-    } else {
-      if( pvHandle.isValid() ) {
-	primaryVertex = pvHandle->at(0);
-      } else {
-	edm::LogError("DataNotAvailable")
-	  << "No primary vertex available from EventSetup, not adding high level selection \n";
-      }
-      // this is needed by the IPTools methods from the tracking group
-      iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", trackBuilder);
+    if( beamSpotHandle.isValid() ){
+      beamSpot = *beamSpotHandle;
+      beamSpotIsValid = true;
+    } else{
+      edm::LogError("DataNotAvailable")
+	<< "No beam spot available from EventSetup, not adding high level selection \n";
     }
+    beamPoint = reco::TrackBase::Point ( beamSpot.x0(), beamSpot.y0(), beamSpot.z0() );
+    if( pvHandle.isValid() ) {
+      primaryVertex = pvHandle->at(0);
+      primaryVertexIsValid = true;
+    } else {
+      edm::LogError("DataNotAvailable")
+	<< "No primary vertex available from EventSetup, not adding high level selection \n";
+    }
+    // this is needed by the IPTools methods from the tracking group
+    iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", trackBuilder);
   }
 
   // this will be the new object collection
@@ -228,12 +234,21 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 	if ( innerTrack.isNonnull() && innerTrack.isAvailable() ) {
 	  unsigned int nhits = innerTrack->numberOfValidHits();
 	  aMuon.setNumberOfValidHits( nhits );
+
+	  reco::TransientTrack tt = trackBuilder->build(innerTrack);
+	  embedHighLevel( aMuon, 
+			  innerTrack,
+			  tt,
+			  primaryVertex,
+			  primaryVertexIsValid,
+			  beamSpot,
+			  beamSpotIsValid );
+
 	  // Correct to PV, or beam spot
 	  if ( !usePV_ ) {
 	    double corr_d0 = -1.0 * innerTrack->dxy( beamPoint );
 	    aMuon.setDB( corr_d0, -1.0 );
 	  } else {
-	    reco::TransientTrack tt = trackBuilder->build(innerTrack);
 	    std::pair<bool,Measurement1D> result = IPTools::absoluteTransverseImpactParameter(tt, primaryVertex);
 	    double d0_corr = result.second.value();
 	    double d0_err = result.second.error();
@@ -299,10 +314,11 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 	reco::TrackToTrackMap::const_iterator it_tpfms;
 	reco::TrackToTrackMap::const_iterator it_defTeV;
 	reco::TrackToTrackMap::const_iterator it_dyt;
-	const reco::TrackRef& globalTrack = itMuon->globalTrack();
 
-	bool TeVfailed = false;
+	const reco::TrackRef& globalTrack = itMuon->globalTrack();
 	
+	bool TeVfailed = false;
+
 	// If the getByLabel calls failed above (i.e. if the TeV refit
 	// maps/collections were not in the event), then the TrackRefs
 	// in the Muon object will remain null.
@@ -314,7 +330,7 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 	  if (embedPickyMuon_) aMuon.embedPickyMuon();
 	}
 	else TeVfailed = true;
-
+ 
 	if (!tpfmsMap.failedToGet()) {
 	  it_tpfms = tpfmsMap->find(globalTrack);
 	  if (it_tpfms != tpfmsMap->end()) 
@@ -347,7 +363,6 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 	    aMuon.setCocktailMuon(cocktail);
 	    if(embedCocktailMuon_)aMuon.embedCocktailMuon();
 	  }
-
 
       }
       
@@ -382,12 +397,21 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 	if ( innerTrack.isNonnull() && innerTrack.isAvailable() ) {
 	  unsigned int nhits = innerTrack->numberOfValidHits();
 	  aMuon.setNumberOfValidHits( nhits );
+
+	  reco::TransientTrack tt = trackBuilder->build(innerTrack);
+	  embedHighLevel( aMuon, 
+			  innerTrack,
+			  tt,
+			  primaryVertex,
+			  primaryVertexIsValid,
+			  beamSpot,
+			  beamSpotIsValid );
+
 	  // Correct to PV, or beam spot
 	  if ( !usePV_ ) {
 	    double corr_d0 = -1.0 * innerTrack->dxy( beamPoint );
 	    aMuon.setDB( corr_d0, -1.0 );
 	  } else {
-	    reco::TransientTrack tt = trackBuilder->build(innerTrack);
 	    std::pair<bool,Measurement1D> result = IPTools::absoluteTransverseImpactParameter(tt, primaryVertex);
 	    double d0_corr = result.second.value();
 	    double d0_err = result.second.error();
@@ -418,6 +442,7 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 
   if (isolator_.enabled()) isolator_.endEvent();
 }
+
 
 void PATMuonProducer::fillMuon( Muon& aMuon, const MuonBaseRef& muonRef, const reco::CandidateBaseRef& baseRef, const GenAssociations& genMatches, const IsoDepositMaps& deposits, const IsolationValueMaps& isolationValues ) const 
 {
@@ -599,6 +624,71 @@ void PATMuonProducer::readIsolationLabels( const edm::ParameterSet & iConfig, co
   }  
 }
 
+
+
+// embed various impact parameters with errors
+// embed high level selection
+void PATMuonProducer::embedHighLevel( pat::Muon & aMuon, 
+				      reco::TrackRef innerTrack,
+				      reco::TransientTrack & tt,
+				      reco::Vertex & primaryVertex,
+				      bool primaryVertexIsValid,
+				      reco::BeamSpot & beamspot,
+				      bool beamspotIsValid
+				      )
+{
+  // Correct to PV
+
+  // PV2D
+  std::pair<bool,Measurement1D> result =
+    IPTools::signedTransverseImpactParameter(tt,
+					     GlobalVector(innerTrack->px(),
+							  innerTrack->py(),
+							  innerTrack->pz()),
+					     primaryVertex); 
+  double d0_corr = result.second.value();
+  double d0_err = primaryVertexIsValid ? result.second.error() : -1.0;
+  aMuon.setDB( d0_corr, d0_err, pat::Muon::PV2D);
+
+
+  // PV3D
+  result =
+    IPTools::signedImpactParameter3D(tt,
+				     GlobalVector(innerTrack->px(),
+						  innerTrack->py(),
+						  innerTrack->pz()),
+				     primaryVertex);
+  d0_corr = result.second.value();
+  d0_err = primaryVertexIsValid ? result.second.error() : -1.0;
+  aMuon.setDB( d0_corr, d0_err, pat::Muon::PV3D);
+  
+
+  // Correct to beam spot
+  // make a fake vertex out of beam spot
+  reco::Vertex vBeamspot(beamspot.position(), beamspot.covariance3D());
+  
+  // BS2D
+  result =
+    IPTools::signedTransverseImpactParameter(tt,
+					     GlobalVector(innerTrack->px(),
+							  innerTrack->py(),
+							  innerTrack->pz()),
+					     vBeamspot);
+  d0_corr = result.second.value();
+  d0_err = beamspotIsValid ? result.second.error() : -1.0;
+  aMuon.setDB( d0_corr, d0_err, pat::Muon::BS2D);
+  
+    // BS3D
+  result =
+    IPTools::signedImpactParameter3D(tt,
+				     GlobalVector(innerTrack->px(),
+						  innerTrack->py(),
+						    innerTrack->pz()),
+				     vBeamspot);
+  d0_corr = result.second.value();
+  d0_err = beamspotIsValid ? result.second.error() : -1.0;
+  aMuon.setDB( d0_corr, d0_err, pat::Muon::BS3D);
+}
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 
