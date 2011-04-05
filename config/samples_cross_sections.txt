@@ -104,6 +104,6 @@ samplename = TEST
 description = ttbar test MC file
 x-section = 157.5
 pathname = patTuple_ttbar.root
-Nprod_evt = 1000
+Nprod_evt = 600
 
 DONE
