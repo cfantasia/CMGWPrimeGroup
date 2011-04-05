@@ -23,7 +23,7 @@ echo -e  "******************************************"
 #setup new working area
 mkdir $WORKING_AREA
 cd $WORKING_AREA
-setenv SCRAM_ARCH slc5_amd64_gcc434
+export SCRAM_ARCH=slc5_amd64_gcc434
 scramv1 p CMSSW $RELEASE_VERSION
 cd $RELEASE_VERSION/src
 
