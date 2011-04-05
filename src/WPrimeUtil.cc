@@ -129,7 +129,7 @@ void WPrimeUtil::getEff(float & eff, float & deff,float Num,float Denom)
 // used for the parsing of samples_cross_sections.txt
 void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
 {
-  unsigned int i = 0;
+  size_t i = 0;
   i = new_line.find("samplename = ");
   if(i != string::npos)
     {
@@ -204,7 +204,7 @@ TVector2 WPrimeUtil::getHadronicMET(edm::EventBase const & event)
 
   assert(event.isRealData() == false);
 
-  size_t W_index = -1;
+  int W_index = -1;
   event.getByLabel(genParticles_, genParticles);
   for(size_t i = 0; i != genParticles->size(); ++i) {
     const reco::GenParticle & W_p = (*genParticles)[i];
