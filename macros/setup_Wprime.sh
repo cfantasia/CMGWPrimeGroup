@@ -9,8 +9,8 @@ exit
 fi
 
 # Definitions
-RELEASE_VERSION=CMSSW_3_8_7
-WORKING_AREA=V202
+RELEASE_VERSION=CMSSW_4_1_4
+WORKING_AREA=V210
 # end definitions
 
 export RELEASE_VERSION WORKING_AREA
@@ -23,6 +23,7 @@ echo -e  "******************************************"
 #setup new working area
 mkdir $WORKING_AREA
 cd $WORKING_AREA
+setenv SCRAM_ARCH slc5_amd64_gcc434
 scramv1 p CMSSW $RELEASE_VERSION
 cd $RELEASE_VERSION/src
 
@@ -31,7 +32,7 @@ echo -e  " Checking out the code..."
 echo -e  "**************************"
 cvs -Q co -r $RELEASE_VERSION DataFormats/PatCandidates
 cvs -Q co -r $RELEASE_VERSION PhysicsTools/PatAlgos
-cvs -Q co -r V00-02-02 UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-02-10 UserCode/CMGWPrimeGroup
 # cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"
@@ -56,8 +57,8 @@ sleep 2
 source /afs/cern.ch/cms/sw/cmsset_default.sh
 # Not sure how to make script aware of cmsenv alias...
 #cmsenv
-scramv1 runtime -sh
-scramv1 b -j 4 # (lots of output here, but nothing to worry about)
+scram runtime -sh
+scram b -j 4 # (lots of output here, but nothing to worry about)
 
 echo -e "\n*************************************************"
 echo -e " Done compiling UserCode/CMGWPrimeGroup"

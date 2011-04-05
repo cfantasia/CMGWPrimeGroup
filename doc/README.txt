@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V202, release:
-CMSSW_3_8_7)
+o Setup a new working area (Default name: V210, release:
+CMSSW_4_1_4)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-02)
+V00-02-10)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos 
@@ -31,11 +31,10 @@ location of the input file and run.
 
 
 NB The following TEST ttbar PAT-tuple (600 events) produced with 
-387 (START38_V13_v1) can be found in  
-/castor/cern.ch/user/c/cleonido/wprime/V200
+4_1_3 (START311_V2_v1) can be found in  
+/castor/cern.ch/user/c/cleonido/wprime/V210
 
-Input file used: /castor/cern.ch/cms/store/relval/CMSSW_3_8_6/RelValTTbar/GEN-SIM-RECO/START38_V13-v1/0068/98EA8C65-25E8-DF11-B0A0-0018F3D095F8.root
-
+Input file used: /castor/cern.ch/cms/store/relval/CMSSW_4_1_3/RelValTTbar/GEN-SIM-RECO/START311_V2-v1/0038/12763BEE-5A52-E011-8988-003048679048.root 
 
 
 =========================================================================

@@ -1,3 +1,9 @@
+05-APR-11 (Christos), V00-02-10
+===============================
+Changes to make code compatible with 41x (tested on/default working release: 4_1_4)
+
+Fix compilation errors for 64-bit architecture
+
 04-APR-11 (Christos), V00-02-02
 ===============================
 
