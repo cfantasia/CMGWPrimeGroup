@@ -93,19 +93,24 @@ void WPrimeFinder::run()
       {
 	cout << " *** Can't find file " << it->pathname
 	     << " ! Aborting... " << endl;
-	//	abort();
-	cout << " (Aborting disabled till input samples are available)\n\n";
+	abort();
       }
 
-    // put this here since we are missing most of the input samples!
-    if(it->samplename != "TEST")continue;
-    
-    cout << " Opened file " << it->pathname << endl;
     it->file = inFile;
     TTree * events = (TTree *) inFile->Get("Events");
     assert(events);
-
     it->Nact_evt = events->GetEntries();
+    if(it->samplename == "data")
+      // Nprod_evt presumably contains the # of events before any filtering
+      // that results in Nact_evt (< Nprod_evt) events contained in the file.
+      // For data, we tend not to know how many events we started with,
+      // so just assume pre-selection efficiency = 100%;
+      // this affects only the efficiency calculations printed
+      // at the end of the job - nothing else!
+      it->Nprod_evt = it->Nact_evt;
+    
+    cout << " Opened file " << it->pathname << " with " << it->Nact_evt 
+	 << " events" << endl;
       
     beginFile(it);
     fwlite::Event ev(inFile);
