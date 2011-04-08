@@ -16,7 +16,7 @@ process.WprimeAnalyzer = cms.PSet(
    # fileNames   = cms.vstring('file:patTuple.root'),  ## mandatory
     outputFile  = cms.string('Wprime_analysis.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
-    reportAfter = cms.uint32(100),                     ## optional
+    reportAfter = cms.uint32(1000),                     ## optional
     doRecoilCorrectionForW = cms.bool(True),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(True),
