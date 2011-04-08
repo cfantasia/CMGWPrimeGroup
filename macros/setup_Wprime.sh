@@ -65,5 +65,5 @@ echo -e " Done compiling UserCode/CMGWPrimeGroup"
 echo -e " Now making symbolic link to example config file"
 echo -e "*************************************************"
 echo -e " \n"
-ln -s UserCode/CMGWPrimeGroup/test/patTuple_mumet.py .
-ln -s UserCode/CMGWprimeGroup/root_macros/ZMET_data.root .
+ln -s UserCode/CMGWPrimeGroup/test/patTuple_mumet_cfg.py .
+ln -s UserCode/CMGWPrimeGroup/root_macros/ZMET_data.root .
