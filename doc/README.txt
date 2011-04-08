@@ -13,7 +13,7 @@ o Setup a new working area (Default name: V211, release:
 CMSSW_4_1_4)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-11)
+V00-02-12)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos 
@@ -26,14 +26,18 @@ o Compile the code
 o Copy example config file for producing PAT-tuple to the top directory.
 
 
+
 (2) You can now modify the parameters in configuration file, change the
 location of the input file and run.
 
-
-NB The following TEST ttbar PAT-tuple (600 events) produced with 
-4_1_3 (START311_V2_v1) can be found in  
+NB The following PAT-tuples produced with V21x can be found in 
 /castor/cern.ch/user/c/cleonido/wprime/V210
 
+(a) Data_Run2011A_7.426ipb.root (/SingleMu/Run2011A-PromptReco-v1/AOD),
+processed ~8.3M events with 4_1_4
+JSON: Cert_160404-161216_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt
+
+(b) (MC)  ttbar (600 events) produced with 4_1_3 (START311_V2_v1) 
 Input file used: /castor/cern.ch/cms/store/relval/CMSSW_4_1_3/RelValTTbar/GEN-SIM-RECO/START311_V2-v1/0038/12763BEE-5A52-E011-8988-003048679048.root 
 
 

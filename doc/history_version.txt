@@ -1,3 +1,13 @@
+08-APR-11 (Christos), V00-02-12
+===============================
+(a) Installation script: fixed typos in symbolik links
+(b) PAT-tuple making:  default now is running on data (need to make
+switching between MC&data a bit easier, but I am not sure how...)
+(c)  Updated default data input file (Run2011A, 7.4 ipb); available on castor
+(see doc/README.txt)
+(d) Misc: removed protection against missing input files
+
+
 05-APR-11 (Christos), V00-02-11
 ===============================
 Bugfix in installation script (macros/setup_Wprime.sh)
