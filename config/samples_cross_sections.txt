@@ -1,8 +1,10 @@
 samplename = data
-description = Muon pt > 25 GeV skim, 36.1 pb^-1
+description = Muon pt > 25 GeV skim, 7.426 pb^-1
 x-section = 1
-pathname = Data.Nov4.root
+pathname = Data_Run2011A_7.426ipb.root
 Nprod_evt = 1
+
+DONE
 
 samplename = W
 description = POWHEG W->munu without eta cut (NNLO cross-section)
@@ -99,11 +101,5 @@ description = Wprime->munu, Tune Z2, Mass = 2.0 TeV (NNLO cross-section)
 x-section = 0.0145
 pathname = wprime_2.0TeV.root
 Nprod_evt = 11000
-
-samplename = TEST
-description = ttbar test MC file
-x-section = 157.5
-pathname = patTuple_ttbar.root
-Nprod_evt = 600
 
 DONE
