@@ -6,22 +6,10 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 #  taylor your PAT configuration; for a few examples
 #  uncomment the lines below
 ## ------------------------------------------------------
-#from PhysicsTools.PatAlgos.tools.coreTools import *
+from PhysicsTools.PatAlgos.tools.coreTools import *
 
 ## remove MC matching from the default sequence
-# removeMCMatching(process, ['Muons'])
-
-## remove certain objects from the default sequence
-# removeAllPATObjectsBut(process, ['Muons'])
-# removeSpecificPATObjects(process, ['Electrons', 'Muons', 'Taus'])
-
-## ------------------------------------------------------
-#  NOTE: you can still run PAT in the 36X version on
-#  input files produced within the 35X series. This
-#  implies some reconfigurations, example are given
-#  below.
-## ------------------------------------------------------
-#from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
+removeMCMatching(process, ['All'])
 
 from PhysicsTools.PatAlgos.tools.metTools import *
 addPfMET(process, 'PF')
@@ -29,49 +17,22 @@ addPfMET(process, 'PF')
 from PhysicsTools.PatAlgos.tools.pfTools import *
 addPFCandidates(process, 'particleFlow')
 
-
-## uncomment this line to run on an 35X input sample
-#run36xOn35xInput(process)
-## uncomment the following lines to add jets from a
-## 35X input sample
-#addJetCollection35X(process,cms.InputTag('ak7CaloJets'),
-#                 'AK7', 'Calo',
-#                 doJTA        = True,
-#                 doBTagging   = False,
-#                 jetCorrLabel = ('AK7', 'Calo'),
-#                 doType1MET   = True,
-#                 doL1Cleaning = True,                 
-#                 doL1Counters = False,
-#                 genJetCollection=cms.InputTag("ak7GenJets"),
-#                 doJetID      = True,
-#                 jetIdLabel   = "ak7"
-#                 )
-
-## uncomment the following lines to switch the jet
-## collection from a 35X input sample
-#switchJetCollection35X(process,cms.InputTag('ak5PFJets'),
-#                 doJTA        = True,
-#                 doBTagging   = True,
-#                 jetCorrLabel = None,
-#                 doType1MET   = True,
-#                 genJetCollection=cms.InputTag("ak5GenJets"),
-#                 doJetID      = True
-#                 )
-
+process.load("FWCore.MessageLogger.MessageLogger_cfi")
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 ### Prune the GEN particle collection ###
-process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
-process.prunedGenParticles = cms.EDProducer("GenParticlePruner",
-                                            src = cms.InputTag("genParticles"),
-                                            select = cms.vstring(
-    "drop  *",
+#process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+#process.prunedGenParticles = cms.EDProducer("GenParticlePruner",
+#                                            src = cms.InputTag("genParticles"),
+#                                            select = cms.vstring(
+#    "drop  *",
     #keeps all particles from the hard matrix element
-    "keep status = 3",
+#    "keep status = 3",
     #keeps all stable muons (13) and electrons (11) + neutrinos (14, 12)
-    # + W (24) + W' (34)  and their (direct) mothers.
-    "+keep (abs(pdgId) = 11 | abs(pdgId) = 13 | abs(pdgId) = 12 | abs(pdgId) = 14 | abs(pdgId) = 24 | abs(pdgId) = 34) & status = 1"
-    )
-)
+#    # + W (24) + W' (34)  and their (direct) mothers.
+#    "+keep (abs(pdgId) = 11 | abs(pdgId) = 13 | abs(pdgId) = 12 | abs(pdgId) = 14 | abs(pdgId) = 24 | abs(pdgId) = 34) & status = 1"
+#    )
+#)
 
 process.selectedPatMuons.cut = "pt > 25. & abs(eta) < 2.5"
 
@@ -82,9 +43,8 @@ process.highPtMuonFilter = cms.EDFilter("CandViewCountFilter",
 
 ## let it run
 process.p = cms.Path(
-#    process.patDefaultSequence
     process.patDefaultSequence *
-    process.prunedGenParticles * 
+#    process.prunedGenParticles * 
     process.highPtMuonFilter
 )
 
@@ -96,11 +56,11 @@ process.p = cms.Path(
 #   process.GlobalTag.globaltag =  ...    ##  (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
 #                                         ##
 process.source.fileNames = [          ##
-    '/store/relval/CMSSW_3_8_6/RelValTTbar/GEN-SIM-RECO/START38_V13-v1/0068/98EA8C65-25E8-DF11-B0A0-0018F3D095F8.root'
-#    '/store/relval/CMSSW_3_8_6/RelValTTbar/GEN-SIM-RECO/START38_V13-v1/0065/2856A4C7-B5E7-DF11-BE1D-00304867BFA8.root'
+    '/store/data/Run2011A/SingleMu/AOD/PromptReco-v1/000/161/312/F8AEC745-DF57-E011-8D23-001D09F290BF.root'
+#    '/store/relval/CMSSW_3_8_6/RelValTTbar/GEN-SIM-RECO/START38_V13-v1/0068/98EA8C65-25E8-DF11-B0A0-0018F3D095F8.root'
     ]                                     ##  (e.g. 'file:AOD.root')
 #                                         ##
-process.maxEvents.input = 1000        ##  (e.g. -1 to run on all events)
+process.maxEvents.input = -1        ##  (e.g. -1 to run on all events)
 #                                         ##
 process.out.outputCommands = [
     # RECO
