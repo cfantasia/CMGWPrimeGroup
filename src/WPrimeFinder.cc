@@ -25,6 +25,7 @@ WPrimeFinder::WPrimeFinder(char * config_file)
 WPrimeFinder::~WPrimeFinder()
 {
   if(muMETAnalyzer) delete muMETAnalyzer;
+  if(WmunugammaAnalyzer) delete WmunugammaAnalyzer;
   delete wprimeUtil;
   out_.close();
 }
@@ -46,6 +47,7 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
   runElMETAnalysis_ = cfg.getParameter<bool>("runElMETAnalysis" );
   runWZAnalysis_ = cfg.getParameter<bool>("runWZAnalysis" );
   runTBAnalysis_ = cfg.getParameter<bool>("runTBAnalysis" );
+  runWgammaAnalysis_ =cfg.getParameter<bool>("runWgammaAnalysis"); 
 
   wprimeUtil = new WPrimeUtil(outputFile_.c_str(), genParticles_);
 
@@ -53,6 +55,10 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
     muMETAnalyzer = new MuMETAnalyzer(cfg, wprimeUtil);
   else
     muMETAnalyzer = 0;
+  if(runWgammaAnalysis_)
+    WmunugammaAnalyzer = new WgammaAnalyzer(cfg, wprimeUtil);
+  else
+    WmunugammaAnalyzer = 0;
 
 }
 
@@ -70,7 +76,9 @@ void WPrimeFinder::beginFile(std::vector<wprime::InputFile>::const_iterator it)
 
   // call beginFile for each finder here
   if(runMuMETAnalysis_)
-    muMETAnalyzer->beginFile(it);
+      muMETAnalyzer->beginFile(it);
+  if(runWgammaAnalysis_) 
+      WmunugammaAnalyzer->beginFile(it);
 }
 
 void WPrimeFinder::eventLoop(edm::EventBase const & event)
@@ -79,6 +87,9 @@ void WPrimeFinder::eventLoop(edm::EventBase const & event)
 
   if(runMuMETAnalysis_)
     muMETAnalyzer->eventLoop(event);
+
+  if(runWgammaAnalysis_)
+      WmunugammaAnalyzer->eventLoop(event);
 }
 
 
@@ -99,32 +110,30 @@ void WPrimeFinder::run()
     it->file = inFile;
     TTree * events = (TTree *) inFile->Get("Events");
     assert(events);
+
     it->Nact_evt = events->GetEntries();
     if(it->samplename == "data")
-      // Nprod_evt presumably contains the # of events before any filtering
-      // that results in Nact_evt (< Nprod_evt) events contained in the file.
-      // For data, we tend not to know how many events we started with,
-      // so just assume pre-selection efficiency = 100%;
-      // this affects only the efficiency calculations printed
-      // at the end of the job - nothing else!
-      it->Nprod_evt = it->Nact_evt;
-    
-    cout << " Opened file " << it->pathname << " with " << it->Nact_evt 
-	 << " events" << endl;
-      
+        // Nprod_evt presumably contains the # of events before any filtering
+        // that results in Nact_evt (< Nprod_evt) events contained in the file.
+        // For data, we tend not to know how many events we started with,
+        // so just assume pre-selection efficiency = 100%;
+        // this affects only the efficiency calculations printed
+        // at the end of the job - nothing else!
+        it->Nprod_evt = it->Nact_evt;
+ 	  	 
+    cout << " Opened file " << it->pathname << " with " << it->Nact_evt
+         << " events" << endl;
+
     beginFile(it);
     fwlite::Event ev(inFile);
     for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){// loop over events
-      
       edm::EventBase const & event = ev;
       // break loop if maximal number of events is reached 
       if(maxEvents_>0 ? ievt+1>maxEvents_ : false) break;
       // simple event counter
       if(reportAfter_!=0 ? (ievt>0 && ievt%reportAfter_==0) : false) 
 	cout << "  Processing event: " << ievt << endl;
-      
       eventLoop(event);
-
     } // loop over events
     endFile(it);
     
@@ -153,7 +162,8 @@ void WPrimeFinder::endFile(std::vector<wprime::InputFile>::const_iterator it)
    // call endFile for each finder here
   if(runMuMETAnalysis_)
     muMETAnalyzer->endFile(it, out_);
-  
+  if(runWgammaAnalysis_) 
+      WmunugammaAnalyzer->endFile(it, out_);  
 }
 
 // e.g. print summmary of expected events for all samples
@@ -161,4 +171,6 @@ void WPrimeFinder::endAnalysis()
 {
   if(runMuMETAnalysis_)
     muMETAnalyzer->endAnalysis(out_);
+  if(runWgammaAnalysis_)
+      WmunugammaAnalyzer->endAnalysis(out_);
 }

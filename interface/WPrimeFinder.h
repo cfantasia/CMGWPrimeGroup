@@ -5,7 +5,7 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/MuMETAnalyzer.h"
-
+#include "UserCode/CMGWPrimeGroup/interface/WgammaAnalyzer.h"
 
 class WPrimeFinder
 {
@@ -48,14 +48,17 @@ class WPrimeFinder
   bool runElMETAnalysis_;
   bool runWZAnalysis_;
   bool runTBAnalysis_;
-
+  bool runWgammaAnalysis_;
   bool doRecoilCorrectionForW_;
 
   edm::InputTag genParticles_;
 
   MuMETAnalyzer * muMETAnalyzer;
+  WgammaAnalyzer * WmunugammaAnalyzer;
   WPrimeUtil * wprimeUtil;
 
 };
 
 #endif // #define _wprime_finder_h_
+
+
