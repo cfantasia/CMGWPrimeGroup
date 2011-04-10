@@ -56,6 +56,7 @@ int MuMETAnalyzer::getTheHardestMuon()
   int ret = -1;
   for(int j = 0; j != nmuons; ++j)
     {
+      if((*muons)[j].innerTrack().isNull())continue;
       float current_muPT = (*muons)[j].innerTrack()->pt();
       if (current_muPT > temp_muPT) 
 	{
