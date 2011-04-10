@@ -23,6 +23,7 @@ process.WprimeAnalyzer = cms.PSet(
     runElMETAnalysis = cms.bool(False),
     runWZAnalysis    = cms.bool(False),
     runTBAnalysis    = cms.bool(False),
+    runWgammaAnalysis = cms.bool(False),
     ## input specific for this analyzer
     muons = cms.InputTag('selectedPatMuons'),
     met   = cms.InputTag('patMETsPF'),
