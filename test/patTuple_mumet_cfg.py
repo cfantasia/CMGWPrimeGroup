@@ -35,6 +35,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 #)
 
 process.selectedPatMuons.cut = "pt > 25. & abs(eta) < 2.5"
+process.selectedPatPFParticles.cut = "particleId == 3"
 
 process.highPtMuonFilter = cms.EDFilter("CandViewCountFilter",
                                 src = cms.InputTag("selectedPatMuons"),
