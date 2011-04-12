@@ -1,3 +1,16 @@
+12-APR011 (David, Christos), V00-02-20
+=====================================
+W + gamma (David):
+o First porting of W(mu) + gamma analysis code. 
+
+
+Mu+MET (Christos):
+o updated data file (now at 19.30 ipb); available on castor (see
+doc/README.txt) 
+o config of PAT-tuple making: dropping all PFParticles but muons;
+significant improvement in reading speeds (factor of ~10)
+
+
 08-APR-11 (Christos), V00-02-12
 ===============================
 (a) Installation script: fixed typos in symbolik links
