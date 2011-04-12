@@ -1,7 +1,7 @@
 samplename = data
-description = Muon pt > 25 GeV skim, 7.426 pb^-1
+description = Muon pt > 25 GeV skim, 19.30 pb^-1
 x-section = 1
-pathname = Data_Run2011A_7.426ipb.root
+pathname = Data_Run2011A_160404_161365_19.30ipb.root
 Nprod_evt = 1
 
 DONE
