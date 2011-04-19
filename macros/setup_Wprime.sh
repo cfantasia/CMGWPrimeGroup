@@ -10,7 +10,7 @@ fi
 
 # Definitions
 RELEASE_VERSION=CMSSW_4_1_4
-WORKING_AREA=V220
+WORKING_AREA=V230
 # end definitions
 
 export RELEASE_VERSION WORKING_AREA
@@ -32,11 +32,13 @@ echo -e  " Checking out the code..."
 echo -e  "**************************"
 cvs -Q co -r $RELEASE_VERSION DataFormats/PatCandidates
 cvs -Q co -r $RELEASE_VERSION PhysicsTools/PatAlgos
-cvs -Q co -r V00-02-20 UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-05-00 -d SHarper/HEEPAnalyzer UserCode/SHarper/HEEPAnalyzer 
+cvs -Q co -r V00-02-30 UserCode/CMGWPrimeGroup
 # cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"
 echo -e  " Hack PAT Muon content to include high-pt reconstructors..."
+echo -e  " Fix BuildFiles (ie. make 41x-compatible) for HEEP code..."
 echo -e  "************************************************************"
 mv DataFormats/PatCandidates/interface/Muon.h DataFormats/PatCandidates/interface/Muon.h_original
 cp UserCode/CMGWPrimeGroup/PAT_hack/Muon.h DataFormats/PatCandidates/interface/
@@ -48,7 +50,8 @@ mv PhysicsTools/PatAlgos/plugins/PATMuonProducer.cc PhysicsTools/PatAlgos/plugin
 cp UserCode/CMGWPrimeGroup/PAT_hack/PATMuonProducer.cc PhysicsTools/PatAlgos/plugins/
 mv PhysicsTools/PatAlgos/python/producersLayer1/muonProducer_cfi.py PhysicsTools/PatAlgos/python/producersLayer1/muonProducer_cfi.py_original
 cp UserCode/CMGWPrimeGroup/PAT_hack/muonProducer_cfi.py PhysicsTools/PatAlgos/python/producersLayer1/
-
+cp UserCode/CMGWPrimeGroup/SHarper_hack/BuildFile1.xml SHarper/HEEPAnalyzer/BuildFile.xml
+cp UserCode/CMGWPrimeGroup/SHarper_hack/BuildFile2.xml SHarper/HEEPAnalyzer/plugins/BuildFile.xml
 
 echo -e "\n************************"
 echo -e " Done. Now will compile"
@@ -66,4 +69,5 @@ echo -e " Now making symbolic link to example config file"
 echo -e "*************************************************"
 echo -e " \n"
 ln -s UserCode/CMGWPrimeGroup/test/patTuple_mumet_cfg.py .
+ln -s UserCode/CMGWPrimeGroup/test/patTuple_elmet_cfg.py .
 ln -s UserCode/CMGWPrimeGroup/root_macros/ZMET_data.root .

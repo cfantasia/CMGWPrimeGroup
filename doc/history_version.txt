@@ -1,3 +1,15 @@
+19-APR-11 (Christos), V00-02-30
+=====================================
+First porting of Electron+MET analyzer. Follows design of Muon+MET code by
+incorporating HEEP cuts for high-Et electron (package:
+UserCode/SHarper/HEEPAnalyzer, V00-05-00)
+
+Misc on Muon+MET: 
+- remove obsolete/unused minimumPt cut
+- minor tweaks to accommodate El+MET needs
+- fix muon mass value :-) (interface/util.h)
+
+
 12-APR011 (David, Christos), V00-02-20
 =====================================
 W + gamma (David):

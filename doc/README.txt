@@ -9,17 +9,19 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V220, release:
+o Setup a new working area (Default name: V230, release:
 CMSSW_4_1_4)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-20)
+V00-02-30)
 
 o Check out the default versions of DataFormats/PatCandidates and
-PhysicsTools/PatAlgos 
+PhysicsTools/PatAlgos and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
 
 o Hack the content of PAT Muon collections in order to include the 
 dedicated high-pt reconstructors (picky, cocktail, etc)
+
+o Hack the BuildFiles of the HEEP code to make it 41x-compatible
 
 o Compile the code
 
@@ -30,17 +32,16 @@ o Copy example config file for producing PAT-tuple to the top directory.
 (2) You can now modify the parameters in configuration file, change the
 location of the input file and run.
 
-NB The following Mu+MET PAT-tuples produced with V21x can be found in 
-/castor/cern.ch/user/c/cleonido/wprime/V210
+NB The following PAT-tuples produced with V220 can be found in 
+/castor/cern.ch/user/c/cleonido/wprime/V220 (a), and
+/castor/cern.ch/user/c/cleonido/wprime/V220/TEST (b), and
 
-(a) Data_Run2011A_160404_161365_19.30ipb.root (/SingleMu/Run2011A-PromptReco-v1/AOD),
+(a) Mu+MET: Data_Run2011A_160404_161365_19.30ipb.root (/SingleMu/Run2011A-PromptReco-v1/AOD),
 processed ~8.3M events with 4_1_4
 JSON: Cert_160404-161216_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt and
 Cert_161079-161352_7TeV_PromptReco_Collisions11_JSON_noESpbl_v2.txt
 
-(b) (MC)  ttbar (600 events) produced with 4_1_3 (START311_V2_v1) 
-Input file used: /castor/cern.ch/cms/store/relval/CMSSW_4_1_3/RelValTTbar/GEN-SIM-RECO/START311_V2-v1/0038/12763BEE-5A52-E011-8988-003048679048.root 
-
+(b) Small Mu+MET and El+MET pat-tuples with 2011 data for testing
 
 =========================================================================
 (B) Step 2: Analyzing custom PAT-tuples
@@ -52,6 +53,9 @@ To run:
  WPrimeAnalyzer UserCode/CMGWPrimeGroup/bin/analyzeWprimeMuNu_cfg.py
 (mu+MET)
 
+ WPrimeAnalyzer UserCode/CMGWPrimeGroup/bin/analyzeWprimeElNu_cfg.py
+(ele+MET)
+
  WPrimeAnalyzer UserCode/CMGWPrimeGroup/bin/analyzeWprimeWgamma_cfg.py
 (W[mu]+gamma)
 
@@ -59,7 +63,7 @@ To run:
 
 Options:
 - enable/disable analyzers for Mu+MET (available), W(mu)+gamma (available),
-El+MET (missing), WZ (missing), tb (missing)
+El+MET (available), WZ (missing), tb (missing)
 - specify input collections 
 - specify parameters for Mu+MET/W+gamma analysis (may want to move to
 separate cfg file) 
@@ -93,6 +97,9 @@ for MC W->mu samples
 
 
 - class MuMETAnalyzer: Mu+MET analysis (applies selection cuts and creates
+kinematic distributions)
+
+- class EleMETAnalyzer: Ele+MET analysis (applies selection cuts and creates
 kinematic distributions)
 
 - class WgammaAnalyzer.cc: W(mu)+gamma analysis (applies selection cuts and
