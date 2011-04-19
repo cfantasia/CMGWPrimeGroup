@@ -5,6 +5,7 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/MuMETAnalyzer.h"
+#include "UserCode/CMGWPrimeGroup/interface/EleMETAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/WgammaAnalyzer.h"
 
 class WPrimeFinder
@@ -54,6 +55,7 @@ class WPrimeFinder
   edm::InputTag genParticles_;
 
   MuMETAnalyzer * muMETAnalyzer;
+  EleMETAnalyzer * eleMETAnalyzer;
   WgammaAnalyzer * WmunugammaAnalyzer;
   WPrimeUtil * wprimeUtil;
 
