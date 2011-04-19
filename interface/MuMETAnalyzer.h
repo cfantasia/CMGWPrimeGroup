@@ -11,7 +11,7 @@
 
 class TH1F;
 
-#define debugme 0
+#define debugmeMuMet 0
 #define dumpHighPtMuons 0
 
 class MuMETAnalyzer;
@@ -20,10 +20,10 @@ class MuMETAnalyzer;
 // of selection cuts should be skipped based on some event property 
 // (e.g. when the trigger has failed the event, or there are more than 
 // one muons in the event, etc)
-typedef bool (MuMETAnalyzer::*funcPtr)(bool *, int, edm::EventBase const &);
+typedef bool (MuMETAnalyzer::*funcPtrMu)(bool *, int, edm::EventBase const &);
 
 // key: cuts_desc_short[i], value: function pointer corresponding to selection cut
-typedef std::map<std::string, funcPtr> selection_map;
+typedef std::map<std::string, funcPtrMu> selection_map_mumet;
 
 class MuMETAnalyzer
 {
@@ -74,7 +74,7 @@ class MuMETAnalyzer
   void defineHistos_TMass(TFileDirectory & dir);
 
   void setupCutOrder();
-  selection_map cuts;
+  selection_map_mumet cuts;
 
   // Get the hardest muon (based on tracker-pt) in event
   // (returns index in pat::MuonCollection)
@@ -109,10 +109,6 @@ class MuMETAnalyzer
   // whether HLT accepted the event
   bool passedHLT(bool *, int, edm::EventBase const &);
 
-  // check if muon has minimum pt, fill isThere accordingly
-  // always returns true
-  bool muonMinimumPt(bool * isThere, int, edm::EventBase const &);
-    
   // check if muon satisfies quality requirements
   // fill goodQual; always returns true
   bool goodQualityMuon(bool * goodQual, int theMu, edm::EventBase const &);

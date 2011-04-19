@@ -380,20 +380,18 @@ void MuMETAnalyzer::defineHistos_TMass(TFileDirectory & dir)
 void MuMETAnalyzer::setupCutOrder()
 {
   cuts.clear();
-#if debugme
+#if debugmeMuMet
   cout << "\n Mu+MET cuts will be applied in this order: " << endl;
 #endif
 
   for(int cut_i = 0; cut_i != Num_mumet_cuts; ++cut_i)
     { // loop over selection cuts
       string arg = mumet_cuts_desc_short[cut_i];
-#if debugme
+#if debugmeMuMet
       cout << " Cut #" << (cut_i+1) << ": " << mumet_cuts_desc_long[cut_i]
 	   << " (" << arg << ") " << endl;
 #endif
       if(arg == "hlt")cuts[arg] = &MuMETAnalyzer::passedHLT;
-      else if(arg.find("thr") != string::npos)
-	cuts[arg] = &MuMETAnalyzer::muonMinimumPt;
       else if(arg == "qual")cuts[arg] = &MuMETAnalyzer::goodQualityMuon;
       else if(arg == "1mu")cuts[arg] = &MuMETAnalyzer::onlyOneHighTrackPtMuon;
       else if(arg == "iso")cuts[arg] = &MuMETAnalyzer::isolatedMuon;
@@ -406,7 +404,7 @@ void MuMETAnalyzer::setupCutOrder()
 	}
     } // loop over selection cuts
 
-#if debugme
+#if debugmeMuMet
   cout << endl;
 #endif
 
@@ -425,7 +423,7 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event)
   TVector2 oldMETv(oldMET->px(), oldMET->py());
   TVector2 newMET = getNewMET(event, mu4D);
   cout << " default pfMET = " << oldMET->pt();
-  cout << " muTeV-adjusted pfMET = " << newMET.Mod() << endl;
+  cout << " muTeV/hadronic-recoil-adjusted pfMET = " << newMET.Mod() << endl;
 
   cout << " default TM = " << WPrimeUtil::TMass(mu4D, oldMETv);
   cout << " muTeV-adjusted TM = " << WPrimeUtil::TMass(mu4D, newMET) << endl;
@@ -538,49 +536,39 @@ bool MuMETAnalyzer::passedHLT(bool *, int, edm::EventBase const &)
   return true;
 }
 
-// check if muon has minimum pt, fill isThere accordingly
-// always returns true
-bool MuMETAnalyzer::muonMinimumPt(bool * isThere, int, edm::EventBase const &)
-{
-  if(mu4D.Pt() <= muonPtThreshold_)
-    *isThere = false;
-
-  return true;
-}
-
 // check if muon satisfies quality requirements
 // fill goodQual; always returns true
 bool MuMETAnalyzer::goodQualityMuon(bool * goodQual, int theMu, edm::EventBase const &)
 {
   //See twiki: https://twiki.cern.ch/twiki/bin/view/CMS/ExoticaWprime
   //for the latest quality cuts
-
+  
   bool muonID = (*muons)[theMu].isGood("AllGlobalMuons") &&
     (*muons)[theMu].isGood("AllTrackerMuons");
-
+  
   reco::TrackRef glb = (*muons)[theMu].globalTrack();
   if(glb.isNull())
     {
       *goodQual = false;
       return true;
     }
-
+  
   bool muon_hits = glb->hitPattern().numberOfValidTrackerHits() > 10
     && glb->hitPattern().numberOfValidMuonHits() > 0
     && glb->hitPattern().numberOfValidPixelHits() > 0
     && (*muons)[theMu].numberOfMatches() > 1;
-
+  
   TVector3 p3(glb->px(), glb->py(), glb->pz());
-
+  
   bool checkqual = (glb->chi2()/glb->ndof() / chi2Cut_)
     && TMath::Abs(p3.Eta()) < muonEtaCut_
     // is this d0 wrt to the beamspot???
     && TMath::Abs((*muons)[theMu].dB()) < 0.02;
-   
+  
   if(!muonID || !muon_hits || !checkqual)
     *goodQual = false;
-
-   return true;
+  
+  return true;
 }
 
 // true if only one muon with track pt > the threshold
