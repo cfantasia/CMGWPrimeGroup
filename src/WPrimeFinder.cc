@@ -55,6 +55,12 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
     muMETAnalyzer = new MuMETAnalyzer(cfg, wprimeUtil);
   else
     muMETAnalyzer = 0;
+
+  if(runElMETAnalysis_)
+    eleMETAnalyzer = new EleMETAnalyzer(cfg, wprimeUtil);
+  else
+    eleMETAnalyzer = 0;
+
   if(runWgammaAnalysis_)
     WmunugammaAnalyzer = new WgammaAnalyzer(cfg, wprimeUtil);
   else
@@ -77,6 +83,8 @@ void WPrimeFinder::beginFile(std::vector<wprime::InputFile>::const_iterator it)
   // call beginFile for each finder here
   if(runMuMETAnalysis_)
       muMETAnalyzer->beginFile(it);
+  if(runElMETAnalysis_)
+      eleMETAnalyzer->beginFile(it);
   if(runWgammaAnalysis_) 
       WmunugammaAnalyzer->beginFile(it);
 }
@@ -87,6 +95,9 @@ void WPrimeFinder::eventLoop(edm::EventBase const & event)
 
   if(runMuMETAnalysis_)
     muMETAnalyzer->eventLoop(event);
+
+  if(runElMETAnalysis_)
+    eleMETAnalyzer->eventLoop(event);
 
   if(runWgammaAnalysis_)
       WmunugammaAnalyzer->eventLoop(event);
@@ -162,6 +173,8 @@ void WPrimeFinder::endFile(std::vector<wprime::InputFile>::const_iterator it)
    // call endFile for each finder here
   if(runMuMETAnalysis_)
     muMETAnalyzer->endFile(it, out_);
+  if(runElMETAnalysis_)
+    eleMETAnalyzer->endFile(it, out_);
   if(runWgammaAnalysis_) 
       WmunugammaAnalyzer->endFile(it, out_);  
 }
@@ -171,6 +184,8 @@ void WPrimeFinder::endAnalysis()
 {
   if(runMuMETAnalysis_)
     muMETAnalyzer->endAnalysis(out_);
+  if(runElMETAnalysis_)
+    eleMETAnalyzer->endAnalysis(out_);
   if(runWgammaAnalysis_)
       WmunugammaAnalyzer->endAnalysis(out_);
 }
