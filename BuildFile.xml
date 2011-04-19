@@ -11,6 +11,7 @@
 <use   name="PhysicsTools/FWLite"/>
 <use   name="PhysicsTools/UtilAlgos"/>
 <use   name="PhysicsTools/Utilities"/>
+<use   name="SHarper/HEEPAnalyzer"/>
 <use   name="clhep"/>
 <export>
   <lib   name="1"/>
