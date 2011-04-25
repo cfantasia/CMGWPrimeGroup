@@ -21,6 +21,7 @@ process.WprimeAnalyzer = cms.PSet(
     maxEvents   = cms.int32(-1),                      ## optional
     reportAfter = cms.uint32(1000),                     ## optional
     doRecoilCorrectionForW = cms.bool(True),
+    sample_cross_sections = cms.string("samples_cross_sections_ElMET.txt"),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(False),
     runElMETAnalysis = cms.bool(True),
