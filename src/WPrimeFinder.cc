@@ -48,8 +48,9 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
   runWZAnalysis_ = cfg.getParameter<bool>("runWZAnalysis" );
   runTBAnalysis_ = cfg.getParameter<bool>("runTBAnalysis" );
   runWgammaAnalysis_ =cfg.getParameter<bool>("runWgammaAnalysis"); 
+  string sample_cross_sections = cfg.getParameter<string>("sample_cross_sections");
 
-  wprimeUtil = new WPrimeUtil(outputFile_.c_str(), genParticles_);
+  wprimeUtil = new WPrimeUtil(outputFile_.c_str(), genParticles_, sample_cross_sections);
 
   if(runMuMETAnalysis_)
     muMETAnalyzer = new MuMETAnalyzer(cfg, wprimeUtil);

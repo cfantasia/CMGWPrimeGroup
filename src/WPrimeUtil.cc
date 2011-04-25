@@ -7,7 +7,7 @@
 using std::cout; using std::cerr; using std::endl;
 using std::string;
 
-WPrimeUtil::WPrimeUtil(const char * out_filename, edm::InputTag genParticles)
+WPrimeUtil::WPrimeUtil(const char * out_filename, edm::InputTag genParticles, string cross_sections)
 {
   fs = new fwlite::TFileService(out_filename);
 
@@ -16,7 +16,7 @@ WPrimeUtil::WPrimeUtil(const char * out_filename, edm::InputTag genParticles)
   histRecoilParal = NULL;
   lumi_ipb = -1;
   genParticles_ = genParticles;
-
+  sample_cross_sections = cross_sections;
   setupZMETcorrection();
 
 }
@@ -82,7 +82,8 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
 
   cout << "\n Reading PAT-tuples from directory " << top_level_dir << endl;
 
-  ifstream in("UserCode/CMGWPrimeGroup/config/samples_cross_sections.txt");
+  string txt_file = "UserCode/CMGWPrimeGroup/config/" + sample_cross_sections;
+  ifstream in(txt_file.c_str());
   string new_line; wprime::InputFile * new_file = 0;
   while(getline(in, new_line))
     {

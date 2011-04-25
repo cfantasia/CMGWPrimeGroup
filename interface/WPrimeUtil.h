@@ -15,6 +15,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <string>
 
 class TFileService;
 class TH1D;
@@ -24,7 +25,7 @@ class TH2D;
 class WPrimeUtil
 {
  public:
-  WPrimeUtil(const char * out_filename, edm::InputTag genParticles);
+  WPrimeUtil(const char * out_filename, edm::InputTag genParticles, std::string cross_sections);
 
   ~WPrimeUtil();
 
@@ -70,6 +71,9 @@ class WPrimeUtil
   fwlite::TFileService * fs;
   // directory containing all input samples
   std::string top_level_dir; 
+
+  // file with samples & cross-sections
+  std::string sample_cross_sections;
 
   void setupZMETcorrection();
   void setRecoilProjections();
