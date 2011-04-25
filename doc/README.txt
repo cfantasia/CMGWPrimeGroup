@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V230, release:
+o Setup a new working area (Default name: V231, release:
 CMSSW_4_1_4)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-30)
+V00-02-31)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
@@ -32,14 +32,20 @@ o Copy example config file for producing PAT-tuple to the top directory.
 (2) You can now modify the parameters in configuration file, change the
 location of the input file and run.
 
-NB The following PAT-tuples produced with V220 can be found in 
-/castor/cern.ch/user/c/cleonido/wprime/V220 (a), and
-/castor/cern.ch/user/c/cleonido/wprime/V220/TEST (b), and
+NB The following PAT-tuples produced can be found in 
+/castor/cern.ch/user/c/cleonido/wprime/V230 (a), and
+/castor/cern.ch/user/c/cleonido/wprime/V220/TEST (b)
 
-(a) Mu+MET: Data_Run2011A_160404_161365_19.30ipb.root (/SingleMu/Run2011A-PromptReco-v1/AOD),
-processed ~8.3M events with 4_1_4
-JSON: Cert_160404-161216_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt and
-Cert_161079-161352_7TeV_PromptReco_Collisions11_JSON_noESpbl_v2.txt
+(a) 
+o Mu+MET: Data_SingleMuon_Run2011A_160404_162917_24.67ipb.root (datasets:
+/SingleMu/Run2011A-PromptReco-v1/AOD and /SingleMu/Run2011A-PromptReco-v2/AOD)
+processed ~8.3M + 2.1M events with 4_1_4
+JSON: Cert_160404-162917_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt
+
+o El+MET: Data_SingleElectron_Run2011A_160404_162917_21.59ipb.root
+(datasets: /SingleElectron/Run2011A-PromptReco-v1/AOD and /SingleElectron/Run2011A-PromptReco-v2/AOD)
+processed ~1.3M + 0.8M events with 4_1_4
+JSON: Cert_160404-162917_7TeV_PromptReco_Collisions11_JSON_golden_AND_noESpbl_v2.txt
 
 (b) Small Mu+MET and El+MET pat-tuples with 2011 data for testing
 
@@ -65,8 +71,7 @@ Options:
 - enable/disable analyzers for Mu+MET (available), W(mu)+gamma (available),
 El+MET (available), WZ (missing), tb (missing)
 - specify input collections 
-- specify parameters for Mu+MET/W+gamma analysis (may want to move to
-separate cfg file) 
+- specify parameters for Mu+MET/El+MET/W+gamma analysis
 
 
 
@@ -109,6 +114,6 @@ creates kinematic distributions)
 Location of top-level directory with input files to be specified in text
 file  top_directory.txt (located in UserCode/CMGWPrimeGroup/config/). The
 parameters for all input MC files (description, cross-section, # of events
-produced etc), can be found in text file samples_cross_sections.txt (in 
+produced etc), can be found in text file samples_cross_sections_*.txt (in 
 the same directory). 
 

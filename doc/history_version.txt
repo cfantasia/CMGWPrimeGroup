@@ -1,3 +1,14 @@
+25-APR-11 (Christos), V00-02-31
+=====================================
+Allow each analysis to run on different input (MC/data) files (option added
+in cfg file); Added customized samples_cross_sections files for Mu+MET and
+El+MET samples.
+
+Updated input files for 
+o Mu+MET (24.67 ipb)
+o El+MET (21.59 ipb)
+analyses. See doc/README.txt
+
 19-APR-11 (Christos), V00-02-30
 =====================================
 First porting of Electron+MET analyzer. Follows design of Muon+MET code by
