@@ -81,7 +81,7 @@ process.out.SelectEvents = cms.untracked.PSet(
     )
 
 #                                         ##
-process.out.fileName = '/tmp/cleonido/patTuple.root'            ##  (e.g. 'myTuple.root')
+#process.out.fileName = '/tmp/cleonido/patTuple.root'            ##  (e.g. 'myTuple.root')
 #                                         ##
 process.options.wantSummary = True        ##  (to suppress the long output at the end of the job)    
 
