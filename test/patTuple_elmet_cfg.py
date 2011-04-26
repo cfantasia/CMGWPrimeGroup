@@ -73,7 +73,11 @@ process.out.outputCommands = [
     'keep GenRunInfoProduct_*_*_*',
     # TRIGGER
     'keep edmTriggerResults_TriggerResults*_*_*',
-    'keep *_hltTriggerSummaryAOD_*_*'
+    'keep *_hltTriggerSummaryAOD_*_*',
+    'keep L1GlobalTriggerReadoutRecord_gtDigis_*_*',
+    'keep *_userPat*_*_*',
+    # PILEUP
+    'keep *_addPileupInfo_*_*',
      ]
 
 process.out.SelectEvents = cms.untracked.PSet(
