@@ -1,3 +1,35 @@
+28-APR-11 (Christos, Cory), V00-02-35
+=====================================
+1. Restructure of python cfg files in order to ease maintenance:
+(a) In directory python (low-level files): 
+ o patTuple_common_cfg.py contains common defitions (e.g. addition of
+pfMET, event-content for trigger, pileup info,  etc); it is not called
+directly from user/high-level cfg file 
+ 
+ o patTuple_mumet_cfg.py and patTuple_elmet_cfg.py: files containing info
+specific to mu+MET and el+MET analyses (e.g. aditional event-content to
+keep; for the muon channel, the subset of pfParticles that needs to be
+stored for the correction of pfMET when using TeV muon reconstructors);
+this is where the call to patTuple_common is made. 
+ 
+(b) In directory test (high-level files):
+ o patTuple_[X]_[Y].py: high-level files for running muon+MET/electron+MET
+analyses on MC/data. Depending on flags, MC info is in(ex)cluded, different
+filters are applied on lepton-pt, etc.  
+ [X] = elmet or mumet
+ [Y] = data or MC_cfg_lowPtSkim or MC_cfg_highPtSkim
+
+
+2. Added skimming CRAB cfg files for MC samples of  Mu+MET analysis
+(directory: skimming_crab)
+
+
+Misc:
+3. Added pileup info in default PAT-tuple-making configurations
+4. Reset event-counter when looping over multiple input files
+
+
+
 25-APR-11 (Christos), V00-02-31
 =====================================
 Allow each analysis to run on different input (MC/data) files (option added

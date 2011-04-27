@@ -10,7 +10,7 @@ fi
 
 # Definitions
 RELEASE_VERSION=CMSSW_4_1_4
-WORKING_AREA=V231
+WORKING_AREA=V235
 # end definitions
 
 export RELEASE_VERSION WORKING_AREA
@@ -33,7 +33,7 @@ echo -e  "**************************"
 cvs -Q co -r $RELEASE_VERSION DataFormats/PatCandidates
 cvs -Q co -r $RELEASE_VERSION PhysicsTools/PatAlgos
 cvs -Q co -r V00-05-00 -d SHarper/HEEPAnalyzer UserCode/SHarper/HEEPAnalyzer 
-cvs -Q co -r V00-02-31 UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-02-35 UserCode/CMGWPrimeGroup
 # cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"
@@ -68,6 +68,6 @@ echo -e " Done compiling UserCode/CMGWPrimeGroup"
 echo -e " Now making symbolic link to example config file"
 echo -e "*************************************************"
 echo -e " \n"
-ln -s UserCode/CMGWPrimeGroup/test/patTuple_mumet_cfg.py .
-ln -s UserCode/CMGWPrimeGroup/test/patTuple_elmet_cfg.py .
+ln -s UserCode/CMGWPrimeGroup/test/patTuple_mumet_data.py .
+ln -s UserCode/CMGWPrimeGroup/test/patTuple_elmet_data.py .
 ln -s UserCode/CMGWPrimeGroup/root_macros/ZMET_data.root .

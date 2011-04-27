@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V231, release:
+o Setup a new working area (Default name: V235, release:
 CMSSW_4_1_4)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-31)
+V00-02-35)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
@@ -32,7 +32,7 @@ o Copy example config file for producing PAT-tuple to the top directory.
 (2) You can now modify the parameters in configuration file, change the
 location of the input file and run.
 
-NB The following PAT-tuples produced can be found in 
+NB The following PAT-tuples can be found in 
 /castor/cern.ch/user/c/cleonido/wprime/V230 (a), and
 /castor/cern.ch/user/c/cleonido/wprime/V220/TEST (b)
 
@@ -48,6 +48,29 @@ processed ~1.3M + 0.8M events with 4_1_4
 JSON: Cert_160404-162917_7TeV_PromptReco_Collisions11_JSON_golden_AND_noESpbl_v2.txt
 
 (b) Small Mu+MET and El+MET pat-tuples with 2011 data for testing
+
+
+(3) NB: Structure of python files for PAT-tuple making:
+
+(a) In directory python (low-level files): 
+ o patTuple_common_cfg.py contains common defitions (e.g. addition of
+pfMET, event-content for trigger, pileup info,  etc); it is not called
+directly from user/high-level cfg file 
+ 
+ o patTuple_mumet_cfg.py and patTuple_elmet_cfg.py: files containing info
+specific to mu+MET and el+MET analyses (e.g. aditional event-content to
+keep; for the muon channel, the subset of pfParticles that needs to be
+stored for the correction of pfMET when using TeV muon reconstructors);
+this is where the call to patTuple_common is made. 
+ 
+(b) In directory test (high-level files):
+ o patTuple_[X]_[Y].py: high-level files for running muon+MET/electron+MET
+analyses on MC/data. Depending on flags, MC info is in(ex)cluded, different
+filters are applied on lepton-pt, etc.  
+ [X] = elmet or mumet
+ [Y] = data or MC_cfg_lowPtSkim or MC_cfg_highPtSkim
+
+
 
 =========================================================================
 (B) Step 2: Analyzing custom PAT-tuples
