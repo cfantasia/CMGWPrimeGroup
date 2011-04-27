@@ -107,9 +107,10 @@ void WPrimeFinder::eventLoop(edm::EventBase const & event)
 
 void WPrimeFinder::run()
 {
-  int ievt=0;  
+  int ievt_all=0;  
   std::vector<wprime::InputFile>::iterator it;
   for(it = inputFiles.begin(); it != inputFiles.end(); ++it){
+  int ievt=0;  
     // loop over input files
     TFile * inFile = TFile::Open(it->pathname.c_str());
     if(!inFile || inFile->IsZombie())
@@ -136,15 +137,18 @@ void WPrimeFinder::run()
     cout << " Opened file " << it->pathname << " with " << it->Nact_evt
          << " events" << endl;
 
+    cout << std::fixed << std::setprecision(2);
     beginFile(it);
     fwlite::Event ev(inFile);
-    for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){// loop over events
+    for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt, ++ievt_all){// loop over events
       edm::EventBase const & event = ev;
       // break loop if maximal number of events is reached 
       if(maxEvents_>0 ? ievt+1>maxEvents_ : false) break;
       // simple event counter
       if(reportAfter_!=0 ? (ievt>0 && ievt%reportAfter_==0) : false) 
-	cout << "  Processing event: " << ievt << endl;
+	cout << "  Processing event: " << ievt << " or " 
+	     << 100.*ievt/it->Nact_evt << "% of input file"
+	     << " (" << ievt_all << " events processed in total) " << endl;
       eventLoop(event);
     } // loop over events
     endFile(it);
