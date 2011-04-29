@@ -17,7 +17,7 @@ process.WprimeAnalyzer = cms.PSet(
     outputFile  = cms.string('Wprime_analysis.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
     reportAfter = cms.uint32(5000),                     ## optional
-    doRecoilCorrectionForW = cms.bool(True),
+    doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_MuMET.txt"),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(True),
