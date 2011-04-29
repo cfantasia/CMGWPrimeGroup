@@ -4,37 +4,116 @@ x-section = 1
 pathname = Data_SingleMuon_Run2011A_160404_162917_24.67ipb.root
 Nprod_evt = 1
 
-DONE
+samplename = WPlusMu_lowPt
+description = POWHEG W+ ->munu without eta cut (NNLO cross-section), low-pt
+x-section = 6152
+pathname = WPlusMu_lowPt.root
+Nprod_evt = 200000
 
-samplename = W
-description = POWHEG W->munu without eta cut (NNLO cross-section)
-x-section = 10438
-pathname = WPowheg.root
-Nprod_evt = 3987868
+samplename = WPlusMu_highPt
+description = POWHEG W+ ->munu without eta cut (NNLO cross-section), high-pt
+x-section = 6152
+pathname = WPlusMu_highPt.root
+Nprod_evt = 1997318
 
-samplename = Wlowpt
-description = PYTHIA W->munu; 15<pt(mu)<100 GeV skim (NNLO-cross-section)
-x-section = 10438
-pathname = WPythia15.root
-Nprod_evt = 500000
+samplename = WMinusMu_lowPt
+description = POWHEG W- ->munu without eta cut (NNLO cross-section), low-pt
+x-section = 4286
+pathname = WMinusMu_lowPt.root
+Nprod_evt = 200000
 
-samplename = QCD
-description = PYTHIA InclusiveMu15 with GEN muon-pt > 15 GeV, pthat > 20 GeV,|eta|<2.5
-x-section = 84679
-pathname = QCD_EnrPtH20_Pt15.root
-Nprod_evt = 29504866
+samplename = WMinusMu_highPt
+description = POWHEG W- ->munu without eta cut (NNLO cross-section), high-pt
+x-section = 4286
+pathname = WMinusMu_highPt.root
+Nprod_evt = 1996548
 
-samplename = Z
-description = POWHEG Z->mumu with M_mumu > 20 GeV (NNLO cross-section)
+samplename = WPlusTau_lowPt
+description = POWHEG W+ ->taunu without eta cut (NNLO cross-section), low-pt
+x-section = 6152
+pathname = WPlusTau_lowPt.root
+Nprod_evt = 200000
+
+samplename = WPlusTau_highPt
+description = POWHEG W+ ->taunu without eta cut (NNLO cross-section), high-pt
+x-section = 6152
+pathname = WPlusTau_highPt.root
+Nprod_evt = 1995871
+
+samplename = DYmumu_lowPt
+description = POWHEG Z/DY->mumu with M_mumu > 20 GeV (NNLO cross-section), low-pt
 x-section = 1666
-pathname = DYPowheg_M20.root
+pathname = DYmumu_lowPt.root
+Nprod_evt = 200000
+
+samplename = DYmumu_highPt
+description = POWHEG Z/DY->mumu with M_mumu > 20 GeV (NNLO cross-section), high-pt
+x-section = 1666
+pathname = DYmumu_highPt.root
 Nprod_evt = 1998931
 
-samplename = Top
-description = Madgraph inclusive t-tbar (NLO cross-section)
+samplename = DYtautau_lowPt
+description = POWHEG Z/DY->tautau with M_tautau > 20 GeV (NNLO cross-section), low-pt
+x-section = 1666
+pathname = DYtautau_lowPt.root
+Nprod_evt = 200000
+
+samplename = DYtautau_highPt
+description = POWHEG Z/DY->tautau with M_tautau > 20 GeV (NNLO cross-section), high-pt
+x-section = 1666
+pathname = DYmumu_highPt.root
+Nprod_evt = 1994719
+
+samplename = ttbar_lowPt
+description = Madgraph inclusive t-tbar (NLO cross-section), low-pt
 x-section = 157.5
-pathname = TTbarMadgraph.root
-Nprod_evt = 1164732
+pathname = ttbar_lowPt.root
+Nprod_evt = 200000
+
+samplename = ttbar_highPt
+description = Madgraph inclusive t-tbar (NLO cross-section), high-pt
+x-section = 157.5
+pathname = ttbar_highPt.root
+Nprod_evt = 1286491
+
+samplename = QCD_lowPt
+description = PYTHIA InclusiveMu15with GEN muon-pt > 15 GeV, pthat > 20
+GeV,|eta|<2.5, low-pt
+x-section = 84679
+pathname = QCD_lowPt.root
+Nprod_evt = 200000
+
+samplename = WW_lowPt
+description = WW Inclusive PYTHIA6, low-pt
+x-section = 43
+pathname = WW_lowPt.root
+Nprod_evt = 200000
+
+samplename = WW_highPt
+description = WW Inclusive PYTHIA6, high-pt
+x-section = 43
+pathname = WW_highPt.root
+Nprod_evt = 2061760
+
+samplename = WZ_lowPt
+description = WZ Inclusive PYTHIA6, low-pt
+x-section = 18
+pathname = WZ_lowPt.root
+Nprod_evt = 200000
+
+samplename = WZ_highPt
+description = WZ Inclusive PYTHIA6, high-pt
+x-section = 18
+pathname = WZ_highPt.root
+Nprod_evt = 2194752
+
+samplename = ZZ_highPt
+description = ZZ Inclusive PYTHIA6, high-pt
+x-section = 5.9
+pathname = ZZ_highPt.root
+Nprod_evt = 2113368
+
+DONE
 
 samplename = wprime0.6
 description = Wprime->munu, Tune Z2, Mass = 0.6 TeV (NNLO cross-section)

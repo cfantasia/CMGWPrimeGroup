@@ -279,13 +279,13 @@ void MuMETAnalyzer::endAnalysis(ofstream & out)
 	 << " +- " << 100.*(it->second)[index].deff
 	 << " %) " << endl;
       
-      if(sample == "W" || sample == "Wlowpt" || sample == "QCD" 
-	 || sample == "Z" || sample == "Top")
+      if(sample.find("data") == string::npos && 
+	 sample.find("wprime") == string::npos)
 	N_SM += N_evt;
       
     } // loop over samples
 
-  out << " Total # of SM (W + QCD + Z + Top) events: " 
+  out << " Total # of SM events: " 
       << N_SM << endl;
   
 }
