@@ -1,3 +1,13 @@
+30-APR-11 (Christos), V00-02-37
+===============================
+Added Spring 2011 MC samples for Mu+MET analysis (still missing:
+QCD-muEnriched-high-pt and ZZ-low-pt)
+
+Misc: 
+o Disabled hadronic recoil correction for W->mu samples till correction is
+derived again with 2011 data
+o Some more sites blacklisted in crab skimming files for Mu+MET analyses
+
 28-APR-11 (David), V00-02-36
 ============================
 bugfix: removeMCmatching accidentally enabled in skimming MC cfg files of

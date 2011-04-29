@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V236, release:
+o Setup a new working area (Default name: V237, release:
 CMSSW_4_1_4)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-36)
+V00-02-37)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
@@ -34,7 +34,7 @@ location of the input file and run.
 
 NB The following PAT-tuples can be found in 
 /castor/cern.ch/user/c/cleonido/wprime/V230 (a), and
-/castor/cern.ch/user/c/cleonido/wprime/V220/TEST (b)
+/castor/cern.ch/user/c/cleonido/wprime/V235/MC (b)
 
 (a) 
 o Mu+MET: Data_SingleMuon_Run2011A_160404_162917_24.67ipb.root (datasets:
@@ -47,7 +47,9 @@ o El+MET: Data_SingleElectron_Run2011A_160404_162917_21.59ipb.root
 processed ~1.3M + 0.8M events with 4_1_4
 JSON: Cert_160404-162917_7TeV_PromptReco_Collisions11_JSON_golden_AND_noESpbl_v2.txt
 
-(b) Small Mu+MET and El+MET pat-tuples with 2011 data for testing
+(b) Spring 2011 MC samples for Mu+MET analysis. 
+NB: still missing: QCD-muEnriched-high-pt and ZZ-low-pt samples)
+
 
 
 (3) NB: Structure of python files for PAT-tuple making:
