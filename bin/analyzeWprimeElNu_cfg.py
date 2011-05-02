@@ -20,7 +20,7 @@ process.WprimeAnalyzer = cms.PSet(
     outputFile  = cms.string('Wprime_analysis.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
     reportAfter = cms.uint32(5000),                     ## optional
-    doRecoilCorrectionForW = cms.bool(True),
+    doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_ElMET.txt"),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(False),
@@ -35,7 +35,7 @@ process.WprimeAnalyzer = cms.PSet(
     #
     oneEleEtCut   = cms.double(25), ## in GeV
     highestEtElectronOnly = cms.bool(False),
-    dumpHighEtElectrons   = cms.bool(False),
+    dumpHighEtElectrons   = cms.bool(True),
     dumpHighEtElectronThreshold = cms.double(200),
     barrelCuts = heepBarrelCuts,
     endcapCuts = heepEndcapCuts
