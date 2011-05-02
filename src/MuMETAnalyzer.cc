@@ -100,6 +100,7 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
     pfMETwithoutMuCalculated_ = false;
     setMuonMomentum(theMu);
     if(isInvalidMuon_)continue;
+    if(mu4D.Pt() < muonPtThreshold_) continue;
     for(int cut_index = 0; cut_index != Num_mumet_cuts; ++cut_index)
       { // loop over selection cuts
 	string arg = mumet_cuts_desc_short[cut_index];
