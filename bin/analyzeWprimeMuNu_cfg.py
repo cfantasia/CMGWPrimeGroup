@@ -38,7 +38,7 @@ process.WprimeAnalyzer = cms.PSet(
     muonEtaCut        = cms.double(2.1),
     combRelCut        = cms.double(0.15),
     highestPtMuonOnly = cms.bool(False),
-    dumpHighPtMuons   = cms.bool(False),
+    dumpHighPtMuons   = cms.bool(True),
     dumpHighPtMuonThreshold = cms.double(200)
 )
 
