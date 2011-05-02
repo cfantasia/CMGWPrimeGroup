@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V237, release:
+o Setup a new working area (Default name: V238, release:
 CMSSW_4_1_4)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-37)
+V00-02-38)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
@@ -33,22 +33,30 @@ o Copy example config file for producing PAT-tuple to the top directory.
 location of the input file and run.
 
 NB The following PAT-tuples can be found in 
-/castor/cern.ch/user/c/cleonido/wprime/V230 (a), and
-/castor/cern.ch/user/c/cleonido/wprime/V235/MC (b)
+/castor/cern.ch/user/c/cleonido/wprime/V235/Data (a), and
+/castor/cern.ch/user/c/cleonido/wprime/V235/MC_MuMET (b)
 
 (a) 
-o Mu+MET: Data_SingleMuon_Run2011A_160404_162917_24.67ipb.root (datasets:
-/SingleMu/Run2011A-PromptReco-v1/AOD and /SingleMu/Run2011A-PromptReco-v2/AOD)
-processed ~8.3M + 2.1M events with 4_1_4
+o SingleMu skims for datasets:
+/SingleMu/Run2011A-PromptReco-v1/AOD (8.3M events)
+/SingleMu/Run2011A-PromptReco-v2/AOD (11.2 M events)
 JSON: Cert_160404-162917_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt
+67.7 ipb in total
 
-o El+MET: Data_SingleElectron_Run2011A_160404_162917_21.59ipb.root
-(datasets: /SingleElectron/Run2011A-PromptReco-v1/AOD and /SingleElectron/Run2011A-PromptReco-v2/AOD)
-processed ~1.3M + 0.8M events with 4_1_4
-JSON: Cert_160404-162917_7TeV_PromptReco_Collisions11_JSON_golden_AND_noESpbl_v2.txt
+o SingleElectron skims for datasets
+/SingleElectron/Run2011A-PromptReco-v1/AOD (1.3M events)
+/SingleElectron/Run2011A-PromptReco-v2/AOD (4.2M events)
+/SingleElectron/Run2011A-PromptReco-v3/AOD (1.6M events)
+JSON: Cert_160404-163369_7TeV_PromptReco_Collisions11_JSON.txt
+43.4 ipb in total
+
+NB: 
+o v1, v2 can be combined, but suffer from bug in ECAL (see 
+https://hypernews.cern.ch/HyperNews/CMS/get/datasets/920.html)
+o v3 contains a bugfix, but it is a subset of v1+v2
 
 (b) Spring 2011 MC samples for Mu+MET analysis. 
-NB: still missing: QCD-muEnriched-high-pt and ZZ-low-pt samples)
+NB: still missing: QCD-muEnriched-high-pt and W- -> tau samples
 
 
 

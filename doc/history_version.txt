@@ -1,3 +1,35 @@
+02-MAY-11 (Christos), V00-02-38
+===============================
+(a) Data: processed all certified data so far (Run2011A_160404_163369)
+  - SingleMu: 67.7 ipb
+  - SingleElectron: 43.4 ipb
+Skims (lepton-pt > 25 GeV) can be found under 
+/castor/cern.ch/user/c/cleonido/wprime/V235/Data/
+
+>>> IMPORTANT: Details in doc/README.txt <<<< 
+
+(b) Allow analyses to deal with data root-tuples distributed over > 1
+input files 
+
+(c) Mu+MET analysis: 
+o Added Spring 2011 ZZ-inclusive low-pt sample. All MC samples for Mu+MET
+analysis can be found under  
+/castor/cern.ch/user/c/cleonido/wprime/V235/MC_MuMET
+(still missing high-pt tail of mu-enriched QCD sample and W- -> tau)
+
+o muon-loop: skip muons with pt < 20 GeV (no real speed improvement observed)
+
+o Cleanup of dump-high-pt muon method
+
+(d) El+MET analysis:
+o Disable hadronic recoil correction for now
+
+o Cleanup of dump-high-pt electron method
+
+(e) First version of plot-making macro (root_macros/plotMT.C). Good only
+for Mu+MET analysis for now, must be made more flexible
+
+
 30-APR-11 (Christos), V00-02-37
 ===============================
 Added Spring 2011 MC samples for Mu+MET analysis (still missing:
@@ -7,6 +39,7 @@ Misc:
 o Disabled hadronic recoil correction for W->mu samples till correction is
 derived again with 2011 data
 o Some more sites blacklisted in crab skimming files for Mu+MET analyses
+
 
 28-APR-11 (David), V00-02-36
 ============================
