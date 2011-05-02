@@ -113,7 +113,7 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 	
 	if(dumpHighPtMuons_ && fill_entry 
 	   && cut_index == Num_mumet_cuts-1
-	   && wprimeUtil_->getSampleName()=="data" &&
+	   && wprimeUtil_->getSampleName().find("data") != string::npos &&
 	   (*muons)[theMu].innerTrack()->pt() > dumpHighPtMuonThreshold_)
 	  printHighPtMuon(event);
       
@@ -418,15 +418,20 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event)
        << endl;
 
   cout << " Muon eta = " << mu4D.Eta() << "  phi = " << mu4D.Phi()
-       << " pt = " << mu4D.Pt() << endl;
+       << " pt = " << mu4D.Pt() << " GeV " << endl;
+
   pat::METCollection::const_iterator oldMET = met->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
-  TVector2 newMET = getNewMET(event, mu4D);
-  cout << " default pfMET = " << oldMET->pt();
-  cout << " muTeV/hadronic-recoil-adjusted pfMET = " << newMET.Mod() << endl;
-
-  cout << " default TM = " << WPrimeUtil::TMass(mu4D, oldMETv);
-  cout << " muTeV-adjusted TM = " << WPrimeUtil::TMass(mu4D, newMET) << endl;
+  cout << " pfMET = " << oldMET->pt() << " GeV ";
+  cout << " TM = " << WPrimeUtil::TMass(mu4D, oldMETv) << " GeV" << endl;
+  if(wprimeUtil_->shouldApplyMETCorrection())
+    {
+      TVector2 newMET = getNewMET(event, mu4D);
+      cout << " muTeV/hadronic-recoil-adjusted pfMET = " << newMET.Mod() 
+	   << " GeV " << endl;
+      cout << " muTeV-adjusted TM = " << WPrimeUtil::TMass(mu4D, newMET)
+	   << " GeV " << endl;
+    }
 
 #if 0
   cout << " P = " << 
