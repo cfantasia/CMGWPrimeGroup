@@ -1,7 +1,21 @@
 samplename = data
-description = Electron pt > 25 GeV skim, 21.59 pb^-1
+description = Electron pt > 25 GeV skim, 43.4 pb^-1
 x-section = 1
-pathname = Data_SingleElectron_Run2011A_160404_162917_21.59ipb.root
+pathname = Data_SingleElectron_Run2011A_160404_163369_43.4ipb_part1.root
+Nprod_evt = 1
+
+samplename = data2
+description = Electron pt > 25 GeV skim, 43.4 pb^-1, part 2
+x-section = 1
+pathname = Data_SingleElectron_Run2011A_160404_163369_43.4ipb_part2.root
+Nprod_evt = 1
+
+DONE
+
+samplename = data3
+description = Electron pt > 25 GeV skim, 43.4 pb^-1, part 3
+x-section = 1
+pathname = Data_SingleElectron_Run2011A_160404_163369_43.4ipb_part3.root
 Nprod_evt = 1
 
 DONE
