@@ -32,7 +32,8 @@ process.WprimeAnalyzer = cms.PSet(
     genParticles = cms.InputTag('prunedGenParticles'),
     #
     muonReconstructor = cms.int32(3), ## see mumet_histo_constants.h
-    muonPtThreshold   = cms.double(10), ## in GeV
+    # do not consider muons below this pt-threshold
+    muonPtThreshold   = cms.double(20), ## in GeV
     oneMuPtTrackCut   = cms.double(25), ## in GeV
     chi2Cut           = cms.double(10),
     muonEtaCut        = cms.double(2.1),
