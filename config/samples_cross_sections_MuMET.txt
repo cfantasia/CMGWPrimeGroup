@@ -1,7 +1,13 @@
 samplename = data
-description = Muon pt > 25 GeV skim, 24.67 pb^-1
+description = Muon pt > 25 GeV skim, 67.7 pb^-1
 x-section = 1
-pathname = Data_SingleMuon_Run2011A_160404_162917_24.67ipb.root
+pathname = Data_SingleMu_Run2011A_160404_163369_67.7ipb_part1.root
+Nprod_evt = 1
+
+samplename = data2
+description = Muon pt > 25 GeV skim, 67.7 pb^-1, part2
+x-section = 1
+pathname = Data_SingleMu_Run2011A_160404_163369_67.7ipb_part2.root
 Nprod_evt = 1
 
 samplename = WPlusMu_lowPt
@@ -106,6 +112,12 @@ description = WZ Inclusive PYTHIA6, high-pt
 x-section = 18
 pathname = WZ_highPt.root
 Nprod_evt = 2194752
+
+samplename = ZZ_lowPt
+description = ZZ Inclusive PYTHIA6, low-pt
+x-section = 5.9
+pathname = ZZ_lowPt.root
+Nprod_evt = 200000
 
 samplename = ZZ_highPt
 description = ZZ Inclusive PYTHIA6, high-pt
