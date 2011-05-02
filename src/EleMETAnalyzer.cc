@@ -335,16 +335,20 @@ void EleMETAnalyzer::printHighEtElectron(edm::EventBase const & event)
        << endl;
 
   cout << " Electron eta = " << el4D.Eta() << "  phi = " << el4D.Phi()
-       << " Et = " << el4D.Et() << endl;
+       << " Et = " << el4D.Et() << << " GeV " << endl;
 
   pat::METCollection::const_iterator oldMET = met->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
-  TVector2 newMET = getNewMET(event, el4D);
-  cout << " default pfMET = " << oldMET->pt();
-  cout << " hadronic-recoil-adjusted pfMET = " << newMET.Mod() << endl;
-
-  cout << " default TM = " << WPrimeUtil::TMass(el4D, oldMETv);
-  cout << " hadronic-recoil-adjusted TM = " << WPrimeUtil::TMass(el4D, newMET) << endl;
+  cout << " pfMET = " << oldMET->pt() << " GeV";
+  cout << " TM = " << WPrimeUtil::TMass(el4D, oldMETv) << " GeV " << endl;
+  if(wprimeUtil_->shouldApplyMETCorrection())
+    {
+      TVector2 newMET = getNewMET(event, el4D);
+      cout << " hadronic-recoil-adjusted pfMET = " << newMET.Mod() 
+	   << " GeV " << endl;
+      cout << " hadronic-recoil-adjusted TM = " 
+	   << WPrimeUtil::TMass(el4D, newMET) << " GeV " << endl;
+    }
 
 #if 0
   cout << " P = " << 
