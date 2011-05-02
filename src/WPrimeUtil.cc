@@ -98,7 +98,7 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
 	parseLine(new_line, new_file);
       else
 	{
-	  if(new_file->samplename != "data")
+	  if(new_file->samplename.find("data") == string::npos)
 	    new_file->weight = lumi_ipb*(new_file->x_sect)
 	      /(new_file->Nprod_evt);
 	  else

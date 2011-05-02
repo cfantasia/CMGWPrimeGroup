@@ -104,7 +104,7 @@ void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
 	
 	if(dumpHighEtElectrons_ && fill_entry 
 	   && cut_index == Num_elmet_cuts-1
-	   && wprimeUtil_->getSampleName()=="data"
+	   && wprimeUtil_->getSampleName().find("data") != string::npos
 	   && el.et() > dumpHighEtElectronThreshold_)
 	  printHighEtElectron(event);
       
@@ -234,13 +234,13 @@ void EleMETAnalyzer::endAnalysis(ofstream & out)
 	 << " +- " << 100.*(it->second)[index].deff
 	 << " %) " << endl;
       
-      if(sample == "W" || sample == "Wlowpt" || sample == "QCD" 
-	 || sample == "Z" || sample == "Top")
+      if(sample.find("data") == string::npos && 
+	 sample.find("wprime") == string::npos)
 	N_SM += N_evt;
       
     } // loop over samples
 
-  out << " Total # of SM (W + QCD + Z + Top) events: " 
+  out << " Total # of SM events: " 
       << N_SM << endl;
   
 }

@@ -184,45 +184,47 @@ void WgammaAnalyzer::eventLoop(edm::EventBase const & event)
           if (!survived_cut) break; // skip rest of selection cuts
 	
           if(fill_entry) {
+	    tabulateMu(cut_index, accountMe, event, theMu);
+	    
+	    if(dumpHighPtMuons_
+	       && cut_index == Num_mumet_cuts-1
+	       && wprimeUtil_->getSampleName().find("data") != string::npos &&
+	       
+	       (*muons)[theMu].innerTrack()->pt() > dumpHighPtMuonThreshold_ )
+	      printHighPtMuon(event);
+	    
+	    // Start looking at photons if the muon passed all the cuts
+	    if (cut_index == Num_mumet_cuts-1) {
+	      //loop over photons
+	      for (int thePhoton = iPhotonMin; thePhoton != iPhotonMax; ++thePhoton){
+		const LorentzVector & PhotonP4 = (*photons)[thePhoton].p4();
+		
+		for(int pho_cut_index = 0; pho_cut_index != Num_photon_cuts; ++pho_cut_index) {
+		  // call to function [as implemented in setupCutOder]
+		  string arg = photon_cuts_desc_short[cut_index];
+		  bool survived_cut = (this->*cuts_pho[arg])(&fill_entry, thePhoton, event);
+		  if (!survived_cut) break; // skip rest of selection cuts
+		  double invMass = -999.999;
 
-              tabulateMu(cut_index, accountMe, event, theMu);
-	
-              if(dumpHighPtMuons_ && fill_entry 
-                 && cut_index == Num_mumet_cuts-1
-                 && wprimeUtil_->getSampleName()=="data" 
-                 && (*muons)[theMu].innerTrack()->pt() > dumpHighPtMuonThreshold_ ) printHighPtMuon(event);
-              
-              // Start looking at photons if the muon passed all the cuts
-              if (cut_index == Num_mumet_cuts-1) {
-                  //loop over photons
-                  for (int thePhoton = iPhotonMin; thePhoton != iPhotonMax; ++thePhoton){
-		    const LorentzVector & PhotonP4 = (*photons)[thePhoton].p4();
-		    
-                      for(int pho_cut_index = 0; pho_cut_index != Num_photon_cuts; ++pho_cut_index) {
-                          // call to function [as implemented in setupCutOder]
-                          string arg = photon_cuts_desc_short[cut_index];
-                          bool survived_cut = (this->*cuts_pho[arg])(&fill_entry, thePhoton, event);
-                          if (!survived_cut) break; // skip rest of selection cuts
-                          double invMass = -999.999;
-                          if (fill_entry) {
-                              LorentzVector neutrinoP4 = calculateNeutrinoP4((*muons)[theMu].p4(), getNewMET(event,mu4D) );
-                              if (neutrinoP4.E() > 0) {
-                                  LorentzVector wP4   =  (*muons)[theMu].p4() + neutrinoP4;
-                                  LorentzVector totalP4 = wP4+PhotonP4;
-                                  invMass = totalP4.M();
-                              }
-                              tabulatePho(pho_cut_index, accountMe, event, invMass);
-	
-                          }
-                          if(dumpHighPtPhotons_ && fill_entry 
-                             && cut_index == Num_photon_cuts-1
-                             && wprimeUtil_->getSampleName()=="data" 
-                             && PhotonP4.pt() > dumpHighPtPhotonThreshold_ ) printHighPtPhoton(event,thePhoton);
-                  
-                         
-                      } // loop over photon cuts
-                  } // loop over photons
-              } // muon passing final cut
+		  LorentzVector neutrinoP4 = calculateNeutrinoP4((*muons)[theMu].p4(), getNewMET(event,mu4D) );
+		  if (neutrinoP4.E() > 0) {
+		    LorentzVector wP4   =  (*muons)[theMu].p4() + neutrinoP4;
+		    LorentzVector totalP4 = wP4+PhotonP4;
+		    invMass = totalP4.M();
+		  }
+		  tabulatePho(pho_cut_index, accountMe, event, invMass);
+		  
+
+		  if(dumpHighPtPhotons_
+		     && cut_index == Num_photon_cuts-1
+		     && (wprimeUtil_->getSampleName().find("data") 
+			 != string::npos)
+		     && PhotonP4.pt() > dumpHighPtPhotonThreshold_ )
+		    printHighPtPhoton(event,thePhoton);
+		  
+		} // loop over photon cuts
+	      } // loop over photons
+	    } // muon passing final cut
           } // muon still good
       } // loop over muon cuts
   } // loop over muons

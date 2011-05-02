@@ -125,7 +125,7 @@ void WPrimeFinder::run()
     assert(events);
 
     it->Nact_evt = events->GetEntries();
-    if(it->samplename == "data")
+    if(it->samplename.find("data") != string::npos)
         // Nprod_evt presumably contains the # of events before any filtering
         // that results in Nact_evt (< Nprod_evt) events contained in the file.
         // For data, we tend not to know how many events we started with,
