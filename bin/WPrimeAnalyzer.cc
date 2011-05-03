@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
   // load framework libraries
   gSystem->Load( "libFWCoreFWLite" );
   AutoLibraryLoader::enable();
+  TH1::SetDefaultSumw2();
   
   // only allow one argument for this simple example which should be the
   // the python cfg file
