@@ -335,7 +335,7 @@ void EleMETAnalyzer::printHighEtElectron(edm::EventBase const & event)
        << endl;
 
   cout << " Electron eta = " << el4D.Eta() << "  phi = " << el4D.Phi()
-       << " Et = " << el4D.Et() << << " GeV " << endl;
+       << " Et = " << el4D.Et() << " GeV " << endl;
 
   pat::METCollection::const_iterator oldMET = met->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
