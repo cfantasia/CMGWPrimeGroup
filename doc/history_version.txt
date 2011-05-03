@@ -1,3 +1,12 @@
+03-MAY-11 (Christos, Cory), V00-02-39
+======================================
+
+- Fixed compilation error in src/EleMETAnalyzer.c
+
+- Added SetDefaultSumw2 in bin/WPrimeAnalyzer.cc to properly take into account bin-content uncertainties in 
+weighted MC  histograms. 
+
+
 02-MAY-11 (Christos), V00-02-38
 ===============================
 (a) Data: processed all certified data so far (Run2011A_160404_163369)

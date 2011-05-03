@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V238, release:
+o Setup a new working area (Default name: V239, release:
 CMSSW_4_1_4)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-38)
+V00-02-39)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
