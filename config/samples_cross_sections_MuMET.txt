@@ -20,7 +20,7 @@ samplename = WPlusMu_highPt
 description = POWHEG W+ ->munu without eta cut (NNLO cross-section), high-pt
 x-section = 6152
 pathname = WPlusMu_highPt.root
-Nprod_evt = 1997318
+Nprod_evt = 1982936
 
 samplename = WMinusMu_lowPt
 description = POWHEG W- ->munu without eta cut (NNLO cross-section), low-pt
@@ -32,7 +32,7 @@ samplename = WMinusMu_highPt
 description = POWHEG W- ->munu without eta cut (NNLO cross-section), high-pt
 x-section = 4286
 pathname = WMinusMu_highPt.root
-Nprod_evt = 1996548
+Nprod_evt = 1978590
 
 samplename = WPlusTau_lowPt
 description = POWHEG W+ ->taunu without eta cut (NNLO cross-section), low-pt
@@ -56,7 +56,7 @@ samplename = DYmumu_highPt
 description = POWHEG Z/DY->mumu with M_mumu > 20 GeV (NNLO cross-section), high-pt
 x-section = 1666
 pathname = DYmumu_highPt.root
-Nprod_evt = 1998931
+Nprod_evt = 1984154
 
 samplename = DYtautau_lowPt
 description = POWHEG Z/DY->tautau with M_tautau > 20 GeV (NNLO cross-section), low-pt
@@ -68,7 +68,7 @@ samplename = DYtautau_highPt
 description = POWHEG Z/DY->tautau with M_tautau > 20 GeV (NNLO cross-section), high-pt
 x-section = 1666
 pathname = DYmumu_highPt.root
-Nprod_evt = 1994719
+Nprod_evt = 1995369
 
 samplename = ttbar_lowPt
 description = Madgraph inclusive t-tbar (NLO cross-section), low-pt
@@ -111,7 +111,7 @@ samplename = WZ_highPt
 description = WZ Inclusive PYTHIA6, high-pt
 x-section = 18
 pathname = WZ_highPt.root
-Nprod_evt = 2194752
+Nprod_evt = 2108416
 
 samplename = ZZ_lowPt
 description = ZZ Inclusive PYTHIA6, low-pt
@@ -123,7 +123,7 @@ samplename = ZZ_highPt
 description = ZZ Inclusive PYTHIA6, high-pt
 x-section = 5.9
 pathname = ZZ_highPt.root
-Nprod_evt = 2113368
+Nprod_evt = 2108608
 
 DONE
 
