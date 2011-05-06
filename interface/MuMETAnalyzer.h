@@ -6,10 +6,12 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/mumet_histo_constants.h"
+#include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
 
 #include "TLorentzVector.h"
 
 class TH1F;
+class TeVMuon;
 
 #define debugmeMuMet 0
 #define dumpHighPtMuons 0
@@ -20,7 +22,7 @@ class MuMETAnalyzer;
 // of selection cuts should be skipped based on some event property 
 // (e.g. when the trigger has failed the event, or there are more than 
 // one muons in the event, etc)
-typedef bool (MuMETAnalyzer::*funcPtrMu)(bool *, int, edm::EventBase const &);
+typedef bool (MuMETAnalyzer::*funcPtrMu)(bool *, const TeVMuon *, edm::EventBase const &);
 
 // key: cuts_desc_short[i], value: function pointer corresponding to selection cut
 typedef std::map<std::string, funcPtrMu> selection_map_mumet;
@@ -59,8 +61,8 @@ class MuMETAnalyzer
   // to be reset at beginning of loop-over-muons
   bool isInvalidMuon_;
 
-  // identifies muon reconstructor (see mumet_histo_constants.h)
-  int muReconstructor_; 
+  // identifies muon reconstructor (see TeVMuon.h)
+  unsigned muReconstructor_; 
   bool highestPtMuonOnly_; // whether to only consider highest-pt muon in event
   bool dumpHighPtMuons_; // whether to dump high-pt muons for data
   float dumpHighPtMuonThreshold_;
@@ -80,20 +82,16 @@ class MuMETAnalyzer
   // (returns index in pat::MuonCollection)
   int getTheHardestMuon();
 
-  void setMuLorentzVector(TLorentzVector& P, const reco::TrackRef & trk);
-
   // fill histograms for muon if fill_entry=true; update book-keeping 
   // (via private member: stats); make sure stats gets updated maximum 
   // once per event
   void tabulateMe(int cut_index, bool accountMe[], 
-		  edm::EventBase const & event, int theMu);
+		  edm::EventBase const & event, const TeVMuon * muon);
   
   // dump on screen info about high-pt muon
   void printHighPtMuon(edm::EventBase const & event);
 
   TLorentzVector mu4D;
-  // set muon 4-d momentum according to muonReconstructor_ value (sets mu4D)
-  void setMuonMomentum(int theMu);
 
   // Get new MET: there are two corrections to be made:
   // (a) the hadronic MET component (that needs to be corrected 
@@ -103,29 +101,26 @@ class MuMETAnalyzer
   // of the dedicated high-pt muon reconstructors
   TVector2 getNewMET(edm::EventBase const & event, const TLorentzVector & mu_p);
 
-  //computes the combined rel isolation value
-  float combRelIsolation(int theMu);
-
   // whether HLT accepted the event
-  bool passedHLT(bool *, int, edm::EventBase const &);
+  bool passedHLT(bool *, const TeVMuon * muon, edm::EventBase const &);
 
   // check if muon satisfies quality requirements
   // fill goodQual; always returns true
-  bool goodQualityMuon(bool * goodQual, int theMu, edm::EventBase const &);
+  bool goodQualityMuon(bool * goodQual, const TeVMuon * muon, edm::EventBase const &);
 
   // true if only one muon with track pt > the threshold
-  bool onlyOneHighTrackPtMuon(bool *, int, edm::EventBase const &);
+  bool onlyOneHighTrackPtMuon(bool *, const TeVMuon *, edm::EventBase const &);
 
   // returns # of (global) muons with tracker-pt above <tracker_muon_pt>
   unsigned nMuAboveThresh(float tracker_muon_pt);
 
   // set bool flag to true if muon isolated
   // always returns true
-  bool isolatedMuon(bool * goodQual, int theMu, edm::EventBase const &);
+  bool isolatedMuon(bool * goodQual, const TeVMuon * muon, edm::EventBase const &);
 
   // check if muon, MET pass kinematic cuts, updated goodQual
   // always returns true
-  bool kinematicCuts(bool * goodQual, int, edm::EventBase const & event);
+  bool kinematicCuts(bool * goodQual, const TeVMuon *, edm::EventBase const & event);
 
   // print summary of efficiencies
   void printFileSummary(std::vector<wprime::InputFile>::const_iterator,

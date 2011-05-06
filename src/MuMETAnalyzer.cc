@@ -24,7 +24,7 @@ MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUti
   dumpHighPtMuons_   = cfg.getParameter<bool>("dumpHighPtMuons");
   dumpHighPtMuonThreshold_ = cfg.getParameter<double>("dumpHighPtMuonThreshold");
 
-  assert(muReconstructor_ >= 0 && muReconstructor_ < Num_trkAlgos);
+  assert(muReconstructor_ < Num_MuTeVtrkAlgos);
 
   setupCutOrder();
 
@@ -56,8 +56,9 @@ int MuMETAnalyzer::getTheHardestMuon()
   int ret = -1;
   for(int j = 0; j != nmuons; ++j)
     {
-      if((*muons)[j].innerTrack().isNull())continue;
-      float current_muPT = (*muons)[j].innerTrack()->pt();
+      TeVMuon muon((*muons)[j]);
+      if(muon.innerTrack().isNull())continue;
+      float current_muPT = muon.innerTrack()->pt();
       if (current_muPT > temp_muPT) 
 	{
 	  temp_muPT = current_muPT;
@@ -82,7 +83,7 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     accountMe[cut] = true;
 
-  int iMuMin = 0; int iMuMax = muons->size();
+  unsigned iMuMin = 0; unsigned iMuMax = muons->size();
   if(highestPtMuonOnly_) // if true, will only consider highest-pt muon in event
     {
       int iMu = getTheHardestMuon();
@@ -94,28 +95,31 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
     }
 
   //loop over muons
-  for (int theMu = iMuMin; theMu != iMuMax; ++theMu){//loop over muons
+  for (unsigned theMu = iMuMin; theMu != iMuMax; ++theMu){//loop over muons
     bool fill_entry = true; // if true, will histogram muon
     isInvalidMuon_ = false;
     pfMETwithoutMuCalculated_ = false;
-    setMuonMomentum(theMu);
+
+    TeVMuon muon((*muons)[theMu]);
+    mu4D = muon.p4(theMu, muReconstructor_, isInvalidMuon_);
     if(isInvalidMuon_)continue;
     if(mu4D.Pt() < muonPtThreshold_) continue;
+
     for(int cut_index = 0; cut_index != Num_mumet_cuts; ++cut_index)
       { // loop over selection cuts
 	string arg = mumet_cuts_desc_short[cut_index];
 	// call to function [as implemented in setupCutOder]
 	// don't get me started about the syntax!
-	bool survived_cut=(this->*cuts[arg])(&fill_entry, theMu, event);
+	bool survived_cut=(this->*cuts[arg])(&fill_entry, &muon, event);
 	if(!survived_cut)break; // skip rest of selection cuts
 	
 	if(fill_entry)
-	  tabulateMe(cut_index, accountMe, event, theMu);
+	  tabulateMe(cut_index, accountMe, event, &muon);
 	
 	if(dumpHighPtMuons_ && fill_entry 
 	   && cut_index == Num_mumet_cuts-1
 	   && wprimeUtil_->getSampleName().find("data") != string::npos &&
-	   (*muons)[theMu].innerTrack()->pt() > dumpHighPtMuonThreshold_)
+	   muon.innerTrack()->pt() > dumpHighPtMuonThreshold_)
 	  printHighPtMuon(event);
       
       } // loop over selection cuts
@@ -125,52 +129,11 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 
 }
 
-void MuMETAnalyzer::setMuLorentzVector(TLorentzVector& P, const reco::TrackRef & trk)
-{
-  if(trk.isNull())
-    {
-      isInvalidMuon_ = true;
-      return;
-    }
-  TVector3 p3(trk->px(), trk->py(), trk->pz());
-  P.SetVectM(p3, wprime::MUON_MASS);
-}
-
-// set muon 4-d momentum according to muonReconstructor_ value (sets mu4D)
-void MuMETAnalyzer::setMuonMomentum(int theMu)
-{
-  switch(muReconstructor_)
-    {
-    case 0:
-      setMuLorentzVector(mu4D, (*muons)[theMu].globalTrack());
-      break;
-    case 1:
-      setMuLorentzVector(mu4D, (*muons)[theMu].innerTrack());
-      break;
-    case 2:
-      setMuLorentzVector(mu4D, (*muons)[theMu].tpfmsMuon());
-      break;
-    case 3:
-      setMuLorentzVector(mu4D, (*muons)[theMu].cocktailMuon());
-      break;
-    case 4:
-      setMuLorentzVector(mu4D, (*muons)[theMu].pickyMuon());
-      break;
-    case 5:
-      setMuLorentzVector(mu4D, (*muons)[theMu].defaultTeVMuon());
-      break;
-    case 6:
-      setMuLorentzVector(mu4D, (*muons)[theMu].dytMuon());
-      break;
-    }
-
-}
-
 
 // fill histograms for muon if fill_entry=true; update book-keeping 
 // (via private member: stats); make sure stats gets updated maximum once per event
 void MuMETAnalyzer::tabulateMe(int cut_index, bool accountMe[], 
-			       edm::EventBase const& event, int theMu)
+			       edm::EventBase const& event, const TeVMuon * muon)
 {
   // if the accountMe switch is on, increase the number of events passing the cuts
   // and turn the switch off so we don't count more than once per event
@@ -189,7 +152,7 @@ void MuMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
   hPHI[cut_index]->Fill(mu4D.Phi(), weight);
   //  hMJDPHI[cut_index]->Fill( XJetDPhi(mu4D, event), weight);
   hTM[cut_index]->Fill(WPrimeUtil::TMass(mu4D, getNewMET(event, mu4D)), weight);
-  hISO[cut_index]->Fill(combRelIsolation(theMu),weight);
+  hISO[cut_index]->Fill(muon->combRelIsolation(),weight);
 }
 
 // operations to be done when changing input file (e.g. create new histograms)
@@ -526,17 +489,9 @@ TVector2 MuMETAnalyzer::getPFMETwithoutMu(edm::EventBase const & event)
   return pfMETwithoutMuCached_;
 }
 
-//computes the combined rel isolation value
-float MuMETAnalyzer::combRelIsolation(int theMu)
-{
-  // maybe we should divide by the pt of the high-pt muon reconstructor
-  // and not always use the tracker-only pt measurement
-  return ( (*muons)[theMu].ecalIso() + (*muons)[theMu].hcalIso() + 
-	   (*muons)[theMu].trackIso() ) / mu4D.Pt();
-}
 
 // whether HLT accepted the event
-bool MuMETAnalyzer::passedHLT(bool *, int, edm::EventBase const &)
+bool MuMETAnalyzer::passedHLT(bool *, const TeVMuon *, edm::EventBase const &)
 {
   // needs implementation
   return true;
@@ -544,41 +499,14 @@ bool MuMETAnalyzer::passedHLT(bool *, int, edm::EventBase const &)
 
 // check if muon satisfies quality requirements
 // fill goodQual; always returns true
-bool MuMETAnalyzer::goodQualityMuon(bool * goodQual, int theMu, edm::EventBase const &)
+bool MuMETAnalyzer::goodQualityMuon(bool * goodQual, const TeVMuon * muon, edm::EventBase const &)
 {
-  //See twiki: https://twiki.cern.ch/twiki/bin/view/CMS/ExoticaWprime
-  //for the latest quality cuts
-  
-  bool muonID = (*muons)[theMu].isGood("AllGlobalMuons") &&
-    (*muons)[theMu].isGood("AllTrackerMuons");
-  
-  reco::TrackRef glb = (*muons)[theMu].globalTrack();
-  if(glb.isNull())
-    {
-      *goodQual = false;
-      return true;
-    }
-  
-  bool muon_hits = glb->hitPattern().numberOfValidTrackerHits() > 10
-    && glb->hitPattern().numberOfValidMuonHits() > 0
-    && glb->hitPattern().numberOfValidPixelHits() > 0
-    && (*muons)[theMu].numberOfMatches() > 1;
-  
-  TVector3 p3(glb->px(), glb->py(), glb->pz());
-  
-  bool checkqual = (glb->chi2()/glb->ndof() / chi2Cut_)
-    && TMath::Abs(p3.Eta()) < muonEtaCut_
-    // is this d0 wrt to the beamspot???
-    && TMath::Abs((*muons)[theMu].dB()) < 0.02;
-  
-  if(!muonID || !muon_hits || !checkqual)
-    *goodQual = false;
-  
+  *goodQual = muon->goodQualityMuon(chi2Cut_, muonEtaCut_);
   return true;
 }
 
 // true if only one muon with track pt > the threshold
-bool MuMETAnalyzer::onlyOneHighTrackPtMuon(bool *, int, edm::EventBase const &)
+bool MuMETAnalyzer::onlyOneHighTrackPtMuon(bool *, const TeVMuon *, edm::EventBase const &)
 {
   return (nMuAboveThresh(oneMuPtTrackCut_) == 1);
 }
@@ -590,10 +518,12 @@ unsigned MuMETAnalyzer::nMuAboveThresh(float tracker_muon_pt)
   int iMuMin = 0; int iMuMax = muons->size();
   //loop over muons
   for (int theMu = iMuMin; theMu != iMuMax; ++theMu){//loop over muons
-    // consider only global muons
-    if(!(*muons)[theMu].isGood("AllGlobalMuons"))continue;
+    const pat::Muon * pMuon = &(*muons)[theMu];
     
-    reco::TrackRef trk = (*muons)[theMu].innerTrack();
+    // consider only global muons
+    if(!pMuon->isGood("AllGlobalMuons"))continue;
+    
+    reco::TrackRef trk = pMuon->innerTrack();
     if(trk.isNull())continue;
     if(trk->pt() > tracker_muon_pt)
       ++N;
@@ -604,10 +534,10 @@ unsigned MuMETAnalyzer::nMuAboveThresh(float tracker_muon_pt)
 
 // set bool flag to true if muon isolated
 // always returns true
-bool MuMETAnalyzer::isolatedMuon(bool * goodQual, int theMu, 
+bool MuMETAnalyzer::isolatedMuon(bool * goodQual, const TeVMuon * muon, 
 				 edm::EventBase const &)
 {
-  if(combRelIsolation(theMu) > combRelCut_)
+  if(muon->combRelIsolation() > combRelCut_)
     *goodQual = false;
 
   return true;
@@ -615,7 +545,7 @@ bool MuMETAnalyzer::isolatedMuon(bool * goodQual, int theMu,
 
 // check if muon, MET pass kinematic cuts, updated goodQual
 // always returns true
-bool MuMETAnalyzer::kinematicCuts(bool * goodQual, int, 
+bool MuMETAnalyzer::kinematicCuts(bool * goodQual, const TeVMuon *, 
 				  edm::EventBase const & event)
 {
   TVector2 MET = getNewMET(event, mu4D);
