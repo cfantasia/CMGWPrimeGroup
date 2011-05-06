@@ -1,0 +1,13 @@
+samplename = data
+description = Muon pt > 25 GeV skim, 24.67 pb^-1
+x-section = 1
+pathname = MultileptonPatTupleV05-04-01G-SingleMu2011A/TrileptonPatTuple_1_1_CSE.root
+Nprod_evt = 100
+
+samplename = WZ3l
+description = Sample WZ3l
+x-section = 300
+pathname = TrileptonPatTupleV05-04-00-WZTo3LNu_7TeV-pythia6/1/TrileptonPatTupleV05-04-00-02227695-354F-E011-AF1A-90E6BA442F43.root
+Nprod_evt = 100
+
+DONE
