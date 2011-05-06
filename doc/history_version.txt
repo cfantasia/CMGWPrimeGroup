@@ -1,3 +1,16 @@
+06-MAY-11 (Christos), V00-02-50
+===============================
+New TeVMuon class introduced to deal with common TeV muon reconstruction 
+across channels (e.g. Mu+MET or W->mu). It should be used for calculating:
+- kinematic information (ie. pt measurement for dedicated TeV muon 
+reconstructor)
+- combined relative isolation (because it uses pt)
+- "good quality" muon definition
+
+Fixed #s of (some of) produced Spring11 Mu+MET samples (used to be taken from 
+Fall10 twiki instead of DBS) 
+
+
 03-MAY-11 (Christos, Cory), V00-02-39
 ======================================
 
