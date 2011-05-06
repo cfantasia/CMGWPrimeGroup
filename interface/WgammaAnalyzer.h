@@ -89,7 +89,7 @@ class WgammaAnalyzer
   bool isInvalidPhoton_;
 
   // identifies muon reconstructor (see mumet_histo_constants.h)
-  int muReconstructor_; 
+  unsigned muReconstructor_; 
   bool highestPtMuonOnly_; // whether to only consider highest-pt muon in event
   bool highestPtPhotonOnly_;
   bool dumpHighPtMuons_; // whether to dump high-pt muons for data

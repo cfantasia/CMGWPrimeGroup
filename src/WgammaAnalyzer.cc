@@ -56,8 +56,7 @@ WgammaAnalyzer::WgammaAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeU
   maxPhotonEta_        = cfg.getParameter<double>("maxEta");
 
 
-  assert( muReconstructor_ >= 0 );
-  assert( muReconstructor_ < Num_trkAlgos);
+  assert( muReconstructor_ < Num_MuTeVtrkAlgos);
 
   setupCutOrderMuons();
   setupCutOrderPhotons();

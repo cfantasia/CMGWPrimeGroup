@@ -9,12 +9,13 @@
 #include <string>
 #include <iostream>
 
+#include "UserCode/CMGWPrimeGroup/interface/TeVMuon_tracking.h"
 #include "UserCode/CMGWPrimeGroup/interface/mumet_histo_constants.h"
 
 using std::string; using std::cout; using std::endl;
 
 // select tracking algorithm
-// from 0 to Num_trkAlgos-1 (see mumet_histo_constants.h)
+// from 0 to Num_MuTeVtrkAlgos-1 (see TeVMuon_tracking.h)
 // NB: this is currently common for Muon-pt and transverse mass distributions
 const unsigned tracking_option = 3;
 
@@ -33,7 +34,7 @@ float Lumi_ipb = -1;
 
 void plotMT()
 {
-  assert(tracking_option >=0 && tracking_option <= Num_trkAlgos-1);
+  assert(tracking_option <= Num_MuTeVtrkAlgos-1);
 
   string input_file = "Wprime_analysis.root";
   _file0 = TFile::Open(input_file.c_str());
@@ -264,8 +265,8 @@ void doPlots(int option)
   c1 = new TCanvas();
   c1->SetLogy();
 		       
-  data->Sumw2();
-  bgd->Sumw2();
+  //  data->Sumw2();
+  // bgd->Sumw2();
   ratio->Divide(data, bgd);
 
   data_cumu->Draw("e");

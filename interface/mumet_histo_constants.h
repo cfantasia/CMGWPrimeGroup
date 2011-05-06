@@ -5,11 +5,6 @@
 
 // ++++++++++++++++++++++++++++++++Useful constants
 
-const int Num_trkAlgos = 7; // global, tracker, tpfms, cocktail, picky, tmr, dyt
-const std::string algo_desc_short[Num_trkAlgos] = {"gbl","trk","tpfms","ckt","pic","def","dyt"};
-// use this for histogram descriptions
-const std::string algo_desc_long[Num_trkAlgos] = {"global", "tracker", "TPFMS","cocktail","picky","default", "DYT"};
-
 const int Num_mumet_cuts = 5; // one new set of histograms after each cut
 // use this for histogram names
 const std::string mumet_cuts_desc_short[Num_mumet_cuts] = {"hlt","qual","1mu","iso", "met"};
