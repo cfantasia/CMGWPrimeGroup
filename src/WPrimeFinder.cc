@@ -26,6 +26,7 @@ WPrimeFinder::~WPrimeFinder()
 {
   if(muMETAnalyzer) delete muMETAnalyzer;
   if(WmunugammaAnalyzer) delete WmunugammaAnalyzer;
+  if(wzAnalyzer) delete wzAnalyzer;
   delete wprimeUtil;
   out_.close();
 }
@@ -67,6 +68,10 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
   else
     WmunugammaAnalyzer = 0;
 
+  if(runWZAnalysis_)
+    wzAnalyzer = new WZAnalyzer(cfg, wprimeUtil);
+  else
+    wzAnalyzer = 0;
 }
 
 // operations to be done when changing input file (e.g. create new histograms)
@@ -88,6 +93,8 @@ void WPrimeFinder::beginFile(std::vector<wprime::InputFile>::const_iterator it)
       eleMETAnalyzer->beginFile(it);
   if(runWgammaAnalysis_) 
       WmunugammaAnalyzer->beginFile(it);
+  if(runWZAnalysis_) 
+      wzAnalyzer->beginFile(it);
 }
 
 void WPrimeFinder::eventLoop(edm::EventBase const & event)
@@ -102,6 +109,9 @@ void WPrimeFinder::eventLoop(edm::EventBase const & event)
 
   if(runWgammaAnalysis_)
       WmunugammaAnalyzer->eventLoop(event);
+
+  if(runWZAnalysis_)
+      wzAnalyzer->eventLoop(event);
 }
 
 
@@ -182,6 +192,8 @@ void WPrimeFinder::endFile(std::vector<wprime::InputFile>::const_iterator it)
     eleMETAnalyzer->endFile(it, out_);
   if(runWgammaAnalysis_) 
       WmunugammaAnalyzer->endFile(it, out_);  
+  if(runWZAnalysis_) 
+      wzAnalyzer->endFile(it, out_);  
 }
 
 // e.g. print summmary of expected events for all samples
@@ -193,4 +205,6 @@ void WPrimeFinder::endAnalysis()
     eleMETAnalyzer->endAnalysis(out_);
   if(runWgammaAnalysis_)
       WmunugammaAnalyzer->endAnalysis(out_);
+  if(runWZAnalysis_)
+      wzAnalyzer->endAnalysis(out_);
 }

@@ -7,6 +7,7 @@
 #include "UserCode/CMGWPrimeGroup/interface/MuMETAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/EleMETAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/WgammaAnalyzer.h"
+#include "UserCode/CMGWPrimeGroup/interface/WZAnalyzer.h"
 
 class WPrimeFinder
 {
@@ -57,6 +58,7 @@ class WPrimeFinder
   MuMETAnalyzer * muMETAnalyzer;
   EleMETAnalyzer * eleMETAnalyzer;
   WgammaAnalyzer * WmunugammaAnalyzer;
+  WZAnalyzer * wzAnalyzer;
   WPrimeUtil * wprimeUtil;
 
 };
