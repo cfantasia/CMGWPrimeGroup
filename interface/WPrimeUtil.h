@@ -6,6 +6,7 @@
 
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/FWLite/interface/Event.h"
+#include "DataFormats/FWLite/interface/ChainEvent.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
 #include "UserCode/CMGWPrimeGroup/interface/util.h"

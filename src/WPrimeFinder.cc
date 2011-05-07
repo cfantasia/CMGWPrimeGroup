@@ -5,7 +5,7 @@
 using std::cout; using std::cerr; using std::endl;
 using std::string;
 
-#include <TFile.h>
+#include <TChain.h>
 #include <TTree.h>
 #include <TH1F.h>
 
@@ -120,21 +120,16 @@ void WPrimeFinder::run()
   int ievt_all=0;  
   std::vector<wprime::InputFile>::iterator it;
   for(it = inputFiles.begin(); it != inputFiles.end(); ++it){
-  int ievt=0;  
+    int ievt=0;  
     // loop over input files
-    TFile * inFile = TFile::Open(it->pathname.c_str());
-    if(!inFile || inFile->IsZombie())
-      {
-	cout << " *** Can't find file " << it->pathname
-	     << " ! Aborting... " << endl;
-	abort();
-      }
-
-    it->file = inFile;
-    TTree * events = (TTree *) inFile->Get("Events");
-    assert(events);
-
-    it->Nact_evt = events->GetEntries();
+    it->chain = new TChain("Events", "Events");
+    for(uint i=0; i<it->pathnames.size(); ++i){
+      it->chain->AddFile(it->pathnames[i].c_str());
+    }
+    assert(it->chain);
+    
+    it->Nact_evt = it->chain->GetEntries();
+    
     if(it->samplename.find("data") != string::npos)
         // Nprod_evt presumably contains the # of events before any filtering
         // that results in Nact_evt (< Nprod_evt) events contained in the file.
@@ -142,14 +137,14 @@ void WPrimeFinder::run()
         // so just assume pre-selection efficiency = 100%;
         // this affects only the efficiency calculations printed
         // at the end of the job - nothing else!
-        it->Nprod_evt = it->Nact_evt;
- 	  	 
-    cout << " Opened file " << it->pathname << " with " << it->Nact_evt
+      it->Nprod_evt = it->Nact_evt;
+    
+    cout << " Opened file " << it->samplename << " with " << it->Nact_evt
          << " events" << endl;
-
+  
     cout << std::fixed << std::setprecision(2);
     beginFile(it);
-    fwlite::Event ev(inFile);
+    fwlite::ChainEvent ev(it->pathnames);
     for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt, ++ievt_all){// loop over events
       edm::EventBase const & event = ev;
       // break loop if maximal number of events is reached 
@@ -182,9 +177,8 @@ void WPrimeFinder::run()
 // (e.g. save histograms, print summary)
 void WPrimeFinder::endFile(std::vector<wprime::InputFile>::const_iterator it)
 {
-  // close input file
-  it->file->Close();
-  
+  delete it->chain;
+
    // call endFile for each finder here
   if(runMuMETAnalysis_)
     muMETAnalyzer->endFile(it, out_);

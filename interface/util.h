@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 
-class TFile;
+class TChain;
 
 namespace wprime{
   static std::string INVALID = "INVALID";
@@ -19,20 +19,20 @@ namespace wprime{
     float weight; // cross-section * integrated luminosity / (# of events produced)
     // Nact_evt * weight = Nexp_evt for given integrated luminosity
     std::string samplename;
-    std::string pathname; // directory + filename
+    std::vector<std::string> pathnames; // directory + filenames
     std::string description; // sample description
-    TFile * file; // pointer to ROOT file
+    TChain * chain; // pointer to ROOT chain
     //
     InputFile()
     {
-      x_sect = -1; Nprod_evt = Nact_evt = -1; weight = 0; file = 0;
-      samplename = pathname = description = INVALID;
+      x_sect = -1; Nprod_evt = Nact_evt = -1; weight = 0; chain = 0;
+      samplename = description = INVALID;
     }
     void checkFile()
     {
       assert(x_sect > 0); assert(Nprod_evt > 0); //assert(Nact_evt > 0);
       assert(weight > 0);
-      assert(pathname != INVALID); assert(description != INVALID); 
+      assert(pathnames.size()); assert(description != INVALID); 
       assert(samplename != INVALID);
     }
 

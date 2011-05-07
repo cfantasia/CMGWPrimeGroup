@@ -170,12 +170,29 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
   i = new_line.find("pathname = ");
   if(i != string::npos)
     {
-      string pathname = top_level_dir + new_line.substr(11, new_line.length() - 11);
-      in_file->pathname = pathname;
-      
+      string input = new_line.substr(11, new_line.length() - 11);
+      size_t j = new_line.find(".txt");
+      if(j != string::npos){
+        cout<<"Using input file "<<input<<endl;
+        ifstream infile;
+        input = "UserCode/CMGWPrimeGroup/config/" + input;
+        infile.open (input.c_str(), ifstream::in);
+        
+        while (infile.good()){
+          string fname;
+          infile>>fname;
+          if(fname != ""){
+            cout<<"filename: "<<fname.c_str()<<endl;
+            in_file->pathnames.push_back(top_level_dir + fname);
+          }
+        }
+        infile.close();
+      }else{
+        string pathname = top_level_dir + input;
+        in_file->pathnames.push_back(pathname);
+      }
       cout << " Input file: " << in_file->samplename;
       cout << " (" << in_file->description << ") " << endl;
-
       return;
     }
 
