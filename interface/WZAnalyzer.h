@@ -44,7 +44,6 @@ public:
 
   double deltaR(double eta1, double phi1, double eta2, double phi2);
 
-  float GetWeight();
   void ScaleHistos();
   void Fill_Histos(int index, float weight=1.);
   void saveHistos(std::string dir);
@@ -137,6 +136,8 @@ public:
 
 // +++++++++++++++++++useful constants
   bool debugme;//print stuff if active
+  bool doPreselect_;
+
   int PDGMUON;
   int PDGELEC;
   int PDGW;

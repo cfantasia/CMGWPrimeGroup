@@ -21,10 +21,10 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   FillCutFns();
   SetLogFile(cfg.getParameter<string>("LogFile"));
 
-  intOptions_["report"] = 100;
-  intOptions_["verbose"] = 1;
-  intOptions_["preselect"] = 1;
-  intOptions_["events"] = 99999999;
+  intOptions_["report"] = cfg.getParameter<uint>("reportAfter");
+  intOptions_["verbose"] = cfg.getParameter<bool>("debugme");
+  doPreselect_ = cfg.getParameter<bool>("preselect");
+  intOptions_["events"] = 0;
 
   debugme = cfg.getParameter<bool>("debugme");
 
@@ -336,17 +336,10 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
 
 }//Declare_Histos
 
-float
-WZAnalyzer::GetWeight(){
-  float scaleFactor = 1.;
-//  if (crossSection > 0. && nEvents[0] > 0)
-//    scaleFactor = wprimeUtil_->getLumi_ipb() * crossSection / nEvents[0];
-  return scaleFactor;
-}
-
 //Scale Histograms
 void
 WZAnalyzer::ScaleHistos(){
+  verbose("Scaling Histos\n");
   for(uint i=0; i != listOfHists.size(); ++i){
     listOfHists[i]->Scale(wprimeUtil_->getWeight());
   }  
@@ -492,7 +485,7 @@ void WZAnalyzer::printSummary(const string& dir)
     }
     hEffRel->Fill(i,eff*100);
     outLogFile << setw(15) <<"\tRelative eff = "<<setw(6)<<eff*100 << " +/- " << setw(6)<<deff*100 << "%";
-    
+    if(Num_surv_cut_[i-1] && Num_surv_cut_[i-1] < 1.) printf("eff:%.2f deff:%.2f num:%.2f den:%.2f\n",eff,deff,Num_surv_cut_[i],Num_surv_cut_[i-1]);    
     getEff(eff, deff, Num_surv_cut_[i], Num_surv_cut_[0]);
     hEffAbs->Fill(i,eff*100);
     outLogFile << setw(15) <<"\tAbsolute eff = "<<setw(6)<<eff*100 << " +/- " << setw(6)<<deff*100 << "%"
@@ -510,7 +503,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   datasetName = getDatasetName(event, datasetName);
 
   // Preselection - skip events that don't look promising
-  if (intOptions_["preselect"])
+  if (doPreselect_)
     if (getProduct<double>(event, 
                            "wzPreselectionProducer:ZMassDiff") > 12.5 ||
         getProduct<double>(event, 

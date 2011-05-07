@@ -1,13 +1,56 @@
 samplename = data
-description = Muon pt > 25 GeV skim, 24.67 pb^-1
+description = Single E+Mu, 55.0 pb^-1
 x-section = 1
-pathname = MultileptonPatTupleV05-04-01G-SingleMu2011A/TrileptonPatTuple_1_1_CSE.root
-Nprod_evt = 100
+pathname = TrileptonPatTupleV05-04-01FGH-2011A.txt
+Nprod_evt = 50918
+
+samplename = DYJetsToLL
+description = DYJetsToLL
+x-section = 2321
+pathname = TrileptonPatTupleV05-04-00-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola.txt
+Nprod_evt = 2329439
+
+samplename = TTTo2L2Nu2B
+description = TTTo2L2Nu2B
+x-section = 15.86
+pathname = TrileptonPatTupleV05-04-00-TTTo2L2Nu2B_7TeV-powheg-pythia6.txt
+Nprod_evt = 999909
+
+samplename = WToENu
+description = WToENu
+x-section = 7899
+pathname = TrileptonPatTupleV05-04-00-WToENu_TuneZ2_7TeV-pythia6.txt
+Nprod_evt = 5076954
+
+samplename = WToMuNu
+description = WToMuNu
+x-section = 7899
+pathname = TrileptonPatTupleV05-04-00-WToMuNu_TuneZ2_7TeV-pythia6.txt
+Nprod_evt = 5038640
 
 samplename = WZ3l
 description = Sample WZ3l
-x-section = 300
-pathname = TrileptonPatTupleV05-04-00-WZTo3LNu_7TeV-pythia6/1/TrileptonPatTupleV05-04-00-02227695-354F-E011-AF1A-90E6BA442F43.root
-Nprod_evt = 100
+x-section = 0.34
+pathname = TrileptonPatTupleV05-04-00-WZTo3LNu_7TeV-pythia6.txt
+Nprod_evt = 110000
+
+samplename = ZGToLLG
+description = ZGToLLG
+x-section = 14.3
+pathname = TrileptonPatTupleV05-04-00-ZGtoLLG_TuneZ2_7TeV-pythia6-tauola.txt
+Nprod_evt = 165000
+
+samplename = ZZtoAnything
+description = ZZtoAnything
+x-section = 4.297
+pathname = TrileptonPatTupleV05-04-00-ZZtoAnything_TuneZ2_7TeV-pythia6-tauola.txt
+Nprod_evt = 2108608
+
+samplename = WprimeToWZTo3LNu_M-300
+description = WprimeToWZTo3LNu_M-300
+x-section = 0.2756
+pathname = TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-300_7TeV-pythia6.txt
+Nprod_evt = 10000
 
 DONE
+

@@ -20,6 +20,7 @@ process.WprimeAnalyzer = cms.PSet(
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_WZ.txt"),
     debugme = cms.bool(False),
+    preselect = cms.bool(True),
     LogFile = cms.string("Wprime_event_counts.txt"),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(False),
