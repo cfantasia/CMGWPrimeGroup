@@ -180,7 +180,7 @@ void doPlots(int option)
       var_plotted = "TM";
     }
   string ratio_desc = "Data-to-MC ratio of " + desc;
-  string cumu_desc = "Cumulative" + desc;
+  string cumu_desc = "Cumulative " + desc;
   string file = var_plotted + "_" + lumi_value + ".gif";
   string file_cumu = var_plotted + "_cumu_" + lumi_value + ".gif"; 
   string file_ratio = var_plotted + "_ratio_" + lumi_value + ".gif"; 
