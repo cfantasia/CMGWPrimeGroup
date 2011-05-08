@@ -126,7 +126,19 @@ void doPlots(int option)
   if(badHisto(data2, "data2"))
     return;
 
+  string hdata3 = "data3/" + histo;
+  TH1F * data3 = (TH1F*) _file0->Get(hdata3.c_str());
+  if(badHisto(data3, "data3"))
+    return;
+
+  string hdata4 = "data4/" + histo;
+  TH1F * data4 = (TH1F*) _file0->Get(hdata4.c_str());
+  if(badHisto(data4, "data4"))
+    return;
+
   data->Add(data2);
+  data->Add(data3);
+  data->Add(data4);
 
   string hname = "tot_bgd";
   string hname_ratio = "ratio";
@@ -161,9 +173,9 @@ void doPlots(int option)
     {
       hname += "_TM";
       hname_ratio += "_TM";
-      desc = "#mu & ME_{T} transverse mass: 2011 data (" 
+      desc = "#mu&ME_{T} transverse mass: 2011 data (" 
 	+ string(lumi_value2) + ")";
-      xmin = 50; xmax = 900; xmax_cumu = 800; xmax_ratio = 800;
+      xmin = 50; xmax = 1000; xmax_cumu = 900; xmax_ratio = 800;
       title = "M_{T} (GeV/c^{2})";
       var_plotted = "TM";
     }
