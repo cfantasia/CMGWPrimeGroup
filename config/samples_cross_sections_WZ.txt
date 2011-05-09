@@ -1,8 +1,8 @@
 samplename = data
-description = Single E+Mu, 55.0 pb^-1
+description = Single E+Mu, 155.0 pb^-1
 x-section = 1
-pathname = TrileptonPatTupleV05-04-01FGH-2011A.txt
-Nprod_evt = 50918
+pathname = data.txt
+Nprod_evt = 99999
 
 samplename = DYJetsToLL
 description = DYJetsToLL
@@ -52,5 +52,46 @@ x-section = 0.2756
 pathname = TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-300_7TeV-pythia6.txt
 Nprod_evt = 10000
 
+samplename = WprimeToWZTo3LNu_M-400
+description = WprimeToWZTo3LNu_M-400
+x-section = 0.08887
+pathname = TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-400_7TeV-pythia6.txt
+Nprod_evt = 10000
+
+samplename = WprimeToWZTo3LNu_M-500
+description = WprimeToWZTo3LNu_M-500
+x-section = 0.03567
+pathname = TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-500_7TeV-pythia6.txt
+Nprod_evt = 10000
+
+samplename = WprimeToWZTo3LNu_M-600
+description = WprimeToWZTo3LNu_M-600
+x-section = 0.01537
+pathname = TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-600_7TeV-pythia6.txt
+Nprod_evt = 10000
+
+samplename = WprimeToWZTo3LNu_M-700
+description = WprimeToWZTo3LNu_M-700
+x-section = 0.007821
+pathname = TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-700_7TeV-pythia6.txt
+Nprod_evt = 10000
+
+samplename = WprimeToWZTo3LNu_M-800
+description = WprimeToWZTo3LNu_M-800
+x-section = 0.004393
+pathname = TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-800_7TeV-pythia6.txt
+Nprod_evt = 10000
+
+samplename = WprimeToWZTo3LNu_M-900
+description = WprimeToWZTo3LNu_M-900
+x-section = 0.002329
+pathname = TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-900_7TeV-pythia6.txt
+Nprod_evt = 10000
+
 DONE
 
+samplename = data
+description = Single E+Mu, 155.0 pb^-1
+x-section = 1
+pathname = TrileptonPatTupleV05-04-01GI-2011A.txt
+Nprod_evt = 99999

@@ -28,6 +28,15 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
 
   debugme = cfg.getParameter<bool>("debugme");
 
+  electronsLabel_ = cfg.getParameter<string>("electrons");
+  muonsLabel_ = cfg.getParameter<string>("muons");
+  metLabel_ = cfg.getParameter<string>("met");
+  
+  hltEventLabel_ = cfg.getParameter<string>("hltEventTag");
+  pileupLabel_ = cfg.getParameter<string>("pileupTag");
+
+  triggersToUse_          = cfg.getParameter<vstring>("triggersToUse");
+
   ResetCounters();
 
   verbose("Using %i cuts\n",NCuts_);
@@ -516,8 +525,8 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 //  verbose("    FlavorType: %i", flavorType);
 
   // Get leptons
-  const ElectronV electrons = getProduct<ElectronV>(event,"userPatElectrons");
-  const MuonV muons = getProduct<MuonV>(event, "userPatMuons");
+  const ElectronV electrons = getProduct<ElectronV>(event,electronsLabel_);
+  const MuonV muons = getProduct<MuonV>(event, muonsLabel_);
   verbose("    Contains: %i electron(s), %i muon(s)",
           electrons.size(), muons.size());
 
@@ -527,23 +536,25 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 //  for (size_t i = 0; i < metTags.size(); i++)
 //    mets.push_back(getProduct<METV>(event, string(metTags[i].label()))[0]);
 //  met = mets[2];
-  met = getProduct<METV>(event, "patMETsPF")[0];
+  met = getProduct<METV>(event, metLabel_)[0];
 
   // Make vectors of leptons passing various criteria
   ElectronV looseElectrons, tightElectrons;
   for (size_t i = 0; i < electrons.size(); i++) {
-    if (PassElecLooseCut(&electrons[i]))
+    if (PassElecLooseCut(&electrons[i])){
       looseElectrons.push_back(electrons[i]);
-    if (PassElecTightCut(&electrons[i]))
-      tightElectrons.push_back(electrons[i]);
+      if (PassElecTightCut(&electrons[i]))
+        tightElectrons.push_back(electrons[i]);
+    }
   }
 
   MuonV looseMuons, tightMuons;
   for (size_t i = 0; i < muons.size(); i++) {
-    if (PassMuonLooseCut(&muons[i]))
+    if (PassMuonLooseCut(&muons[i])){
       looseMuons.push_back(muons[i]);
-    if (PassMuonTightCut(&muons[i]))
-      tightMuons.push_back(muons[i]);
+      if (PassMuonTightCut(&muons[i]))
+        tightMuons.push_back(muons[i]);
+    }
   }
 /*
   GenParticleV genParticles = getUntrackedProduct<GenParticleV>(event, "genParticles");
@@ -563,14 +574,29 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   wCand = getWCand(tightElectrons, tightMuons, met, zCand);
 
   wzCand = (zCand && wCand) ? WZCandidate(zCand, wCand) : WZCandidate();
+
+  triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
+
+///////////////////////
+/*
+  PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
+  
+  std::vector<PileupSummaryInfo>::const_iterator PVI;                       
+  for(PVI = PupInfo_.begin(); PVI != PupInfo_.end(); ++PVI) {               
+    //Cory: What am I looping over?
+    int PU_BunchCrossing = PVI->getBunchCrossing();                  
+    int PU_NumInteractions = PVI->getPU_NumInteractions();           
+  }
+*/
+/////////////////////
   CalcEventVariables();
 
   if(!PassCuts()) return;
-//  if(!dir.find("Run201")){
-//    cout<<" The following data events passed All Cuts!!!\n\n";
-//    PrintEventFull(event);
-//    cout<<" ------------------\n";
-//  }
+  if(!wprimeUtil_->getSampleName().find("data")){
+    cout<<" The following data events passed All Cuts!!!\n\n";
+    PrintEventFull(event);
+    cout<<" ------------------\n";
+  }
 }
 
 void WZAnalyzer::PrintEventToFile(edm::EventBase const & event){
@@ -720,10 +746,16 @@ bool WZAnalyzer::PassTriggersCut()
 //-----------------------------------------------------------
   if(debugme) cout<<"Trigger requirements"<<endl;
   
-  int NTriggers = TriggerHLTNames->size();
-  for(int i=0; i<NTriggers; ++i){
-    if(TriggerHLTDecisions->at(i) == 1 && TriggerHLTPrescales->at(i) <= 1) return true;
-  }
+  const pat::TriggerPathRefVector acceptedPaths = triggerEvent_.acceptedPaths();
+  for (size_t i = 0; i < acceptedPaths.size(); i++)
+    for (size_t j = 0; j < triggersToUse_.size(); j++)
+      if (!acceptedPaths[i]->name().compare(triggersToUse_[j])){
+//        string pat::TriggerPath::name()
+//        unsigned pat::TriggerPath::prescale()
+//        bool pat::TriggerPath::wasAccept()
+        if(acceptedPaths[i]->prescale() == 1  && acceptedPaths[i]->wasAccept()) return true;
+        break;
+      }
   return false;
 }//--- PassTriggersCut()
 

@@ -29,12 +29,40 @@ process.WprimeAnalyzer = cms.PSet(
     runTBAnalysis    = cms.bool(False),
     runWgammaAnalysis = cms.bool(False),
     ## input specific for this analyzer
-    muons = cms.InputTag('userPatMuons'),
-    electrons = cms.InputTag('userPatElectrons'),
-    met   = cms.InputTag('patMETsPF'),
-    particleFlow = cms.InputTag('selectedPatPFParticles'),
-    genParticles = cms.InputTag('prunedGenParticles'),
+    muons = cms.string('userPatMuons'),
+    electrons = cms.string('userPatElectrons'),
+    met   = cms.string('patMETsPF'),
+    particleFlow = cms.string('selectedPatPFParticles'),
+    genParticles = cms.string('prunedGenParticles'),
+    hltEventTag = cms.string('patTriggerEvent'),
+    pileupTag  = cms.string('addPileupInfo'),
+
+
     #
+
+    triggersToUse = cms.vstring("HLT_Mu24_v1",
+                                "HLT_Mu9",
+                                "HLT_Mu11",
+                                "HLT_Mu15_v1",
+                                "HLT_Mu15_v2",
+                                "HLT_Mu20_v1",
+                                "HLT_Mu24_v1",
+                                "HLT_Mu30_v1",
+                                
+                                "HLT_Ele15_LW_L1R",
+                                "HLT_Ele15_SW_L1R",
+                                "HLT_Ele15_SW_CaloEleId_L1R",
+                                "HLT_Ele17_SW_CaloEleId_L1R",
+                                "HLT_Ele17_SW_TightEleId_L1R",
+                                "HLT_Ele17_SW_TighterEleIdIsol_L1R_v2",
+                                "HLT_Ele17_SW_TighterEleIdIsol_L1R_v3",
+                                "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*",
+                                "HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*",
+                                "HLT_Ele45_CaloIdVT_TrkIdT_v*",
+
+                                ),
+
+
     Cuts = cms.vstring("NoCuts", 
                        #"HLT", 
                        "ValidWandZ", 

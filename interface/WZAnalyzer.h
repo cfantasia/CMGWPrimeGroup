@@ -18,6 +18,8 @@
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
+#include "DataFormats/PatCandidates/interface/TriggerEvent.h"
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h" 
 
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/WZUtilities.h"
@@ -138,6 +140,13 @@ public:
   bool debugme;//print stuff if active
   bool doPreselect_;
 
+  std::string electronsLabel_;
+  std::string muonsLabel_;
+  std::string metLabel_;
+  std::string hltEventLabel_;
+  std::string pileupLabel_;
+  vstring triggersToUse_;
+
   int PDGMUON;
   int PDGELEC;
   int PDGW;
@@ -227,11 +236,8 @@ public:
   ZCandidate zCand;
   WCandidate wCand;
   WZCandidate wzCand;
-  
-  std::vector<std::string>* TriggerHLTNames;
-  std::vector<int>* TriggerHLTPrescales;
-  std::vector<bool>* TriggerHLTDecisions;
-
+  pat::TriggerEvent triggerEvent_; 
+//  std::vector< PileupSummaryInfo > PupInfo_; 
   std::vector<float> Num_surv_cut_;
 
 // +++++++++++++++++++ Histogram Definitions
