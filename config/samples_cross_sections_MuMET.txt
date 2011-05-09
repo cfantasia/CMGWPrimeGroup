@@ -1,13 +1,25 @@
 samplename = data
-description = Muon pt > 25 GeV skim, 67.7 pb^-1
+description = Muon pt > 25 GeV skim, 181.44 pb^-1, v1
 x-section = 1
-pathname = Data_SingleMu_Run2011A_160404_163369_67.7ipb_part1.root
+pathname = Data_SingleMu_Run2011A_160329_161312_231.971ipb_DCSonly_v1.root
 Nprod_evt = 1
 
 samplename = data2
-description = Muon pt > 25 GeV skim, 67.7 pb^-1, part2
+description = Muon pt > 25 GeV skim, 181.44 pb^-1, v2 part1
 x-section = 1
-pathname = Data_SingleMu_Run2011A_160404_163369_67.7ipb_part2.root
+pathname = Data_SingleMu_Run2011A_162718_163869_231.971ipb_DCSonly_v2_part1.root
+Nprod_evt = 1
+
+samplename = data3
+description = Muon pt > 25 GeV skim, 181.44 pb^-1, v2 part2
+x-section = 1
+pathname = Data_SingleMu_Run2011A_162718_163869_231.971ipb_DCSonly_v2_part2.root
+Nprod_evt = 1
+
+samplename = data4
+description = Muon pt > 25 GeV skim, 181.44 pb^-1, v2 part3
+x-section = 1
+pathname = Data_SingleMu_Run2011A_162718_163869_231.971ipb_DCSonly_v2_part3.root
 Nprod_evt = 1
 
 samplename = WPlusMu_lowPt
@@ -67,7 +79,7 @@ Nprod_evt = 200000
 samplename = DYtautau_highPt
 description = POWHEG Z/DY->tautau with M_tautau > 20 GeV (NNLO cross-section), high-pt
 x-section = 1666
-pathname = DYmumu_highPt.root
+pathname = DYtautau_highPt.root
 Nprod_evt = 1995369
 
 samplename = ttbar_lowPt
