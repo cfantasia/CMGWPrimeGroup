@@ -1,3 +1,49 @@
+09-MAY-11 (Christos, Cory, David), V00-02-60
+============================================
+(a) First porting of WZ analyzer (source code, configuration, skimming
+py files); brought to you by Cory Fantasia
+
+
+(b) Added JSON directory with latest DCS-only, MuonPhys and golden
+JSON files available. Have to be used by all analyzers now. 
+
+
+(c) New skimmed (pt > 25 GeV) pat-tuples for SingleMu and
+SingleElectrons datasets can be found at
+/castor/cern.ch/user/c/cleonido/wprime/V250/Data/. 
+
+The data has been processed with the DCS-only JSON file (231.97
+ipb) to include maximum possible statistics. 
+Analyzers should run with either "Muon Phys" (181.44 ipb) or
+"golden" JSON (152.80 ipb) files, depending on whether they are considering
+muons or electrons. See doc/README.txt for details.
+
+
+(d) First part of high-pt tail of El+MET MC samples available at
+/castor/cern.ch/user/d/dsperka/wprime/V235 
+
+
+(e) Bugfix in pfMET-adjusting for TeV muon pt: make sure to return
+original pfMET value when no dR-match between TeV muon and pf Muon is
+found. Bug triggered by pfCollection containing no muons (hmmm...)
+(NB: this has to go into some common piece of code, it
+does not belong to Mu+MET analysis. Probably to be integrated within
+W-finder class)
+
+
+(f) Misc:
+- Can now access multiple root-files per input-sample listed in
+config/samples_cross_sections_*txt (see WZ analysis for example)
+
+- Primitive attempt to integrate plot-maker for Mu+MET and El+MET
+analyses (root_macros/plotMT.C); use "analysis_channel" switch. Should
+probably implement something more sophisticated, but no time right
+now.
+ 
+- Mu+MET bugfix: was using DY->mumu in place of DY->tautau sample
+
+
+
 06-MAY-11 (Christos), V00-02-50
 ===============================
 New TeVMuon class introduced to deal with common TeV muon reconstruction 

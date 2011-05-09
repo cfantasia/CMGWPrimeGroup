@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V250, release:
+o Setup a new working area (Default name: V260, release:
 CMSSW_4_1_4)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-50)
+V00-02-60)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
@@ -32,31 +32,34 @@ o Copy example config file for producing PAT-tuple to the top directory.
 (2) You can now modify the parameters in configuration file, change the
 location of the input file and run.
 
-NB The following PAT-tuples can be found in 
-/castor/cern.ch/user/c/cleonido/wprime/V235/Data (a), and
+NB: The following PAT-tuples can be found in 
+/castor/cern.ch/user/c/cleonido/wprime/V250/Data (a), and
 /castor/cern.ch/user/c/cleonido/wprime/V235/MC_MuMET (b)
+/castor/cern.ch/user/d/dsperka/wprime/V235 (c)
 
 (a) 
 o SingleMu skims for datasets:
 /SingleMu/Run2011A-PromptReco-v1/AOD (8.3M events)
-/SingleMu/Run2011A-PromptReco-v2/AOD (11.2 M events)
-JSON: Cert_160404-162917_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt
-67.7 ipb in total
+/SingleMu/Run2011A-PromptReco-v2/AOD (15.7 M events)
+pat-tuples produced with JSON/json_160404-163869_DCSonly.txt (231.97 ipb)
+For analyziing, use
+JSON/Cert_160404-163757_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt
+(182.44 ipb)
 
 o SingleElectron skims for datasets
 /SingleElectron/Run2011A-PromptReco-v1/AOD (1.3M events)
-/SingleElectron/Run2011A-PromptReco-v2/AOD (4.2M events)
-/SingleElectron/Run2011A-PromptReco-v3/AOD (1.6M events)
-JSON: Cert_160404-163369_7TeV_PromptReco_Collisions11_JSON.txt
-43.4 ipb in total
+/SingleElectron/Run2011A-PromptReco-v2/AOD (7.7M events)
+pat-tuples produced with JSON/json_160404-163869_DCSonly.txt (231.97 ipb)
+For analyziing, use
+JSON/Cert_160404-163757_7TeV_PromptReco_Collisions11_JSON.txt (152.80 ipb)
 
-NB: 
-o v1, v2 can be combined, but suffer from bug in ECAL (see 
-https://hypernews.cern.ch/HyperNews/CMS/get/datasets/920.html)
-o v3 contains a bugfix, but it is a subset of v1+v2
 
 (b) Spring 2011 MC samples for Mu+MET analysis. 
 NB: still missing: QCD-muEnriched-high-pt and W- -> tau samples
+
+(c) Spring 2011 MC samples for El+MET analysis. 
+NB: still missing: low-pt samples, some QCD bins, W->mu, DY->mumu and
+W+/- -> tau samples 
 
 
 
@@ -95,6 +98,9 @@ To run:
  WPrimeAnalyzer UserCode/CMGWPrimeGroup/bin/analyzeWprimeElNu_cfg.py
 (ele+MET)
 
+ WPrimeAnalyzer UserCode/CMGWPrimeGroup/bin/analyzeWprimeWZ_cfg.py
+(W[mu]Z)
+
  WPrimeAnalyzer UserCode/CMGWPrimeGroup/bin/analyzeWprimeWgamma_cfg.py
 (W[mu]+gamma)
 
@@ -102,9 +108,9 @@ To run:
 
 Options:
 - enable/disable analyzers for Mu+MET (available), W(mu)+gamma (available),
-El+MET (available), WZ (missing), tb (missing)
+El+MET (available), WZ (available), tb (missing)
 - specify input collections 
-- specify parameters for Mu+MET/El+MET/W+gamma analysis
+- specify parameters for Mu+MET/El+MET/WZ/W+gamma analysis
 
 
 
@@ -139,6 +145,9 @@ kinematic distributions)
 
 - class EleMETAnalyzer: Ele+MET analysis (applies selection cuts and creates
 kinematic distributions)
+
+- class WZAnalyzer.cc: W(mu)+Z analysis (applies selection cuts and
+creates kinematic distributions)
 
 - class WgammaAnalyzer.cc: W(mu)+gamma analysis (applies selection cuts and
 creates kinematic distributions)
