@@ -11,15 +11,16 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon_tracking.h"
 #include "UserCode/CMGWPrimeGroup/interface/mumet_histo_constants.h"
+#include "UserCode/CMGWPrimeGroup/interface/elmet_histo_constants.h"
 
 using std::string; using std::cout; using std::endl;
 
-// select tracking algorithm
+// select tracking algorithm for analyses using muons
 // from 0 to Num_MuTeVtrkAlgos-1 (see TeVMuon_tracking.h)
 // NB: this is currently common for Muon-pt and transverse mass distributions
 const unsigned tracking_option = 3;
 
-// algorithm description
+// algorithm description (relevant for analysis using muons)
 string algo; 
 
 // histogram title;
@@ -32,11 +33,48 @@ void doPlots(int option);
 
 float Lumi_ipb = -1;
 
+// 1 -> Mu+MET
+// 2 -> El+MET
+const unsigned analysis_channel = 1;
+
+// availability of data + MC samples indicated in these arrays
+const unsigned NbgdSamplesMuMET = 19;
+const string bgdNamesMuMET[NbgdSamplesMuMET] = {
+  "DYmumu_lowPt", "DYmumu_highPt", "DYtautau_lowPt", "DYtautau_highPt",
+  "QCD_lowPt", "WMinusMu_lowPt", "WMinusMu_highPt", "WPlusMu_lowPt",
+  "WPlusMu_highPt", "WPlusTau_lowPt", "WPlusTau_highPt", 
+  "ttbar_lowPt", "ttbar_highPt","WW_lowPt",
+  "WW_highPt", "WZ_lowPt", "WZ_highPt", "ZZ_lowPt", "ZZ_highPt"};
+
+TH1F * bgdMuMET[NbgdSamplesMuMET] = {0};
+
+const unsigned NdataSamplesMuMET = 4;
+const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4"};
+
+TH1F * dataMuMET[NdataSamplesMuMET] = {0};
+
+const unsigned NbgdSamplesElMET = 16;
+const string bgdNamesElMET[NbgdSamplesElMET] = {
+  "WtoEnu_highPt", "DYtoEE_highPt", "DYtautau_highPt", "ttbar_highPt", 
+  "WW_highPt", "WZ_highPt", "ZZ_highPt", "QCD_5to15_highPt", 
+  "QCD_15to30_highPt", "QCD_30to50_highPt", "QCD_50to80_highPt", 
+  "QCD_80to120_highPt", "QCD_120to170_highPt", "QCD_170to300_highPt", 
+  "QCD_300to470_highPt", "QCD_470to600_highPt"};
+
+TH1F * bgdElMET[NbgdSamplesElMET] = {0};
+
+const unsigned NdataSamplesElMET = 5;
+const string dataNamesElMET[NdataSamplesElMET] = {"data", "data2", "data3", "data4", "data5"};
+
+TH1F * dataElMET[NdataSamplesElMET] = {0};
+
+
 void plotMT()
 {
   assert(tracking_option <= Num_MuTeVtrkAlgos-1);
 
   string input_file = "Wprime_analysis.root";
+
   _file0 = TFile::Open(input_file.c_str());
   if(!_file0 || _file0->IsZombie())
     {
@@ -50,10 +88,13 @@ void plotMT()
 
   gStyle->SetOptStat(00000);
 
-  algo = algo_desc_short[tracking_option];
+  if(analysis_channel == 1)
+    algo = algo_desc_short[tracking_option];
+  else if(analysis_channel == 2)
+    algo = "";
 
-  //doPlots(1); // muon-pt
-  doPlots(2); // transverse mass
+  //doPlots(1); // lepton-pt
+  doPlots(2); // lepton + MET transverse mass
 }
 
 bool badHisto(TH1F * h, string s)
@@ -73,29 +114,46 @@ void doPlots(int option)
   //gStyle->SetFillColor(1);
 
   // interested in plot made after all cuts have been applied
-  string final_histo_desc = mumet_cuts_desc_short[Num_mumet_cuts-1];
+  string final_histo_desc;
+  if(analysis_channel == 1)
+    final_histo_desc = mumet_cuts_desc_short[Num_mumet_cuts-1];
+  else if(analysis_channel == 2)
+    final_histo_desc = elmet_cuts_desc_short[Num_elmet_cuts-1];
 
   string prefix = "";
-  if(option == 1)
+  if(option == 1 && analysis_channel == 1)
     prefix = "hPT";
+  if(option == 1 && analysis_channel == 2)
+    prefix = "hET";
   else if(option == 2)
     prefix = "hTM";
+ 
+  TH1F ** bgdSamples = 0;
+  TH1F ** dataSamples = 0;
+  const string * bgdNames = 0;
+  const string * dataNames = 0;
+  unsigned NbgdSamples = 0;
+  unsigned NdataSamples = 0;
 
-
-  const int NbgdSamples = 17;
-  TH1F * bgd_samples[NbgdSamples] = {0};
-  string bgdNames[NbgdSamples] = {
-    "DYmumu_lowPt", "DYmumu_highPt", "DYtautau_lowPt", "DYtautau_lowPt",
-    "QCD_lowPt", "WMinusMu_lowPt", "WMinusMu_highPt", "WPlusMu_lowPt",
-    "WPlusMu_highPt", "WPlusTau_lowPt", "WPlusTau_highPt", "WW_lowPt",
-    "WW_highPt", "WZ_lowPt", "WZ_highPt", "ZZ_lowPt", "ZZ_highPt"};
+  if(analysis_channel == 1)
+    {
+      bgdSamples = &bgdMuMET[0]; dataSamples = &dataMuMET[0];
+      bgdNames = &bgdNamesMuMET[0]; dataNames = &dataNamesMuMET[0];
+      NbgdSamples = NbgdSamplesMuMET; NdataSamples = NdataSamplesMuMET;
+    }
+  else if(analysis_channel == 2)
+    {
+      bgdSamples = &bgdElMET[0]; dataSamples = &dataElMET[0];
+      bgdNames = &bgdNamesElMET[0]; dataNames = &dataNamesElMET[0];
+      NbgdSamples = NbgdSamplesElMET; NdataSamples = NdataSamplesElMET;
+    }
 
   string histo = prefix + algo + "_" + final_histo_desc;  
-  for(int i = 0; i != NbgdSamples; ++i)
+  for(unsigned i = 0; i != NbgdSamples; ++i)
     {
       string histo_i = bgdNames[i] + "/" + histo;
-      bgd_samples[i] = (TH1F* ) _file0->Get(histo_i.c_str());
-      if(badHisto(bgd_samples[i], bgdNames[i]))
+      bgdSamples[i] = (TH1F* ) _file0->Get(histo_i.c_str());
+      if(badHisto(bgdSamples[i], histo_i))
 	return;
     }
 
@@ -116,29 +174,19 @@ void doPlots(int option)
     return;
 #endif
 
-  string hdata = "data/" + histo;
-  TH1F * data = (TH1F*) _file0->Get(hdata.c_str());
-  if(badHisto(data, "data"))
-    return;
+  TH1F * data = 0;
+  for(unsigned i = 0; i != NdataSamples; ++i)
+    {
+      string histo_i = dataNames[i] + "/" + histo;
+      dataSamples[i] = (TH1F* ) _file0->Get(histo_i.c_str());
+      if(badHisto(dataSamples[i], histo_i))
+	return;
 
-  string hdata2 = "data2/" + histo;
-  TH1F * data2 = (TH1F*) _file0->Get(hdata2.c_str());
-  if(badHisto(data2, "data2"))
-    return;
-
-  string hdata3 = "data3/" + histo;
-  TH1F * data3 = (TH1F*) _file0->Get(hdata3.c_str());
-  if(badHisto(data3, "data3"))
-    return;
-
-  string hdata4 = "data4/" + histo;
-  TH1F * data4 = (TH1F*) _file0->Get(hdata4.c_str());
-  if(badHisto(data4, "data4"))
-    return;
-
-  data->Add(data2);
-  data->Add(data3);
-  data->Add(data4);
+      if(i == 0)
+	data = dataSamples[i];
+      else
+	data->Add(dataSamples[i]);
+    }
 
   string hname = "tot_bgd";
   string hname_ratio = "ratio";
@@ -175,7 +223,7 @@ void doPlots(int option)
       hname_ratio += "_TM";
       desc = "#mu&ME_{T} transverse mass: 2011 data (" 
 	+ string(lumi_value2) + ")";
-      xmin = 50; xmax = 1000; xmax_cumu = 900; xmax_ratio = 800;
+      xmin = 50; xmax = 1000; xmax_cumu = 1200; xmax_ratio = 740;
       title = "M_{T} (GeV/c^{2})";
       var_plotted = "TM";
     }
@@ -190,8 +238,8 @@ void doPlots(int option)
   TH1F * bgd = new TH1F(hname.c_str(), desc.c_str(), 
 			Nbins, data->GetXaxis()->GetXmin(), 
 			data->GetXaxis()->GetXmax());
-  for(int i = 0; i != NbgdSamples; ++i)
-    bgd->Add(bgd_samples[i]);
+  for(unsigned i = 0; i != NbgdSamples; ++i)
+    bgd->Add(bgdSamples[i]);
 
   data->SetTitle(desc.c_str());
   data->SetMarkerStyle(8);
@@ -232,16 +280,16 @@ void doPlots(int option)
 
   bgd_cumu->SetLineColor(kAzure+1);
   bgd_cumu->SetFillColor(kAzure+1);
-  bgd_cumu->SetFillStyle(3004);
+  bgd_cumu->SetFillStyle(fill_style_bgd);
 
   // =============== PLOT DISTRIBUTIONS HERE ========================
   TCanvas * c1 = new TCanvas();
   c1->SetLogy();
 
   if(data->GetMinimum() < 0.00001)data->SetMinimum(0.00001);
- 
+  
   data->Draw("e");
-  bgd->Draw("same");
+  bgd->Draw("hist same");
 
 #if 0
   wp10->SetLineColor(kRed);
@@ -259,7 +307,7 @@ void doPlots(int option)
 #endif
   
 
-  TLegend * lg = new TLegend(0.59, 0.67, 0.89, 0.89);
+  TLegend * lg = new TLegend(0.52, 0.67, 0.82, 0.89);
   lg->SetTextSize(0.03);
   lg->SetBorderSize(0);
   lg->SetFillColor(0);
@@ -283,9 +331,9 @@ void doPlots(int option)
 
   data_cumu->Draw("e");
   bgd_cumu->Draw("same");
-  TLatex * l1c = new TLatex(350 + x_offset, 350, cms_prelim.c_str());
+  TLatex * l1c = new TLatex(600 + x_offset, 300, cms_prelim.c_str());
   l1c->SetTextSize(0.04); 
-  TLatex * l2c = new TLatex(330 + x_offset, 100, lumi_sqrts.c_str());
+  TLatex * l2c = new TLatex(570 + x_offset, 100, lumi_sqrts.c_str());
   l2c->SetTextSize(0.04); 
   l1c->Draw(); l2c->Draw();
 
