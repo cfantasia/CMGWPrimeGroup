@@ -1,9 +1,17 @@
 import FWCore.ParameterSet.Config as cms
+import FWCore.PythonUtilities.LumiList as LumiList
+import FWCore.ParameterSet.Types as CfgTypes
 
 process = cms.Process("WPrimeAnalysis")
+# get JSON file correctly parced
+JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-163757_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt'
+#JSONfile = 'UserCode/CMGWPrimeGroup/JSON/json_160404-163869_DCSonly.txt'
+myList = LumiList.LumiList (filename = JSONfile).getCMSSWString().split(',')
 
-#process.load("PhysicsTools.PatAlgos.patLayer0_cff")
-#process.load("PhysicsTools.PatAlgos.patLayer1_cff")
+process.inputs = cms.PSet (
+    lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
+    )
+process.inputs.lumisToProcess.extend(myList)
 
 
 process.source = cms.Source("PoolSource",
@@ -20,8 +28,8 @@ process.WprimeAnalyzer = cms.PSet(
     ##fileNames   = cms.vstring('rfio:/castor/cern.ch/user/c/cleonido/wprime/V210/Data_Run2011A_7.426ipb.root'),  ## mandatory
     outputFile  = cms.string('Wgamma_analysis.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
-    reportAfter = cms.uint32(100),                     ## optional
-    doRecoilCorrectionForW = cms.bool(True),
+    reportAfter = cms.uint32(15000),                     ## optional
+    doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_MuMET.txt"),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(False),
@@ -36,7 +44,8 @@ process.WprimeAnalyzer = cms.PSet(
     photons = cms.InputTag('selectedPatPhotons'),
     genParticles = cms.InputTag('prunedGenParticles'),
     #
-    muonReconstructor = cms.int32(3), ## see mumet_histo_constants.h
+    muonReconstructor = cms.int32(3), ## see TeVMuon_tracking.h
+    # do not consider muons below this pt-threshold
     muonPtThreshold   = cms.double(10), ## in GeV
     oneMuPtTrackCut   = cms.double(25), ## in GeV
     chi2Cut           = cms.double(10),
@@ -66,6 +75,6 @@ process.WprimeAnalyzer = cms.PSet(
     EndcapMaxSigmaIetaIeta = cms.double(99999.9),
     ApplyTrackVeto = cms.bool(True),
     minPt = cms.double(10),
-    maxEta = cms.double(5)
- 
+    maxEta = cms.double(5),
+    inputs = process.inputs
 )
