@@ -61,6 +61,11 @@ class WPrimeFinder
   WZAnalyzer * wzAnalyzer;
   WPrimeUtil * wprimeUtil;
 
+  std::vector< edm::LuminosityBlockRange > jsonVector;
+
+  bool jsonContainsEvent (const std::vector<edm::LuminosityBlockRange>&jsonVec,
+			  const edm::EventBase &event);
+
 };
 
 #endif // #define _wprime_finder_h_
