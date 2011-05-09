@@ -1,119 +1,127 @@
 samplename = data
-description = Electron pt > 25 GeV skim, 43.4 pb^-1
+description = Electron pt > 25 GeV skim, 231.97 pb^-1, v1
 x-section = 1
-pathname = Data_SingleElectron_Run2011A_160404_163369_43.4ipb_part1.root
+pathname = Data_SingleElectron_Run2011A_160329_161312_231.97ipb_DCSonly_v1.root
 Nprod_evt = 1
 
 samplename = data2
-description = Electron pt > 25 GeV skim, 43.4 pb^-1, part 2
+description = Electron pt > 25 GeV skim, 152.80 pb^-1, v2 part 1
 x-section = 1
-pathname = Data_SingleElectron_Run2011A_160404_163369_43.4ipb_part2.root
+pathname = Data_SingleElectron_Run2011A_162718_163869_231.97ipb_DCSonly_v2_part1.root
 Nprod_evt = 1
-
-DONE
 
 samplename = data3
-description = Electron pt > 25 GeV skim, 43.4 pb^-1, part 3
+description = Electron pt > 25 GeV skim, 152.80 pb^-1, v2 part 2
 x-section = 1
-pathname = Data_SingleElectron_Run2011A_160404_163369_43.4ipb_part3.root
+pathname = Data_SingleElectron_Run2011A_162718_163869_231.97ipb_DCSonly_v2_part2.root
 Nprod_evt = 1
 
-DONE
+samplename = data4
+description = Electron pt > 25 GeV skim, 152.80 pb^-1, v2 part 3
+x-section = 1
+pathname = Data_SingleElectron_Run2011A_162718_163869_231.97ipb_DCSonly_v2_part3.root
+Nprod_evt = 1
 
-samplename = W
-description = POWHEG W->munu without eta cut (NNLO cross-section)
+samplename = data5
+description = Electron pt > 25 GeV skim, 152.80 pb^-1, v2 part 4
+x-section = 1
+pathname = Data_SingleElectron_Run2011A_162718_163869_231.97ipb_DCSonly_v2_part4.root
+Nprod_evt = 1
+
+samplename = WtoEnu_highPt
+description = POWHEG W ->enu without eta cut (NNLO cross-section), high-pt
 x-section = 10438
-pathname = WPowheg.root
-Nprod_evt = 3987868
+pathname = WtoEnu_highPt.root
+Nprod_evt = 3994687
 
-samplename = Wlowpt
-description = PYTHIA W->munu; 15<pt(mu)<100 GeV skim (NNLO-cross-section)
-x-section = 10438
-pathname = WPythia15.root
-Nprod_evt = 500000
-
-samplename = QCD
-description = PYTHIA InclusiveMu15 with GEN muon-pt > 15 GeV, pthat > 20 GeV,|eta|<2.5
-x-section = 84679
-pathname = QCD_EnrPtH20_Pt15.root
-Nprod_evt = 29504866
-
-samplename = Z
-description = POWHEG Z->mumu with M_mumu > 20 GeV (NNLO cross-section)
+samplename = DYtoEE_highPt
+description = POWHEG Z/DY->ee with M_ee > 20 GeV (NNLO cross-section), high-pt
 x-section = 1666
-pathname = DYPowheg_M20.root
-Nprod_evt = 1998931
+pathname = DYtoEE_highPt.root
+Nprod_evt = 1992276
 
-samplename = Top
-description = Madgraph inclusive t-tbar (NLO cross-section)
+samplename = DYtautau_highPt
+description = POWHEG Z/DY->tautau with M_tautau > 20 GeV (NNLO cross-section), high-pt
+x-section = 1666
+pathname = DY_tautau_highPt.root
+Nprod_evt = 1995369
+
+samplename = ttbar_highPt
+description = Madgraph inclusive t-tbar (NLO cross-section), high-pt
 x-section = 157.5
-pathname = TTbarMadgraph.root
-Nprod_evt = 1164732
+pathname = TTbar_highPt.root
+Nprod_evt = 1286491
 
-samplename = wprime0.6
-description = Wprime->munu, Tune Z2, Mass = 0.6 TeV (NNLO cross-section)
-x-section = 8.29
-pathname = wprime_0.6TeV.root
-Nprod_evt = 11000
+samplename = WW_highPt
+description = WW Inclusive PYTHIA6, high-pt
+x-section = 43
+pathname = WW_highPt.root
+Nprod_evt = 2061760
 
-samplename = wprime0.7
-description = Wprime->munu, Tune Z2, Mass = 0.7 TeV (NNLO cross-section)
-x-section = 4.26
-pathname = wprime_0.7TeV.root
-Nprod_evt = 11000
+samplename = WZ_highPt
+description = WZ Inclusive PYTHIA6, high-pt
+x-section = 18
+pathname = WZ_highPt.root
+Nprod_evt = 2108416
 
-samplename = wprime0.8
-description = Wprime->munu, Tune Z2, Mass = 0.8 TeV (NNLO cross-section)
-x-section = 2.43
-pathname = wprime_0.8TeV.root
-Nprod_evt = 11000
+samplename = ZZ_highPt
+description = ZZ Inclusive PYTHIA6, high-pt
+x-section = 5.9
+pathname = ZZ_highPt.root
+Nprod_evt = 2108608
 
-samplename = wprime0.9
-description = Wprime->munu, Tune Z2, Mass = 0.9 TeV (NNLO cross-section)
-x-section = 1.39
-pathname = wprime_0.9TeV.root
-Nprod_evt = 11000
+samplename = QCD_5to15_highPt
+description = QCD 5-15, PYTHIA6 Tune Z2
+x-section = 36750000000
+pathname = QCD_5to15_highPt.root
+Nprod_evt = 3296192
 
-samplename = wprime1.0
-description = Wprime->munu, Tune Z2, Mass = 1.0 TeV (NNLO cross-section)
-x-section = 0.838
-pathname = wprime_1.0TeV.root
-Nprod_evt = 11000
+samplename = QCD_15to30_highPt
+description = QCD 15-30, PYTHIA6 Tune Z2
+x-section = 815900000
+pathname = QCD_15to30_highPt.root
+Nprod_evt = 8213600
 
-samplename = wprime1.1
-description = Wprime->munu, Tune Z2, Mass = 1.1 TeV (NNLO cross-section)
-x-section = 0.516
-pathname = wprime_1.1TeV.root
-Nprod_evt = 11000
+samplename = QCD_30to50_highPt
+description = QCD 30-50, PYTHIA6 Tune Z2
+x-section = 53120000
+pathname = QCD_30to50_highPt.root
+Nprod_evt = 6529320
 
-samplename = wprime1.2
-description = Wprime->munu, Tune Z2, Mass = 1.2 TeV (NNLO cross-section)
-x-section = 0.334
-pathname = wprime_1.2TeV.root
-Nprod_evt = 11000
+samplename = QCD_50to80_highPt
+description = QCD 50-80, PYTHIA6 Tune Z2
+x-section = 6359000
+pathname = QCD_50to80_highPt.root
+Nprod_evt = 4301392
 
-samplename = wprime1.3
-description = Wprime->munu, Tune Z2, Mass = 1.3 TeV (NNLO cross-section)
-x-section = 0.215
-pathname = wprime_1.3TeV.root
-Nprod_evt = 11000
+samplename = QCD_80to120_highPt
+description = QCD 80-120, PYTHIA6 Tune Z2
+x-section = 784300
+pathname = QCD_80to120_highPt.root
+Nprod_evt = 6407738
 
-samplename = wprime1.4
-description = Wprime->munu, Tune Z2, Mass = 1.4 TeV (NNLO cross-section)
-x-section = 0.136
-pathname = wprime_1.4TeV.root
-Nprod_evt = 11000
+samplename = QCD_120to170_highPt
+description = QCD 120-170, PYTHIA6 Tune Z2
+x-section = 115100
+pathname = QCD_120to170_highPt.root
+Nprod_evt = 6090400
 
-samplename = wprime1.5
-description = Wprime->munu, Tune Z2, Mass = 1.5 TeV (NNLO cross-section)
-x-section = 0.0986
-pathname = wprime_1.5TeV.root
-Nprod_evt = 11000
+samplename = QCD_170to300_highPt
+description = QCD 170-300, PYTHIA6 Tune Z2
+x-section = 24260
+pathname = QCD_170to3000_highPt.root
+Nprod_evt = 5684160
 
-samplename = wprime2.0
-description = Wprime->munu, Tune Z2, Mass = 2.0 TeV (NNLO cross-section)
-x-section = 0.0145
-pathname = wprime_2.0TeV.root
-Nprod_evt = 11000
+samplename = QCD_300to470_highPt
+description = QCD 300-470, PYTHIA6 Tune Z2
+x-section = 1168
+pathname = QCD_300to470_highPt.root
+Nprod_evt = 5717340
+
+samplename = QCD_470to600_highPt
+description = QCD 470-600, PYTHIA6 Tune Z2
+x-section = 70.22
+pathname = QCD_470to600_highPt.root
+Nprod_evt = 4034162
 
 DONE
