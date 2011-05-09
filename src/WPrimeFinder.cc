@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-using std::cout; using std::cerr; using std::endl;
+using std::cout; using std::cerr; using std::endl; using std::vector;
 using std::string;
 
 #include <TChain.h>
@@ -38,7 +38,7 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
   const edm::ParameterSet& cfg = builder.processDesc()->getProcessPSet()->getParameter<edm::ParameterSet>("WprimeAnalyzer");
   
   // now get each parameter
-  /////  inputFiles_  = cfg.getParameter<std::vector<string> >("fileNames") ;
+  /////  inputFiles_  = cfg.getParameter<vector<string> >("fileNames") ;
   outputFile_  = cfg.getParameter<string  >("outputFile" );
   reportAfter_ = cfg.getParameter<unsigned int>("reportAfter");
   maxEvents_   = cfg.getParameter<int>("maxEvents") ;
@@ -50,7 +50,15 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
   runTBAnalysis_ = cfg.getParameter<bool>("runTBAnalysis" );
   runWgammaAnalysis_ =cfg.getParameter<bool>("runWgammaAnalysis"); 
   string sample_cross_sections = cfg.getParameter<string>("sample_cross_sections");
-
+  edm::ParameterSet const& inputs = cfg.getParameter<edm::ParameterSet>("inputs");
+  if ( inputs.exists("lumisToProcess") ) 
+    {
+      vector<edm::LuminosityBlockRange> const & lumisTemp =
+	inputs.getUntrackedParameter<vector<edm::LuminosityBlockRange> > ("lumisToProcess");
+      jsonVector.resize( lumisTemp.size() );
+      copy( lumisTemp.begin(), lumisTemp.end(), jsonVector.begin() );
+    }
+  
   wprimeUtil = new WPrimeUtil(outputFile_.c_str(), genParticles_, sample_cross_sections);
 
   if(runMuMETAnalysis_)
@@ -75,7 +83,7 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
 }
 
 // operations to be done when changing input file (e.g. create new histograms)
-void WPrimeFinder::beginFile(std::vector<wprime::InputFile>::const_iterator it)
+void WPrimeFinder::beginFile(vector<wprime::InputFile>::const_iterator it)
 {
 
   bool shouldCorrectMt = 
@@ -117,8 +125,8 @@ void WPrimeFinder::eventLoop(edm::EventBase const & event)
 
 void WPrimeFinder::run()
 {
-  int ievt_all=0;  
-  std::vector<wprime::InputFile>::iterator it;
+  int ievt_all=0;  int ievt_skipped = 0;
+  vector<wprime::InputFile>::iterator it;
   for(it = inputFiles.begin(); it != inputFiles.end(); ++it){
     int ievt=0;  
     // loop over input files
@@ -145,22 +153,33 @@ void WPrimeFinder::run()
     cout << std::fixed << std::setprecision(2);
     beginFile(it);
     fwlite::ChainEvent ev(it->pathnames);
-    for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt, ++ievt_all){// loop over events
+    for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){// loop over events
       edm::EventBase const & event = ev;
-      // break loop if maximal number of events is reached 
-      if(maxEvents_>0 ? ievt+1>maxEvents_ : false) break;
+      // skip event if maximal number of events per input file is reached 
+      if(maxEvents_>0 &&  ievt > maxEvents_) continue;
+      
+      if(it->samplename.find("data") != string::npos && 
+	 !jsonContainsEvent (jsonVector, event))
+	{
+	  ++ievt_skipped;
+	  continue;
+	}
+      else
+	++ievt_all;
+
       // simple event counter
       if(reportAfter_!=0 ? (ievt>0 && ievt%reportAfter_==0) : false) 
-	cout << "  Processing event: " << ievt << " or " 
+	cout << " Processing event: " << ievt << " or " 
 	     << 100.*ievt/it->Nact_evt << "% of input file"
-	     << " (" << ievt_all << " events processed in total) " << endl;
+	     << " (Total events processed: " << ievt_all 
+	     << ", non-certified/skipped: " << ievt_skipped << ") " << endl;
+
+
+
+
       eventLoop(event);
     } // loop over events
     endFile(it);
-    
-     // break loop if maximal number of events is reached:
-    // this has to be done twice to stop the file loop as well
-    if(maxEvents_>0 ? ievt+1>maxEvents_ : false) break;
     
   } // loop over input files
 
@@ -175,7 +194,7 @@ void WPrimeFinder::run()
 
 // operations to be done when closing input file 
 // (e.g. save histograms, print summary)
-void WPrimeFinder::endFile(std::vector<wprime::InputFile>::const_iterator it)
+void WPrimeFinder::endFile(vector<wprime::InputFile>::const_iterator it)
 {
   delete it->chain;
 
@@ -201,4 +220,22 @@ void WPrimeFinder::endAnalysis()
       WmunugammaAnalyzer->endAnalysis(out_);
   if(runWZAnalysis_)
       wzAnalyzer->endAnalysis(out_);
+}
+
+bool WPrimeFinder::jsonContainsEvent (const vector<edm::LuminosityBlockRange>&jsonVec, const edm::EventBase &event)
+{
+  // if the jsonVec is empty, then no JSON file was provided so all
+  // events should pass
+  if (jsonVec.empty())
+    {
+      return true;
+    }
+  bool (* funcPtr) (edm::LuminosityBlockRange const &,
+		    edm::LuminosityBlockID const &) = &edm::contains;
+  edm::LuminosityBlockID lumiID (event.id().run(), 
+				 event.id().luminosityBlock());
+  vector< edm::LuminosityBlockRange >::const_iterator iter = 
+    std::find_if (jsonVec.begin(), jsonVec.end(),
+		  boost::bind(funcPtr, _1, lumiID) );
+  return jsonVec.end() != iter;
 }
