@@ -104,7 +104,6 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
     mu4D = muon.p4(theMu, muReconstructor_, isInvalidMuon_);
     if(isInvalidMuon_)continue;
     if(mu4D.Pt() < muonPtThreshold_) continue;
-
     for(int cut_index = 0; cut_index != Num_mumet_cuts; ++cut_index)
       { // loop over selection cuts
 	string arg = mumet_cuts_desc_short[cut_index];
@@ -120,7 +119,7 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 	   && cut_index == Num_mumet_cuts-1
 	   && wprimeUtil_->getSampleName().find("data") != string::npos &&
 	   muon.innerTrack()->pt() > dumpHighPtMuonThreshold_)
-	  printHighPtMuon(event);
+	  printHighPtMuon(event, muon);
       
       } // loop over selection cuts
 
@@ -375,28 +374,27 @@ void MuMETAnalyzer::setupCutOrder()
 }
 
 // dump on screen info about high-pt muon
-void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event)
+void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const TeVMuon & muon) 
 {
   cout << " Run # = " << event.id().run() << " Event # = " 
        << event.id().event() << " LS = " << event.id().luminosityBlock() 
        << endl;
 
   cout << " Muon eta = " << mu4D.Eta() << "  phi = " << mu4D.Phi()
-       << " pt = " << mu4D.Pt() << " GeV " << endl;
+       << " pt = " << mu4D.Pt() << " GeV " << " inner track pt = "
+       << muon.innerTrack()->pt() << " GeV " << endl;
 
   pat::METCollection::const_iterator oldMET = met->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
-  cout << " pfMET = " << oldMET->pt() << " GeV ";
-  cout << " TM = " << WPrimeUtil::TMass(mu4D, oldMETv) << " GeV" << endl;
-  if(wprimeUtil_->shouldApplyMETCorrection())
-    {
-      TVector2 newMET = getNewMET(event, mu4D);
-      cout << " muTeV/hadronic-recoil-adjusted pfMET = " << newMET.Mod() 
-	   << " GeV " << endl;
-      cout << " muTeV-adjusted TM = " << WPrimeUtil::TMass(mu4D, newMET)
-	   << " GeV " << endl;
-    }
-
+  cout << " default pfMET = " << oldMET->pt() << " GeV ";
+  cout << " default TM = " << WPrimeUtil::TMass(mu4D, oldMETv) << " GeV" 
+       << endl;
+  TVector2 newMET = getNewMET(event, mu4D);
+  cout << " TeVMu-adjusted pfMET = " << newMET.Mod() 
+       << " GeV ";
+  cout << " TeVMu-adjusted TM = " << WPrimeUtil::TMass(mu4D, newMET)
+       << " GeV " << endl;
+      
 #if 0
   cout << " P = " << 
 
@@ -454,7 +452,6 @@ TVector2 MuMETAnalyzer::getPFMETwithoutMu(edm::EventBase const & event)
   pat::PFParticleCollection::const_iterator icorrespondingPFMu;
   for( iParticle = (PFCandidates.product())->begin() ; 
        iParticle != (PFCandidates.product())->end() ; ++iParticle ){
-    
     const reco::Candidate* candidate = &(*iParticle);
     if (candidate) {
       const reco::PFCandidate* pfCandidate = 
@@ -484,6 +481,10 @@ TVector2 MuMETAnalyzer::getPFMETwithoutMu(edm::EventBase const & event)
     met_x += mypfCandidate->px();
     met_y += mypfCandidate->py();
   }//if nmuon >0
+  else { // if no match found, use mu4D value
+    met_x += mu4D.Px();
+    met_y += mu4D.Py();
+  }
   pfMETwithoutMuCached_.Set(met_x,met_y);
   pfMETwithoutMuCalculated_ = true;
   return pfMETwithoutMuCached_;
