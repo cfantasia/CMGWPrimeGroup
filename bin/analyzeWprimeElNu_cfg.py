@@ -1,6 +1,17 @@
 import FWCore.ParameterSet.Config as cms
+import FWCore.PythonUtilities.LumiList as LumiList
+import FWCore.ParameterSet.Types as CfgTypes
 
 process = cms.Process("WPrimeAnalysis")
+# get JSON file correctly parced
+#JSONfile = 'CertUserCode/CMGWPrimeGroup/JSON/_160404-163757_7TeV_PromptReco_Collisions11_JSON.txt'
+JSONfile = 'jsUserCode/CMGWPrimeGroup/JSON/on_160404-163869_DCSonly.txt'
+myList = LumiList.LumiList (filename = JSONfile).getCMSSWString().split(',')
+
+process.inputs = cms.PSet (
+    lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
+    )
+process.inputs.lumisToProcess.extend(myList)
 
 process.source = cms.Source("PoolSource",
   fileNames = cms.untracked.vstring(
@@ -19,7 +30,7 @@ process.WprimeAnalyzer = cms.PSet(
    # fileNames   = cms.vstring('file:patTuple.root'),  ## mandatory
     outputFile  = cms.string('Wprime_analysis.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
-    reportAfter = cms.uint32(5000),                     ## optional
+    reportAfter = cms.uint32(15000),                     ## optional
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_ElMET.txt"),
     ## enable analysis in individual channels
@@ -38,6 +49,7 @@ process.WprimeAnalyzer = cms.PSet(
     dumpHighEtElectrons   = cms.bool(True),
     dumpHighEtElectronThreshold = cms.double(200),
     barrelCuts = heepBarrelCuts,
-    endcapCuts = heepEndcapCuts
-)
+    endcapCuts = heepEndcapCuts,
+    inputs = process.inputs
+ )
 
