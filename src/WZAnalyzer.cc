@@ -57,67 +57,7 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   PI    = 2.0 * TMath::ACos(0.);
   TWOPI = 2.0 * PI;
   NOCUT = 9e9;
-  
-  ClearAndResize(hEvtType,NCuts_,NULL);
-  
-  ClearAndResize(hWZInvMass     ,NCuts_,NULL);
-  ClearAndResize(hWZ3e0muInvMass,NCuts_,NULL);
-  ClearAndResize(hWZ2e1muInvMass,NCuts_,NULL);
-  ClearAndResize(hWZ1e2muInvMass,NCuts_,NULL);
-  ClearAndResize(hWZ0e3muInvMass,NCuts_,NULL);
-
-  ClearAndResize(hWZTransMass,NCuts_,NULL);
-  ClearAndResize(hHt,NCuts_,NULL);
-  ClearAndResize(hWpt,NCuts_,NULL);
-  ClearAndResize(hZpt,NCuts_,NULL);
-  ClearAndResize(hMET,NCuts_,NULL);
-  
-  ClearAndResize(hZMass     ,NCuts_,NULL);
-  ClearAndResize(hZeeMass   ,NCuts_,NULL);
-  ClearAndResize(hZmumuMass ,NCuts_,NULL);
-  ClearAndResize(hZ3e0muMass,NCuts_,NULL);
-  ClearAndResize(hZ2e1muMass,NCuts_,NULL);
-  ClearAndResize(hZ1e2muMass,NCuts_,NULL);
-  ClearAndResize(hZ0e3muMass,NCuts_,NULL);
-  ClearAndResize(hZeeMassTT,NCuts_,NULL);
-  ClearAndResize(hZeeMassTF,NCuts_,NULL);
-  ClearAndResize(hZmumuMassTT,NCuts_,NULL);
-  ClearAndResize(hZmumuMassTF,NCuts_,NULL);
-  
-  ClearAndResize(hWTransMass     ,NCuts_,NULL);
-  ClearAndResize(hWenuTransMass  ,NCuts_,NULL);
-  ClearAndResize(hWmunuTransMass ,NCuts_,NULL);
-  ClearAndResize(hW3e0muTransMass,NCuts_,NULL);
-  ClearAndResize(hW2e1muTransMass,NCuts_,NULL);
-  ClearAndResize(hW1e2muTransMass,NCuts_,NULL);
-  ClearAndResize(hW0e3muTransMass,NCuts_,NULL);
-  
-  ClearAndResize(hQ,NCuts_,NULL);
-  
-  ClearAndResize(hLeadPt,NCuts_,NULL);
-  ClearAndResize(hLeadElecPt,NCuts_,NULL);
-  ClearAndResize(hLeadMuonPt,NCuts_,NULL);
-  
-  ClearAndResize(hElecPt,NCuts_,NULL);
-  ClearAndResize(hElecEt,NCuts_,NULL);
-  ClearAndResize(hElecdEta,NCuts_,NULL);
-  ClearAndResize(hElecdPhi,NCuts_,NULL);
-  ClearAndResize(hElecSigmann,NCuts_,NULL);
-  ClearAndResize(hElecEP,NCuts_,NULL);
-  ClearAndResize(hElecHE,NCuts_,NULL);
-  ClearAndResize(hElecTrkRelIso,NCuts_,NULL);
-  ClearAndResize(hElecECalRelIso,NCuts_,NULL);
-  ClearAndResize(hElecHCalRelIso,NCuts_,NULL);
-  
-  ClearAndResize(hMuonPt,NCuts_,NULL);
-  ClearAndResize(hMuonDxy,NCuts_,NULL);
-  ClearAndResize(hMuonNormChi2,NCuts_,NULL);
-  ClearAndResize(hMuonNPix,NCuts_,NULL);
-  ClearAndResize(hMuonNTrk,NCuts_,NULL);
-  ClearAndResize(hMuonRelIso,NCuts_,NULL);
-  ClearAndResize(hMuonStation,NCuts_,NULL);
-  ClearAndResize(hMuonSip,NCuts_,NULL);
-  
+ 
 // +++++++++++++++++++General Cut values
   maxNumZs = cfg.getParameter<int>("maxNumZs");
   minNumLeptons = cfg.getParameter<int>("minNumLeptons");
@@ -255,7 +195,7 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
   verbose("Declare histos\n");
 
   DeclareHistoSet("hEvtType", "Event Type",
-                  "N_{\\mu}", 4, 0, 4, hEvtType,dir);
+                  "N_{#mu}", 4, 0, 4, hEvtType,dir);
 
   DeclareHistoSet("hWZInvMass", "Reconstructed WZ Invariant Mass",
                   "m_{WZ} (GeV)", 100, 0, 1000, hWZInvMass,dir);
@@ -329,9 +269,9 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
 
 ///Eff Plots///////
   string title = Form("Expected # of Events / %.0f pb^{-1}",  wprimeUtil_->getLumi_ipb());
-  hNumEvts = dir.make<TH1F>("hNumEvts",title.c_str(),NCuts_,0,NCuts_);
-  hEffRel = dir.make<TH1F>("hEffRel","Relative Efficiency",NCuts_,0,NCuts_);
-  hEffAbs = dir.make<TH1F>("hEffAbs","Absolute Efficiency",NCuts_,0,NCuts_);
+  hNumEvts = NULL; hNumEvts = dir.make<TH1F>("hNumEvts",title.c_str(),NCuts_,0,NCuts_);
+  hEffRel  = NULL; hEffRel  = dir.make<TH1F>("hEffRel","Relative Efficiency",NCuts_,0,NCuts_);
+  hEffAbs  = NULL; hEffAbs  = dir.make<TH1F>("hEffAbs","Absolute Efficiency",NCuts_,0,NCuts_);
 
 //  DeclareHisto("hNumEvts",title.c_str(),       NCuts_,0,NCuts_,hNumEvts,dir);
 //  DeclareHisto("hEffRel","Relative Efficiency",NCuts_,0,NCuts_,hEffRel,dir);
@@ -364,40 +304,40 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
 //-----------------------------------------------------------
   verbose("Filling Histos\n");
   if(wCand && zCand){
-    hWZInvMass[index]->Fill(wzCand.mass("minPz"));
-    if     (evtType == 0) hWZ3e0muInvMass[index]->Fill(wzCand.mass("minPz"));
-    else if(evtType == 1) hWZ2e1muInvMass[index]->Fill(wzCand.mass("minPz"));
-    else if(evtType == 2) hWZ1e2muInvMass[index]->Fill(wzCand.mass("minPz"));
-    else if(evtType == 3) hWZ0e3muInvMass[index]->Fill(wzCand.mass("minPz"));
-    hEvtType[index]->Fill(evtType);
-    hQ[index]->Fill(Q); 
-    hWZTransMass[index]->Fill(wzCand.transMass());
-    hHt[index]->Fill(Ht);
+    hWZInvMass[index]->Fill(wzCand.mass("minPz"), weight);
+    if     (evtType == 0) hWZ3e0muInvMass[index]->Fill(wzCand.mass("minPz"), weight);
+    else if(evtType == 1) hWZ2e1muInvMass[index]->Fill(wzCand.mass("minPz"), weight);
+    else if(evtType == 2) hWZ1e2muInvMass[index]->Fill(wzCand.mass("minPz"), weight);
+    else if(evtType == 3) hWZ0e3muInvMass[index]->Fill(wzCand.mass("minPz"), weight);
+    hEvtType[index]->Fill(evtType, weight);
+    hQ[index]->Fill(Q, weight); 
+    hWZTransMass[index]->Fill(wzCand.transMass(), weight);
+    hHt[index]->Fill(Ht, weight);
   }
   if(zCand){
-    hZpt[index]->Fill(zCand.pt());
-    hZMass[index]->Fill(zCand.mass());
+    hZpt[index]->Fill(zCand.pt(), weight);
+    hZMass[index]->Fill(zCand.mass(), weight);
     if      (zCand.flavor() == PDGELEC){
-      hZeeMass[index]->Fill(zCand.mass());
+      hZeeMass[index]->Fill(zCand.mass(), weight);
     }else if (zCand.flavor() == PDGMUON){
-      hZmumuMass[index]->Fill(zCand.mass());
+      hZmumuMass[index]->Fill(zCand.mass(), weight);
     }
-    if     (evtType == 0) hZ3e0muMass[index]->Fill(zCand.mass());
-    else if(evtType == 1) hZ2e1muMass[index]->Fill(zCand.mass());
-    else if(evtType == 2) hZ1e2muMass[index]->Fill(zCand.mass());
-    else if(evtType == 3) hZ0e3muMass[index]->Fill(zCand.mass());
+    if     (evtType == 0) hZ3e0muMass[index]->Fill(zCand.mass(), weight);
+    else if(evtType == 1) hZ2e1muMass[index]->Fill(zCand.mass(), weight);
+    else if(evtType == 2) hZ1e2muMass[index]->Fill(zCand.mass(), weight);
+    else if(evtType == 3) hZ0e3muMass[index]->Fill(zCand.mass(), weight);
   }
   if(wCand){
-    hWpt[index]->Fill(wCand.pt());
-    hWTransMass[index]->Fill(wCand.mt());
-    if      (wCand.flavor() == PDGELEC) hWenuTransMass[index]->Fill(wCand.mt());
-    else if (wCand.flavor() == PDGMUON) hWmunuTransMass[index]->Fill(wCand.mt());
-    if(evtType == 0) hW3e0muTransMass[index]->Fill(wCand.mt());
-    if(evtType == 1) hW2e1muTransMass[index]->Fill(wCand.mt());
-    if(evtType == 2) hW1e2muTransMass[index]->Fill(wCand.mt());
-    if(evtType == 3) hW0e3muTransMass[index]->Fill(wCand.mt());
+    hWpt[index]->Fill(wCand.pt(), weight);
+    hWTransMass[index]->Fill(wCand.mt(), weight);
+    if      (wCand.flavor() == PDGELEC) hWenuTransMass[index]->Fill(wCand.mt(), weight);
+    else if (wCand.flavor() == PDGMUON) hWmunuTransMass[index]->Fill(wCand.mt(), weight);
+    if(evtType == 0) hW3e0muTransMass[index]->Fill(wCand.mt(), weight);
+    if(evtType == 1) hW2e1muTransMass[index]->Fill(wCand.mt(), weight);
+    if(evtType == 2) hW1e2muTransMass[index]->Fill(wCand.mt(), weight);
+    if(evtType == 3) hW0e3muTransMass[index]->Fill(wCand.mt(), weight);
   }  
-  hMET[index]->Fill(met.et());
+  hMET[index]->Fill(met.et(), weight);
 }//Fill_Histos
 
 void
@@ -426,6 +366,8 @@ void
 WZAnalyzer::DeclareHistoSet(string n, string t, string xtitle,
                             int nbins, float min, float max,
                             vector<TH1F*>& h, TFileDirectory& d){
+  ClearAndResize(h,NCuts_,NULL);
+
   float binWidth = (max-min)/nbins;
   for(int i=0; i<NCuts_; ++i){
     
@@ -487,7 +429,7 @@ void WZAnalyzer::printSummary(const string& dir)
     outLogFile<<right<<"Cut " << setw(2) << i << "("
               <<left<< setw(15) << Cuts_[i]
               <<right << "): " <<"expected evts = " << setw(10) << Num_surv_cut_[i];
-    hNumEvts->Fill(i,Num_surv_cut_[i]);
+    hNumEvts->SetBinContent(i+1,Num_surv_cut_[i]);
 
 //calculate efficiencies
     float eff, deff;
@@ -496,10 +438,10 @@ void WZAnalyzer::printSummary(const string& dir)
     }else{
       getEff(eff, deff, Num_surv_cut_[i], Num_surv_cut_[i-1]);
     }
-    hEffRel->Fill(i,eff*100);
+    hEffRel->SetBinContent(i+1,eff*100);
     outLogFile << setw(15) <<"\tRelative eff = "<<setw(6)<<eff*100 << " +/- " << setw(6)<<deff*100 << "%";
     getEff(eff, deff, Num_surv_cut_[i], Num_surv_cut_[0]);
-    hEffAbs->Fill(i,eff*100);
+    hEffAbs->SetBinContent(i+1,eff*100);
     outLogFile << setw(15) <<"\tAbsolute eff = "<<setw(6)<<eff*100 << " +/- " << setw(6)<<deff*100 << "%"
                << endl;
         
@@ -1070,8 +1012,8 @@ void WZAnalyzer::endFile(std::vector<wprime::InputFile>::const_iterator fi,
                          ofstream & out){
   //ScaleHistos();//Already scaled
   printSummary(fi->samplename);  
-  deleteHistos();
-  //listOfHists.clear();
+  //deleteHistos();
+  listOfHists.clear();
 }
 
 void WZAnalyzer::endAnalysis(ofstream & out){
