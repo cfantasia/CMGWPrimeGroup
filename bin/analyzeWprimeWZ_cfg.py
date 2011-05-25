@@ -4,14 +4,14 @@ import FWCore.ParameterSet.Types as CfgTypes
 
 process = cms.Process("WPrimeAnalysis")
 # get JSON file correctly parced
-JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-163757_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt'
+#JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-163757_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt'
 #JSONfile = 'UserCode/CMGWPrimeGroup/JSON/json_160404-163869_DCSonly.txt'
-myList = LumiList.LumiList (filename = JSONfile).getCMSSWString().split(',')
+#myList = LumiList.LumiList (filename = JSONfile).getCMSSWString().split(',')
 
-process.inputs = cms.PSet (
-    lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
-    )
-process.inputs.lumisToProcess.extend(myList)
+#process.inputs = cms.PSet (
+#    lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
+#    )
+#process.inputs.lumisToProcess.extend(myList)
 
 
 process = cms.Process("WPrimeAnalysis")
@@ -36,6 +36,7 @@ process.WprimeAnalyzer = cms.PSet(
     debugme = cms.bool(False),
     preselect = cms.bool(True),
     LogFile = cms.string("Wprime_event_counts.txt"),
+    CandEvtFile = cms.string("Wprime_CandEvts.txt"),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(False),
     runElMETAnalysis = cms.bool(False),
@@ -52,28 +53,25 @@ process.WprimeAnalyzer = cms.PSet(
     pileupTag  = cms.string('addPileupInfo'),
     inputs = process.inputs,
 
-
+    muonAlgo = cms.int32(0),
     #
 
-    triggersToUse = cms.vstring("HLT_Mu24_v1",
-                                "HLT_Mu9",
+    triggersToUse = cms.vstring("HLT_Mu9",
                                 "HLT_Mu11",
-                                "HLT_Mu15_v1",
-                                "HLT_Mu15_v2",
-                                "HLT_Mu20_v1",
-                                "HLT_Mu24_v1",
-                                "HLT_Mu30_v1",
+                                "HLT_Mu15_v?",
+                                "HLT_Mu20_v?",
+                                "HLT_Mu24_v?",
+                                "HLT_Mu30_v?",
                                 
                                 "HLT_Ele15_LW_L1R",
                                 "HLT_Ele15_SW_L1R",
                                 "HLT_Ele15_SW_CaloEleId_L1R",
                                 "HLT_Ele17_SW_CaloEleId_L1R",
                                 "HLT_Ele17_SW_TightEleId_L1R",
-                                "HLT_Ele17_SW_TighterEleIdIsol_L1R_v2",
-                                "HLT_Ele17_SW_TighterEleIdIsol_L1R_v3",
-                                "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*",
-                                "HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*",
-                                "HLT_Ele45_CaloIdVT_TrkIdT_v*",
+                                "HLT_Ele17_SW_TighterEleIdIsol_L1R_v?",
+                                "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v?",
+                                "HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v?",
+                                "HLT_Ele45_CaloIdVT_TrkIdT_v?",
 
                                 ),
 

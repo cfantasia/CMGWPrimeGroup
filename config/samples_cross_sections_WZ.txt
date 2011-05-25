@@ -1,8 +1,8 @@
 samplename = data
-description = Single E+Mu, 155.0 pb^-1
+description = Single E+Mu, 192.0 pb^-1
 x-section = 1
-pathname = data.txt
-Nprod_evt = 99999
+pathname = TrileptonPatTupleV05-04-01GIJ-2011A.txt
+Nprod_evt = 9999999
 
 samplename = DYJetsToLL
 description = DYJetsToLL
@@ -28,8 +28,8 @@ x-section = 7899
 pathname = TrileptonPatTupleV05-04-00-WToMuNu_TuneZ2_7TeV-pythia6.txt
 Nprod_evt = 5038640
 
-samplename = WZ3l
-description = Sample WZ3l
+samplename = WZTo3LNu
+description = WZTo3LNu
 x-section = 0.34
 pathname = TrileptonPatTupleV05-04-00-WZTo3LNu_7TeV-pythia6.txt
 Nprod_evt = 110000
@@ -91,7 +91,7 @@ Nprod_evt = 10000
 DONE
 
 samplename = data
-description = Single E+Mu, 155.0 pb^-1
+description = Single E+Mu, 192.0 pb^-1
 x-section = 1
-pathname = TrileptonPatTupleV05-04-01GI-2011A.txt
-Nprod_evt = 99999
+pathname = TrileptonPatTupleV05-04-01J-SingleMu2011A.txt
+Nprod_evt = 9999999
