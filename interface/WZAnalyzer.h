@@ -23,6 +23,7 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/WZUtilities.h"
+#include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
 
 class WZAnalyzer  {
 public:
@@ -45,6 +46,7 @@ public:
                     TH1F* h, TFileDirectory& d);
 
   double deltaR(double eta1, double phi1, double eta2, double phi2);
+  void ClearAndResize(vector<TH1F*>& h, int& size, TH1F* ptr=NULL);
 
   void ScaleHistos();
   void Fill_Histos(int index, float weight=1.);
@@ -62,7 +64,7 @@ public:
   void PrintEvent(edm::EventBase const & event);
   void PrintEventFull(edm::EventBase const & event);
   void PrintElectron(const pat::Electron* elec, int parent);
-  void PrintMuon(const pat::Muon* mu, int parent);
+  void PrintMuon(const TeVMuon* mu, int parent);
   double CalcLeadPt(int type=0);
   double CalcQ();
 
@@ -106,26 +108,25 @@ public:
   bool PassElecLooseWPCut(const pat::Electron* elec);
   bool PassElecWPRelIsoCut(const pat::Electron* elec);
 
-  bool PassMuonLooseCut(const pat::Muon* mu);
-  bool PassMuonTightCut(const pat::Muon* mu);
-  bool PassMuonLoosePtCut(const pat::Muon* mu);
-  bool PassMuonTightPtCut(const pat::Muon* mu);
-  bool PassMuonGlobalCut(const pat::Muon* mu);
-  bool PassMuonDxyCut(const pat::Muon* mu);
-  bool PassMuonNpixhitCut(const pat::Muon* mu);
-  bool PassMuonNtrkhitCut(const pat::Muon* mu);
-  bool PassMuonNormChi2Cut(const pat::Muon* mu);
-  bool PassMuonHitsUsedCut(const pat::Muon* mu);
-  bool PassMuonStationsCut(const pat::Muon* mu);
-  bool PassMuonEtaCut(const pat::Muon* mu);
-  bool PassMuonCombRelIsoCut(const pat::Muon* mu);
+  bool PassMuonLooseCut(const TeVMuon* mu);
+  bool PassMuonTightCut(const TeVMuon* mu);
+  bool PassMuonLoosePtCut(const TeVMuon* mu);
+  bool PassMuonTightPtCut(const TeVMuon* mu);
+  bool PassMuonGlobalCut(const TeVMuon* mu);
+  bool PassMuonDxyCut(const TeVMuon* mu);
+  bool PassMuonNpixhitCut(const TeVMuon* mu);
+  bool PassMuonNtrkhitCut(const TeVMuon* mu);
+  bool PassMuonNormChi2Cut(const TeVMuon* mu);
+  bool PassMuonHitsUsedCut(const TeVMuon* mu);
+  bool PassMuonStationsCut(const TeVMuon* mu);
+  bool PassMuonEtaCut(const TeVMuon* mu);
+  bool PassMuonCombRelIsoCut(const TeVMuon* mu);
 
   int   Calc_EvtType();
   float Calc_Q();
   float Calc_Ht();
   float CalcElecSc(const pat::Electron* elec);
-  float Calc_MuonNormChi2(const pat::Muon* mu);
-  float Calc_MuonRelIso(const pat::Muon* mu);
+  float Calc_MuonRelIso(const TeVMuon* mu);
   float Calc_GenWZInvMass();
 
 //////////
@@ -153,9 +154,6 @@ public:
   int PDGZ;
   int PDGWPRIME;
 
-  float PDGZMASS;
-  float W_mass;
-
   double PI;
   double TWOPI;
   float NOCUT;
@@ -178,6 +176,8 @@ public:
   ofstream outLogFile;
 
   WPrimeUtil * wprimeUtil_;
+  
+  int muonAlgo_;
 
 ///My calculated qualities//////////////////
   float Ht;
@@ -320,7 +320,7 @@ public:
   std::vector<std::string> TightMuonCuts_;
   typedef bool (WZAnalyzer::*    CutFnPtr)(); 
   typedef bool (WZAnalyzer::*ElecCutFnPtr)(const pat::Electron*); 
-  typedef bool (WZAnalyzer::*MuonCutFnPtr)(const pat::Muon*); 
+  typedef bool (WZAnalyzer::*MuonCutFnPtr)(const TeVMuon*); 
 #ifndef __CINT__
   std::map<std::string,     CutFnPtr> mFnPtrs_;
   std::map<std::string, ElecCutFnPtr> mElecFnPtrs_;
