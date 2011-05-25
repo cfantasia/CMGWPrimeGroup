@@ -26,7 +26,7 @@
 #include "PhysicsTools/SelectorUtils/interface/Selector.h"
 #include "PhysicsTools/CandUtils/interface/AddFourMomenta.h"
 
-
+#include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
 
 using namespace std;
 
@@ -39,8 +39,12 @@ typedef math::XYZPoint Point;
 typedef math::XYZTLorentzVector LorentzVector;
 typedef edm::ParameterSet PSet;
 typedef edm::MergeableCounter Counter;
+
+//typedef vector<pat::Electron> ElectronV;
+//typedef vector<pat::Muon    > MuonV;
 typedef vector<pat::Electron> ElectronV;
-typedef vector<pat::Muon    > MuonV;
+typedef vector<TeVMuon    > MuonV;
+
 typedef vector<pat::Jet     > JetV;
 typedef vector<pat::MET     > METV;
 typedef vector<reco::Track  > TrackV;
@@ -178,12 +182,12 @@ class ZCandidate : public BosonCandidate {
   ZCandidate() {genLepton1_ = genLepton2_ = 0;}
   ZCandidate(const pat::Electron & p1, const pat::Electron & p2) {
     genLepton1_ = p1.genLepton();
-    genLepton2_ = p1.genLepton();
+    genLepton2_ = p2.genLepton();
     addDaughters(p1, p2);
   }
-  ZCandidate(const pat::Muon & p1, const pat::Muon & p2) {
+  ZCandidate(const TeVMuon & p1, const TeVMuon & p2) {
     genLepton1_ = p1.genLepton();
-    genLepton2_ = p1.genLepton();
+    genLepton2_ = p2.genLepton();
     addDaughters(p1, p2);
   }
   const reco::Candidate * genLepton1() const {return genLepton1_;}  
@@ -202,7 +206,7 @@ class WCandidate : public BosonCandidate {
     genLepton_ = lepton.genLepton();
     addDaughters(lepton, met);
   }
-  WCandidate(const pat::Muon & lepton, const reco::Candidate & met) {
+  WCandidate(const TeVMuon & lepton, const reco::Candidate & met) {
     genLepton_ = lepton.genLepton();
     addDaughters(lepton, met);
   }
@@ -276,6 +280,7 @@ class WZCandidate {
   }
 
   double transMass() {return transMass_;}
+  double mt() {return transMass_;}
 
   double neutrinoPz(string type) {
     return neutrinoPz_[index_(type)];
