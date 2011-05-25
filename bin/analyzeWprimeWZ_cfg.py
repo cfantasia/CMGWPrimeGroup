@@ -14,8 +14,6 @@ process.inputs = cms.PSet (
 process.inputs.lumisToProcess.extend(myList)
 
 
-process = cms.Process("WPrimeAnalysis")
-
 process.source = cms.Source("PoolSource",
   fileNames = cms.untracked.vstring(
 ##    'file:patTuple.root'
