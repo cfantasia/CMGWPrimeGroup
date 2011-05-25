@@ -1,0 +1,10 @@
+/pnfs/cms/WAX/11/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleMu2011A/TrileptonPatTuple_3_1_0O8.root
+/pnfs/cms/WAX/11/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleMu2011A/TrileptonPatTuple_6_1_EgO.root
+/pnfs/cms/WAX/11/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleMu2011A/TrileptonPatTuple_2_1_6uD.root
+/pnfs/cms/WAX/11/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleMu2011A/TrileptonPatTuple_9_1_1pd.root
+/pnfs/cms/WAX/11/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleMu2011A/TrileptonPatTuple_1_1_8Nf.root
+/pnfs/cms/WAX/11/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleMu2011A/TrileptonPatTuple_8_1_2P3.root
+/pnfs/cms/WAX/11/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleMu2011A/TrileptonPatTuple_5_1_DBZ.root
+/pnfs/cms/WAX/11/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleMu2011A/TrileptonPatTuple_4_1_KHX.root
+/pnfs/cms/WAX/11/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleMu2011A/TrileptonPatTuple_10_1_KlQ.root
+/pnfs/cms/WAX/11/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleMu2011A/TrileptonPatTuple_7_1_OXD.root
