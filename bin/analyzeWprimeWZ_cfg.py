@@ -28,7 +28,7 @@ process.WprimeAnalyzer = cms.PSet(
    # fileNames   = cms.vstring('file:patTuple.root'),  ## mandatory
     outputFile  = cms.string('Wprime_analysis.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
-    reportAfter = cms.uint32(1000),                     ## optional
+    reportAfter = cms.uint32(5000),                     ## optional
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_WZ.txt"),
     debugme = cms.bool(False),
@@ -52,30 +52,30 @@ process.WprimeAnalyzer = cms.PSet(
     inputs = process.inputs,
 
     muonAlgo = cms.int32(0),
-    #
+    minDeltaR = cms.double(0.05),
 
     triggersToUse = cms.vstring("HLT_Mu9",
                                 "HLT_Mu11",
-                                "HLT_Mu15_v?",
-                                "HLT_Mu20_v?",
-                                "HLT_Mu24_v?",
-                                "HLT_Mu30_v?",
+                                "HLT_Mu15_v*",
+                                "HLT_Mu20_v*",
+                                "HLT_Mu24_v*",
+                                "HLT_Mu30_v*",
                                 
                                 "HLT_Ele15_LW_L1R",
                                 "HLT_Ele15_SW_L1R",
                                 "HLT_Ele15_SW_CaloEleId_L1R",
                                 "HLT_Ele17_SW_CaloEleId_L1R",
                                 "HLT_Ele17_SW_TightEleId_L1R",
-                                "HLT_Ele17_SW_TighterEleIdIsol_L1R_v?",
-                                "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v?",
-                                "HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v?",
-                                "HLT_Ele45_CaloIdVT_TrkIdT_v?",
+                                "HLT_Ele17_SW_TighterEleIdIsol_L1R_v*",
+                                "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*",
+                                "HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*",
+                                "HLT_Ele45_CaloIdVT_TrkIdT_v*",
 
                                 ),
 
 
     Cuts = cms.vstring("NoCuts", 
-                       #"HLT", 
+                       "HLT", 
                        "ValidWandZ", 
                        "ValidWZCand",
                        "NumZs", 
