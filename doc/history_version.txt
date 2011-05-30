@@ -1,3 +1,19 @@
+30-MAY-11 (Cory), V00-02-65
+============================
+General:
+o First version of W and Z finders looping over high-pt leptons (ie. using
+TeV muon reconstructors and HEEP electron ID). Need to migrate corrections
+to MET here. 
+o TeVMuon class now inherits from pat::Muon for a cleaner interface
+
+WZ analyzer:
+o general bugfixes
+o updated list of triggers
+
+NB: This version is compatible with 41x data and MC (e.g. Spring 11), not
+42x. 
+
+
 09-MAY-11 (Christos, Cory, David), V00-02-60
 ============================================
 (a) First porting of WZ analyzer (source code, configuration, skimming

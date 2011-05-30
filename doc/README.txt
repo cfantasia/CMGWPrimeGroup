@@ -13,7 +13,7 @@ o Setup a new working area (Default name: V260, release:
 CMSSW_4_1_4)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-60)
+V00-02-65)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
@@ -42,7 +42,7 @@ o SingleMu skims for datasets:
 /SingleMu/Run2011A-PromptReco-v1/AOD (8.3M events)
 /SingleMu/Run2011A-PromptReco-v2/AOD (15.7 M events)
 pat-tuples produced with JSON/json_160404-163869_DCSonly.txt (231.97 ipb)
-For analyziing, use
+For analyzing, use
 JSON/Cert_160404-163757_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt
 (182.44 ipb)
 
