@@ -149,7 +149,7 @@ void WPrimeFinder::run()
       // skip event if maximal number of events per input file is reached 
       if(maxEvents_>0 &&  ievt > maxEvents_) continue;
       
-      if(0 && it->samplename.find("data") != string::npos && 
+      if(it->samplename.find("data") != string::npos && 
 	 !jsonContainsEvent (jsonVector, event))
 	{
 	  ++ievt_skipped;
