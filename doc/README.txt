@@ -9,19 +9,19 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V260, release:
-CMSSW_4_1_4)
+o Setup a new working area (Default name: V270, release:
+CMSSW_4_2_3)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-65)
+V00-02-70)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
 
 o Hack the content of PAT Muon collections in order to include the 
-dedicated high-pt reconstructors (picky, cocktail, etc)
+dedicated high-pt reconstructors (DYT, cocktail, etc)
 
-o Hack the BuildFiles of the HEEP code to make it 41x-compatible
+o Hack the BuildFiles of the HEEP code to make it 42x-compatible
 
 o Compile the code
 
@@ -32,35 +32,29 @@ o Copy example config file for producing PAT-tuple to the top directory.
 (2) You can now modify the parameters in configuration file, change the
 location of the input file and run.
 
-NB: The following PAT-tuples can be found in 
-/castor/cern.ch/user/c/cleonido/wprime/V250/Data (a), and
-/castor/cern.ch/user/c/cleonido/wprime/V235/MC_MuMET (b)
-/castor/cern.ch/user/d/dsperka/wprime/V235 (c)
+Notes:
+The following 42x-compatible PAT-tuples are available in:
+/castor/cern.ch/user/c/cleonido/wprime/V270/Data
 
-(a) 
-o SingleMu skims for datasets:
-/SingleMu/Run2011A-PromptReco-v1/AOD (8.3M events)
-/SingleMu/Run2011A-PromptReco-v2/AOD (15.7 M events)
-pat-tuples produced with JSON/json_160404-163869_DCSonly.txt (231.97 ipb)
-For analyzing, use
-JSON/Cert_160404-163757_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt
-(182.44 ipb)
+The directory contains skims (lepton pt > 25 GeV) for SingleMu and
+SingleElectron datasets. 
 
-o SingleElectron skims for datasets
-/SingleElectron/Run2011A-PromptReco-v1/AOD (1.3M events)
-/SingleElectron/Run2011A-PromptReco-v2/AOD (7.7M events)
-pat-tuples produced with JSON/json_160404-163869_DCSonly.txt (231.97 ipb)
-For analyziing, use
-JSON/Cert_160404-163757_7TeV_PromptReco_Collisions11_JSON.txt (152.80 ipb)
+(a) For Mu+MET analysis:
+/SingleMu/Run2011A-May10ReReco-v1/AOD (21.6 M events)
+/SingleMu/Run2011A-PromptReco-v4/AOD (4.7M events)
+Pat-tuples produced with JSON/json_160404-165620_DCSonly.txt (368.91 ipb)
+For analyzing use
+JSON/Cert_160404-165542_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt
+(284.94 ipb)
 
-
-(b) Spring 2011 MC samples for Mu+MET analysis. 
-NB: still missing: QCD-muEnriched-high-pt and W- -> tau samples
-
-(c) Spring 2011 MC samples for El+MET analysis. 
-NB: still missing: low-pt samples, some QCD bins, W->mu, DY->mumu and
-W+/- -> tau samples 
-
+(b) For El+MET analysis:
+/SingleElectron/Run2011A-May10ReReco-v1/AOD (9.1 M events)
+and
+/SingleElectron/Run2011A-PromptReco-v4/AOD (2.9M events)
+Pat-tuples produced with JSON/json_DCSonly.txt_160404_166011.txt (410.83
+ipb)
+For analyzing use
+JSON/Cert_160404-165542_7TeV_PromptReco_Collisions11_JSON.txt (251.56 ipb)
 
 
 (3) NB: Structure of python files for PAT-tuple making:

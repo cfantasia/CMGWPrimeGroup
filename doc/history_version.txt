@@ -1,3 +1,24 @@
+30-MAY-11 (Christos), V00-02-70
+===============================
+o Have started necessary migration to 42x in order to deal with latest data
+and MC samples: Code can now run on 42x (e.g. May10 ReReco/PromptRecoV4
+data and Summer11 MC samples).  
+
+NB: cannot combine PAT-tuples from 42x and 41x (e.g. May10ReReco data and
+Spring 11 MC are not compatible) 
+
+PAT-tuples with the latest data for Mu+MET and El+MET analyses available
+(see doc/README.txt for details); Everything else: still missing
+
+
+o Updated JSON files in config files for El+MET and Mu+MET analyses for
+processing the latest 42x datasets  
+
+o Mu+MET analysis now properly using updated TeVMuon class (default
+algorithm was inadvertedly switched from cocktail to global muons...)
+
+
+
 30-MAY-11 (Cory), V00-02-65
 ============================
 General:
