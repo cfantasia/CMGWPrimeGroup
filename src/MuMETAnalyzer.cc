@@ -56,7 +56,7 @@ int MuMETAnalyzer::getTheHardestMuon()
   int ret = -1;
   for(int j = 0; j != nmuons; ++j)
     {
-      TeVMuon muon((*muons)[j]);
+      TeVMuon muon((*muons)[j], muReconstructor_);
       if(muon.innerTrack().isNull())continue;
       float current_muPT = muon.innerTrack()->pt();
       if (current_muPT > temp_muPT) 
@@ -100,8 +100,8 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
     isInvalidMuon_ = false;
     pfMETwithoutMuCalculated_ = false;
 
-    TeVMuon muon((*muons)[theMu]);
-    mu4D = muon.p4(theMu, muReconstructor_, isInvalidMuon_);
+    TeVMuon muon((*muons)[theMu], muReconstructor_);
+    mu4D = muon.p4(isInvalidMuon_);
     if(isInvalidMuon_)continue;
     if(mu4D.Pt() < muonPtThreshold_) continue;
     for(int cut_index = 0; cut_index != Num_mumet_cuts; ++cut_index)
