@@ -1,7 +1,7 @@
 samplename = data
 description = Single E+Mu, 192.0 pb^-1
 x-section = 1
-pathname = filelists_WZ/TrileptonPatTupleV05-04-01GIJ-2011A.txt
+pathname = /pnfs/cms/WAX/11/store/user/fantasia/41X/MultileptonPatTupleV05-04-01J-SingleMu2011A/TrileptonPatTuple_22_1_eIl.root
 Nprod_evt = 9999999
 
 samplename = DYJetsToLL
@@ -9,6 +9,20 @@ description = DYJetsToLL
 x-section = 2321
 pathname = filelists_WZ/TrileptonPatTupleV05-04-00-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola.txt
 Nprod_evt = 2329439
+
+samplename = DYToEE
+description = DYToEE
+x-section = 1614
+pathname = filelists_WZ/TrileptonPatTupleV05-04-00-DYToEE_M-20_TuneZ2_7TeV-pythia6.txt
+Nprod_evt = 2059987
+
+samplename = DYToMuMu
+description = DYToMuMu
+x-section = 1614
+pathname = filelists_WZ/TrileptonPatTupleV05-04-00-DYToMuMu_M-20_TuneZ2_7TeV-pythia6.txt
+Nprod_evt = 2244733
+
+DONE
 
 samplename = TTTo2L2Nu2B
 description = TTTo2L2Nu2B
@@ -94,4 +108,34 @@ samplename = data
 description = Single E+Mu, 192.0 pb^-1
 x-section = 1
 pathname = filelists_WZ/TrileptonPatTupleV05-04-01J-SingleMu2011A.txt
+pathname = filelists_WZ/TrileptonPatTupleV05-04-01GIJ-2011A.txt
 Nprod_evt = 9999999
+
+
+###
+sample LO (NLO)
+DYJets 2289(3048) 
+ttbar2l 15.86(16.7?) 
+WZ 10.4(18.3) 
+ZZ 4.30(5.9)
+DYToEE (1614) 
+DYToMM (1614) 
+
+Taken from
+https://twiki.cern.ch/twiki/bin/viewauth/CMS/MCBackgroundList
+
+##Testing
+samplename = data
+description = Single E+Mu, 192.0 pb^-1
+x-section = 1
+pathname = TrileptonPatTuple_5_1_cTQ.root
+Nprod_evt = 9999999
+
+samplename = WprimeToWZTo3LNu_M-900
+description = WprimeToWZTo3LNu_M-900
+x-section = 2321
+pathname = TrileptonPatTuple_9.root
+Nprod_evt = 2329439
+
+DONE
+
