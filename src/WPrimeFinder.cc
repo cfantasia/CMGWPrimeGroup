@@ -5,8 +5,6 @@
 using std::cout; using std::cerr; using std::endl; using std::vector;
 using std::string;
 
-#include <TChain.h>
-#include <TTree.h>
 #include <TH1F.h>
 
 // constructor: needs configuration file to set things up
@@ -129,15 +127,9 @@ void WPrimeFinder::run()
   vector<wprime::InputFile>::iterator it;
   for(it = inputFiles.begin(); it != inputFiles.end(); ++it){
     int ievt=0;  
-    // loop over input files
-    it->chain = new TChain("Events", "Events");
-    for(uint i=0; i<it->pathnames.size(); ++i){
-      it->chain->AddFile(it->pathnames[i].c_str());
-    }
-    assert(it->chain);
-    
-    it->Nact_evt = it->chain->GetEntries();
-    
+    fwlite::ChainEvent ev(it->pathnames);
+    it->Nact_evt = ev.size();
+  
     if(it->samplename.find("data") != string::npos)
         // Nprod_evt presumably contains the # of events before any filtering
         // that results in Nact_evt (< Nprod_evt) events contained in the file.
@@ -147,18 +139,17 @@ void WPrimeFinder::run()
         // at the end of the job - nothing else!
       it->Nprod_evt = it->Nact_evt;
     
-    cout << " Opened file " << it->samplename << " with " << it->Nact_evt
+    cout << " Opened sample " << it->samplename << " with " << it->Nact_evt
          << " events" << endl;
   
     cout << std::fixed << std::setprecision(2);
     beginFile(it);
-    fwlite::ChainEvent ev(it->pathnames);
     for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){// loop over events
       edm::EventBase const & event = ev;
       // skip event if maximal number of events per input file is reached 
       if(maxEvents_>0 &&  ievt > maxEvents_) continue;
       
-      if(it->samplename.find("data") != string::npos && 
+      if(0 && it->samplename.find("data") != string::npos && 
 	 !jsonContainsEvent (jsonVector, event))
 	{
 	  ++ievt_skipped;
@@ -196,8 +187,6 @@ void WPrimeFinder::run()
 // (e.g. save histograms, print summary)
 void WPrimeFinder::endFile(vector<wprime::InputFile>::const_iterator it)
 {
-  delete it->chain;
-
    // call endFile for each finder here
   if(runMuMETAnalysis_)
     muMETAnalyzer->endFile(it, out_);

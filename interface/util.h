@@ -5,8 +5,6 @@
 #include <string>
 #include <map>
 
-class TChain;
-
 namespace wprime{
   static std::string INVALID = "INVALID";
 
@@ -21,11 +19,10 @@ namespace wprime{
     std::string samplename;
     std::vector<std::string> pathnames; // directory + filenames
     std::string description; // sample description
-    TChain * chain; // pointer to ROOT chain
     //
     InputFile()
     {
-      x_sect = -1; Nprod_evt = Nact_evt = -1; weight = 0; chain = 0;
+      x_sect = -1; Nprod_evt = Nact_evt = -1; weight = 0;
       samplename = description = INVALID;
     }
     void checkFile()
