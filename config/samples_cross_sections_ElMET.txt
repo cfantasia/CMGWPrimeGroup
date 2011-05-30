@@ -1,32 +1,64 @@
 samplename = data
-description = Electron pt > 25 GeV skim, 231.97 pb^-1, v1
+description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
 x-section = 1
-pathname = Data_SingleElectron_Run2011A_160329_161312_231.97ipb_DCSonly_v1.root
+pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part1.root
 Nprod_evt = 1
 
 samplename = data2
-description = Electron pt > 25 GeV skim, 152.80 pb^-1, v2 part 1
+description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
 x-section = 1
-pathname = Data_SingleElectron_Run2011A_162718_163869_231.97ipb_DCSonly_v2_part1.root
+pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part2.root
+Nprod_evt = 1
+
+samplename = data2b
+description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
+x-section = 1
+pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part2b.root
 Nprod_evt = 1
 
 samplename = data3
-description = Electron pt > 25 GeV skim, 152.80 pb^-1, v2 part 2
+description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
 x-section = 1
-pathname = Data_SingleElectron_Run2011A_162718_163869_231.97ipb_DCSonly_v2_part2.root
+pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part3.root
+Nprod_evt = 1
+
+samplename = data3b
+description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
+x-section = 1
+pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part3b.root
 Nprod_evt = 1
 
 samplename = data4
-description = Electron pt > 25 GeV skim, 152.80 pb^-1, v2 part 3
+description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
 x-section = 1
-pathname = Data_SingleElectron_Run2011A_162718_163869_231.97ipb_DCSonly_v2_part3.root
+pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part4.root
+Nprod_evt = 1
+
+samplename = data4b
+description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
+x-section = 1
+pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part4b.root
+Nprod_evt = 1
+
+samplename = data4c
+description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
+x-section = 1
+pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part4001.root
 Nprod_evt = 1
 
 samplename = data5
-description = Electron pt > 25 GeV skim, 152.80 pb^-1, v2 part 4
+description = Electron pt > 25 GeV skim, 251.56 pb^-1, PR v4
 x-section = 1
-pathname = Data_SingleElectron_Run2011A_162718_163869_231.97ipb_DCSonly_v2_part4.root
+pathname = SingleElectron_PromptReco_V4_upToRun166011.root
 Nprod_evt = 1
+
+samplename = data5b
+description = Electron pt > 25 GeV skim, 251.56 pb^-1, PR v4
+x-section = 1
+pathname = SingleElectron_PromptReco_V4_upToRun166011_001.root
+Nprod_evt = 1
+
+DONE
 
 samplename = WtoEnu_highPt
 description = POWHEG W ->enu without eta cut (NNLO cross-section), high-pt
