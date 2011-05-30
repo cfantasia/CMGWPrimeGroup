@@ -8,13 +8,13 @@
 
 class TeVMuon : public pat::Muon{
  public:
-  TeVMuon(const pat::Muon & muon, unsigned int algo=0, bool isValid=1) :
-    pat::Muon(muon), algo_(algo) {p4_ = p4(0,algo_,isValid_);}
+  TeVMuon(const pat::Muon & muon, unsigned int muReconstructor=0, bool isValid=1) :
+    pat::Muon(muon), muReconstructor_(muReconstructor) {p4_ = p4(isValid_);}
   ~TeVMuon(){}
   
-  // get muon 4-d momentum according to muonReconstructor_ value
-  const TLorentzVector & p4(unsigned theMu, unsigned muReconstructor, 
-			    bool & isInvalidMuon);
+  // get muon 4-d momentum according to muonReconstructor_ value;
+  // isInvalidMuon: set to false if muon track (for given reconstructor) is NULL
+  const TLorentzVector & p4(bool & isInvalidMuon);
 
   bool goodQualityMuon(float chi2Cut, float muonEtaCut) const;
 
@@ -24,7 +24,7 @@ class TeVMuon : public pat::Muon{
 
  private:
   bool isValid_;
-  unsigned int algo_;
+  unsigned int muReconstructor_;
   TLorentzVector p4_;
 
   void setMuLorentzVector(const reco::TrackRef & trk, bool & isInvalidMuon);

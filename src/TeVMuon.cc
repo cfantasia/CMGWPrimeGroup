@@ -5,10 +5,9 @@
 
 // get muon 4-d momentum according to muonReconstructor_ value
 // see interface/TeVMuon.h
-const TLorentzVector & TeVMuon::p4(unsigned theMu, unsigned muReconstructor,
-				   bool & isInvalidMuon)
+const TLorentzVector & TeVMuon::p4(bool & isInvalidMuon)
 {
-  switch(muReconstructor)
+  switch(muReconstructor_)
     {
     case 0:
       setMuLorentzVector(globalTrack(), isInvalidMuon);
