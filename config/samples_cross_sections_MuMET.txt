@@ -1,26 +1,64 @@
 samplename = data
-description = Muon pt > 25 GeV skim, 181.44 pb^-1, v1
+description = Muon pt > 25 GeV skim, 284.94 pb^-1, v1
 x-section = 1
-pathname = Data_SingleMu_Run2011A_160329_161312_231.971ipb_DCSonly_v1.root
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part1.root
 Nprod_evt = 1
 
 samplename = data2
-description = Muon pt > 25 GeV skim, 181.44 pb^-1, v2 part1
+description = Muon pt > 25 GeV skim, 284.94 pb^-1, v1
 x-section = 1
-pathname = Data_SingleMu_Run2011A_162718_163869_231.971ipb_DCSonly_v2_part1.root
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part2.root
 Nprod_evt = 1
 
 samplename = data3
-description = Muon pt > 25 GeV skim, 181.44 pb^-1, v2 part2
+description = Muon pt > 25 GeV skim, 284.94 pb^-1, v1
 x-section = 1
-pathname = Data_SingleMu_Run2011A_162718_163869_231.971ipb_DCSonly_v2_part2.root
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part3.root
 Nprod_evt = 1
 
 samplename = data4
-description = Muon pt > 25 GeV skim, 181.44 pb^-1, v2 part3
+description = Muon pt > 25 GeV skim, 284.94 pb^-1, v1
 x-section = 1
-pathname = Data_SingleMu_Run2011A_162718_163869_231.971ipb_DCSonly_v2_part3.root
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part4.root
 Nprod_evt = 1
+
+samplename = data5
+description = Muon pt > 25 GeV skim, 284.94 pb^-1, v1
+x-section = 1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part5.root
+Nprod_evt = 1
+
+samplename = data5b
+description = Muon pt > 25 GeV skim, 284.94 pb^-1, v1
+x-section = 1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part5001.root
+Nprod_evt = 1
+
+samplename = data6
+description = Muon pt > 25 GeV skim, 284.94 pb^-1, v1
+x-section = 1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part6.root
+Nprod_evt = 1
+
+samplename = data7
+description = Muon pt > 25 GeV skim, 284.94 pb^-1, v1
+x-section = 1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part7.root
+Nprod_evt = 1
+
+samplename = data8
+description = Muon pt > 25 GeV skim, 284.94 pb^-1, v1
+x-section = 1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part8.root
+Nprod_evt = 1
+
+samplename = data9
+description = Muon pt > 25 GeV skim, 284.94 pb^-1, PRv4
+x-section = 1
+pathname = SingleMu_PromptReco_V4_upToRun165627.root
+Nprod_evt = 1
+
+DONE
 
 samplename = WPlusMu_lowPt
 description = POWHEG W+ ->munu without eta cut (NNLO cross-section), low-pt
