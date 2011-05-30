@@ -124,8 +124,9 @@ void WPrimeFinder::eventLoop(edm::EventBase const & event)
 void WPrimeFinder::run()
 {
   int ievt_all=0;  int ievt_skipped = 0;
+  unsigned i_sample = 1;
   vector<wprime::InputFile>::iterator it;
-  for(it = inputFiles.begin(); it != inputFiles.end(); ++it){
+  for(it = inputFiles.begin(); it != inputFiles.end(); ++it, ++i_sample){
     int ievt=0;  
     fwlite::ChainEvent ev(it->pathnames);
     it->Nact_evt = ev.size();
@@ -139,9 +140,10 @@ void WPrimeFinder::run()
         // at the end of the job - nothing else!
       it->Nprod_evt = it->Nact_evt;
     
-    cout << " Opened sample " << it->samplename << " with " << it->Nact_evt
-         << " events" << endl;
-  
+    cout << "\n Opened sample " << it->samplename << " with " << it->Nact_evt
+         << " events (Input file #" << i_sample << " out of " << inputFiles.size()
+	 << " samples) " << endl;
+    
     cout << std::fixed << std::setprecision(2);
     beginFile(it);
     for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){// loop over events
