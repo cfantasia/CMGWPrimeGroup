@@ -33,8 +33,6 @@ public:
 
   void FillCutFns();
   void getEff(float & eff, float & deff, float Num, float Denom);
-  double deltaEta(double eta1, double eta2);
-  double deltaPhi(double phi1, double phi2);
 
   void ResetCounters();
   void Declare_Histos(TFileDirectory& dir);
@@ -45,7 +43,6 @@ public:
                     int nbins, float min, float max,
                     TH1F* h, TFileDirectory& d);
 
-  double deltaR(double eta1, double phi1, double eta2, double phi2);
   void ClearAndResize(vector<TH1F*>& h, int& size, TH1F* ptr=NULL);
 
   void ScaleHistos();
@@ -56,7 +53,6 @@ public:
 
   void eventLoop(edm::EventBase const & event);
   void Tabulate_Me(int& cut_index,const float& weight);
-  void UseSample(std::string dir);
   void CalcEventVariables();
   bool PassCuts(const float& weight=1.);
 
@@ -67,6 +63,8 @@ public:
   void PrintMuon(const TeVMuon* mu, int parent);
   double CalcLeadPt(int type=0);
   double CalcQ();
+  
+  bool SameTrigger(string & A, string & B);
 
 //methods for utilities
   void CheckStream(ofstream& stream, std::string s);
@@ -232,6 +230,7 @@ public:
   int minMuonHitsUsed;
 
 //////Chosen Candidates
+  float minDeltaR_;
   pat::MET met;
   ZCandidate zCand;
   WCandidate wCand;

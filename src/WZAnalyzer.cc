@@ -40,6 +40,8 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
 
   triggersToUse_          = cfg.getParameter<vstring>("triggersToUse");
 
+  minDeltaR_ = cfg.getParameter<double>("minDeltaR");
+
   ResetCounters();
 
   verbose("Using %i cuts\n",NCuts_);
@@ -451,20 +453,22 @@ void WZAnalyzer::printSummary(const string& dir)
 
 void 
 WZAnalyzer::eventLoop(edm::EventBase const & event){
-  if (intOptions_["events"] && eventNum > intOptions_["events"]) return;
-  reportProgress(eventNum++);
+  //if (intOptions_["events"] && eventNum > intOptions_["events"]) return;
+  //reportProgress(eventNum++);
   //updateEventCounts(event, nEvents, runNumber,  wprimeUtil_->getLumi_ipb());
-  datasetName = getDatasetName(event, datasetName);
+  //datasetName = getDatasetName(event, datasetName);
 
   // Preselection - skip events that don't look promising
-  if (doPreselect_)
+  if (doPreselect_){
+    if(debugme) cout<<"Testing Preselection...\n";
     if (getProduct<double>(event, 
-                           "wzPreselectionProducer:ZMassDiff") > 12.5 ||
+                           "wzPreselectionProducer:ZMassDiff") > 30.0 ||
         getProduct<double>(event, 
                            "wzPreselectionProducer:highestLeptonPt") < 10 ||
         getProduct<vector<uint> >(event, 
                                   "wzPreselectionProducer:nLeptonsEid")[5] < 3)
       return;
+  }
 //  // Get information about flavorHistory
 //  const uint flavorType = getProduct<uint>(event, "flavorHistoryFilter", 0);
 //  verbose("    FlavorType: %i", flavorType);
@@ -524,7 +528,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   verbose("    Contains: %i loose Z candidate(s)", looseZCands.size());
 
   // Reconstruct the W
-  wCand = getWCand(tightElectrons, tightMuons, met, zCand);
+  wCand = getWCand(tightElectrons, tightMuons, met, zCand, minDeltaR_);
   verbose("    Contains: %i tight W candidate(s)", (bool)wCand);
 
   wzCand = (zCand && wCand) ? WZCandidate(zCand, wCand) : WZCandidate();
@@ -659,6 +663,11 @@ WZAnalyzer::CalcLeadPt(int type){
   return TMath::Max(CalcLeadPt(PDGELEC), CalcLeadPt(PDGMUON));
 }
 
+inline bool
+WZAnalyzer::SameTrigger(string & A, string & B){
+  return (B.find("*") == string::npos) ? !A.compare(B) : !A.compare(0, A.size()-1, B, 0, B.size()-1);
+}
+
 /////////////////Accessors///////////////////////
 
 /////////////////Modifies///////////////////////
@@ -703,15 +712,21 @@ bool WZAnalyzer::PassTriggersCut()
   if(debugme) cout<<"Trigger requirements"<<endl;
   
   const pat::TriggerPathRefVector acceptedPaths = triggerEvent_.acceptedPaths();
-  for (size_t i = 0; i < acceptedPaths.size(); i++)
-    for (size_t j = 0; j < triggersToUse_.size(); j++)
-      if (!acceptedPaths[i]->name().compare(triggersToUse_[j])){
-//        string pat::TriggerPath::name()
-//        unsigned pat::TriggerPath::prescale()
-//        bool pat::TriggerPath::wasAccept()
+  if(debugme) cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
+  for (size_t i = 0; i < acceptedPaths.size(); i++){
+    string A = acceptedPaths[i]->name();
+    for (size_t j = 0; j < triggersToUse_.size(); j++){
+      //Need to acct for version numbers
+//      cout<<"A: "<<acceptedPaths[i]->name()<< " B: "<<triggersToUse_[j]<<endl;
+//      if(SameTrigger(A,B)){
+      if(SameTrigger(A, triggersToUse_[j])){
+//      if(SameTrigger(acceptedPaths[i]->name(), triggersToUse_[j])){
+        if(debugme) cout<<"Match A: "<<acceptedPaths[i]->name()<< " B: "<<triggersToUse_[j]<<endl;
         if(acceptedPaths[i]->prescale() == 1  && acceptedPaths[i]->wasAccept()) return true;
         break;
       }
+    }
+  }
   return false;
 }//--- PassTriggersCut()
 
@@ -945,33 +960,6 @@ void WZAnalyzer::getEff(float & eff, float & deff, float Num, float Denom)
   }
 
 }//getEff
-
-//--------------------------------------------------------------
-double WZAnalyzer::deltaPhi(double phi1, double phi2)
-{
-//--------------------------------------------------------------
-
-  double phi=fabs(phi1-phi2);
-  return (phi <= PI) ? phi : TWOPI - phi;
-}
-
-//--------------------------------------------------------------
-double WZAnalyzer::deltaEta(double eta1, double eta2)
-{
-//--------------------------------------------------------------
-  double eta = fabs(eta1 - eta2);
-  return eta;
-}
-
-//Just a function to calculate DeltaR
-//--------------------------------------------------------------
-double WZAnalyzer::deltaR(double eta1, double phi1, double eta2, double phi2)
-{
-//--------------------------------------------------------------
-  double deta = eta1 - eta2;
-  double dphi = deltaPhi(phi1, phi2);
-  return sqrt(deta * deta + dphi * dphi);
-}
 
 void WZAnalyzer::ClearAndResize(vector<TH1F*>& h, int& size, TH1F* ptr){
   h.clear();
