@@ -5,49 +5,80 @@
 
 // get muon 4-d momentum according to muonReconstructor_ value
 // see interface/TeVMuon.h
-const TLorentzVector & TeVMuon::p4(bool & isInvalidMuon)
-{
-  switch(muReconstructor_)
-    {
-    case 0:
-      setMuLorentzVector(globalTrack(), isInvalidMuon);
-      break;
-    case 1:
-      setMuLorentzVector(innerTrack(), isInvalidMuon);
-      break;
-    case 2:
-      setMuLorentzVector(tpfmsMuon(), isInvalidMuon);
-      break;
-    case 3:
-      setMuLorentzVector(cocktailMuon(), isInvalidMuon);
-      break;
-    case 4:
-      setMuLorentzVector(pickyMuon(), isInvalidMuon);
-      break;
-    case 5:
-      setMuLorentzVector(defaultTeVMuon(), isInvalidMuon);
-      break;
-    case 6:
-      setMuLorentzVector(dytMuon(), isInvalidMuon);
-      break;
-    }
-
+const TLorentzVector & TeVMuon::p4(unsigned muReconstructor,
+                                   bool & isInvalidMuon){
+  setMuLorentzVector(GetTrack(muReconstructor), isInvalidMuon);
+ 
   return p4_;
+}
+
+const TLorentzVector & TeVMuon::p4(bool & isInvalidMuon){
+  return p4(muReconstructor_, isInvalidMuon);
+}
+
+const reco::TrackRef
+TeVMuon::GetTrack(unsigned muReconstructor) const{
+  switch(muReconstructor)
+  {
+  case 0:
+    return globalTrack();
+  case 1:
+    return innerTrack();
+  case 2:
+    return tpfmsMuon();
+  case 3:
+    return cocktailMuon();
+  case 4:
+    return pickyMuon();
+  case 5:
+    return defaultTeVMuon();
+  case 6:
+    return dytMuon();
+  }
+  std::cout<<"Failed to find a track requested\n";
+  return reco::TrackRef();
 }
 
 double TeVMuon::pt() const {
   return p4_.Pt();
 }
 
+double TeVMuon::pt(unsigned muReconstructor) const {
+  return getTrkLorentzVector(muReconstructor).Pt();
+}
+
+TVector2 TeVMuon::getPtDiff() const {
+  TVector2  chosenAlgo( p4_.Px(), p4_.Py() );
+  bool isInvalid = false;
+  TLorentzVector p4Def = getTrkLorentzVector(0);//Global Muon Pt
+  if(isInvalid){
+    std::cout<<"Failed getting muon\n";
+    return TVector2();
+  }
+  TVector2 defaultAlgo( p4Def.Px(), p4Def.Py() );
+  return chosenAlgo - defaultAlgo;
+}
+
 void TeVMuon::setMuLorentzVector(const reco::TrackRef & trk, bool & isInvalidMuon)
 {
-  if(trk.isNull())
-    {
-      isInvalidMuon = true;
-      return;
-    }
-  TVector3 p3(trk->px(), trk->py(), trk->pz());
-  p4_.SetVectM(p3, wprime::MUON_MASS);
+  p4_ = getTrkLorentzVector(trk, isInvalidMuon);
+}
+
+const TLorentzVector TeVMuon::getTrkLorentzVector(unsigned muReconstructor) const{
+  bool isInvalidMuon = false;
+  return getTrkLorentzVector(GetTrack(muReconstructor), isInvalidMuon);
+}
+
+const TLorentzVector TeVMuon::getTrkLorentzVector(const reco::TrackRef & trk, bool & isInvalidMuon) const
+{
+  TLorentzVector trkP4;
+  if(trk.isNull()){
+    isInvalidMuon = true;
+  }else{
+    TVector3 p3(trk->px(), trk->py(), trk->pz());
+    trkP4 = TLorentzVector(p3, wprime::MUON_MASS);
+  } 
+  return trkP4;
 }
 
 //computes the combined rel isolation value
