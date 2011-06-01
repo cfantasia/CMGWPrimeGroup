@@ -460,7 +460,7 @@ TVector2 MuMETAnalyzer::getPFMETwithoutMu(edm::EventBase const & event)
 	//check that it is a muon
 	if (!(pfCandidate->particleId() == 3)) continue;
 	double deta = mu4D.Eta() - pfCandidate->eta();
-	double dphi = mu4D.Phi() - pfCandidate->phi();
+	double dphi = reco::deltaPhi(mu4D.Phi(), pfCandidate->phi());
 	double dR = TMath::Sqrt(deta*deta + dphi*dphi);
 	if(dR < 0.01)
 	  {
