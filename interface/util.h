@@ -5,6 +5,15 @@
 #include <string>
 #include <map>
 
+#include "DataFormats/PatCandidates/interface/Electron.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/MET.h"
+#include "DataFormats/PatCandidates/interface/TriggerEvent.h"
+#include "DataFormats/Common/interface/MergeableCounter.h"
+#include "DataFormats/Math/interface/deltaR.h"
+#include "SimDataFormats/GeneratorProducts/interface/GenRunInfoProduct.h"
+
 namespace wprime{
   static std::string INVALID = "INVALID";
 
@@ -57,6 +66,68 @@ namespace wprime{
   const float ELECTRON_MASS = 0.000511;     // GeV
 }
 
+//// Global constants ////////////////////////////////////////////////////////
+
+const float ZMASS = 91.188;
+const float WMASS = 80.398;
+
+//////// Comparators (for sorting vectors) ///////////////////////////////////
+
+struct closestToZMass {
+  bool operator() (const reco::Candidate & a, const reco::Candidate & b) {
+    return fabs(ZMASS - a.mass()) < fabs(ZMASS - b.mass());
+  }
+};
+struct highestPt {
+  bool operator() (const reco::Candidate * a, const reco::Candidate * b) {
+    return a->pt() > b->pt();
+  }
+};
+struct highestPtLepton {
+  bool operator() (const reco::CompositeCandidate a, 
+                   reco::CompositeCandidate b) {
+    return a.daughter(0)->pt() > b.daughter(0)->pt();
+  }
+};
+
+
+inline bool areIdentical(const reco::Candidate & p1, 
+                         const reco::Candidate & p2)
+{
+  float tolerance = 0.0001;
+  if (p1.pdgId() == p2.pdgId() &&
+      fabs(p1.eta() - p2.eta()) < tolerance &&
+      fabs(p1.phi() - p2.phi()) < tolerance &&
+      fabs(p1.pt () - p2.pt ()) < tolerance)
+    return true;
+  return false;
+}
+
+inline bool areOverlapping(const reco::Candidate & p1, 
+                           const reco::Candidate & p2)
+{
+  if (p1.numberOfDaughters() == 0 && p2.numberOfDaughters() == 0)
+    return areIdentical(p1, p2);
+  for (size_t i = 0; i < p1.numberOfDaughters(); i++)
+    if (areOverlapping(p2, * p1.daughter(i)))
+      return true;
+  for (size_t i = 0; i < p2.numberOfDaughters(); i++)
+    if (areOverlapping(p1, * p2.daughter(i)))
+      return true;
+  return false;
+}
+
+
+
+inline const reco::Candidate * findMother(const reco::Candidate * p)
+{
+  const reco::Candidate * mother = p ? p->mother(0) : 0;
+  if (mother) {
+    if (mother->pdgId() == p->pdgId()) return findMother(mother);
+    else return mother;
+  }
+  else return 0;
+}
 
 
 #endif // _util_h
