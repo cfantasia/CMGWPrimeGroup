@@ -23,6 +23,7 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/WZUtilities.h"
+#include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
 
 class WZAnalyzer  {
@@ -59,7 +60,7 @@ public:
   void PrintEventToFile(edm::EventBase const & event);
   void PrintEvent(edm::EventBase const & event);
   void PrintEventFull(edm::EventBase const & event);
-  void PrintElectron(const pat::Electron* elec, int parent);
+  void PrintElectron(const heep::Ele* elec, int parent);
   void PrintMuon(const TeVMuon* mu, int parent);
   double CalcLeadPt(int type=0);
   double CalcQ();
@@ -99,12 +100,12 @@ public:
   bool PassWenuIsoCut();
   bool PassWmunuIsoCut();
 
-  bool PassElecLooseCut(const pat::Electron* elec);
-  bool PassElecTightCut(const pat::Electron* elec);
-  bool PassElecLooseEtCut(const pat::Electron* elec);
-  bool PassElecTightEtCut(const pat::Electron* elec);
-  bool PassElecLooseWPCut(const pat::Electron* elec);
-  bool PassElecWPRelIsoCut(const pat::Electron* elec);
+  bool PassElecLooseCut(const heep::Ele* elec);
+  bool PassElecTightCut(const heep::Ele* elec);
+  bool PassElecLooseEtCut(const heep::Ele* elec);
+  bool PassElecTightEtCut(const heep::Ele* elec);
+  bool PassElecLooseWPCut(const heep::Ele* elec);
+  bool PassElecWPRelIsoCut(const heep::Ele* elec);
 
   bool PassMuonLooseCut(const TeVMuon* mu);
   bool PassMuonTightCut(const TeVMuon* mu);
@@ -123,7 +124,7 @@ public:
   int   Calc_EvtType();
   float Calc_Q();
   float Calc_Ht();
-  float CalcElecSc(const pat::Electron* elec);
+  float CalcElecSc(const heep::Ele* elec);
   float Calc_MuonRelIso(const TeVMuon* mu);
   float Calc_GenWZInvMass();
 
@@ -236,7 +237,7 @@ public:
   WCandidate wCand;
   WZCandidate wzCand;
   pat::TriggerEvent triggerEvent_; 
-//  std::vector< PileupSummaryInfo > PupInfo_; 
+  std::vector< PileupSummaryInfo > PupInfo_; 
   std::vector<float> Num_surv_cut_;
 
 // +++++++++++++++++++ Histogram Definitions
@@ -318,7 +319,7 @@ public:
   int NTightMuonCuts_;
   std::vector<std::string> TightMuonCuts_;
   typedef bool (WZAnalyzer::*    CutFnPtr)(); 
-  typedef bool (WZAnalyzer::*ElecCutFnPtr)(const pat::Electron*); 
+  typedef bool (WZAnalyzer::*ElecCutFnPtr)(const heep::Ele*); 
   typedef bool (WZAnalyzer::*MuonCutFnPtr)(const TeVMuon*); 
 #ifndef __CINT__
   std::map<std::string,     CutFnPtr> mFnPtrs_;

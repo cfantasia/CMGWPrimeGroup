@@ -474,8 +474,8 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 //  verbose("    FlavorType: %i", flavorType);
 
   // Get leptons
-  const ElectronV patElectrons = getProduct<ElectronV>(event,electronsLabel_);
-  const vector<pat::Muon> patMuons = getProduct<vector<pat::Muon> >(event, muonsLabel_);
+  const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, electronsLabel_);
+  const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
   verbose("    Contains: %i electron(s), %i muon(s)",
           patElectrons.size(), patMuons.size());
 
@@ -488,12 +488,13 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   met = getProduct<METV>(event, metLabel_)[0];
 
   // Make vectors of leptons passing various criteria
-  ElectronV looseElectrons, tightElectrons;
+  ElectronV electrons, looseElectrons, tightElectrons;
   for (size_t i = 0; i < patElectrons.size(); i++) {
-    if (PassElecLooseCut(&patElectrons[i])){
-      looseElectrons.push_back(patElectrons[i]);
-      if (PassElecTightCut(&patElectrons[i]))
-        tightElectrons.push_back(patElectrons[i]);
+    electrons.push_back(heep::Ele(patElectrons[i]));   
+    if (PassElecLooseCut(&electrons[i])){
+      looseElectrons.push_back(electrons[i]);
+      if (PassElecTightCut(&electrons[i]))
+        tightElectrons.push_back(electrons[i]);
     }
   }
 
@@ -538,13 +539,19 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
 ///////////////////////
 /*
-  PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
+  if(wprimeUtil_->getSampleName().find("data") == string:npos){
   
-  std::vector<PileupSummaryInfo>::const_iterator PVI;                       
-  for(PVI = PupInfo_.begin(); PVI != PupInfo_.end(); ++PVI) {               
-    //Cory: What am I looping over?
-    int PU_BunchCrossing = PVI->getBunchCrossing();                  
-    int PU_NumInteractions = PVI->getPU_NumInteractions();           
+    PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
+    
+    std::vector<PileupSummaryInfo>::const_iterator PVI;                       
+    for(PVI = PupInfo_.begin(); PVI != PupInfo_.end(); ++PVI) {               
+      //Cory: What am I looping over? Primary Vtxs
+      int PU_BunchCrossing = PVI->getBunchCrossing();                  
+      int PU_NumInteractions = PVI->getPU_NumInteractions();           
+      cout<<"N_BX: "<<PU_BunchCrossing
+          <<" PU_NumInteractions: "<<PVI->getPU_NumInteractions()
+          <<endl;
+    }
   }
 */
 /////////////////////
@@ -598,34 +605,34 @@ void
 WZAnalyzer::PrintEventFull(edm::EventBase const & event){
   PrintEvent(event);
   if     (zCand.flavor() == PDGELEC){
-    PrintElectron((const pat::Electron*)zCand.daughter(0), PDGZ);
-    PrintElectron((const pat::Electron*)zCand.daughter(1), PDGZ);
+    PrintElectron((const heep::Ele*)zCand.daughter(0), PDGZ);
+    PrintElectron((const heep::Ele*)zCand.daughter(1), PDGZ);
   }else if(zCand.flavor() == PDGMUON){
     PrintMuon((const TeVMuon*)zCand.daughter(0), PDGZ);
     PrintMuon((const TeVMuon*)zCand.daughter(1), PDGZ);
   }
 
-  if     (wCand.flavor() == PDGELEC) PrintElectron((const pat::Electron*)wCand.daughter(0), PDGW);
+  if     (wCand.flavor() == PDGELEC) PrintElectron((const heep::Ele*)wCand.daughter(0), PDGW);
   else if(wCand.flavor() == PDGMUON) PrintMuon    ((const TeVMuon*    )wCand.daughter(0), PDGW);
 }
 
 void
-WZAnalyzer::PrintElectron(const pat::Electron* elec, int parent){
+WZAnalyzer::PrintElectron(const heep::Ele* elec, int parent){
   if     (parent == PDGZ) cout<<"-----Electron from Z-------------------------"<<endl;
   else if(parent == PDGW) cout<<"-----Electron from W-------------------------"<<endl;
   else                    cout<<"-----Electron from ?-------------------------"<<endl;
-  cout<<" Elec Pt: "<<elec->pt()<<endl
+  cout<<" Elec Pt: "<<elec->patEle().pt()<<endl
       <<" Elec ScEt: "<<CalcElecSc(elec)<<endl //ScEt
-      <<" Elec Eta: "<<elec->eta()<<endl //Eta
-      <<" Elec SigmaNN: "<<elec->sigmaIetaIeta()<<endl //sigmaNN
-      <<" Elec dPhi: "<<elec->deltaPhiSuperClusterTrackAtVtx()<<endl //DeltaPhi
-      <<" Elec dEta: "<<elec->deltaEtaSuperClusterTrackAtVtx()<<endl //DeltaEta
-      <<" Elec HoverE: "<<elec->hadronicOverEm()<<endl// H/E
-      <<" Elec EoverP: "<<elec->eSuperClusterOverP()<<endl// E/P
-      <<" Elec WP95: "<<elec->electronID("simpleEleId95relIso")<<endl
-      <<" Elec WP90: "<<elec->electronID("simpleEleId90relIso")<<endl
-      <<" Elec WP85: "<<elec->electronID("simpleEleId85relIso")<<endl
-      <<" Elec WP80: "<<elec->electronID("simpleEleId80relIso")<<endl;
+      <<" Elec Eta: "<<elec->patEle().eta()<<endl //Eta
+      <<" Elec SigmaNN: "<<elec->patEle().sigmaIetaIeta()<<endl //sigmaNN
+      <<" Elec dPhi: "<<elec->patEle().deltaPhiSuperClusterTrackAtVtx()<<endl //DeltaPhi
+      <<" Elec dEta: "<<elec->patEle().deltaEtaSuperClusterTrackAtVtx()<<endl //DeltaEta
+      <<" Elec HoverE: "<<elec->patEle().hadronicOverEm()<<endl// H/E
+      <<" Elec EoverP: "<<elec->patEle().eSuperClusterOverP()<<endl// E/P
+      <<" Elec WP95: "<<elec->patEle().electronID("simpleEleId95relIso")<<endl
+      <<" Elec WP90: "<<elec->patEle().electronID("simpleEleId90relIso")<<endl
+      <<" Elec WP85: "<<elec->patEle().electronID("simpleEleId85relIso")<<endl
+      <<" Elec WP80: "<<elec->patEle().electronID("simpleEleId80relIso")<<endl;
 }
 
 void
@@ -790,41 +797,41 @@ WZAnalyzer::PassWptCut(){
 ////////////////////////////////
 /////////Check Electron Properties/////
 ////////////////////////////////
-bool WZAnalyzer::PassElecLooseCut(const pat::Electron* elec){
+bool WZAnalyzer::PassElecLooseCut(const heep::Ele* elec){
   for(uint i=0; i<LooseElecCutFns_.size(); ++i){
     if(!(this->*LooseElecCutFns_[i])(elec)) return false;
   }
   return true;
 }
 
-bool WZAnalyzer::PassElecTightCut(const pat::Electron* elec){
+bool WZAnalyzer::PassElecTightCut(const heep::Ele* elec){
   for(uint i=0; i<TightElecCutFns_.size(); ++i){
     if(!(this->*TightElecCutFns_[i])(elec)) return false;
   }
   return true;
 }
 
-bool WZAnalyzer::PassElecLooseEtCut(const pat::Electron* elec){
+bool WZAnalyzer::PassElecLooseEtCut(const heep::Ele* elec){
   if(debugme) cout<<"Check Electron Loose Et Cut"<<endl;
   return (CalcElecSc(elec) > minElecLooseEt);
 }//--- PassElecLooseEtCut
 
-bool WZAnalyzer::PassElecTightEtCut(const pat::Electron* elec){
+bool WZAnalyzer::PassElecTightEtCut(const heep::Ele* elec){
   if(debugme) cout<<"Check Electron Tight Et Cut"<<endl;
   return (CalcElecSc(elec) > minElecTightEt);
 }//--- PassElecTightEtCut
 
-bool WZAnalyzer::PassElecLooseWPCut(const pat::Electron* elec){
+bool WZAnalyzer::PassElecLooseWPCut(const heep::Ele* elec){
 //-----------------------------------------------------------
   if(debugme) cout<<"Check Electron WP Loose Cut"<<endl;
-  return ((int)elec->electronID("simpleEleId95relIso") & cutElecWPLooseMask) 
+  return ((int)elec->patEle().electronID("simpleEleId95relIso") & cutElecWPLooseMask) 
     == cutElecWPLooseMask;
 }//--- PassElecLooseWPCut
 
-bool WZAnalyzer::PassElecWPRelIsoCut(const pat::Electron* elec){
+bool WZAnalyzer::PassElecWPRelIsoCut(const heep::Ele* elec){
 //-----------------------------------------------------------
   if(debugme) cout<<"Check Electron WP RelIso Cut"<<endl;
-  return ((int)elec->electronID("simpleEleId80relIso") & cutWenuWPRelIsoMask) 
+  return ((int)elec->patEle().electronID("simpleEleId80relIso") & cutWenuWPRelIsoMask) 
     == cutWenuWPRelIsoMask;
 }//--- PassElecWPRelIsoElecCut
 
@@ -932,10 +939,10 @@ int WZAnalyzer::Calc_EvtType(){
 }
 
 float
-WZAnalyzer::CalcElecSc(const pat::Electron* elec){
+WZAnalyzer::CalcElecSc(const heep::Ele* elec){
   float scEt=-999.;
-  if (elec->core().isNonnull()) {
-    const reco::SuperClusterRef sc = elec->superCluster();
+  if (elec->patEle().core().isNonnull()) {
+    const reco::SuperClusterRef sc = elec->patEle().superCluster();
     scEt = sc.get()->energy() / cosh(sc.get()->eta());
   }
   return scEt;
