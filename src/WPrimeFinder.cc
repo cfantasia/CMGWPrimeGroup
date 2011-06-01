@@ -128,8 +128,10 @@ void WPrimeFinder::run()
   vector<wprime::InputFile>::iterator it;
   for(it = inputFiles.begin(); it != inputFiles.end(); ++it, ++i_sample){
     int ievt=0;  
+    cout << " Opening sample " << it->samplename << " ... ";
     fwlite::ChainEvent ev(it->pathnames);
     it->Nact_evt = ev.size();
+    cout<<" Done. The sample contains " << it->Nact_evt << " events" << endl;
   
     if(it->samplename.find("data") != string::npos)
         // Nprod_evt presumably contains the # of events before any filtering
@@ -142,7 +144,7 @@ void WPrimeFinder::run()
     
     cout << "\n Opened sample " << it->samplename << " with " << it->Nact_evt
          << " events (Input file #" << i_sample << " out of " << inputFiles.size()
-	 << " samples) " << endl;
+         << " samples) " << endl;
     
     cout << std::fixed << std::setprecision(2);
     beginFile(it);
