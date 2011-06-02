@@ -242,8 +242,15 @@ TVector2 getPtDiff(heep::Ele & e);
 
 TVector2 adjustPt(const ElectronV & electrons);
 TVector2 adjustPt(const MuonV & muons);
-TLorentzVector AdjustedMET(const ElectronV & electrons,
-                           const MuonV & muons,
-                           const pat::MET & met);
-#endif
 
+pat::MET AdjustedMET(const ElectronV & electrons,
+                            const pat::MET & met);
+
+pat::MET AdjustedMET(const MuonV & muons,
+                             const pat::MET & met);
+
+pat::MET AdjustedMET(const ElectronV & electrons,
+                     const MuonV & muons,
+                     const pat::MET & met);
+
+#endif

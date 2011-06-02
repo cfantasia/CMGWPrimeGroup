@@ -191,14 +191,33 @@ adjustPt(const MuonV & muons){
   return diff;
 }
 
-TLorentzVector
-AdjustedMET(const ElectronV & electrons,
-            const MuonV & muons,
-            const pat::MET & met){
-  TVector2 met2(met.px(), met.py());
-
-  TVector2 totalAdj = adjustPt(electrons) + adjustPt(muons);
-  
-  //How are we going to do this part!!!
-  return TLorentzVector(met2.Px(), met2.Py(), 0, met2.Mod());
+pat::MET AdjustedMET(const ElectronV & electrons,
+                     const pat::MET & met){
+  TVector2 adj = adjustPt(electrons);
+  TVector2 newmet(met.px()-adj.Px(), met.py()-adj.Py());
+  return pat::MET(reco::MET(LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), reco::MET::Point(0,0,0)));
+//Note: This should include a change of sumET for significance measurements
+//  return pat::MET(reco::MET(met.sumEt()+dSumEt, LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), reco::MET::Point(0,0,0)));
+//Note: Should the new met be wrt beamspot??, what is old met wrt?
+//  pat::MET scaledMET(reco::MET(met.sumEt()+dSumEt, reco::MET::LorentzVector(scaledMETPx, scaledMETPy, 0, sqrt(scaledMETPx*scaledMETPx+scaledMETPy*scaledMETPy)), reco::MET::Point(0,0,0)));
 }
+
+pat::MET AdjustedMET(const MuonV & muons,
+                     const pat::MET & met){
+  TVector2 adj = adjustPt(muons);
+  TVector2 newmet(met.px()-adj.Px(), met.py()-adj.Py());
+  return pat::MET(reco::MET(LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), reco::MET::Point(0,0,0)));
+//Note: This should include a change of sumET for significance measurements
+//  return pat::MET(reco::MET(met.sumEt()+dSumEt, LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), reco::MET::Point(0,0,0)));
+}
+ 
+pat::MET
+AdjustedLeptonMET(const ElectronV & electrons,
+                  const MuonV & muons,
+                  const pat::MET & met){
+  pat::MET met1 = AdjustedMET(electrons, met);
+  pat::MET met2 = AdjustedMET(muons    , met1);
+
+  return met2;
+}
+
