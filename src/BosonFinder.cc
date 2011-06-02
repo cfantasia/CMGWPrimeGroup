@@ -211,10 +211,9 @@ pat::MET AdjustedMET(const MuonV & muons,
 //  return pat::MET(reco::MET(met.sumEt()+dSumEt, LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), reco::MET::Point(0,0,0)));
 }
  
-pat::MET
-AdjustedLeptonMET(const ElectronV & electrons,
-                  const MuonV & muons,
-                  const pat::MET & met){
+pat::MET AdjustedMET(const ElectronV & electrons,
+                           const MuonV & muons,
+                           const pat::MET & met){
   pat::MET met1 = AdjustedMET(electrons, met);
   pat::MET met2 = AdjustedMET(muons    , met1);
 
