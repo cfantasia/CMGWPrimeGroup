@@ -8,7 +8,7 @@
 
 class TeVMuon : public pat::Muon{
  public:
-  TeVMuon(const pat::Muon & muon, unsigned int muReconstructor=0, bool isValid=1) :
+  TeVMuon(const pat::Muon & muon, unsigned int muReconstructor=kTEV, bool isValid=1) :
     pat::Muon(muon), muReconstructor_(muReconstructor) {p4_ = p4(isValid_);}
   ~TeVMuon(){}
   

@@ -20,23 +20,23 @@ const reco::TrackRef
 TeVMuon::GetTrack(unsigned muReconstructor) const{
   switch(muReconstructor)
   {
-  case 0:
+  case kGLOBAL:
     return globalTrack();
-  case 1:
+  case kINNER:
     return innerTrack();
-  case 2:
+  case kTPFMS:
     return tpfmsMuon();
-  case 3:
+  case kCOCKTAIL:
     return cocktailMuon();
-  case 4:
+  case kPICKY:
     return pickyMuon();
-  case 5:
+  case kTEV:
     return defaultTeVMuon();
-  case 6:
+  case kDYT:
     return dytMuon();
   }
   std::cout<<"Failed to find a track requested\n";
-  return reco::TrackRef();
+  return defaultTeVMuon();
 }
 
 double TeVMuon::pt() const {
