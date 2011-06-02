@@ -44,6 +44,7 @@ public:
                     int nbins, float min, float max,
                     TH1F* h, TFileDirectory& d);
 
+  void ClearEvtVariables();
   void ClearAndResize(vector<TH1F*>& h, int& size, TH1F* ptr=NULL);
 
   void ScaleHistos();
@@ -54,6 +55,9 @@ public:
 
   void eventLoop(edm::EventBase const & event);
   void Tabulate_Me(int& cut_index,const float& weight);
+  void CalcZVariables();
+  void CalcWVariables();
+  void CalcWZVariables();
   void CalcEventVariables();
   bool PassCuts(const float& weight=1.);
 
@@ -78,10 +82,12 @@ public:
 //methods for the cuts
   bool PassNoCut();
   bool PassTriggersCut();
+  bool PassNLeptonsCut();
   bool PassValidWCut();
   bool PassValidZCut();
   bool PassValidWandZCut();
   bool PassValidWZCandCut();
+  bool PassLeadingLeptonPtCut();
   bool PassNumberOfZsCut();
   bool PassWptCut();
   bool PassZptCut();
@@ -176,21 +182,22 @@ public:
 
   WPrimeUtil * wprimeUtil_;
   
-  int muonAlgo_;
+  uint muonAlgo_;
 
 ///My calculated qualities//////////////////
   float Ht;
   float Q;
-  int   evtType;
-  int numZs;
+  uint evtType;
+  uint numZs;
   float LeadPt;
   float LeadElecPt;
   float LeadMuonPt;
   bool TT, TF;
 
 // +++++++++++++++++++General Cut values
-  int maxNumZs;
-  int minNumLeptons;
+  uint maxNumZs;
+  uint minNLeptons;
+  float minLeadPt;
   float minMET;
 
 // +++++++++++++++++++Ht Cuts
@@ -202,6 +209,8 @@ public:
 
   float maxWmunuCombRelIso;
   int   cutWenuWPRelIsoMask;
+  string cutElecWPTightType;
+  float minDeltaR_;
 
 // +++++++++++++++++++Z Cuts
   float minZpt;
@@ -213,6 +222,7 @@ public:
   float minElecLooseEt;
   float minElecTightEt;
   int cutElecWPLooseMask;
+  string cutElecWPLooseType;
   std::vector<double> maxElecSigmaiEtaiEta;
   std::vector<double> maxElecDeltaPhiIn;
   std::vector<double> maxElecDeltaEtaIn;
@@ -231,7 +241,8 @@ public:
   int minMuonHitsUsed;
 
 //////Chosen Candidates
-  float minDeltaR_;
+  ElectronV electrons_, looseElectrons_, tightElectrons_;
+  MuonV muons_, looseMuons_, tightMuons_;
   pat::MET met;
   ZCandidate zCand;
   WCandidate wCand;

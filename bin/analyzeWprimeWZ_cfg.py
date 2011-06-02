@@ -31,7 +31,7 @@ process.WprimeAnalyzer = cms.PSet(
     reportAfter = cms.uint32(5000),                     ## optional
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_WZ.txt"),
-    debugme = cms.bool(False),
+    debugme = cms.bool(True),
     preselect = cms.bool(True),
     LogFile = cms.string("Wprime_event_counts.txt"),
     CandEvtFile = cms.string("Wprime_CandEvts.txt"),
@@ -51,8 +51,8 @@ process.WprimeAnalyzer = cms.PSet(
     pileupTag  = cms.string('addPileupInfo'),
     inputs = process.inputs,
 
-    muonAlgo = cms.int32(0),
-    minDeltaR = cms.double(0.05),
+    muonAlgo = cms.uint32(0),
+    minDeltaR = cms.double(0.1),
 
     triggersToUse = cms.vstring("HLT_Mu9",
                                 "HLT_Mu11",
@@ -76,11 +76,12 @@ process.WprimeAnalyzer = cms.PSet(
 
     Cuts = cms.vstring("NoCuts", 
                        "HLT", 
+                       "NLeptons",
                        "ValidWandZ", 
                        "ValidWZCand",
+                       "LeadLepPt",
                        "NumZs", 
                        "ZMass", 
-                       #"WTransMass", 
                        "MET",
                        "Ht", 
                        "Zpt", 
@@ -107,52 +108,55 @@ process.WprimeAnalyzer = cms.PSet(
 
 ####################
 
-# +++++++++++++++++++General Cut values
-  maxNumZs = cms.int32(2),
-  minNumLeptons = cms.int32(3),
-  minMET = cms.double(30.),
-
-# +++++++++++++++++++Ht Cuts
-  minHt = cms.double(190.),#150 for TC300), 190 for W'400
-
-# +++++++++++++++++++W Cuts
-  minWtransMass = cms.double(0.),#Cory: Removed cut
-  minWpt = cms.double(110.),#90 for TC300), 110 for W'400
-
-  maxWmunuCombRelIso = cms.double(0.15),
-
-  cutWenuWPRelIsoMask = cms.int32(2),#Cory: Iso only
-
-  maxWenuTrkRelIso   = cms.vdouble(0.30,0.20),
-  maxWenuECalRelIso  = cms.vdouble(0.20,0.15),
-  maxWenuHCalRelIso  = cms.vdouble(0.15,0.12),
-
-# +++++++++++++++++++Z Cuts
-  minZpt =  cms.double(110.),#90 for TC300), 110 for W'400
-  minZmass =  cms.double(80.),
-  maxZmass =  cms.double(100.),
-
-# +++++++++++++++++++Electron General Cuts
-#VBTF Recommended Cuts
-  minElecLooseEt = cms.double(10.),
-  minElecTightEt = cms.double(20.),
-  cutElecWPLooseMask = cms.int32(5),#Cory: No Iso
-
-  maxElecSigmaiEtaiEta = cms.vdouble(0.01,0.03),
-  maxElecDeltaPhiIn  = cms.vdouble(0.08,0.7),
-  maxElecDeltaEtaIn  = cms.vdouble(0.007,0.01),
-  maxElecHOverE      = cms.vdouble(0.15,0.07),
-
-# +++++++++++++++++++Muon General Cuts
-  maxMuonEta = cms.double(2.5),
-  minMuonLoosePt = cms.double(10.),
-  minMuonTightPt = cms.double(20.),
-#VBTF Recommended Cuts
-  maxMuonDxy = cms.double(0.2),
-  maxMuonNormChi2 = cms.double(10.),
-  minMuonNPixHit = cms.int32(0),
-  minMuonNTrkHit = cms.int32(10),
-  minMuonStations = cms.int32(1),
-  minMuonHitsUsed = cms.int32(0),
-)
+    # +++++++++++++++++++General Cut values
+    maxNumZs = cms.uint32(2),
+    minNLeptons = cms.uint32(2),
+    minLeadPt = cms.double(35.),
+    minMET = cms.double(30.),
+    
+    # +++++++++++++++++++Ht Cuts
+    minHt = cms.double(190.),#150 for TC300), 190 for W'400
+    
+    # +++++++++++++++++++W Cuts
+    minWtransMass = cms.double(0.),#Cory: Removed cut
+    minWpt = cms.double(110.),#90 for TC300), 110 for W'400
+    
+    maxWmunuCombRelIso = cms.double(0.15),
+    
+    cutWenuWPRelIsoMask = cms.int32(2),#Cory: Iso only
+    cutElecWPTightType = cms.string("simpleEleId80relIso"),
+    
+    maxWenuTrkRelIso   = cms.vdouble(0.30,0.20),
+    maxWenuECalRelIso  = cms.vdouble(0.20,0.15),
+    maxWenuHCalRelIso  = cms.vdouble(0.15,0.12),
+    
+    # +++++++++++++++++++Z Cuts
+    minZpt =  cms.double(110.),#90 for TC300), 110 for W'400
+    minZmass =  cms.double(80.),
+    maxZmass =  cms.double(100.),
+    
+    # +++++++++++++++++++Electron General Cuts
+    #VBTF Recommended Cuts
+    minElecLooseEt = cms.double(10.),
+    minElecTightEt = cms.double(20.),
+    cutElecWPLooseMask = cms.int32(5),#Cory: No Iso
+    cutElecWPLooseType = cms.string("simpleEleId95relIso"),
+    
+    maxElecSigmaiEtaiEta = cms.vdouble(0.01,0.03),
+    maxElecDeltaPhiIn  = cms.vdouble(0.08,0.7),
+    maxElecDeltaEtaIn  = cms.vdouble(0.007,0.01),
+    maxElecHOverE      = cms.vdouble(0.15,0.07),
+    
+    # +++++++++++++++++++Muon General Cuts
+    maxMuonEta = cms.double(2.5),
+    minMuonLoosePt = cms.double(10.),
+    minMuonTightPt = cms.double(20.),
+    #VBTF Recommended Cuts
+    maxMuonDxy = cms.double(0.2),
+    maxMuonNormChi2 = cms.double(10.),
+    minMuonNPixHit = cms.int32(0),
+    minMuonNTrkHit = cms.int32(10),
+    minMuonStations = cms.int32(1),
+    minMuonHitsUsed = cms.int32(0),
+    )
 
