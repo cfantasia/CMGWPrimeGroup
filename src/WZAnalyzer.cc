@@ -605,15 +605,21 @@ void
 WZAnalyzer::PrintEventFull(edm::EventBase const & event){
   PrintEvent(event);
   if     (zCand.flavor() == PDGELEC){
-    PrintElectron((const heep::Ele*)zCand.daughter(0), PDGZ);
-    PrintElectron((const heep::Ele*)zCand.daughter(1), PDGZ);
+    heep::Ele ze1 = heep::Ele(*(pat::Electron*)zCand.daughter(0));
+    heep::Ele ze2 = heep::Ele(*(pat::Electron*)zCand.daughter(0));
+    PrintElectron(&ze1, PDGZ);
+    PrintElectron(&ze2, PDGZ);
+//    PrintElectron((const heep::Ele*)zCand.daughter(0), PDGZ);
+//    PrintElectron((const heep::Ele*)zCand.daughter(1), PDGZ);
   }else if(zCand.flavor() == PDGMUON){
     PrintMuon((const TeVMuon*)zCand.daughter(0), PDGZ);
     PrintMuon((const TeVMuon*)zCand.daughter(1), PDGZ);
   }
 
-  if     (wCand.flavor() == PDGELEC) PrintElectron((const heep::Ele*)wCand.daughter(0), PDGW);
-  else if(wCand.flavor() == PDGMUON) PrintMuon    ((const TeVMuon*    )wCand.daughter(0), PDGW);
+  if     (wCand.flavor() == PDGELEC){
+    heep::Ele we = heep::Ele(*(pat::Electron*)wCand.daughter(0));
+    PrintElectron(&we, PDGW);
+  }else if(wCand.flavor() == PDGMUON) PrintMuon    ((const TeVMuon*    )wCand.daughter(0), PDGW);
 }
 
 void
@@ -621,15 +627,16 @@ WZAnalyzer::PrintElectron(const heep::Ele* elec, int parent){
   if     (parent == PDGZ) cout<<"-----Electron from Z-------------------------"<<endl;
   else if(parent == PDGW) cout<<"-----Electron from W-------------------------"<<endl;
   else                    cout<<"-----Electron from ?-------------------------"<<endl;
+  cout<<" Elec ScEt: "<<elec->et()<<endl; //ScEt
+  if(!elec->isPatEle()) return;
   cout<<" Elec Pt: "<<elec->patEle().pt()<<endl
-      <<" Elec ScEt: "<<CalcElecSc(elec)<<endl //ScEt
       <<" Elec Eta: "<<elec->patEle().eta()<<endl //Eta
       <<" Elec SigmaNN: "<<elec->patEle().sigmaIetaIeta()<<endl //sigmaNN
       <<" Elec dPhi: "<<elec->patEle().deltaPhiSuperClusterTrackAtVtx()<<endl //DeltaPhi
       <<" Elec dEta: "<<elec->patEle().deltaEtaSuperClusterTrackAtVtx()<<endl //DeltaEta
       <<" Elec HoverE: "<<elec->patEle().hadronicOverEm()<<endl// H/E
-      <<" Elec EoverP: "<<elec->patEle().eSuperClusterOverP()<<endl// E/P
-      <<" Elec WP95: "<<elec->patEle().electronID("simpleEleId95relIso")<<endl
+      <<" Elec EoverP: "<<elec->patEle().eSuperClusterOverP()<<endl;// E/P
+  cout<<" Elec WP95: "<<elec->patEle().electronID("simpleEleId95relIso")<<endl
       <<" Elec WP90: "<<elec->patEle().electronID("simpleEleId90relIso")<<endl
       <<" Elec WP85: "<<elec->patEle().electronID("simpleEleId85relIso")<<endl
       <<" Elec WP80: "<<elec->patEle().electronID("simpleEleId80relIso")<<endl;
@@ -813,12 +820,12 @@ bool WZAnalyzer::PassElecTightCut(const heep::Ele* elec){
 
 bool WZAnalyzer::PassElecLooseEtCut(const heep::Ele* elec){
   if(debugme) cout<<"Check Electron Loose Et Cut"<<endl;
-  return (CalcElecSc(elec) > minElecLooseEt);
+  return (elec->et() > minElecLooseEt);
 }//--- PassElecLooseEtCut
 
 bool WZAnalyzer::PassElecTightEtCut(const heep::Ele* elec){
   if(debugme) cout<<"Check Electron Tight Et Cut"<<endl;
-  return (CalcElecSc(elec) > minElecTightEt);
+  return (elec->et() > minElecTightEt);
 }//--- PassElecTightEtCut
 
 bool WZAnalyzer::PassElecLooseWPCut(const heep::Ele* elec){
