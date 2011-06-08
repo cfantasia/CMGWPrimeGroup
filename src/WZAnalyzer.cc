@@ -755,7 +755,7 @@ bool WZAnalyzer::PassTriggersCut()
 //      if(SameTrigger(A,B)){
       if(SameTrigger(A, triggersToUse_[j])){
 //      if(SameTrigger(acceptedPaths[i]->name(), triggersToUse_[j])){
-        if(debugme) cout<<"Match A: "<<acceptedPaths[i]->name()<< " B: "<<triggersToUse_[j]<<endl;
+        if(debugme) cout<<"Match A: "<<acceptedPaths[i]->name()<<" B: "<<triggersToUse_[j]<<endl;
         if(acceptedPaths[i]->prescale() == 1  && acceptedPaths[i]->wasAccept()) return true;
         break;
       }
@@ -771,24 +771,27 @@ WZAnalyzer::PassNLeptonsCut(){
 
 bool
 WZAnalyzer::PassValidWandZCut(){
+  if(!zCand_) CalcZVariables();
+  if(!wCand_) CalcWVariables();
+  CalcEventVariables();
+  
   return PassValidZCut() && PassValidWCut();
 }
 
 bool
 WZAnalyzer::PassValidWCut(){
-  CalcWVariables();
+  if(!wCand_) CalcWVariables();
   return wCand_ && wCand_.mt()>0;
 }
 
 bool
 WZAnalyzer::PassValidZCut(){
-  CalcZVariables();
+  if(!zCand_) CalcZVariables();
   return zCand_ && zCand_.mass()>0.;
 }
 
 bool
 WZAnalyzer::PassValidWZCandCut(){
-  CalcEventVariables();
   CalcWZVariables();
   return wzCand_.mass("minPz")>0.;
 }
