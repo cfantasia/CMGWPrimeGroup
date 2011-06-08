@@ -62,6 +62,7 @@ class BosonCandidate : public reco::CompositeCandidate {
       return abs(daughter(0)->pdgId());
     return 0;
   }
+  bool isLeptonic() const {return leptonic_;}
   operator bool() const {
     return (numberOfDaughters() > 0);
   }
@@ -77,23 +78,33 @@ class BosonCandidate : public reco::CompositeCandidate {
     if (mom) return mom->pdgId();
     return 0;
   }
+  bool leptonic_;
 };
 
 class ZCandidate : public BosonCandidate {
  public:
-  ZCandidate() {genLepton1_ = genLepton2_ = 0;}
+  ZCandidate() {genLepton1_ = genLepton2_ = 0; leptonic_ = false;}
   ZCandidate(const heep::Ele & p1, const heep::Ele & p2) {
     genLepton1_ = p1.patEle().genLepton();
     genLepton2_ = p2.patEle().genLepton();
     addDaughters(p1.patEle(), p2.patEle());
+    leptonic_ = true;
   }
   ZCandidate(const TeVMuon & p1, const TeVMuon & p2) {
     genLepton1_ = p1.genLepton();
     genLepton2_ = p2.genLepton();
     addDaughters(p1, p2);
+    leptonic_ = true;
   }
+  ZCandidate(const pat::Jet & jet) {
+    addDaughter(jet);
+    AddFourMomenta addP4;
+    addP4.set(* this);
+    leptonic_ = false;
+ }
   const reco::Candidate * genLepton1() const {return genLepton1_;}  
   const reco::Candidate * genLepton2() const {return genLepton2_;}
+  const reco::Candidate * jet() const {return daughter(0);}
   int genMotherId1() const {return findGenMotherId(genLepton1_);}
   int genMotherId2() const {return findGenMotherId(genLepton2_);}
  private:
@@ -103,18 +114,27 @@ class ZCandidate : public BosonCandidate {
 
 class WCandidate : public BosonCandidate {
  public:
-  WCandidate() {genLepton_ = 0;}
+  WCandidate() {genLepton_ = 0; leptonic_ = false;}
   WCandidate(const heep::Ele & lepton, const reco::Candidate & met) {
     genLepton_ = lepton.patEle().genLepton();
     addDaughters(lepton.patEle(), met);
+    leptonic_ = true;
   }
   WCandidate(const TeVMuon & lepton, const reco::Candidate & met) {
     genLepton_ = lepton.genLepton();
     addDaughters(lepton, met);
+    leptonic_ = true;
   }
+  WCandidate(const pat::Jet & jet) {
+    addDaughter(jet);
+    AddFourMomenta addP4;
+    addP4.set(* this);
+    leptonic_ = false;
+ }
   const reco::Candidate * lepton() const {return daughter(0);}
   const reco::Candidate * met() const {return daughter(1);}
   const reco::Candidate * genLepton() const {return genLepton_;}
+  const reco::Candidate * jet() const {return daughter(0);}
   int genMotherId() const {return findGenMotherId(genLepton_);}
   double mt() const {
     double dphi = 1 - cos(reco::deltaPhi(lepton()->phi(), met()->phi()));
