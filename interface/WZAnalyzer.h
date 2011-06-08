@@ -64,6 +64,7 @@ public:
   void PrintEventToFile(edm::EventBase const & event);
   void PrintEvent(edm::EventBase const & event);
   void PrintEventFull(edm::EventBase const & event);
+  void PrintTrigger();
   void PrintElectron(const heep::Ele* elec, int parent);
   void PrintMuon(const TeVMuon* mu, int parent);
   double CalcLeadPt(int type=0);
@@ -173,10 +174,8 @@ public:
   std::map<std::string, int> intOptions_;
   std::map<std::string, std::string> stringOptions_;
   std::vector<std::string> filenames_;
-  std::string datasetName;
   
 // +++++++++++++++++++location of data files and samples info
-  std::string top_level_dir;
   ofstream outCandEvt;
   ofstream outLogFile;
 
@@ -185,68 +184,68 @@ public:
   uint muonAlgo_;
 
 ///My calculated qualities//////////////////
-  float Ht;
-  float Q;
-  uint evtType;
-  uint numZs;
-  float LeadPt;
-  float LeadElecPt;
-  float LeadMuonPt;
+  float Ht_;
+  float Q_;
+  uint evtType_;
+  uint numZs_;
+  float LeadPt_;
+  float LeadElecPt_;
+  float LeadMuonPt_;
   bool TT, TF;
 
 // +++++++++++++++++++General Cut values
-  uint maxNumZs;
-  uint minNLeptons;
-  float minLeadPt;
-  float minMET;
+  uint maxNumZs_;
+  uint minNLeptons_;
+  float minLeadPt_;
+  float minMET_;
 
 // +++++++++++++++++++Ht Cuts
-  float minHt;
+  float minHt_;
 
 // +++++++++++++++++++W Cuts
-  float minWtransMass;
-  float minWpt;
+  float minWtransMass_;
+  float minWpt_;
 
-  float maxWmunuCombRelIso;
-  int   cutWenuWPRelIsoMask;
-  string cutElecWPTightType;
+  float maxWmunuCombRelIso_;
+  int   cutWenuWPRelIsoMask_;
+  string cutElecWPTightType_;
   float minDeltaR_;
 
 // +++++++++++++++++++Z Cuts
-  float minZpt;
-  float minZmass;
-  float maxZmass;
+  float minZpt_;
+  float minZmass_;
+  float maxZmass_;
 
 // +++++++++++++++++++Electron General Cuts
 //VBTF Recommended Cuts
-  float minElecLooseEt;
-  float minElecTightEt;
-  int cutElecWPLooseMask;
-  string cutElecWPLooseType;
-  std::vector<double> maxElecSigmaiEtaiEta;
-  std::vector<double> maxElecDeltaPhiIn;
-  std::vector<double> maxElecDeltaEtaIn;
-  std::vector<double> maxElecHOverE    ;
+  float minElecLooseEt_;
+  float minElecTightEt_;
+  int cutElecWPLooseMask_;
+  string cutElecWPLooseType_;
+  std::vector<double> maxElecSigmaiEtaiEta_;
+  std::vector<double> maxElecDeltaPhiIn_;
+  std::vector<double> maxElecDeltaEtaIn_;
+  std::vector<double> maxElecHOverE_    ;
 
 // +++++++++++++++++++Muon General Cuts
-  float maxMuonEta;
-  float minMuonLoosePt;
-  float minMuonTightPt;
+  float maxMuonEta_;
+  float minMuonLoosePt_;
+  float minMuonTightPt_;
 //VBTF Recommended Cuts
-  float maxMuonDxy;
-  float maxMuonNormChi2;
-  int minMuonNPixHit;
-  int minMuonNTrkHit;
-  int minMuonStations;
-  int minMuonHitsUsed;
+  float maxMuonDxy_;
+  float maxMuonNormChi2_;
+  int minMuonNPixHit_;
+  int minMuonNTrkHit_;
+  int minMuonStations_;
+  int minMuonHitsUsed_;
 
 //////Chosen Candidates
   ElectronV electrons_, looseElectrons_, tightElectrons_;
   MuonV muons_, looseMuons_, tightMuons_;
-  pat::MET met;
-  ZCandidate zCand;
-  WCandidate wCand;
-  WZCandidate wzCand;
+  pat::MET met_;
+  ZCandidate zCand_;
+  WCandidate wCand_;
+  WZCandidate wzCand_;
   pat::TriggerEvent triggerEvent_; 
   std::vector< PileupSummaryInfo > PupInfo_; 
   std::vector<float> Num_surv_cut_;
