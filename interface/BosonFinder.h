@@ -114,34 +114,37 @@ class ZCandidate : public BosonCandidate {
 
 class WCandidate : public BosonCandidate {
  public:
-  WCandidate() {genLepton_ = 0; leptonic_ = false;}
+  WCandidate() {genLepton_ = 0; leptonic_ = false; mt_ = -999.9;}
   WCandidate(const heep::Ele & lepton, const reco::Candidate & met) {
     genLepton_ = lepton.patEle().genLepton();
     addDaughters(lepton.patEle(), met);
     leptonic_ = true;
+    double dphi = 1 - cos(reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi()));
+    mt_ = sqrt(2 * daughter(0)->et() * daughter(1)->et() * dphi);
   }
   WCandidate(const TeVMuon & lepton, const reco::Candidate & met) {
     genLepton_ = lepton.genLepton();
     addDaughters(lepton, met);
     leptonic_ = true;
+    double dphi = 1 - cos(reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi()));
+    mt_ = sqrt(2 * daughter(0)->et() * daughter(1)->et() * dphi);
   }
   WCandidate(const pat::Jet & jet) {
     addDaughter(jet);
     AddFourMomenta addP4;
     addP4.set(* this);
     leptonic_ = false;
+    mt_ = -999.9;
  }
   const reco::Candidate * lepton() const {return daughter(0);}
   const reco::Candidate * met() const {return daughter(1);}
   const reco::Candidate * genLepton() const {return genLepton_;}
   const reco::Candidate * jet() const {return daughter(0);}
   int genMotherId() const {return findGenMotherId(genLepton_);}
-  double mt() const {
-    double dphi = 1 - cos(reco::deltaPhi(lepton()->phi(), met()->phi()));
-    return sqrt(2 * met()->et() * lepton()->et() * dphi);
-  }
+  double mt() const { return mt_;}
  private:
   const reco::Candidate * genLepton_;
+  double mt_;
 };
 
 class WZCandidate {
@@ -257,6 +260,7 @@ WCandidate getWCand(const ElectronV & electrons,
                     const pat::MET & met);
 WCandidate getWCand(const MuonV & muons, 
                     const pat::MET & met);
+WCandidate getWCand(const JetV & jets);
 
 TVector2 getPtDiff(heep::Ele & e);
 
