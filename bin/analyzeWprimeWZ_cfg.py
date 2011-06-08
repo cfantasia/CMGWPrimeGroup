@@ -31,7 +31,7 @@ process.WprimeAnalyzer = cms.PSet(
     reportAfter = cms.uint32(5000),                     ## optional
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_WZ.txt"),
-    debugme = cms.bool(True),
+    debugme = cms.bool(False),
     preselect = cms.bool(True),
     LogFile = cms.string("Wprime_event_counts.txt"),
     CandEvtFile = cms.string("Wprime_CandEvts.txt"),
@@ -57,10 +57,16 @@ process.WprimeAnalyzer = cms.PSet(
     triggersToUse = cms.vstring("HLT_Mu9",
                                 "HLT_Mu11",
                                 "HLT_Mu15_v*",
+                                'HLT_Mu17_v*',
                                 "HLT_Mu20_v*",
                                 "HLT_Mu24_v*",
                                 "HLT_Mu30_v*",
-                                
+
+                                'HLT_DoubleMu5_v*',
+                                'HLT_DoubleMu7_v*',
+                                'HLT_Mu13_Mu8_v*', #1e33 unprescaled
+                                'HLT_TripleMu5_v*',
+
                                 "HLT_Ele15_LW_L1R",
                                 "HLT_Ele15_SW_L1R",
                                 "HLT_Ele15_SW_CaloEleId_L1R",
@@ -70,6 +76,10 @@ process.WprimeAnalyzer = cms.PSet(
                                 "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*",
                                 "HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*",
                                 "HLT_Ele45_CaloIdVT_TrkIdT_v*",
+
+                                'HLT_DoubleEle17_SW_L1R_v*',
+                                'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
+                                'HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v*'
 
                                 ),
 
