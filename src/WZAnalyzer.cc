@@ -374,7 +374,7 @@ void
 WZAnalyzer::CalcEventVariables(){
   if (debugme) cout<<"In Calc Event Variables\n";
   evtType_ = (zCand_ && wCand_) ? Calc_EvtType() : -999;
-  LeadPt_ = CalcLeadPt();
+  LeadPt_ = CalcLeadPt(); 
   LeadElecPt_ = CalcLeadPt(PDGELEC);
   LeadMuonPt_ = CalcLeadPt(PDGMUON);
 //  TT = TF = false;
@@ -1026,6 +1026,8 @@ WZAnalyzer::ClearEvtVariables(){
   LeadPt_ = -999;
   LeadElecPt_ = -999;
   LeadMuonPt_ = -999;
+  Ht_= -999;
+  Q_ = -999;
 }
 
 void WZAnalyzer::ClearAndResize(vector<TH1F*>& h, int& size, TH1F* ptr){
