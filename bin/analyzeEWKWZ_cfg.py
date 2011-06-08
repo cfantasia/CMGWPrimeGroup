@@ -26,15 +26,15 @@ process.WprimeAnalyzer = cms.PSet(
     ## common input for wrapped analyzers
     fileNames   = cms.vstring(),  ## keep empty!
    # fileNames   = cms.vstring('file:patTuple.root'),  ## mandatory
-    outputFile  = cms.string('Wprime_analysis.root'),## mandatory
+    outputFile  = cms.string('EWKWZ_analysis.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
     reportAfter = cms.uint32(5000),                     ## optional
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_WZ.txt"),
     debugme = cms.bool(False),
     preselect = cms.bool(True),
-    LogFile = cms.string("Wprime_event_counts.txt"),
-    CandEvtFile = cms.string("Wprime_CandEvts.txt"),
+    LogFile = cms.string("EWKWZ_event_counts.txt"),
+    CandEvtFile = cms.string("EWKWZ_CandEvts.txt"),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(False),
     runElMETAnalysis = cms.bool(False),
