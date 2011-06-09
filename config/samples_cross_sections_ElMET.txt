@@ -1,59 +1,61 @@
+integrated lumi = 251.56 pb^-1
+
 samplename = data
-description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
+description = Electron pt > 25 GeV skim, v1
 x-section = 1
 pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part1.root
 Nprod_evt = 1
 
 samplename = data2
-description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
+description = Electron pt > 25 GeV skim, v1
 x-section = 1
 pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part2.root
 Nprod_evt = 1
 
 samplename = data2b
-description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
+description = Electron pt > 25 GeV skim, v1
 x-section = 1
 pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part2b.root
 Nprod_evt = 1
 
 samplename = data3
-description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
+description = Electron pt > 25 GeV skim, v1
 x-section = 1
 pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part3.root
 Nprod_evt = 1
 
 samplename = data3b
-description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
+description = Electron pt > 25 GeV skim, v1
 x-section = 1
 pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part3b.root
 Nprod_evt = 1
 
 samplename = data4
-description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
+description = Electron pt > 25 GeV skim, v1
 x-section = 1
 pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part4.root
 Nprod_evt = 1
 
 samplename = data4b
-description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
+description = Electron pt > 25 GeV skim, v1
 x-section = 1
 pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part4b.root
 Nprod_evt = 1
 
 samplename = data4c
-description = Electron pt > 25 GeV skim, 251.56 pb^-1, v1
+description = Electron pt > 25 GeV skim, v1
 x-section = 1
 pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part4001.root
 Nprod_evt = 1
 
 samplename = data5
-description = Electron pt > 25 GeV skim, 251.56 pb^-1, PR v4
+description = Electron pt > 25 GeV skim, PR v4
 x-section = 1
 pathname = SingleElectron_PromptReco_V4_upToRun166011.root
 Nprod_evt = 1
 
 samplename = data5b
-description = Electron pt > 25 GeV skim, 251.56 pb^-1, PR v4
+description = Electron pt > 25 GeV skim, PR v4
 x-section = 1
 pathname = SingleElectron_PromptReco_V4_upToRun166011_001.root
 Nprod_evt = 1
