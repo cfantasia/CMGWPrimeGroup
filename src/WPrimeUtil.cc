@@ -93,7 +93,6 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
     if(new_line.find("samplename = ") != string::npos)
       // new file found! create structure to put in info
       new_file = new wprime::InputFile();
-    cout<<"TESTING\n";
     if(!new_line.empty())
       parseLine(new_line, new_file);
     else{ //Empty line means the end of a sample
