@@ -1,16 +1,58 @@
 samplename = data
-description = Single E+Mu, 192.0 pb^-1
+description = E+Mu, 349.0 pb^-1
 x-section = 1
-pathname = /pnfs/cms/WAX/11/store/user/fantasia/41X/MultileptonPatTupleV05-04-01H-SingleMu2011A/TrileptonPatTuple_9_1_aq3.root
+pathname = filelists_WZ/TrileptonPatTuple-B05-06-03-SingleLepton2011A.txt
 Nprod_evt = 9999999
+
+DONE
+
+samplename = WprimeToWZTo3LNu_M-300
+description = WprimeToWZTo3LNu_M-300
+x-section = 0.2756
+pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-300_7TeV-pythia6.txt
+Nprod_evt = 10000
+
+samplename = WprimeToWZTo3LNu_M-400
+description = WprimeToWZTo3LNu_M-400
+x-section = 0.08887
+pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-400_7TeV-pythia6.txt
+Nprod_evt = 10000
+
+samplename = WprimeToWZTo3LNu_M-500
+description = WprimeToWZTo3LNu_M-500
+x-section = 0.03567
+pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-500_7TeV-pythia6.txt
+Nprod_evt = 10000
+
+samplename = WprimeToWZTo3LNu_M-600
+description = WprimeToWZTo3LNu_M-600
+x-section = 0.01537
+pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-600_7TeV-pythia6.txt
+Nprod_evt = 10000
+
+samplename = WprimeToWZTo3LNu_M-700
+description = WprimeToWZTo3LNu_M-700
+x-section = 0.007821
+pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-700_7TeV-pythia6.txt
+Nprod_evt = 10000
+
+samplename = WprimeToWZTo3LNu_M-800
+description = WprimeToWZTo3LNu_M-800
+x-section = 0.004393
+pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-800_7TeV-pythia6.txt
+Nprod_evt = 10000
+
+samplename = WprimeToWZTo3LNu_M-900
+description = WprimeToWZTo3LNu_M-900
+x-section = 0.002329
+pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-900_7TeV-pythia6.txt
+Nprod_evt = 10000
 
 samplename = DYToEE
 description = DYToEE
 x-section = 1614
 pathname = filelists_WZ/TrileptonPatTupleV05-04-00-DYToEE_M-20_TuneZ2_7TeV-pythia6.txt
 Nprod_evt = 2059987
-
-DONE
 
 samplename = DYToMuMu
 description = DYToMuMu
@@ -60,57 +102,7 @@ x-section = 4.297
 pathname = filelists_WZ/TrileptonPatTupleV05-04-00-ZZtoAnything_TuneZ2_7TeV-pythia6-tauola.txt
 Nprod_evt = 2108608
 
-samplename = WprimeToWZTo3LNu_M-300
-description = WprimeToWZTo3LNu_M-300
-x-section = 0.2756
-pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-300_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WprimeToWZTo3LNu_M-400
-description = WprimeToWZTo3LNu_M-400
-x-section = 0.08887
-pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-400_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WprimeToWZTo3LNu_M-500
-description = WprimeToWZTo3LNu_M-500
-x-section = 0.03567
-pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-500_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WprimeToWZTo3LNu_M-600
-description = WprimeToWZTo3LNu_M-600
-x-section = 0.01537
-pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-600_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WprimeToWZTo3LNu_M-700
-description = WprimeToWZTo3LNu_M-700
-x-section = 0.007821
-pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-700_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WprimeToWZTo3LNu_M-800
-description = WprimeToWZTo3LNu_M-800
-x-section = 0.004393
-pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-800_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WprimeToWZTo3LNu_M-900
-description = WprimeToWZTo3LNu_M-900
-x-section = 0.002329
-pathname = filelists_WZ/TrileptonPatTupleV05-04-00-WprimeToWZTo3LNu_M-900_7TeV-pythia6.txt
-Nprod_evt = 10000
-
 DONE
-
-samplename = data
-description = Single E+Mu, 192.0 pb^-1
-x-section = 1
-pathname = filelists_WZ/TrileptonPatTupleV05-04-01J-SingleMu2011A.txt
-pathname = filelists_WZ/TrileptonPatTupleV05-04-01GIJ-2011A.txt
-Nprod_evt = 9999999
-
 
 ###
 sample LO (NLO)
@@ -123,30 +115,3 @@ DYToMM (1614)
 
 Taken from
 https://twiki.cern.ch/twiki/bin/viewauth/CMS/MCBackgroundList
-
-##Testing
-samplename = WprimeToWZTo3LNu_M-900
-description = WprimeToWZTo3LNu_M-900
-x-section = 2321
-pathname = TrileptonPatTuple_9.root
-Nprod_evt = 2329439
-
-DONE
-samplename = data
-description = Single E+Mu, 192.0 pb^-1
-x-section = 1
-pathname = filelists_WZ/TrileptonPatTupleV05-04-01GIJ-2011A.txt
-Nprod_evt = 9999999
-
-samplename = WprimeToWZTo3LNu_M-900
-description = WprimeToWZTo3LNu_M-900
-x-section = 2321
-pathname = TrileptonPatTuple_9.root
-Nprod_evt = 2329439
-
-samplename = DYToEE
-description = DYToEE
-x-section = 1614
-pathname = TrileptonPatTupleV05-04-00-FA67D774-624E-E011-8CD5-00215E221C7A.root
-Nprod_evt = 2059987
-
