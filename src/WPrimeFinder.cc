@@ -177,6 +177,7 @@ void WPrimeFinder::run()
     endFile(it);
     
   } // loop over input files
+  cout<<"Done with Input Samples\n";
 
   wprimeUtil->getFileService()->cd(); 
   TH1F * h = new TH1F("lumi_ipb", "Integrated luminosity in pb^{-1}", 1, 0, 1);
