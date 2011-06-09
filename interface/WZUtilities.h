@@ -208,6 +208,24 @@ public:
 
 
 
+/// Selector for jets based on params
+class JetSelector : public MinMaxSelector<pat::Jet> {
+public:
+  JetSelector() {}
+  JetSelector(PSet pset, string selectorName) {
+    PSet const params = pset.getParameter<PSet>(selectorName);
+    // Set the last parameter to false to turn off the cut
+    loadFromPset<double>(params, "minPt", true);
+    loadFromPset<double>(params, "maxEta", true);
+  }
+  virtual bool operator()(const pat::Jet & p, pat::strbitset & ret) {
+    ret.set(false);
+    setPassCut("minPt", p.pt(), ret);
+    setPassCut("maxEta", p.eta(), ret);
+    setIgnored(ret);
+    return (bool) ret;
+  }
+};
 
 //////// Functions ///////////////////////////////////////////////////////////
 
