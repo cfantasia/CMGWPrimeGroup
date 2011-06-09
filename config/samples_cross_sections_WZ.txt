@@ -1,5 +1,7 @@
+integrated lumi = 349.0 pb^-1
+
 samplename = data
-description = E+Mu, 349.0 pb^-1
+description = E+Mu
 x-section = 1
 pathname = filelists_WZ/TrileptonPatTuple-B05-06-03-SingleLepton2011A.txt
 Nprod_evt = 9999999
