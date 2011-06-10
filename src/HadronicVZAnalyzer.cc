@@ -9,8 +9,8 @@ HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil
   wprimeUtil_ = wprimeUtil;
   assert(wprimeUtil_);
 
-  SetLogFile(cfg.getParameter<string>("LogFile"));
-  SetCandEvtFile(cfg.getParameter<string>("CandEvtFile"));
+  SetLogFile(cfg.getParameter<string>("logFile"));
+  SetCandEvtFile(cfg.getParameter<string>("candEvtFile"));
 
   intOptions_["report"] = cfg.getParameter<uint>("reportAfter");
   intOptions_["verbose"] = cfg.getParameter<bool>("debugme");
@@ -94,7 +94,7 @@ HadronicVZAnalyzer::~HadronicVZAnalyzer(){
 void HadronicVZAnalyzer::Declare_Histos(TFileDirectory & dir)
 {
   // For now we have only one histo for testing, may extend later.
-  verbose("Declare histos\n");
+  printf("Declare histos\n");
   h_HadVZMass = dir.make<TH1F>("h_HadVZMass","h_HadVZMass",200,0.0,2000.0);
 
 }//Declare_Histos
@@ -104,7 +104,7 @@ void HadronicVZAnalyzer::Declare_Histos(TFileDirectory & dir)
 void HadronicVZAnalyzer::Fill_Histos(int index, float weight)
 {
   // For now we have only one histo, so no need for this function.
-  verbose("Filling Histos\n");
+  printf("Filling Histos\n");
 }//Fill_Histos
 
 void 
@@ -121,10 +121,10 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   // Get jets
   const vector<pat::Jet     > patJets      = getProduct<vector<pat::Jet     > >(event, jetsLabel_);
 
-  verbose("    Contains: %i muon(s)",
-          patMuons.size());
-  verbose("    Contains: %i jet(s)",
-	  patJets.size());
+  printf("    Contains: %i muon(s)\n",
+	 (int)patMuons.size());
+  printf("    Contains: %i jet(s)\n",
+	 (int)patJets.size());
 
   // Make vectors of leptons passing various criteria
   // Loop over muons, and see if they pass the TeVMuon criteria  
@@ -137,15 +137,15 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   // Loop over jets, and see if they pass the jet criteria
   for (size_t i = 0; i < patJets.size(); ++i) {
     if (PassJetCut(&patJets[i]))
-      jets_.push_back(jets_[i]);
+      jets_.push_back(patJets[i]);
   }
   
   bool passedNLeptons = PassNLeptonsCut();
-  bool passedNJets = PassNJetsCut();;
+  bool passedNJets = PassNJetsCut();
   
   if(!(passedNLeptons && passedNJets))
     return;
-    
+  
   // Make a Z candidate out of the muons. 
   zCand = getZCands(looseMuons_).front();
   // Make a W candidate out of the jets.
@@ -424,9 +424,9 @@ HadronicVZAnalyzer::reportProgress(int eventNum) {
   if (eventNum % intOptions_["report"] == 0) {
     printf("\rWe've processed %i events so far...", eventNum);
     cout.flush();
-    verbose("\n");
+    printf("\n");
   }
-  verbose("Event number: %i", ++eventNum);
+  printf("Event number: %i", ++eventNum);
 }
 
 /// Print to screen (like printf), but only if --verbose option is on

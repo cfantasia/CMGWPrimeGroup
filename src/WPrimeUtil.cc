@@ -202,7 +202,7 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
         infile.close();
       }else{
         string pathname = top_level_dir + input;
-        in_file->pathnames.push_back(pathname);
+	in_file->pathnames.push_back(pathname);
       }
       cout << " Input file: " << in_file->samplename;
       cout << " (" << in_file->description << ") " << endl;

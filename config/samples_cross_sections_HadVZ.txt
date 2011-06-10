@@ -1,0 +1,9 @@
+integrated lumi = 349.0 pb^-1
+
+samplename = testSampleName
+description = testDescription
+x-section = 1
+pathname = patTuple.root
+Nprod_evt = 9999999
+
+DONE

@@ -18,7 +18,7 @@ process.inputs = cms.PSet()
 
 process.source = cms.Source("PoolSource",
   fileNames = cms.untracked.vstring(
-    'file:patTuple.root'
+#    'file:patTuple.root'
   )
 )
 
@@ -34,17 +34,17 @@ process.WprimeAnalyzer = cms.PSet(
     outputFile  = cms.string('test.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
     reportAfter = cms.uint32(1),                     ## optional
-    LogFile     = cms.string("test.log"),
-    CandEvtFile = cms.string("testCandEvtFile.txt"),
+    logFile     = cms.string("test.log"),
+    candEvtFile = cms.string("testCandEvtFile.txt"),
     debugme     = cms.bool(False),
     preselect   = cms.bool(False),
     doRecoilCorrectionForW = cms.bool(False),
-    sample_cross_sections = cms.string(""),
+    sample_cross_sections = cms.string("samples_cross_sections_HadVZ.txt"),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(False),
     runElMETAnalysis = cms.bool(False),
     runWZAnalysis    = cms.bool(False),
-    runHadronicVZAnalysis = cms.bool(True),
+    runHadVZAnalysis = cms.bool(True),
     runTBAnalysis    = cms.bool(False),
     runWgammaAnalysis = cms.bool(False),
     ## input specific for this analyzer
@@ -57,18 +57,23 @@ process.WprimeAnalyzer = cms.PSet(
     triggersToUse = cms.vstring(),
     inputs = process.inputs,
     #
+    MCPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/MCPUDist.root'),
+    MCPUDistHist = cms.string('pileup'),
+    DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/DataPUDist.root'),
+    DataPUDistHist = cms.string('pileup'),
+    #
     maxNumZs = cms.uint32(1),
     minNLeptons =cms.uint32(2),
     minNumJets = cms.uint32(0), # Larger than
-    maxNumJets = cms.uint32(3), # Smaller than 
+    maxNumJets = cms.uint32(9999), # Smaller than 
     minLeadPt = cms.double(20.0),
-    maxAngleBetweenJets = cms.double(2.8),
+    maxAngleBetweenJets = cms.double(9999.9),
     #
-    minZpt = cms.double(200.0), # All units in GeV
+    minZpt = cms.double(0.0), # All units in GeV
     minZmass = cms.double(80.0),
     maxZmass = cms.double(100.0),
-    minHadVPt = cms.double(300.0),
-    minHadVmass = cms.double(50.0),
+    minHadVPt = cms.double(0.0),
+    minHadVmass = cms.double(0.0),
     maxHadVmass = cms.double(9999.9),
     # +++++++++++++++++++Muon General Cuts
     maxMuonEta = cms.double(2.5),

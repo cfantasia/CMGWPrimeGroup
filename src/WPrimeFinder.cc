@@ -40,6 +40,7 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
   runMuMETAnalysis_ = cfg.getParameter<bool>("runMuMETAnalysis" );
   runElMETAnalysis_ = cfg.getParameter<bool>("runElMETAnalysis" );
   runWZAnalysis_ = cfg.getParameter<bool>("runWZAnalysis" );
+  runHadVZAnalysis_ = cfg.getParameter<bool>("runHadVZAnalysis" );
   runTBAnalysis_ = cfg.getParameter<bool>("runTBAnalysis" );
   runWgammaAnalysis_ =cfg.getParameter<bool>("runWgammaAnalysis"); 
   string sample_cross_sections = cfg.getParameter<string>("sample_cross_sections");
@@ -82,12 +83,16 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
     wzAnalyzer = new WZAnalyzer(cfg, wprimeUtil);
   else
     wzAnalyzer = 0;
+
+  if(runHadVZAnalysis_)
+    hadvzAnalyzer = new HadronicVZAnalyzer(cfg, wprimeUtil);
+  else
+    hadvzAnalyzer = 0;
 }
 
 // operations to be done when changing input file (e.g. create new histograms)
 void WPrimeFinder::beginFile(vector<wprime::InputFile>::const_iterator it)
 {
-
   bool shouldCorrectMt = 
     ((it->samplename=="W" || it->samplename=="Wlowpt") 
      && doRecoilCorrectionForW_);
@@ -105,6 +110,9 @@ void WPrimeFinder::beginFile(vector<wprime::InputFile>::const_iterator it)
       WmunugammaAnalyzer->beginFile(it);
   if(runWZAnalysis_) 
       wzAnalyzer->beginFile(it);
+  if(runHadVZAnalysis_)
+    hadvzAnalyzer->beginFile(it);
+
 }
 
 void WPrimeFinder::eventLoop(edm::EventBase const & event)
@@ -122,7 +130,11 @@ void WPrimeFinder::eventLoop(edm::EventBase const & event)
 
   if(runWZAnalysis_)
       wzAnalyzer->eventLoop(event);
+
+  if(runHadVZAnalysis_)
+    hadvzAnalyzer->eventLoop(event);
 }
+
 
 
 void WPrimeFinder::run()
@@ -130,6 +142,7 @@ void WPrimeFinder::run()
   int ievt_all=0;  int ievt_skipped = 0;
   unsigned i_sample = 1;
   vector<wprime::InputFile>::iterator it;
+
   for(it = inputFiles.begin(); it != inputFiles.end(); ++it, ++i_sample){
     int ievt=0;  
     cout << " Opening sample " << it->samplename << " ... ";
@@ -205,6 +218,8 @@ void WPrimeFinder::endFile(vector<wprime::InputFile>::const_iterator it)
       WmunugammaAnalyzer->endFile(it, outLogFile_);  
   if(runWZAnalysis_) 
       wzAnalyzer->endFile(it, outLogFile_);  
+  if(runHadVZAnalysis_)
+    hadvzAnalyzer->endFile(it, outLogFile_);  
 }
 
 // e.g. print summmary of expected events for all samples
@@ -218,6 +233,8 @@ void WPrimeFinder::endAnalysis()
       WmunugammaAnalyzer->endAnalysis(outLogFile_);
   if(runWZAnalysis_)
       wzAnalyzer->endAnalysis(outLogFile_);
+  if(runHadVZAnalysis_)
+    hadvzAnalyzer->endAnalysis(outLogFile_);
 }
 
 bool WPrimeFinder::jsonContainsEvent (const vector<edm::LuminosityBlockRange>&jsonVec, const edm::EventBase &event)
