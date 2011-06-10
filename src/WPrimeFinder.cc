@@ -9,13 +9,7 @@ using std::string;
 
 // constructor: needs configuration file to set things up
 WPrimeFinder::WPrimeFinder(char * config_file)
-  : out_("event_counts.txt")
 {
-  if(!out_) { 
-    cout << " Cannot open output text file " << endl;
-    abort();
-  } 
-  
   getConfiguration(config_file);
   wprimeUtil->getInputFiles(inputFiles);
 }
@@ -26,7 +20,7 @@ WPrimeFinder::~WPrimeFinder()
   if(WmunugammaAnalyzer) delete WmunugammaAnalyzer;
   if(wzAnalyzer) delete wzAnalyzer;
   delete wprimeUtil;
-  out_.close();
+  outLogFile_.close(); 
 }
 
 // parse configuration, extract parameters
@@ -38,6 +32,7 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
   // now get each parameter
   /////  inputFiles_  = cfg.getParameter<vector<string> >("fileNames") ;
   outputFile_  = cfg.getParameter<string  >("outputFile" );
+  logFile_  = cfg.getParameter<string  >("logFile" );
   reportAfter_ = cfg.getParameter<unsigned int>("reportAfter");
   maxEvents_   = cfg.getParameter<int>("maxEvents") ;
   genParticles_ = cfg.getParameter<edm::InputTag>("genParticles" );
@@ -56,8 +51,17 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
       jsonVector.resize( lumisTemp.size() );
       copy( lumisTemp.begin(), lumisTemp.end(), jsonVector.begin() );
     }
+
+  outLogFile_.open(logFile_.c_str());
+  WPrimeUtil::CheckStream(outLogFile_, logFile_);
+  
+  MCPUDistFile_   = cfg.getParameter<string>("MCPUDistFile" );
+  MCPUDistHist_   = cfg.getParameter<string>("MCPUDistHist" );
+  DataPUDistFile_ = cfg.getParameter<string>("DataPUDistFile" );
+  DataPUDistHist_ = cfg.getParameter<string>("DataPUDistHist" );
   
   wprimeUtil = new WPrimeUtil(outputFile_.c_str(), genParticles_, sample_cross_sections);
+  wprimeUtil->SetLumiWeights(MCPUDistFile_, DataPUDistFile_, MCPUDistHist_, DataPUDistHist_);
 
   if(runMuMETAnalysis_)
     muMETAnalyzer = new MuMETAnalyzer(cfg, wprimeUtil);
@@ -194,26 +198,26 @@ void WPrimeFinder::endFile(vector<wprime::InputFile>::const_iterator it)
 {
    // call endFile for each finder here
   if(runMuMETAnalysis_)
-    muMETAnalyzer->endFile(it, out_);
+    muMETAnalyzer->endFile(it, outLogFile_);
   if(runElMETAnalysis_)
-    eleMETAnalyzer->endFile(it, out_);
+    eleMETAnalyzer->endFile(it, outLogFile_);
   if(runWgammaAnalysis_) 
-      WmunugammaAnalyzer->endFile(it, out_);  
+      WmunugammaAnalyzer->endFile(it, outLogFile_);  
   if(runWZAnalysis_) 
-      wzAnalyzer->endFile(it, out_);  
+      wzAnalyzer->endFile(it, outLogFile_);  
 }
 
 // e.g. print summmary of expected events for all samples
 void WPrimeFinder::endAnalysis()
 {
   if(runMuMETAnalysis_)
-    muMETAnalyzer->endAnalysis(out_);
+    muMETAnalyzer->endAnalysis(outLogFile_);
   if(runElMETAnalysis_)
-    eleMETAnalyzer->endAnalysis(out_);
+    eleMETAnalyzer->endAnalysis(outLogFile_);
   if(runWgammaAnalysis_)
-      WmunugammaAnalyzer->endAnalysis(out_);
+      WmunugammaAnalyzer->endAnalysis(outLogFile_);
   if(runWZAnalysis_)
-      wzAnalyzer->endAnalysis(out_);
+      wzAnalyzer->endAnalysis(outLogFile_);
 }
 
 bool WPrimeFinder::jsonContainsEvent (const vector<edm::LuminosityBlockRange>&jsonVec, const edm::EventBase &event)

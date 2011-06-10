@@ -8,6 +8,7 @@
 #include "DataFormats/FWLite/interface/Event.h"
 #include "DataFormats/FWLite/interface/ChainEvent.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
 
 #include "UserCode/CMGWPrimeGroup/interface/util.h"
 
@@ -45,6 +46,7 @@ class WPrimeUtil
 
   std::string getSampleName(){return samplename_;}
   float getWeight(){return weight_;}
+  float getLumiWeight(int & nInt){return LumiWeights_.weight(nInt);}
 
   static void getEff(float & eff, float & deff,float Num,float Denom);
 
@@ -67,7 +69,11 @@ class WPrimeUtil
   // if applyMETCorrection=true)from Z data; this will be done according to hadronic 
   // activity from Z->mumu reconstructed events
   TVector2 getHadronicMET(edm::EventBase const & event);
-  
+
+  void SetLumiWeights(std::string & MCFile, std::string & DataFile, 
+                      std::string & MCHist, std::string & DataHist);
+  static void CheckStream(ofstream& stream, std::string & s);
+
  private:
   fwlite::TFileService * fs;
   // directory containing all input samples
@@ -101,8 +107,9 @@ class WPrimeUtil
   edm::InputTag genParticles_;
  // Handle to GenParticleCollectiom>
   edm::Handle<reco::GenParticleCollection> genParticles;
-
-
+  
+  edm::LumiReWeighting LumiWeights_;
+  
 };
 
 #endif //#define _wprime_util_h_

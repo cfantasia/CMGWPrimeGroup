@@ -3,6 +3,8 @@
 
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
 
+#include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
+
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/MuMETAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/EleMETAnalyzer.h"
@@ -32,7 +34,7 @@ class WPrimeFinder
   // e.g. print summary of expected events for all samples
   void endAnalysis();
 
-  ofstream out_;
+  ofstream outLogFile_;
 
   // print out event # 
   unsigned int reportAfter_;
@@ -44,6 +46,7 @@ class WPrimeFinder
   std::vector<wprime::InputFile> inputFiles; 
 
   std::string outputFile_;
+  std::string logFile_;
 
   // enable/disable analysis in specific channels
   bool runMuMETAnalysis_;
@@ -66,6 +69,10 @@ class WPrimeFinder
   bool jsonContainsEvent (const std::vector<edm::LuminosityBlockRange>&jsonVec,
 			  const edm::EventBase &event);
 
+  string MCPUDistFile_;
+  string MCPUDistHist_;
+  string DataPUDistFile_;
+  string DataPUDistHist_;
 };
 
 #endif // #define _wprime_finder_h_

@@ -116,6 +116,17 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
   }
 }
 
+void WPrimeUtil::SetLumiWeights(string & MCFile, string & DataFile,
+                                string & MCHist, string & DataHist){
+  LumiWeights_ = edm::LumiReWeighting(MCFile, DataFile, MCHist, DataHist);
+}
+
+void WPrimeUtil::CheckStream(ofstream& stream, std::string & s){
+  if(!stream) { 
+    std::cout << "Cannot open file " << s << std::endl; 
+    abort();
+  } 
+}
 
 // Calculate efficiencies
 //------------------------------------------------------------------------
