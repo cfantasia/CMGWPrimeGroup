@@ -34,6 +34,7 @@ process.WprimeAnalyzer = cms.PSet(
     reportAfter = cms.uint32(15000),                     ## optional
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_ElMET.txt"),
+    logFile = cms.string("Wprime_event_counts.txt"),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(False),
     runElMETAnalysis = cms.bool(True),
@@ -51,6 +52,12 @@ process.WprimeAnalyzer = cms.PSet(
     dumpHighEtElectronThreshold = cms.double(200),
     barrelCuts = heepBarrelCuts,
     endcapCuts = heepEndcapCuts,
-    inputs = process.inputs
+    inputs = process.inputs,
+
+    MCPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/MCPUDist.root'),
+    MCPUDistHist = cms.string('pileup'),
+    DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/DataPUDist.root'),
+    DataPUDistHist = cms.string('pileup'),
+
  )
 

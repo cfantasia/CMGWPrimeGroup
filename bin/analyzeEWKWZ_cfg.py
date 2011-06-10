@@ -51,6 +51,11 @@ process.WprimeAnalyzer = cms.PSet(
     pileupTag  = cms.string('addPileupInfo'),
     inputs = process.inputs,
 
+    MCPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/MCPUDist.root'),
+    MCPUDistHist = cms.string('pileup'),
+    DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/DataPUDist.root'),
+    DataPUDistHist = cms.string('pileup'),
+
     muonAlgo = cms.uint32(0),
     minDeltaR = cms.double(0.1),
 

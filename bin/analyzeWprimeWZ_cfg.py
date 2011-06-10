@@ -33,8 +33,8 @@ process.WprimeAnalyzer = cms.PSet(
     sample_cross_sections = cms.string("samples_cross_sections_WZ.txt"),
     debugme = cms.bool(False),
     preselect = cms.bool(True),
-    LogFile = cms.string("Wprime_event_counts.txt"),
-    CandEvtFile = cms.string("Wprime_CandEvts.txt"),
+    logFile = cms.string("Wprime_event_counts.txt"),
+    candEvtFile = cms.string("Wprime_CandEvts.txt"),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(False),
     runElMETAnalysis = cms.bool(False),
@@ -50,6 +50,11 @@ process.WprimeAnalyzer = cms.PSet(
     hltEventTag = cms.string('patTriggerEvent'),
     pileupTag  = cms.string('addPileupInfo'),
     inputs = process.inputs,
+
+    MCPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/MCPUDist.root'),
+    MCPUDistHist = cms.string('pileup'),
+    DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/DataPUDist.root'),
+    DataPUDistHist = cms.string('pileup'),
 
     muonAlgo = cms.uint32(0),
     minDeltaR = cms.double(0.1),

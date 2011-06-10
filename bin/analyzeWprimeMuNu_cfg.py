@@ -31,6 +31,7 @@ process.WprimeAnalyzer = cms.PSet(
     reportAfter = cms.uint32(15000),                     ## optional
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_MuMET.txt"),
+    logFile = cms.string("event_counts.txt"),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(True),
     runElMETAnalysis = cms.bool(False),
@@ -53,6 +54,12 @@ process.WprimeAnalyzer = cms.PSet(
     highestPtMuonOnly = cms.bool(False),
     dumpHighPtMuons   = cms.bool(True),
     dumpHighPtMuonThreshold = cms.double(200),
-    inputs = process.inputs
+    inputs = process.inputs,
+ 
+    MCPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/MCPUDist.root'),
+    MCPUDistHist = cms.string('pileup'),
+    DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/DataPUDist.root'),
+    DataPUDistHist = cms.string('pileup'),
+
 )
 
