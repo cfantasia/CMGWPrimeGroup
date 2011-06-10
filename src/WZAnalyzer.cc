@@ -19,8 +19,6 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   NTightMuonCuts_ = TightMuonCuts_.size();
 
   FillCutFns();
-  SetLogFile(cfg.getParameter<string>("LogFile"));
-  SetCandEvtFile(cfg.getParameter<string>("CandEvtFile"));
 
   intOptions_["report"] = cfg.getParameter<uint>("reportAfter");
   intOptions_["verbose"] = cfg.getParameter<bool>("debugme");
@@ -42,6 +40,7 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
 
   minDeltaR_ = cfg.getParameter<double>("minDeltaR");
 
+  SetCandEvtFile(cfg.getParameter<string  >("candEvtFile" ));
   ResetCounters();
 
   verbose("Using %i cuts\n",NCuts_);
@@ -107,8 +106,7 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   minMuonHitsUsed_ = cfg.getParameter<int>("minMuonHitsUsed");
 }
 WZAnalyzer::~WZAnalyzer(){
-  outCandEvt.close(); 
-  outLogFile.close(); 
+  outCandEvt_.close();
 }
 
 void WZAnalyzer::FillCutFns(){
@@ -441,22 +439,22 @@ void WZAnalyzer::Tabulate_Me(int& cut_index, const float& weight)
 
 //Writing results to a txt file
 //--------------------------------------------------------------------------
-void WZAnalyzer::printSummary(const string& dir) 
+void WZAnalyzer::printSummary(const string& dir, ofstream & out) 
 { 
 //------------------------------------------------------------------------
   if(debugme) cout<<"Writing results to a txt file"<<endl;
 
-  outLogFile << setiosflags(ios::fixed) << setprecision(2);
-  outLogFile<<"$$$$$$$$$$$$$$$$$$$$$$$ Type of sample: "<<dir<<endl;
-//  outLogFile << " xsec*lumi expected events = " << Nthe_evt << endl;
-//  outLogFile << " # of evt passing preselection = " << Nexp_evt << " per "<<Form("%.0f", wprimeUtil_->getLumi_ipb())<<" inv pb"<<endl;
-        
+  out << setiosflags(ios::fixed) << setprecision(2);
+  out<<"$$$$$$$$$$$$$$$$$$$$$$$ Type of sample: "<<dir<<endl;
+//  out << " xsec*lumi expected events = " << Nthe_evt << endl;
+//  out << " # of evt passing preselection = " << Nexp_evt << " per "<<Form("%.0f", wprimeUtil_->getLumi_ipb())<<" inv pb"<<endl;
+  
   for(int i = 0; i < NCuts_; ++i){
-    outLogFile<<right<<"Cut " << setw(2) << i << "("
-              <<left<< setw(15) << Cuts_[i]
-              <<right << "): " <<"expected evts = " << setw(10) << Num_surv_cut_[i];
+    out<<right<<"Cut " << setw(2) << i << "("
+               <<left<< setw(15) << Cuts_[i]
+               <<right << "): " <<"expected evts = " << setw(10) << Num_surv_cut_[i];
     hNumEvts->SetBinContent(i+1,Num_surv_cut_[i]);
-
+    
 //calculate efficiencies
     float eff, deff;
     if(i == 0){
@@ -465,11 +463,11 @@ void WZAnalyzer::printSummary(const string& dir)
       getEff(eff, deff, Num_surv_cut_[i], Num_surv_cut_[i-1]);
     }
     hEffRel->SetBinContent(i+1,eff*100);
-    outLogFile << setw(15) <<"\tRelative eff = "<<setw(6)<<eff*100 << " +/- " << setw(6)<<deff*100 << "%";
+    out << setw(15) <<"\tRelative eff = "<<setw(6)<<eff*100 << " +/- " << setw(6)<<deff*100 << "%";
     getEff(eff, deff, Num_surv_cut_[i], Num_surv_cut_[0]);
     hEffAbs->SetBinContent(i+1,eff*100);
-    outLogFile << setw(15) <<"\tAbsolute eff = "<<setw(6)<<eff*100 << " +/- " << setw(6)<<deff*100 << "%"
-               << endl;
+    out << setw(15) <<"\tAbsolute eff = "<<setw(6)<<eff*100 << " +/- " << setw(6)<<deff*100 << "%"
+        << endl;
         
   } // loop over different cuts
 }//printSummary
@@ -545,9 +543,9 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     else if (abs(genParticles[i].pdgId()) == 24) genW = & genParticles[i];
 */
 
-/*
-  if(wprimeUtil_->getSampleName().find("data") == string:npos){
-  
+
+  if(wprimeUtil_->getSampleName().find("data") == string::npos){//Don't do this for data
+    //Cory: this below should be in wprimeUtil or something, done once for everyone.
     PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
     
     std::vector<PileupSummaryInfo>::const_iterator PVI;                       
@@ -555,12 +553,14 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
       //Cory: What am I looping over? Primary Vtxs
       int PU_BunchCrossing = PVI->getBunchCrossing();                  
       int PU_NumInteractions = PVI->getPU_NumInteractions();           
+      double MyWeight = wprimeUtil_->getLumiWeight(PU_NumInteractions );
       cout<<"N_BX: "<<PU_BunchCrossing
-          <<" PU_NumInteractions: "<<PVI->getPU_NumInteractions()
+          <<" PU_NumInteractions: "<<PU_NumInteractions
+          <<" additional weight: "<<MyWeight
           <<endl;
     }
   }
-*/
+
 /////////////////////
   if(!PassCuts(wprimeUtil_->getWeight())) return;
   if(!wprimeUtil_->getSampleName().find("data")){
@@ -571,9 +571,9 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 }
 
 void WZAnalyzer::PrintEventToFile(edm::EventBase const & event){
-  outCandEvt<<event.id().run()<<":"
-            <<event.id().luminosityBlock()<<":"
-            <<event.id().event()<<endl;
+  outCandEvt_<<event.id().run()<<":"
+             <<event.id().luminosityBlock()<<":"
+             <<event.id().event()<<endl;
 }
 
 void WZAnalyzer::PrintEvent(edm::EventBase const & event){
@@ -704,22 +704,11 @@ WZAnalyzer::SameTrigger(string & A, string & B){
 
 /////////////////Accessors///////////////////////
 
-/////////////////Modifies///////////////////////
-void WZAnalyzer::CheckStream(ofstream& stream, string s){
-  if(!stream) { 
-    cout << "Cannot open file " << s << endl; 
-    abort();
-  } 
-}
+/////////////////Modifiers///////////////////////
 
 void WZAnalyzer::SetCandEvtFile(string s){
-  outCandEvt.open(s.c_str());
-  CheckStream(outCandEvt, s);
-}
-
-void WZAnalyzer::SetLogFile(string s){
-  outLogFile.open(s.c_str());      
-  CheckStream(outLogFile, s); 
+  outCandEvt_.open(s.c_str());
+  WPrimeUtil::CheckStream(outCandEvt_, s);
 }
 
 /////////////////Cuts///////////////////////
@@ -1068,7 +1057,7 @@ void WZAnalyzer::beginFile(std::vector<wprime::InputFile>::const_iterator fi){
 void WZAnalyzer::endFile(std::vector<wprime::InputFile>::const_iterator fi,
                          ofstream & out){
   //ScaleHistos();//Already scaled
-  printSummary(fi->samplename);  
+  printSummary(fi->samplename, out);  
   //deleteHistos();
   listOfHists.clear();
 }

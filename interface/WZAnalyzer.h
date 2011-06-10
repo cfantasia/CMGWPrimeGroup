@@ -51,7 +51,7 @@ public:
   void Fill_Histos(int index, float weight=1.);
   void saveHistos(std::string dir);
   void deleteHistos();
-  void printSummary(const std::string& dir);
+  void printSummary(const std::string& dir, ofstream & out);
 
   void eventLoop(edm::EventBase const & event);
   void Tabulate_Me(int& cut_index,const float& weight);
@@ -73,12 +73,9 @@ public:
   bool SameTrigger(string & A, string & B);
 
 //methods for utilities
-  void CheckStream(ofstream& stream, std::string s);
 
 //methods for modifiers
   void SetCandEvtFile(std::string s);
-  void SetLogFile(std::string s);
-  void SetOutputFile(std::string s);
 
 //methods for the cuts
   bool PassNoCut();
@@ -176,11 +173,9 @@ public:
   std::vector<std::string> filenames_;
   
 // +++++++++++++++++++location of data files and samples info
-  ofstream outCandEvt;
-  ofstream outLogFile;
-
   WPrimeUtil * wprimeUtil_;
-  
+  ofstream outCandEvt_;
+
   uint muonAlgo_;
 
 ///My calculated qualities//////////////////
