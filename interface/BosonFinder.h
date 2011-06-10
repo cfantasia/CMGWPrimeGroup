@@ -119,15 +119,13 @@ class WCandidate : public BosonCandidate {
     genLepton_ = lepton.patEle().genLepton();
     addDaughters(lepton.patEle(), met);
     leptonic_ = true;
-    double dphi = 1 - cos(reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi()));
-    mt_ = sqrt(2 * daughter(0)->et() * daughter(1)->et() * dphi);
+    mt_ = CalcMT();
   }
   WCandidate(const TeVMuon & lepton, const reco::Candidate & met) {
     genLepton_ = lepton.genLepton();
     addDaughters(lepton, met);
     leptonic_ = true;
-    double dphi = 1 - cos(reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi()));
-    mt_ = sqrt(2 * daughter(0)->et() * daughter(1)->et() * dphi);
+    mt_ = CalcMT();
   }
   WCandidate(const pat::Jet & jet) {
     addDaughter(jet);
@@ -144,6 +142,8 @@ class WCandidate : public BosonCandidate {
   double mt() const { return mt_;}
  private:
   const reco::Candidate * genLepton_;
+  double CalcMT(){return sqrt(2 * daughter(0)->et() * daughter(1)->et() * CalcDPhi());}
+  double CalcDPhi(){return 1 - cos(reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi()));}
   double mt_;
 };
 
