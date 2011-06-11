@@ -36,6 +36,7 @@ process.WprimeAnalyzer = cms.PSet(
     runMuMETAnalysis = cms.bool(False),
     runElMETAnalysis = cms.bool(False),
     runWZAnalysis    = cms.bool(False),
+    runHadronicVZAnalysis = cms.bool(False),
     runTBAnalysis    = cms.bool(False),
     runWgammaAnalysis = cms.bool(True),
     ## input specific for this analyzer
