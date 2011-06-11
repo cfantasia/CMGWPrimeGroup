@@ -134,25 +134,25 @@ WCandidate getWCand(const ElectronV & electrons,
                     const ZCandidate & zCand,
                     double minDeltaR)
 {
-  if (!zCand) return WCandidate();
-
   vector<WCandidate> wCands;
-
+  
   for (ElectronV::const_iterator i = electrons.begin(); 
        i != electrons.end(); ++i)
-    if (!areOverlapping(i->patEle(), * zCand.daughter(0)) &&
-        !areOverlapping(i->patEle(), * zCand.daughter(1)) &&
-        reco::deltaR(* i, * zCand.daughter(0)) > minDeltaR &&
-        reco::deltaR(* i, * zCand.daughter(1)) > minDeltaR) {
+    if (!zCand || 
+        (!areOverlapping(i->patEle(), * zCand.daughter(0)) &&
+         !areOverlapping(i->patEle(), * zCand.daughter(1)) &&
+         reco::deltaR(* i, * zCand.daughter(0)) > minDeltaR &&
+         reco::deltaR(* i, * zCand.daughter(1)) > minDeltaR)) {
       wCands.push_back(WCandidate(* i, met));
     }
-
+  
   for (MuonV::const_iterator i = muons.begin(); 
        i != muons.end(); ++i)
-    if (!areOverlapping(* i, * zCand.daughter(0)) &&
-        !areOverlapping(* i, * zCand.daughter(1)) &&
-        reco::deltaR(* i, * zCand.daughter(0)) > minDeltaR &&
-        reco::deltaR(* i, * zCand.daughter(1)) > minDeltaR) {
+    if (!zCand || 
+        (!areOverlapping(* i, * zCand.daughter(0)) &&
+         !areOverlapping(* i, * zCand.daughter(1)) &&
+         reco::deltaR(* i, * zCand.daughter(0)) > minDeltaR &&
+         reco::deltaR(* i, * zCand.daughter(1)) > minDeltaR)) {
       wCands.push_back(WCandidate(* i, met));
     }
 
