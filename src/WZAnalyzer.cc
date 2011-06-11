@@ -160,26 +160,46 @@ void WZAnalyzer::FillCutFns(){
 
   CutFns_.resize(NCuts_);
   for(int i=0; i<NCuts_; ++i){
+    if(mFnPtrs_.find(Cuts_[i]) == mFnPtrs_.end()){
+      cout<<"Didn't find Cut named "<<Cuts_[i]<<endl;
+      abort();
+    }
     CutFns_[i] = mFnPtrs_.find(Cuts_[i])->second;
   }
 
   LooseElecCutFns_.resize(NLooseElecCuts_);
   for(int i=0; i<NLooseElecCuts_; ++i){
+    if(mElecFnPtrs_.find(LooseElecCuts_[i]) == mElecFnPtrs_.end()){
+      cout<<"Didn't find Cut named "<<LooseElecCuts_[i]<<endl;
+      abort();
+    }
     LooseElecCutFns_[i] = mElecFnPtrs_.find(LooseElecCuts_[i])->second;
   }
-
+  
   LooseMuonCutFns_.resize(NLooseMuonCuts_);
   for(int i=0; i<NLooseMuonCuts_; ++i){
+    if(mMuonFnPtrs_.find(LooseMuonCuts_[i]) == mMuonFnPtrs_.end()){
+      cout<<"Didn't find Cut named "<<LooseMuonCuts_[i]<<endl;
+      abort();
+    }
     LooseMuonCutFns_[i] = mMuonFnPtrs_.find(LooseMuonCuts_[i])->second;
   }
-
+  
   TightElecCutFns_.resize(NTightElecCuts_);
   for(int i=0; i<NTightElecCuts_; ++i){
+    if(mElecFnPtrs_.find(TightElecCuts_[i]) == mElecFnPtrs_.end()){
+      cout<<"Didn't find Cut named "<<TightElecCuts_[i]<<endl;
+      abort();
+    }
     TightElecCutFns_[i] = mElecFnPtrs_.find(TightElecCuts_[i])->second;
   }
 
   TightMuonCutFns_.resize(NTightMuonCuts_);
   for(int i=0; i<NTightMuonCuts_; ++i){
+    if(mMuonFnPtrs_.find(TightMuonCuts_[i]) == mMuonFnPtrs_.end()){
+      cout<<"Didn't find Cut named "<<TightMuonCuts_[i]<<endl;
+      abort();
+    }
     TightMuonCutFns_[i] = mMuonFnPtrs_.find(TightMuonCuts_[i])->second;
   }
   
