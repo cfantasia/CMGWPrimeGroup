@@ -65,8 +65,8 @@ public:
   void PrintEvent(edm::EventBase const & event);
   void PrintEventFull(edm::EventBase const & event);
   void PrintTrigger();
-  void PrintElectron(const heep::Ele* elec, int parent);
-  void PrintMuon(const TeVMuon* mu, int parent);
+  void PrintElectron(const heep::Ele& elec, int parent);
+  void PrintMuon(const TeVMuon& mu, int parent);
   double CalcLeadPt(int type=0);
   double CalcQ();
   
@@ -81,6 +81,7 @@ public:
   bool PassNoCut();
   bool PassTriggersCut();
   bool PassNLeptonsCut();
+  bool PassEvtSetupCut();
   bool PassValidWCut();
   bool PassValidZCut();
   bool PassValidWandZCut();
@@ -90,7 +91,6 @@ public:
   bool PassWptCut();
   bool PassZptCut();
   bool PassHtCut();
-  bool PassHtMetCut();
   bool PassMETCut();
 
   bool PassZMassCut();
@@ -104,32 +104,39 @@ public:
   bool PassWenuIsoCut();
   bool PassWmunuIsoCut();
 
-  bool PassElecLooseCut(const heep::Ele* elec);
-  bool PassElecTightCut(const heep::Ele* elec);
-  bool PassElecLooseEtCut(const heep::Ele* elec);
-  bool PassElecTightEtCut(const heep::Ele* elec);
-  bool PassElecLooseWPCut(const heep::Ele* elec);
-  bool PassElecWPRelIsoCut(const heep::Ele* elec);
+  bool PassWFlavorElecCut();
+  bool PassWFlavorMuonCut();
+  bool PassFakeEvtCut();
+  bool PassFakeLeptonTagCut();
+  bool PassFakeLeptonProbeLooseCut();
+  bool PassFakeLeptonProbeTightCut();
 
-  bool PassMuonLooseCut(const TeVMuon* mu);
-  bool PassMuonTightCut(const TeVMuon* mu);
-  bool PassMuonLoosePtCut(const TeVMuon* mu);
-  bool PassMuonTightPtCut(const TeVMuon* mu);
-  bool PassMuonGlobalCut(const TeVMuon* mu);
-  bool PassMuonDxyCut(const TeVMuon* mu);
-  bool PassMuonNpixhitCut(const TeVMuon* mu);
-  bool PassMuonNtrkhitCut(const TeVMuon* mu);
-  bool PassMuonNormChi2Cut(const TeVMuon* mu);
-  bool PassMuonHitsUsedCut(const TeVMuon* mu);
-  bool PassMuonStationsCut(const TeVMuon* mu);
-  bool PassMuonEtaCut(const TeVMuon* mu);
-  bool PassMuonCombRelIsoCut(const TeVMuon* mu);
+  bool PassElecLooseCut(const heep::Ele& elec);
+  bool PassElecTightCut(const heep::Ele& elec);
+  bool PassElecLooseEtCut(const heep::Ele& elec);
+  bool PassElecTightEtCut(const heep::Ele& elec);
+  bool PassElecLooseWPCut(const heep::Ele& elec);
+  bool PassElecWPRelIsoCut(const heep::Ele& elec);
+
+  bool PassMuonLooseCut(const TeVMuon& mu);
+  bool PassMuonTightCut(const TeVMuon& mu);
+  bool PassMuonLoosePtCut(const TeVMuon& mu);
+  bool PassMuonTightPtCut(const TeVMuon& mu);
+  bool PassMuonGlobalCut(const TeVMuon& mu);
+  bool PassMuonDxyCut(const TeVMuon& mu);
+  bool PassMuonNpixhitCut(const TeVMuon& mu);
+  bool PassMuonNtrkhitCut(const TeVMuon& mu);
+  bool PassMuonNormChi2Cut(const TeVMuon& mu);
+  bool PassMuonHitsUsedCut(const TeVMuon& mu);
+  bool PassMuonStationsCut(const TeVMuon& mu);
+  bool PassMuonEtaCut(const TeVMuon& mu);
+  bool PassMuonCombRelIsoCut(const TeVMuon& mu);
 
   int   Calc_EvtType();
   float Calc_Q();
   float Calc_Ht();
-  float CalcElecSc(const heep::Ele* elec);
-  float Calc_MuonRelIso(const TeVMuon* mu);
+  float CalcElecSc(const heep::Ele& elec);
+  float Calc_MuonRelIso(const TeVMuon& mu);
   float Calc_GenWZInvMass();
 
 //////////
@@ -140,6 +147,10 @@ public:
   void endFile(std::vector<wprime::InputFile>::const_iterator fi, ofstream & out);
   void endAnalysis(ofstream & out);
 
+  heep::Ele & FindElectron(reco::Candidate & p);
+  TeVMuon & FindMuon(reco::Candidate & p);
+  bool Match(heep::Ele & p1, reco::Candidate & p2);
+  bool Match(TeVMuon & p1, reco::Candidate & p2);
 // +++++++++++++++++++useful constants
   bool debugme;//print stuff if active
   bool doPreselect_;
@@ -324,8 +335,8 @@ public:
   int NTightMuonCuts_;
   std::vector<std::string> TightMuonCuts_;
   typedef bool (WZAnalyzer::*    CutFnPtr)(); 
-  typedef bool (WZAnalyzer::*ElecCutFnPtr)(const heep::Ele*); 
-  typedef bool (WZAnalyzer::*MuonCutFnPtr)(const TeVMuon*); 
+  typedef bool (WZAnalyzer::*ElecCutFnPtr)(const heep::Ele&); 
+  typedef bool (WZAnalyzer::*MuonCutFnPtr)(const TeVMuon&); 
 #ifndef __CINT__
   std::map<std::string,     CutFnPtr> mFnPtrs_;
   std::map<std::string, ElecCutFnPtr> mElecFnPtrs_;
