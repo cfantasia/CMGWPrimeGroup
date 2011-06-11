@@ -1,4 +1,4 @@
-integrated lumi = 349.0 pb^-1
+integrated lumi = 498.7 pb^-1
 
 samplename = data
 description = Single E+Mu
