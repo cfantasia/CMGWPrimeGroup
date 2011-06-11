@@ -95,6 +95,7 @@ process.WprimeAnalyzer = cms.PSet(
                        "ValidWandZ", 
                        "NumZs", 
                        "ValidWZCand",
+                       "EvtSetup",
                        "LeadLepPt",
                        "ZMass", 
                        "MET",
