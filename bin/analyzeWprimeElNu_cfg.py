@@ -32,6 +32,7 @@ process.WprimeAnalyzer = cms.PSet(
     outputFile  = cms.string('Wprime_analysis.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
     reportAfter = cms.uint32(15000),                     ## optional
+    useJSON = cms.bool(True),
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_ElMET.txt"),
     logFile = cms.string("Wprime_event_counts.txt"),

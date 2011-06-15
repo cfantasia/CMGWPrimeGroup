@@ -35,6 +35,7 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
   logFile_  = cfg.getParameter<string  >("logFile" );
   reportAfter_ = cfg.getParameter<unsigned int>("reportAfter");
   maxEvents_   = cfg.getParameter<int>("maxEvents") ;
+  useJSON_   = cfg.getParameter<bool>("useJSON") ;
   genParticles_ = cfg.getParameter<edm::InputTag>("genParticles" );
   doRecoilCorrectionForW_ = cfg.getParameter<bool>("doRecoilCorrectionForW");
   runMuMETAnalysis_ = cfg.getParameter<bool>("runMuMETAnalysis" );
@@ -170,21 +171,19 @@ void WPrimeFinder::run()
       // skip event if maximal number of events per input file is reached 
       if(maxEvents_>0 &&  ievt > maxEvents_) continue;
       
-      if(it->samplename.find("data") != string::npos && 
-	 !jsonContainsEvent (jsonVector, event))
-	{
-	  ++ievt_skipped;
-	  continue;
-	}
-      else
-	++ievt_all;
+      if(useJSON_ && it->samplename.find("data") != string::npos && 
+         !jsonContainsEvent (jsonVector, event)){
+        ++ievt_skipped;
+        continue;
+      }else
+        ++ievt_all;
 
       // simple event counter
       if(reportAfter_!=0 ? (ievt>0 && ievt%reportAfter_==0) : false) 
-	cout << " Processing event: " << ievt << " or " 
-	     << 100.*ievt/it->Nact_evt << "% of input file"
-	     << " (Total events processed: " << ievt_all 
-	     << ", non-certified/skipped: " << ievt_skipped << ") " << endl;
+        cout << " Processing event: " << ievt << " or " 
+             << 100.*ievt/it->Nact_evt << "% of input file"
+             << " (Total events processed: " << ievt_all 
+             << ", non-certified/skipped: " << ievt_skipped << ") " << endl;
 
 
 

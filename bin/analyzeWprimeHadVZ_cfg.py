@@ -34,6 +34,7 @@ process.WprimeAnalyzer = cms.PSet(
     outputFile  = cms.string('test.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
     reportAfter = cms.uint32(1),                     ## optional
+    useJSON = cms.bool(True),
     logFile     = cms.string("test.log"),
     candEvtFile = cms.string("testCandEvtFile.txt"),
     debugme     = cms.bool(False),

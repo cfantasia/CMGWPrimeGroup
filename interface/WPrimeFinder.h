@@ -41,6 +41,8 @@ class WPrimeFinder
   unsigned int reportAfter_;
   // maximum # of events to process (set to <0 for processing all events)
   int maxEvents_;
+  // Should we use the json file
+  bool useJSON_;
 
   void eventLoop(edm::EventBase const & event);
 
