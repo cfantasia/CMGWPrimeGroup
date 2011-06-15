@@ -57,6 +57,8 @@ public:
   void Tabulate_Me(int& cut_index,const float& weight);
   void CalcZVariables();
   void CalcWVariables();
+  void CalcWElecVariables();
+  void CalcWMuonVariables();
   void CalcWZVariables();
   void CalcEventVariables();
   bool PassCuts(const float& weight=1.);
@@ -80,9 +82,12 @@ public:
 //methods for the cuts
   bool PassNoCut();
   bool PassTriggersCut();
-  bool PassNLeptonsCut();
+  bool PassMinNLeptonsCut();
+  bool PassMaxNLeptonsCut();
   bool PassEvtSetupCut();
   bool PassValidWCut();
+  bool PassValidWElecCut();
+  bool PassValidWMuonCut();
   bool PassValidZCut();
   bool PassValidWandZCut();
   bool PassValidWZCandCut();
@@ -104,6 +109,7 @@ public:
   bool PassWenuIsoCut();
   bool PassWmunuIsoCut();
 
+  bool PassWLepTightCut();
   bool PassWFlavorElecCut();
   bool PassWFlavorMuonCut();
   bool PassFakeEvtCut();
@@ -117,6 +123,26 @@ public:
   bool PassElecTightEtCut(const heep::Ele& elec);
   bool PassElecLooseWPCut(const heep::Ele& elec);
   bool PassElecWPRelIsoCut(const heep::Ele& elec);
+
+  bool PassElecEtaCut(const heep::Ele& elec);
+
+  bool PassElecNMissingHitsCut(const heep::Ele& elec);
+  bool PassElecDistCut(const heep::Ele& elec);
+  bool PassElecDeltaCotThetaCut(const heep::Ele& elec);
+  bool PassElecSigmaIEtaIEtaCut(const heep::Ele& elec);
+  bool PassElecDeltaPhiCut(const heep::Ele& elec);
+  bool PassElecDeltaEtaCut(const heep::Ele& elec);
+  bool PassElecHOverECut(const heep::Ele& elec);
+  bool PassElecCombRelIsoCut(const heep::Ele& elec);
+
+  bool PassElecTightNMissingHitsCut(const heep::Ele& elec);
+  bool PassElecTightDistCut(const heep::Ele& elec);
+  bool PassElecTightDeltaCotThetaCut(const heep::Ele& elec);
+  bool PassElecTightSigmaIEtaIEtaCut(const heep::Ele& elec);
+  bool PassElecTightDeltaPhiCut(const heep::Ele& elec);
+  bool PassElecTightDeltaEtaCut(const heep::Ele& elec);
+  bool PassElecTightHOverECut(const heep::Ele& elec);
+  bool PassElecTightCombRelIsoCut(const heep::Ele& elec);
 
   bool PassMuonLooseCut(const TeVMuon& mu);
   bool PassMuonTightCut(const TeVMuon& mu);
@@ -136,6 +162,7 @@ public:
   float Calc_Q();
   float Calc_Ht();
   float CalcElecSc(const heep::Ele& elec);
+  float CalcElecCombRelIso(const heep::Ele& elec);
   float Calc_MuonRelIso(const TeVMuon& mu);
   float Calc_GenWZInvMass();
 
@@ -188,6 +215,7 @@ public:
   ofstream outCandEvt_;
 
   uint muonAlgo_;
+  double rhoFastJet_;
 
 ///My calculated qualities//////////////////
   float Ht_;
@@ -202,6 +230,7 @@ public:
 // +++++++++++++++++++General Cut values
   uint maxNumZs_;
   uint minNLeptons_;
+  uint maxNLeptons_;
   float minLeadPt_;
   float minMET_;
 
@@ -212,15 +241,19 @@ public:
   float minWtransMass_;
   float minWpt_;
 
-  float maxWmunuCombRelIso_;
   int   cutWenuWPRelIsoMask_;
   string cutElecWPTightType_;
   float minDeltaR_;
 
+  float minWlepPt_;
 // +++++++++++++++++++Z Cuts
   float minZpt_;
   float minZmass_;
   float maxZmass_;
+  float minZeePt1_;
+  float minZeePt2_;
+  float minZmmPt1_;
+  float minZmmPt2_;
 
 // +++++++++++++++++++Electron General Cuts
 //VBTF Recommended Cuts
@@ -228,10 +261,24 @@ public:
   float minElecTightEt_;
   int cutElecWPLooseMask_;
   string cutElecWPLooseType_;
-  std::vector<double> maxElecSigmaiEtaiEta_;
-  std::vector<double> maxElecDeltaPhiIn_;
-  std::vector<double> maxElecDeltaEtaIn_;
+  
+  float maxElecNMissingHits_;
+  float minElecDist_;
+  float minElecDeltaCotTheta_;
+  std::vector<double> maxElecSigmaIetaIeta_;
+  std::vector<double> maxElecDeltaPhi_;
+  std::vector<double> maxElecDeltaEta_;
   std::vector<double> maxElecHOverE_    ;
+  std::vector<double> maxElecCombRelIso_;
+
+  float maxElecTightNMissingHits_;
+  float minElecTightDist_;
+  float minElecTightDeltaCotTheta_;
+  std::vector<double> maxElecTightSigmaIetaIeta_;
+  std::vector<double> maxElecTightDeltaPhi_;
+  std::vector<double> maxElecTightDeltaEta_;
+  std::vector<double> maxElecTightHOverE_    ;
+  std::vector<double> maxElecTightCombRelIso_;
 
 // +++++++++++++++++++Muon General Cuts
   float maxMuonEta_;
@@ -244,6 +291,7 @@ public:
   int minMuonNTrkHit_;
   int minMuonStations_;
   int minMuonHitsUsed_;
+  float maxMuonCombRelIso_;
 
 //////Chosen Candidates
   ElectronV electrons_, looseElectrons_, tightElectrons_;
@@ -297,6 +345,14 @@ public:
   std::vector<TH1F*> hW0e3muTransMass;
 
   std::vector<TH1F*> hQ;
+
+  std::vector<TH1F*> hNLElec;
+  std::vector<TH1F*> hNLMuon;
+  std::vector<TH1F*> hNLLeps;
+
+  std::vector<TH1F*> hNTElec;
+  std::vector<TH1F*> hNTMuon;
+  std::vector<TH1F*> hNTLeps;
 
   std::vector<TH1F*> hLeadPt;
   std::vector<TH1F*> hLeadElecPt;
