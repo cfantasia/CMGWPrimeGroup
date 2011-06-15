@@ -358,6 +358,9 @@ public:
   std::vector<TH1F*> hLeadElecPt;
   std::vector<TH1F*> hLeadMuonPt;
 
+  std::vector<TH1F*> hWenuCombRelIso;
+  std::vector<TH1F*> hWmunuCombRelIso;
+
   std::vector<TH1F*> hElecPt;
   std::vector<TH1F*> hElecEt;
   std::vector<TH1F*> hElecdEta;

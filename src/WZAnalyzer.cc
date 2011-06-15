@@ -353,6 +353,11 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
   DeclareHistoSet("hNTLeps", "Number of Tight Leptons in Event",
                   "N_{l}", 10, 0, 10, hNTLeps,dir);
 
+  DeclareHistoSet("hWenuCombRelIso", "Comb Rel Iso of W Electron",
+                  "Comb Rel Iso", 100, 0, 1., hWenuCombRelIso,dir);
+  DeclareHistoSet("hWmunuCombRelIso", "Comb Rel Iso of W Muon",
+                  "Comb Rel Iso", 100, 0, 1., hWmunuCombRelIso,dir);
+  
 
 ///Eff Plots///////
   string title = Form("Expected # of Events / %.0f pb^{-1}",  wprimeUtil_->getLumi_ipb());
@@ -421,8 +426,13 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
   if(wCand_){
     hWpt[index]->Fill(wCand_.pt(), weight);
     hWTransMass[index]->Fill(wCand_.mt(), weight);
-    if      (wCand_.flavor() == PDGELEC) hWenuTransMass[index]->Fill(wCand_.mt(), weight);
-    else if (wCand_.flavor() == PDGMUON) hWmunuTransMass[index]->Fill(wCand_.mt(), weight);
+    if      (wCand_.flavor() == PDGELEC){
+      hWenuTransMass[index]->Fill(wCand_.mt(), weight);
+      hWenuCombRelIso[index]->Fill(CalcElecCombRelIso(FindElectron(*wCand_.daughter(0))), weight);
+    }else if (wCand_.flavor() == PDGMUON){
+      hWmunuTransMass[index]->Fill(wCand_.mt(), weight);
+      hWmunuCombRelIso[index]->Fill(Calc_MuonRelIso(FindMuon(*wCand_.daughter(0))), weight);
+    }
     if(evtType_ == 0) hW3e0muTransMass[index]->Fill(wCand_.mt(), weight);
     if(evtType_ == 1) hW2e1muTransMass[index]->Fill(wCand_.mt(), weight);
     if(evtType_ == 2) hW1e2muTransMass[index]->Fill(wCand_.mt(), weight);
@@ -435,6 +445,7 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
   hNTElec[index]->Fill(tightElectrons_.size(), weight);
   hNTMuon[index]->Fill(tightMuons_    .size(), weight);
   hNTLeps[index]->Fill(tightElectrons_.size()+tightMuons_.size(), weight);
+
 }//Fill_Histos
 
 void
@@ -685,7 +696,10 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
           <<endl;
     }
   }
-
+  if(event.id().run() == 162909 && event.id().luminosityBlock() == 279){
+    cout<<"This is the missing event\n";
+    PrintEventFull(event);
+  }
 /////////////////////
   if(!PassCuts(wprimeUtil_->getWeight())) return;
   if(!wprimeUtil_->getSampleName().find("data")){
@@ -721,7 +735,7 @@ void WZAnalyzer::PrintEvent(edm::EventBase const & event){
         <<" pfMet et: "<<met_.et()
         <<endl;
   }
-  if(zCand_ && wCand_){
+  if(zCand_ && wCand_ && wzCand_.mass("minPz")>0.){
     cout<<" WZ Mass: "<<wzCand_.mass("minPz")
         <<" Ht: "<<Ht_
         <<" Zpt: "<<zCand_.pt()
@@ -778,10 +792,13 @@ WZAnalyzer::PrintElectron(const heep::Ele& elec, int parent){
       <<" Elec dEta: "<<elec.patEle().deltaEtaSuperClusterTrackAtVtx()<<endl //DeltaEta
       <<" Elec HoverE: "<<elec.patEle().hadronicOverEm()<<endl// H/E
       <<" Elec EoverP: "<<elec.patEle().eSuperClusterOverP()<<endl;// E/P
-  cout<<" Elec WP95: "<<elec.patEle().electronID("simpleEleId95relIso")<<endl
-      <<" Elec WP90: "<<elec.patEle().electronID("simpleEleId90relIso")<<endl
-      <<" Elec WP85: "<<elec.patEle().electronID("simpleEleId85relIso")<<endl
-      <<" Elec WP80: "<<elec.patEle().electronID("simpleEleId80relIso")<<endl;
+  if(1 || parent == PDGW){
+    cout<<" Elec CombRelIso: "<<CalcElecCombRelIso(elec)<<endl;
+//  cout<<" Elec WP95: "<<elec.patEle().electronID("simpleEleId95relIso")<<endl
+//      <<" Elec WP90: "<<elec.patEle().electronID("simpleEleId90relIso")<<endl
+//      <<" Elec WP85: "<<elec.patEle().electronID("simpleEleId85relIso")<<endl
+//      <<" Elec WP80: "<<elec.patEle().electronID("simpleEleId80relIso")<<endl;
+  }
 }
 
 void
@@ -799,7 +816,7 @@ WZAnalyzer::PrintMuon(const TeVMuon& mu, int parent){
       <<" Muon NMatches: "<<mu.numberOfMatches()<<endl //MuonStations
       <<" Muon Hits: "  <<gm->hitPattern().numberOfValidMuonHits()<<endl; //Muon Hits
 
-  if(parent == PDGW){
+  if(1 || parent == PDGW){
     cout<<" Muon RelIso: "<<Calc_MuonRelIso(mu)<<endl;// CombRelIso
   }
 }
