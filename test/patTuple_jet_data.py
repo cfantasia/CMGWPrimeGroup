@@ -1,9 +1,8 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
-#process.load('CommonTools.ParticleFlow.PF2PAT_cff')
-#from PhysicsTools.PFCandProducer.PF2PAT_cff import *
-process.load('PhysicsTools.PFCandProducer.PF2PAT_cff')
 from PhysicsTools.PatAlgos.tools.coreTools import *
-from UserCode.CMGWPrimeGroup.patTuple_jet_cfg import *
+
+process.load("UserCode.CMGWPrimeGroup.patTuple_jet_cfg")
+from UserCode.CMGWPrimeGroup.patTuple_jet_cfg import jetExtra_config
 from UserCode.CMGWPrimeGroup.patTuple_mumet_cfg import *
 
 ## remove MC matching from the default sequence when running on data
@@ -21,55 +20,22 @@ process.lowPtJetFilter = cms.EDFilter("CandViewCountFilter",
                                 minNumber = cms.uint32(1)
                                 )
 
-# Setup so that my patJets are PFJets and not calojets
-process.patJets.jetSource='pfJets'
-# turn off all the corrections and extra factors for now
-process.patJets.addJetCorrFactors = False
-process.patJets.addBTagInfo = False
-process.patJets.addDiscriminators = False
-process.patJets.addAssociatedTracks = False
-process.patJets.addJetCharge = False
-process.patJets.addJetID = False
-process.patJets.addGenPartonMatch = False
-process.patJets.embedGenPartonMatch = False
-process.patJets.genPartonMatch = ''
-process.patJets.addGenJetMatch = False
-process.patJets.embedGenJetMatch = False
-process.patJets.getJetMCFlavour = False
-process.patJets.JetPartonMapSource = '' 
-
-# here I define which sequence I want to be made from PF2PAT - will made the process up to jets only, not care about it does later
-process.PF2PATmod = cms.Sequence(
-    process.pfNoPileUpSequence +
-    process.pfAllNeutralHadrons+
-    process.pfAllChargedHadrons+
-    process.pfAllPhotons+
-    process.pfMuonSequence +
-    process.pfNoMuon +
-    process.pfElectronSequence +
-    process.pfNoElectron +
-    process.pfJetSequence 
-    )
-
 ## let it run
 process.p = cms.Path(
-    process.muonMatch +
+#    process.muonMatch +
     process.patMuons +
     process.selectedPatMuons +
     process.PF2PATmod *
-    (process.patJets +
+    (process.patJetCorrFactors +
+     process.patJets +
      process.selectedPatJets +
      process.lowPtJetFilter)
 )
 
-#                                         ##
-process.source.fileNames = [          ##
+process.source.fileNames = [
     'file:/afs/cern.ch/user/t/tomei/tmp/V260/CMSSW_4_1_4/src/PYTHIA6_EXOTICA_RSGravZZ_kMpl005_M1000_7TeV_mumujj_cff_py_GEN_FASTSIM_HLT.root',
     ] 
-#                                         ##
 
 process.out.SelectEvents = cms.untracked.PSet(
     SelectEvents = cms.vstring('p')
     )
-
-#process.out.fileName = '/tmp/cleonido/patTuple.root'
