@@ -4,7 +4,9 @@ import FWCore.ParameterSet.Types as CfgTypes
 
 process = cms.Process("WPrimeAnalysis")
 # get JSON file correctly parced
-JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404_165542_7TeV_May10ReRecoPromptReco_Collisions11_JSON.txt'
+#JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404_165542_7TeV_May10ReRecoPromptReco_Collisions11_JSON.txt'
+#JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-163869_7TeV_PromptReco_Collisions11_JSON.txt'
+JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Arabella.txt'
 myList = LumiList.LumiList (filename = JSONfile).getCMSSWString().split(',')
 
 process.inputs = cms.PSet (
@@ -28,7 +30,7 @@ process.WprimeAnalyzer = cms.PSet(
     outputFile  = cms.string('EWKWZ_analysis.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
     reportAfter = cms.uint32(5000),                     ## optional
-    useJSON = cms.bool(False),
+    useJSON = cms.bool(True),
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_WZ.txt"),
     debugme = cms.bool(False),
@@ -59,7 +61,8 @@ process.WprimeAnalyzer = cms.PSet(
 
     muonAlgo = cms.uint32(0),
     minDeltaR = cms.double(0.1),
-
+    effectiveElecArea = cms.vdouble(0.0997,0.1123),#Not using Recommended PI*0.3*0.3
+    effectiveMuonArea = cms.vdouble(0.0997,0.1123),#Cory: Copied from Elec, but these should be different
     triggersToUse = cms.vstring("HLT_Mu9",
                                 "HLT_Mu11",
                                 "HLT_Mu15_v*",
@@ -94,27 +97,27 @@ process.WprimeAnalyzer = cms.PSet(
                        "HLT", 
                        "MinNLeptons",
                        "MaxNLeptons",
-                       "ValidWandZ", 
-                       "NumZs", 
-                       "EvtSetup",
+                       "ValidZ", 
                        "ZLepPt",
-                       "WLepPt",
+                       "NumZs", 
+                       "ValidW", 
+#                       "WLepPt",
+                       "EvtSetup",
                        "ZMass", 
                        "MET",
                        "AllCuts"),
     LooseElecCuts = cms.vstring("ElecEta",
                                 "ElecNMiss",
-#                                "ElecDist",
-#                                "ElecDCotTheta",
+#                                "ElecDistDCot",
                                 "ElecSigmaNN",
                                 "ElecDeltaPhi",
                                 "ElecDeltaEta",
                                 "ElecCombRelIso",
                                 ),
     TightElecCuts = cms.vstring("ElecLoose",
+                                "ElecTightEt",
                                 "ElecTightNMiss",
-                                "ElecTightDist",
-                                "ElecTightDCotTheta",
+                                "ElecTightDistDCot",     ##
                                 "ElecTightSigmaNN",
                                 "ElecTightDeltaPhi",
                                 "ElecTightDeltaEta",
@@ -131,6 +134,7 @@ process.WprimeAnalyzer = cms.PSet(
                                 "MuonIso",
                                 ),
     TightMuonCuts = cms.vstring("MuonLoose",
+                                "MuonTightPt",
                                 ),
 
 ####################
@@ -161,7 +165,8 @@ process.WprimeAnalyzer = cms.PSet(
     maxElecTightDeltaPhi  = cms.vdouble(0.027,0.021),
     maxElecTightDeltaEta  = cms.vdouble(0.005,0.006),
     maxElecTightHOverE    = cms.vdouble(0.,0.),#Not used in 2011
-    maxElecTightCombRelIso = cms.vdouble(0.040,0.033),
+#    maxElecTightCombRelIso = cms.vdouble(0.040,0.033),#2011 Rec
+    maxElecTightCombRelIso = cms.vdouble(0.070,0.06), #2010 Rec
       
     # +++++++++++++++++++Z Cuts
     minZeePt1 =  cms.double(20.),

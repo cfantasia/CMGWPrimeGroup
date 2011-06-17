@@ -67,8 +67,9 @@ public:
   void PrintEvent(edm::EventBase const & event);
   void PrintEventFull(edm::EventBase const & event);
   void PrintTrigger();
-  void PrintElectron(const heep::Ele& elec, int parent);
-  void PrintMuon(const TeVMuon& mu, int parent);
+  void PrintLeptons();
+  void PrintElectron(const heep::Ele& elec, int parent=0);
+  void PrintMuon(const TeVMuon& mu, int parent=0);
   double CalcLeadPt(int type=0);
   double CalcQ();
   
@@ -127,6 +128,7 @@ public:
   bool PassElecEtaCut(const heep::Ele& elec);
 
   bool PassElecNMissingHitsCut(const heep::Ele& elec);
+  bool PassElecDistDCotCut(const heep::Ele& elec);
   bool PassElecDistCut(const heep::Ele& elec);
   bool PassElecDeltaCotThetaCut(const heep::Ele& elec);
   bool PassElecSigmaIEtaIEtaCut(const heep::Ele& elec);
@@ -136,6 +138,7 @@ public:
   bool PassElecCombRelIsoCut(const heep::Ele& elec);
 
   bool PassElecTightNMissingHitsCut(const heep::Ele& elec);
+  bool PassElecTightDistDCotCut(const heep::Ele& elec);
   bool PassElecTightDistCut(const heep::Ele& elec);
   bool PassElecTightDeltaCotThetaCut(const heep::Ele& elec);
   bool PassElecTightSigmaIEtaIEtaCut(const heep::Ele& elec);
@@ -162,10 +165,13 @@ public:
   float Calc_Q();
   float Calc_Ht();
   float CalcElecSc(const heep::Ele& elec);
+  float CalcElecTrkIso(const heep::Ele& elec);
+  float CalcElecECalIso(const heep::Ele& elec);
+  float CalcElecHCalIso(const heep::Ele& elec);
   float CalcElecCombRelIso(const heep::Ele& elec);
   float Calc_MuonRelIso(const TeVMuon& mu);
   float Calc_GenWZInvMass();
-
+  bool inEE(const TeVMuon& mu);
 //////////
   void reportProgress(int eventNum);
   void verbose(const char *string, ...);
@@ -216,6 +222,8 @@ public:
 
   uint muonAlgo_;
   double rhoFastJet_;
+  std::vector<double> effectiveElecArea_;
+  std::vector<double> effectiveMuonArea_;
 
 ///My calculated qualities//////////////////
   float Ht_;
