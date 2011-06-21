@@ -648,19 +648,17 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   // Make vectors of leptons passing various criteria
   for (size_t i = 0; i < patElectrons.size(); i++) {
     electrons_.push_back(heep::Ele(patElectrons[i]));   
-    if (PassElecLooseCut(electrons_[i])){
+    if (PassElecLooseCut(electrons_[i]))
       looseElectrons_.push_back(electrons_[i]);
-      if (PassElecTightCut(electrons_[i]))
-        tightElectrons_.push_back(electrons_[i]);
-    }
+    if (PassElecTightCut(electrons_[i]))//Tight Cuts are not strictly a subset anymore
+      tightElectrons_.push_back(electrons_[i]);
   }
   for (size_t i = 0; i < patMuons.size(); i++) {
     muons_.push_back(TeVMuon(patMuons[i],muonAlgo_));   
-    if (PassMuonLooseCut(muons_[i])){
+    if (PassMuonLooseCut(muons_[i]))
       looseMuons_.push_back(muons_[i]);
-      if (PassMuonTightCut(muons_[i]))
-        tightMuons_.push_back(muons_[i]);
-    }
+    if (PassMuonTightCut(muons_[i]))
+      tightMuons_.push_back(muons_[i]);
   }
 
   verbose("    Contains: %i loose electron(s), %i loose muon(s)",
@@ -700,13 +698,13 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
           <<endl;
     }
   }
-/*
+
   if(event.id().run() == 163659 && event.id().luminosityBlock() == 425){
     cout<<"This is a missing event\n";
-    PrintEventFull(event);
+    //PrintEventFull(event);
     PrintLeptons();
   }
-*/
+
 /////////////////////
   if(!PassCuts(wprimeUtil_->getWeight())) return;
   if(!wprimeUtil_->getSampleName().find("data")){
@@ -787,6 +785,10 @@ WZAnalyzer::PrintTrigger(){
 
 void
 WZAnalyzer::PrintLeptons(){
+  cout<<"----All Electrons:------\n";
+  for(uint i=0; i<electrons_.size(); ++i) PrintElectron(electrons_[i]);
+  cout<<"----All Muons:------\n";
+  for(uint i=0; i<muons_    .size(); ++i) PrintMuon    (muons_[i]);
   cout<<"----Loose Electrons:------\n";
   for(uint i=0; i<looseElectrons_.size(); ++i) PrintElectron(looseElectrons_[i]);
   cout<<"----Loose Muons:------\n";
@@ -808,6 +810,7 @@ WZAnalyzer::PrintElectron(const heep::Ele& elec, int parent){
   cout<<" Elec ScEt: "<<elec.et()<<endl; //ScEt
   if(!elec.isPatEle()) return;
   cout<<" Elec Pt: "<<elec.patEle().pt()<<endl
+      <<" Elec Charge: "<<elec.patEle().charge()<<endl
       <<" Elec Eta: "<<elec.patEle().eta()<<", isEB="<<elec.patEle().isEB()<<endl //Eta
       <<" Elec NMiss: "<<elec.patEle().gsfTrack().get()->trackerExpectedHitsInner().numberOfHits()<<endl
       <<" Elec Dist: "<<elec.patEle().convDist()<<endl
@@ -841,6 +844,7 @@ WZAnalyzer::PrintMuon(const TeVMuon& mu, int parent){
   else                    cout<<"-----Muon from ?-------------------------"<<endl;
   reco::TrackRef gm = mu.globalTrack();
   cout<<" Muon Pt: "  <<mu.pt()<<endl
+      <<" Muon Charge: "<<mu.charge()<<endl
       <<" Muon Eta: " <<mu.eta()<<endl
       <<" Muon Dxy: " <<mu.userFloat("d0")<<endl //Dxy
       <<" Muon NormX2: "<<gm->normalizedChi2()<<endl //NormX2
@@ -917,21 +921,21 @@ bool WZAnalyzer::PassTriggersCut()
 //-----------------------------------------------------------
   if(debugme) cout<<"Trigger requirements"<<endl;
   
-  const pat::TriggerPathRefVector acceptedPaths = triggerEvent_.acceptedPaths();
-  if(debugme) cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
-  for (size_t i = 0; i < acceptedPaths.size(); i++){
-    string A = acceptedPaths[i]->name();
-    for (size_t j = 0; j < triggersToUse_.size(); j++){
-      //Need to acct for version numbers
-//      cout<<"A: "<<acceptedPaths[i]->name()<< " B: "<<triggersToUse_[j]<<endl;
-//      if(SameTrigger(A,B)){
-      if(SameTrigger(A, triggersToUse_[j])){
-//      if(SameTrigger(acceptedPaths[i]->name(), triggersToUse_[j])){
-        if(debugme) cout<<"Match A: "<<acceptedPaths[i]->name()<<" B: "<<triggersToUse_[j]<<endl;
-        if(acceptedPaths[i]->prescale() == 1  && acceptedPaths[i]->wasAccept()) return true;
-        break;
+  if(wprimeUtil_->getSampleName().find("data") != string::npos){
+    const pat::TriggerPathRefVector acceptedPaths = triggerEvent_.acceptedPaths();
+    if(debugme) cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
+    for (size_t i = 0; i < acceptedPaths.size(); i++){
+      string A = acceptedPaths[i]->name();
+      for (size_t j = 0; j < triggersToUse_.size(); j++){
+        if(SameTrigger(A, triggersToUse_[j])){
+          if(debugme) cout<<"Match A: "<<acceptedPaths[i]->name()<<" B: "<<triggersToUse_[j]<<endl;
+          if(acceptedPaths[i]->prescale() == 1  && acceptedPaths[i]->wasAccept()) return true;
+          break;
+        }
       }
     }
+  }else{//This is MC, use emulation
+    return true;//Cory: This is not good, but will pass HLT in the meantime.
   }
   return false;
 }//--- PassTriggersCut()
@@ -1370,8 +1374,16 @@ WZAnalyzer::CalcElecHCalIso(const heep::Ele& elec){
 
 float
 WZAnalyzer::CalcElecCombRelIso(const heep::Ele& elec){
+  /*
+  double R=TMath::Sqrt(elec.superCluster().x()*elec.superCluster().x() + 
+                       elec.superCluster().y()*elec.superCluster().y() +
+                       elec.superCluster().z()*elec.superCluster().z());
+  double Rt=TMath::Sqrt(elec.superCluster().x()*elec.superCluster().x() + 
+                        elec.superCluster().y()*elec.superCluster().y());
+  */
+  float ratio = elec.superCluster().position().rho() / elec.superCluster().position().r();
   float num = elec.patEle().dr03TkSumPt()
-    + (elec.patEle().dr03HcalTowerSumEt() + elec.patEle().hadronicOverEm() * elec.et()) 
+    + (elec.patEle().dr03HcalTowerSumEt() + elec.patEle().hadronicOverEm() * ratio) 
     - rhoFastJet_*effectiveElecArea_[elec.patEle().isEE()];
   num += elec.patEle().isEB() ? max(0., elec.patEle().dr03EcalRecHitSumEt() - 1.) : elec.patEle().dr03EcalRecHitSumEt();
   return num / elec.patEle().p4().Pt();
@@ -1384,7 +1396,7 @@ WZAnalyzer::Calc_MuonRelIso(const TeVMuon& mu){
 }
 
 bool WZAnalyzer::inEE(const TeVMuon& mu){
-  return mu.eta() > 1.479;
+  return fabs(mu.eta()) >= 1.05;
 }
 
 ///////////////Utilities//////////////////
