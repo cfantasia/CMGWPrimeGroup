@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V270, release:
+o Setup a new working area (Default name: V280, release:
 CMSSW_4_2_3)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-70)
+V00-02-80)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
@@ -39,25 +39,42 @@ The following 42x-compatible PAT-tuples are available in:
 The directory contains skims (lepton pt > 25 GeV) for SingleMu and
 SingleElectron datasets. 
 
-(a) For Mu+MET analysis:
-/SingleMu/Run2011A-May10ReReco-v1/AOD (21.6 M events)
-/SingleMu/Run2011A-PromptReco-v4/AOD (4.7M events)
-Pat-tuples produced with JSON/json_160404-165620_DCSonly.txt (368.91 ipb)
-For analyzing use
-JSON/Cert_160404-165542_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt
-(284.94 ipb)
-
-(b) For El+MET analysis:
-/SingleElectron/Run2011A-May10ReReco-v1/AOD (9.1 M events)
-and
-/SingleElectron/Run2011A-PromptReco-v4/AOD (2.9M events)
-Pat-tuples produced with JSON/json_DCSonly.txt_160404_166011.txt (410.83
-ipb)
-For analyzing use
-JSON/Cert_160404-165542_7TeV_PromptReco_Collisions11_JSON.txt (251.56 ipb)
+(a) May10ReRecoV1: pat-tuples created (with
+JSON/json_160404-165620_DCSonly.txt)   from
+o /SingleMu/Run2011A-May10ReReco-v1/AOD (21.6 M events, or 221.43 ipb with
+MuonPhys JSON)
+o /SingleElectron/Run2011A-May10ReReco-v1/AOD (9.1 M events, or 204.16 ipb
+with golden JSON)
 
 
-(3) NB: Structure of python files for PAT-tuple making:
+(b) PromptRecoV4_SingleMuon and PromptRecoV4_SingleElectron: pat-tuples
+created (with JSON/json_160404-167151_DCSonly.txt) from 
+/SingleMu/Run2011A-PromptReco-v4/AOD (28.0M events)
+/SingleElectron/Run2011A-PromptReco-v4/AOD (16.1M events)
+
+which are futher grouped into these directories by run range:
+(b1) PromptRecoV4_SingleMuon/165071_166763
+(b2) PromptRecoV4_SingleMuon/166764_167043
+(c1) PromptRecoV4_SingleElectron/165071_166763
+(c2) PromptRecoV4_SingleElectron/166764_167043
+
+o For Mu+MET analysis:
+(a)+(b1)+(b2) correspond to 825.73 ipb (if used with
+JSON/json_160404-167151_DCSonly.txt), or 756 ipb (if used with
+JSON/Cert_160404-166861_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt) 
+
+For El+MET analysis:
+(a)+(c1)+(c2) correspond to 817.92 ipb (if used with
+JSON/json_160404-167151_DCSonly.txt), or 715 ipb (if used with 
+JSON/Cert_160404-166861_7TeV_PromptReco_Collisions11_JSON.txt) 
+
+NB: all these files must be transferred into directory specified in
+config/top_directory.txt (which should be edited and reflect the actual
+location!)
+
+
+
+(3) Structure of python files for PAT-tuple making:
 
 (a) In directory python (low-level files): 
  o patTuple_common_cfg.py contains common defitions (e.g. addition of
