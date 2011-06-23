@@ -1,55 +1,55 @@
-integrated lumi = 284.94 pb^-1
+integrated lumi = 825.73 pb^-1
 
 samplename = data
-description = Muon pt > 25 GeV skim, v1
+description = Muon pt > 25 GeV skim, May10th ReReco v1
 x-section = 1
 pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part1.root
 Nprod_evt = 1
 
 samplename = data2
-description = Muon pt > 25 GeV skim, v1
+description = Muon pt > 25 GeV skim, May10th ReReco v1
 x-section = 1
 pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part2.root
 Nprod_evt = 1
 
 samplename = data3
-description = Muon pt > 25 GeV skim, v1
+description = Muon pt > 25 GeV skim, May10th ReReco v1
 x-section = 1
 pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part3.root
 Nprod_evt = 1
 
 samplename = data4
-description = Muon pt > 25 GeV skim, v1
+description = Muon pt > 25 GeV skim, May10th ReReco v1
 x-section = 1
 pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part4.root
 Nprod_evt = 1
 
 samplename = data5
-description = Muon pt > 25 GeV skim, v1
+description = Muon pt > 25 GeV skim, May10th ReReco v1
 x-section = 1
 pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part5.root
 Nprod_evt = 1
 
 samplename = data5b
-description = Muon pt > 25 GeV skim, v1
+description = Muon pt > 25 GeV skim, May10th ReReco v1
 x-section = 1
 pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part5001.root
 Nprod_evt = 1
 
 samplename = data6
-description = Muon pt > 25 GeV skim, v1
+description = Muon pt > 25 GeV skim, May10th ReReco v1
 x-section = 1
 pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part6.root
 Nprod_evt = 1
 
 samplename = data7
-description = Muon pt > 25 GeV skim, v1
+description = Muon pt > 25 GeV skim, May10th ReReco v1
 x-section = 1
 pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part7.root
 Nprod_evt = 1
 
 samplename = data8
-description = Muon pt > 25 GeV skim, v1
+description = Muon pt > 25 GeV skim, May10th ReReco v1
 x-section = 1
 pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part8.root
 Nprod_evt = 1
