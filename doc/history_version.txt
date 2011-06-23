@@ -19,6 +19,7 @@ o First version of hadronic WZ analyzer available
 
 
 o Misc:
+  - Updated pat-tuples for lepton+MET channels (see doc/README.txt)
   - Updated JSON files (golden, MuonPhys, DCS-only)
   - Mu+MET analyzer: fixed delta-phi matching between patMuons and PF muons
   - Added separate line in config files for determing integrated luminosity

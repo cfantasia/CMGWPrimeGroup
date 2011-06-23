@@ -10,7 +10,7 @@ fi
 
 # Definitions
 RELEASE_VERSION=CMSSW_4_2_3
-WORKING_AREA=V270
+WORKING_AREA=V280
 # end definitions
 
 export RELEASE_VERSION WORKING_AREA
@@ -34,7 +34,7 @@ cvs -Q co -r $RELEASE_VERSION DataFormats/PatCandidates
 cvs -Q co -r $RELEASE_VERSION PhysicsTools/PatAlgos
 cvs -Q co -r V00-05-00 -d SHarper/HEEPAnalyzer UserCode/SHarper/HEEPAnalyzer 
 cvs -Q co -r V08-03-03 PhysicsTools/Utilities
-cvs -Q co -r V00-02-70 UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-02-80 UserCode/CMGWPrimeGroup
 # cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"
