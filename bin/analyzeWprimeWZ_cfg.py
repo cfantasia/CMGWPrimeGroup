@@ -32,7 +32,7 @@ process.WprimeAnalyzer = cms.PSet(
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_WZ.txt"),
     debugme = cms.bool(False),
-    preselect = cms.bool(True),
+    preselect = cms.bool(False),
     logFile = cms.string("Wprime_event_counts.txt"),
     candEvtFile = cms.string("Wprime_CandEvts.txt"),
     ## enable analysis in individual channels
@@ -59,31 +59,11 @@ process.WprimeAnalyzer = cms.PSet(
 
     muonAlgo = cms.uint32(0),
     minDeltaR = cms.double(0.1),
-
-    triggersToUse = cms.vstring(#"HLT_Mu9",
-                                #"HLT_Mu11",
-                                #"HLT_Mu15_v*",
-                                #'HLT_Mu17_v*',
-                                #"HLT_Mu20_v*",
-                                #"HLT_Mu24_v*",
-                                #"HLT_Mu30_v*",
-
-                                #'HLT_DoubleMu5_v*',
-                                'HLT_DoubleMu7_v*',
+    effectiveElecArea = cms.vdouble(0.0997,0.1123),#Not using Recommended PI*0.3*0.3
+    effectiveMuonArea = cms.vdouble(0.1057,0.0769),
+    triggersToUse = cms.vstring('HLT_DoubleMu7_v*',
                                 'HLT_Mu13_Mu8_v*', #1e33 unprescaled
-                                #'HLT_TripleMu5_v*',
 
-                                #"HLT_Ele15_LW_L1R",
-                                #"HLT_Ele15_SW_L1R",
-                                #"HLT_Ele15_SW_CaloEleId_L1R",
-                                #"HLT_Ele17_SW_CaloEleId_L1R",
-                                #"HLT_Ele17_SW_TightEleId_L1R",
-                                #"HLT_Ele17_SW_TighterEleIdIsol_L1R_v*",
-                                #"HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*",
-                                #"HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*",
-                                #"HLT_Ele45_CaloIdVT_TrkIdT_v*",
-
-                                #'HLT_DoubleEle17_SW_L1R_v*',
                                 'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
                                 'HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v*'
 
@@ -94,13 +74,12 @@ process.WprimeAnalyzer = cms.PSet(
                        "HLT", 
                        "MinNLeptons",
                        "MaxNLeptons",
-                       "ValidWandZ", 
+                       "ValidZ", 
+                       "ZLepPt",
                        "NumZs", 
+                       "ValidW", 
                        "ValidWZCand",
                        "EvtSetup",
-#                       "LeadLepPt",
-                       "ZLepPt",
-                       "WLepPt",
                        "ZMass", 
                        "MET",
                        "Ht", 
@@ -109,17 +88,15 @@ process.WprimeAnalyzer = cms.PSet(
                        "AllCuts"),
     LooseElecCuts = cms.vstring("ElecEta",
                                 "ElecNMiss",
-#                                "ElecDist",
-#                                "ElecDCotTheta",
                                 "ElecSigmaNN",
                                 "ElecDeltaPhi",
                                 "ElecDeltaEta",
                                 "ElecCombRelIso",
                                 ),
     TightElecCuts = cms.vstring("ElecLoose",
+                                "ElecTightEt",
                                 "ElecTightNMiss",
-                                "ElecTightDist",
-                                "ElecTightDCotTheta",
+                                "ElecTightDistDCot",     
                                 "ElecTightSigmaNN",
                                 "ElecTightDeltaPhi",
                                 "ElecTightDeltaEta",
@@ -136,14 +113,15 @@ process.WprimeAnalyzer = cms.PSet(
                                 "MuonIso",
                                 ),
     TightMuonCuts = cms.vstring("MuonLoose",
+                                "MuonTightPt",
                                 ),
 
 ####################
 
     # +++++++++++++++++++General Cut values
-    maxNumZs = cms.uint32(2),
-    minNLeptons = cms.uint32(2),
-    maxNLeptons = cms.uint32(4),
+    maxNumZs = cms.uint32(1),
+    minNLeptons = cms.uint32(3),
+    maxNLeptons = cms.uint32(3),
     minLeadPt = cms.double(35.),
     minMET = cms.double(30.),
     
@@ -166,7 +144,8 @@ process.WprimeAnalyzer = cms.PSet(
     maxElecTightDeltaPhi  = cms.vdouble(0.027,0.021),
     maxElecTightDeltaEta  = cms.vdouble(0.005,0.006),
     maxElecTightHOverE    = cms.vdouble(0.,0.),#Not used in 2011
-    maxElecTightCombRelIso = cms.vdouble(0.040,0.033),
+#    maxElecTightCombRelIso = cms.vdouble(0.040,0.033),#2011 Rec
+    maxElecTightCombRelIso = cms.vdouble(0.070,0.06), #2010 Rec
       
     # +++++++++++++++++++Z Cuts
     minZeePt1 =  cms.double(20.),
