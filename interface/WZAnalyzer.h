@@ -47,10 +47,7 @@ public:
   void ClearEvtVariables();
   void ClearAndResize(vector<TH1F*>& h, int& size, TH1F* ptr=NULL);
 
-  void ScaleHistos();
   void Fill_Histos(int index, float weight=1.);
-  void saveHistos(std::string dir);
-  void deleteHistos();
   void printSummary(const std::string& dir, ofstream & out);
 
   void eventLoop(edm::EventBase const & event);
@@ -63,9 +60,13 @@ public:
   void CalcEventVariables();
   bool PassCuts(const float& weight=1.);
 
+  void PrintEventFull(edm::EventBase const & event);
+  void PrintPassingEvent(edm::EventBase const & event);
+  void PrintDebugEvent();
   void PrintEventToFile(edm::EventBase const & event);
   void PrintEvent(edm::EventBase const & event);
-  void PrintEventFull(edm::EventBase const & event);
+  void PrintEventDetails();
+  void PrintEventLeptons();
   void PrintTrigger();
   void PrintLeptons();
   void PrintElectron(const heep::Ele& elec, int parent=0);
@@ -206,11 +207,6 @@ public:
   float NOCUT;
 
 // +++++++++++++++++++
-  std::vector<uint> nEvents;
-  int eventNum;
-  uint runNumber;
-  uint lumiID;
-
   typedef pair< map<string, bool>, vector<string> > OptArgPair;
   std::map<std::string, int> intOptions_;
   std::map<std::string, std::string> stringOptions_;
@@ -313,7 +309,6 @@ public:
   std::vector<float> Num_surv_cut_;
 
 // +++++++++++++++++++ Histogram Definitions
-  std::vector<TH1F*> listOfHists;
   TH1F * hEffRel;
   TH1F * hEffAbs;
   TH1F * hNumEvts;
