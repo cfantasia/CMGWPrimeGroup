@@ -160,9 +160,9 @@ void WPrimeFinder::run()
         // at the end of the job - nothing else!
       it->Nprod_evt = it->Nact_evt;
     
-    cout << "\n Opened sample " << it->samplename << " with " << it->Nact_evt
+    cout << " Opened sample " << it->samplename << " with " << it->Nact_evt
          << " events (Input file #" << i_sample << " out of " << inputFiles.size()
-         << " samples) " << endl;
+         << " samples) " << endl << endl;
     
     cout << std::fixed << std::setprecision(2);
     beginFile(it);
@@ -170,6 +170,13 @@ void WPrimeFinder::run()
       edm::EventBase const & event = ev;
       // skip event if maximal number of events per input file is reached 
       if(maxEvents_>0 &&  ievt > maxEvents_) continue;
+ 
+      // simple event counter
+      if(reportAfter_!=0 ? (ievt>0 && ievt%reportAfter_==0) : false) 
+        cout << " Processing event: " << ievt << " or " 
+             << 100.*ievt/it->Nact_evt << "% of input file"
+             << " (Total events processed: " << ievt_all 
+             << ", non-certified/skipped: " << ievt_skipped << ") " << endl;
       
       if(useJSON_ && it->samplename.find("data") != string::npos && 
          !jsonContainsEvent (jsonVector, event)){
@@ -177,16 +184,6 @@ void WPrimeFinder::run()
         continue;
       }else
         ++ievt_all;
-
-      // simple event counter
-      if(reportAfter_!=0 ? (ievt>0 && ievt%reportAfter_==0) : false) 
-        cout << " Processing event: " << ievt << " or " 
-             << 100.*ievt/it->Nact_evt << "% of input file"
-             << " (Total events processed: " << ievt_all 
-             << ", non-certified/skipped: " << ievt_skipped << ") " << endl;
-
-
-
 
       eventLoop(event);
     } // loop over events
