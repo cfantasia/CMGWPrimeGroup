@@ -1,11 +1,13 @@
 #!/bin/bash
-Ver="B05-06-07"
-Dir=/pnfs/cms/WAX/11/store/user/fantasia/42X
+Ver="05-07-01"
+#Dir=/pnfs/cms/WAX/11/store/user/fantasia/42X
+Dir=~/nobackup/42X/filelists
 
 for Directory in `ls ${Dir} | grep ${Ver}`
   do
-  find ${Dir}/${Directory}/ | grep .root >& ${Directory}.txt
-
+  if [ -d $Dir/$Directory ]; then
+      find ${Dir}/${Directory}/ | grep .root >& ${Directory}.txt
+  fi
 done
 
 ./mergeFilelists.sh
