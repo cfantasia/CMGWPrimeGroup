@@ -3,10 +3,9 @@ import FWCore.PythonUtilities.LumiList as LumiList
 import FWCore.ParameterSet.Types as CfgTypes
 
 process = cms.Process("WPrimeAnalysis")
-# get JSON file correctly parced
-JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-165542_7TeV_PromptReco_Collisions11_JSON.txt'
-#JSONfile = 'UserCode/CMGWPrimeGroup/JSON/json_160404-166011_DCSonly.txt'
-
+# get JSON file correctly parsed
+#JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-166861_7TeV_PromptReco_Collisions11_JSON.txt'
+JSONfile = 'UserCode/CMGWPrimeGroup/JSON/json_160404-167151_DCSonly.txt'
 myList = LumiList.LumiList (filename = JSONfile).getCMSSWString().split(',')
 
 process.inputs = cms.PSet (
@@ -29,13 +28,13 @@ process.WprimeAnalyzer = cms.PSet(
     ## common input for wrapped analyzers
  fileNames   = cms.vstring(),  ## keep empty!
    # fileNames   = cms.vstring('file:patTuple.root'),  ## mandatory
-    outputFile  = cms.string('Wprime_analysis.root'),## mandatory
+    outputFile  = cms.string('Wprime_analysis_ElMET.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
     reportAfter = cms.uint32(15000),                     ## optional
     useJSON = cms.bool(True),
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_ElMET.txt"),
-    logFile = cms.string("Wprime_event_counts.txt"),
+    logFile = cms.string("event_counts_ElMET.txt"),
     ## enable analysis in individual channels
     runMuMETAnalysis = cms.bool(False),
     runElMETAnalysis = cms.bool(True),
@@ -55,11 +54,9 @@ process.WprimeAnalyzer = cms.PSet(
     barrelCuts = heepBarrelCuts,
     endcapCuts = heepEndcapCuts,
     inputs = process.inputs,
-
     MCPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/MCPUDist.root'),
     MCPUDistHist = cms.string('pileup'),
     DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/DataPUDist.root'),
-    DataPUDistHist = cms.string('pileup'),
-
+    DataPUDistHist = cms.string('pileup')
  )
 

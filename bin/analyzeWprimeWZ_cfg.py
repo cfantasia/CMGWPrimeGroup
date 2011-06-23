@@ -3,8 +3,8 @@ import FWCore.PythonUtilities.LumiList as LumiList
 import FWCore.ParameterSet.Types as CfgTypes
 
 process = cms.Process("WPrimeAnalysis")
-# get JSON file correctly parced
-JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404_165542_7TeV_May10ReRecoPromptReco_Collisions11_JSON.txt'
+# get JSON file correctly parsed
+JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-166861_7TeV_PromptReco_Collisions11_JSON.txt'
 myList = LumiList.LumiList (filename = JSONfile).getCMSSWString().split(',')
 
 process.inputs = cms.PSet (
