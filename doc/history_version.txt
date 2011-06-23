@@ -1,4 +1,28 @@
+23-JUN-11 (Cory, Thiago, Christos), V00-02-80
+=============================================
 
+o Introduced "boson" finder (W, Z) in both lepton (+MET) and hadronic (jj)
+signatures. Deals with adjustments to (pf)MET, hadronic corrections, etc,
+high-pt reconstruction (HEEP, TeV muons) and provides W/Z candidates for
+higher-level analyses. 
+
+o Added pileup-weighting option for MC histograms.
+
+o WZ analysis:
+  - Now using HEEP electrons
+  - Triggers updated
+  - Isolation histograms added
+  - PU-weighting added
+  - Data and MC samples updated
+
+o First version of hadronic WZ analyzer available
+
+
+o Misc:
+  - Updated pat-tuples for lepton+MET channels (see doc/README.txt)
+  - Updated JSON files (golden, MuonPhys, DCS-only)
+  - Mu+MET analyzer: fixed delta-phi matching between patMuons and PF muons
+  - Added separate line in config files for determing integrated luminosity
 
 
 30-MAY-11 (Christos), V00-02-70
