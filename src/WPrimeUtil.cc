@@ -277,3 +277,9 @@ TVector2 WPrimeUtil::getHadronicMET(edm::EventBase const & event)
   return hadronicMETcached;    
 
 }
+
+// true if current file under processing contains "data" in description
+bool WPrimeUtil::runningOnData() const
+{
+  return (getSampleName().find("data") != string::npos);
+}

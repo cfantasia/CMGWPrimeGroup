@@ -28,20 +28,18 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
 
-using namespace std;
-
 typedef edm::ParameterSet PSet;
 
 /// Functions to get products from the event
 template <class T, class P>
-T getProduct(const P & event, string productName) {
+  T getProduct(const P & event, std::string productName) {
   edm::Handle<T> handle;
   event.getByLabel(edm::InputTag(productName), handle);
   return * handle;
 }
 
 template <class T, class P>
-T getProduct(const P & event, string productName, T defaultVal) {
+  T getProduct(const P & event, std::string productName, T defaultVal) {
   edm::Handle<T> handle;
   event.getByLabel(edm::InputTag(productName), handle);
   if (handle.isValid()) return * handle;
@@ -49,7 +47,7 @@ T getProduct(const P & event, string productName, T defaultVal) {
 }
 
 template <class T, class P>
-const T * getPointer(const P & event, string productName) {
+  const T * getPointer(const P & event, std::string productName) {
   edm::Handle<T> handle;
   event.getByLabel(edm::InputTag(productName), handle);
   if (handle.isValid()) return handle.product();
@@ -67,26 +65,26 @@ const T * getPointer(const P & event, string productName) {
 template<class T>
 class MinMaxSelector : public Selector<T> {
  public:
-  bool cutOnMin(string param) {
-    bool useMin = param.find("min") != string::npos;
-    bool useMax = param.find("max") != string::npos;
+  bool cutOnMin(std::string param) {
+    bool useMin = param.find("min") != std::string::npos;
+    bool useMax = param.find("max") != std::string::npos;
     if (!useMin && !useMax) {
-      cout << param << " has neither 'min' nor 'max' in its name!" << endl;
+      std::cout << param << " has neither 'min' nor 'max' in its name!" << std::endl;
       exit(1);
     }
     return useMin;
   }
   template<class C>
-  void loadFromPset(PSet params, string param, bool shouldSet = true) {
+    void loadFromPset(PSet params, std::string param, bool shouldSet = true) {
     C defaultValue = 0;
     if (!this->cutOnMin(param))
-      defaultValue = numeric_limits<C>::max();
+      defaultValue = std::numeric_limits<C>::max();
     C val = params.getUntrackedParameter<C>(param, defaultValue);
     this->push_back(param, val);
     this->set(param, shouldSet);
   }
   template<class C>
-  void setPassCut(string param, C value, pat::strbitset & ret) {
+    void setPassCut(std::string param, C value, pat::strbitset & ret) {
     bool useMin = this->cutOnMin(param);
     bool passMin = useMin && value >= this->cut(param, C());
     bool passMax = !useMin && value <= this->cut(param, C());
@@ -150,7 +148,7 @@ public:
 class ElectronSelector {
  public:
   ElectronSelector() {}
-  ElectronSelector(PSet pset, string selectorName) {
+  ElectronSelector(PSet pset, std::string selectorName) {
     PSet const params = pset.getParameter<PSet>(selectorName);
     barrelSelector_ = ElectronSelectorBase(params.getParameter<PSet>("barrel"));
     endcapSelector_ = ElectronSelectorBase(params.getParameter<PSet>("endcap"));
@@ -173,7 +171,7 @@ class ElectronSelector {
 class MuonSelector : public MinMaxSelector<pat::Muon> {
 public:
   MuonSelector() {}
-  MuonSelector(PSet pset, string selectorName) {
+  MuonSelector(PSet pset, std::string selectorName) {
     PSet const params = pset.getParameter<PSet>(selectorName);
     // Set the last parameter to false to turn off the cut
     loadFromPset<double>(params, "minPt", true);
@@ -212,7 +210,7 @@ public:
 class JetSelector : public MinMaxSelector<pat::Jet> {
 public:
   JetSelector() {}
-  JetSelector(PSet pset, string selectorName) {
+  JetSelector(PSet pset, std::string selectorName) {
     PSet const params = pset.getParameter<PSet>(selectorName);
     // Set the last parameter to false to turn off the cut
     loadFromPset<double>(params, "minPt", true);
@@ -231,9 +229,9 @@ public:
 
 /// Return the DBS dataset name stored in the patTuple
 template <class P>
-string getDatasetName(const P & event, const string datasetName) {
+std::string getDatasetName(const P & event, const std::string datasetName) {
   if (datasetName == "")
-    return getProduct<string>(event, "wzPreselectionProducer:datasetName", 
+    return getProduct<std::string>(event, "wzPreselectionProducer:datasetName", 
                               "Not found");
   return datasetName;
 }

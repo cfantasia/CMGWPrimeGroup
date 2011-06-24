@@ -1,5 +1,7 @@
 #include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
 
+using std::vector; using std::cout; using std::endl;
+
 //////// Useful Algorithms ///////////////////////////////////////////////////
 /// Return a vector of non-overlapping Z candidates
 ZCandV getZCands(const ElectronV & electrons, float maxMassDiff)
@@ -12,7 +14,7 @@ ZCandV getZCands(const ElectronV & electrons, float maxMassDiff)
         zCands.push_back(ZCandidate(electrons[i], electrons[j]));
 
   // Order by difference from Z mass
-  sort(zCands.begin(), zCands.end(), closestToZMass());
+  std::sort(zCands.begin(), zCands.end(), closestToZMass());
 
   removeOverlapping(zCands);
 

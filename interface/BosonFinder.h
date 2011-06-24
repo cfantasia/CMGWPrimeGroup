@@ -33,11 +33,9 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/util.h"
 
-using namespace std;
-
 typedef unsigned int uint;
-typedef vector<int> vint;
-typedef vector<string> vstring;
+typedef std::vector<int> vint;
+typedef std::vector<std::string> vstring;
 typedef math::XYZPoint Point;
 typedef math::XYZTLorentzVector LorentzVector;
 typedef edm::ParameterSet PSet;
@@ -45,15 +43,15 @@ typedef edm::MergeableCounter Counter;
 
 //typedef vector<pat::Electron> ElectronV;
 //typedef vector<pat::Muon    > MuonV;
-typedef vector<heep::Ele > ElectronV;
-typedef vector<TeVMuon  > MuonV;
+typedef std::vector<heep::Ele > ElectronV;
+typedef std::vector<TeVMuon  > MuonV;
 
-typedef vector<pat::Jet     > JetV;
-typedef vector<pat::MET     > METV;
-typedef vector<reco::Track  > TrackV;
-typedef vector<edm::InputTag> VInputTag;
-typedef vector<reco::Candidate> CandV;
-typedef vector<reco::GenParticle> GenParticleV;
+typedef std::vector<pat::Jet     > JetV;
+typedef std::vector<pat::MET     > METV;
+typedef std::vector<reco::Track  > TrackV;
+typedef std::vector<edm::InputTag> VInputTag;
+typedef std::vector<reco::Candidate> CandV;
+typedef std::vector<reco::GenParticle> GenParticleV;
 
 class BosonCandidate : public reco::CompositeCandidate {
  public:

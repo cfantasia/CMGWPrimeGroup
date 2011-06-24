@@ -74,10 +74,10 @@ class WPrimeFinder
   bool jsonContainsEvent (const std::vector<edm::LuminosityBlockRange>&jsonVec,
 			  const edm::EventBase &event);
 
-  string MCPUDistFile_;
-  string MCPUDistHist_;
-  string DataPUDistFile_;
-  string DataPUDistHist_;
+  std::string MCPUDistFile_;
+  std::string MCPUDistHist_;
+  std::string DataPUDistFile_;
+  std::string DataPUDistHist_;
 };
 
 #endif // #define _wprime_finder_h_

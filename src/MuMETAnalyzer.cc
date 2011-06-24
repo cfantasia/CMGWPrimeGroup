@@ -117,7 +117,7 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 	
 	if(dumpHighPtMuons_ && fill_entry 
 	   && cut_index == Num_mumet_cuts-1
-	   && wprimeUtil_->getSampleName().find("data") != string::npos &&
+	   && wprimeUtil_->runningOnData() && 
 	   muon.innerTrack()->pt() > dumpHighPtMuonThreshold_)
 	  printHighPtMuon(event, muon);
       
@@ -242,7 +242,7 @@ void MuMETAnalyzer::endAnalysis(ofstream & out)
 	 << " +- " << 100.*(it->second)[index].deff
 	 << " %) " << endl;
       
-      if(sample.find("data") == string::npos && 
+      if(!wprimeUtil_->runningOnData() &&
 	 sample.find("wprime") == string::npos)
 	N_SM += N_evt;
       

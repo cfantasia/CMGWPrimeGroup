@@ -100,7 +100,7 @@ public:
   void PrintMuon(const TeVMuon* mu, int parent);
   void PrintJet(const pat::Jet* jet, int parent);
     
-  bool SameTrigger(string & A, string & B);
+  bool SameTrigger(std::string & A, std::string & B);
 
 //methods for utilities
   void CheckStream(ofstream& stream, std::string s);
@@ -194,7 +194,7 @@ public:
   uint runNumber;
   uint lumiID;
 
-  typedef pair< map<string, bool>, vector<string> > OptArgPair;
+  typedef std::pair< std::map<std::string, bool>, std::vector<std::string> > OptArgPair;
   std::map<std::string, int> intOptions_;
   std::map<std::string, std::string> stringOptions_;
   std::vector<std::string> filenames_;

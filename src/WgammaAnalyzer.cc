@@ -187,8 +187,7 @@ void WgammaAnalyzer::eventLoop(edm::EventBase const & event)
 	    
 	    if(dumpHighPtMuons_
 	       && cut_index == Num_mumet_cuts-1
-	       && wprimeUtil_->getSampleName().find("data") != string::npos &&
-	       
+	       && wprimeUtil_->runningOnData() &&
 	       (*muons)[theMu].innerTrack()->pt() > dumpHighPtMuonThreshold_ )
 	      printHighPtMuon(event);
 	    
@@ -216,8 +215,7 @@ void WgammaAnalyzer::eventLoop(edm::EventBase const & event)
 
 		  if(dumpHighPtPhotons_
 		     && cut_index == Num_photon_cuts-1
-		     && (wprimeUtil_->getSampleName().find("data") 
-			 != string::npos)
+		     && wprimeUtil_->runningOnData()
 		     && PhotonP4.pt() > dumpHighPtPhotonThreshold_ )
 		    printHighPtPhoton(event,thePhoton);
 		  

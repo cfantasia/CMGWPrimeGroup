@@ -45,7 +45,7 @@ public:
                     TH1F* h, TFileDirectory& d);
 
   void ClearEvtVariables();
-  void ClearAndResize(vector<TH1F*>& h, int& size, TH1F* ptr=NULL);
+  void ClearAndResize(std::vector<TH1F*>& h, int& size, TH1F* ptr=NULL);
 
   void Fill_Histos(int index, float weight=1.);
   void printSummary(const std::string& dir, ofstream & out);
@@ -74,7 +74,7 @@ public:
   double CalcLeadPt(int type=0);
   double CalcQ();
   
-  bool SameTrigger(string & A, string & B);
+  bool SameTrigger(std::string & A, std::string & B);
 
 //methods for utilities
 
@@ -207,7 +207,7 @@ public:
   float NOCUT;
 
 // +++++++++++++++++++
-  typedef pair< map<string, bool>, vector<string> > OptArgPair;
+  typedef std::pair< std::map<std::string, bool>, std::vector<std::string> > OptArgPair;
   std::map<std::string, int> intOptions_;
   std::map<std::string, std::string> stringOptions_;
   std::vector<std::string> filenames_;
@@ -246,7 +246,7 @@ public:
   float minWpt_;
 
   int   cutWenuWPRelIsoMask_;
-  string cutElecWPTightType_;
+  std::string cutElecWPTightType_;
   float minDeltaR_;
 
   float minWlepPt_;
@@ -264,7 +264,7 @@ public:
   float minElecLooseEt_;
   float minElecTightEt_;
   int cutElecWPLooseMask_;
-  string cutElecWPLooseType_;
+  std::string cutElecWPLooseType_;
   
   float maxElecNMissingHits_;
   float minElecDist_;
@@ -413,7 +413,7 @@ public:
 
 /// Return a pointer to product with productName
 template <class T, class P>
-const T * getPointerFWLite(const P & ev, string productName)
+  const T * getPointerFWLite(const P & ev, std::string productName)
 {
   fwlite::Handle<T> handle;
   handle.getByLabel(ev, productName.c_str());

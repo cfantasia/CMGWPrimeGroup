@@ -44,12 +44,14 @@ class WPrimeUtil
   void setSampleName(std::string samplename){samplename_ = samplename;}
   void setWeight(float weight){weight_ = weight;}
 
-  std::string getSampleName(){return samplename_;}
-  float getWeight(){return weight_;}
-  float getLumiWeight(int & nInt){return LumiWeights_.weight(nInt);}
+  std::string getSampleName() const{return samplename_;}
+  float getWeight() const{return weight_;}
+  float getLumiWeight (int & nInt) {return LumiWeights_.weight(nInt);}
 
   static void getEff(float & eff, float & deff,float Num,float Denom);
 
+  // true if current file under processing contains "data" in description
+  bool runningOnData() const;
 
   // integrated luminosity in pb^-1
   float getLumi_ipb(){return lumi_ipb;}

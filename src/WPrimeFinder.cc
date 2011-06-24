@@ -151,13 +151,13 @@ void WPrimeFinder::run()
     it->Nact_evt = ev.size();
     cout<<" Done. The sample contains " << it->Nact_evt << " events" << endl;
   
-    if(it->samplename.find("data") != string::npos)
-        // Nprod_evt presumably contains the # of events before any filtering
-        // that results in Nact_evt (< Nprod_evt) events contained in the file.
-        // For data, we tend not to know how many events we started with,
-        // so just assume pre-selection efficiency = 100%;
-        // this affects only the efficiency calculations printed
-        // at the end of the job - nothing else!
+    if(!wprimeUtil->runningOnData())
+      // Nprod_evt presumably contains the # of events before any filtering
+      // that results in Nact_evt (< Nprod_evt) events contained in the file.
+      // For data, we tend not to know how many events we started with,
+      // so just assume pre-selection efficiency = 100%;
+      // this affects only the efficiency calculations printed
+      // at the end of the job - nothing else!
       it->Nprod_evt = it->Nact_evt;
     
     cout << " Opened sample " << it->samplename << " with " << it->Nact_evt
@@ -178,11 +178,13 @@ void WPrimeFinder::run()
              << " (Total events processed: " << ievt_all 
              << ", non-certified/skipped: " << ievt_skipped << ") " << endl;
       
-      if(useJSON_ && it->samplename.find("data") != string::npos && 
-         !jsonContainsEvent (jsonVector, event)){
-        ++ievt_skipped;
-        continue;
-      }else
+      if(useJSON_ && wprimeUtil->runningOnData() &&
+         !jsonContainsEvent (jsonVector, event))
+	{
+	  ++ievt_skipped;
+	  continue;
+	}
+      else
         ++ievt_all;
 
       eventLoop(event);

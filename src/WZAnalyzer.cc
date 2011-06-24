@@ -642,7 +642,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
   triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
 
-  if(0 && wprimeUtil_->getSampleName().find("data") == string::npos){//Don't do this for data
+  if(0 && wprimeUtil_->runningOnData()){//Don't do this for data
 /*    
     GenParticleV genParticles = getUntrackedProduct<GenParticleV>(event, "genParticles");
     const Candidate * genZ = 0;
@@ -674,7 +674,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
 /////////////////////
   if(!PassCuts(wprimeUtil_->getWeight())) return;
-  if(!wprimeUtil_->getSampleName().find("data")){
+  if(wprimeUtil_->runningOnData()){
     cout<<" The following data events passed All Cuts!!!\n\n";
     PrintPassingEvent(event);
     cout<<" ------------------\n";
@@ -906,7 +906,7 @@ bool WZAnalyzer::PassTriggersCut()
 //-----------------------------------------------------------
   if(debugme) cout<<"Trigger requirements"<<endl;
   
-  if(wprimeUtil_->getSampleName().find("data") != string::npos){
+  if(wprimeUtil_->runningOnData()){
     const pat::TriggerPathRefVector acceptedPaths = triggerEvent_.acceptedPaths();
     if(debugme) cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
     for (size_t i = 0; i < acceptedPaths.size(); i++){
