@@ -68,48 +68,66 @@ void removeOverlapping(ZCandV & zCands){
       }
 }
 
-WCandidate getWCand(const ElectronV & electrons,
-                    const pat::MET & met){
+vector<WCandidate> getWCandidates(const ElectronV & electrons,
+				  const pat::MET & met){
   vector<WCandidate> wCands;
-  
   for (ElectronV::const_iterator i = electrons.begin(); 
        i != electrons.end(); ++i)
     wCands.push_back(WCandidate(* i, met));
 
-  sort(wCands.begin(), wCands.end(), highestPtLepton());
+  return wCands;
+}
 
+WCandidate getWCand(const ElectronV & electrons,
+                    const pat::MET & met){
+
+  vector<WCandidate> wCands = getWCandidates(electrons, met);
+
+  sort(wCands.begin(), wCands.end(), highestPtLepton());
   if (wCands.size()) return wCands[0];
 
   return WCandidate();
-
 }
 
-WCandidate getWCand(const MuonV & muons, 
+vector<WCandidate> getWCandidates(const MuonV & muons, 
                     const pat::MET & met){
   vector<WCandidate> wCands;
   for (MuonV::const_iterator i = muons.begin(); 
        i != muons.end(); ++i)
     wCands.push_back(WCandidate(* i, met));
 
-  sort(wCands.begin(), wCands.end(), highestPtLepton());
+  return wCands;
+}
 
+WCandidate getWCand(const MuonV & muons, 
+                    const pat::MET & met){
+  vector<WCandidate> wCands = getWCandidates(muons, met);
+
+  sort(wCands.begin(), wCands.end(), highestPtLepton());
   if (wCands.size()) return wCands[0];
 
   return WCandidate();
 }
 
+vector<WCandidate> getWCandidates(const ElectronV & electrons,
+                    const MuonV & muons, const pat::MET & met){
+
+  vector<WCandidate> eWcands = getWCandidates(electrons, met);
+  vector<WCandidate> muWcands = getWCandidates(muons, met);
+  vector<WCandidate>::const_iterator it;
+  for (it = muWcands.begin(); it != muWcands.end(); ++it)
+    eWcands.push_back(*it);
+  return eWcands;
+}
+
 WCandidate getWCand(const ElectronV & electrons,
                     const MuonV & muons, 
                     const pat::MET & met){
- vector<WCandidate> wCands;
-
- wCands.push_back(getWCand(electrons, met));
- wCands.push_back(getWCand(muons    , met));
-
- sort(wCands.begin(), wCands.end(), highestPtLepton());
- 
- if (wCands.size()) return wCands[0];
- 
+  vector<WCandidate> wCands = getWCandidates(electrons, muons, met);
+  
+  sort(wCands.begin(), wCands.end(), highestPtLepton());
+  if (wCands.size()) return wCands[0];
+  
  return WCandidate();
 }
 
