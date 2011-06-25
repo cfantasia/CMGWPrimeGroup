@@ -84,12 +84,15 @@ process.WprimeAnalyzer = cms.PSet(
 
     Cuts = cms.vstring("NoCuts", 
                        "HLT",
+                       "FakeEvt",
                        
                        "ValidW", 
 #                       "WFlavorMuon",
                        "WFlavorElec",
 
-                       "FakeEvt",
+                       "WTransMass",
+                       "MET",
+                       
                        "FakeLepTag",
                        "FakeLepProbeLoose",
                        "FakeLepProbeTight",
@@ -132,7 +135,7 @@ process.WprimeAnalyzer = cms.PSet(
                                 "MuonNormChi2",
                                 "MuonHitsUsed",
                                 "MuonStations",
-                                "MuonIso",
+                                "MuonTightIso",
                                 ),
 
 ####################
@@ -142,13 +145,13 @@ process.WprimeAnalyzer = cms.PSet(
     minNLeptons = cms.uint32(2),
     maxNLeptons = cms.uint32(3),
     minLeadPt = cms.double(35.),
-    minMET = cms.double(30.),
+    minMET = cms.double(20.),
     
     # +++++++++++++++++++Ht Cuts
     minHt = cms.double(190.),#150 for TC300), 190 for W'400
     
     # +++++++++++++++++++W Cuts
-    minWtransMass = cms.double(0.),#Cory: Removed cut
+    minWtransMass = cms.double(20.),
     minWpt = cms.double(110.),#90 for TC300), 110 for W'400
     
     minWlepPt = cms.double(20.),
