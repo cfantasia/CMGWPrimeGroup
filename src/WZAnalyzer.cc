@@ -922,7 +922,7 @@ bool WZAnalyzer::PassTriggersCut()
 //-----------------------------------------------------------
   if(debugme) cout<<"Trigger requirements"<<endl;
   
-  if(wprimeUtil_->runningOnData()){
+  if(wprimeUtil_->runningOnData() || (zCand_ && zCand_.flavor() == PDGMUON)){
     const pat::TriggerPathRefVector acceptedPaths = triggerEvent_.acceptedPaths();
     if(debugme) cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
     for (size_t i = 0; i < acceptedPaths.size(); i++){
@@ -1331,8 +1331,6 @@ inline bool WZAnalyzer::PassWFlavorMuonCut(){
 bool WZAnalyzer::PassFakeEvtCut(){
   if(looseElectrons_.size() != 1) return false;
   if(looseMuons_    .size() != 1) return false;
-  if( wCand_.mt() < 20 ) return false;
-  if( met_.et() < 20) return false;
   if(looseMuons_[0].charge() != looseElectrons_[0].charge()) return false;
   return true;
 }
