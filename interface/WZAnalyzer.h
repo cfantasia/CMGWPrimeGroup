@@ -52,6 +52,7 @@ public:
 
   void eventLoop(edm::EventBase const & event);
   void Tabulate_Me(int& cut_index,const float& weight);
+  int CountZCands(ZCandV & Zs);
   void CalcZVariables();
   void CalcWVariables();
   void CalcWElecVariables();
@@ -71,8 +72,6 @@ public:
   void PrintLeptons();
   void PrintElectron(const heep::Ele& elec, int parent=0);
   void PrintMuon(const TeVMuon& mu, int parent=0);
-  double CalcLeadPt(int type=0);
-  double CalcQ();
   
   bool SameTrigger(std::string & A, std::string & B);
 
@@ -127,6 +126,7 @@ public:
   bool PassElecWPRelIsoCut(const heep::Ele& elec);
 
   bool PassElecEtaCut(const heep::Ele& elec);
+  bool PassTriggerMatch(const heep::Ele& elec);
 
   bool PassElecNMissingHitsCut(const heep::Ele& elec);
   bool PassElecDistDCotCut(const heep::Ele& elec);
@@ -160,12 +160,13 @@ public:
   bool PassMuonHitsUsedCut(const TeVMuon& mu);
   bool PassMuonStationsCut(const TeVMuon& mu);
   bool PassMuonEtaCut(const TeVMuon& mu);
-  bool PassMuonCombRelIsoCut(const TeVMuon& mu);
+  bool PassMuonLooseCombRelIsoCut(const TeVMuon& mu);
+  bool PassMuonTightCombRelIsoCut(const TeVMuon& mu);
 
   int   Calc_EvtType();
+  float CalcLeadPt(int type=0);
   float Calc_Q();
   float Calc_Ht();
-  float CalcElecSc(const heep::Ele& elec);
   float CalcElecTrkIso(const heep::Ele& elec);
   float CalcElecECalIso(const heep::Ele& elec);
   float CalcElecHCalIso(const heep::Ele& elec);
@@ -181,10 +182,16 @@ public:
   void endFile(std::vector<wprime::InputFile>::const_iterator fi, ofstream & out);
   void endAnalysis(ofstream & out);
 
+  bool EMuOverlap(const pat::Electron & e,
+                  const std::vector<pat::Muon > & ms);
+
   heep::Ele & FindElectron(reco::Candidate & p);
   TeVMuon & FindMuon(reco::Candidate & p);
   bool Match(heep::Ele & p1, reco::Candidate & p2);
   bool Match(TeVMuon & p1, reco::Candidate & p2);
+
+  float WLepPt();
+  float ZLepPt(int idx);
 // +++++++++++++++++++useful constants
   bool debugme;//print stuff if active
   bool doPreselect_;
@@ -217,6 +224,7 @@ public:
   ofstream outCandEvt_;
 
   uint muonAlgo_;
+  bool useAdjustedMET_;
   double rhoFastJet_;
   std::vector<double> effectiveElecArea_;
   std::vector<double> effectiveMuonArea_;
@@ -295,7 +303,8 @@ public:
   int minMuonNTrkHit_;
   int minMuonStations_;
   int minMuonHitsUsed_;
-  float maxMuonCombRelIso_;
+  float maxMuonLooseCombRelIso_;
+  float maxMuonTightCombRelIso_;
 
 //////Chosen Candidates
   ElectronV electrons_, looseElectrons_, tightElectrons_;
