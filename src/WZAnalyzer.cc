@@ -155,6 +155,7 @@ void WZAnalyzer::FillCutFns(){
   mFnPtrs_["Wpt"] = &WZAnalyzer::PassWptCut;
   mFnPtrs_["ZLepPt"] = &WZAnalyzer::PassZLepPtCut;
   mFnPtrs_["WLepPt"] = &WZAnalyzer::PassWLepPtCut;
+  mFnPtrs_["WLepIso"] = &WZAnalyzer::PassWLepIsoCut;
   mFnPtrs_["AllCuts"] = &WZAnalyzer::PassNoCut;
 
   mFnPtrs_["WLepTight"] = &WZAnalyzer::PassWLepTightCut;
@@ -370,7 +371,8 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
   DeclareHistoSet("hLeadMuonPt", "Leading Muon Pt",
                   "Lead Muon Pt", 20, 0, 200., hLeadMuonPt,dir);
 
-
+  DeclareHistoSet("hMuonTightCombIso", "hMuonTightCombIso",
+                  "Comb Iso", 20, 0., 1., hMuonTightCombIso, dir);
 ///Eff Plots///////
   string title = Form("Expected # of Events / %.0f pb^{-1}",  wprimeUtil_->getLumi_ipb());
   hNumEvts = NULL; hNumEvts = dir.make<TH1F>("hNumEvts",title.c_str(),NCuts_,0,NCuts_);
@@ -447,6 +449,9 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
   hNTMuon[index]->Fill(tightMuons_    .size(), weight);
   hNTLeps[index]->Fill(tightElectrons_.size()+tightMuons_.size(), weight);
 
+  for(uint i=0; i<tightMuons_.size(); ++i){
+    hMuonTightCombIso[index]->Fill(Calc_MuonRelIso(tightMuons_[i]), weight);
+  }
 }//Fill_Histos
 int
 WZAnalyzer::CountZCands(ZCandV & Zs){
@@ -691,8 +696,9 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 /////////////////////
   if(!PassCuts(wprimeUtil_->getWeight())) return;
   if(wprimeUtil_->runningOnData()){
-    cout<<" The following data events passed All Cuts!!!\n\n";
+    cout<<" The following data events passed All Cuts!!!\n";
     PrintPassingEvent(event);
+    //PrintEventLeptons();
     cout<<" ------------------\n";
   }
 }
@@ -915,6 +921,12 @@ inline bool WZAnalyzer::PassWLepTightCut(){
   return false;
 }
 
+inline bool WZAnalyzer::PassWLepIsoCut(){
+  if(wCand_.flavor() == PDGELEC) return PassElecTightCombRelIsoCut(FindElectron(*wCand_.daughter(0))); 
+  if(wCand_.flavor() == PDGMUON) return PassMuonTightCombRelIsoCut(FindMuon(*wCand_.daughter(0)));
+  return false;
+}
+
 //Trigger requirements
 //-----------------------------------------------------------
 bool WZAnalyzer::PassTriggersCut()
@@ -947,7 +959,7 @@ WZAnalyzer::EMuOverlap(const pat::Electron & e,
   //Eliminate electrons that fall within a cone of dR=0.1 around a muon
   for (size_t i = 0; i < ms.size(); i++) {
     if(debugme) cout<<" with muon "<<i<<": "<<reco::deltaR(e, ms[i])<<endl;
-    if(reco::deltaR(e, ms[i]) < 0.1) return true;
+    if(reco::deltaR(e, ms[i]) < 0.01) return true;
   }
   return false;
 }
