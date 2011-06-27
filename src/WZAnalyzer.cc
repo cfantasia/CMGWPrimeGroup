@@ -664,7 +664,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
   triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
 
-  if(0 && wprimeUtil_->runningOnData()){//Don't do this for data
+  if(0 && !wprimeUtil_->runningOnData()){//Don't do this for data
 /*    
     GenParticleV genParticles = getUntrackedProduct<GenParticleV>(event, "genParticles");
     const Candidate * genZ = 0;
@@ -1057,16 +1057,16 @@ WZAnalyzer::PassZLepTriggerMatchCut(){
     heep::Ele& e1 = FindElectron(*zCand_.daughter(0));
     heep::Ele& e2 = FindElectron(*zCand_.daughter(1));
     return (PassTriggerEmulation(e1) && PassTriggerEmulation(e2) && 
-            (!wprimeUtil_->runningOnData() || PassTriggerMatch(e1, e2)));
+            PassTriggerMatch(e1, e2));
   }else if(zCand_.flavor() == PDGMUON){
     TeVMuon& m1 = FindMuon(*zCand_.daughter(0));
     TeVMuon& m2 = FindMuon(*zCand_.daughter(1));
-    return (!wprimeUtil_->runningOnData() || PassTriggerMatch(m1, m2)); 
+    return PassTriggerMatch(m1, m2); 
   }
   return false;
 }
 
-bool
+inline bool
 WZAnalyzer::PassTriggerMatch(const heep::Ele& e1, const heep::Ele& e2){
   return (e1.patEle().triggerObjectMatches().size() > 0 &&
           e2.patEle().triggerObjectMatches().size() > 0 &&
@@ -1074,7 +1074,7 @@ WZAnalyzer::PassTriggerMatch(const heep::Ele& e1, const heep::Ele& e2){
           min(e1.patEle().triggerObjectMatches()[0].pt(), e2.patEle().triggerObjectMatches()[0].pt()) > 8.);
 }
 
-bool
+inline bool
 WZAnalyzer::PassTriggerMatch(const TeVMuon& m1, const TeVMuon& m2){
   return (m1.triggerObjectMatches().size() > 0 &&
           m2.triggerObjectMatches().size() > 0 &&
@@ -1149,16 +1149,18 @@ inline bool WZAnalyzer::PassElecWPRelIsoCut(const heep::Ele& elec){
 /////////////////////////////////////
 bool WZAnalyzer::PassTriggerEmulation(const heep::Ele& elec){
   if(!elec.isEcalDriven()) return false;
+  float e = elec.patEle().superCluster()->energy() * 
+    fabs(sin(elec.patEle().superCluster()->position().theta()));
   if(elec.isEB()){
       return elec.patEle().sigmaIetaIeta() < 0.014 &&
         elec.patEle().hadronicOverEm() < 0.15 && 
-        elec.patEle().dr03EcalRecHitSumEt() / elec.patEle().p4().Pt() < 0.2  &&
-        elec.patEle().dr03HcalTowerSumEt() / elec.patEle().p4().Pt() < 0.19;
+      elec.patEle().dr03EcalRecHitSumEt() / e < 0.2  &&
+        elec.patEle().dr03HcalTowerSumEt() / e < 0.19;
   }else if(elec.patEle().isEE()){
       return elec.patEle().sigmaIetaIeta() < 0.035 &&
         elec.patEle().hadronicOverEm() <0.10 && 
-        elec.patEle().dr03EcalRecHitSumEt() / elec.patEle().p4().Pt() < 0.2 &&
-        elec.patEle().dr03HcalTowerSumEt() / elec.patEle().p4().Pt() < 0.19;
+        elec.patEle().dr03EcalRecHitSumEt() / e < 0.2 &&
+        elec.patEle().dr03HcalTowerSumEt() / e < 0.19;
   }
   return false;
 }
