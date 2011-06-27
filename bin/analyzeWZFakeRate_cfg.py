@@ -59,7 +59,7 @@ process.WprimeAnalyzer = cms.PSet(
 
     useAdjustedMET = cms.bool(False),
     muonAlgo = cms.uint32(0),
-    minDeltaR = cms.double(-999.),
+    minDeltaR = cms.double(0.),
     effectiveElecArea = cms.vdouble(0.0997,0.1123),#Not using Recommended PI*0.3*0.3
     effectiveMuonArea = cms.vdouble(0.1057,0.0769),
     triggersToUse = cms.vstring(#"HLT_Mu9",
