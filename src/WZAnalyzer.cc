@@ -155,6 +155,7 @@ void WZAnalyzer::FillCutFns(){
   mFnPtrs_["Wpt"] = &WZAnalyzer::PassWptCut;
   mFnPtrs_["ZLepPt"] = &WZAnalyzer::PassZLepPtCut;
   mFnPtrs_["WLepPt"] = &WZAnalyzer::PassWLepPtCut;
+  mFnPtrs_["ZLepTrigMatch"] = &WZAnalyzer::PassZLepTriggerMatchCut;
   mFnPtrs_["WLepIso"] = &WZAnalyzer::PassWLepIsoCut;
   mFnPtrs_["AllCuts"] = &WZAnalyzer::PassNoCut;
 
@@ -934,7 +935,7 @@ bool WZAnalyzer::PassTriggersCut()
 //-----------------------------------------------------------
   if(debugme) cout<<"Trigger requirements"<<endl;
   
-  if(wprimeUtil_->runningOnData() || (zCand_ && zCand_.flavor() == PDGMUON)){
+  if(wprimeUtil_->runningOnData()){
     const pat::TriggerPathRefVector acceptedPaths = triggerEvent_.acceptedPaths();
     if(debugme) cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
     for (size_t i = 0; i < acceptedPaths.size(); i++){
@@ -956,7 +957,7 @@ bool WZAnalyzer::PassTriggersCut()
 bool
 WZAnalyzer::EMuOverlap(const pat::Electron & e, 
                        const vector<pat::Muon    > & ms){
-  //Eliminate electrons that fall within a cone of dR=0.1 around a muon
+  //Eliminate electrons that fall within a cone of dR=0.01 around a muon
   for (size_t i = 0; i < ms.size(); i++) {
     if(debugme) cout<<" with muon "<<i<<": "<<reco::deltaR(e, ms[i])<<endl;
     if(reco::deltaR(e, ms[i]) < 0.01) return true;
@@ -1040,25 +1041,48 @@ WZAnalyzer::PassZptCut(){
 bool
 WZAnalyzer::PassZLepPtCut(){
   if     (zCand_.flavor() == PDGELEC){
-    heep::Ele& e1 = FindElectron(*zCand_.daughter(0));
-    heep::Ele& e2 = FindElectron(*zCand_.daughter(1));
-    
-    return (PassTriggerMatch(e1) && PassTriggerMatch(e2) &&
-            max(ZLepPt(0),ZLepPt(1)) > minZeePt1_ && 
-            min(ZLepPt(0),ZLepPt(1)) > minZeePt2_);
+    return ( max(ZLepPt(0),ZLepPt(1)) > minZeePt1_ && 
+             min(ZLepPt(0),ZLepPt(1)) > minZeePt2_ );
   }else if(zCand_.flavor() == PDGMUON){
-    TeVMuon & m1 = FindMuon(*zCand_.daughter(0));
-    TeVMuon & m2 = FindMuon(*zCand_.daughter(1));
 
-    return (m1.triggerObjectMatches().size() > 0 &&
-            m2.triggerObjectMatches().size() > 0 &&
-            max(m1.triggerObjectMatches()[0].pt(), m2.triggerObjectMatches()[0].pt()) > 13. &&
-            min(m1.triggerObjectMatches()[0].pt(), m2.triggerObjectMatches()[0].pt()) > 8. &&
-            max(ZLepPt(0),ZLepPt(1)) > minZmmPt1_ && 
-            min(ZLepPt(0),ZLepPt(1)) > minZmmPt2_);
+    return ( max(ZLepPt(0),ZLepPt(1)) > minZmmPt1_ && 
+             min(ZLepPt(0),ZLepPt(1)) > minZmmPt2_ );
   }
   return false;
 }
+
+bool
+WZAnalyzer::PassZLepTriggerMatchCut(){
+  if     (zCand_.flavor() == PDGELEC){ 
+    heep::Ele& e1 = FindElectron(*zCand_.daughter(0));
+    heep::Ele& e2 = FindElectron(*zCand_.daughter(1));
+    return (PassTriggerEmulation(e1) && PassTriggerEmulation(e2) && 
+            (!wprimeUtil_->runningOnData() || PassTriggerMatch(e1, e2)));
+  }else if(zCand_.flavor() == PDGMUON){
+    TeVMuon& m1 = FindMuon(*zCand_.daughter(0));
+    TeVMuon& m2 = FindMuon(*zCand_.daughter(1));
+    return (!wprimeUtil_->runningOnData() || PassTriggerMatch(m1, m2)); 
+  }
+  return false;
+}
+
+bool
+WZAnalyzer::PassTriggerMatch(const heep::Ele& e1, const heep::Ele& e2){
+  return (e1.patEle().triggerObjectMatches().size() > 0 &&
+          e2.patEle().triggerObjectMatches().size() > 0 &&
+          max(e1.patEle().triggerObjectMatches()[0].pt(), e2.patEle().triggerObjectMatches()[0].pt()) > 17. &&
+          min(e1.patEle().triggerObjectMatches()[0].pt(), e2.patEle().triggerObjectMatches()[0].pt()) > 8.);
+}
+
+bool
+WZAnalyzer::PassTriggerMatch(const TeVMuon& m1, const TeVMuon& m2){
+  return (m1.triggerObjectMatches().size() > 0 &&
+          m2.triggerObjectMatches().size() > 0 &&
+          max(m1.triggerObjectMatches()[0].pt(), m2.triggerObjectMatches()[0].pt()) > 13. &&
+          min(m1.triggerObjectMatches()[0].pt(), m2.triggerObjectMatches()[0].pt()) > 8.);
+}
+
+
 ////////////////////////////////
 /////////Check W Properties/////
 ////////////////////////////////
@@ -1123,7 +1147,7 @@ inline bool WZAnalyzer::PassElecWPRelIsoCut(const heep::Ele& elec){
 /////////////////////////////////////
 /////Reproduce SimpleCutBased Cuts///
 /////////////////////////////////////
-bool WZAnalyzer::PassTriggerMatch(const heep::Ele& elec){
+bool WZAnalyzer::PassTriggerEmulation(const heep::Ele& elec){
   if(!elec.isEcalDriven()) return false;
   if(elec.isEB()){
       return elec.patEle().sigmaIetaIeta() < 0.014 &&

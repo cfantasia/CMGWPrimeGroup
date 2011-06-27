@@ -101,6 +101,9 @@ public:
 
   bool PassZMassCut();
   bool PassZLepPtCut();
+  bool PassZLepTriggerMatchCut();
+  bool PassTriggerMatch(const heep::Ele& e1, const heep::Ele& e2);
+  bool PassTriggerMatch(const TeVMuon& m1, const TeVMuon& m2);
   bool PassZeePtCut();
   bool PassZmumuPtCut();
 
@@ -124,7 +127,7 @@ public:
   bool PassElecWPRelIsoCut(const heep::Ele& elec);
 
   bool PassElecEtaCut(const heep::Ele& elec);
-  bool PassTriggerMatch(const heep::Ele& elec);
+  bool PassTriggerEmulation(const heep::Ele& elec);
 
   bool PassElecNMissingHitsCut(const heep::Ele& elec);
   bool PassElecDistDCotCut(const heep::Ele& elec);
