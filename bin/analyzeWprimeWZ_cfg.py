@@ -76,6 +76,7 @@ process.WprimeAnalyzer = cms.PSet(
                        "ZMass", 
                        "NumZs", 
                        "ZLepPt",
+                       "ZLepTrigMatch",
                        "HLT", 
 
                        "ValidW", 
