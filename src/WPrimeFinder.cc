@@ -146,10 +146,10 @@ void WPrimeFinder::run()
 
   for(it = inputFiles.begin(); it != inputFiles.end(); ++it, ++i_sample){
     int ievt=0;  
-    cout << " Opening sample " << it->samplename << " ... ";
+    cout << "\n Opening sample " << it->samplename << " ... ";
     fwlite::ChainEvent ev(it->pathnames);
     it->Nact_evt = ev.size();
-    cout<<" Done. The sample contains " << it->Nact_evt << " events" << endl;
+    cout<<" Done. \n";
   
     if(!wprimeUtil->runningOnData())
       // Nprod_evt presumably contains the # of events before any filtering
