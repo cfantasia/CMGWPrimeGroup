@@ -107,8 +107,6 @@ public:
   bool PassWtransMassCut();
   bool PassWLepPtCut();
   bool PassWLepIsoCut();
-  bool PassWenuIsoCut();
-  bool PassWmunuIsoCut();
 
   bool PassWLepTightCut();
   bool PassWFlavorElecCut();
@@ -392,7 +390,7 @@ public:
   std::vector<TH1F*> hMuonRelIso;
   std::vector<TH1F*> hMuonStation;
   std::vector<TH1F*> hMuonSip;
-
+  std::vector<TH1F*> hMuonTightCombIso;
 //Cuts
   
   int NCuts_;
