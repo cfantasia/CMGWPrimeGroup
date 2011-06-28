@@ -104,7 +104,7 @@ void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
 	
 	if(dumpHighEtElectrons_ && fill_entry 
 	   && cut_index == Num_elmet_cuts-1
-	   && wprimeUtil_->runningOnData()
+	   && wprimeUtil_->getSampleName().find("data") != string::npos
 	   && el.et() > dumpHighEtElectronThreshold_)
 	  printHighEtElectron(event);
       
@@ -234,7 +234,7 @@ void EleMETAnalyzer::endAnalysis(ofstream & out)
 	 << " +- " << 100.*(it->second)[index].deff
 	 << " %) " << endl;
       
-      if(!wprimeUtil_->runningOnData() &&
+      if(sample.find("data") == string::npos && 
 	 sample.find("wprime") == string::npos)
 	N_SM += N_evt;
       
@@ -399,18 +399,18 @@ int EleMETAnalyzer::ignoreIsolationMask = (~heep::CutCodes::ISOLEMHADDEPTH1)
 int EleMETAnalyzer::useOnlyIsolationMask = heep::CutCodes::ISOLEMHADDEPTH1
 	  | heep::CutCodes::ISOLHADDEPTH2 | heep::CutCodes::ISOLPTTRKS;
 
-// make sure HEEP cuts are calculated once per electron
-void EleMETAnalyzer::runHEEPcuts(const heep::Ele & el)
+// run HEEP cuts, return HEEPEleSelector::getCutCode
+int EleMETAnalyzer::runHEEPcuts(const heep::Ele & el)
 {
-  if(cutCode < 0)
-    cutCode = cuts_.getCutCode(el);
+   return cuts_.getCutCode(el);
 }
 
 // check if electron satisfies quality requirements
 // fill goodQual; always returns true
 bool EleMETAnalyzer::goodQualityElectron(bool * goodQual, const heep::Ele & el, edm::EventBase const &)
 {
-  runHEEPcuts(el);
+  if(cutCode < 0)
+    cutCode = runHEEPcuts(el);
   if(cutCode & ignoreIsolationMask)
     *goodQual = false;
   return true;
@@ -430,7 +430,8 @@ unsigned EleMETAnalyzer::nEleAboveThresh(float Et_thresh)
   //loop over electrons
   for (int theEle = iEleMin; theEle != iEleMax; ++theEle){//loop over electrons
     heep::Ele el((*electrons)[theEle]);
-    if(el.et() > Et_thresh)
+    bool goodElectron = (runHEEPcuts(el) == 0);
+    if(el.et() > Et_thresh && goodElectron)
       ++N;
   }
 
@@ -442,7 +443,8 @@ unsigned EleMETAnalyzer::nEleAboveThresh(float Et_thresh)
 bool EleMETAnalyzer::isolatedElectron(bool * goodQual, const heep::Ele & el, 
 				 edm::EventBase const &)
 {
-  runHEEPcuts(el);
+  if(cutCode < 0)
+    cutCode = runHEEPcuts(el);
   if(cutCode & useOnlyIsolationMask)
     *goodQual = false;
   return true;

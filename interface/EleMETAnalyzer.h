@@ -90,8 +90,8 @@ class EleMETAnalyzer
   // goodQualityElectron and isolatedElectron; cache here
   // so that we don't have to call method twice per electron
   int cutCode; 
-  // make sure HEEP cuts are calculated once per electron
-  void runHEEPcuts(const heep::Ele & el);
+  // run HEEP cuts, return HEEPEleSelector::getCutCode
+  int runHEEPcuts(const heep::Ele & el);
 
   static int ignoreIsolationMask;
   static int useOnlyIsolationMask;
