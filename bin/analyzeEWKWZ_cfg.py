@@ -62,7 +62,8 @@ process.WprimeAnalyzer = cms.PSet(
     minDeltaR = cms.double(0.),
     effectiveElecArea = cms.vdouble(0.0997,0.1123),#Not using Recommended PI*0.3*0.3
     effectiveMuonArea = cms.vdouble(0.1057,0.0769),
-    triggersToUse = cms.vstring('HLT_DoubleMu7_v*',
+    triggersToUse = cms.vstring('HLT_DoubleMu5_v*', #For MC
+                                'HLT_DoubleMu7_v*',
                                 'HLT_Mu13_Mu8_v*', #1e33 unprescaled
 
                                 'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
