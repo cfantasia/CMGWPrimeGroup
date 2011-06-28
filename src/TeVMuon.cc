@@ -81,6 +81,12 @@ const TLorentzVector TeVMuon::getTrkLorentzVector(const reco::TrackRef & trk, bo
   return trkP4;
 }
 
+// computes the tracker-based relative isolation value
+float TeVMuon::trkRelIsolation() const
+{
+  return trackIso()/pt();
+}
+
 //computes the combined rel isolation value
 float TeVMuon::combRelIsolation() const
 {

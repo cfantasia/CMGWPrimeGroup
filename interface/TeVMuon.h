@@ -23,6 +23,8 @@ class TeVMuon : public pat::Muon{
 
   double pt() const ;
   double pt(unsigned muReconstructor) const ;
+  // computes the tracker-based relative isolation value
+  float trkRelIsolation() const;
   //computes the combined rel isolation value
   float combRelIsolation() const;
   
