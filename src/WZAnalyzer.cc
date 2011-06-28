@@ -935,7 +935,7 @@ bool WZAnalyzer::PassTriggersCut()
 //-----------------------------------------------------------
   if(debugme) cout<<"Trigger requirements"<<endl;
   
-  if(wprimeUtil_->runningOnData()){
+  if(wprimeUtil_->runningOnData() || (zCand_ && zCand_.flavor() == PDGMUON)){
     const pat::TriggerPathRefVector acceptedPaths = triggerEvent_.acceptedPaths();
     if(debugme) cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
     for (size_t i = 0; i < acceptedPaths.size(); i++){
@@ -949,6 +949,18 @@ bool WZAnalyzer::PassTriggersCut()
       }
     }
   }else{
+    /*
+    const pat::TriggerPathCollection* allPaths = triggerEvent_.paths();
+    //const pat::TriggerPathRefVector allPaths = triggerEvent_.pathRefs();
+    //for (size_t i = 0; i < allPaths->size(); i++){
+    for ( pat::TriggerPathCollection::const_iterator iPath = allPaths->begin(); iPath != allPaths->end(); ++iPath ) {
+//      string A = allPaths[i]->name();
+      cout<<"Name: "<<iPath->name()<<endl;
+      
+      //if(A.find("HLT_Mu"))
+      
+    } 
+    */   
     return true;//Cory: This is not good, but will pass HLT in the meantime.
   }
   return false;
@@ -1056,8 +1068,7 @@ WZAnalyzer::PassZLepTriggerMatchCut(){
   if     (zCand_.flavor() == PDGELEC){ 
     heep::Ele& e1 = FindElectron(*zCand_.daughter(0));
     heep::Ele& e2 = FindElectron(*zCand_.daughter(1));
-    return (PassTriggerEmulation(e1) && PassTriggerEmulation(e2) && 
-            PassTriggerMatch(e1, e2));
+    return (PassTriggerEmulation(e1) && PassTriggerEmulation(e2));
   }else if(zCand_.flavor() == PDGMUON){
     TeVMuon& m1 = FindMuon(*zCand_.daughter(0));
     TeVMuon& m2 = FindMuon(*zCand_.daughter(1));
@@ -1070,8 +1081,8 @@ inline bool
 WZAnalyzer::PassTriggerMatch(const heep::Ele& e1, const heep::Ele& e2){
   return (e1.patEle().triggerObjectMatches().size() > 0 &&
           e2.patEle().triggerObjectMatches().size() > 0 &&
-          max(e1.patEle().triggerObjectMatches()[0].pt(), e2.patEle().triggerObjectMatches()[0].pt()) > 17. &&
-          min(e1.patEle().triggerObjectMatches()[0].pt(), e2.patEle().triggerObjectMatches()[0].pt()) > 8.);
+          max(e1.patEle().triggerObjectMatches()[0].et(), e2.patEle().triggerObjectMatches()[0].et()) > 17. &&
+          min(e1.patEle().triggerObjectMatches()[0].et(), e2.patEle().triggerObjectMatches()[0].et()) > 8.);
 }
 
 inline bool
