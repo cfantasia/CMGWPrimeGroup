@@ -55,9 +55,15 @@ pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part8.root
 Nprod_evt = 1
 
 samplename = data9
-description = Muon pt > 25 GeV skim, PRv4
+description = Muon pt > 25 GeV skim, PRv4 165071-166763
 x-section = 1
-pathname = SingleMu_PromptReco_V4_upToRun165627.root
+pathname = listOfInputFiles_mu_PRv4_165071-166763.txt
+Nprod_evt = 1
+
+samplename = data10
+description = Muon pt > 25 GeV skim, PRv4 166764-167043
+x-section = 1
+pathname = listOfInputFiles_mu_PRv4_166764-167043.txt
 Nprod_evt = 1
 
 DONE
