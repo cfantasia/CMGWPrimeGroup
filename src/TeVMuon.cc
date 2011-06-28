@@ -95,6 +95,8 @@ bool TeVMuon::goodQualityMuon(float chi2Cut, float muonEtaCut) const
   
   bool muonID = isGood("AllGlobalMuons") && isGood("AllTrackerMuons");
   
+  if(!muonID) return false;
+
   reco::TrackRef glb = globalTrack();
   if(glb.isNull())
     return false;
@@ -104,16 +106,17 @@ bool TeVMuon::goodQualityMuon(float chi2Cut, float muonEtaCut) const
     && glb->hitPattern().numberOfValidPixelHits() > 0
     && numberOfMatches() > 1;
   
+  if(!muon_hits)
+    return false;
+
   TVector3 p3(glb->px(), glb->py(), glb->pz());
   
   bool checkqual = (glb->chi2()/glb->ndof() / chi2Cut)
     && TMath::Abs(p3.Eta()) < muonEtaCut
     // is this d0 wrt to the beamspot???
     && TMath::Abs(dB()) < 0.02;
-  
-  if(!muonID || !muon_hits || !checkqual)
-    return false;
-  else
-    return true;
 
+  if(!checkqual)return false;
+  
+  return true;
 }
