@@ -19,7 +19,7 @@ MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUti
   chi2Cut_           = cfg.getParameter<double>("chi2Cut");
   muonEtaCut_        = cfg.getParameter<double>("muonEtaCut");
   oneMuPtTrackCut_   = cfg.getParameter<double>("oneMuPtTrackCut");
-  combRelCut_        = cfg.getParameter<double>("combRelCut");
+  relIsoCut_        = cfg.getParameter<double>("relIsoCut");
   highestPtMuonOnly_ = cfg.getParameter<bool>("highestPtMuonOnly");
   dumpHighPtMuons_   = cfg.getParameter<bool>("dumpHighPtMuons");
   dumpHighPtMuonThreshold_ = cfg.getParameter<double>("dumpHighPtMuonThreshold");
@@ -151,7 +151,7 @@ void MuMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
   hPHI[cut_index]->Fill(mu4D.Phi(), weight);
   //  hMJDPHI[cut_index]->Fill( XJetDPhi(mu4D, event), weight);
   hTM[cut_index]->Fill(WPrimeUtil::TMass(mu4D, getNewMET(event, mu4D)), weight);
-  hISO[cut_index]->Fill(muon->combRelIsolation(),weight);
+  hISO[cut_index]->Fill(muon->trkRelIsolation(),weight);
 }
 
 // operations to be done when changing input file (e.g. create new histograms)
@@ -538,7 +538,7 @@ unsigned MuMETAnalyzer::nMuAboveThresh(float tracker_muon_pt)
 bool MuMETAnalyzer::isolatedMuon(bool * goodQual, const TeVMuon * muon, 
 				 edm::EventBase const &)
 {
-  if(muon->combRelIsolation() > combRelCut_)
+  if(muon->trkRelIsolation() > relIsoCut_)
     *goodQual = false;
 
   return true;

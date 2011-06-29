@@ -139,7 +139,7 @@ class MuMETAnalyzer
   float chi2Cut_;
   float muonEtaCut_;
   float oneMuPtTrackCut_;
-  float combRelCut_;
+  float relIsoCut_;
 
   TH1F * hPT[Num_mumet_cuts];
   TH1F * hETA[Num_mumet_cuts];
