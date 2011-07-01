@@ -304,7 +304,7 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
                   "p_{T}^{Z} (GeV)", 40, 0, 400, "GeV", hZpt,dir);
 //MET Histos
   DeclareHistoSet("hMET", "MET",
-                  "#displaystyle{#not} {E_T} (GeV)", 30, 0, 300, "GeV", hMET,dir);
+                  "MET (GeV)", 30, 0, 300, "GeV", hMET,dir);
 
 //Z Mass Histos
   DeclareHistoSet("hZMass" , "Reconstructed Mass of Z",
