@@ -95,7 +95,7 @@ process.WprimeAnalyzer = cms.PSet(
                                 "ElecCombRelIso",
                                 ),
     TightElecCuts = cms.vstring("ElecEta",
-                                "ElecTightEt",
+                                "ElecTightPt",
                                 "ElecTightNMiss",
                                 "ElecTightDistDCot",     
                                 "ElecTightSigmaNN",
@@ -171,6 +171,8 @@ process.WprimeAnalyzer = cms.PSet(
     #VBTF Recommended Cuts
     minElecLooseEt = cms.double(10.),
     minElecTightEt = cms.double(20.),
+    minElecLoosePt = cms.double(10.),
+    minElecTightPt = cms.double(20.),
     cutElecWPLooseMask = cms.int32(5),#Cory: No Iso
     cutElecWPLooseType = cms.string("simpleEleId95relIso"),
     

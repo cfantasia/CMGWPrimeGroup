@@ -102,6 +102,8 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
 //VBTF Recommended Cuts
   minElecLooseEt_ = cfg.getParameter<double>("minElecLooseEt");
   minElecTightEt_ = cfg.getParameter<double>("minElecTightEt");
+  minElecLoosePt_ = cfg.getParameter<double>("minElecLoosePt");
+  minElecTightPt_ = cfg.getParameter<double>("minElecTightPt");
   cutElecWPLooseMask_ = cfg.getParameter<int>("cutElecWPLooseMask");
   cutElecWPLooseType_ = cfg.getParameter<string>("cutElecWPLooseType");
 
@@ -172,6 +174,8 @@ void WZAnalyzer::FillCutFns(){
   mElecFnPtrs_["ElecTight"] = &WZAnalyzer::PassElecTightCut;
   mElecFnPtrs_["ElecLooseEt"] = &WZAnalyzer::PassElecLooseEtCut;
   mElecFnPtrs_["ElecTightEt"] = &WZAnalyzer::PassElecTightEtCut;
+  mElecFnPtrs_["ElecLoosePt"] = &WZAnalyzer::PassElecLoosePtCut;
+  mElecFnPtrs_["ElecTightPt"] = &WZAnalyzer::PassElecTightPtCut;
   mElecFnPtrs_["ElecLooseID"] = &WZAnalyzer::PassElecLooseWPCut;
   mElecFnPtrs_["ElecIso"] = &WZAnalyzer::PassElecWPRelIsoCut;
 
@@ -274,108 +278,109 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
   verbose("Declare histos\n");
 
   DeclareHistoSet("hEvtType", "Event Type",
-                  "N_{#mu}", 4, 0, 4, hEvtType,dir);
+                  "N_{#mu}", 4, 0, 4, "NONE", hEvtType,dir);
 
   DeclareHistoSet("hWZInvMass", "Reconstructed WZ Invariant Mass",
-                  "m_{WZ} (GeV)", 100, 0, 1000, hWZInvMass,dir);
+                  "m_{WZ} (GeV)", 100, 0, 1000, "GeV", hWZInvMass,dir);
   DeclareHistoSet("hWZ3e0muInvMass", "Reconstructed WZ(3e0\\mu) Invariant Mass",
-                  "m_{WZ} (GeV)", 100, 0, 1000, hWZ3e0muInvMass,dir);
+                  "m_{WZ}^(3e0\\mu) (GeV)", 100, 0, 1000, "GeV", hWZ3e0muInvMass,dir);
   DeclareHistoSet("hWZ2e1muInvMass", "Reconstructed WZ(2e1\\mu) Invariant Mass",
-                  "m_{WZ} (GeV)", 100, 0, 1000, hWZ2e1muInvMass,dir);
+                  "m_{WZ}^(2e1\\mu) (GeV)", 100, 0, 1000, "GeV", hWZ2e1muInvMass,dir);
   DeclareHistoSet("hWZ1e2muInvMass", "Reconstructed WZ(1e2\\mu) Invariant Mass",
-                  "m_{WZ} (GeV)", 100, 0, 1000, hWZ1e2muInvMass,dir);
+                  "m_{WZ}^(1e2\\mu) (GeV)", 100, 0, 1000, "GeV", hWZ1e2muInvMass,dir);
   DeclareHistoSet("hWZ0e3muInvMass", "Reconstructed WZ(0e3\\mu) Invariant Mass",
-                  "m_{WZ} (GeV)", 100, 0, 1000, hWZ0e3muInvMass,dir);
+                  "m_{WZ}^(0e3\\mu) (GeV)", 100, 0, 1000, "GeV", hWZ0e3muInvMass,dir);
 
   DeclareHistoSet("hWZTransMass", "Reconstructed WZ Transverse Mass",
-                  "m_{WZ} (GeV)", 100, 0, 1000, hWZTransMass,dir);
+                  "m_{WZ} (GeV)", 100, 0, 1000, "GeV", hWZTransMass,dir);
 //Ht Histos
   DeclareHistoSet("hHt", "H_{T}", 
-                  "Lepton Pt Sum: H_{T} (GeV)", 80, 0, 800, hHt,dir);
+                  "Lepton Pt Sum: H_{T} (GeV)", 80, 0, 800, "GeV", hHt,dir);
 //Wpt Histos
   DeclareHistoSet("hWpt", "p_{T}^{W}", 
-                  "p_{T}^{W} (GeV)", 40, 0, 400, hWpt,dir);
+                  "p_{T}^{W} (GeV)", 40, 0, 400, "GeV", hWpt,dir);
 //Zpt Histos
   DeclareHistoSet("hZpt", "p_{T}^{Z}", 
-                  "p_{T}^{Z} (GeV)", 40, 0, 400, hZpt,dir);
+                  "p_{T}^{Z} (GeV)", 40, 0, 400, "GeV", hZpt,dir);
 //MET Histos
   DeclareHistoSet("hMET", "MET",
-                  "MET (GeV)", 30, 0, 300, hMET,dir);
+                  "#displaystyle{#not} {E_T} (GeV)", 30, 0, 300, "GeV", hMET,dir);
 
 //Z Mass Histos
   DeclareHistoSet("hZMass" , "Reconstructed Mass of Z",
-                  "m_{Z}^{Reco} (GeV)", 30, 60, 120, hZMass,dir);
+                  "m_{Z} (GeV)", 30, 60, 120, "GeV", hZMass,dir);
   DeclareHistoSet("hZeeMass","Reconstructed Mass of Zee",
-                  "m_{Z}^{Reco} (GeV)", 30, 60, 120, hZeeMass,dir);
-  DeclareHistoSet("hZmumuMass","Reconstructed Mass of Zmumu",
-                  "m_{Z}^{Reco} (GeV)", 30, 60, 120, hZmumuMass,dir);
+                  "m_{Z}^{ee} (GeV)", 30, 60, 120, "GeV", hZeeMass,dir);
+  DeclareHistoSet("hZmumuMass","Reconstructed Mass of Z\\mu\\mu",
+                  "m_{Z}^{#mu#mu} (GeV)", 30, 60, 120, "GeV", hZmumuMass,dir);
   DeclareHistoSet("hZ3e0muMass" , "Reconstructed Mass of Z(3e0\\mu)",
-                  "m_{Z}^{Reco} (GeV)", 30, 60, 120, hZ3e0muMass,dir);
+                  "m_{Z}^{3e0#mu} (GeV)", 30, 60, 120, "GeV", hZ3e0muMass,dir);
   DeclareHistoSet("hZ2e1muMass" , "Reconstructed Mass of Z(2e1\\mu)",
-                  "m_{Z}^{Reco} (GeV)", 30, 60, 120, hZ2e1muMass,dir);
+                  "m_{Z}^{2e1#mu} (GeV)", 30, 60, 120, "GeV", hZ2e1muMass,dir);
   DeclareHistoSet("hZ1e2muMass" , "Reconstructed Mass of Z(1e2\\mu)",
-                  "m_{Z}^{Reco} (GeV)", 30, 60, 120, hZ1e2muMass,dir);
+                  "m_{Z}^{1e2#mu} (GeV)", 30, 60, 120, "GeV", hZ1e2muMass,dir);
   DeclareHistoSet("hZ0e3muMass" , "Reconstructed Mass of Z(0e3\\mu)",
-                  "m_{Z}^{Reco} (GeV)", 30, 60, 120, hZ0e3muMass,dir);
+                  "m_{Z}^{0e3#mu} (GeV)", 30, 60, 120, "GeV", hZ0e3muMass,dir);
   DeclareHistoSet("hZeeMassTT","Reconstructed MassTT of ZeeTT",
-                  "m_{Z}^{Reco} (GeV)", 30, 60, 120, hZeeMassTT,dir);
+                  "m_{Z}^{ee,TT} (GeV)", 30, 60, 120, "GeV", hZeeMassTT,dir);
   DeclareHistoSet("hZeeMassTF","Reconstructed Mass of ZeeTF",
-                  "m_{Z}^{Reco} (GeV)", 30, 60, 120, hZeeMassTF,dir);
-  DeclareHistoSet("hZmumuMassTT","Reconstructed Mass of ZmumuTT",
-                  "m_{Z}^{Reco} (GeV)", 30, 60, 120, hZmumuMassTT,dir);
-  DeclareHistoSet("hZmumuMassTF","Reconstructed Mass of ZmumuTF",
-                  "m_{Z}^{Reco} (GeV)", 30, 60, 120, hZmumuMassTF,dir);
+                  "m_{Z}^{ee,TF} (GeV)", 30, 60, 120, "GeV", hZeeMassTF,dir);
+  DeclareHistoSet("hZmumuMassTT","Reconstructed Mass of Z\\mu\\muTT",
+                  "m_{Z}^{#mu#mu,TT} (GeV)", 30, 60, 120, "GeV", hZmumuMassTT,dir);
+  DeclareHistoSet("hZmumuMassTF","Reconstructed Mass of Z\\mu\\muTF",
+                  "m_{Z}^{#mu#mu,TF} (GeV)", 30, 60, 120, "GeV", hZmumuMassTF,dir);
 
 //W Trans Mass Histos
-  DeclareHistoSet("hWTransMass", "Reconstructed TransMass of W",
-                  "m_{T}^{Reco} (GeV)", 20, 0, 100, hWTransMass,dir);
-  DeclareHistoSet("hWenuTransMass", "Reconstructed TransMass of Wenu",
-                  "m_{T}^{Reco} (GeV)", 20, 0, 100, hWenuTransMass,dir);
-  DeclareHistoSet("hWmunuTransMass", "Reconstructed TransMass of Wmunu",
-                  "m_{T}^{Reco} (GeV)", 20, 0, 100, hWmunuTransMass,dir);
-  DeclareHistoSet("hW3e0muTransMass", "Reconstructed TransMass of W(3e0\\mu)",
-                  "m_{T}^{Reco} (GeV)", 20, 0, 100, hW3e0muTransMass,dir);
-  DeclareHistoSet("hW2e1muTransMass", "Reconstructed TransMass of W(2e1\\mu)",
-                  "m_{T}^{Reco} (GeV)", 20, 0, 100, hW2e1muTransMass,dir);
-  DeclareHistoSet("hW1e2muTransMass", "Reconstructed TransMass of W(1e2\\mu)",
-                  "m_{T}^{Reco} (GeV)", 20, 0, 100, hW1e2muTransMass,dir);
-  DeclareHistoSet("hW0e3muTransMass", "Reconstructed TransMass of W(0e3\\mu)",
-                  "m_{T}^{Reco} (GeV)", 20, 0, 100, hW0e3muTransMass,dir);
+  DeclareHistoSet("hWTransMass", "Reconstructed Transverse Mass of W",
+                  "m_{T} (GeV)", 20, 0, 100, "GeV", hWTransMass,dir);
+  DeclareHistoSet("hWenuTransMass", "Reconstructed Transverse Mass of We\\nu",
+                  "m_{T}^{e#nu} (GeV)", 20, 0, 100, "GeV", hWenuTransMass,dir);
+  DeclareHistoSet("hWmunuTransMass", "Reconstructed TransverseMass of W\\mu\\nu",
+                  "m_{T}^{#mu#nu} (GeV)", 20, 0, 100, "GeV", hWmunuTransMass,dir);
+  DeclareHistoSet("hW3e0muTransMass", "Reconstructed Transverse Mass of W(3e0\\mu)",
+                  "m_{T}^{3e0#mu} (GeV)", 20, 0, 100, "GeV", hW3e0muTransMass,dir);
+  DeclareHistoSet("hW2e1muTransMass", "Reconstructed Transverse Mass of W(2e1\\mu)",
+                  "m_{T}^{2e1#mu} (GeV)", 20, 0, 100, "GeV", hW2e1muTransMass,dir);
+  DeclareHistoSet("hW1e2muTransMass", "Reconstructed Transverse Mass of W(1e2\\mu)",
+                  "m_{T}^{1e2#mu} (GeV)", 20, 0, 100, "GeV", hW1e2muTransMass,dir);
+  DeclareHistoSet("hW0e3muTransMass", "Reconstructed Transverse Mass of W(0e3\\mu)",
+                  "m_{T}^{0e3#mu} (GeV)", 20, 0, 100, "GeV", hW0e3muTransMass,dir);
 
 //Q=M_{WZ} - M_W - M_Z
   DeclareHistoSet("hQ", "Q=M_{WZ} - M_{W} - M_{Z}",
-                  "Q (GeV)", 50, 0, 500, hQ,dir);
+                  "Q (GeV)", 50, 0, 500, "GeV", hQ,dir);
 
   DeclareHistoSet("hNLElec", "Number of Loose Electrons in Event",
-                  "N_{e}", 10, 0, 10, hNLElec,dir);
+                  "N_{e}", 10, 0, 10, "NONE", hNLElec,dir);
   DeclareHistoSet("hNLMuon", "Number of Loose Muons in Event",
-                  "N_{#mu}", 10, 0, 10, hNLMuon,dir);
+                  "N_{#mu}", 10, 0, 10, "NONE", hNLMuon,dir);
   DeclareHistoSet("hNLLeps", "Number of Loose Leptons in Event",
-                  "N_{l}", 10, 0, 10, hNLLeps,dir);
+                  "N_{l}", 10, 0, 10, "NONE", hNLLeps,dir);
 
   DeclareHistoSet("hNTElec", "Number of Tight Electrons in Event",
-                  "N_{e}", 10, 0, 10, hNTElec,dir);
+                  "N_{e}", 10, 0, 10, "NONE", hNTElec,dir);
   DeclareHistoSet("hNTMuon", "Number of Tight Muons in Event",
-                  "N_{#mu}", 10, 0, 10, hNTMuon,dir);
+                  "N_{#mu}", 10, 0, 10, "NONE", hNTMuon,dir);
   DeclareHistoSet("hNTLeps", "Number of Tight Leptons in Event",
-                  "N_{l}", 10, 0, 10, hNTLeps,dir);
+                  "N_{l}", 10, 0, 10, "NONE", hNTLeps,dir);
 
   DeclareHistoSet("hWenuCombRelIso", "Comb Rel Iso of W Electron",
-                  "Comb Rel Iso", 20, 0, 0.2, hWenuCombRelIso,dir);
+                  "Electron Combined Relative Isolation", 20, 0, 0.2, "NONE", hWenuCombRelIso,dir);
   DeclareHistoSet("hWmunuCombRelIso", "Comb Rel Iso of W Muon",
-                  "Comb Rel Iso", 20, 0, 0.2, hWmunuCombRelIso,dir);
+                  "Muon Combined Relative Isolation", 20, 0, 0.2, "NONE", hWmunuCombRelIso,dir);
   
   DeclareHistoSet("hLeadPt", "Leading Lepton Pt",
-                  "Lead Pt", 20, 0, 200., hLeadPt,dir);
+                  "Lead Lepton Pt", 20, 0, 200., "GeV", hLeadPt,dir);
   DeclareHistoSet("hLeadElecPt", "Leading Electron Pt",
-                  "Lead Elec Pt", 20, 0, 200., hLeadElecPt,dir);
+                  "Lead Electron Pt", 20, 0, 200., "GeV", hLeadElecPt,dir);
   DeclareHistoSet("hLeadMuonPt", "Leading Muon Pt",
-                  "Lead Muon Pt", 20, 0, 200., hLeadMuonPt,dir);
+                  "Lead Muon Pt", 20, 0, 200., "GeV", hLeadMuonPt,dir);
 
   DeclareHistoSet("hMuonTightCombIso", "hMuonTightCombIso",
-                  "Comb Iso", 20, 0., 1., hMuonTightCombIso, dir);
+                  "Muon Combined Isolation", 20, 0., 1., "NONE", hMuonTightCombIso, dir);
 ///Eff Plots///////
   string title = Form("Expected # of Events / %.0f pb^{-1}",  wprimeUtil_->getLumi_ipb());
+  title = title + ";;" + title;
   hNumEvts = NULL; hNumEvts = dir.make<TH1F>("hNumEvts",title.c_str(),NCuts_,0,NCuts_);
   hEffRel  = NULL; hEffRel  = dir.make<TH1F>("hEffRel","Relative Efficiency",NCuts_,0,NCuts_);
   hEffAbs  = NULL; hEffAbs  = dir.make<TH1F>("hEffAbs","Absolute Efficiency",NCuts_,0,NCuts_);
@@ -537,7 +542,7 @@ WZAnalyzer::CalcEventVariables(){
 
 void
 WZAnalyzer::DeclareHistoSet(string n, string t, string xtitle,
-                            int nbins, float min, float max,
+                            int nbins, float min, float max, string units,
                             vector<TH1F*>& h, TFileDirectory& d){
   ClearAndResize(h,NCuts_,NULL);
 
@@ -545,8 +550,11 @@ WZAnalyzer::DeclareHistoSet(string n, string t, string xtitle,
   for(int i=0; i<NCuts_; ++i){
     
     string name = n + "_" + Cuts_[i];
-    string title = t + " (After " + Cuts_[i] + " Cut);" 
-      + xtitle + Form(";Evts/%.0f GeV/%.0f pb^{-1}",binWidth, wprimeUtil_->getLumi_ipb());
+    string title = t + " (After " + Cuts_[i] + " Cut);"; 
+    title += xtitle + ";Events";
+    if(units.compare("NONE"))
+      title += Form(" / %.0f ",binWidth) + units;
+    //title += Form(" / %.0f pb^{-1}", wprimeUtil_->getLumi_ipb());
     h[i] = d.make<TH1F>(name.c_str(),title.c_str(),nbins,min,max);
   }
 }
@@ -689,7 +697,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
   }
 
-  if(event.id().run() == 163270 && event.id().luminosityBlock() == 791){
+  if(event.id().run() == 165415 && event.id().luminosityBlock() == 125){
     cout<<"This is a missing event\n";
     PrintLeptons();
   }
@@ -1133,13 +1141,24 @@ bool WZAnalyzer::PassElecTightCut(const heep::Ele& elec){
 
 inline bool WZAnalyzer::PassElecLooseEtCut(const heep::Ele& elec){
   if(debugme) cout<<"Check Electron Loose Et Cut"<<endl;
-  return (elec.et() > minElecLooseEt_);
+  return (elec.patEle().et() > minElecLooseEt_);
 }//--- PassElecLooseEtCut
 
 inline bool WZAnalyzer::PassElecTightEtCut(const heep::Ele& elec){
   if(debugme) cout<<"Check Electron Tight Et Cut"<<endl;
-  return (elec.et() > minElecTightEt_);
+  return (elec.patEle().et() > minElecTightEt_);
 }//--- PassElecTightEtCut
+
+inline bool WZAnalyzer::PassElecLoosePtCut(const heep::Ele& elec){
+  if(debugme) cout<<"Check Electron Loose Pt Cut"<<endl;
+  return (elec.patEle().pt() > minElecLoosePt_);
+}//--- PassElecLoosePtCut
+
+inline bool WZAnalyzer::PassElecTightPtCut(const heep::Ele& elec){
+  if(debugme) cout<<"Check Electron Tight Pt Cut"<<endl;
+  return (elec.patEle().pt() > minElecTightPt_);
+}//--- PassElecTightPtCut
+
 
 inline bool WZAnalyzer::PassElecLooseWPCut(const heep::Ele& elec){
 //-----------------------------------------------------------

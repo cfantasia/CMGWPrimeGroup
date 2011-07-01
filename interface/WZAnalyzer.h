@@ -38,7 +38,7 @@ public:
   void ResetCounters();
   void Declare_Histos(TFileDirectory& dir);
   void DeclareHistoSet(std::string n, std::string t, std::string xtitle,
-                       int nbins, float min, float max,
+                       int nbins, float min, float max, std::string units,
                        std::vector<TH1F*>& h, TFileDirectory& d);
   void DeclareHisto(std::string n, std::string t, std::string xtitle,
                     int nbins, float min, float max,
@@ -123,6 +123,8 @@ public:
   bool PassElecTightCut(const heep::Ele& elec);
   bool PassElecLooseEtCut(const heep::Ele& elec);
   bool PassElecTightEtCut(const heep::Ele& elec);
+  bool PassElecLoosePtCut(const heep::Ele& elec);
+  bool PassElecTightPtCut(const heep::Ele& elec);
   bool PassElecLooseWPCut(const heep::Ele& elec);
   bool PassElecWPRelIsoCut(const heep::Ele& elec);
 
@@ -272,6 +274,8 @@ public:
 //VBTF Recommended Cuts
   float minElecLooseEt_;
   float minElecTightEt_;
+  float minElecLoosePt_;
+  float minElecTightPt_;
   int cutElecWPLooseMask_;
   std::string cutElecWPLooseType_;
   
