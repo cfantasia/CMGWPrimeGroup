@@ -109,6 +109,7 @@ void HadronicVZAnalyzer::Fill_Histos(int index, float weight)
 
 void 
 HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
+  ClearEvtVariables();
 
   // Preselection - skip events that don't look promising
   if (doPreselect_){
@@ -124,7 +125,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   printf("    Contains: %i muon(s)\n",
 	 (int)patMuons.size());
   printf("    Contains: %i jet(s)\n",
-	 (int)patJets.size());
+  	 (int)patJets.size());
 
   // Make vectors of leptons passing various criteria
   // Loop over muons, and see if they pass the TeVMuon criteria  
@@ -134,27 +135,80 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
       looseMuons_.push_back(muons_[i]);
   }
 
+  printf("    Contains: %i looseMuons_(s)\n",
+         (int)looseMuons_.size());
+
   // Loop over jets, and see if they pass the jet criteria
   for (size_t i = 0; i < patJets.size(); ++i) {
     if (PassJetCut(&patJets[i]))
       jets_.push_back(patJets[i]);
   }
   
+  printf("    Contains: %i jets_(s)\n",
+         (int)jets_.size());
+
+
   bool passedNLeptons = PassNLeptonsCut();
   bool passedNJets = PassNJetsCut();
+
+  cout << "Passed " << PassNLeptonsCut() << " leptons and jets " << PassNJetsCut() << endl;
   
-  if(!(passedNLeptons && passedNJets))
+  if(!(passedNLeptons && passedNJets)){
+    
+    cout << "No leptons or jets. Bad bad event, returning now..." << endl;
     return;
-  
+  }
+
+  cout << "Im just before boson cands" << endl;
+
   // Make a Z candidate out of the muons. 
-  zCand = getZCands(looseMuons_).front();
+  cout << "loose muons size " << looseMuons_.size() << endl;
+ 
+  int oppCharge=0;
+
+  for (size_t i=0; i<looseMuons_.size(); i++){
+    cout << "looseMuons_ has charge "  << looseMuons_.at(i).charge() << endl;
+
+    for (size_t j=i+1; i<looseMuons_.size(); i++){
+      if (looseMuons_[i].charge() != looseMuons_[j].charge())
+	oppCharge=1;
+    }
+
+  }
+
+
+
+  if (oppCharge==1){
+    //  zCand = getZCands(looseMuons_).front();
+    zCand = getZCands(looseMuons_).at(0);
+    cout << "Passed zCand" << endl;
+  }
+  else
+    cout << "WTF???" << endl;
+  
+
   // Make a W candidate out of the jets.
+
   wCand = getWCand(jets_);
 
+  cout << "Passed wCand" << endl;
+
+
   bool validZ    = PassValidZCut();
+  cout << "Valid Z from muon" << endl;
+
   bool validHadV = PassValidHadVCut();
+  cout << "Valid Z from jet" << endl;
+
+
   bool goodZ     = PassZMassCut() && PassZptCut();
+  cout << "Good Z from muon" << endl;
+
+
   bool goodHadV  = PassHadVMassCut() && PassHadVptCut();
+  cout << "Good Z from jet" << endl;
+
+
   
   if(validZ && validHadV && goodZ && goodHadV) {
     reco::CompositeCandidate hadVZ;
@@ -164,7 +218,13 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     addP4.set(hadVZ);
     h_HadVZMass->Fill(hadVZ.mass());
   }
+  else{
+    cout << "Didnt manage to make a damn bloody candidate (no good Zs)" << endl;
+  }
+
+
 }
+
 
 /////////////////Accessors///////////////////////
 
@@ -409,16 +469,17 @@ HadronicVZAnalyzer::Calc_MuonRelIso(const TeVMuon* mu){
 }
 */
 ///////////////Utilities//////////////////
-/*
+
 void
 HadronicVZAnalyzer::ClearEvtVariables(){
   muons_.clear();
+  jets_.clear();
   looseMuons_.clear();
   tightMuons_.clear();
   zCand = ZCandidate();
   wCand = WCandidate();
 }
-*/
+
 void 
 HadronicVZAnalyzer::reportProgress(int eventNum) {
   if (eventNum % intOptions_["report"] == 0) {
