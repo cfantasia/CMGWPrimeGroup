@@ -114,6 +114,10 @@ public:
   void Declare_Histos(TFileDirectory& dir);
   void Fill_Histos(int index, float weight=1.);
 
+  //clean stuff
+  void ClearEvtVariables();
+
+
 //methods for the cuts
   bool PassNoCut();
   bool PassTriggersCut();
