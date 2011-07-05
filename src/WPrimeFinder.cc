@@ -151,7 +151,7 @@ void WPrimeFinder::run()
     it->Nact_evt = ev.size();
     cout<<" Done. \n";
   
-    if(!wprimeUtil->runningOnData())
+    if(wprimeUtil->runningOnData())
       // Nprod_evt presumably contains the # of events before any filtering
       // that results in Nact_evt (< Nprod_evt) events contained in the file.
       // For data, we tend not to know how many events we started with,
