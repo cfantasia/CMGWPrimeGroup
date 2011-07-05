@@ -305,6 +305,18 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
 //MET Histos
   DeclareHistoSet("hMET", "MET",
                   "MET (GeV)", 30, 0, 300, "GeV", hMET,dir);
+  DeclareHistoSet("hMETee", "MET",
+                  "MET^{ee} (GeV)", 30, 0, 300, "GeV", hMETee,dir);
+  DeclareHistoSet("hMETmumu", "MET",
+                  "MET^{#mu#mu} (GeV)", 30, 0, 300, "GeV", hMETmumu,dir);
+  DeclareHistoSet("hMET3e0mu", "MET",
+                  "MET^{3e0#mu} (GeV)", 30, 0, 300, "GeV", hMET3e0mu,dir);
+  DeclareHistoSet("hMET2e1mu", "MET",
+                  "MET^{2e1#mu} (GeV)", 30, 0, 300, "GeV", hMET2e1mu,dir);
+  DeclareHistoSet("hMET1e2mu", "MET",
+                  "MET^{1e2#mu} (GeV)", 30, 0, 300, "GeV", hMET1e2mu,dir);
+  DeclareHistoSet("hMET0e3mu", "MET",
+                  "MET^{0e3#mu} (GeV)", 30, 0, 300, "GeV", hMET0e3mu,dir);
 
 //Z Mass Histos
   DeclareHistoSet("hZMass" , "Reconstructed Mass of Z",
@@ -422,15 +434,23 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
       hZeeMass[index]->Fill(zCand_.mass(), weight);
       if(TT) hZeeMassTT[index]->Fill(zCand_.mass(), weight);
       if(TF) hZeeMassTF[index]->Fill(zCand_.mass(), weight);
+      hMETee[index]->Fill(met_.et(), weight);
     }else if (zCand_.flavor() == PDGMUON){
       hZmumuMass[index]->Fill(zCand_.mass(), weight);
       if(TT) hZmumuMassTT[index]->Fill(zCand_.mass(), weight);
       if(TF) hZmumuMassTF[index]->Fill(zCand_.mass(), weight);
+      hMETmumu[index]->Fill(met_.et(), weight);
     }
     if     (evtType_ == 0) hZ3e0muMass[index]->Fill(zCand_.mass(), weight);
     else if(evtType_ == 1) hZ2e1muMass[index]->Fill(zCand_.mass(), weight);
     else if(evtType_ == 2) hZ1e2muMass[index]->Fill(zCand_.mass(), weight);
     else if(evtType_ == 3) hZ0e3muMass[index]->Fill(zCand_.mass(), weight);
+
+    if     (evtType_ == 0) hMET3e0mu[index]->Fill(met_.et(), weight);
+    else if(evtType_ == 1) hMET2e1mu[index]->Fill(met_.et(), weight);
+    else if(evtType_ == 2) hMET1e2mu[index]->Fill(met_.et(), weight);
+    else if(evtType_ == 3) hMET0e3mu[index]->Fill(met_.et(), weight);
+
   }
   if(wCand_){
     hWpt[index]->Fill(wCand_.pt(), weight);
@@ -448,6 +468,7 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
     if(evtType_ == 3) hW0e3muTransMass[index]->Fill(wCand_.mt(), weight);
   }  
   hMET[index]->Fill(met_.et(), weight);
+
   hNLElec[index]->Fill(looseElectrons_.size(), weight);
   hNLMuon[index]->Fill(looseMuons_    .size(), weight);
   hNLLeps[index]->Fill(looseElectrons_.size()+looseMuons_.size(), weight);

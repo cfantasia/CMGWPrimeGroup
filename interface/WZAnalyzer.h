@@ -339,7 +339,14 @@ public:
   std::vector<TH1F*> hHt;
   std::vector<TH1F*> hWpt;
   std::vector<TH1F*> hZpt;
+
   std::vector<TH1F*> hMET;
+  std::vector<TH1F*> hMETee;
+  std::vector<TH1F*> hMETmumu;
+  std::vector<TH1F*> hMET3e0mu;
+  std::vector<TH1F*> hMET2e1mu;
+  std::vector<TH1F*> hMET1e2mu;
+  std::vector<TH1F*> hMET0e3mu;
 
   std::vector<TH1F*> hZMass     ;
   std::vector<TH1F*> hZeeMass   ;
