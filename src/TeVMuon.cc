@@ -94,6 +94,11 @@ float TeVMuon::combRelIsolation() const
     / pt();
 }
 
+inline float TeVMuon::combRelIsolation03(float offset) const{
+  return (isolationR03().emEt + isolationR03().hadEt + isolationR03().sumPt - offset)
+    / pt();
+}
+
 bool TeVMuon::goodQualityMuon(float chi2Cut, float muonEtaCut) const
 {
   // See twiki: https://twiki.cern.ch/twiki/bin/view/CMS/ExoticaWprime
@@ -126,3 +131,49 @@ bool TeVMuon::goodQualityMuon(float chi2Cut, float muonEtaCut) const
   
   return true;
 }
+
+//////////////////
+inline bool TeVMuon::PassIsGlobalCut(){
+  return isGlobalMuon(); 
+}//--- PassIsGlobalCut
+
+inline bool TeVMuon::PassIsTrackerCut(){
+  return isTrackerMuon(); 
+}//--- PassIsTrackerCut
+
+inline bool TeVMuon::PassPtCut(const float cut){
+  return pt() > cut;
+}
+
+inline bool TeVMuon::PassEtaCut(const float cut){
+  return fabs(eta()) < cut;
+}//--- PassEta Cut
+
+inline bool TeVMuon::PassDxyCut(const float cut){
+  return (fabs(dB()) < cut);
+}//--- PassDxyCut
+
+inline bool TeVMuon::PassNPixHitCut(const float cut){
+  return (globalTrack()->hitPattern().numberOfValidPixelHits() > cut);
+}//--- PassNpixhitCut
+
+inline bool TeVMuon::PassNTrkHitCut(const float cut){
+  return (globalTrack()->hitPattern().numberOfValidTrackerHits() > cut);
+}//--- PassNtrkhitCut
+
+inline bool TeVMuon::PassNormChi2Cut(const float cut){
+  return (globalTrack()->normalizedChi2() < cut);
+}//--- PassChi2Cut
+
+inline bool TeVMuon::PassHitsUsedCut(const float cut){
+  return (globalTrack()->hitPattern().numberOfValidMuonHits() > cut);
+}//--- PassHits Used Cut
+
+inline bool TeVMuon::PassStationsCut(const float cut){
+  return numberOfMatches() > cut;
+}//--- PassStationsCut
+
+inline bool TeVMuon::PassCombRelIso03Cut(const float puOffset, const float cut){
+  return combRelIsolation03(puOffset) < cut;
+}//--- PassCombRelIsoCut
+

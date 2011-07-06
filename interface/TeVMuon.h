@@ -20,6 +20,18 @@ class TeVMuon : public pat::Muon{
   const TLorentzVector & p4(bool & isInvalidMuon);
 
   bool goodQualityMuon(float chi2Cut, float muonEtaCut) const;
+  bool PassEtaCut(const float cut);
+  bool PassPtCut(const float cut);
+  bool PassIsGlobalCut();
+  bool PassIsTrackerCut();
+  bool PassDxyCut(const float cut);
+  bool PassNPixHitCut(const float cut);
+  bool PassNTrkHitCut(const float cut);
+  bool PassNormChi2Cut(const float cut);
+  bool PassHitsUsedCut(const float cut);
+  bool PassStationsCut(const float cut);
+  bool PassCombRelIsoCut(const float cut);
+  bool PassCombRelIso03Cut(const float puOffset, const float cut);
 
   double pt() const ;
   double pt(unsigned muReconstructor) const ;
@@ -27,6 +39,7 @@ class TeVMuon : public pat::Muon{
   float trkRelIsolation() const;
   //computes the combined rel isolation value
   float combRelIsolation() const;
+  float combRelIsolation03(const float offset) const;
   
   TVector2 getPtDiff() const;
   const reco::TrackRef GetTrack(unsigned muReconstructor) const;
