@@ -60,6 +60,7 @@ process.WprimeAnalyzer = cms.PSet(
     useAdjustedMET = cms.bool(False),
     muonAlgo = cms.uint32(0),
     minDeltaR = cms.double(0.),
+    maxZMassDiff = cms.double(9999999.),
     effectiveElecArea = cms.vdouble(0.0997,0.1123),#Not using Recommended PI*0.3*0.3
     effectiveMuonArea = cms.vdouble(0.1057,0.0769),
     triggersToUse = cms.vstring('HLT_DoubleMu5_v*', #For MC
@@ -68,7 +69,10 @@ process.WprimeAnalyzer = cms.PSet(
 
                                 'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
                                 ),
-
+    eventCounters = cms.vstring('nEventsTotal',
+                                'nEventsHLT',
+                                'nEventsFiltered',
+                                'nEventsPat'),
 
     Cuts = cms.vstring("NoCuts", 
                        "MinNLeptons",
