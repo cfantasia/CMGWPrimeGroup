@@ -43,6 +43,8 @@ class WPrimeFinder
   int maxEvents_;
   // Should we use the json file
   bool useJSON_;
+  // Should we count the number of gen evts in patTuple?
+  bool countGenEvts_;
 
   void eventLoop(edm::EventBase const & event);
 
@@ -50,6 +52,10 @@ class WPrimeFinder
 
   std::string outputFile_;
   std::string logFile_;
+
+  //Variables for counting # of gen events
+  std::vector<uint> nEvents_;
+  std::vector<std::string> ctrNames_;
 
   // enable/disable analysis in specific channels
   bool runMuMETAnalysis_;

@@ -36,6 +36,7 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
   reportAfter_ = cfg.getParameter<unsigned int>("reportAfter");
   maxEvents_   = cfg.getParameter<int>("maxEvents") ;
   useJSON_   = cfg.getParameter<bool>("useJSON") ;
+  countGenEvts_ = cfg.getParameter<bool>("countGenEvts");
   genParticles_ = cfg.getParameter<edm::InputTag>("genParticles" );
   doRecoilCorrectionForW_ = cfg.getParameter<bool>("doRecoilCorrectionForW");
   runMuMETAnalysis_ = cfg.getParameter<bool>("runMuMETAnalysis" );
@@ -56,6 +57,9 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
 
   outLogFile_.open(logFile_.c_str());
   WPrimeUtil::CheckStream(outLogFile_, logFile_);
+
+  ctrNames_ = (cfg.getParameter<vstring>("eventCounters"));
+  
   
   MCPUDistFile_   = cfg.getParameter<string>("MCPUDistFile" );
   MCPUDistHist_   = cfg.getParameter<string>("MCPUDistHist" );
@@ -166,11 +170,21 @@ void WPrimeFinder::run()
     
     cout << std::fixed << std::setprecision(2);
     beginFile(it);
+
+    unsigned runNumber = 0;
+    unsigned lumiID = 0;
+    nEvents_.assign(ctrNames_.size(), 0);
     for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){// loop over events
       edm::EventBase const & event = ev;
+
+      if(countGenEvts_)
+        updateEventCounts(ev, nEvents_, 
+                          runNumber, lumiID, 
+                          ctrNames_, false);
+      
       // skip event if maximal number of events per input file is reached 
       if(maxEvents_>0 &&  ievt > maxEvents_) continue;
- 
+      
       // simple event counter
       if(reportAfter_!=0 ? (ievt>0 && ievt%reportAfter_==0) : false) 
         cout << " Processing event: " << ievt << " or " 
@@ -180,15 +194,17 @@ void WPrimeFinder::run()
       
       if(useJSON_ && wprimeUtil->runningOnData() &&
          !jsonContainsEvent (jsonVector, event))
-	{
-	  ++ievt_skipped;
-	  continue;
-	}
+      {
+        ++ievt_skipped;
+        continue;
+      }
       else
         ++ievt_all;
-
+      
       eventLoop(event);
     } // loop over events
+    if(countGenEvts_ && (int)nEvents_[0] != it->Nprod_evt) 
+      cout<<"Weight Wrong: Found "<<nEvents_[0]<<" generated events and sample file lists "<<it->Nprod_evt<<endl;
     endFile(it);
     
   } // loop over input files

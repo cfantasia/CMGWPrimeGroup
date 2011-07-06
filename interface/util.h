@@ -14,6 +14,24 @@
 #include "DataFormats/Math/interface/deltaR.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenRunInfoProduct.h"
 
+////
+#include <stdarg.h>
+#include <boost/algorithm/string.hpp>
+
+#include "DataFormats/FWLite/interface/Handle.h"
+#include "DataFormats/FWLite/interface/Event.h"
+#include "DataFormats/FWLite/interface/LuminosityBlock.h"
+#include "DataFormats/FWLite/interface/ChainEvent.h"
+
+#include "FWCore/FWLite/interface/AutoLibraryLoader.h"
+#include "FWCore/PythonParameterSet/interface/PythonProcessDesc.h"
+#include "FWCore/ParameterSet/interface/ProcessDesc.h"
+
+#include "PhysicsTools/FWLite/interface/TFileService.h"
+
+#include "DataFormats/Common/interface/MergeableCounter.h"
+////
+
 namespace wprime{
   static std::string INVALID = "INVALID";
 
@@ -129,5 +147,40 @@ inline const reco::Candidate * findMother(const reco::Candidate * p)
   else return 0;
 }
 
+////
+/// Return a pointer to product with productName
+template <class T, class P>
+  const T * getPointerFWLite(const P & ev, std::string productName)
+{
+  fwlite::Handle<T> handle;
+  handle.getByLabel(ev, productName.c_str());
+  if (handle.isValid()) {
+    return handle.ptr();
+  }
+  return 0;
+}
+
+/// Update event counters if this is a new run/lumi block
+template <class P>
+void updateEventCounts(P & ev, std::vector<unsigned int> & nEvents, 
+                       unsigned int & runNumber, unsigned int & lumiID,
+                       std::vector<std::string> & names, bool verbose=false)
+{
+  if (ev.id().run() != runNumber ||
+      ev.id().luminosityBlock() != lumiID) {
+    if(verbose) std::cout<<" Changing Lumi block. Run: "<<runNumber<<" Lumi: "<<lumiID<<std::endl;
+    fwlite::LuminosityBlock const & lumi = ev.getLuminosityBlock();
+    runNumber = ev.id().run();
+    lumiID = ev.id().luminosityBlock();
+    if (nEvents.size() == 0)
+      nEvents.assign(names.size(), 0);
+    for (size_t i = 0; i < names.size(); i++) {
+      nEvents[i] += (* getPointerFWLite<edm::MergeableCounter>(lumi, names[i])).value;
+    }
+    if (verbose)
+      printf("New luminosity block: %i events present of %i total processed\n",
+             nEvents[names.size() - 1], nEvents[0]);
+  }
+}
 
 #endif // _util_h
