@@ -20,7 +20,6 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
 
   FillCutFns();
 
-  intOptions_["report"] = cfg.getParameter<uint>("reportAfter");
   intOptions_["verbose"] = cfg.getParameter<bool>("debugme");
   doPreselect_ = cfg.getParameter<bool>("preselect");
   intOptions_["events"] = 0;
@@ -39,10 +38,11 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
 
   triggersToUse_          = cfg.getParameter<vstring>("triggersToUse");
 
+  maxZMassDiff_ = cfg.getParameter<double>("maxZMassDiff");
   minDeltaR_ = cfg.getParameter<double>("minDeltaR");
 
   SetCandEvtFile(cfg.getParameter<string  >("candEvtFile" ));
-  Num_surv_cut_.resize(NCuts_,0.);
+  Num_surv_cut_.assign(NCuts_,0.);
 
   verbose("Using %i cuts\n",NCuts_);
   verbose("Using %i loose elec cuts\n",NLooseElecCuts_);
@@ -59,6 +59,7 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   PI    = 2.0 * TMath::ACos(0.);
   TWOPI = 2.0 * PI;
   NOCUT = 9e9;
+
 
   effectiveElecArea_ = cfg.getParameter<vector<double> >("effectiveElecArea");
   effectiveMuonArea_ = cfg.getParameter<vector<double> >("effectiveMuonArea");
@@ -493,7 +494,7 @@ inline void
 WZAnalyzer::CalcZVariables(){
   if (debugme) cout<<"In Calc Z Variables\n";
   // Reconstruct the Z
-  ZCandV looseZCands = getZCands(looseElectrons_, looseMuons_, 12.5);
+  ZCandV looseZCands = getZCands(looseElectrons_, looseMuons_, maxZMassDiff_);
   zCand_ = looseZCands.size() ? looseZCands[0] : ZCandidate();
   verbose("    Contains: %i loose Z candidate(s)", looseZCands.size());
   numZs_ = CountZCands(looseZCands); 
@@ -565,7 +566,7 @@ void
 WZAnalyzer::DeclareHistoSet(string n, string t, string xtitle,
                             int nbins, float min, float max, string units,
                             vector<TH1F*>& h, TFileDirectory& d){
-  ClearAndResize(h,NCuts_,NULL);
+  h.assign(NCuts_,NULL);
 
   float binWidth = (max-min)/nbins;
   for(int i=0; i<NCuts_; ++i){
@@ -717,12 +718,12 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
           <<endl;
     }
   }
-
+/*
   if(event.id().run() == 165415 && event.id().luminosityBlock() == 125){
     cout<<"This is a missing event\n";
     PrintLeptons();
   }
-
+*/
 /////////////////////
   if(!PassCuts(wprimeUtil_->getWeight())) return;
   if(wprimeUtil_->runningOnData()){
@@ -1543,20 +1544,6 @@ WZAnalyzer::ClearEvtVariables(){
   TT = TF = false;
 }
 
-inline void WZAnalyzer::ClearAndResize(vector<TH1F*>& h, int& size, TH1F* ptr){
-  h.clear();
-  h.resize(size, ptr);
-}
-
-void WZAnalyzer::reportProgress(int eventNum) {
-  if (eventNum % intOptions_["report"] == 0) {
-    printf("\rWe've processed %i events so far...", eventNum);
-    cout.flush();
-    verbose("\n");
-  }
-  verbose("Event number: %i", ++eventNum);
-}
-
 /// Print to screen (like printf), but only if --verbose option is on
 void WZAnalyzer::verbose(const char *string, ...)
 {
@@ -1644,5 +1631,4 @@ WZAnalyzer::ZLepPt(int idx){
     return FindMuon(*zCand_.daughter(idx)).pt();
   return -999.;
 }
-
 

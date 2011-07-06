@@ -45,7 +45,6 @@ public:
                     TH1F* h, TFileDirectory& d);
 
   void ClearEvtVariables();
-  void ClearAndResize(std::vector<TH1F*>& h, int& size, TH1F* ptr=NULL);
 
   void Fill_Histos(int index, float weight=1.);
   void printSummary(const std::string& dir, ofstream & out);
@@ -178,7 +177,6 @@ public:
   float Calc_GenWZInvMass();
   bool inEE(const TeVMuon& mu);
 //////////
-  void reportProgress(int eventNum);
   void verbose(const char *string, ...);
 
   void beginFile(std::vector<wprime::InputFile>::const_iterator fi);
@@ -262,6 +260,8 @@ public:
 
   float minWlepPt_;
 // +++++++++++++++++++Z Cuts
+  float maxZMassDiff_;
+
   float minZpt_;
   float minZmass_;
   float maxZmass_;
@@ -431,17 +431,5 @@ public:
   std::vector<MuonCutFnPtr> TightMuonCutFns_;
 #endif
 };
-
-/// Return a pointer to product with productName
-template <class T, class P>
-  const T * getPointerFWLite(const P & ev, std::string productName)
-{
-  fwlite::Handle<T> handle;
-  handle.getByLabel(ev, productName.c_str());
-  if (handle.isValid()) {
-    return handle.ptr();
-  }
-  return 0;
-}
 
 #endif//#define _WZAnalyzer_h_
