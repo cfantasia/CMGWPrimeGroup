@@ -244,6 +244,7 @@ ZCandV getZCands(const ElectronV & electrons, float maxMassDiff = ZMASS);
 ZCandV getZCands(const MuonV & muons, float maxMassDiff = ZMASS);
 ZCandV getZCands(const ElectronV & electrons,
                  const MuonV & muons, float maxMassDiff = ZMASS);
+void removeWorstCands(ZCandV & zCands, float & maxMassDiff);
 void removeOverlapping(ZCandV & zCands);
 
 std::vector<WCandidate> getWCandidates(const ElectronV & electrons,

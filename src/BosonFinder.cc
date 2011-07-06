@@ -13,6 +13,7 @@ ZCandV getZCands(const ElectronV & electrons, float maxMassDiff)
       if (electrons[i].charge() != electrons[j].charge())
         zCands.push_back(ZCandidate(electrons[i], electrons[j]));
 
+  removeWorstCands(zCands, maxMassDiff);
   // Order by difference from Z mass
   std::sort(zCands.begin(), zCands.end(), closestToZMass());
 
@@ -30,6 +31,7 @@ ZCandV getZCands(const MuonV & muons, float maxMassDiff)
       if (muons[i].charge() != muons[j].charge())
         zCands.push_back(ZCandidate(muons[i], muons[j]));
   
+  removeWorstCands(zCands, maxMassDiff);
   // Order by difference from Z mass
   sort(zCands.begin(), zCands.end(), closestToZMass());
   
@@ -68,6 +70,13 @@ void removeOverlapping(ZCandV & zCands){
       }
 }
 
+void removeWorstCands(ZCandV & zCands, float & maxMassDiff){
+  for (ZCandV::iterator i = zCands.begin(); i != zCands.end(); ++i)
+    if( fabs(i->mass() - ZMASS) > maxMassDiff){
+      zCands.erase(i);
+      i--;
+    }
+}
 vector<WCandidate> getWCandidates(const ElectronV & electrons,
 				  const pat::MET & met){
   vector<WCandidate> wCands;
