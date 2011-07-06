@@ -98,7 +98,7 @@ inline bool areIdentical(const reco::Candidate & p1,
   if (p1.pdgId() == p2.pdgId() &&
       fabs(p1.eta() - p2.eta()) < tolerance &&
       fabs(p1.phi() - p2.phi()) < tolerance &&
-      fabs(p1.pt () - p2.pt ()) < tolerance)
+      fabs(p1.pt () - p2.pt ()) < 0.1*p1.pt())
     return true;
   return false;
 }
