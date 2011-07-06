@@ -28,7 +28,12 @@ process.WprimeAnalyzer = cms.PSet(
     outputFile  = cms.string('EWKWZ_analysis.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
     reportAfter = cms.uint32(5000),                     ## optional
-    useJSON = cms.bool(False),
+    useJSON = cms.bool(False),  
+    countGenEvts = cms.bool(True),
+    eventCounters = cms.vstring('nEventsTotal',
+                                'nEventsHLT',
+                                'nEventsFiltered',
+                                'nEventsPat'),
     doRecoilCorrectionForW = cms.bool(False),
     sample_cross_sections = cms.string("samples_cross_sections_WZ.txt"),
     debugme = cms.bool(False),
