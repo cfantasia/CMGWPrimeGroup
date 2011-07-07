@@ -498,6 +498,7 @@ WZAnalyzer::CalcZVariables(){
   zCand_ = looseZCands.size() ? looseZCands[0] : ZCandidate();
   verbose("    Contains: %i loose Z candidate(s)", looseZCands.size());
   numZs_ = CountZCands(looseZCands); 
+  if(debugme) PrintEventLeptons();
 }
 
 inline void
@@ -506,6 +507,7 @@ WZAnalyzer::CalcWVariables(){
   //wCand_ = getWCand(looseElectrons_, looseMuons_, met_, zCand_, minDeltaR_);
   wCand_ = getWCand(tightElectrons_, tightMuons_, met_, zCand_, minDeltaR_);
   verbose("    Contains: %i tight W candidate(s)", (bool)wCand_);
+  if(debugme) PrintEventLeptons(); 
 }
 
 inline void
@@ -718,12 +720,12 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
           <<endl;
     }
   }
-/*
-  if(event.id().run() == 165415 && event.id().luminosityBlock() == 125){
+
+  if(event.id().run() == 1 && event.id().luminosityBlock() == 82 && event.id().event() == 38275){
     cout<<"This is a missing event\n";
     PrintLeptons();
   }
-*/
+
 /////////////////////
   if(!PassCuts(wprimeUtil_->getWeight())) return;
   if(wprimeUtil_->runningOnData()){
@@ -847,6 +849,8 @@ WZAnalyzer::PrintElectron(const heep::Ele& elec, int parent){
   cout<<" Elec ScEt: "<<elec.et()<<endl; //ScEt
   if(!elec.isPatEle()) return;
   cout<<" Elec Pt: "<<elec.patEle().pt()<<endl
+      <<" Elec P4Pt: "<<elec.patEle().p4().Pt()<<endl
+      <<" Elec energy: "<<elec.patEle().energy()<<endl
       <<" Elec Charge: "<<elec.patEle().charge()<<endl
       <<" Elec Eta: "<<elec.patEle().eta()<<", isEB="<<elec.patEle().isEB()<<endl //Eta
       <<" Elec NMiss: "<<elec.patEle().gsfTrack().get()->trackerExpectedHitsInner().numberOfHits()<<endl
@@ -1201,7 +1205,7 @@ inline bool WZAnalyzer::PassElecWPRelIsoCut(const heep::Ele& elec){
 /////////////////////////////////////
 bool WZAnalyzer::PassTriggerEmulation(const heep::Ele& elec){
   if(!elec.isEcalDriven()) return false;
-  float e = elec.patEle().superCluster()->energy() * 
+  float e = elec.patEle().energy() * 
     fabs(sin(elec.patEle().superCluster()->position().theta()));
   if(elec.isEB()){
       return elec.patEle().sigmaIetaIeta() < 0.014 &&
@@ -1493,7 +1497,7 @@ float
 WZAnalyzer::CalcElecCombRelIso(const heep::Ele& elec){
   float num = elec.patEle().dr03TkSumPt();
   num += (elec.patEle().dr03HcalTowerSumEt() + 
-          elec.patEle().hadronicOverEm() * elec.patEle().superCluster()->energy() * fabs(sin(elec.patEle().superCluster()->position().theta())));
+          elec.patEle().hadronicOverEm() * elec.patEle().energy() * fabs(sin(elec.patEle().superCluster()->position().theta())));
   num -= rhoFastJet_*effectiveElecArea_[elec.patEle().isEE()];
   num += elec.patEle().isEB() ? max(0., elec.patEle().dr03EcalRecHitSumEt() - 1.) : elec.patEle().dr03EcalRecHitSumEt();
   return num / elec.patEle().p4().Pt();
