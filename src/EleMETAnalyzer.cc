@@ -150,7 +150,7 @@ void EleMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
   hETA[cut_index]->Fill(el4D.Eta(), weight);
   hPHI[cut_index]->Fill(el4D.Phi(), weight);
   hTM[cut_index]->Fill(WPrimeUtil::TMass(el4D, getNewMET(event, el4D)), weight);
-
+ 
   //fill the TTrees
   vars.ele = el4D;
   vars.p_ele = &vars.ele;
@@ -423,18 +423,18 @@ int EleMETAnalyzer::ignoreIsolationMask = (~heep::CutCodes::ISOLEMHADDEPTH1)
 int EleMETAnalyzer::useOnlyIsolationMask = heep::CutCodes::ISOLEMHADDEPTH1
 	  | heep::CutCodes::ISOLHADDEPTH2 | heep::CutCodes::ISOLPTTRKS;
 
-// run HEEP cuts, return HEEPEleSelector::getCutCode
-int EleMETAnalyzer::runHEEPcuts(const heep::Ele & el)
+// make sure HEEP cuts are calculated once per electron
+void EleMETAnalyzer::runHEEPcuts(const heep::Ele & el)
 {
-   return cuts_.getCutCode(el);
+  if(cutCode < 0)
+    cutCode = cuts_.getCutCode(el);
 }
 
 // check if electron satisfies quality requirements
 // fill goodQual; always returns true
 bool EleMETAnalyzer::goodQualityElectron(bool * goodQual, const heep::Ele & el, edm::EventBase const &)
 {
-  if(cutCode < 0)
-    cutCode = runHEEPcuts(el);
+  runHEEPcuts(el);
   if(cutCode & ignoreIsolationMask)
     *goodQual = false;
   return true;
@@ -454,8 +454,7 @@ unsigned EleMETAnalyzer::nEleAboveThresh(float Et_thresh)
   //loop over electrons
   for (int theEle = iEleMin; theEle != iEleMax; ++theEle){//loop over electrons
     heep::Ele el((*electrons)[theEle]);
-    bool goodElectron = (runHEEPcuts(el) == 0);
-    if(el.et() > Et_thresh && goodElectron)
+    if(el.et() > Et_thresh)
       ++N;
   }
 
@@ -467,8 +466,7 @@ unsigned EleMETAnalyzer::nEleAboveThresh(float Et_thresh)
 bool EleMETAnalyzer::isolatedElectron(bool * goodQual, const heep::Ele & el, 
 				 edm::EventBase const &)
 {
-  if(cutCode < 0)
-    cutCode = runHEEPcuts(el);
+  runHEEPcuts(el);
   if(cutCode & useOnlyIsolationMask)
     *goodQual = false;
   return true;
