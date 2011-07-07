@@ -7,6 +7,8 @@
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/elmet_histo_constants.h"
 
+#include "UserCode/CMGWPrimeGroup/interface/WprimeTreeVariables.h"
+
 #include "SHarper/HEEPAnalyzer/interface/HEEPEleSelector.h"
 #include "SHarper/HEEPAnalyzer/interface/HEEPEle.h"
 
@@ -64,6 +66,7 @@ class EleMETAnalyzer
   float dumpHighEtElectronThreshold_;
 
   void defineHistos(TFileDirectory & dir);
+  void defineTrees(TFileDirectory & dir);
   void defineHistos_ElectronEt(TFileDirectory & dir);
   void defineHistos_ElectronEta(TFileDirectory & dir);
   void defineHistos_ElectronPhi(TFileDirectory & dir);
@@ -137,6 +140,9 @@ class EleMETAnalyzer
   TH1F * hETA[Num_elmet_cuts];
   TH1F * hPHI[Num_elmet_cuts];
   TH1F * hTM[Num_elmet_cuts];
+
+  WprimeVariables vars;
+  TTree * cloneTrees[Num_elmet_cuts];
 
 };
 

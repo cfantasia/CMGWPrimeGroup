@@ -30,8 +30,12 @@ EleMETAnalyzer::~EleMETAnalyzer()
 void EleMETAnalyzer::defineHistos(TFileDirectory & dir)
 {
   for(int i = 0; i != Num_elmet_cuts; ++i)
-    hPT[i] = hETA[i] = hPHI[i] = /*hMJDPHI[i] =*/ hTM[i] = 0;
-
+    {
+      hPT[i] = hETA[i] = hPHI[i] = /*hMJDPHI[i] =*/ hTM[i] = 0;
+      cloneTrees[i] = 0;
+    }
+  
+  defineTrees(dir);
   defineHistos_ElectronEt(dir);
   defineHistos_ElectronEta(dir);
   defineHistos_ElectronPhi(dir);
@@ -61,6 +65,8 @@ int EleMETAnalyzer::getTheHardestElectron()
 
 void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
 {
+  ClearWprimeVariables(vars);
+
   event.getByLabel(electrons_, electrons);
   event.getByLabel(met_, met);
 
@@ -144,6 +150,13 @@ void EleMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
   hETA[cut_index]->Fill(el4D.Eta(), weight);
   hPHI[cut_index]->Fill(el4D.Phi(), weight);
   hTM[cut_index]->Fill(WPrimeUtil::TMass(el4D, getNewMET(event, el4D)), weight);
+
+  //fill the TTrees
+  vars.ele = el4D;
+  vars.p_ele = &vars.ele;
+  
+ 
+  cloneTrees[cut_index] -> Fill();
 }
 
 // operations to be done when changing input file (e.g. create new histograms)
@@ -165,6 +178,7 @@ void EleMETAnalyzer::endFile(std::vector<wprime::InputFile>::const_iterator fi,
 			    ofstream & out)
 {
   printFileSummary(fi, out);
+      
 }
 
 // print summary of efficiencies
@@ -255,6 +269,16 @@ void EleMETAnalyzer::defineHistos_ElectronEt(TFileDirectory & dir)
       
       hPT[cut] = dir.make<TH1F>(name.c_str(), title.c_str(), nBinEtEle,
 			    minEtEle, maxEtEle);
+    }
+}
+
+void EleMETAnalyzer::defineTrees(TFileDirectory & dir)
+{
+  for(int cut = 0; cut != Num_elmet_cuts; ++cut)
+    {
+      string name = "ntu_" + elmet_cuts_desc_short[cut];
+      cloneTrees[cut] = dir.make<TTree>(name.c_str(), name.c_str());
+      InitializeTree(vars, cloneTrees[cut]);
     }
 }
 
