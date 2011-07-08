@@ -27,6 +27,7 @@
 #include "PhysicsTools/CandUtils/interface/AddFourMomenta.h"
 
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
+#include "UserCode/CMGWPrimeGroup/interface/NewElec.h"
 
 typedef edm::ParameterSet PSet;
 
@@ -59,7 +60,6 @@ template <class T, class P>
 
 
 
-
 //////// Selectors ///////////////////////////////////////////////////////////
 /// Class derived from Selector that implements some convenience functions
 template<class T>
@@ -86,9 +86,9 @@ class MinMaxSelector : public Selector<T> {
   template<class C>
     void setPassCut(std::string param, C value, pat::strbitset & ret) {
     bool useMin = this->cutOnMin(param);
-    bool passMin = useMin && value >= this->cut(param, C());
-    bool passMax = !useMin && value <= this->cut(param, C());
-    if (passMin || passMax || this->ignoreCut(param))
+    if (this->ignoreCut(param) || 
+        ( useMin && value >= this->cut(param, C())) ||
+        (!useMin && value <= this->cut(param, C())) )
       this->passCut(ret, param);
   }
 };
@@ -100,43 +100,28 @@ public:
   ElectronSelectorBase(PSet const params) {
     // Set the last parameter to false to turn off the cut
     loadFromPset<double>(params, "minPt", true);
+    loadFromPset<double>(params, "minConv", true);
+    loadFromPset<double>(params, "maxSigmaIEtaIEta", true);
     loadFromPset<double>(params, "maxDeltaEta", true);
     loadFromPset<double>(params, "maxDeltaPhi", true);
-    loadFromPset<double>(params, "maxSigmaEtaEta", true);
-    loadFromPset<double>(params, "maxSigmaIEtaIEta", true);
-    loadFromPset<double>(params, "minEoverP", true);
-    loadFromPset<double>(params, "maxHoverE", true);
-    loadFromPset<double>(params, "maxCaloIso", true);
-    loadFromPset<double>(params, "maxTrackIso", true);
-    loadFromPset<double>(params, "maxSwissCross", true);
+    loadFromPset<double>(params, "maxCombRelIso", true);
     loadFromPset<int>(params, "maxMissingHits", true);
-    loadFromPset<int>(params, "minSimpleEleId60relIso", true);
-    loadFromPset<int>(params, "minSimpleEleId70relIso", true);
-    loadFromPset<int>(params, "minSimpleEleId80relIso", true);
-    loadFromPset<int>(params, "minSimpleEleId85relIso", true);
-    loadFromPset<int>(params, "minSimpleEleId90relIso", true);
-    loadFromPset<int>(params, "minSimpleEleId95relIso", true);
   }
   virtual bool operator()(const pat::Electron & p, pat::strbitset & ret) {
+    return (*this)(p,ret,0.);
+  }
+  virtual bool operator()(const pat::Electron & p, pat::strbitset & ret, const float pu) {
     ret.set(false);
     setPassCut("minPt", p.pt(), ret);
-    setPassCut("maxDeltaEta", p.deltaEtaSuperClusterTrackAtVtx(), ret);
-    setPassCut("maxDeltaPhi", p.deltaPhiSuperClusterTrackAtVtx(), ret);
-    setPassCut("maxSigmaEtaEta", p.scSigmaEtaEta(), ret);
+    if(ignoreCut("minConv") || 
+       fabs(p.convDist()) >= cut("minConv", double()) || fabs(p.convDcot()) >= cut("minConv", double()))
+      passCut(ret, "minConv");
     setPassCut("maxSigmaIEtaIEta", p.sigmaIetaIeta(), ret);
-    setPassCut("minEoverP", p.eSuperClusterOverP(), ret);
-    setPassCut("maxHoverE", p.hadronicOverEm(), ret);
-    setPassCut("maxCaloIso", p.userFloat("relCaloIso"), ret);
-    setPassCut("maxTrackIso", p.userFloat("relTrackIso"), ret);
-    setPassCut("maxSwissCross", p.userFloat("swissCross"), ret);
+    setPassCut("maxDeltaEta", fabs(p.deltaEtaSuperClusterTrackAtVtx()), ret);
+    setPassCut("maxDeltaPhi", fabs(p.deltaPhiSuperClusterTrackAtVtx()), ret);   
+    setPassCut("maxCombRelIso",CalcElecCombRelIso(p, pu), ret);
     setPassCut("maxMissingHits", 
                p.gsfTrack()->trackerExpectedHitsInner().numberOfHits(), ret);
-    setPassCut("minSimpleEleId60relIso", p.electronID("simpleEleId60relIso"), ret);
-    setPassCut("minSimpleEleId70relIso", p.electronID("simpleEleId70relIso"), ret);
-    setPassCut("minSimpleEleId80relIso", p.electronID("simpleEleId80relIso"), ret);
-    setPassCut("minSimpleEleId85relIso", p.electronID("simpleEleId85relIso"), ret);
-    setPassCut("minSimpleEleId90relIso", p.electronID("simpleEleId90relIso"), ret);
-    setPassCut("minSimpleEleId95relIso", p.electronID("simpleEleId95relIso"), ret);
     setIgnored(ret);
     return (bool) ret;
   }
@@ -153,10 +138,9 @@ class ElectronSelector {
     barrelSelector_ = ElectronSelectorBase(params.getParameter<PSet>("barrel"));
     endcapSelector_ = ElectronSelectorBase(params.getParameter<PSet>("endcap"));
   }
-  bool operator()(const pat::Electron & p, pat::strbitset & ret) {
-    double fabsEta = fabs(p.eta());
-    if (fabsEta < 1.479) return barrelSelector_(p, ret);
-    if (fabsEta > 1.550) return endcapSelector_(p, ret);
+  bool operator()(const pat::Electron & p, pat::strbitset & ret, const float pu=0.) {
+    if     (p.isEB()) return barrelSelector_(p, ret, pu);
+    else if(p.isEE()) return endcapSelector_(p, ret, pu);
     return false;
   }
   pat::strbitset getBitTemplate() { return barrelSelector_.getBitTemplate(); }
@@ -168,34 +152,45 @@ class ElectronSelector {
 
 
 /// Selector for muons based on params
-class MuonSelector : public MinMaxSelector<pat::Muon> {
+class MuonSelector : public MinMaxSelector<TeVMuon> {
 public:
   MuonSelector() {}
   MuonSelector(PSet pset, std::string selectorName) {
     PSet const params = pset.getParameter<PSet>(selectorName);
     // Set the last parameter to false to turn off the cut
     loadFromPset<double>(params, "minPt", true);
-    loadFromPset<double>(params, "maxSip", true);
-    loadFromPset<double>(params, "maxIso", true);
+    loadFromPset<double>(params, "maxEta", true);
+    loadFromPset<double>(params, "maxDxy", true);
     loadFromPset<double>(params, "maxNormalizedChi2", true);
+    loadFromPset<double>(params, "maxIso", true);
+    loadFromPset<double>(params, "maxIso03", true);
+    loadFromPset<int>(params, "minIsGlobal", true);
+    loadFromPset<int>(params, "minIsTracker", true);
     loadFromPset<int>(params, "minNTrackerHits", true);
     loadFromPset<int>(params, "minNPixelHits", true);
     loadFromPset<int>(params, "minNMuonHits", true);
     loadFromPset<int>(params, "minNMatches", true);
+
   }
-  virtual bool operator()(const pat::Muon & p, pat::strbitset & ret) {
+  virtual bool operator()(const TeVMuon & p, pat::strbitset & ret) {
+    return (*this)(p,ret,0.);
+  }
+  bool operator()(const TeVMuon & p, pat::strbitset & ret, const float pu) {
     ret.set(false);
-    reco::TrackRef inner = p.innerTrack();
     reco::TrackRef global = p.globalTrack();
     setPassCut("minPt", p.pt(), ret);
-    setPassCut("maxSip", p.userFloat("sip"), ret);
-    setPassCut("maxIso", p.userFloat("relIso"), ret);
+    setPassCut("maxEta", p.eta(), ret);
+    setPassCut("maxDxy", fabs(p.dB()), ret);
     setPassCut("maxNormalizedChi2", global.isNull() ? 0. : 
                global->normalizedChi2(), ret);
-    setPassCut("minNTrackerHits", inner.isNull() ? 0 :
-               inner->hitPattern().numberOfValidTrackerHits(), ret);
-    setPassCut("minNPixelHits", inner.isNull() ? 0 :
-               inner->hitPattern().numberOfValidPixelHits(), ret);
+    setPassCut("maxIso", p.combRelIsolation(), ret);
+    setPassCut("maxIso03", p.combRelIsolation03(pu), ret);
+    setPassCut("minIsGlobal", p.isGlobalMuon(), ret);
+    setPassCut("minIsTracker", p.isTrackerMuon(), ret);
+    setPassCut("minNTrackerHits", global.isNull() ? 0 :
+               global->hitPattern().numberOfValidTrackerHits(), ret);
+    setPassCut("minNPixelHits", global.isNull() ? 0 :
+               global->hitPattern().numberOfValidPixelHits(), ret);
     setPassCut("minNMuonHits", global.isNull() ? 0 :
                global->hitPattern().numberOfValidMuonHits(), ret);
     setPassCut("minNMatches", p.numberOfMatches(), ret);
