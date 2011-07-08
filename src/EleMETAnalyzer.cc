@@ -20,7 +20,8 @@ EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeU
   dumpHighEtElectronThreshold_ = cfg.getParameter<double>("dumpHighEtElectronThreshold");
 
   setupCutOrder();
-
+  
+  analysis = "eleMET";
 }
 
 EleMETAnalyzer::~EleMETAnalyzer()
@@ -65,7 +66,7 @@ int EleMETAnalyzer::getTheHardestElectron()
 
 void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
 {
-  ClearWprimeVariables(vars);
+  ClearWprimeVariables(vars, analysis);
 
   event.getByLabel(electrons_, electrons);
   event.getByLabel(met_, met);
@@ -278,7 +279,7 @@ void EleMETAnalyzer::defineTrees(TFileDirectory & dir)
     {
       string name = "ntu_" + elmet_cuts_desc_short[cut];
       cloneTrees[cut] = dir.make<TTree>(name.c_str(), name.c_str());
-      InitializeTree(vars, cloneTrees[cut]);
+      InitializeTree(vars, cloneTrees[cut], analysis);
     }
 }
 

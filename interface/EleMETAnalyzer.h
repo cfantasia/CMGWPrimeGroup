@@ -141,6 +141,7 @@ class EleMETAnalyzer
   TH1F * hPHI[Num_elmet_cuts];
   TH1F * hTM[Num_elmet_cuts];
 
+  std::string analysis;
   WprimeVariables vars;
   TTree * cloneTrees[Num_elmet_cuts];
 

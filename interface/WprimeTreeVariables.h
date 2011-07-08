@@ -62,10 +62,10 @@ struct WprimeVariables
 
 
 
-void InitializeTree(WprimeVariables& vars, TTree* tree);
+void InitializeTree(WprimeVariables& vars, TTree* tree, std::string& analysis);
 void SetBranchAddresses(WprimeVariables& vars, TTree* tree);
 
-void ClearWprimeVariables(WprimeVariables&);
+void ClearWprimeVariables(WprimeVariables&, std::string& analysis);
 void DeleteWprimeVariables(WprimeVariables&);
 TTree* CloneTree(WprimeVariables& vars);
 
