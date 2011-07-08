@@ -180,6 +180,15 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
       return;
     }
 
+ i = new_line.find("subdir = ");
+  if(i != string::npos)
+    {
+      in_file->subdir = new_line.substr(9, new_line.length() - 9);
+
+      return;
+    }
+
+
   i = new_line.find("pathname = ");
   if(i != string::npos)
     {
@@ -196,12 +205,20 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
           infile>>fname;
           if(fname != ""){
             cout<<"filename: "<<fname.c_str()<<endl;
-            in_file->pathnames.push_back(top_level_dir + fname);
+	    if(in_file->subdir == "")
+	      in_file->pathnames.push_back(top_level_dir + fname);
+	    else
+	      in_file->pathnames.push_back(top_level_dir +in_file->subdir+ "/" + fname);
           }
         }
         infile.close();
       }else{
-        string pathname = top_level_dir + input;
+        string pathname;
+	if(in_file->subdir == "")
+	  pathname = top_level_dir + input;
+	else
+	  pathname = top_level_dir + in_file->subdir + "/" + input;
+
 	in_file->pathnames.push_back(pathname);
       }
       cout << " Input file: " << in_file->samplename;

@@ -44,13 +44,15 @@ namespace wprime{
     float weight; // cross-section * integrated luminosity / (# of events produced)
     // Nact_evt * weight = Nexp_evt for given integrated luminosity
     std::string samplename;
-    std::vector<std::string> pathnames; // directory + filenames
+    std::string subdir;
+    std::vector<std::string> pathnames; // directory + subdir + filenames
     std::string description; // sample description
     //
     InputFile()
     {
       x_sect = -1; Nprod_evt = Nact_evt = -1; weight = 0;
       samplename = description = INVALID;
+      subdir = "";
     }
     void checkFile()
     {
