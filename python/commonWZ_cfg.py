@@ -262,8 +262,8 @@ process.WprimeAnalyzer.maxElecHOverE    = cms.vdouble(0.,0.)#Not used in 2011
 process.WprimeAnalyzer.maxElecCombRelIso = cms.vdouble(0.150,0.100)
 
 # +++++++++++++++++++Muon General Cuts
-process.WprimeAnalyzer.maxMuonEta = cms.double(2.5)
-process.WprimeAnalyzer.minMuonLoosePt = cms.double(15.)
+process.WprimeAnalyzer.maxMuonEta = cms.double(2.4)
+process.WprimeAnalyzer.minMuonLoosePt = cms.double(10.)
 process.WprimeAnalyzer.minMuonTightPt = cms.double(20.)
 #VBTF Recommended Cuts
 process.WprimeAnalyzer.maxMuonDxy = cms.double(0.2)

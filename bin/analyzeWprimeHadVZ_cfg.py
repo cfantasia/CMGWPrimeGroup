@@ -1,101 +1,55 @@
-import FWCore.ParameterSet.Config as cms
-import FWCore.PythonUtilities.LumiList as LumiList
-import FWCore.ParameterSet.Types as CfgTypes
+from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
-process = cms.Process("WPrimeAnalysis")
-# get JSON file correctly parced
-#JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-165542_7TeV_PromptReco_Collisions11_JSON.txt'
-#JSONfile = 'UserCode/CMGWPrimeGroup/JSON/json_160404-166011_DCSonly.txt'
+process.WprimeAnalyzer.outputFile  = cms.string('test.root')## mandatory
+process.WprimeAnalyzer.maxEvents   = cms.int32(-1)                      ## optional
+process.WprimeAnalyzer.reportAfter = cms.uint32(1)                     ## optional
+process.WprimeAnalyzer.useJSON = cms.bool(True)
+process.WprimeAnalyzer.logFile     = cms.string("test.log")
+process.WprimeAnalyzer.candEvtFile = cms.string("testCandEvtFile.txt")
+process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_sections_HadVZ.txt")
 
-#myList = LumiList.LumiList (filename = JSONfile).getCMSSWString().split(',')
+## enable analysis in individual channels
+process.WprimeAnalyzer.runHadVZAnalysis = cms.bool(True)
 
-#process.inputs = cms.PSet (
-#    lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
-#    )
-#process.inputs.lumisToProcess.extend(myList)
+## input specific for this analyzer
+process.WprimeAnalyzer.muons = cms.string('selectedPatMuons')
+process.WprimeAnalyzer.muonAlgo = cms.uint32(0)
+process.WprimeAnalyzer.jets = cms.string('selectedPatJets')
+process.WprimeAnalyzer.genParticles = cms.InputTag('prunedGenParticles')
+process.WprimeAnalyzer.hltEventTag = cms.string('patTriggerEvent')
+process.WprimeAnalyzer.pileupTag  = cms.string('addPileupInfo')
+#
+process.WprimeAnalyzer.maxNumZs = cms.uint32(1)
+process.WprimeAnalyzer.minNLeptons =cms.uint32(2)
+process.WprimeAnalyzer.minNumJets = cms.uint32(0) # Larger than
+process.WprimeAnalyzer.maxNumJets = cms.uint32(9999) # Smaller than 
+process.WprimeAnalyzer.minLeadPt = cms.double(20.0)
+process.WprimeAnalyzer.maxAngleBetweenJets = cms.double(9999.9)
+#
+process.WprimeAnalyzer.minZpt = cms.double(0.0) # All units in GeV
+process.WprimeAnalyzer.minZmass = cms.double(80.0)
+process.WprimeAnalyzer.maxZmass = cms.double(100.0)
+process.WprimeAnalyzer.minHadVPt = cms.double(0.0)
+process.WprimeAnalyzer.minHadVmass = cms.double(0.0)
+process.WprimeAnalyzer.maxHadVmass = cms.double(9999.9)
+# +++++++++++++++++++Muon General Cuts
+process.WprimeAnalyzer.maxMuonEta = cms.double(2.5)
+process.WprimeAnalyzer.minMuonLoosePt = cms.double(10.)
+process.WprimeAnalyzer.minMuonTightPt = cms.double(20.)
+#VBTF Recommended Cuts
+process.WprimeAnalyzer.maxMuonDxy = cms.double(0.2)
+process.WprimeAnalyzer.maxMuonNormChi2 = cms.double(10.)
+process.WprimeAnalyzer.minMuonNPixHit = cms.int32(0)
+process.WprimeAnalyzer.minMuonNTrkHit = cms.int32(10)
+process.WprimeAnalyzer.minMuonStations = cms.int32(1)
+process.WprimeAnalyzer.minMuonHitsUsed = cms.int32(0)
+# +++++++++++++++++++Jet General Cuts
+process.WprimeAnalyzer.minJetPt = cms.double(30.0)
+process.WprimeAnalyzer.maxJetEta = cms.double(2.4)
+process.WprimeAnalyzer.maxJetNHF = cms.double(0.99)
+process.WprimeAnalyzer.maxJetNEF = cms.double(0.99)
+process.WprimeAnalyzer.minJetnumConst = cms.uint32(1)
+process.WprimeAnalyzer.minJetCHF = cms.double(0.0)
+process.WprimeAnalyzer.minJetcMult = cms.uint32(0)
+process.WprimeAnalyzer.maxJetCEF = cms.double(0.99)
 
-process.inputs = cms.PSet()
-
-process.source = cms.Source("PoolSource",
-  fileNames = cms.untracked.vstring(
-#    'file:patTuple.root'
-  )
-)
-
-process.MessageLogger = cms.Service("MessageLogger")
-
-from SHarper.HEEPAnalyzer.HEEPSelectionCuts_cfi import heepBarrelCuts, heepEndcapCuts
-
-
-process.WprimeAnalyzer = cms.PSet(
-    ## common input for wrapped analyzers
-    fileNames   = cms.vstring(),  ## keep empty!
-    # fileNames   = cms.vstring('file:patTuple.root'),  ## mandatory
-    outputFile  = cms.string('test.root'),## mandatory
-    maxEvents   = cms.int32(-1),                      ## optional
-    reportAfter = cms.uint32(1),                     ## optional
-    useJSON = cms.bool(True),
-    countGenEvts = cms.bool(False),
-    eventCounters = cms.vstring(),
-    logFile     = cms.string("test.log"),
-    candEvtFile = cms.string("testCandEvtFile.txt"),
-    debugme     = cms.bool(False),
-    preselect   = cms.bool(False),
-    doRecoilCorrectionForW = cms.bool(False),
-    sample_cross_sections = cms.string("samples_cross_sections_HadVZ.txt"),
-    ## enable analysis in individual channels
-    runMuMETAnalysis = cms.bool(False),
-    runElMETAnalysis = cms.bool(False),
-    runWZAnalysis    = cms.bool(False),
-    runHadVZAnalysis = cms.bool(True),
-    runTBAnalysis    = cms.bool(False),
-    runWgammaAnalysis = cms.bool(False),
-    ## input specific for this analyzer
-    muons = cms.string('selectedPatMuons'),
-    muonAlgo = cms.uint32(0),
-    jets = cms.string('selectedPatJets'),
-    genParticles = cms.InputTag('prunedGenParticles'),
-    hltEventTag = cms.string('patTriggerEvent'),
-    pileupTag  = cms.string('addPileupInfo'),
-    triggersToUse = cms.vstring(),
-    inputs = process.inputs,
-    #
-    MCPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/MCPUDist.root'),
-    MCPUDistHist = cms.string('pileup'),
-    DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/DataPUDist.root'),
-    DataPUDistHist = cms.string('pileup'),
-    #
-    maxNumZs = cms.uint32(1),
-    minNLeptons =cms.uint32(2),
-    minNumJets = cms.uint32(0), # Larger than
-    maxNumJets = cms.uint32(9999), # Smaller than 
-    minLeadPt = cms.double(20.0),
-    maxAngleBetweenJets = cms.double(9999.9),
-    #
-    minZpt = cms.double(0.0), # All units in GeV
-    minZmass = cms.double(80.0),
-    maxZmass = cms.double(100.0),
-    minHadVPt = cms.double(0.0),
-    minHadVmass = cms.double(0.0),
-    maxHadVmass = cms.double(9999.9),
-    # +++++++++++++++++++Muon General Cuts
-    maxMuonEta = cms.double(2.5),
-    minMuonLoosePt = cms.double(10.),
-    minMuonTightPt = cms.double(20.),
-    #VBTF Recommended Cuts
-    maxMuonDxy = cms.double(0.2),
-    maxMuonNormChi2 = cms.double(10.),
-    minMuonNPixHit = cms.int32(0),
-    minMuonNTrkHit = cms.int32(10),
-    minMuonStations = cms.int32(1),
-    minMuonHitsUsed = cms.int32(0),
-    # +++++++++++++++++++Jet General Cuts
-    minJetPt = cms.double(30.0),
-    maxJetEta = cms.double(2.4),
-    maxJetNHF = cms.double(0.99),
-    maxJetNEF = cms.double(0.99),
-    minJetnumConst = cms.uint32(1),
-    minJetCHF = cms.double(0.0),
-    minJetcMult = cms.uint32(0),
-    maxJetCEF = cms.double(0.99)
-) 

@@ -1,10 +1,12 @@
 import FWCore.ParameterSet.Config as cms
 import FWCore.PythonUtilities.LumiList as LumiList
 import FWCore.ParameterSet.Types as CfgTypes
+from UserCode.CMGWPrimeGroup.selectors_cff import *
+from SHarper.HEEPAnalyzer.HEEPSelectionCuts_cfi import heepBarrelCuts, heepEndcapCuts
 
 process = cms.Process("WPrimeAnalysis")
 # get JSON file correctly parsed
-JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-166861_7TeV_PromptReco_Collisions11_JSON.txt'
+JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-167784_7TeV_PromptReco_Collisions11_JSON.txt'
 myList = LumiList.LumiList (filename = JSONfile).getCMSSWString().split(',')
 
 process.inputs = cms.PSet (
@@ -46,6 +48,8 @@ process.WprimeAnalyzer = cms.PSet(
     runWgammaAnalysis = cms.bool(False),
 
     ## input specific for this analyzer
+    muonReconstructor = cms.int32(3) ## see TeVMuon_tracking.h
+
     muons = cms.string('userPatMuons'),
     electrons = cms.string('userPatElectrons'),
     met   = cms.string('patMETsPF'),
