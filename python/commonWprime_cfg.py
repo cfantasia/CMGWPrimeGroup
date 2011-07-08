@@ -48,7 +48,7 @@ process.WprimeAnalyzer = cms.PSet(
     runWgammaAnalysis = cms.bool(False),
 
     ## input specific for this analyzer
-    muonReconstructor = cms.int32(3) ## see TeVMuon_tracking.h
+    muonReconstructor = cms.int32(3), ## see TeVMuon_tracking.h
 
     muons = cms.string('userPatMuons'),
     electrons = cms.string('userPatElectrons'),
