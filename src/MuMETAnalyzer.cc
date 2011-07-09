@@ -382,7 +382,12 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const TeVMuon 
 
   cout << " Muon eta = " << mu4D.Eta() << "  phi = " << mu4D.Phi()
        << " pt = " << mu4D.Pt() << " GeV " << " inner track pt = "
-       << muon.innerTrack()->pt() << " GeV " << endl;
+       << muon.innerTrack()->pt() << " GeV " << " global track pt = " 
+       << muon.globalTrack()->pt() << " GeV " << endl;
+  cout << " TPFMS pt = " << muon.tpfmsMuon()->pt() << " GeV " 
+       << " cocktail pt = " << muon.cocktailMuon()->pt() << " GeV " 
+       << " picky pt = " << muon.pickyMuon()->pt() << " GeV " 
+       << " DYT pt = " << muon.dytMuon()->pt() << " GeV" << endl;
 
   pat::METCollection::const_iterator oldMET = met->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
