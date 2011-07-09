@@ -204,21 +204,13 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
           string fname;
           infile>>fname;
           if(fname != ""){
-            cout<<"filename: "<<fname.c_str()<<endl;
-	    if(in_file->subdir == "")
-	      in_file->pathnames.push_back(top_level_dir + fname);
-	    else
-	      in_file->pathnames.push_back(top_level_dir +in_file->subdir+ "/" + fname);
+            cout<<" filename: "<<fname.c_str()<<endl;
+	    in_file->pathnames.push_back(top_level_dir + in_file->subdir+ "/" + fname);
           }
         }
         infile.close();
       }else{
-        string pathname;
-	if(in_file->subdir == "")
-	  pathname = top_level_dir + input;
-	else
-	  pathname = top_level_dir + in_file->subdir + "/" + input;
-
+        string pathname = top_level_dir + in_file->subdir + "/" + input;
 	in_file->pathnames.push_back(pathname);
       }
       cout << " Input file: " << in_file->samplename;
