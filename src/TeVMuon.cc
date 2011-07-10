@@ -94,7 +94,7 @@ float TeVMuon::combRelIsolation() const
     / pt();
 }
 
-inline float TeVMuon::combRelIsolation03(float offset) const{
+float TeVMuon::combRelIsolation03(const float offset) const{
   return (isolationR03().emEt + isolationR03().hadEt + isolationR03().sumPt - offset)
     / pt();
 }
@@ -173,7 +173,7 @@ inline bool TeVMuon::PassStationsCut(const float cut){
   return numberOfMatches() > cut;
 }//--- PassStationsCut
 
-inline bool TeVMuon::PassCombRelIso03Cut(const float puOffset, const float cut){
+inline bool TeVMuon::PassCombRelIso03Cut(const float cut, const float puOffset){
   return combRelIsolation03(puOffset) < cut;
 }//--- PassCombRelIsoCut
 

@@ -31,7 +31,7 @@ class TeVMuon : public pat::Muon{
   bool PassHitsUsedCut(const float cut);
   bool PassStationsCut(const float cut);
   bool PassCombRelIsoCut(const float cut);
-  bool PassCombRelIso03Cut(const float puOffset, const float cut);
+  bool PassCombRelIso03Cut(const float cut, const float puOffset=0.);
 
   double pt() const ;
   double pt(unsigned muReconstructor) const ;
