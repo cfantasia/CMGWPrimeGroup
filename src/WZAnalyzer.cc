@@ -18,6 +18,8 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   looseElectron_ = ElectronSelector(eSelectorPset_, looseElectronType_);
   tightElectron_ = ElectronSelector(eSelectorPset_, tightElectronType_);
   electronResult_ = looseElectron_.getBitTemplate();
+  if(debugme) cout<<"Using "<<looseElectronType_<<" for Z electrons and "
+                  <<tightElectronType_<<" for W electrons\n";
 
   mSelectorPset_ = cfg.getParameter<PSet>("muonSelectors");
   looseMuonType_ = cfg.getParameter<string>("LooseMuonType");
@@ -25,6 +27,8 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   looseMuon_ = MuonSelector(mSelectorPset_, looseMuonType_);
   tightMuon_ = MuonSelector(mSelectorPset_, tightMuonType_);
   muonResult_ = looseMuon_.getBitTemplate();
+  if(debugme) cout<<"Using "<<looseElectronType_<<" for Z muons and "
+                  <<tightElectronType_<<" for W muons\n";
 
   doPreselect_ = cfg.getParameter<bool>("preselect");
 
@@ -34,7 +38,7 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   muonsLabel_ = cfg.getParameter<string>("muons");
   metLabel_ = cfg.getParameter<string>("met");
 
-  muonAlgo_ = cfg.getParameter<uint>("muonAlgo");
+  muonAlgo_ = cfg.getParameter<uint>("muonAlgo");if(debugme) cout<<"Using muon algo "<<muonAlgo_<<endl;
   useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
 
   hltEventLabel_ = cfg.getParameter<string>("hltEventTag");
@@ -359,7 +363,7 @@ WZAnalyzer::CalcZVariables(){
   // Reconstruct the Z
   ZCandV looseZCands = getZCands(looseElectrons_, looseMuons_, maxZMassDiff_);
   zCand_ = looseZCands.size() ? looseZCands[0] : ZCandidate();
-  if(debugme) printf("    Contains: %i loose Z candidate(s)", (int)looseZCands.size());
+  if(debugme) printf("    Contains: %i loose Z candidate(s)\n", (int)looseZCands.size());
   numZs_ = CountZCands(looseZCands); 
   if(debugme) PrintEventLeptons();
 }
@@ -368,23 +372,22 @@ inline void
 WZAnalyzer::CalcWVariables(){
   if (debugme) cout<<"In Calc W Variables\n";
   wCand_ = getWCand(tightElectrons_, tightMuons_, met_, zCand_, minDeltaR_);
-  if(debugme) printf("    Contains: %i tight W candidate(s)", (bool)wCand_);
+  if(debugme) printf("    Contains: %i tight W candidate(s)\n", (bool)wCand_);
   if(debugme) PrintEventLeptons(); 
 }
 
 inline void
 WZAnalyzer::CalcWElecVariables(){
   if (debugme) cout<<"In Calc W Elec Variables\n";
-  //wCand_ = getWCand(looseElectrons_, met_);
   wCand_ = getWCand(tightElectrons_, met_);
-  if(debugme) printf("    Contains: %i tight W candidate(s)", (bool)wCand_);
+  if(debugme) printf("    Contains: %i tight W candidate(s)\n", (bool)wCand_);
 }
 
 inline void
 WZAnalyzer::CalcWMuonVariables(){
   if (debugme) cout<<"In Calc W Muon Variables\n";
   wCand_ = getWCand(tightMuons_, met_);
-  if(debugme) printf("    Contains: %i tight W candidate(s)", (bool)wCand_);
+  if(debugme) printf("    Contains: %i tight W candidate(s)\n", (bool)wCand_);
 }
 
 inline void
@@ -521,7 +524,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   // Get leptons
   const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, electronsLabel_);
   const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
-  if(debugme) printf("    Contains: %i electron(s), %i muon(s)",
+  if(debugme) printf("    Contains: %i electron(s), %i muon(s)\n",
                      (int)patElectrons.size(), (int)patMuons.size());
 
   // Make vectors of leptons passing various criteria
@@ -546,9 +549,10 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
   }
 
-  if(debugme) printf("    Contains: %i loose electron(s), %i loose muon(s)",
+  if(debugme) PrintLeptons();
+  if(debugme) printf("    Contains: %i loose electron(s), %i loose muon(s)\n",
                      (int)looseElectrons_.size(), (int)looseMuons_.size());
-  if(debugme) printf("    Contains: %i tight electron(s), %i tightmuon(s)",
+  if(debugme) printf("    Contains: %i tight electron(s), %i tightmuon(s)\n",
                      (int)tightElectrons_.size(), (int)tightMuons_.size());
 
   // Get MET
@@ -586,8 +590,10 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
   }
 
-  if(event.id().run() == 1 && event.id().luminosityBlock() == 82 && event.id().event() == 38275){
+  if((event.id().run() == 166033 && event.id().luminosityBlock() == 801 && event.id().event() == 1091994700) ||
+     (event.id().run() == 166699 && event.id().luminosityBlock() == 664 && event.id().event() == 714495816)){
     cout<<"This is a missing event\n";
+    PrintEvent(event);
     PrintLeptons();
   }
 
@@ -596,7 +602,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   if(wprimeUtil_->runningOnData()){
     cout<<" The following data events passed All Cuts!!!\n";
     PrintPassingEvent(event);
-    //PrintEventLeptons();
+    if(debugme) PrintEventLeptons();
     cout<<" ------------------\n";
   }
 }
@@ -760,7 +766,11 @@ WZAnalyzer::PrintMuon(const TeVMuon& mu, int parent){
       <<" Muon Hits: "  <<gm->hitPattern().numberOfValidMuonHits()<<endl; //Muon Hits
 
   if(1 || parent == PDGW){
-    cout<<" Muon RelIso: "<<mu.combRelIsolation03(MuonPU(mu))<<endl;// CombRelIso
+    cout<<" Muon EcalIso: "<<mu.isolationR03().emEt<<endl
+        <<" Muon HcalIso: "<<mu.isolationR03().hadEt<<endl
+        <<" Muon TrkIso: "<<mu.isolationR03().sumPt<<endl
+        <<" Muon PU Corr: "<<MuonPU(mu)<<endl
+        <<" Muon RelIso: "<<mu.combRelIsolation03(MuonPU(mu))<<endl;// CombRelIso
   }
 }
 
