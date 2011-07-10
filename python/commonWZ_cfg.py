@@ -110,75 +110,11 @@ WZEffCuts = cms.vstring(
     "ZLepPt",
     
     "AllCuts"),    
-###############
-LooseElecCuts = cms.vstring(
-    "ElecEta",
-    "ElecNMiss",
-    "ElecSigmaNN",
-    "ElecDeltaPhi",
-    "ElecDeltaEta",
-    "ElecCombRelIso",
-    )
-RelaxedElecCuts = cms.vstring(
-    "ElecEta",
-    "ElecTightPt",
-    "ElecTightNMiss",
-    "ElecTightDistDCot",     
-    "ElecTightSigmaNN",
-    "ElecTightDeltaPhi",
-    "ElecTightDeltaEta",
-    #Removed for Matrix            "ElecTightCombRelIso",
-    ),
-TightElecCuts = cms.vstring(
-    "ElecEta",
-    "ElecTightPt",
-    "ElecTightNMiss",
-    "ElecTightDistDCot",     
-    "ElecTightSigmaNN",
-    "ElecTightDeltaPhi",
-    "ElecTightDeltaEta",
-    "ElecTightCombRelIso",
-    )
-LooseMuonCuts = cms.vstring(
-    "MuonEta",
-    "MuonGlobal",
-    "MuonDxy",
-    "MuonNpxl",
-    "MuonNtrk",
-    "MuonNormChi2",
-    "MuonHitsUsed",
-    "MuonStations",
-    "MuonLooseIso",
-    )
-RelaxedMuonCuts = cms.vstring(
-    "MuonEta",
-    "MuonTightPt",
-    "MuonGlobal",
-    "MuonDxy",
-    "MuonNpxl",
-    "MuonNtrk",
-    "MuonNormChi2",
-    "MuonHitsUsed",
-    "MuonStations",
-    #Removed for Matrix             "MuonTightIso",
-    ),
-TightMuonCuts = cms.vstring(
-    "MuonEta",
-    "MuonTightPt",
-    "MuonGlobal",
-    "MuonDxy",
-    "MuonNpxl",
-    "MuonNtrk",
-    "MuonNormChi2",
-    "MuonHitsUsed",
-    "MuonStations",
-    "MuonTightIso",
-    )
 
-process.WprimeAnalyzer.LooseElecCuts = LooseElecCuts
-process.WprimeAnalyzer.TightElecCuts = TightElecCuts
-process.WprimeAnalyzer.LooseMuonCuts = LooseMuonCuts
-process.WprimeAnalyzer.TightMuonCuts = TightMuonCuts
+process.WprimeAnalyzer.LooseElectronType = cms.string("WZLoose")
+process.WprimeAnalyzer.TightElectronType = cms.string("WZTight")
+process.WprimeAnalyzer.LooseMuonType = cms.string("WZLoose")
+process.WprimeAnalyzer.TightMuonType = cms.string("WZTight")
 
 ####Triggers
 DoubleTriggers = cms.vstring(
@@ -222,18 +158,6 @@ process.WprimeAnalyzer.minWlepPt = cms.double(20.)
 process.WprimeAnalyzer.cutWenuWPRelIsoMask = cms.int32(2)#Cory: Iso only
 process.WprimeAnalyzer.cutElecWPTightType = cms.string("simpleEleId80relIso")
 
-process.WprimeAnalyzer.maxElecTightNMissingHits = cms.double(0.)
-process.WprimeAnalyzer.minElecTightDist = cms.double(0.02)
-process.WprimeAnalyzer.minElecTightDeltaCotTheta = cms.double(0.02)
-process.WprimeAnalyzer.maxElecTightSigmaIetaIeta = cms.vdouble(0.01,0.031)
-process.WprimeAnalyzer.maxElecTightDeltaPhi  = cms.vdouble(0.027,0.021)
-process.WprimeAnalyzer.maxElecTightDeltaEta  = cms.vdouble(0.005,0.006)
-process.WprimeAnalyzer.maxElecTightHOverE    = cms.vdouble(0.,0.)#Not used in 2011
-#    process.WprimeAnalyzer.maxElecTightCombRelIso = cms.vdouble(0.040,0.033)#2011 Rec
-process.WprimeAnalyzer.maxElecTightCombRelIso = cms.vdouble(0.070,0.06) #2010 Rec
-
-process.WprimeAnalyzer.maxMuonTightCombRelIso = cms.double(0.1)
-
 # +++++++++++++++++++Z Cuts
 process.WprimeAnalyzer.minZeePt1 =  cms.double(20.)
 process.WprimeAnalyzer.minZeePt2 =  cms.double(10.)
@@ -242,36 +166,3 @@ process.WprimeAnalyzer.minZmmPt2 =  cms.double(15.)
 process.WprimeAnalyzer.minZpt =  cms.double(110.)#90 for TC300) 110 for W'400
 process.WprimeAnalyzer.minZmass =  cms.double(60.)
 process.WprimeAnalyzer.maxZmass =  cms.double(120.)
-
-# +++++++++++++++++++Electron General Cuts
-#VBTF Recommended Cuts
-process.WprimeAnalyzer.minElecLooseEt = cms.double(10.)
-process.WprimeAnalyzer.minElecTightEt = cms.double(20.)
-process.WprimeAnalyzer.minElecLoosePt = cms.double(10.)
-process.WprimeAnalyzer.minElecTightPt = cms.double(20.)
-process.WprimeAnalyzer.cutElecWPLooseMask = cms.int32(5)#Cory: No Iso
-process.WprimeAnalyzer.cutElecWPLooseType = cms.string("simpleEleId95relIso")
-
-process.WprimeAnalyzer.maxElecNMissingHits = cms.double(0.)
-process.WprimeAnalyzer.minElecDist = cms.double(0.)
-process.WprimeAnalyzer.minElecDeltaCotTheta = cms.double(0.)
-process.WprimeAnalyzer.maxElecSigmaIetaIeta = cms.vdouble(0.012,0.031)
-process.WprimeAnalyzer.maxElecDeltaPhi  = cms.vdouble(0.800,0.7)
-process.WprimeAnalyzer.maxElecDeltaEta  = cms.vdouble(0.007,0.011)
-process.WprimeAnalyzer.maxElecHOverE    = cms.vdouble(0.,0.)#Not used in 2011
-process.WprimeAnalyzer.maxElecCombRelIso = cms.vdouble(0.150,0.100)
-
-# +++++++++++++++++++Muon General Cuts
-process.WprimeAnalyzer.maxMuonEta = cms.double(2.4)
-process.WprimeAnalyzer.minMuonLoosePt = cms.double(10.)
-process.WprimeAnalyzer.minMuonTightPt = cms.double(20.)
-#VBTF Recommended Cuts
-process.WprimeAnalyzer.maxMuonDxy = cms.double(0.2)
-process.WprimeAnalyzer.maxMuonNormChi2 = cms.double(10.)
-process.WprimeAnalyzer.minMuonNPixHit = cms.int32(0)
-process.WprimeAnalyzer.minMuonNTrkHit = cms.int32(10)
-process.WprimeAnalyzer.minMuonStations = cms.int32(1)
-process.WprimeAnalyzer.minMuonHitsUsed = cms.int32(0)
-process.WprimeAnalyzer.maxMuonLooseCombRelIso = cms.double(0.15)
-
-

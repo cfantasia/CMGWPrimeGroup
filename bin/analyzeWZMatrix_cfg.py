@@ -6,10 +6,10 @@ process.WprimeAnalyzer.candEvtFile = cms.string("WZMatrix_CandEvts.txt")
 
 process.WprimeAnalyzer.Cuts = EWKWZCuts
 
-process.WprimeAnalyzer.LooseElecCuts = LooseElecCuts
-process.WprimeAnalyzer.TightElecCuts = RelaxedElecCuts
-process.WprimeAnalyzer.LooseMuonCuts = LooseMuonCuts
-process.WprimeAnalyzer.TightMuonCuts = RelaxedMuonCuts
+process.WprimeAnalyzer.LooseElecType = "WZLoose"
+process.WprimeAnalyzer.TightElecType = "WZRelaxed"
+process.WprimeAnalyzer.LooseMuonType = "WZLoose"
+process.WprimeAnalyzer.TightMuonType = "WZRelaxed"
 
 process.WprimeAnalyzer.minNLeptons = cms.uint32(2)
     

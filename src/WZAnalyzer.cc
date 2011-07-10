@@ -9,20 +9,24 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
 
    Cuts_          = cfg.getParameter<vstring>("Cuts");
   NCuts_          = Cuts_.size();
-   LooseElecCuts_ = cfg.getParameter<vstring>("LooseElecCuts");
-  NLooseElecCuts_ = LooseElecCuts_.size();
-   LooseMuonCuts_ = cfg.getParameter<vstring>("LooseMuonCuts");
-  NLooseMuonCuts_ = LooseMuonCuts_.size();
-   TightElecCuts_ = cfg.getParameter<vstring>("TightElecCuts");
-  NTightElecCuts_ = TightElecCuts_.size();
-   TightMuonCuts_ = cfg.getParameter<vstring>("TightMuonCuts");
-  NTightMuonCuts_ = TightMuonCuts_.size();
 
   FillCutFns();
 
-  intOptions_["verbose"] = cfg.getParameter<bool>("debugme");
+  eSelectorPset_ = cfg.getParameter<PSet>("electronSelectors");
+  looseElectronType_ = cfg.getParameter<string>("LooseElectronType");
+  tightElectronType_ = cfg.getParameter<string>("TightElectronType");
+  looseElectron_ = ElectronSelector(eSelectorPset_, looseElectronType_);
+  tightElectron_ = ElectronSelector(eSelectorPset_, tightElectronType_);
+  electronResult_ = looseElectron_.getBitTemplate();
+
+  mSelectorPset_ = cfg.getParameter<PSet>("muonSelectors");
+  looseMuonType_ = cfg.getParameter<string>("LooseMuonType");
+  tightMuonType_ = cfg.getParameter<string>("TightMuonType");
+  looseMuon_ = MuonSelector(mSelectorPset_, looseMuonType_);
+  tightMuon_ = MuonSelector(mSelectorPset_, tightMuonType_);
+  muonResult_ = looseMuon_.getBitTemplate();
+
   doPreselect_ = cfg.getParameter<bool>("preselect");
-  intOptions_["events"] = 0;
 
   debugme = cfg.getParameter<bool>("debugme");
 
@@ -44,22 +48,7 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   SetCandEvtFile(cfg.getParameter<string  >("candEvtFile" ));
   Num_surv_cut_.assign(NCuts_,0.);
 
-  verbose("Using %i cuts\n",NCuts_);
-  verbose("Using %i loose elec cuts\n",NLooseElecCuts_);
-  verbose("Using %i loose muon cuts\n",NLooseMuonCuts_);
-  verbose("Using %i tight elec cuts\n",NTightElecCuts_);
-  verbose("Using %i tight muon cuts\n",NTightMuonCuts_);
-
-  PDGMUON = 13;
-  PDGELEC = 11;
-  PDGW = 24;
-  PDGZ = 23;
-  PDGWPRIME = 34;
-
-  PI    = 2.0 * TMath::ACos(0.);
-  TWOPI = 2.0 * PI;
-  NOCUT = 9e9;
-
+  if(debugme) printf("Using %i cuts\n",NCuts_);
 
   effectiveElecArea_ = cfg.getParameter<vector<double> >("effectiveElecArea");
   effectiveMuonArea_ = cfg.getParameter<vector<double> >("effectiveMuonArea");
@@ -79,18 +68,6 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   minWpt_ = cfg.getParameter<double>("minWpt");
   minWlepPt_ = cfg.getParameter<double>("minWlepPt");
 
-  cutWenuWPRelIsoMask_ = cfg.getParameter<int>("cutWenuWPRelIsoMask");
-  cutElecWPTightType_ = cfg.getParameter<string>("cutElecWPTightType");
-
-  maxElecTightNMissingHits_ = cfg.getParameter<double>("maxElecTightNMissingHits");
-  minElecTightDist_ = cfg.getParameter<double>("minElecTightDist");
-  minElecTightDeltaCotTheta_ = cfg.getParameter<double>("minElecTightDeltaCotTheta");
-  maxElecTightSigmaIetaIeta_ = cfg.getParameter<vector<double> >("maxElecTightSigmaIetaIeta");
-  maxElecTightDeltaPhi_ = cfg.getParameter<vector<double> >("maxElecTightDeltaPhi");
-  maxElecTightDeltaEta_ = cfg.getParameter<vector<double> >("maxElecTightDeltaEta");
-  maxElecTightHOverE_   = cfg.getParameter<vector<double> >("maxElecTightHOverE");
-  maxElecTightCombRelIso_ = cfg.getParameter<vector<double> >("maxElecTightCombRelIso");
-
 // +++++++++++++++++++Z Cuts
   minZpt_ = cfg.getParameter<double>("minZpt");
   minZmass_ = cfg.getParameter<double>("minZmass");
@@ -99,37 +76,6 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   minZeePt2_ = cfg.getParameter<double>("minZeePt2");
   minZmmPt1_ = cfg.getParameter<double>("minZmmPt1");
   minZmmPt2_ = cfg.getParameter<double>("minZmmPt2");
-// +++++++++++++++++++Electron General Cuts
-//VBTF Recommended Cuts
-  minElecLooseEt_ = cfg.getParameter<double>("minElecLooseEt");
-  minElecTightEt_ = cfg.getParameter<double>("minElecTightEt");
-  minElecLoosePt_ = cfg.getParameter<double>("minElecLoosePt");
-  minElecTightPt_ = cfg.getParameter<double>("minElecTightPt");
-  cutElecWPLooseMask_ = cfg.getParameter<int>("cutElecWPLooseMask");
-  cutElecWPLooseType_ = cfg.getParameter<string>("cutElecWPLooseType");
-
-  maxElecNMissingHits_ = cfg.getParameter<double>("maxElecNMissingHits");
-  minElecDist_ = cfg.getParameter<double>("minElecDist");
-  minElecDeltaCotTheta_ = cfg.getParameter<double>("minElecDeltaCotTheta");
-  maxElecSigmaIetaIeta_ = cfg.getParameter<vector<double> >("maxElecSigmaIetaIeta");
-  maxElecDeltaPhi_ = cfg.getParameter<vector<double> >("maxElecDeltaPhi");
-  maxElecDeltaEta_ = cfg.getParameter<vector<double> >("maxElecDeltaEta");
-  maxElecHOverE_   = cfg.getParameter<vector<double> >("maxElecHOverE");
-  maxElecCombRelIso_ = cfg.getParameter<vector<double> >("maxElecCombRelIso");
-
-// +++++++++++++++++++Muon General Cuts
-  maxMuonEta_ = cfg.getParameter<double>("maxMuonEta");
-  minMuonLoosePt_ = cfg.getParameter<double>("minMuonLoosePt");
-  minMuonTightPt_ = cfg.getParameter<double>("minMuonTightPt");
-//VBTF Recommended Cuts
-  maxMuonDxy_ = cfg.getParameter<double>("maxMuonDxy");
-  maxMuonNormChi2_ = cfg.getParameter<double>("maxMuonNormChi2");
-  minMuonNPixHit_ = cfg.getParameter<int>("minMuonNPixHit");
-  minMuonNTrkHit_ = cfg.getParameter<int>("minMuonNTrkHit");
-  minMuonStations_ = cfg.getParameter<int>("minMuonStations");
-  minMuonHitsUsed_ = cfg.getParameter<int>("minMuonHitsUsed");
-  maxMuonLooseCombRelIso_ = cfg.getParameter<double>("maxMuonLooseCombRelIso");
-  maxMuonTightCombRelIso_ = cfg.getParameter<double>("maxMuonTightCombRelIso");
 }
 
 WZAnalyzer::~WZAnalyzer(){
@@ -159,7 +105,7 @@ void WZAnalyzer::FillCutFns(){
   mFnPtrs_["ZLepPt"] = &WZAnalyzer::PassZLepPtCut;
   mFnPtrs_["WLepPt"] = &WZAnalyzer::PassWLepPtCut;
   mFnPtrs_["ZLepTrigMatch"] = &WZAnalyzer::PassZLepTriggerMatchCut;
-  mFnPtrs_["WLepIso"] = &WZAnalyzer::PassWLepIsoCut;
+//  mFnPtrs_["WLepIso"] = &WZAnalyzer::PassWLepIsoCut;
   mFnPtrs_["AllCuts"] = &WZAnalyzer::PassNoCut;
 
   mFnPtrs_["WLepTight"] = &WZAnalyzer::PassWLepTightCut;
@@ -170,55 +116,6 @@ void WZAnalyzer::FillCutFns(){
   mFnPtrs_["FakeLepProbeLoose"] = &WZAnalyzer::PassFakeLeptonProbeLooseCut;
   mFnPtrs_["FakeLepProbeTight"] = &WZAnalyzer::PassFakeLeptonProbeTightCut;
 
-  //Electron cuts
-  mElecFnPtrs_["ElecLoose"] = &WZAnalyzer::PassElecLooseCut;
-  mElecFnPtrs_["ElecTight"] = &WZAnalyzer::PassElecTightCut;
-  mElecFnPtrs_["ElecLooseEt"] = &WZAnalyzer::PassElecLooseEtCut;
-  mElecFnPtrs_["ElecTightEt"] = &WZAnalyzer::PassElecTightEtCut;
-  mElecFnPtrs_["ElecLoosePt"] = &WZAnalyzer::PassElecLoosePtCut;
-  mElecFnPtrs_["ElecTightPt"] = &WZAnalyzer::PassElecTightPtCut;
-  mElecFnPtrs_["ElecLooseID"] = &WZAnalyzer::PassElecLooseWPCut;
-  mElecFnPtrs_["ElecIso"] = &WZAnalyzer::PassElecWPRelIsoCut;
-
-  mElecFnPtrs_["ElecEta"] = &WZAnalyzer::PassElecEtaCut;
-
-  mElecFnPtrs_["ElecNMiss"] = &WZAnalyzer::PassElecNMissingHitsCut;
-  mElecFnPtrs_["ElecDistDCot"] = &WZAnalyzer::PassElecDistDCotCut;
-  //mElecFnPtrs_["ElecDist"] = &WZAnalyzer::PassElecDistCut;
-  //mElecFnPtrs_["ElecDCotTheta"] = &WZAnalyzer::PassElecDeltaCotThetaCut;
-  mElecFnPtrs_["ElecSigmaNN"] = &WZAnalyzer::PassElecSigmaIEtaIEtaCut;
-  mElecFnPtrs_["ElecDeltaPhi"] = &WZAnalyzer::PassElecDeltaPhiCut;
-  mElecFnPtrs_["ElecDeltaEta"] = &WZAnalyzer::PassElecDeltaEtaCut;
-  mElecFnPtrs_["ElecHOverE"] = &WZAnalyzer::PassElecHOverECut;
-  mElecFnPtrs_["ElecCombRelIso"] = &WZAnalyzer::PassElecCombRelIsoCut;
-  //Tight Elec Fn, won't be here long
-  mElecFnPtrs_["ElecTightNMiss"] = &WZAnalyzer::PassElecTightNMissingHitsCut;
-  mElecFnPtrs_["ElecTightDistDCot"] = &WZAnalyzer::PassElecTightDistDCotCut;
-  //mElecFnPtrs_["ElecTightDist"] = &WZAnalyzer::PassElecTightDistCut;
-  //mElecFnPtrs_["ElecTightDCotTheta"] = &WZAnalyzer::PassElecTightDeltaCotThetaCut;
-  mElecFnPtrs_["ElecTightSigmaNN"] = &WZAnalyzer::PassElecTightSigmaIEtaIEtaCut;
-  mElecFnPtrs_["ElecTightDeltaPhi"] = &WZAnalyzer::PassElecTightDeltaPhiCut;
-  mElecFnPtrs_["ElecTightDeltaEta"] = &WZAnalyzer::PassElecTightDeltaEtaCut;
-  mElecFnPtrs_["ElecTightHOverE"] = &WZAnalyzer::PassElecTightHOverECut;
-  mElecFnPtrs_["ElecTightCombRelIso"] = &WZAnalyzer::PassElecTightCombRelIsoCut;
- 
-
-  //Muon cuts
-  mMuonFnPtrs_["MuonLoose"] = &WZAnalyzer::PassMuonLooseCut;
-  mMuonFnPtrs_["MuonTight"] = &WZAnalyzer::PassMuonTightCut;
-  mMuonFnPtrs_["MuonLoosePt"] = &WZAnalyzer::PassMuonLoosePtCut;
-  mMuonFnPtrs_["MuonTightPt"] = &WZAnalyzer::PassMuonTightPtCut;
-  mMuonFnPtrs_["MuonLooseIso"] = &WZAnalyzer::PassMuonLooseCombRelIsoCut;
-  mMuonFnPtrs_["MuonTightIso"] = &WZAnalyzer::PassMuonTightCombRelIsoCut;
-  mMuonFnPtrs_["MuonEta"] = &WZAnalyzer::PassMuonEtaCut;
-  mMuonFnPtrs_["MuonGlobal"] = &WZAnalyzer::PassMuonGlobalCut;
-  mMuonFnPtrs_["MuonDxy"] = &WZAnalyzer::PassMuonDxyCut;
-  mMuonFnPtrs_["MuonNpxl"] = &WZAnalyzer::PassMuonNpixhitCut;
-  mMuonFnPtrs_["MuonNtrk"] = &WZAnalyzer::PassMuonNtrkhitCut;
-  mMuonFnPtrs_["MuonNormChi2"] = &WZAnalyzer::PassMuonNormChi2Cut;
-  mMuonFnPtrs_["MuonHitsUsed"] = &WZAnalyzer::PassMuonHitsUsedCut;
-  mMuonFnPtrs_["MuonStations"] = &WZAnalyzer::PassMuonStationsCut;
-
   CutFns_.resize(NCuts_);
   for(int i=0; i<NCuts_; ++i){
     if(mFnPtrs_.find(Cuts_[i]) == mFnPtrs_.end()){
@@ -227,48 +124,12 @@ void WZAnalyzer::FillCutFns(){
     }
     CutFns_[i] = mFnPtrs_.find(Cuts_[i])->second;
   }
-
-  LooseElecCutFns_.resize(NLooseElecCuts_);
-  for(int i=0; i<NLooseElecCuts_; ++i){
-    if(mElecFnPtrs_.find(LooseElecCuts_[i]) == mElecFnPtrs_.end()){
-      cout<<"Didn't find Cut named "<<LooseElecCuts_[i]<<endl;
-      abort();
-    }
-    LooseElecCutFns_[i] = mElecFnPtrs_.find(LooseElecCuts_[i])->second;
-  }
-  
-  LooseMuonCutFns_.resize(NLooseMuonCuts_);
-  for(int i=0; i<NLooseMuonCuts_; ++i){
-    if(mMuonFnPtrs_.find(LooseMuonCuts_[i]) == mMuonFnPtrs_.end()){
-      cout<<"Didn't find Cut named "<<LooseMuonCuts_[i]<<endl;
-      abort();
-    }
-    LooseMuonCutFns_[i] = mMuonFnPtrs_.find(LooseMuonCuts_[i])->second;
-  }
-  
-  TightElecCutFns_.resize(NTightElecCuts_);
-  for(int i=0; i<NTightElecCuts_; ++i){
-    if(mElecFnPtrs_.find(TightElecCuts_[i]) == mElecFnPtrs_.end()){
-      cout<<"Didn't find Cut named "<<TightElecCuts_[i]<<endl;
-      abort();
-    }
-    TightElecCutFns_[i] = mElecFnPtrs_.find(TightElecCuts_[i])->second;
-  }
-
-  TightMuonCutFns_.resize(NTightMuonCuts_);
-  for(int i=0; i<NTightMuonCuts_; ++i){
-    if(mMuonFnPtrs_.find(TightMuonCuts_[i]) == mMuonFnPtrs_.end()){
-      cout<<"Didn't find Cut named "<<TightMuonCuts_[i]<<endl;
-      abort();
-    }
-    TightMuonCutFns_[i] = mMuonFnPtrs_.find(TightMuonCuts_[i])->second;
-  }
   
 }
 
 inline void
 WZAnalyzer::ResetCounters(){
-  verbose("Reset Counters\n");
+  if(debugme) printf("Reset Counters\n");
   for(uint i=0; i<Num_surv_cut_.size(); ++i)
     Num_surv_cut_[i] = 0.;
 }
@@ -276,7 +137,7 @@ WZAnalyzer::ResetCounters(){
 //--------------------------------------------------------------
 void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
 {
-  verbose("Declare histos\n");
+  if(debugme) printf("Declare histos\n");
 
   DeclareHistoSet("hEvtType", "Event Type",
                   "N_{#mu}", 4, 0, 4, "NONE", hEvtType,dir);
@@ -413,7 +274,7 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
 void WZAnalyzer::Fill_Histos(int index, float weight)
 {
 //-----------------------------------------------------------
-  verbose("Filling Histos\n");
+  if(debugme) printf("Filling Histos\n");
   if(wCand_ && zCand_){
     hWZInvMass[index]->Fill(wzCand_.mass("minPz"), weight);
     if     (evtType_ == 0) hWZ3e0muInvMass[index]->Fill(wzCand_.mass("minPz"), weight);
@@ -458,10 +319,12 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
     hWTransMass[index]->Fill(wCand_.mt(), weight);
     if      (wCand_.flavor() == PDGELEC){
       hWenuTransMass[index]->Fill(wCand_.mt(), weight);
-      hWenuCombRelIso[index]->Fill(CalcElecCombRelIso(FindElectron(*wCand_.daughter(0))), weight);
+      const heep::Ele & e = FindElectron(*wCand_.daughter(0));
+      hWenuCombRelIso[index]->Fill(CalcCombRelIso(e.patEle(), ElecPU(e)), weight);
     }else if (wCand_.flavor() == PDGMUON){
       hWmunuTransMass[index]->Fill(wCand_.mt(), weight);
-      hWmunuCombRelIso[index]->Fill(Calc_MuonRelIso(FindMuon(*wCand_.daughter(0))), weight);
+      const TeVMuon m = FindMuon(*wCand_.daughter(0));
+      hWmunuCombRelIso[index]->Fill(m.combRelIsolation03(MuonPU(m)), weight);
     }
     if(evtType_ == 0) hW3e0muTransMass[index]->Fill(wCand_.mt(), weight);
     if(evtType_ == 1) hW2e1muTransMass[index]->Fill(wCand_.mt(), weight);
@@ -478,7 +341,7 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
   hNTLeps[index]->Fill(tightElectrons_.size()+tightMuons_.size(), weight);
 
   for(uint i=0; i<tightMuons_.size(); ++i){
-    hMuonTightCombIso[index]->Fill(Calc_MuonRelIso(tightMuons_[i]), weight);
+    hMuonTightCombIso[index]->Fill(tightMuons_[i].combRelIsolation03(MuonPU(tightMuons_[i])), weight);
   }
 }//Fill_Histos
 int
@@ -496,7 +359,7 @@ WZAnalyzer::CalcZVariables(){
   // Reconstruct the Z
   ZCandV looseZCands = getZCands(looseElectrons_, looseMuons_, maxZMassDiff_);
   zCand_ = looseZCands.size() ? looseZCands[0] : ZCandidate();
-  verbose("    Contains: %i loose Z candidate(s)", looseZCands.size());
+  if(debugme) printf("    Contains: %i loose Z candidate(s)", (int)looseZCands.size());
   numZs_ = CountZCands(looseZCands); 
   if(debugme) PrintEventLeptons();
 }
@@ -504,9 +367,8 @@ WZAnalyzer::CalcZVariables(){
 inline void
 WZAnalyzer::CalcWVariables(){
   if (debugme) cout<<"In Calc W Variables\n";
-  //wCand_ = getWCand(looseElectrons_, looseMuons_, met_, zCand_, minDeltaR_);
   wCand_ = getWCand(tightElectrons_, tightMuons_, met_, zCand_, minDeltaR_);
-  verbose("    Contains: %i tight W candidate(s)", (bool)wCand_);
+  if(debugme) printf("    Contains: %i tight W candidate(s)", (bool)wCand_);
   if(debugme) PrintEventLeptons(); 
 }
 
@@ -515,15 +377,14 @@ WZAnalyzer::CalcWElecVariables(){
   if (debugme) cout<<"In Calc W Elec Variables\n";
   //wCand_ = getWCand(looseElectrons_, met_);
   wCand_ = getWCand(tightElectrons_, met_);
-  verbose("    Contains: %i tight W candidate(s)", (bool)wCand_);
+  if(debugme) printf("    Contains: %i tight W candidate(s)", (bool)wCand_);
 }
 
 inline void
 WZAnalyzer::CalcWMuonVariables(){
   if (debugme) cout<<"In Calc W Muon Variables\n";
-  //wCand_ = getWCand(looseMuons_, met_);
   wCand_ = getWCand(tightMuons_, met_);
-  verbose("    Contains: %i tight W candidate(s)", (bool)wCand_);
+  if(debugme) printf("    Contains: %i tight W candidate(s)", (bool)wCand_);
 }
 
 inline void
@@ -534,7 +395,7 @@ WZAnalyzer::CalcWZVariables(){
   
   Ht_ = (zCand_ && wCand_) ? Calc_Ht() : -999.;
   Q_ = (zCand_ && wCand_) ? Calc_Q() : -999.;
-  verbose("evt Type: %i, Z Flav: %i, W Flav: %i\n", evtType_, zCand_.flavor(), wCand_.flavor());
+  if(debugme) printf("evt Type: %i, Z Flav: %i, W Flav: %i\n", evtType_, (int)zCand_.flavor(), (int)wCand_.flavor());
 
 }
 
@@ -619,13 +480,13 @@ void WZAnalyzer::printSummary(const string& dir, ofstream & out)
 //calculate efficiencies
     float eff, deff;
     if(i == 0){
-      getEff(eff, deff, Num_surv_cut_[i], Num_surv_cut_[0]);
+      WPrimeUtil::getEff(eff, deff, Num_surv_cut_[i], Num_surv_cut_[0]);
     }else{
-      getEff(eff, deff, Num_surv_cut_[i], Num_surv_cut_[i-1]);
+      WPrimeUtil::getEff(eff, deff, Num_surv_cut_[i], Num_surv_cut_[i-1]);
     }
     hEffRel->SetBinContent(i+1,eff*100);
     out << setw(15) <<"\tRelative eff = "<<setw(6)<<eff*100 << " +/- " << setw(6)<<deff*100 << "%";
-    getEff(eff, deff, Num_surv_cut_[i], Num_surv_cut_[0]);
+    WPrimeUtil::getEff(eff, deff, Num_surv_cut_[i], Num_surv_cut_[0]);
     hEffAbs->SetBinContent(i+1,eff*100);
     out << setw(15) <<"\tAbsolute eff = "<<setw(6)<<eff*100 << " +/- " << setw(6)<<deff*100 << "%"
         << endl;
@@ -653,38 +514,42 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   }
 //  // Get information about flavorHistory
 //  const uint flavorType = getProduct<uint>(event, "flavorHistoryFilter", 0);
-//  verbose("    FlavorType: %i", flavorType);
+//  if(debugme) printf("    FlavorType: %i", flavorType);
 
-  //rhoFastJet_ = getProduct<double>(event,"kt6PFJets:rho:Iso");
   rhoFastJet_ = getProduct<double>(event,"kt6PFJets:rho");
 
   // Get leptons
   const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, electronsLabel_);
   const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
-  verbose("    Contains: %i electron(s), %i muon(s)",
-          patElectrons.size(), patMuons.size());
+  if(debugme) printf("    Contains: %i electron(s), %i muon(s)",
+                     (int)patElectrons.size(), (int)patMuons.size());
 
   // Make vectors of leptons passing various criteria
   for (size_t i = 0; i < patElectrons.size(); i++) {
     electrons_.push_back(heep::Ele(patElectrons[i]));   
     if(EMuOverlap(patElectrons[i], patMuons)) continue;
-    if (PassElecLooseCut(electrons_[i]))
+    const float pu = ElecPU(electrons_[i]);
+    if (looseElectron_(electrons_[i].patEle(), electronResult_, pu))
       looseElectrons_.push_back(electrons_[i]);
-    if (PassElecTightCut(electrons_[i]))//Tight Cuts are not strictly a subset anymore
+
+    if (tightElectron_(electrons_[i].patEle(), electronResult_, pu))
       tightElectrons_.push_back(electrons_[i]);
   }
   for (size_t i = 0; i < patMuons.size(); i++) {
     muons_.push_back(TeVMuon(patMuons[i],muonAlgo_));   
-    if (PassMuonLooseCut(muons_[i]))
+    const float pu = MuonPU(muons_[i]);
+    if (looseMuon_(muons_[i], muonResult_,pu))
       looseMuons_.push_back(muons_[i]);
-    if (PassMuonTightCut(muons_[i]))//Tight Cuts are not strictly a subset anymore
+
+    if (tightMuon_(muons_[i], muonResult_,pu))
       tightMuons_.push_back(muons_[i]);
+
   }
 
-  verbose("    Contains: %i loose electron(s), %i loose muon(s)",
-          looseElectrons_.size(), looseMuons_.size());
-  verbose("    Contains: %i tight electron(s), %i tightmuon(s)",
-          tightElectrons_.size(), tightMuons_.size());
+  if(debugme) printf("    Contains: %i loose electron(s), %i loose muon(s)",
+                     (int)looseElectrons_.size(), (int)looseMuons_.size());
+  if(debugme) printf("    Contains: %i tight electron(s), %i tightmuon(s)",
+                     (int)tightElectrons_.size(), (int)tightMuons_.size());
 
   // Get MET
   met_ = getProduct<METV>(event, metLabel_)[0];
@@ -865,10 +730,10 @@ WZAnalyzer::PrintElectron(const heep::Ele& elec, int parent){
     cout<<" rhoFastJet: "<<rhoFastJet_<<endl;   
     cout<<" adj rhoFastJet: "<<rhoFastJet_*effectiveElecArea_[elec.patEle().isEE()]<<endl;   
     
-    cout<<" Elec TrkIso: "<<CalcElecTrkIso(elec)<<endl;
-    cout<<" Elec ECALIso: "<<CalcElecECalIso(elec)<<endl;
-    cout<<" Elec HCALIso: "<<CalcElecHCalIso(elec)<<endl;
-    cout<<" Elec CombRelIso: "<<CalcElecCombRelIso(elec)<<endl;
+    cout<<" Elec TrkIso: "<<CalcTrkIso(elec.patEle())<<endl;
+    cout<<" Elec ECALIso: "<<CalcECalIso(elec.patEle())<<endl;
+    cout<<" Elec HCALIso: "<<CalcHCalIso(elec.patEle())<<endl;
+    cout<<" Elec CombRelIso: "<<CalcCombRelIso(elec.patEle(), ElecPU(elec))<<endl;
     
 //  cout<<" Elec WP95: "<<elec.patEle().electronID("simpleEleId95relIso")<<endl
 //      <<" Elec WP90: "<<elec.patEle().electronID("simpleEleId90relIso")<<endl
@@ -895,7 +760,7 @@ WZAnalyzer::PrintMuon(const TeVMuon& mu, int parent){
       <<" Muon Hits: "  <<gm->hitPattern().numberOfValidMuonHits()<<endl; //Muon Hits
 
   if(1 || parent == PDGW){
-    cout<<" Muon RelIso: "<<Calc_MuonRelIso(mu)<<endl;// CombRelIso
+    cout<<" Muon RelIso: "<<mu.combRelIsolation03(MuonPU(mu))<<endl;// CombRelIso
   }
 }
 
@@ -951,17 +816,22 @@ inline bool WZAnalyzer::PassEvtSetupCut(){
 }
 
 inline bool WZAnalyzer::PassWLepTightCut(){
-  if(wCand_.flavor() == PDGELEC) return PassElecTightCut(FindElectron(*wCand_.daughter(0)));
-  if(wCand_.flavor() == PDGMUON) return PassMuonTightCut(FindMuon(*wCand_.daughter(0)));
+  if(wCand_.flavor() == PDGELEC){
+    const heep::Ele & e = FindElectron(*wCand_.daughter(0));
+    return tightElectron_(e.patEle(),electronResult_,ElecPU(e));
+  }else if(wCand_.flavor() == PDGMUON){
+    const TeVMuon & m = FindMuon(*wCand_.daughter(0));
+    return tightMuon_(m, muonResult_,MuonPU(m));
+}
   return false;
 }
-
+/*
 inline bool WZAnalyzer::PassWLepIsoCut(){
   if(wCand_.flavor() == PDGELEC) return PassElecTightCombRelIsoCut(FindElectron(*wCand_.daughter(0))); 
-  if(wCand_.flavor() == PDGMUON) return PassMuonTightCombRelIsoCut(FindMuon(*wCand_.daughter(0)));
+  if(wCand_.flavor() == PDGMUON) return FindMuon(*wCand_.daughter(0)).combRelIsolation03();
   return false;
 }
-
+*/
 //Trigger requirements
 //-----------------------------------------------------------
 bool WZAnalyzer::PassTriggersCut()
@@ -1151,58 +1021,6 @@ WZAnalyzer::PassWLepPtCut(){
 ////////////////////////////////
 /////////Check Electron Properties/////
 ////////////////////////////////
-bool WZAnalyzer::PassElecLooseCut(const heep::Ele& elec){
-  for(uint i=0; i<LooseElecCutFns_.size(); ++i){
-    if(!(this->*LooseElecCutFns_[i])(elec)) return false;
-  }
-  return true;
-}
-
-bool WZAnalyzer::PassElecTightCut(const heep::Ele& elec){
-  for(uint i=0; i<TightElecCutFns_.size(); ++i){
-    if(!(this->*TightElecCutFns_[i])(elec)) return false;
-  }
-  return true;
-}
-
-inline bool WZAnalyzer::PassElecLooseEtCut(const heep::Ele& elec){
-  if(debugme) cout<<"Check Electron Loose Et Cut"<<endl;
-  return (elec.patEle().et() > minElecLooseEt_);
-}//--- PassElecLooseEtCut
-
-inline bool WZAnalyzer::PassElecTightEtCut(const heep::Ele& elec){
-  if(debugme) cout<<"Check Electron Tight Et Cut"<<endl;
-  return (elec.patEle().et() > minElecTightEt_);
-}//--- PassElecTightEtCut
-
-inline bool WZAnalyzer::PassElecLoosePtCut(const heep::Ele& elec){
-  if(debugme) cout<<"Check Electron Loose Pt Cut"<<endl;
-  return (elec.patEle().pt() > minElecLoosePt_);
-}//--- PassElecLoosePtCut
-
-inline bool WZAnalyzer::PassElecTightPtCut(const heep::Ele& elec){
-  if(debugme) cout<<"Check Electron Tight Pt Cut"<<endl;
-  return (elec.patEle().pt() > minElecTightPt_);
-}//--- PassElecTightPtCut
-
-
-inline bool WZAnalyzer::PassElecLooseWPCut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check Electron WP Loose Cut"<<endl;
-  return ((int)elec.patEle().electronID(cutElecWPLooseType_) & cutElecWPLooseMask_) 
-    == cutElecWPLooseMask_;
-}//--- PassElecLooseWPCut
-
-inline bool WZAnalyzer::PassElecWPRelIsoCut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check Electron WP RelIso Cut"<<endl;
-  return ((int)elec.patEle().electronID(cutElecWPTightType_) & cutWenuWPRelIsoMask_) 
-    == cutWenuWPRelIsoMask_;
-}//--- PassElecWPRelIsoElecCut
-
-/////////////////////////////////////
-/////Reproduce SimpleCutBased Cuts///
-/////////////////////////////////////
 bool WZAnalyzer::PassTriggerEmulation(const heep::Ele& elec){
   if(!elec.isEcalDriven()) return false;
   float e = elec.patEle().energy() * 
@@ -1220,189 +1038,6 @@ bool WZAnalyzer::PassTriggerEmulation(const heep::Ele& elec){
   }
   return false;
 }
-
-inline bool WZAnalyzer::PassElecEtaCut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check Electron Eta Cut"<<endl;
-  return elec.patEle().isEB() || elec.patEle().isEE();
-}//--- PassElecEtaCut
-
-inline bool WZAnalyzer::PassElecNMissingHitsCut(const heep::Ele& elec){
-  return elec.patEle().gsfTrack().get()->trackerExpectedHitsInner().numberOfHits() <= maxElecNMissingHits_;
-}
-
-inline bool WZAnalyzer::PassElecDistDCotCut(const heep::Ele& elec){
-  return PassElecDistCut(elec) || PassElecDeltaCotThetaCut(elec);
-}
-
-inline bool WZAnalyzer::PassElecDistCut(const heep::Ele& elec){
-  return fabs(elec.patEle().convDist()) >= minElecDist_;
-}
-
-inline bool WZAnalyzer::PassElecDeltaCotThetaCut(const heep::Ele& elec){
-  return fabs(elec.patEle().convDcot()) >= minElecDeltaCotTheta_;
-}
-
-inline bool WZAnalyzer::PassElecSigmaIEtaIEtaCut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check Electron Sigma nn Cut"<<endl;
-  return elec.patEle().sigmaIetaIeta() < maxElecSigmaIetaIeta_[elec.patEle().isEE()];
-}//--- PassElecSigmaEtaEtaCut
-
-inline bool WZAnalyzer::PassElecDeltaPhiCut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check Electron dPhi Cut"<<endl;
-  return fabs(elec.patEle().deltaPhiSuperClusterTrackAtVtx()) < maxElecDeltaPhi_[elec.patEle().isEE()];
-}//--- PassElecDeltaPhiCut
-
-inline bool WZAnalyzer::PassElecDeltaEtaCut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check Electron dEta Cut"<<endl;
-  return fabs(elec.patEle().deltaEtaSuperClusterTrackAtVtx()) < maxElecDeltaEta_[elec.patEle().isEE()];
-}//--- PassElecDeltaEtaCut
-
-inline bool WZAnalyzer::PassElecHOverECut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check Electron HOverE Cut"<<endl;
-  return elec.patEle().hadronicOverEm() < maxElecHOverE_[elec.patEle().isEE()];
-}//--- PassElecHOverECut
-
-inline bool WZAnalyzer::PassElecCombRelIsoCut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check Electron Elec RelIso Cut"<<endl;
-  return CalcElecCombRelIso(elec) < maxElecCombRelIso_[elec.patEle().isEE()];
-}//--- PassElecTrkRelIsoCut
-
-//////Tight Elec Cuts
-inline bool WZAnalyzer::PassElecTightNMissingHitsCut(const heep::Ele& elec){
-  return elec.patEle().gsfTrack().get()->trackerExpectedHitsInner().numberOfHits() <= maxElecTightNMissingHits_;
-}
-
-inline bool WZAnalyzer::PassElecTightDistDCotCut(const heep::Ele& elec){
-  return PassElecTightDistCut(elec) || PassElecTightDeltaCotThetaCut(elec);
-}
-
-inline bool WZAnalyzer::PassElecTightDistCut(const heep::Ele& elec){
-  return fabs(elec.patEle().convDist()) >= minElecTightDist_;
-}
-
-inline bool WZAnalyzer::PassElecTightDeltaCotThetaCut(const heep::Ele& elec){
-  return fabs(elec.patEle().convDcot()) >= minElecTightDeltaCotTheta_;
-}
-
-inline bool WZAnalyzer::PassElecTightSigmaIEtaIEtaCut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check Elec Tight Sigma nn Cut"<<endl;
-  return elec.patEle().sigmaIetaIeta() < maxElecTightSigmaIetaIeta_[elec.patEle().isEE()];
-}//--- PassElecTightSigmaEtaEtaCut
-
-inline bool WZAnalyzer::PassElecTightDeltaPhiCut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check Elec Tight dPhi Cut"<<endl;
-  return fabs(elec.patEle().deltaPhiSuperClusterTrackAtVtx()) < maxElecTightDeltaPhi_[elec.patEle().isEE()];
-}//--- PassElecTightDeltaPhiCut
-
-inline bool WZAnalyzer::PassElecTightDeltaEtaCut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check Elec Tight dEta Cut"<<endl;
-  return fabs(elec.patEle().deltaEtaSuperClusterTrackAtVtx()) < maxElecTightDeltaEta_[elec.patEle().isEE()];
-}//--- PassElecTightDeltaEtaCut
-
-inline bool WZAnalyzer::PassElecTightHOverECut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check Elec Tight HOverE Cut"<<endl;
-  return elec.patEle().hadronicOverEm() < maxElecTightHOverE_[elec.patEle().isEE()];
-}//--- PassElecTightHOverECut
-
-inline bool WZAnalyzer::PassElecTightCombRelIsoCut(const heep::Ele& elec){
-//-----------------------------------------------------------
-  if(debugme) cout<<"Check  Elec Tight RelIso Cut"<<endl;
-  return CalcElecCombRelIso(elec) < maxElecTightCombRelIso_[elec.patEle().isEE()];
-}//--- PassElecTrkRelIsoCut
-
-
-////////////////////////////////
-/////////Check Muon Properties/////
-////////////////////////////////
-bool WZAnalyzer::PassMuonLooseCut(const TeVMuon& mu){
-  for(uint i=0; i<LooseMuonCutFns_.size(); ++i){
-    if(!(this->*LooseMuonCutFns_[i])(mu)) return false;
-  }
-  return true;
-}
-
-bool WZAnalyzer::PassMuonTightCut(const TeVMuon& mu){
-  for(uint i=0; i<TightMuonCutFns_.size(); ++i){
-    if(!(this->*TightMuonCutFns_[i])(mu)) return false;
-  }
-  return true;
-}
-
-inline bool WZAnalyzer::PassMuonLoosePtCut(const TeVMuon& mu){
-  if(debugme) cout<<"Check Muon Loose Pt Cut"<<endl;
-  return (mu.pt() > minMuonLoosePt_);
-}
-
-inline bool WZAnalyzer::PassMuonTightPtCut(const TeVMuon& mu){
-  if(debugme) cout<<"Check Muon Tight Pt Cut"<<endl;
-  return (mu.pt() > minMuonTightPt_);
-}//--- PassMuonPtCut
-
-inline bool WZAnalyzer::PassMuonGlobalCut(const TeVMuon& mu){
-  if(debugme) cout<<"Check Muon Global Cut"<<endl;
-  return (mu.isGlobalMuon()); 
-}//--- PassMuonGlobalCut
-
-inline bool WZAnalyzer::PassMuonNpixhitCut(const TeVMuon& mu){
-  if(debugme) cout<<"Check Muon NpixhitCut"<<endl;
-  return (mu.globalTrack()->hitPattern().numberOfValidPixelHits() > minMuonNPixHit_);
-}//--- PassMuonNpixhitCut
-
-inline bool WZAnalyzer::PassMuonNtrkhitCut(const TeVMuon& mu){
-  if(debugme) cout<<"Check Muon NtrkhitCut"<<endl;
-  return (mu.globalTrack()->hitPattern().numberOfValidTrackerHits() > minMuonNTrkHit_);
-}//--- PassMuonNtrkhitCut
-
-inline bool WZAnalyzer::PassMuonNormChi2Cut(const TeVMuon& mu){
-  if(debugme) cout<<"Check Muon Chi2 Cut"<<endl;
-  return (mu.globalTrack()->normalizedChi2() < maxMuonNormChi2_);
-}//--- PassMuonChi2Cut
-
-inline bool WZAnalyzer::PassMuonHitsUsedCut(const TeVMuon& mu){
-  //Num Valid Muon Hits
-  if(debugme) cout<<"Check Muon Hits Used Cut"<<endl;
-  return (mu.globalTrack()->hitPattern().numberOfValidMuonHits() > minMuonHitsUsed_);
-}//--- PassMuonHits Used Cut
-
-inline bool WZAnalyzer::PassMuonStationsCut(const TeVMuon& mu){
-  if(debugme) cout<<"Check Muon Stations Cut"<<endl;
-  return (mu.numberOfMatches() > minMuonStations_);
-}//--- PassMuonStationsCut
-
-inline bool WZAnalyzer::PassMuonEtaCut(const TeVMuon& mu){
-  if(debugme) cout<<"Check Muon Eta Cut"<<endl;
-  return (fabs(mu.eta()) < maxMuonEta_);
-}//--- PassMuonEta Cut
-
-inline bool WZAnalyzer::PassMuonDxyCut(const TeVMuon& mu){
-  if(debugme) cout<<"Check Muon Dxy Cut"<<endl;
-  return (fabs(mu.userFloat("d0")) < maxMuonDxy_);
-}//--- PassMuonDxyCut
-
-inline bool WZAnalyzer::PassMuonLooseCombRelIsoCut(const TeVMuon& mu){
-  if(debugme) cout<<"Check Muon Loose CombRelIso Cut"<<endl;
-  return (Calc_MuonRelIso(mu) < maxMuonLooseCombRelIso_);
-}//--- PassMuonCombRelIsoCut
-
-inline bool WZAnalyzer::PassMuonTightCombRelIsoCut(const TeVMuon& mu){
-  if(debugme) cout<<"Check Muon Tight CombRelIso Cut"<<endl;
-  return (Calc_MuonRelIso(mu) < maxMuonTightCombRelIso_);
-}//--- PassMuonCombRelIsoCut
-
-
-////////////////////////////////
-/////Check TeV Properties/////
-////////////////////////////////
 
 //Check Ht Properties
 //-----------------------------------------------------------
@@ -1433,9 +1068,9 @@ bool WZAnalyzer::PassFakeEvtCut(){
 //-----------------------------------------------------------
 bool WZAnalyzer::PassFakeLeptonTagCut(){
   if(wCand_.flavor() == PDGELEC){
-    return PassElecTightCut(looseElectrons_[0]);
+    return tightElectron_(looseElectrons_[0].patEle(), electronResult_,ElecPU(looseElectrons_[0]));
   }else if(wCand_.flavor() == PDGMUON){
-    return PassMuonTightCut(looseMuons_[0]);
+    return tightMuon_(looseMuons_[0],muonResult_,MuonPU(looseMuons_[0]));
   }
   return true;
 }//--- Tag Cut
@@ -1444,25 +1079,25 @@ bool WZAnalyzer::PassFakeLeptonTagCut(){
 //-----------------------------------------------------------
 bool WZAnalyzer::PassFakeLeptonProbeLooseCut(){
   if(wCand_.flavor() == PDGELEC){
-    return PassMuonLooseCut(looseMuons_[0]); //Check the other lepton
+    return looseMuon_(looseMuons_[0], muonResult_, MuonPU(looseMuons_[0])); //Check the other lepton
   }else if(wCand_.flavor() == PDGMUON){
-    return PassElecLooseCut(looseElectrons_[0]);
+    return looseElectron_(looseElectrons_[0].patEle(), electronResult_,ElecPU(looseElectrons_[0]));
   }
   return true;
 }//--- Probe Cut
 
 bool WZAnalyzer::PassFakeLeptonProbeTightCut(){
   if(wCand_.flavor() == PDGELEC){
-    return PassMuonTightCut(looseMuons_[0]); //Check the other lepton
+    return tightMuon_(looseMuons_[0], muonResult_, MuonPU(looseMuons_[0])); //Check the other lepton
   }else if(wCand_.flavor() == PDGMUON){
-    return PassElecTightCut(looseElectrons_[0]);
+      return tightElectron_(looseElectrons_[0].patEle(), electronResult_, ElecPU(looseElectrons_[0]));
   }
   return true;
 }//--- Probe Cut
 
 ///////////////////////////////////
 
-//Calc Ht (Cory: Does this take TeV values?) NO!!!!!
+//Calc Ht
 //-----------------------------------------------------------
 inline float WZAnalyzer::Calc_Ht(){
   return WLepPt() + ZLepPt(0) + ZLepPt(1);
@@ -1476,56 +1111,12 @@ inline int WZAnalyzer::Calc_EvtType(){
   return (zCand_ && wCand_) ?  2 * (zCand_.flavor() != 11) + (wCand_.flavor() != 11) : -999;
 }
 
-inline float
-WZAnalyzer::CalcElecTrkIso(const heep::Ele& elec){
-  return elec.patEle().dr03TkSumPt() ;
-}
-
-inline float
-WZAnalyzer::CalcElecECalIso(const heep::Ele& elec){
-  return elec.patEle().isEB() ? 
-    max(0., elec.patEle().dr03EcalRecHitSumEt() - 1.)
-    : elec.patEle().dr03EcalRecHitSumEt();
-}
-
-inline float
-WZAnalyzer::CalcElecHCalIso(const heep::Ele& elec){
-  return  elec.patEle().dr03HcalTowerSumEt();
-}
-
-float
-WZAnalyzer::CalcElecCombRelIso(const heep::Ele& elec){
-  float num = elec.patEle().dr03TkSumPt();
-  num += (elec.patEle().dr03HcalTowerSumEt() + 
-          elec.patEle().hadronicOverEm() * elec.patEle().energy() * fabs(sin(elec.patEle().superCluster()->position().theta())));
-  num -= rhoFastJet_*effectiveElecArea_[elec.patEle().isEE()];
-  num += elec.patEle().isEB() ? max(0., elec.patEle().dr03EcalRecHitSumEt() - 1.) : elec.patEle().dr03EcalRecHitSumEt();
-  return num / elec.patEle().p4().Pt();
-}
-
-inline float
-WZAnalyzer::Calc_MuonRelIso(const TeVMuon& mu){
-  return (mu.isolationR03().emEt + mu.isolationR03().hadEt + mu.isolationR03().sumPt - rhoFastJet_*effectiveMuonArea_[inEE(mu)])
-    / mu.pt();
-}
-
 inline bool WZAnalyzer::inEE(const TeVMuon& mu){
   return fabs(mu.eta()) >= 1.05;
 }
 
 ///////////////Utilities//////////////////
 //--------------------------------------------------------------
-void WZAnalyzer::getEff(float & eff, float & deff, float Num, float Denom)
-{
-//--------------------------------------------------------------
-  if(Denom){
-    eff = Num/Denom;
-    deff = TMath::Sqrt(eff * (1-eff)/Denom);
-  }else{
-    eff = deff = 0;
-  }
-
-}//getEff
 
 inline void
 WZAnalyzer::ClearEvtVariables(){
@@ -1548,19 +1139,6 @@ WZAnalyzer::ClearEvtVariables(){
   TT = TF = false;
 }
 
-/// Print to screen (like printf), but only if --verbose option is on
-void WZAnalyzer::verbose(const char *string, ...)
-{
-  if (intOptions_["verbose"]) {
-    va_list ap;
-    va_start(ap, string);
-    vprintf(string, ap);
-    va_end(ap);
-    cout << endl;
-  }
-}
-
-//Cory: This should really be beginSample!!!
 void WZAnalyzer::beginFile(std::vector<wprime::InputFile>::const_iterator fi){
   TFileDirectory dir = wprimeUtil_->getFileService()->mkdir(fi->samplename); 
   Declare_Histos(dir);
@@ -1636,3 +1214,12 @@ WZAnalyzer::ZLepPt(int idx){
   return -999.;
 }
 
+inline float
+  WZAnalyzer::ElecPU(const heep::Ele & e){
+  return rhoFastJet_*effectiveElecArea_[e.patEle().isEE()];
+}
+
+inline float
+  WZAnalyzer::MuonPU(const TeVMuon & m){
+  return rhoFastJet_*effectiveMuonArea_[inEE(m)];
+}

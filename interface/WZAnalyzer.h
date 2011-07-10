@@ -33,7 +33,6 @@ public:
   ~WZAnalyzer();
 
   void FillCutFns();
-  void getEff(float & eff, float & deff, float Num, float Denom);
 
   void ResetCounters();
   void Declare_Histos(TFileDirectory& dir);
@@ -118,66 +117,14 @@ public:
   bool PassFakeLeptonProbeLooseCut();
   bool PassFakeLeptonProbeTightCut();
 
-  bool PassElecLooseCut(const heep::Ele& elec);
-  bool PassElecTightCut(const heep::Ele& elec);
-  bool PassElecLooseEtCut(const heep::Ele& elec);
-  bool PassElecTightEtCut(const heep::Ele& elec);
-  bool PassElecLoosePtCut(const heep::Ele& elec);
-  bool PassElecTightPtCut(const heep::Ele& elec);
-  bool PassElecLooseWPCut(const heep::Ele& elec);
-  bool PassElecWPRelIsoCut(const heep::Ele& elec);
-
-  bool PassElecEtaCut(const heep::Ele& elec);
   bool PassTriggerEmulation(const heep::Ele& elec);
-
-  bool PassElecNMissingHitsCut(const heep::Ele& elec);
-  bool PassElecDistDCotCut(const heep::Ele& elec);
-  bool PassElecDistCut(const heep::Ele& elec);
-  bool PassElecDeltaCotThetaCut(const heep::Ele& elec);
-  bool PassElecSigmaIEtaIEtaCut(const heep::Ele& elec);
-  bool PassElecDeltaPhiCut(const heep::Ele& elec);
-  bool PassElecDeltaEtaCut(const heep::Ele& elec);
-  bool PassElecHOverECut(const heep::Ele& elec);
-  bool PassElecCombRelIsoCut(const heep::Ele& elec);
-
-  bool PassElecTightNMissingHitsCut(const heep::Ele& elec);
-  bool PassElecTightDistDCotCut(const heep::Ele& elec);
-  bool PassElecTightDistCut(const heep::Ele& elec);
-  bool PassElecTightDeltaCotThetaCut(const heep::Ele& elec);
-  bool PassElecTightSigmaIEtaIEtaCut(const heep::Ele& elec);
-  bool PassElecTightDeltaPhiCut(const heep::Ele& elec);
-  bool PassElecTightDeltaEtaCut(const heep::Ele& elec);
-  bool PassElecTightHOverECut(const heep::Ele& elec);
-  bool PassElecTightCombRelIsoCut(const heep::Ele& elec);
-
-  bool PassMuonLooseCut(const TeVMuon& mu);
-  bool PassMuonTightCut(const TeVMuon& mu);
-  bool PassMuonLoosePtCut(const TeVMuon& mu);
-  bool PassMuonTightPtCut(const TeVMuon& mu);
-  bool PassMuonGlobalCut(const TeVMuon& mu);
-  bool PassMuonDxyCut(const TeVMuon& mu);
-  bool PassMuonNpixhitCut(const TeVMuon& mu);
-  bool PassMuonNtrkhitCut(const TeVMuon& mu);
-  bool PassMuonNormChi2Cut(const TeVMuon& mu);
-  bool PassMuonHitsUsedCut(const TeVMuon& mu);
-  bool PassMuonStationsCut(const TeVMuon& mu);
-  bool PassMuonEtaCut(const TeVMuon& mu);
-  bool PassMuonLooseCombRelIsoCut(const TeVMuon& mu);
-  bool PassMuonTightCombRelIsoCut(const TeVMuon& mu);
 
   int   Calc_EvtType();
   float CalcLeadPt(int type=0);
   float Calc_Q();
   float Calc_Ht();
-  float CalcElecTrkIso(const heep::Ele& elec);
-  float CalcElecECalIso(const heep::Ele& elec);
-  float CalcElecHCalIso(const heep::Ele& elec);
-  float CalcElecCombRelIso(const heep::Ele& elec);
-  float Calc_MuonRelIso(const TeVMuon& mu);
   float Calc_GenWZInvMass();
   bool inEE(const TeVMuon& mu);
-//////////
-  void verbose(const char *string, ...);
 
   void beginFile(std::vector<wprime::InputFile>::const_iterator fi);
   void endFile(std::vector<wprime::InputFile>::const_iterator fi, ofstream & out);
@@ -193,9 +140,15 @@ public:
 
   float WLepPt();
   float ZLepPt(int idx);
-// +++++++++++++++++++useful constants
+  
+  float ElecPU(const heep::Ele & e);
+  float MuonPU(const TeVMuon & m);
+
   bool debugme;//print stuff if active
   bool doPreselect_;
+
+  std::string looseElectronType_, tightElectronType_;
+  std::string looseMuonType_, tightMuonType_;
 
   std::string electronsLabel_;
   std::string muonsLabel_;
@@ -204,22 +157,6 @@ public:
   std::string pileupLabel_;
   vstring triggersToUse_;
 
-  int PDGMUON;
-  int PDGELEC;
-  int PDGW;
-  int PDGZ;
-  int PDGWPRIME;
-
-  double PI;
-  double TWOPI;
-  float NOCUT;
-
-// +++++++++++++++++++
-  typedef std::pair< std::map<std::string, bool>, std::vector<std::string> > OptArgPair;
-  std::map<std::string, int> intOptions_;
-  std::map<std::string, std::string> stringOptions_;
-  std::vector<std::string> filenames_;
-  
 // +++++++++++++++++++location of data files and samples info
   WPrimeUtil * wprimeUtil_;
   ofstream outCandEvt_;
@@ -269,47 +206,6 @@ public:
   float minZeePt2_;
   float minZmmPt1_;
   float minZmmPt2_;
-
-// +++++++++++++++++++Electron General Cuts
-//VBTF Recommended Cuts
-  float minElecLooseEt_;
-  float minElecTightEt_;
-  float minElecLoosePt_;
-  float minElecTightPt_;
-  int cutElecWPLooseMask_;
-  std::string cutElecWPLooseType_;
-  
-  float maxElecNMissingHits_;
-  float minElecDist_;
-  float minElecDeltaCotTheta_;
-  std::vector<double> maxElecSigmaIetaIeta_;
-  std::vector<double> maxElecDeltaPhi_;
-  std::vector<double> maxElecDeltaEta_;
-  std::vector<double> maxElecHOverE_    ;
-  std::vector<double> maxElecCombRelIso_;
-
-  float maxElecTightNMissingHits_;
-  float minElecTightDist_;
-  float minElecTightDeltaCotTheta_;
-  std::vector<double> maxElecTightSigmaIetaIeta_;
-  std::vector<double> maxElecTightDeltaPhi_;
-  std::vector<double> maxElecTightDeltaEta_;
-  std::vector<double> maxElecTightHOverE_    ;
-  std::vector<double> maxElecTightCombRelIso_;
-
-// +++++++++++++++++++Muon General Cuts
-  float maxMuonEta_;
-  float minMuonLoosePt_;
-  float minMuonTightPt_;
-//VBTF Recommended Cuts
-  float maxMuonDxy_;
-  float maxMuonNormChi2_;
-  int minMuonNPixHit_;
-  int minMuonNTrkHit_;
-  int minMuonStations_;
-  int minMuonHitsUsed_;
-  float maxMuonLooseCombRelIso_;
-  float maxMuonTightCombRelIso_;
 
 //////Chosen Candidates
   ElectronV electrons_, looseElectrons_, tightElectrons_;
@@ -409,27 +305,23 @@ public:
   
   int NCuts_;
   std::vector<std::string> Cuts_;
-  int NLooseElecCuts_;
-  std::vector<std::string> LooseElecCuts_;
-  int NLooseMuonCuts_;
-  std::vector<std::string> LooseMuonCuts_;
-  int NTightElecCuts_;
-  std::vector<std::string> TightElecCuts_;
-  int NTightMuonCuts_;
-  std::vector<std::string> TightMuonCuts_;
   typedef bool (WZAnalyzer::*    CutFnPtr)(); 
-  typedef bool (WZAnalyzer::*ElecCutFnPtr)(const heep::Ele&); 
-  typedef bool (WZAnalyzer::*MuonCutFnPtr)(const TeVMuon&); 
 #ifndef __CINT__
   std::map<std::string,     CutFnPtr> mFnPtrs_;
-  std::map<std::string, ElecCutFnPtr> mElecFnPtrs_;
-  std::map<std::string, MuonCutFnPtr> mMuonFnPtrs_;
   std::vector<    CutFnPtr> CutFns_;
-  std::vector<ElecCutFnPtr> LooseElecCutFns_;
-  std::vector<MuonCutFnPtr> LooseMuonCutFns_;
-  std::vector<ElecCutFnPtr> TightElecCutFns_;
-  std::vector<MuonCutFnPtr> TightMuonCutFns_;
 #endif
+
+  PSet eSelectorPset_;
+  ElectronSelector looseElectron_;
+  ElectronSelector tightElectron_;
+  pat::strbitset electronResult_;
+
+  PSet mSelectorPset_;
+  MuonSelector looseMuon_;
+  MuonSelector tightMuon_;
+  pat::strbitset muonResult_;
+
+
 };
 
 #endif//#define _WZAnalyzer_h_

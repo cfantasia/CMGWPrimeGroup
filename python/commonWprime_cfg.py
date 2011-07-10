@@ -58,6 +58,9 @@ process.WprimeAnalyzer = cms.PSet(
     hltEventTag = cms.string('patTriggerEvent'),
     pileupTag  = cms.string('addPileupInfo'),
 
+    electronSelectors = electronSelectors,
+    muonSelectors = muonSelectors,
+
     inputs = process.inputs,
 
     #PileUp Inputs
