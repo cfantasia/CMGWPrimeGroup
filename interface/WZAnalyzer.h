@@ -176,6 +176,7 @@ public:
   float LeadElecPt_;
   float LeadMuonPt_;
   bool TT, TF;
+  int PU_NumInteractions_;
 
 // +++++++++++++++++++General Cut values
   uint maxNumZs_;
@@ -210,6 +211,7 @@ public:
 //////Chosen Candidates
   ElectronV electrons_, looseElectrons_, tightElectrons_;
   MuonV muons_, looseMuons_, tightMuons_;
+  JetV  jets_;
   pat::MET met_;
   ZCandidate zCand_;
   WCandidate wCand_;
@@ -273,6 +275,9 @@ public:
   std::vector<TH1F*> hNTElec;
   std::vector<TH1F*> hNTMuon;
   std::vector<TH1F*> hNTLeps;
+
+  std::vector<TH1F*> hNJets;
+  std::vector<TH1F*> hNVtxs;
 
   std::vector<TH1F*> hLeadPt;
   std::vector<TH1F*> hLeadElecPt;

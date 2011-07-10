@@ -242,6 +242,11 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
   DeclareHistoSet("hNTLeps", "Number of Tight Leptons in Event",
                   "N_{l}", 10, 0, 10, "NONE", hNTLeps,dir);
 
+  DeclareHistoSet("hNJets", "Number of Jets in Event",
+                  "N_{j}", 20, 0, 20, "NONE", hNJets,dir);
+  DeclareHistoSet("hNVtxs", "Number of Vertexs in Event",
+                  "N_{vtx}", 20, 0, 20, "NONE", hNVtxs,dir);
+
   DeclareHistoSet("hWenuCombRelIso", "Comb Rel Iso of W Electron",
                   "Electron Combined Relative Isolation", 20, 0, 0.2, "NONE", hWenuCombRelIso,dir);
   DeclareHistoSet("hWmunuCombRelIso", "Comb Rel Iso of W Muon",
@@ -256,6 +261,7 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
 
   DeclareHistoSet("hMuonTightCombIso", "hMuonTightCombIso",
                   "Muon Combined Isolation", 20, 0., 1., "NONE", hMuonTightCombIso, dir);
+
 ///Eff Plots///////
   string title = Form("Expected # of Events / %.0f pb^{-1}",  wprimeUtil_->getLumi_ipb());
   title = title + ";;" + title;
@@ -343,6 +349,9 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
   hNTElec[index]->Fill(tightElectrons_.size(), weight);
   hNTMuon[index]->Fill(tightMuons_    .size(), weight);
   hNTLeps[index]->Fill(tightElectrons_.size()+tightMuons_.size(), weight);
+
+  hNJets[index]->Fill(jets_.size(), weight);
+  hNVtxs[index]->Fill(PU_NumInteractions_, weight);
 
   for(uint i=0; i<tightMuons_.size(); ++i){
     hMuonTightCombIso[index]->Fill(tightMuons_[i].combRelIsolation03(MuonPU(tightMuons_[i])), weight);
@@ -524,6 +533,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   // Get leptons
   const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, electronsLabel_);
   const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
+  jets_  = getProduct< JetV>(event, "selectedPatJets");
   if(debugme) printf("    Contains: %i electron(s), %i muon(s)\n",
                      (int)patElectrons.size(), (int)patMuons.size());
 
@@ -565,7 +575,8 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
   triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
 
-  if(0 && !wprimeUtil_->runningOnData()){//Don't do this for data
+  float PU_Weight = 1.;
+  if(!wprimeUtil_->runningOnData()){//Don't do this for data
 /*    
     GenParticleV genParticles = getUntrackedProduct<GenParticleV>(event, "genParticles");
     const Candidate * genZ = 0;
@@ -576,19 +587,20 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
 */
     PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
-    
     std::vector<PileupSummaryInfo>::const_iterator PVI;                       
     for(PVI = PupInfo_.begin(); PVI != PupInfo_.end(); ++PVI) {               
-      //Cory: What am I looping over? Primary Vtxs
-      int PU_BunchCrossing = PVI->getBunchCrossing();                  
-      int PU_NumInteractions = PVI->getPU_NumInteractions();           
-      double MyWeight = wprimeUtil_->getLumiWeight(PU_NumInteractions );
-      cout<<"N_BX: "<<PU_BunchCrossing
-          <<" PU_NumInteractions: "<<PU_NumInteractions
-          <<" additional weight: "<<MyWeight
-          <<endl;
-    }
-  }
+      if(PVI->getBunchCrossing() == 0){//Only care about in time PU for now 
+        PU_NumInteractions_ = PVI->getPU_NumInteractions();           
+        PU_Weight = wprimeUtil_->getLumiWeight(PU_NumInteractions_);
+        if(debugme) 
+          cout<<"BX: "<<PVI->getBunchCrossing()
+              <<" PU_NumInteractions: "<<PU_NumInteractions_
+              <<" PU Weight: "<<PU_Weight
+              <<endl;
+        break;
+      }
+    }//Looping over different Bunch Crossings
+  }//MC Only If
 
   if((event.id().run() == 166033 && event.id().luminosityBlock() == 801 && event.id().event() == 1091994700) ||
      (event.id().run() == 166699 && event.id().luminosityBlock() == 664 && event.id().event() == 714495816)){
@@ -598,7 +610,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   }
 
 /////////////////////
-  if(!PassCuts(wprimeUtil_->getWeight())) return;
+  if(!PassCuts(wprimeUtil_->getWeight()*PU_Weight)) return;
   if(wprimeUtil_->runningOnData()){
     cout<<" The following data events passed All Cuts!!!\n";
     PrintPassingEvent(event);
@@ -1130,6 +1142,7 @@ inline bool WZAnalyzer::inEE(const TeVMuon& mu){
 
 inline void
 WZAnalyzer::ClearEvtVariables(){
+  jets_.clear();
   electrons_.clear();
   looseElectrons_.clear();
   tightElectrons_.clear();
@@ -1147,6 +1160,7 @@ WZAnalyzer::ClearEvtVariables(){
   Ht_= -999;
   Q_ = -999;
   TT = TF = false;
+  PU_NumInteractions_ = -999.;
 }
 
 void WZAnalyzer::beginFile(std::vector<wprime::InputFile>::const_iterator fi){
