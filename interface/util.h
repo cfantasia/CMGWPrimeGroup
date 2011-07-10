@@ -91,6 +91,16 @@ namespace wprime{
 const float ZMASS = 91.188;
 const float WMASS = 80.398;
 
+const int PDGMUON = 13;
+const int PDGELEC = 11;
+const int PDGW = 24;
+const int PDGZ = 23;
+const int PDGWPRIME = 34;
+
+const float PI    = 2.0 * TMath::ACos(0.);
+const float TWOPI = 2.0 * PI;
+const float NOCUT = 9e9;
+
 //////// Comparators (for sorting vectors) ///////////////////////////////////
 
 struct closestToZMass {
@@ -184,5 +194,6 @@ void updateEventCounts(P & ev, std::vector<unsigned int> & nEvents,
              nEvents[names.size() - 1], nEvents[0]);
   }
 }
+
 
 #endif // _util_h
