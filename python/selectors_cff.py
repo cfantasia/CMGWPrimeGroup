@@ -32,8 +32,8 @@ muonSelectors.WZTight.maxIso03 = cms.untracked.double(0.1)
 cutsMissingHits = [0, 0, 0, 0, 0, 0]
 cutsConvDist = [0., 0., 0.02, 0.02, 0.02, 0.02]
 cutsConvDcot = [0., 0., 0.02, 0.02, 0.02, 0.02]
-#cutsEBCombRelIso = [0.150, 0.085, 0.053, 0.070, 0.030, 0.016]#2011
-cutsEBCombRelIso = [0.150, 0.085, 0.053, 0.040, 0.030, 0.016]#2010
+cutsEBCombRelIso = [0.150, 0.085, 0.053, 0.070, 0.030, 0.016]#2010
+#cutsEBCombRelIso = [0.150, 0.085, 0.053, 0.040, 0.030, 0.016]#2011
 cutsEBSigmaIEtaIEta = [0.012, 0.01, 0.01, 0.01, 0.01, 0.01]
 cutsEBDeltaPhi = [0.800, 0.071, 0.039, 0.027, 0.020, 0.020]
 cutsEBDeltaEta = [0.007, 0.007, 0.005, 0.005, 0.004, 0.004]
@@ -52,6 +52,8 @@ electronSelectors = cms.PSet(
 
 for i, s in enumerate(["wp95", "wp90", "wp85", "wp80", "wp70", "wp60"]):
     pset = cms.PSet(
+          maxMissingHits = cms.untracked.int32(cutsMissingHits[i]),
+          minConv = cms.untracked.double(cutsConvDist[i]),#Hack bc we need an OR of these two cuts below
 #        minConvDist = cms.untracked.double(cutsConvDist[i]),
 #        minConvDcot = cms.untracked.double(cutsConvDcot[i]),
         barrel = cms.PSet(
