@@ -133,8 +133,11 @@ void WPrimeUtil::CheckStream(ofstream& stream, std::string & s){
 void WPrimeUtil::getEff(float & eff, float & deff,float Num,float Denom)
 {
   //------------------------------------------------------------------------
-  eff = Num/Denom;
-  deff = TMath::Sqrt(eff * (1-eff)/Denom);
+  if(Denom){
+    eff = Num/Denom;
+    deff = TMath::Sqrt(eff * (1-eff)/Denom);
+  }else 
+    eff = deff = 0.;
 }//---------------getEff
 
 
