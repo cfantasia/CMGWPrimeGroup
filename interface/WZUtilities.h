@@ -119,7 +119,7 @@ public:
     setPassCut("maxSigmaIEtaIEta", p.sigmaIetaIeta(), ret);
     setPassCut("maxDeltaEta", fabs(p.deltaEtaSuperClusterTrackAtVtx()), ret);
     setPassCut("maxDeltaPhi", fabs(p.deltaPhiSuperClusterTrackAtVtx()), ret);   
-    setPassCut("maxCombRelIso",CalcElecCombRelIso(p, pu), ret);
+    setPassCut("maxCombRelIso",CalcCombRelIso(p, pu), ret);
     setPassCut("maxMissingHits", 
                p.gsfTrack()->trackerExpectedHitsInner().numberOfHits(), ret);
     setIgnored(ret);
