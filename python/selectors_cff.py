@@ -52,10 +52,6 @@ electronSelectors = cms.PSet(
 
 for i, s in enumerate(["wp95", "wp90", "wp85", "wp80", "wp70", "wp60"]):
     pset = cms.PSet(
-          maxMissingHits = cms.untracked.int32(cutsMissingHits[i]),
-          minConv = cms.untracked.double(cutsConvDist[i]),#Hack bc we need an OR of these two cuts below
-#        minConvDist = cms.untracked.double(cutsConvDist[i]),
-#        minConvDcot = cms.untracked.double(cutsConvDcot[i]),
         barrel = cms.PSet(
            maxMissingHits = cms.untracked.int32(cutsMissingHits[i]),
            minConv = cms.untracked.double(cutsConvDist[i]),#Hack bc we need an OR of these two cuts below
@@ -76,13 +72,16 @@ for i, s in enumerate(["wp95", "wp90", "wp85", "wp80", "wp70", "wp60"]):
     setattr(electronSelectors, s, pset)
     
 electronSelectors.WZLoose = electronSelectors.wp95.clone()
-electronSelectors.WZLoose.minPt = cms.untracked.double(10.)
+electronSelectors.WZLoose.barrel.minPt = cms.untracked.double(10.)
+electronSelectors.WZLoose.endcap.minPt = cms.untracked.double(10.)
     
 electronSelectors.WZRelaxed = electronSelectors.wp80.clone()
-electronSelectors.WZRelaxed.minPt = cms.untracked.double(20.)
+electronSelectors.WZRelaxed.barrel.minPt = cms.untracked.double(20.)
+electronSelectors.WZRelaxed.endcap.minPt = cms.untracked.double(20.)
 electronSelectors.WZRelaxed.barrel.maxCombRelIso = cms.untracked.double(999999999.)
 electronSelectors.WZRelaxed.endcap.maxCombRelIso = cms.untracked.double(999999999.)
 
 electronSelectors.WZTight = electronSelectors.wp80.clone()
-electronSelectors.WZTight.minPt = cms.untracked.double(20.)
+electronSelectors.WZTight.barrel.minPt = cms.untracked.double(20.)
+electronSelectors.WZTight.endcap.minPt = cms.untracked.double(20.)
 
