@@ -402,35 +402,30 @@ WZAnalyzer::CalcWMuonVariables(){
 inline void
 WZAnalyzer::CalcWZVariables(){
   if (debugme) cout<<"In Calc WZ Variables\n";
-  //Calculate Important Quantities for each event
   wzCand_ = (zCand_ && wCand_) ? WZCandidate(zCand_, wCand_) : WZCandidate();
-  
-  Ht_ = (zCand_ && wCand_) ? Calc_Ht() : -999.;
   Q_ = (zCand_ && wCand_) ? Calc_Q() : -999.;
-  if(debugme) printf("evt Type: %i, Z Flav: %i, W Flav: %i\n", evtType_, (int)zCand_.flavor(), (int)wCand_.flavor());
-
 }
 
 void
 WZAnalyzer::CalcEventVariables(){
   if (debugme) cout<<"In Calc Event Variables\n";
   evtType_ = (zCand_ && wCand_) ? Calc_EvtType() : -999;
+  if(debugme) printf("evt Type: %i, Z Flav: %i, W Flav: %i\n", evtType_, (int)zCand_.flavor(), (int)wCand_.flavor());
   LeadPt_ = CalcLeadPt(); 
   LeadElecPt_ = CalcLeadPt(PDGELEC);
   LeadMuonPt_ = CalcLeadPt(PDGMUON);
+  Ht_ = (zCand_ && wCand_) ? Calc_Ht() : -999.;
   TT = TF = false;
   bool tight1=false, tight2=false;
   if(zCand_.flavor() == PDGELEC){
     for(uint i=0; i<tightElectrons_.size(); ++i){
       if(!tight1 && Match(tightElectrons_[i], *zCand_.daughter(0))) tight1 = true;
       if(!tight2 && Match(tightElectrons_[i], *zCand_.daughter(1))) tight2 = true;
-      //cout<<"tight1: "<<tight1<<" tight2: "<<tight2<<endl;  
     }
   }else if(zCand_.flavor() == PDGMUON){
     for(uint i=0; i<tightMuons_.size(); ++i){
       if(!tight1 && Match(tightMuons_[i], *zCand_.daughter(0))) tight1 = true;
       if(!tight2 && Match(tightMuons_[i], *zCand_.daughter(1))) tight2 = true;
-      //cout<<"tight1: "<<tight1<<" tight2: "<<tight2<<endl;
     } 
   }
   TT = tight1 && tight2;
@@ -914,6 +909,7 @@ WZAnalyzer::PassValidWandZCut(){
 inline bool
 WZAnalyzer::PassValidWCut(){
   CalcWVariables();
+  CalcEventVariables();
   return wCand_ && wCand_.mt()>0.;
 }
 

@@ -40,13 +40,12 @@ EWKWZCuts = cms.vstring(
     
     "ValidZ", 
     "ZMass", 
-    "NumZs", 
-    "ZLepPt",
     "ZLepTrigMatch",
+    "ZLepPt",
     "HLT", 
+    "NumZs", 
     
     "ValidW",    
-    "EvtSetup",
     
     "MET",
 
@@ -57,18 +56,16 @@ WprimeWZCuts = cms.vstring(
     
     "ValidZ", 
     "ZMass", 
-    "NumZs", 
-    "ZLepPt",
     "ZLepTrigMatch",
+    "ZLepPt",
     "HLT", 
+    "NumZs", 
     
     "ValidW", 
     
     "MET",
 
-    "ValidWZCand",
-    "EvtSetup",
-    
+    "ValidWZCand",   
     "Ht", 
     "Zpt", 
     "Wpt",
