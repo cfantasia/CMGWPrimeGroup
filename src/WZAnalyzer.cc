@@ -587,19 +587,12 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
 */
     PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
-    std::vector<PileupSummaryInfo>::const_iterator PVI;                       
-    for(PVI = PupInfo_.begin(); PVI != PupInfo_.end(); ++PVI) {               
-      if(PVI->getBunchCrossing() == 0){//Only care about in time PU for now 
-        PU_NumInteractions_ = PVI->getPU_NumInteractions();           
-        PU_Weight = wprimeUtil_->getLumiWeight(PU_NumInteractions_);
-        if(debugme) 
-          cout<<"BX: "<<PVI->getBunchCrossing()
-              <<" PU_NumInteractions: "<<PU_NumInteractions_
-              <<" PU Weight: "<<PU_Weight
-              <<endl;
-        break;
-      }
-    }//Looping over different Bunch Crossings
+    PU_NumInteractions_ = wprimeUtil_->GetPU1BX(PupInfo_);
+    PU_Weight = wprimeUtil_->getLumiWeight(PU_NumInteractions_);
+    if(debugme) 
+      cout<<" PU_NumInteractions: "<<PU_NumInteractions_
+          <<" PU Weight: "<<PU_Weight
+          <<endl;   
   }//MC Only If
 
   if((event.id().run() == 166033 && event.id().luminosityBlock() == 801 && event.id().event() == 1091994700) ||

@@ -121,6 +121,37 @@ void WPrimeUtil::SetLumiWeights(string & MCFile, string & DataFile,
   LumiWeights_ = edm::LumiReWeighting(MCFile, DataFile, MCHist, DataHist);
 }
 
+int WPrimeUtil::GetPU1BX(const std::vector< PileupSummaryInfo > & PupInfo){
+  std::vector<PileupSummaryInfo>::const_iterator PVI;                       
+  for(PVI = PupInfo.begin(); PVI != PupInfo.end(); ++PVI) {               
+    if(PVI->getBunchCrossing() == 0){//Only care about in time PU for now 
+      return PVI->getPU_NumInteractions();           
+    }
+  }//Looping over different Bunch Crossings
+  return -1;
+}
+
+inline float WPrimeUtil::GetPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInfo){
+  return LumiWeights_.weight(GetPU1BX(PupInfo));
+}
+
+float WPrimeUtil::GetPU3BX(const std::vector< PileupSummaryInfo > & PupInfo){
+  std::vector<PileupSummaryInfo>::const_iterator PVI;
+  float sum_nvtx = 0;
+  for(PVI = PupInfo.begin(); PVI != PupInfo.end(); ++PVI) {
+    float npv = PVI->getPU_NumInteractions();
+    sum_nvtx += float(npv);
+  }
+
+  return sum_nvtx/3.;//+1, 0, -1 BX
+}
+
+/*
+//weight3BX not implemented until PhysicsTools/Utilities V08-03-06
+inline float WPrimeUtil::GetPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo){
+  return LumiWeights_.weight3BX( GetPU3BX(PupInfo) );
+}
+*/
 void WPrimeUtil::CheckStream(ofstream& stream, std::string & s){
   if(!stream) { 
     std::cout << "Cannot open file " << s << std::endl; 

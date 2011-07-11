@@ -9,6 +9,7 @@
 #include "DataFormats/FWLite/interface/ChainEvent.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 
 #include "UserCode/CMGWPrimeGroup/interface/util.h"
 
@@ -47,6 +48,10 @@ class WPrimeUtil
   std::string getSampleName() const{return samplename_;}
   float getWeight() const{return weight_;}
   float getLumiWeight (int & nInt) {return LumiWeights_.weight(nInt);}
+  int   GetPU1BX(const std::vector< PileupSummaryInfo > & PupInfo);
+  float GetPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInfo);
+  float GetPU3BX(const std::vector< PileupSummaryInfo > & PupInfo);
+  float GetPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo);
 
   static void getEff(float & eff, float & deff,float Num,float Denom);
 
