@@ -848,8 +848,9 @@ bool WZAnalyzer::PassTriggersCut()
 {
 //-----------------------------------------------------------
   if(debugme) cout<<"Trigger requirements"<<endl;
-  
-  if(wprimeUtil_->runningOnData() || (zCand_ && zCand_.flavor() == PDGMUON)){
+  //Apply the trigger if running on data or MC 
+  //If MC, apply if no Z or if Z exists, zCand == PDGMuon)
+  if(wprimeUtil_->runningOnData() || !zCand_ || zCand_.flavor() == PDGMUON){
     const pat::TriggerPathRefVector acceptedPaths = triggerEvent_.acceptedPaths();
     if(debugme) cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
     for (size_t i = 0; i < acceptedPaths.size(); i++){
@@ -863,18 +864,6 @@ bool WZAnalyzer::PassTriggersCut()
       }
     }
   }else{
-    /*
-    const pat::TriggerPathCollection* allPaths = triggerEvent_.paths();
-    //const pat::TriggerPathRefVector allPaths = triggerEvent_.pathRefs();
-    //for (size_t i = 0; i < allPaths->size(); i++){
-    for ( pat::TriggerPathCollection::const_iterator iPath = allPaths->begin(); iPath != allPaths->end(); ++iPath ) {
-//      string A = allPaths[i]->name();
-      cout<<"Name: "<<iPath->name()<<endl;
-      
-      //if(A.find("HLT_Mu"))
-      
-    } 
-    */   
     return true;//Cory: This is not good, but will pass HLT in the meantime.
   }
   return false;
