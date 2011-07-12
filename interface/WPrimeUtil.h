@@ -50,7 +50,7 @@ class WPrimeUtil
   float getLumiWeight (int & nInt) {return LumiWeights_.weight(nInt);}
   int   GetPU1BX(const std::vector< PileupSummaryInfo > & PupInfo);
   float GetPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInfo);
-  float GetPU3BX(const std::vector< PileupSummaryInfo > & PupInfo);
+  //float GetPU3BX(const std::vector< PileupSummaryInfo > & PupInfo);
   float GetPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo);
 
   static void getEff(float & eff, float & deff,float Num,float Denom);

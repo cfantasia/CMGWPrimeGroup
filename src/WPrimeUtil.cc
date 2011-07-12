@@ -135,6 +135,7 @@ inline float WPrimeUtil::GetPUWeight1BX(const std::vector< PileupSummaryInfo > &
   return LumiWeights_.weight(GetPU1BX(PupInfo));
 }
 
+#if 0
 float WPrimeUtil::GetPU3BX(const std::vector< PileupSummaryInfo > & PupInfo){
   std::vector<PileupSummaryInfo>::const_iterator PVI;
   float sum_nvtx = 0;
@@ -146,6 +147,7 @@ float WPrimeUtil::GetPU3BX(const std::vector< PileupSummaryInfo > & PupInfo){
   return sum_nvtx/3.;//+1, 0, -1 BX
 }
 
+#endif
 /*
 //weight3BX not implemented until PhysicsTools/Utilities V08-03-06
 inline float WPrimeUtil::GetPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo){

@@ -346,7 +346,7 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
     hWQ[index]->Fill(wCand_.charge(), weight);
     if      (wCand_.flavor() == PDGELEC){
       hWenuTransMass[index]->Fill(wCand_.mt(), weight);
-      hWwnuQ[index]->Fill(wCand_.charge(), weight);
+      hWmunuQ[index]->Fill(wCand_.charge(), weight);
       const heep::Ele & e = FindElectron(*wCand_.daughter(0));
       hWenuCombRelIso[index]->Fill(CalcCombRelIso(e.patEle(), ElecPU(e)), weight);
     }else if (wCand_.flavor() == PDGMUON){
@@ -606,8 +606,11 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
 */
     PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
-    PU_NumInteractions_ = wprimeUtil_->GetPU3BX(PupInfo_);
-    PU_Weight = wprimeUtil_->GetPUWeight3BX(PupInfo_);
+    //    PU_NumInteractions_ = wprimeUtil_->GetPU3BX(PupInfo_);
+    // PU_Weight = wprimeUtil_->GetPUWeight3BX(PupInfo_);
+    PU_NumInteractions_ = wprimeUtil_->GetPU1BX(PupInfo_);
+    int PU_NumInteractions_tmp = int(PU_NumInteractions_);
+    PU_Weight = wprimeUtil_->getLumiWeight(PU_NumInteractions_tmp);
     if(debugme) 
       cout<<" PU_NumInteractions: "<<PU_NumInteractions_
           <<" PU Weight: "<<PU_Weight
