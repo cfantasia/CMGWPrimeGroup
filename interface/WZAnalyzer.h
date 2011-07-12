@@ -176,7 +176,7 @@ public:
   float LeadElecPt_;
   float LeadMuonPt_;
   bool TT, TF;
-  int PU_NumInteractions_;
+  float PU_NumInteractions_;
 
 // +++++++++++++++++++General Cut values
   uint maxNumZs_;
@@ -258,13 +258,21 @@ public:
   std::vector<TH1F*> hZmumuMassTT ;
   std::vector<TH1F*> hZmumuMassTF ;
 
-  std::vector<TH1F*> hWTransMass     ;
+a  std::vector<TH1F*> hWTransMass     ;
   std::vector<TH1F*> hWenuTransMass  ;
   std::vector<TH1F*> hWmunuTransMass ;
   std::vector<TH1F*> hW3e0muTransMass;
   std::vector<TH1F*> hW2e1muTransMass;
   std::vector<TH1F*> hW1e2muTransMass;
   std::vector<TH1F*> hW0e3muTransMass;
+
+  std::vector<TH1F*> hWQ     ;
+  std::vector<TH1F*> hWenuQ  ;
+  std::vector<TH1F*> hWmunuQ ;
+  std::vector<TH1F*> hW3e0muQ;
+  std::vector<TH1F*> hW2e1muQ;
+  std::vector<TH1F*> hW1e2muQ;
+  std::vector<TH1F*> hW0e3muQ;
 
   std::vector<TH1F*> hQ;
 

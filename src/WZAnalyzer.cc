@@ -224,6 +224,22 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
   DeclareHistoSet("hW0e3muTransMass", "Reconstructed Transverse Mass of W(0e3\\mu)",
                   "m_{T}^{0e3#mu} (GeV)", 20, 0, 100, "GeV", hW0e3muTransMass,dir);
 
+  //W Charge Histos
+  DeclareHistoSet("hWQ", "Reconstructed Charge of W",
+                  "q_{W}", 3, -1, 1, "", hWQ,dir);
+  DeclareHistoSet("hWenuQ", "Reconstructed Charge of We\\nu",
+                  "q_{W}^{e#nu}", 3, -1.5, 1.5, "", hWenuQ,dir);
+  DeclareHistoSet("hWmunuQ", "Reconstructed TransverseMass of W\\mu\\nu",
+                  "q_{W}^{#mu#nu}", 3, -1.5, 1.5, "", hWmunuQ,dir);
+  DeclareHistoSet("hW3e0muQ", "Reconstructed Charge of W(3e0\\mu)",
+                  "q_{W}^{3e0#mu}", 3, -1.5, 1.5, "", hW3e0muQ,dir);
+  DeclareHistoSet("hW2e1muQ", "Reconstructed Charge of W(2e1\\mu)",
+                  "q_{W}^{2e1#mu}", 3, -1.5, 1.5, "", hW2e1muQ,dir);
+  DeclareHistoSet("hW1e2muQ", "Reconstructed Charge of W(1e2\\mu)",
+                  "q_{W}^{1e2#mu}", 3, -1.5, 1.5, "", hW1e2muQ,dir);
+  DeclareHistoSet("hW0e3muQ", "Reconstructed Charge of W(0e3\\mu)",
+                  "q_{W}^{0e3#mu}", 3, -1.5, 1.5, "", hW0e3muQ,dir);
+
 //Q=M_{WZ} - M_W - M_Z
   DeclareHistoSet("hQ", "Q=M_{WZ} - M_{W} - M_{Z}",
                   "Q (GeV)", 50, 0, 500, "GeV", hQ,dir);
@@ -327,12 +343,15 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
   if(wCand_){
     hWpt[index]->Fill(wCand_.pt(), weight);
     hWTransMass[index]->Fill(wCand_.mt(), weight);
+    hWQ[index]->Fill(wCand_.charge(), weight);
     if      (wCand_.flavor() == PDGELEC){
       hWenuTransMass[index]->Fill(wCand_.mt(), weight);
+      hWwnuQ[index]->Fill(wCand_.charge(), weight);
       const heep::Ele & e = FindElectron(*wCand_.daughter(0));
       hWenuCombRelIso[index]->Fill(CalcCombRelIso(e.patEle(), ElecPU(e)), weight);
     }else if (wCand_.flavor() == PDGMUON){
       hWmunuTransMass[index]->Fill(wCand_.mt(), weight);
+      hWmunuQ[index]->Fill(wCand_.charge(), weight);
       const TeVMuon m = FindMuon(*wCand_.daughter(0));
       hWmunuCombRelIso[index]->Fill(m.combRelIsolation03(MuonPU(m)), weight);
     }
@@ -340,6 +359,11 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
     if(evtType_ == 1) hW2e1muTransMass[index]->Fill(wCand_.mt(), weight);
     if(evtType_ == 2) hW1e2muTransMass[index]->Fill(wCand_.mt(), weight);
     if(evtType_ == 3) hW0e3muTransMass[index]->Fill(wCand_.mt(), weight);
+
+    if(evtType_ == 0) hW3e0muQ[index]->Fill(wCand_.charge(), weight);
+    if(evtType_ == 1) hW2e1muQ[index]->Fill(wCand_.charge(), weight);
+    if(evtType_ == 2) hW1e2muQ[index]->Fill(wCand_.charge(), weight);
+    if(evtType_ == 3) hW0e3muQ[index]->Fill(wCand_.charge(), weight);
   }  
   hMET[index]->Fill(met_.et(), weight);
 
@@ -582,8 +606,8 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
 */
     PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
-    PU_NumInteractions_ = wprimeUtil_->GetPU1BX(PupInfo_);
-    PU_Weight = wprimeUtil_->getLumiWeight(PU_NumInteractions_);
+    PU_NumInteractions_ = wprimeUtil_->GetPU3BX(PupInfo_);
+    PU_Weight = wprimeUtil_->GetPUWeight3BX(PupInfo_);
     if(debugme) 
       cout<<" PU_NumInteractions: "<<PU_NumInteractions_
           <<" PU Weight: "<<PU_Weight
