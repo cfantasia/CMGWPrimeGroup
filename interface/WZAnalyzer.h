@@ -258,7 +258,7 @@ public:
   std::vector<TH1F*> hZmumuMassTT ;
   std::vector<TH1F*> hZmumuMassTF ;
 
-a  std::vector<TH1F*> hWTransMass     ;
+  std::vector<TH1F*> hWTransMass     ;
   std::vector<TH1F*> hWenuTransMass  ;
   std::vector<TH1F*> hWmunuTransMass ;
   std::vector<TH1F*> hW3e0muTransMass;
