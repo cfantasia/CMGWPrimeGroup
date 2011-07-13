@@ -77,6 +77,7 @@ const TLorentzVector TeVMuon::getTrkLorentzVector(const reco::TrackRef & trk, bo
   }else{
     TVector3 p3(trk->px(), trk->py(), trk->pz());
     trkP4 = TLorentzVector(p3, wprime::MUON_MASS);
+    isInvalidMuon = false;
   } 
   return trkP4;
 }
