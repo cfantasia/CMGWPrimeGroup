@@ -89,7 +89,7 @@ class MuMETAnalyzer
 		  edm::EventBase const & event, const TeVMuon * muon);
   
   // dump on screen info about high-pt muon
-  void printHighPtMuon(edm::EventBase const & event, const TeVMuon & muon);
+  void printHighPtMuon(edm::EventBase const & event, TeVMuon & muon);
 
   TLorentzVector mu4D;
 
@@ -147,6 +147,9 @@ class MuMETAnalyzer
   //  TH1F * hMJDPHI[Num_mumet_cuts];
   TH1F * hISO[Num_mumet_cuts];
   TH1F * hTM[Num_mumet_cuts];
+
+  std::vector<unsigned> reconstructors;
+
 
 };
 

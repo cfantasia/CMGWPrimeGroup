@@ -28,6 +28,11 @@ MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUti
 
   setupCutOrder();
 
+  reconstructors.push_back(kGLOBAL);
+  reconstructors.push_back(kINNER);
+  reconstructors.push_back(kCOCKTAIL);
+  reconstructors.push_back(kDYT);
+ 
 }
 
 MuMETAnalyzer::~MuMETAnalyzer()
@@ -374,53 +379,33 @@ void MuMETAnalyzer::setupCutOrder()
 }
 
 // dump on screen info about high-pt muon
-void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const TeVMuon & muon) 
+void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, TeVMuon & muon) 
 {
-  cout << " Run # = " << event.id().run() << " Event # = " 
+  cout << "\n Run # = " << event.id().run() << " Event # = " 
        << event.id().event() << " LS = " << event.id().luminosityBlock() 
        << endl;
-
-  cout << " Muon eta = " << mu4D.Eta() << "  phi = " << mu4D.Phi()
-       << " pt = " << mu4D.Pt() << " GeV " << " inner track pt = "
-       << muon.innerTrack()->pt() << " GeV " << " global track pt = " 
-       << muon.globalTrack()->pt() << " GeV " << endl;
-  cout << " TPFMS pt = " << muon.tpfmsMuon()->pt() << " GeV " 
-       << " cocktail pt = " << muon.cocktailMuon()->pt() << " GeV " 
-       << " picky pt = " << muon.pickyMuon()->pt() << " GeV " 
-       << " DYT pt = " << muon.dytMuon()->pt() << " GeV" << endl;
-
+  cout << " Muon eta = " << mu4D.Eta() << "  phi = " << mu4D.Phi() << endl;
   pat::METCollection::const_iterator oldMET = met->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
-  cout << " default pfMET = " << oldMET->pt() << " GeV ";
-  cout << " default TM = " << WPrimeUtil::TMass(mu4D, oldMETv) << " GeV" 
-       << endl;
-  TVector2 newMET = getNewMET(event, mu4D);
-  cout << " TeVMu-adjusted pfMET = " << newMET.Mod() 
-       << " GeV ";
-  cout << " TeVMu-adjusted TM = " << WPrimeUtil::TMass(mu4D, newMET)
-       << " GeV " << endl;
-      
-#if 0
-  cout << " P = " << 
+  //  cout << " default pfMET = " << oldMET->pt() << " GeV ";
 
-  printMe("  pt = ", theMu);
-  printMe(" dpt = ", theMu);
-  cout << " # of layers: (strip, pixel) " << endl;
-  printMe("layers", theMu);
-  cout << " # of layers w/o measurement: (strip, pixel) " << endl;
-  printMe("layersNoMeas", theMu);
-  cout << " # of hits (strip, pixel, muon) " << endl;
-  printMe("hits", theMu);
-  cout << " Chi2/Ndof " << endl;
-  printMe("chi2", theMu);
-  cout << " Tracker eta =  " << theMu->tracker.p.Eta()
-       << ", Tracker phi = " << theMu->tracker.p.Phi() << endl;
-  cout << " # of standalone muon hits = " << theMu->Nmu_hits << endl;
-  cout << " Global: " << theMu->AllGlobalMuons
-       << " Tracker: " << theMu->AllTrackerMuons
-       << " Standalone: " << theMu->AllStandAloneMuons
-       << " Global prompt tight: " << theMu->GlobalMuonPromptTight << endl;
-#endif
+  typedef std::vector<unsigned>::iterator It;
+
+  for(It it = reconstructors.begin(); it != reconstructors.end(); ++it)
+    {
+      bool isInvalid = true;
+      unsigned rec_i(*it);
+      TLorentzVector p4 = muon.p4(rec_i, isInvalid);
+      if(isInvalid)continue;
+      TVector2 newMET = getNewMET(event, p4);
+      cout << " " << algo_desc_long[rec_i] << " pt = "
+	   << muon.GetTrack(rec_i)->pt() << " +- " 
+	   << muon.GetTrack(rec_i)->ptError()
+	   << " GeV, charge = " << muon.GetTrack(rec_i)->charge() 
+	   << ", TM = " << WPrimeUtil::TMass(p4, newMET) << " GeV " << endl;
+    }
+      
+
 }
 
 // Get new MET: there are two corrections to be made:
