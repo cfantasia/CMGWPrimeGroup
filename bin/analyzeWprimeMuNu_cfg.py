@@ -7,6 +7,7 @@ process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_section
 process.WprimeAnalyzer.logFile = cms.string("event_counts_MuMET.txt")
 ## enable analysis in individual channels
 process.WprimeAnalyzer.runMuMETAnalysis = cms.bool(True)
+process.WprimeAnalyzer.maxEvents = cms.int32(-1)
 
 ## input specific for this analyzer
 process.WprimeAnalyzer.muons = cms.InputTag('selectedPatMuons')
