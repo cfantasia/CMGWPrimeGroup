@@ -9,6 +9,12 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/WprimeTreeVariables.h"
 
+// for Trigger
+#include "DataFormats/Common/interface/TriggerResults.h"
+#include "FWCore/Common/interface/TriggerNames.h"
+#include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
+#include "DataFormats/HLTReco/interface/TriggerEvent.h"
+
 #include "SHarper/HEEPAnalyzer/interface/HEEPEleSelector.h"
 #include "SHarper/HEEPAnalyzer/interface/HEEPEle.h"
 
@@ -61,6 +67,17 @@ class EleMETAnalyzer
    // keeps track of selection efficiencies for all input samples & cuts
   wprime::SampleStat stats;
 
+  // Trigger
+  edm::InputTag triggerResults_;
+  std::vector<std::string> HLTPathsByName_;
+  std::vector<unsigned int> HLTPathsByIndex_;
+
+  bool SameTrigger(std::string & A, std::string & B);
+
+  // PileUp
+  std::string pileupLabel_;
+  // std::vector< PileupSummaryInfo > PupInfo_; 
+
   bool highestEtElectronOnly_; // whether to only consider highest-pt electron in event
   bool dumpHighEtElectrons_; // whether to dump high-pt electrons for data
   float dumpHighEtElectronThreshold_;
@@ -109,7 +126,7 @@ class EleMETAnalyzer
   TVector2 getNewMET(edm::EventBase const & event, const TLorentzVector & el_p);
 
   // whether HLT accepted the event
-  bool passedHLT(bool *, const heep::Ele &, edm::EventBase const &);
+  bool passedHLT(bool *, const heep::Ele &, edm::EventBase const & event);
 
   // check if electron satisfies quality requirements
   // fill goodQual; always returns true

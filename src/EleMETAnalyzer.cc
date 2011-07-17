@@ -18,6 +18,13 @@ EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeU
   highestEtElectronOnly_ = cfg.getParameter<bool>("highestEtElectronOnly");
   dumpHighEtElectrons_   = cfg.getParameter<bool>("dumpHighEtElectrons");
   dumpHighEtElectronThreshold_ = cfg.getParameter<double>("dumpHighEtElectronThreshold");
+  
+  triggerResults_ = cfg.getParameter<edm::InputTag>("triggerResults");
+  HLTPathsByName_= cfg.getParameter<std::vector<std::string > >("hltPaths");
+  HLTPathsByIndex_.resize(HLTPathsByName_.size());
+  
+  pileupLabel_ = cfg.getParameter<string>("pileupTag");
+  
 
   setupCutOrder();
   
@@ -411,11 +418,63 @@ TVector2 EleMETAnalyzer::getNewMET(edm::EventBase const & event, const TLorentzV
   return TVector2 (pfMET->px(), pfMET->py());
 }
 
+//##Trigger
+inline bool
+EleMETAnalyzer::SameTrigger(string & A, string & B){
+  return (B.find("*") == string::npos) ? !A.compare(B) : !A.compare(0, A.size()-1, B, 0, B.size()-1);
+}
+
+
 // whether HLT accepted the event
-bool EleMETAnalyzer::passedHLT(bool *, const heep::Ele &, edm::EventBase const &)
+bool EleMETAnalyzer::passedHLT(bool *, const heep::Ele &, edm::EventBase const & event)
 {
-  // needs implementation
-  return true;
+  // retrieve TriggerResults from the event
+  edm::Handle<edm::TriggerResults> triggerResults ;
+  event.getByLabel(triggerResults_,triggerResults) ;
+  
+  bool accept = false ;
+  
+  if (triggerResults.isValid())
+    {
+      // get trigger names
+      const edm::TriggerNames & triggerNames = event.triggerNames(*triggerResults);
+      
+      unsigned int n = HLTPathsByName_.size() ;
+      for (unsigned int i=0; i!=n; i++)
+	{
+	  HLTPathsByIndex_[i]=triggerNames.triggerIndex(HLTPathsByName_[i]) ;
+	}
+      
+      // empty input vectors (n==0) means any trigger paths
+      if (n==0)
+	{
+	  n=triggerResults->size() ;
+	  HLTPathsByName_.resize(n) ;
+	  HLTPathsByIndex_.resize(n) ;
+	  for ( unsigned int i=0 ; i!=n ; i++)
+	    {
+              HLTPathsByName_[i]=triggerNames.triggerName(i) ;
+              HLTPathsByIndex_[i]=i ;
+	    }
+	}
+      
+      // count number of requested HLT paths which have fired
+      unsigned int fired=0 ;
+      for ( unsigned int i=0 ; i!=n ; i++ )
+	{
+	  if (HLTPathsByIndex_[i]<triggerResults->size())
+	    {
+	      if (triggerResults->accept(HLTPathsByIndex_[i]))
+		{
+		  fired++ ;
+		  accept = true ;
+		}
+	    }
+	}
+      
+    }
+  
+  return accept;
 }
 
 int EleMETAnalyzer::ignoreIsolationMask = (~heep::CutCodes::ISOLEMHADDEPTH1)
