@@ -8,6 +8,7 @@ process.WprimeAnalyzer.logFile = cms.string("event_counts_ElMET.txt")
 
 ## enable analysis in individual channels
 process.WprimeAnalyzer.runElMETAnalysis = cms.bool(True)
+process.WprimeAnalyzer.maxEvents = cms.int32(-1)
 
 ## input specific for this analyzer
 process.WprimeAnalyzer.electrons = cms.InputTag('selectedPatElectrons')
@@ -21,3 +22,10 @@ process.WprimeAnalyzer.dumpHighEtElectronThreshold = cms.double(200)
 process.WprimeAnalyzer.barrelCuts = heepBarrelCuts
 process.WprimeAnalyzer.endcapCuts = heepEndcapCuts
 
+#for trigger
+process.WprimeAnalyzer.triggerResults = cms.InputTag("TriggerResults::HLT")
+process.WprimeAnalyzer.hltPaths = cms.vstring('HLT_Ele22_SW_TighterEleId_L1R_v1','HLT_Ele22_SW_TighterEleId_L1R_v2','HLT_Ele22_SW_TighterEleId_L1R_v3',
+    'HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v1','HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2','HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v3',
+    'HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_ TrkIsoT_v1','HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_ TrkIsoT_v2','HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_ TrkIsoT_v3',
+    'HLT_Ele25_WP80_PFMT40_v1')
+##process.WprimeAnalyzer.pileupTag  = cms.string('addPileupInfo'),
