@@ -103,7 +103,7 @@ public:
   bool SameTrigger(std::string & A, std::string & B);
 
 //methods for utilities
-  void CheckStream(ofstream& stream, std::string s);
+//  void CheckStream(ofstream& stream, std::string s);
 
 //methods for modifiers
   void SetCandEvtFile(std::string s);
@@ -133,7 +133,7 @@ public:
   bool PassHadVMassCut();
   bool PassHadVptCut();
 
-  bool PassZLepPtCut();
+  //  bool PassZLepPtCut();
   
   bool PassMuonCut(const TeVMuon* mu);
   bool PassMuonLooseCut(const TeVMuon* mu);
@@ -231,7 +231,28 @@ public:
 
 // +++++++++++++++++++ Histogram Definitions
   TH1F* h_HadVZMass;
-  
+  TH1F* h_Zmuon1_pt;	
+  TH1F* h_Zmuon1_eta;
+  TH1F* h_Zmuon1_phi;
+  TH1F* h_Zmuon2_pt;
+  TH1F* h_Zmuon2_eta;
+  TH1F* h_Zmuon2_phi;
+  TH1F* h_jet1_pt;
+  TH1F* h_jet1_eta;
+  TH1F* h_jet1_phi;
+  TH1F* h_jet2_pt;
+  TH1F* h_jet2_eta;
+  TH1F* h_jet2_phi;
+  TH1F* h_jet1_mass;
+  TH1F* h_jet2_mass;
+  TH1F* h_deltaR_muon1muon2;
+  TH1F* h_deltaR_jet1muon1;
+  TH1F* h_deltaR_jet1muon2;
+  TH1F* h_deltaR_jet2muon1;
+  TH1F* h_deltaR_jet2muon2;	
+  TH1F* h_HadVZpt;
+  TH1F* h_HadVZeta;
+  TH1F* h_HadVZphi;		
   // http://www.parashift.com/c++-faq-lite/pointers-to-members.html#faq-33.5
   // Good manners!
   
@@ -246,6 +267,71 @@ public:
   // Map between strings and member function pointers
   std::map<std::string, MuonCutFnPtr> mMuonFnPtrs_;
 
+
+  //NEW STUFF
+ // void FillCutFNS();
+
+
+//  std::string looseMuonType_, tightMuonType_;
+//  float maxZMassDiff_;
+//  float minDeltaR_;
+  //  std::vector<float> Num_surv_cut_;
+//  std::vector<double> effectiveMuonArea_;
+
+/*
+
+  int NCuts_;
+  std::vector<std::string> Cuts_;
+  typedef bool (HadronicVZAnalyzer::*    CutFnPtr)(); 
+#ifndef __CINT__
+  std::map<std::string,     CutFnPtr> mFnPtrs_;
+  std::vector<    CutFnPtr> CutFns_;
+#endif
+
+
+  PSet mSelectorPset_;
+  MuonSelector looseMuon_;
+  MuonSelector tightMuon_;
+  pat::strbitset muonResult_;
+
+
+
+  double rhoFastJet_;
+
+  void ResetCounters();
+
+  float MuonPU(const TeVMuon & m);
+  ZCandidate zCand_;
+  bool inEE(const TeVMuon& mu);
+*/
+
+  ZCandidate zCand_;
+
+  
+  /*  struct highestPt {
+    bool operator() (const reco::Candidate & a, const reco::Candidate & b){
+      
+      return a.pt() > b.pt();
+    }
+    };*/
+
+
 };
+
+struct highestMuonPt {                                                                                                                                     
+  bool operator() (const TeVMuon & a, const TeVMuon & b){                                                                                  
+                                                                                                                                                             
+    return a.pt() > b.pt();                                                                                                                                
+  }                                                                                                                                                        
+};
+
+
+struct highestJetPt {
+  bool operator() (const pat::Jet & a, const pat::Jet & b){
+    return a.pt() > b.pt();
+  }
+};
+
+
 
 #endif//#define _HadronicVZAnalyzer_h_
