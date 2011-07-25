@@ -7,28 +7,29 @@ process.WprimeAnalyzer.useJSON = cms.bool(True)
 process.WprimeAnalyzer.logFile     = cms.string("test.log")
 process.WprimeAnalyzer.candEvtFile = cms.string("testCandEvtFile.txt")
 process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_sections_HadVZ.txt")
-
+process.WprimeAnalyzer.debugme = cms.bool(False)
+process.WprimeAnalyzer.preselect = cms.bool(False)
 ## enable analysis in individual channels
 process.WprimeAnalyzer.runHadVZAnalysis = cms.bool(True)
-
+process.WprimeAnalyzer.triggersToUse = cms.vstring()
 ## input specific for this analyzer
 process.WprimeAnalyzer.muons = cms.string('selectedPatMuons')
-process.WprimeAnalyzer.muonAlgo = cms.uint32(0)
+process.WprimeAnalyzer.muonAlgo = cms.uint32(3)
 process.WprimeAnalyzer.jets = cms.string('selectedPatJets')
 process.WprimeAnalyzer.genParticles = cms.InputTag('prunedGenParticles')
 process.WprimeAnalyzer.hltEventTag = cms.string('patTriggerEvent')
 process.WprimeAnalyzer.pileupTag  = cms.string('addPileupInfo')
 #
-process.WprimeAnalyzer.maxNumZs = cms.uint32(1)
-process.WprimeAnalyzer.minNLeptons =cms.uint32(2)
-process.WprimeAnalyzer.minNumJets = cms.uint32(0) # Larger than
-process.WprimeAnalyzer.maxNumJets = cms.uint32(9999) # Smaller than 
+process.WprimeAnalyzer.maxNumZs = cms.uint32(2)
+process.WprimeAnalyzer.minNLeptons =cms.uint32(1)
+process.WprimeAnalyzer.minNJets = cms.uint32(0) # Larger than
+process.WprimeAnalyzer.maxNJets = cms.uint32(9999) # Smaller than 
 process.WprimeAnalyzer.minLeadPt = cms.double(20.0)
 process.WprimeAnalyzer.maxAngleBetweenJets = cms.double(9999.9)
 #
 process.WprimeAnalyzer.minZpt = cms.double(0.0) # All units in GeV
-process.WprimeAnalyzer.minZmass = cms.double(80.0)
-process.WprimeAnalyzer.maxZmass = cms.double(100.0)
+process.WprimeAnalyzer.minZmass = cms.double(70.0)
+process.WprimeAnalyzer.maxZmass = cms.double(110.0)
 process.WprimeAnalyzer.minHadVPt = cms.double(0.0)
 process.WprimeAnalyzer.minHadVmass = cms.double(0.0)
 process.WprimeAnalyzer.maxHadVmass = cms.double(9999.9)
@@ -39,10 +40,10 @@ process.WprimeAnalyzer.minMuonTightPt = cms.double(20.)
 #VBTF Recommended Cuts
 process.WprimeAnalyzer.maxMuonDxy = cms.double(0.2)
 process.WprimeAnalyzer.maxMuonNormChi2 = cms.double(10.)
-process.WprimeAnalyzer.minMuonNPixHit = cms.int32(0)
-process.WprimeAnalyzer.minMuonNTrkHit = cms.int32(10)
-process.WprimeAnalyzer.minMuonStations = cms.int32(1)
-process.WprimeAnalyzer.minMuonHitsUsed = cms.int32(0)
+process.WprimeAnalyzer.minMuonNPixHit = cms.uint32(0)
+process.WprimeAnalyzer.minMuonNTrkHit = cms.uint32(10)
+process.WprimeAnalyzer.minMuonStations = cms.uint32(1)
+process.WprimeAnalyzer.minMuonHitsUsed = cms.uint32(0)
 # +++++++++++++++++++Jet General Cuts
 process.WprimeAnalyzer.minJetPt = cms.double(30.0)
 process.WprimeAnalyzer.maxJetEta = cms.double(2.4)
