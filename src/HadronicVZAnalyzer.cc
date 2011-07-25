@@ -1,5 +1,7 @@
 #include "UserCode/CMGWPrimeGroup/interface/HadronicVZAnalyzer.h"
 #include "DataFormats/PatCandidates/interface/PFParticle.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "DataFormats/TrackReco/interface/TrackBase.h"
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember)) 
 
 using namespace std;
@@ -203,7 +205,7 @@ void HadronicVZAnalyzer::Declare_Histos(TFileDirectory & dir)
   h_Zmuon2_eta = dir.make<TH1F>("h_Zmuon2_eta", "h_Zmuon2_eta", 40, -5.0, 5.0);
   h_Zmuon2_phi = dir.make<TH1F>("h_Zmuon2_phi", "h_Zmuon2_phi", 20, -4.0, 4.0);
 
-  h_deltaR_muon1muon2 = dir.make<TH1F>("h_deltaR_muon1muon1", "h_deltaR_muon1muon2", 50, 0., 5.);
+  h_deltaR_muon1muon2 = dir.make<TH1F>("h_deltaR_muon1muon2", "h_deltaR_muon1muon2", 50, 0., 5.);
 
   h_jet1_pt = dir.make<TH1F>("h_jet1_pt", "h_jet1_pt", 100, 0.0, 1000.0);
   h_jet1_eta = dir.make<TH1F>("h_jet1_eta", "h_jet1_eta", 40, -5.0, 5.0);
@@ -224,7 +226,16 @@ void HadronicVZAnalyzer::Declare_Histos(TFileDirectory & dir)
   h_HadVZeta = dir.make<TH1F>("h_HadVZeta", "h_HadVZeta", 10, 0.0, 5.0);
   h_HadVZphi = dir.make<TH1F>("h_HadVZphi", "h_HadVZphi", 10, -4.0, 4.0);
   
+  h_muons_pt = dir.make<TH1F>("h_muons_pt", "h_muons_pt", 100, 0.0, 1000.);
+  h_muons_eta = dir.make<TH1F>("h_muons_eta", "h_muons_eta", 40, -5.0, 5.);  
+  h_muons_phi = dir.make<TH1F>("h_muons_phi", "h_muons_phi", 20, -4.0, 4.);
   
+  
+  // 2D Piotr histos
+
+  h_dptpt_vs_pt = dir.make<TH2F>("h_dptpt_vs_pt", "h_dptpt_vs_pt", 100, 0.0, 1000., 100, 0.0, 1000.);
+  h_dptpt2_vs_pt = dir.make<TH2F>("h_dptpt2_vs_pt", "h_dptpt2_vs_pt", 100, 0.0, 1000., 100, 0.0, 1000.);
+
 
   //
 
@@ -276,9 +287,11 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     //New simple implementation of muon cuts
     //Chi2 cut dropped
 
-    bool TightMuonCuts = PassMuonTightPtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonNtrkhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
+    bool TightMuonCuts = PassMuonTightPtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonNtrkhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
 
-    bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonNtrkhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
+    //  bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonNtrkhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
+
+    bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
     
     if (LooseMuonCuts)
       looseMuons_.push_back(muons_[i]);
@@ -333,6 +346,19 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
       sort(tightMuons_.begin(), tightMuons_.end(), highestMuonPt());
     }
   
+  //Fill histos for all muons in the event
+  for (size_t nM=0; nM<looseMuons_.size(); nM++)
+    {
+      h_muons_pt->Fill(looseMuons_.at(nM).pt());
+      h_muons_eta->Fill(looseMuons_.at(nM).eta());
+      h_muons_phi->Fill(looseMuons_.at(nM).phi());
+
+      h_dptpt_vs_pt->Fill((looseMuons_.at(nM).track()->ptError())/(looseMuons_.at(nM).track()->pt()),looseMuons_.at(nM).pt());
+      h_dptpt2_vs_pt->Fill((looseMuons_.at(nM).track()->ptError())/((looseMuons_.at(nM).track()->pt())*(looseMuons_.at(nM).track()->pt())),looseMuons_.at(nM).pt());
+
+      
+    }
+
 
   //Fill muon histos for loose muons
   int oneMu = 0;
@@ -473,21 +499,25 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     //    zCand = getZCands(looseMuons_).at(0);
 
     ZCandV zCand = getZCands(looseMuons_, 12.5);
-
+    
     if(zCand.size()>0)
       { 
 	zCand_ =  zCand[0];
-	cout << "Daugh 1 pT is " << zCand[0].daughter(0)->pt() << endl;
-	cout << "Daugh 2 pT is " << zCand[0].daughter(1)->pt() << endl;
-
+	if (debugme)
+	  {
+	    cout << "Daugh 1 pT is " << zCand[0].daughter(0)->pt() << endl;
+	    cout << "Daugh 2 pT is " << zCand[0].daughter(1)->pt() << endl;
+	  }
 	
-	h_Zmuon1_pt->Fill(zCand[0].daughter(0)->pt());
-	h_Zmuon1_eta->Fill(zCand[0].daughter(0)->eta());
-	h_Zmuon1_phi->Fill(zCand[0].daughter(0)->phi());
-	h_Zmuon2_pt->Fill(zCand[0].daughter(1)->pt());
-	h_Zmuon2_eta->Fill(zCand[0].daughter(1)->eta());
-	h_Zmuon2_phi->Fill(zCand[0].daughter(1)->phi());	  
-	h_deltaR_muon1muon2->Fill(deltaR(zCand[0].daughter(0)->eta(), zCand[0].daughter(0)->phi(), zCand[0].daughter(1)->eta(), zCand[0].daughter(1)->phi()));
+	const TeVMuon m1 = FindMuon(*zCand_.daughter(0));
+	const TeVMuon m2 = FindMuon(*zCand_.daughter(1));
+	h_Zmuon1_pt->Fill(m1.pt());
+	h_Zmuon1_eta->Fill(m1.eta());
+	h_Zmuon1_phi->Fill(m1.phi());
+	h_Zmuon2_pt->Fill(m2.pt());
+	h_Zmuon2_eta->Fill(m2.eta());
+	h_Zmuon2_phi->Fill(m2.phi());	  
+	h_deltaR_muon1muon2->Fill(deltaR(m1.eta(), m1.phi(), m2.eta(), m2.phi()));
 	    
 	
       }
@@ -845,6 +875,29 @@ void HadronicVZAnalyzer::endFile(std::vector<wprime::InputFile>::const_iterator 
 
 void HadronicVZAnalyzer::endAnalysis(ofstream & out){
 }
+
+
+TeVMuon &
+HadronicVZAnalyzer::FindMuon(reco::Candidate & p){
+  for(uint i=0; i<muons_.size(); ++i){
+    if(Match(muons_[i], p)) return muons_[i];
+  }
+  cout<<"Didn't find match for muon!!!, returning random one\n";
+  return muons_[0];
+}
+
+
+bool
+HadronicVZAnalyzer::Match(TeVMuon & p1, reco::Candidate & p2){
+  float tolerance = 0.0001;
+  if (p1.pdgId() == p2.pdgId() &&
+      fabs(p1.eta() - p2.eta()) < tolerance &&
+      fabs(p1.phi() - p2.phi()) < tolerance
+    )
+    return true;
+  return false;
+}
+
 
 /*
 inline bool HadronicVZAnalyzer::inEE(const TeVMuon& mu){
