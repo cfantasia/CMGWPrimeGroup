@@ -11,27 +11,6 @@ HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil
   wprimeUtil_ = wprimeUtil;
   assert(wprimeUtil_);
 
-  //NEW STUFF
-  /*
-  Cuts_ = cfg.getParameter<vstring>("Cuts");
-  NCuts_ = Cuts_.size();
-
-  FillCutFNS();
-
-
-  mSelectorPset_ = cfg.getParameter<PSet>("muonSelectors");
-  looseMuonType_ = cfg.getParameter<string>("LooseMuonType");
-  tightMuonType_ = cfg.getParameter<string>("TightMuonType");
-  looseMuon_ = MuonSelector(mSelectorPset_, looseMuonType_);
-  tightMuon_ = MuonSelector(mSelectorPset_, tightMuonType_);
-  muonResult_ = looseMuon_.getBitTemplate();
-  if(debugme) cout<<"Using "<<looseMuonType_<<" for Z muons and "
-                  <<tightMuonType_<<" for W muons\n";
-
-  //
-  */
-
-
   SetLogFile(cfg.getParameter<string>("logFile"));
   SetCandEvtFile(cfg.getParameter<string>("candEvtFile"));
 
@@ -41,9 +20,6 @@ HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil
   intOptions_["events"] = 0;
 
   debugme = cfg.getParameter<bool>("debugme");
-
-
-  
 
   muonsLabel_ = cfg.getParameter<string>("muons");
   jetsLabel_ = cfg.getParameter<string>("jets");
@@ -56,19 +32,6 @@ HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil
   pileupLabel_ = cfg.getParameter<string>("pileupTag");
 
   triggersToUse_          = cfg.getParameter<vstring>("triggersToUse");
-
-  //More new stuff
-  /*
-  maxZMassDiff_ = cfg.getParameter<double>("maxZMassDiff");
-  minDeltaR_ = cfg.getParameter<double>("minDeltaR");
-
-  Num_surv_cut_.assign(NCuts_,0.);
-  if(debugme) printf("Using %i cuts\n",NCuts_);
-
-  effectiveMuonArea_ = cfg.getParameter<vector<double> >("effectiveMuonArea");
-
-  //
-  */
 
   PDGMUON = 13;
   PDGELEC = 11;
@@ -96,13 +59,6 @@ HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil
   minZpt = cfg.getParameter<double>("minZpt");
   minZmass = cfg.getParameter<double>("minZmass");
   maxZmass = cfg.getParameter<double>("maxZmass");
-
-  //New Stuff
-  /*
-  minZmmPt1_ = cfg.getParameter<double>("minZmmPt1");
-  minZmmPt2_ = cfg.getParameter<double>("minZmmPt2");
-  */
-  //
 
 
 // +++++++++++++++++++Hadronic Boson Cuts
@@ -139,62 +95,13 @@ HadronicVZAnalyzer::~HadronicVZAnalyzer(){
 }
 
 
-//NEW stuff
-/*
-void HadronicVZAnalyzer::FillCutFNS(){
-  
-  mFnPtrs_["NoCuts"] = &HadronicVZAnalyzer::PassNoCut;
-  mFnPtrs_["HLT"] = &HadronicVZAnalyzer::PassTriggersCut;
-  //  mFnPtrs_["MinNLeptons"] = &HadronicVZAnalyzer::PassMinNLeptonsCut;
-  //  mFnPtrs_["EvtSetup"] = &HadronicVZAnalyzer::PassEvtSetupCut;
-  mFnPtrs_["ValidHadV"] = &HadronicVZAnalyzer::PassValidHadVCut;
-  mFnPtrs_["ValidZ"] = &HadronicVZAnalyzer::PassValidZCut;
-  //  mFnPtrs_["ValidHadVandZ"] = &HadronicVZAnalyzer::PassValidHadVandZCut;
-  mFnPtrs_["ValidHadVZCand"] = &HadronicVZAnalyzer::PassValidHadVZCandCut;
-  mFnPtrs_["LeadLepPt"] = &HadronicVZAnalyzer::PassLeadingLeptonPtCut;
-  mFnPtrs_["NumZs"] = &HadronicVZAnalyzer::PassNumberOfZsCut;
-  mFnPtrs_["ZMass"] = &HadronicVZAnalyzer::PassZMassCut;
-  mFnPtrs_["HadVMass"] = &HadronicVZAnalyzer::PassHadVMassCut;
-  mFnPtrs_["Zpt"] = &HadronicVZAnalyzer::PassZptCut;
-  mFnPtrs_["HadVpt"] = &HadronicVZAnalyzer::PassHadVptCut;
-  // mFnPtrs_["ZLepPt"] = &HadronicVZAnalyzer::PassZLepPtCut;
-  //  mFnPtrs_["ZLepTrigMatch"] = &HadronicVZAnalyzer::PassZLepTriggerMatchCut;
-  mFnPtrs_["AllCuts"] = &HadronicVZAnalyzer::PassNoCut;
-  //  mFnPtrs_["FakeEvt"] = &HadronicVZAnalyzer::PassFakeEvtCut;
-  //  mFnPtrs_["FakeLepTag"] = &HadronicVZAnalyzer::PassFakeLeptonTagCut;
-  //  mFnPtrs_["FakeLepProbeLoose"] = &HadronicVZAnalyzer::PassFakeLeptonProbeLooseCut;
-  // mFnPtrs_["FakeLepProbeTight"] = &HadronicVZAnalyzer::PassFakeLeptonProbeTightCut;
-
-  CutFns_.resize(NCuts_);
-  for(int i=0; i<NCuts_; ++i){
-    if(mFnPtrs_.find(Cuts_[i]) == mFnPtrs_.end()){
-      cout<<"Didn't find Cut named "<<Cuts_[i]<<endl;
-      abort();
-    }
-    CutFns_[i] = mFnPtrs_.find(Cuts_[i])->second;
-  }
-  
-}
-
-
-inline void
-HadronicVZAnalyzer::ResetCounters(){
-  if(debugme) printf("Reset Counters\n");
-  for(uint i=0; i<Num_surv_cut_.size(); ++i)
-    Num_surv_cut_[i] = 0.;
-}
-
-
-//
-*/
-
 /// Declare Histograms
 //--------------------------------------------------------------
 void HadronicVZAnalyzer::Declare_Histos(TFileDirectory & dir)
 {
   // Extend later.
   printf("Declare histos\n");
-  h_HadVZMass = dir.make<TH1F>("h_HadVZMass","h_HadVZMass",200,0.0,2000.0);
+  h_HadVZMass = dir.make<TH1F>("h_HadVZMass","h_HadVZMass",250,0.0,2500.0);
 
   //New histos
   
@@ -205,7 +112,20 @@ void HadronicVZAnalyzer::Declare_Histos(TFileDirectory & dir)
   h_Zmuon2_eta = dir.make<TH1F>("h_Zmuon2_eta", "h_Zmuon2_eta", 40, -5.0, 5.0);
   h_Zmuon2_phi = dir.make<TH1F>("h_Zmuon2_phi", "h_Zmuon2_phi", 20, -4.0, 4.0);
 
+
+  h_Zmuon1_VZCut_pt = dir.make<TH1F>("h_Zmuon1_VZCut_pt", "h_Zmuon1_VZCut_pt", 100, 0.0, 1000.0);
+  h_Zmuon1_VZCut_eta = dir.make<TH1F>("h_Zmuon1_VZCut_eta", "h_Zmuon1_VZCut_eta", 40, -5.0, 5.0);
+  h_Zmuon1_VZCut_phi = dir.make<TH1F>("h_Zmuon1_VZCut_phi", "h_Zmuon1_VZCut_phi", 20, -4.0, 4.0);
+  h_Zmuon2_VZCut_pt = dir.make<TH1F>("h_Zmuon2_VZCut_pt", "h_Zmuon2_VZCut_pt", 100, 0.0, 1000.0);
+  h_Zmuon2_VZCut_eta = dir.make<TH1F>("h_Zmuon2_VZCut_eta", "h_Zmuon2_VZCut_eta", 40, -5.0, 5.0);
+  h_Zmuon2_VZCut_phi = dir.make<TH1F>("h_Zmuon2_VZCut_phi", "h_Zmuon2_VZCut_phi", 20, -4.0, 4.0);
+
   h_deltaR_muon1muon2 = dir.make<TH1F>("h_deltaR_muon1muon2", "h_deltaR_muon1muon2", 50, 0., 5.);
+
+  h_deltaR_HadVmuon1 = dir.make<TH1F>("h_deltaR_HadVmuon1", "h_deltaR_HadVmuon1", 50, 0., 5.);
+  h_deltaR_HadVmuon2 = dir.make<TH1F>("h_deltaR_HadVmuon2", "h_deltaR_HadVmuon2", 50, 0., 5.);
+
+
 
   h_jet1_pt = dir.make<TH1F>("h_jet1_pt", "h_jet1_pt", 100, 0.0, 1000.0);
   h_jet1_eta = dir.make<TH1F>("h_jet1_eta", "h_jet1_eta", 40, -5.0, 5.0);
@@ -222,20 +142,43 @@ void HadronicVZAnalyzer::Declare_Histos(TFileDirectory & dir)
   h_deltaR_jet2muon1 = dir.make<TH1F>("h_deltaR_jet2muon1", "h_deltaR_jet2muon1", 50, 0., 5.);
   h_deltaR_jet2muon2 = dir.make<TH1F>("h_deltaR_jet2muon2", "h_deltaR_jet2muon2", 50, 0., 5.);
 
-  h_HadVZpt = dir.make<TH1F>("h_HadVZpt", "h_HadVZpt", 10, 0.0, 100.0);
-  h_HadVZeta = dir.make<TH1F>("h_HadVZeta", "h_HadVZeta", 10, 0.0, 5.0);
-  h_HadVZphi = dir.make<TH1F>("h_HadVZphi", "h_HadVZphi", 10, -4.0, 4.0);
+  h_HadVZpt = dir.make<TH1F>("h_HadVZpt", "h_HadVZpt", 30, 0.0, 300.0);
+  h_HadVZeta = dir.make<TH1F>("h_HadVZeta", "h_HadVZeta", 40, -5.0, 5.0);
+  h_HadVZphi = dir.make<TH1F>("h_HadVZphi", "h_HadVZphi", 20, -4.0, 4.0);
   
   h_muons_pt = dir.make<TH1F>("h_muons_pt", "h_muons_pt", 100, 0.0, 1000.);
   h_muons_eta = dir.make<TH1F>("h_muons_eta", "h_muons_eta", 40, -5.0, 5.);  
   h_muons_phi = dir.make<TH1F>("h_muons_phi", "h_muons_phi", 20, -4.0, 4.);
+
+
+  h_jets_pt = dir.make<TH1F>("h_jets_pt", "h_jets_pt", 100, 0.0, 1000.);
+  h_jets_eta = dir.make<TH1F>("h_jets_eta", "h_jets_eta", 40, -5.0, 5.);  
+  h_jets_phi = dir.make<TH1F>("h_jets_phi", "h_jets_phi", 20, -4.0, 4.);
   
+
+  h_jet_HadV_pt = dir.make<TH1F>("h_jet_HadV_pt", "h_jet_HadV_pt", 100, 0.0, 1000.);
+  h_jet_HadV_eta = dir.make<TH1F>("h_jet_HadV_eta", "h_jet_HadV_eta", 40, -5.0, 5.);  
+  h_jet_HadV_phi = dir.make<TH1F>("h_jet_HadV_phi", "h_jet_HadV_phi", 20, -4.0, 4.);
+
+
+  h_jet_VZCut_pt = dir.make<TH1F>("h_jet_VZCut_pt", "h_jet_VZCut_pt", 100, 0.0, 1000.);
+  h_jet_VZCut_eta = dir.make<TH1F>("h_jet_VZCut_eta", "h_jet_VZCut_eta", 40, -5.0, 5.);  
+  h_jet_VZCut_phi = dir.make<TH1F>("h_jet_VZCut_phi", "h_jet_VZCut_phi", 20, -4.0, 4.);
   
+
+  h_jet_mult = dir.make<TH1F>("h_jet_mult", "h_jet_mult", 10, -0.5, 9.5); 
+  h_jet_mult_inc = dir.make<TH1F>("h_jet_mult_incl", "h_jet_mult_incl", 10, -0.5, 9.5); 
+
+
   // 2D Piotr histos
 
-  h_dptpt_vs_pt = dir.make<TH2F>("h_dptpt_vs_pt", "h_dptpt_vs_pt", 100, 0.0, 1000., 100, 0.0, 1000.);
-  h_dptpt2_vs_pt = dir.make<TH2F>("h_dptpt2_vs_pt", "h_dptpt2_vs_pt", 100, 0.0, 1000., 100, 0.0, 1000.);
+  h_dptpt_vs_pt = dir.make<TH2F>("h_dptpt_vs_pt", "h_dptpt_vs_pt", 50, 0., 0.5, 50, 0.0, 500.);
+  h_dptpt2_vs_pt = dir.make<TH2F>("h_dptpt2_vs_pt", "h_dptpt2_vs_pt", 150, 0., 0.1, 150, 0.0, 500.);
 
+  h_dptpt_vs_invpt = dir.make<TH2F>("h_dptpt_vs_invpt","h_dptpt_vs_invpt", 50, 0., 0.5, 50, 0., 0.1);
+  h_dptpt2_vs_invpt = dir.make<TH2F>("h_dptpt2_vs_invpt","h_dptpt2_vs_invpt", 150, 0., 0.5, 150, 0., 0.1);
+  h_dptpt_vs_eta = dir.make<TH2F>("h_dptpt_vs_eta","h_dptpt_vs_eta", 50, 0., 0.5, 50, -5., 5.);
+  h_dptpt2_vs_eta = dir.make<TH2F>("h_dptpt2_vs_eta","h_dptpt2_vs_eta", 150, 0., 0.5, 150, -5., 5.);
 
   //
 
@@ -287,12 +230,15 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     //New simple implementation of muon cuts
     //Chi2 cut dropped
 
-    bool TightMuonCuts = PassMuonTightPtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonNtrkhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
+    bool TightMuonCuts = PassMuonTightPtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonNtrkhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
 
     //  bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonNtrkhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
 
-    bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
+    //    bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonNtrkhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
     
+bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
+
+
     if (LooseMuonCuts)
       looseMuons_.push_back(muons_[i]);
     
@@ -353,9 +299,30 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
       h_muons_eta->Fill(looseMuons_.at(nM).eta());
       h_muons_phi->Fill(looseMuons_.at(nM).phi());
 
+      double trackpT = looseMuons_.at(nM).track()->pt();
+      double trackpT2 = trackpT*trackpT;
+      double invpt = 1/trackpT;
+      double trackpTError = looseMuons_.at(nM).track()->ptError();
+
+      double dptpt = trackpTError/trackpT;
+      double dptpt2 =trackpTError/trackpT2;
+
+      //  cout << "Muon number " << nM << " in the event had ptError = " << trackpTError << " and track pt " << trackpT << " and dpt/pt " << dptpt << " and dpt/pt2 " << dptpt2 << endl;
+
+      h_dptpt_vs_pt->Fill(dptpt, trackpT);
+      h_dptpt2_vs_pt->Fill(dptpt2, trackpT);
+
+      h_dptpt_vs_invpt->Fill(dptpt, invpt);
+      h_dptpt2_vs_invpt->Fill(dptpt2, invpt);
+
+      h_dptpt_vs_eta->Fill(dptpt, looseMuons_.at(nM).track()->eta());
+      h_dptpt2_vs_eta->Fill(dptpt2, looseMuons_.at(nM).track()->eta());
+
+
+      /*
       h_dptpt_vs_pt->Fill((looseMuons_.at(nM).track()->ptError())/(looseMuons_.at(nM).track()->pt()),looseMuons_.at(nM).pt());
       h_dptpt2_vs_pt->Fill((looseMuons_.at(nM).track()->ptError())/((looseMuons_.at(nM).track()->pt())*(looseMuons_.at(nM).track()->pt())),looseMuons_.at(nM).pt());
-
+      */
       
     }
 
@@ -389,6 +356,76 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
       jets_.push_back(patJets[i]);
   }
   
+  h_jet_mult->Fill(jets_.size());
+
+
+  h_jet_mult_inc->Fill(0);
+    
+
+  if (jets_.size()>=1)
+    {
+      h_jet_mult_inc->Fill(1);
+    }
+
+
+  if (jets_.size()>=2)
+    {
+      h_jet_mult_inc->Fill(2);
+    }
+
+  if (jets_.size()>=3)
+    {
+      h_jet_mult_inc->Fill(3);
+    }
+
+  if (jets_.size()>=4)
+    {
+      h_jet_mult_inc->Fill(4);
+    }
+
+  if (jets_.size()>=5)
+    {
+      h_jet_mult_inc->Fill(5);
+    }
+
+  if (jets_.size()>=6)
+    {
+      h_jet_mult_inc->Fill(6);
+    }
+
+
+  if (jets_.size()>=7)
+    {
+      h_jet_mult_inc->Fill(7);
+    }
+
+  if (jets_.size()>=8)
+    {
+      h_jet_mult_inc->Fill(8);
+    }
+
+  if (jets_.size()>=9)
+    {
+      h_jet_mult_inc->Fill(9);
+    }
+
+  if (jets_.size()>=10)
+    {
+      h_jet_mult_inc->Fill(10);
+    }
+
+
+
+
+  for (size_t nJ=0; nJ<jets_.size(); nJ++)
+    {
+      h_jets_pt->Fill(jets_.at(nJ).pt());
+      h_jets_eta->Fill(jets_.at(nJ).eta());
+      h_jets_phi->Fill(jets_.at(nJ).phi());
+    }
+
+
+
   //Fill jet histos for jets who passes the criteria
   if (jets_.size() > 0)
     {
@@ -417,7 +454,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
       if (twoMu ==1)
 	{
 	  h_deltaR_jet1muon2->Fill(deltaR(jets_.at(0).eta(), jets_.at(0).phi(), looseMuons_.at(1).eta(), looseMuons_.at(1).phi()));
-	}
+	  }
       
       if (jets_.size() > 1)
 	{
@@ -433,7 +470,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 	    {
 	      h_deltaR_jet2muon2->Fill(deltaR(jets_.at(1).eta(), jets_.at(1).phi(), looseMuons_.at(1).eta(), looseMuons_.at(1).phi()));
 	    }
-
+	  
 	}
       
 
@@ -498,7 +535,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     //  zCand = getZCands(looseMuons_).front();
     //    zCand = getZCands(looseMuons_).at(0);
 
-    ZCandV zCand = getZCands(looseMuons_, 12.5);
+    ZCandV zCand = getZCands(looseMuons_, 25.0);
     
     if(zCand.size()>0)
       { 
@@ -509,7 +546,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 	    cout << "Daugh 2 pT is " << zCand[0].daughter(1)->pt() << endl;
 	  }
 	
-	const TeVMuon m1 = FindMuon(*zCand_.daughter(0));
+	/*	const TeVMuon m1 = FindMuon(*zCand_.daughter(0));
 	const TeVMuon m2 = FindMuon(*zCand_.daughter(1));
 	h_Zmuon1_pt->Fill(m1.pt());
 	h_Zmuon1_eta->Fill(m1.eta());
@@ -517,7 +554,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 	h_Zmuon2_pt->Fill(m2.pt());
 	h_Zmuon2_eta->Fill(m2.eta());
 	h_Zmuon2_phi->Fill(m2.phi());	  
-	h_deltaR_muon1muon2->Fill(deltaR(m1.eta(), m1.phi(), m2.eta(), m2.phi()));
+	h_deltaR_muon1muon2->Fill(deltaR(m1.eta(), m1.phi(), m2.eta(), m2.phi()));*/
 	    
 	
       }
@@ -558,6 +595,27 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     cout << "Good Z from jet" << endl;
 
 
+
+  if (goodZ)
+    {
+      const TeVMuon m1 = FindMuon(*zCand_.daughter(0));
+      const TeVMuon m2 = FindMuon(*zCand_.daughter(1));
+      h_Zmuon1_pt->Fill(m1.pt());
+      h_Zmuon1_eta->Fill(m1.eta());
+      h_Zmuon1_phi->Fill(m1.phi());
+      h_Zmuon2_pt->Fill(m2.pt());
+      h_Zmuon2_eta->Fill(m2.eta());
+      h_Zmuon2_phi->Fill(m2.phi());	  
+      h_deltaR_muon1muon2->Fill(deltaR(m1.eta(), m1.phi(), m2.eta(), m2.phi()));
+    }
+
+  if (goodHadV)
+    {
+      h_jet_HadV_pt->Fill(wCand.pt());
+      h_jet_HadV_eta->Fill(wCand.eta());
+      h_jet_HadV_phi->Fill(wCand.phi());
+    }
+
   
   if(validZ && validHadV && goodZ && goodHadV) {
     reco::CompositeCandidate hadVZ;
@@ -570,10 +628,28 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     h_HadVZeta->Fill(hadVZ.eta());
     h_HadVZphi->Fill(hadVZ.phi());
 
+
+    const TeVMuon VZm1 = FindMuon(*zCand_.daughter(0));
+    const TeVMuon VZm2 = FindMuon(*zCand_.daughter(1));
+    h_Zmuon1_VZCut_pt->Fill(VZm1.pt());
+    h_Zmuon1_VZCut_eta->Fill(VZm1.eta());
+    h_Zmuon1_VZCut_phi->Fill(VZm1.phi());
+    h_Zmuon2_VZCut_pt->Fill(VZm2.pt());
+    h_Zmuon2_VZCut_eta->Fill(VZm2.eta());
+    h_Zmuon2_VZCut_phi->Fill(VZm2.phi());
+    
+    h_jet_VZCut_pt->Fill(wCand.pt());
+    h_jet_VZCut_eta->Fill(wCand.eta());
+    h_jet_VZCut_phi->Fill(wCand.phi());
+
+    h_deltaR_HadVmuon1->Fill(deltaR(wCand.eta(), wCand.phi(), VZm1.eta(), VZm1.phi()));
+    h_deltaR_HadVmuon2->Fill(deltaR(wCand.eta(), wCand.phi(), VZm2.eta(), VZm2.phi()));
+
+
   }
   else{
     if (debugme)
-      cout << "Didnt manage to make a damn bloody candidate (no good Zs)" << endl;
+      cout << "Didnt manage to make a HadVZ Candidate" << endl;
   }
 
   

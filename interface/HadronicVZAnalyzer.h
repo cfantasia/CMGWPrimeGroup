@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <TH2F.h>
+
 
 #include "DataFormats/FWLite/interface/Handle.h"
 #include "DataFormats/FWLite/interface/Event.h"
@@ -246,6 +248,8 @@ public:
   TH1F* h_jet1_mass;
   TH1F* h_jet2_mass;
   TH1F* h_deltaR_muon1muon2;
+  TH1F* h_deltaR_HadVmuon1;
+  TH1F* h_deltaR_HadVmuon2;
   TH1F* h_deltaR_jet1muon1;
   TH1F* h_deltaR_jet1muon2;
   TH1F* h_deltaR_jet2muon1;
@@ -253,9 +257,43 @@ public:
   TH1F* h_HadVZpt;
   TH1F* h_HadVZeta;
   TH1F* h_HadVZphi;		
+  TH1F* h_muons_pt;
+  TH1F* h_muons_eta;
+  TH1F* h_muons_phi;
+  TH1F* h_jets_pt;
+  TH1F* h_jets_eta;
+  TH1F* h_jets_phi;
+  TH1F* h_jet_HadV_pt;
+  TH1F* h_jet_HadV_eta;
+  TH1F* h_jet_HadV_phi;
+  TH1F* h_Zmuon1_VZCut_pt;
+  TH1F* h_Zmuon1_VZCut_eta;
+  TH1F* h_Zmuon1_VZCut_phi;
+  TH1F* h_Zmuon2_VZCut_pt;
+  TH1F* h_Zmuon2_VZCut_eta;
+  TH1F* h_Zmuon2_VZCut_phi;
+  TH1F* h_jet_VZCut_pt;
+  TH1F* h_jet_VZCut_eta;
+  TH1F* h_jet_VZCut_phi;
+  TH1F* h_jet_mult;
+  TH1F* h_jet_mult_inc;
+
+  TH2F* h_dptpt_vs_pt;
+  TH2F* h_dptpt2_vs_pt;
+
+  TH2F* h_dptpt_vs_invpt;
+  TH2F* h_dptpt2_vs_invpt;
+
+  TH2F* h_dptpt_vs_eta;
+  TH2F* h_dptpt2_vs_eta;
+
   // http://www.parashift.com/c++-faq-lite/pointers-to-members.html#faq-33.5
   // Good manners!
   
+  TeVMuon & FindMuon(reco::Candidate & p);
+  bool Match(TeVMuon & p1, reco::Candidate & p2);
+
+
   // MuonCutFnPtr type is: "pointer to member function of HadronicVZAnalyzer"
   // It takes a const TeVMuon* as argument, and returns a bool.
   typedef bool (HadronicVZAnalyzer::*MuonCutFnPtr)(const TeVMuon*); 

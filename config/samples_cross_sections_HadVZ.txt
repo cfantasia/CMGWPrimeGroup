@@ -1,9 +1,10 @@
-integrated lumi = 349.0 pb^-1
+integrated lumi = 204.18 pb^-1
 
-samplename = testSampleName
-description = testDescription
+samplename = data_May10ReReco_AK7
+description = SingleMuData
 x-section = 1
-pathname = patTuple.root
+subdir = patTuples_data_SingleMu_May10ReReco_AK7
+pathname = filelists_HadVZ/patTupleDataSingleMuAK7.txt
 Nprod_evt = 9999999
 
 DONE

@@ -2,7 +2,7 @@ from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
 process.WprimeAnalyzer.outputFile  = cms.string('test.root')## mandatory
 process.WprimeAnalyzer.maxEvents   = cms.int32(-1)                      ## optional
-process.WprimeAnalyzer.reportAfter = cms.uint32(1)                     ## optional
+process.WprimeAnalyzer.reportAfter = cms.uint32(1000)                     ## optional
 process.WprimeAnalyzer.useJSON = cms.bool(True)
 process.WprimeAnalyzer.logFile     = cms.string("test.log")
 process.WprimeAnalyzer.candEvtFile = cms.string("testCandEvtFile.txt")
@@ -31,8 +31,8 @@ process.WprimeAnalyzer.minZpt = cms.double(0.0) # All units in GeV
 process.WprimeAnalyzer.minZmass = cms.double(70.0)
 process.WprimeAnalyzer.maxZmass = cms.double(110.0)
 process.WprimeAnalyzer.minHadVPt = cms.double(0.0)
-process.WprimeAnalyzer.minHadVmass = cms.double(0.0)
-process.WprimeAnalyzer.maxHadVmass = cms.double(9999.9)
+process.WprimeAnalyzer.minHadVmass = cms.double(60.0)
+process.WprimeAnalyzer.maxHadVmass = cms.double(110.0)
 # +++++++++++++++++++Muon General Cuts
 process.WprimeAnalyzer.maxMuonEta = cms.double(2.5)
 process.WprimeAnalyzer.minMuonLoosePt = cms.double(10.)

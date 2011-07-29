@@ -10,8 +10,8 @@ removeMCMatching(process, ['All'])
 
 # 2nd argument: message-logger frequency
 # 3rd argument: # of events to process
-mumet_config(process, 1, 5000)
-jetExtra_config(process, 1, 5000)
+mumet_config(process, 1000, -1)
+jetExtra_config(process, 1000, -1)
 
 # keep all events with jet-pt above 30 GeV, |eta| < 2.4
 process.selectedPatJets.cut = "pt > 30. & abs(eta) < 2.4"
@@ -33,7 +33,7 @@ process.p = cms.Path(
 )
 
 process.source.fileNames = [
-    'file:/afs/cern.ch/user/t/tomei/tmp/V260/CMSSW_4_1_4/src/PYTHIA6_EXOTICA_RSGravZZ_kMpl005_M1000_7TeV_mumujj_cff_py_GEN_FASTSIM_HLT.root',
+#    'file:/afs/cern.ch/user/t/tomei/tmp/V260/CMSSW_4_1_4/src/PYTHIA6_EXOTICA_RSGravZZ_kMpl005_M1000_7TeV_mumujj_cff_py_GEN_FASTSIM_HLT.root',
     ] 
 
 process.out.SelectEvents = cms.untracked.PSet(
