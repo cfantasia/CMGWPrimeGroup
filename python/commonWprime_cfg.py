@@ -3,6 +3,7 @@ import FWCore.PythonUtilities.LumiList as LumiList
 import FWCore.ParameterSet.Types as CfgTypes
 from UserCode.CMGWPrimeGroup.selectors_cff import *
 from SHarper.HEEPAnalyzer.HEEPSelectionCuts_cfi import heepBarrelCuts, heepEndcapCuts
+from SHarper.HEEPAnalyzer.WP80SelectionCuts_cfi import wp80BarrelCuts, wp80EndcapCuts
 
 process = cms.Process("WPrimeAnalysis")
 # get JSON file correctly parsed
