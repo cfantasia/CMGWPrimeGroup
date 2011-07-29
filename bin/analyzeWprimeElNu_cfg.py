@@ -19,8 +19,14 @@ process.WprimeAnalyzer.oneEleEtCut   = cms.double(25) ## in GeV
 process.WprimeAnalyzer.highestEtElectronOnly = cms.bool(False)
 process.WprimeAnalyzer.dumpHighEtElectrons   = cms.bool(True)
 process.WprimeAnalyzer.dumpHighEtElectronThreshold = cms.double(200)
-process.WprimeAnalyzer.barrelCuts = heepBarrelCuts
-process.WprimeAnalyzer.endcapCuts = heepEndcapCuts
+
+#HEEP Selection
+#process.WprimeAnalyzer.barrelCuts = heepBarrelCuts
+#process.WprimeAnalyzer.endcapCuts = heepEndcapCuts
+
+#WP80 Selection
+process.WprimeAnalyzer.barrelCuts = wp80BarrelCuts
+process.WprimeAnalyzer.endcapCuts = wp80EndcapCuts
 
 #for trigger
 process.WprimeAnalyzer.triggerResults = cms.InputTag("TriggerResults::HLT")
