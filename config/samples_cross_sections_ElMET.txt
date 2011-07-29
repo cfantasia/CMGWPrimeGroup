@@ -1,7 +1,7 @@
-integrated lumi = 817.92 pb^-1
+integrated lumi = 1136 pb^-1
 
 samplename = data
-description = Electron pt > 25 GeV skim, May10th ReReco v1
+description = Electron pt > 25 GeV skim, May10th ReReco v1 (204 ipb)
 x-section = 1
 subdir = May10ReRecoV1
 pathname = SingleElectron_May10ReReco_v1_uptoRun163869_part1.root
