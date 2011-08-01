@@ -25,7 +25,6 @@
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h" 
 
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
-#include "UserCode/CMGWPrimeGroup/interface/WZUtilities.h"
 #include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
 

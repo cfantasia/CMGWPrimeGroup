@@ -23,7 +23,6 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/util.h"
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
-#include "UserCode/CMGWPrimeGroup/interface/WZUtilities.h"
 #include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
 #include "TH3F.h"
