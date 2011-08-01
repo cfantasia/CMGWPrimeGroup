@@ -5,15 +5,12 @@
 
 // get muon 4-d momentum according to muonReconstructor_ value
 // see interface/TeVMuon.h
+
 const TLorentzVector & TeVMuon::p4(unsigned muReconstructor,
                                    bool & isInvalidMuon){
   setMuLorentzVector(GetTrack(muReconstructor), isInvalidMuon);
  
   return p4_;
-}
-
-const TLorentzVector & TeVMuon::p4(bool & isInvalidMuon){
-  return p4(muReconstructor_, isInvalidMuon);
 }
 
 const reco::TrackRef
@@ -39,10 +36,6 @@ TeVMuon::GetTrack(unsigned muReconstructor) const{
   return defaultTeVMuon();
 }
 
-double TeVMuon::pt() const {
-  return p4_.Pt();
-}
-
 double TeVMuon::pt(unsigned muReconstructor) const {
   return getTrkLorentzVector(muReconstructor).Pt();
 }
@@ -50,7 +43,7 @@ double TeVMuon::pt(unsigned muReconstructor) const {
 TVector2 TeVMuon::getPtDiff() const {
   TVector2  chosenAlgo( p4_.Px(), p4_.Py() );
   bool isInvalid = false;
-  TLorentzVector p4Def = getTrkLorentzVector(0);//Global Muon Pt
+  TLorentzVector p4Def = getTrkLorentzVector(kGLOBAL);
   if(isInvalid){
     std::cout<<"Failed getting muon\n";
     return TVector2();
@@ -62,6 +55,7 @@ TVector2 TeVMuon::getPtDiff() const {
 void TeVMuon::setMuLorentzVector(const reco::TrackRef & trk, bool & isInvalidMuon)
 {
   p4_ = getTrkLorentzVector(trk, isInvalidMuon);
+  setP4(LorentzVector(p4_.Px(), p4_.Py(), p4_.Pz(), p4_.E()));
 }
 
 const TLorentzVector TeVMuon::getTrkLorentzVector(unsigned muReconstructor) const{
@@ -76,7 +70,7 @@ const TLorentzVector TeVMuon::getTrkLorentzVector(const reco::TrackRef & trk, bo
     isInvalidMuon = true;
   }else{
     TVector3 p3(trk->px(), trk->py(), trk->pz());
-    trkP4 = TLorentzVector(p3, wprime::MUON_MASS);
+    trkP4 = TLorentzVector(p3, sqrt(p3.Mag2() + wprime::MUON_MASS*wprime::MUON_MASS));
     isInvalidMuon = false;
   } 
   return trkP4;
