@@ -8,21 +8,21 @@ pathname = filelists_MuNu/listOfInputFiles_mu_May10ReReco_160431-163869.txt
 Nprod_evt = 1
 
 samplename = data2
-description = Muon pt > 25 GeV skim, PRv4 165071-166763
+description = Muon pt > 25 GeV skim, PRv4 165071-166763 (435.71 ipb)
 x-section = 1
 subdir = PromptRecoV4_SingleMuon/165071_166763
 pathname = filelists_MuNu/listOfInputFiles_mu_PRv4_165071-166763.txt
 Nprod_evt = 1
 
 samplename = data3
-description = Muon pt > 25 GeV skim, PRv4 166764-167043
+description = Muon pt > 25 GeV skim, PRv4 166764-167043 (168.59 ipb)
 x-section = 1
 subdir = PromptRecoV4_SingleMuon/166764_167043
 pathname = filelists_MuNu/listOfInputFiles_mu_PRv4_166764-167043.txt
 Nprod_evt = 1
 
 samplename = data4
-description = Muon pt > 25 GeV skim, PRv4 167044-167969
+description = Muon pt > 25 GeV skim, PRv4 167044-167969 (193.57 ipb)
 x-section = 1
 subdir = PromptRecoV4_SingleMuon/167044_167969
 pathname = filelists_MuNu/listOfInputFiles_mu_PRv4_167044-167969.txt
