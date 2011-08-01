@@ -21,6 +21,7 @@
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h" 
 
+#include "UserCode/CMGWPrimeGroup/interface/util.h"
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/WZUtilities.h"
 #include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
@@ -34,8 +35,14 @@ public:
   WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil);
   ~WZAnalyzer();
 
+  //methods for stuff to be once per job
   void FillCutFns();
+  void endAnalysis(ofstream & out);
 
+
+  //methods for stuff to be done for each sample
+  void beginFile(std::vector<wprime::InputFile>::const_iterator fi);
+  void endFile(std::vector<wprime::InputFile>::const_iterator fi, ofstream & out);
   void ResetCounters();
   void Declare_Histos(TFileDirectory& dir);
   void DeclareHistoSet(std::string n, std::string t, std::string xtitle,
@@ -44,48 +51,70 @@ public:
   void DeclareHisto(std::string n, std::string t, std::string xtitle,
                     int nbins, float min, float max,
                     TH1F* h, TFileDirectory& d);
+  void tabulateSummary();
+  void printSummary(const std::string& dir, ofstream & out) const;
 
-  void ClearEvtVariables();
-
-  void Fill_Histos(int index, float weight=1.);
-  void printSummary(const std::string& dir, ofstream & out);
-
+  //methods for stuff to be done for each event
   void eventLoop(edm::EventBase const & event);
+  bool PassCuts(const float& weight=1.);
+  void ClearEvtVariables();
+  void Fill_Histos(int index, float weight=1.);
   void Tabulate_Me(int& cut_index,const float& weight);
-  int CountZCands(ZCandV & Zs);
+
+  //methods for printers
+  void PrintEventFull(edm::EventBase const & event) const;
+  void PrintPassingEvent(edm::EventBase const & event);
+  void PrintDebugEvent() const;
+  void PrintEventToFile(edm::EventBase const & event);
+  void PrintEvent(edm::EventBase const & event) const;
+  void PrintEventDetails() const;
+  void PrintEventLeptons() const;
+  void PrintTrigger() const;
+  void PrintLeptons() const;
+  void PrintElectron(const heep::Ele& elec, int parent=0) const;
+  void PrintMuon(const TeVMuon& mu, int parent=0) const;
+  
+//methods for utilities
+  bool SameTrigger(const std::string & A, const std::string & B) const;
+  int CountZCands(ZCandV & Zs) const;
   void CalcZVariables();
   void CalcWVariables();
   void CalcWElecVariables();
   void CalcWMuonVariables();
   void CalcWZVariables();
   void CalcEventVariables();
-  bool PassCuts(const float& weight=1.);
 
-  void PrintEventFull(edm::EventBase const & event);
-  void PrintPassingEvent(edm::EventBase const & event);
-  void PrintDebugEvent();
-  void PrintEventToFile(edm::EventBase const & event);
-  void PrintEvent(edm::EventBase const & event);
-  void PrintEventDetails();
-  void PrintEventLeptons();
-  void PrintTrigger();
-  void PrintLeptons();
-  void PrintElectron(const heep::Ele& elec, int parent=0);
-  void PrintMuon(const TeVMuon& mu, int parent=0);
+  int   Calc_EvtType() const;
+  float CalcLeadPt(int type=0) const;
+  float Calc_Q() const;
+  float Calc_Ht() const;
+  float CalcTriLepMass() const;
+  float Calc_GenWZInvMass() const;
+  bool inEE(const TeVMuon& mu) const;
+
+  bool EMuOverlap(const pat::Electron & e,
+                  const std::vector<pat::Muon > & ms) const;
   
-  bool SameTrigger(std::string & A, std::string & B);
+  const heep::Ele & FindElectron(const reco::Candidate & p) const;
+  const TeVMuon & FindMuon(const reco::Candidate & p) const ;
 
-//methods for utilities
+  bool Match(const heep::Ele & p1, const reco::Candidate & p2) const;
+  bool Match(const TeVMuon & p1, const reco::Candidate & p2) const;
+  
+  float WLepPt() const;
+  float ZLepPt(int idx) const;
+  
+  float ElecPU(const heep::Ele & e) const;
+  float MuonPU(const TeVMuon & m) const;
 
 //methods for modifiers
-  void SetCandEvtFile(std::string s);
+  void SetCandEvtFile(const std::string& s);
 
 //methods for the cuts
   bool PassNoCut();
   bool PassTriggersCut();
   bool PassMinNLeptonsCut();
   bool PassMaxNLeptonsCut();
-  bool PassEvtSetupCut();
   bool PassValidWCut();
   bool PassValidWElecCut();
   bool PassValidWMuonCut();
@@ -102,10 +131,6 @@ public:
   bool PassZMassCut();
   bool PassZLepPtCut();
   bool PassZLepTriggerMatchCut();
-  bool PassTriggerMatch(const heep::Ele& e1, const heep::Ele& e2);
-  bool PassTriggerMatch(const TeVMuon& m1, const TeVMuon& m2);
-  bool PassTriggerMatch(const pat::Electron& p, const float cut, const vstring& triggers);
-  bool PassTriggerMatch(const TeVMuon& p, const float cut, const vstring& triggers);
   bool PassZeePtCut();
   bool PassZmumuPtCut();
 
@@ -121,33 +146,16 @@ public:
   bool PassFakeLeptonProbeLooseCut();
   bool PassFakeLeptonProbeTightCut();
 
-  bool PassTriggerEmulation(const heep::Ele& elec, const float minPt=0.);
+  bool PassTriggerMatch(const heep::Ele& e1, const heep::Ele& e2) const;
+  bool PassTriggerMatch(const TeVMuon& m1, const TeVMuon& m2) const;
+  bool PassTriggerMatch(const pat::Electron& p, const float cut, const vstring& triggers) const;
+  bool PassTriggerMatch(const TeVMuon& p, const float cut, const vstring& triggers) const;
+  bool PassTriggerEmulation(const heep::Ele& elec, const float minPt=0.) const;
 
-  int   Calc_EvtType();
-  float CalcLeadPt(int type=0);
-  float Calc_Q();
-  float Calc_Ht();
-  float CalcTriLepMass();
-  float Calc_GenWZInvMass();
-  bool inEE(const TeVMuon& mu);
 
-  void beginFile(std::vector<wprime::InputFile>::const_iterator fi);
-  void endFile(std::vector<wprime::InputFile>::const_iterator fi, ofstream & out);
-  void endAnalysis(ofstream & out);
-
-  bool EMuOverlap(const pat::Electron & e,
-                  const std::vector<pat::Muon > & ms);
-
-  heep::Ele & FindElectron(reco::Candidate & p);
-  TeVMuon & FindMuon(reco::Candidate & p);
-  bool Match(heep::Ele & p1, reco::Candidate & p2);
-  bool Match(TeVMuon & p1, reco::Candidate & p2);
-
-  float WLepPt();
-  float ZLepPt(int idx);
-  
-  float ElecPU(const heep::Ele & e);
-  float MuonPU(const TeVMuon & m);
+//////////////////
+/////Variables////
+//////////////////
 
   bool debugme;//print stuff if active
   bool doPreselect_;
@@ -228,7 +236,7 @@ public:
   WZCandidate wzCand_;
   pat::TriggerEvent triggerEvent_; 
   std::vector< PileupSummaryInfo > PupInfo_; 
-  std::vector<float> Num_surv_cut_;
+  std::vector<wprime::FilterEff> results_;
 
 // +++++++++++++++++++ Histogram Definitions
   TH1F * hEffRel;
@@ -334,10 +342,10 @@ public:
   
   int NCuts_;
   std::vector<std::string> Cuts_;
-  typedef bool (WZAnalyzer::*    CutFnPtr)(); 
+  typedef bool (WZAnalyzer::*CutFnPtr)(); 
 #ifndef __CINT__
-  std::map<std::string,     CutFnPtr> mFnPtrs_;
-  std::vector<    CutFnPtr> CutFns_;
+  std::map<std::string,CutFnPtr> mFnPtrs_;
+  std::vector<CutFnPtr> CutFns_;
 #endif
 
   PSet eSelectorPset_;
@@ -349,7 +357,6 @@ public:
   MuonSelector looseMuon_;
   MuonSelector tightMuon_;
   pat::strbitset muonResult_;
-
 
 };
 
