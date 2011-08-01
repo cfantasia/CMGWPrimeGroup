@@ -77,65 +77,94 @@ class BosonCandidate : public reco::CompositeCandidate {
     return 0;
   }
   bool leptonic_;
+  int muType_;
 };
 
 class ZCandidate : public BosonCandidate {
  public:
-  ZCandidate() {genLepton1_ = genLepton2_ = 0; leptonic_ = false;}
-  ZCandidate(const heep::Ele & p1, const heep::Ele & p2) {
+  ZCandidate() : 
+    elec1_(NULL), elec2_(NULL), muon1_(NULL), muon2_(NULL)
+  {genLepton1_ = genLepton2_ = 0; leptonic_ = false; muType_=-1;}
+  ZCandidate(const heep::Ele & p1, const heep::Ele & p2) :
+    elec1_(&p1), elec2_(&p2), muon1_(NULL), muon2_(NULL){
     genLepton1_ = p1.patEle().genLepton();
     genLepton2_ = p2.patEle().genLepton();
     addDaughters(p1.patEle(), p2.patEle());
     leptonic_ = true;
+    muType_ = -1;
   }
-  ZCandidate(const TeVMuon & p1, const TeVMuon & p2) {
+  ZCandidate(const TeVMuon & p1, const TeVMuon & p2) :
+    elec1_(NULL), elec2_(NULL), muon1_(&p1), muon2_(&p2){
     genLepton1_ = p1.genLepton();
     genLepton2_ = p2.genLepton();
     addDaughters(p1, p2);
     leptonic_ = true;
+    muType_ = p1.getmuReconstructor();
   }
-  ZCandidate(const pat::Jet & jet) {
+    ZCandidate(const pat::Jet & jet) :
+    elec1_(NULL), elec2_(NULL), muon1_(NULL), muon2_(NULL){
     addDaughter(jet);
     AddFourMomenta addP4;
     addP4.set(* this);
     leptonic_ = false;
+    muType_ = -1;
  }
   const reco::Candidate * genLepton1() const {return genLepton1_;}  
   const reco::Candidate * genLepton2() const {return genLepton2_;}
   const reco::Candidate * jet() const {return daughter(0);}
   int genMotherId1() const {return findGenMotherId(genLepton1_);}
   int genMotherId2() const {return findGenMotherId(genLepton2_);}
+  const heep::Ele * elec1() const {return elec1_;}
+  const heep::Ele * elec2() const {return elec2_;}
+  const TeVMuon * muon1() const {return muon1_;}
+  const TeVMuon * muon2() const {return muon2_;}
  private:
   const reco::Candidate * genLepton1_;
   const reco::Candidate * genLepton2_;
+  const heep::Ele * elec1_;
+  const heep::Ele * elec2_;
+  const TeVMuon * muon1_;
+  const TeVMuon * muon2_;
 };
 
 class WCandidate : public BosonCandidate {
  public:
-  WCandidate() {genLepton_ = 0; leptonic_ = false; mt_ = -999.9;}
-  WCandidate(const heep::Ele & lepton, const reco::Candidate & met) {
+  WCandidate() {genLepton_ = 0; leptonic_ = false; mt_ = -999.9; elec_=NULL; muon_=NULL;}
+  WCandidate(const heep::Ele & lepton, const reco::Candidate & met) :
+    elec_(&lepton), muon_(NULL){
     genLepton_ = lepton.patEle().genLepton();
     addDaughters(lepton.patEle(), met);
     leptonic_ = true;
+    muType_ = -1; 
+    muon_=NULL;
     mt_ = CalcMT();
   }
-  WCandidate(const TeVMuon & lepton, const reco::Candidate & met) {
+  WCandidate(const TeVMuon & lepton, const reco::Candidate & met) :
+    elec_(NULL), muon_(&lepton)  {
     genLepton_ = lepton.genLepton();
     addDaughters(lepton, met);
     leptonic_ = true;
+    muType_ = lepton.getmuReconstructor();
+    muon_ = &lepton;
     mt_ = CalcMT();
   }
-  WCandidate(const pat::Jet & jet) {
+  WCandidate(const pat::Jet & jet) :
+    elec_(NULL), muon_(NULL){
     addDaughter(jet);
     AddFourMomenta addP4;
     addP4.set(* this);
     leptonic_ = false;
+    muType_ = -1;
     mt_ = -999.9;
  }
   const reco::Candidate * lepton() const {return daughter(0);}
   const reco::Candidate * met() const {return daughter(1);}
   const reco::Candidate * genLepton() const {return genLepton_;}
   const reco::Candidate * jet() const {return daughter(0);}
+  
+  const heep::Ele * elec() const {return elec_;}
+  const TeVMuon * muon() const {return muon_;}
+
   int genMotherId() const {return findGenMotherId(genLepton_);}
   double mt() const { return mt_;}
  private:
@@ -143,6 +172,8 @@ class WCandidate : public BosonCandidate {
   double CalcMT(){return sqrt(2 * daughter(0)->et() * daughter(1)->et() * CalcDPhi());}
   double CalcDPhi(){return 1 - cos(reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi()));}
   double mt_;
+  const heep::Ele * elec_;
+  const TeVMuon * muon_;
 };
 
 class WZCandidate {
@@ -240,20 +271,58 @@ typedef std::vector<ZCandidate > ZCandV;
 typedef std::vector<WCandidate > WCandV;
 typedef std::vector<WZCandidate> WZCandV;
 
-ZCandV getZCands(const ElectronV & electrons, float maxMassDiff = ZMASS);
-ZCandV getZCands(const MuonV & muons, float maxMassDiff = ZMASS);
-ZCandV getZCands(const ElectronV & electrons,
-                 const MuonV & muons, float maxMassDiff = ZMASS);
-void removeWorstCands(ZCandV & zCands, float & maxMassDiff);
+void removeWorstCands(ZCandV & zCands, const float & maxMassDiff);
+void removeWorstCands(ZCandV & zCands, const float& min, const float& max);
+void removeLowLepPtCands(ZCandV & zCands, const float& minPt1, const float& minPt2);
 void removeOverlapping(ZCandV & zCands);
 
-std::vector<WCandidate> getWCandidates(const ElectronV & electrons,
-				       const pat::MET & met);
-std::vector<WCandidate> getWCandidates(const ElectronV & muons,
-				       const pat::MET & met);
-std::vector<WCandidate> getWCandidates(const ElectronV & electrons,
-				       const MuonV & muons, 
-				       const pat::MET & met);
+template<class L>
+ZCandV ZCands(const std::vector<L> & leptons){
+  ZCandV zCands;
+  for (size_t i = 0; i < leptons.size(); i++)
+    for (size_t j = i + 1; j < leptons.size(); j++)
+      if (leptons[i].charge() != leptons[j].charge())  // Get opposite-charge pairs of leptons
+        zCands.push_back(ZCandidate(leptons[i], leptons[j]));
+  return zCands;
+}
+
+template<class L>
+ZCandV getZCands(const std::vector<L> & leptons, float maxMassDiff, bool rmOverlap=true)
+{
+  ZCandV zCands = ZCands(leptons);
+  removeWorstCands(zCands, maxMassDiff);
+  // Order by difference from Z mass
+  sort(zCands.begin(), zCands.end(), closestToZMass());
+
+  if(rmOverlap) removeOverlapping(zCands);
+
+  return zCands;
+}
+ZCandV getZCands(const ElectronV & electrons, const MuonV & muons, 
+                 float maxMassDiff = ZMASS, bool rmOverlap=true);
+
+template<class L>
+WCandV getWCandidates(const std::vector<L> & leptons, const pat::MET & met){
+  WCandV wCands;
+  for (size_t i = 0; i < leptons.size(); i++)
+    wCands.push_back(WCandidate(leptons[i], met));
+  
+  return wCands;
+}
+
+template<class L>
+WCandidate getWCand(const std::vector<L> & leptons, const pat::MET & met){
+  WCandV wCands = getWCandidates(leptons, met);
+
+  sort(wCands.begin(), wCands.end(), highestPtLepton());
+  if (wCands.size()) return wCands[0];
+
+  return WCandidate();
+}
+
+WCandV getWCandidates(const ElectronV & electrons,
+                      const MuonV & muons, 
+                      const pat::MET & met);
 
 WCandidate getWCand(const ElectronV & electrons,
                     const MuonV & muons, 
@@ -263,10 +332,6 @@ WCandidate getWCand(const ElectronV & electrons,
                     const pat::MET & met,
                     const ZCandidate & zCand,
                     double minDeltaR = 0.);
-WCandidate getWCand(const ElectronV & electrons, 
-                    const pat::MET & met);
-WCandidate getWCand(const MuonV & muons, 
-                    const pat::MET & met);
 WCandidate getWCand(const JetV & jets);
 
 TVector2 getPtDiff(heep::Ele & e);

@@ -4,58 +4,21 @@ using std::vector; using std::cout; using std::endl;
 
 //////// Useful Algorithms ///////////////////////////////////////////////////
 /// Return a vector of non-overlapping Z candidates
-ZCandV getZCands(const ElectronV & electrons, float maxMassDiff)
-{
-  ZCandV zCands;
-  // Get opposite-charge pairs of electrons
-  for (size_t i = 0; i < electrons.size(); i++)
-    for (size_t j = i + 1; j < electrons.size(); j++)
-      if (electrons[i].charge() != electrons[j].charge())
-        zCands.push_back(ZCandidate(electrons[i], electrons[j]));
 
-  removeWorstCands(zCands, maxMassDiff);
-  // Order by difference from Z mass
-  std::sort(zCands.begin(), zCands.end(), closestToZMass());
-
-  removeOverlapping(zCands);
-
-  return zCands;
-}
-
-ZCandV getZCands(const MuonV & muons, float maxMassDiff)
-{
-  ZCandV zCands;
-  // Get opposite-charge pairs of muons
-  for (size_t i = 0; i < muons.size(); i++)
-    for (size_t j = i + 1; j < muons.size(); j++)
-      if (muons[i].charge() != muons[j].charge())
-        zCands.push_back(ZCandidate(muons[i], muons[j]));
-  
-  removeWorstCands(zCands, maxMassDiff);
-  // Order by difference from Z mass
-  sort(zCands.begin(), zCands.end(), closestToZMass());
-  
-  removeOverlapping(zCands);
-
-  return zCands;
-}
-
-ZCandV getZCands(const ElectronV & electrons, 
-                 const MuonV & muons, float maxMassDiff)
+ZCandV getZCands(const ElectronV & electrons, const MuonV & muons, 
+                 float maxMassDiff, bool rmOverlap)
 {
 
   ZCandV zCands;
 
-  ZCandV zeeCands = getZCands(electrons, maxMassDiff);
+  ZCandV zeeCands = getZCands(electrons, maxMassDiff, rmOverlap);
   zCands.insert(zCands.end(), zeeCands.begin(), zeeCands.end());
 
-  ZCandV zmmCands = getZCands(    muons, maxMassDiff);
+  ZCandV zmmCands = getZCands(    muons, maxMassDiff, rmOverlap);
   zCands.insert(zCands.end(), zmmCands.begin(), zmmCands.end());
 
   // Order by difference from Z mass
   sort(zCands.begin(), zCands.end(), closestToZMass());
-
-  removeOverlapping(zCands);
 
   return zCands;
 }
@@ -70,56 +33,35 @@ void removeOverlapping(ZCandV & zCands){
       }
 }
 
-void removeWorstCands(ZCandV & zCands, float & maxMassDiff){
+void removeWorstCands(ZCandV & zCands, const float & maxMassDiff){
   for (ZCandV::iterator i = zCands.begin(); i != zCands.end(); ++i)
     if( fabs(i->mass() - ZMASS) > maxMassDiff){
       zCands.erase(i);
       i--;
     }
 }
-vector<WCandidate> getWCandidates(const ElectronV & electrons,
-				  const pat::MET & met){
-  vector<WCandidate> wCands;
-  for (ElectronV::const_iterator i = electrons.begin(); 
-       i != electrons.end(); ++i)
-    wCands.push_back(WCandidate(* i, met));
 
-  return wCands;
+void removeWorstCands(ZCandV & zCands, const float& min, const float& max){
+  for (ZCandV::iterator i = zCands.begin(); i != zCands.end(); ++i)
+    if(i->mass() > max  || i->mass() < min){
+      zCands.erase(i);
+      i--;
+    }
 }
 
-WCandidate getWCand(const ElectronV & electrons,
-                    const pat::MET & met){
-
-  vector<WCandidate> wCands = getWCandidates(electrons, met);
-
-  sort(wCands.begin(), wCands.end(), highestPtLepton());
-  if (wCands.size()) return wCands[0];
-
-  return WCandidate();
+void removeLowLepPtCands(ZCandV & zCands, const float& minPt1, const float& minPt2){
+  for (ZCandV::iterator i = zCands.begin(); i != zCands.end(); ++i){
+    float pt1 = std::max(i->daughter(0)->pt(), i->daughter(1)->pt());
+    float pt2 = std::min(i->daughter(0)->pt(), i->daughter(1)->pt());
+    if(pt1 < minPt1 || pt2 < minPt2){
+      zCands.erase(i);
+      i--;
+    }
+  }
 }
 
-vector<WCandidate> getWCandidates(const MuonV & muons, 
-                    const pat::MET & met){
-  vector<WCandidate> wCands;
-  for (MuonV::const_iterator i = muons.begin(); 
-       i != muons.end(); ++i)
-    wCands.push_back(WCandidate(* i, met));
-
-  return wCands;
-}
-
-WCandidate getWCand(const MuonV & muons, 
-                    const pat::MET & met){
-  vector<WCandidate> wCands = getWCandidates(muons, met);
-
-  sort(wCands.begin(), wCands.end(), highestPtLepton());
-  if (wCands.size()) return wCands[0];
-
-  return WCandidate();
-}
-
-vector<WCandidate> getWCandidates(const ElectronV & electrons,
-                    const MuonV & muons, const pat::MET & met){
+WCandV getWCandidates(const ElectronV & electrons,
+                      const MuonV & muons, const pat::MET & met){
 
   vector<WCandidate> eWcands = getWCandidates(electrons, met);
   vector<WCandidate> muWcands = getWCandidates(muons, met);
@@ -191,8 +133,6 @@ WCandidate getWCand(const ElectronV & electrons,
 
   return WCandidate();
 }
-
-
 
 /// Return candidates using the highest-pT non-Z lepton and each of the METs
 WCandV getWCands(const ElectronV & electrons, 
