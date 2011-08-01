@@ -1,3 +1,57 @@
+01-AUG-11 (Christos, Cory, Federico, Flavia, Sunghyun), V00-02-90 
+================================================================== 
+o General improvements: 
+  - First version of small/flat ntuples for El+MET channel
+  - Common configuration for all W' analyzers
+  (python/commonWprime_cfg.py) with baseline selector
+  cuts. Individual-channel config files (under bin/) much simpler & more
+compact now
+  - Updated JSON files
+  - Added macro for producing PU distributions for MC samples; Updated
+  with latest distributions.for Summer11 samples
+  - Implemented WP80 selection cuts for all electrons
+  - Location of input (data + MC) samples documented in
+doc/data_and_MC_samples.txt 
+
+
+o WZ analysis: 
+  - Added trigger emulation + trigger matching 
+  - Utilities for efficiency, fake rate calculation 
+  - Bugfix in delta-R matching 
+  - Update samples
+  - Moved quality cuts into TeV muon class
+ 
+o El+MET analysis: 
+  - "only-one high pt electron" veto now considers only good-quality electrons
+  - Switched to WP80 selection cuts
+  - Added list of triggers
+  - Updated plotting macro
+  - Now using Summer11 MC samples 
+ 
+o Mu+MET analysis: 
+  - Switched from combined-relative isolation (0.15) to tracker-relative 
+isolation (0.10) cut as default 
+  - Fixed location of PromptRecoV4 input files 
+  - Improved printout information for high-pt muons
+ 
+o Hadronic VZ analyzer: 
+  - Fixed memory leak 
+  - Fixed check on muon sign in Z finder
+  - Selection cut restructuring
+  - Extra plots
+
+o Misc: 
+- BosonFinder class: Added methods for returning full list of W candidates in 
+event; added maxMassDiff method
+- Added WPrimeUtil::runningOnData to determine whether current file under 
+processing is real data 
+- Changed some getters to const methods 
+- Removed "using namespace std" from headers 
+- Added "subdir" option in configuration of input samples in order to
+be able to group them (according to run range, MC process, etc)
+
+
+
 23-JUN-11 (Cory, Thiago, Christos), V00-02-80
 =============================================
 
