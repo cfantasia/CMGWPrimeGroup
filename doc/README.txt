@@ -23,7 +23,7 @@ dedicated high-pt reconstructors (DYT, cocktail, etc)
 
 o Hack the BuildFiles of the HEEP code to make it 42x-compatible
 
-o Hack the electron selection in onrder to implement the WP80 cuts
+o Hack the electron selection in order to implement the WP80 cuts
 
 o Compile the code
 
