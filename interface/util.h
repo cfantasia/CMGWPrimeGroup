@@ -102,27 +102,27 @@ const int PDGWPRIME = 34;
 const float NOCUT = 9e9;
 
 //////// Comparators (for sorting vectors) ///////////////////////////////////
-
 struct closestToZMass {
   bool operator() (const reco::Candidate & a, const reco::Candidate & b) {
     return fabs(ZMASS - a.mass()) < fabs(ZMASS - b.mass());
   }
 };
+
+template<class C, class D>
 struct highestPt {
-  bool operator() (const reco::Candidate * a, const reco::Candidate * b) {
+  bool operator() (const C * a, const D * b) {
     return a->pt() > b->pt();
   }
 };
 struct highestPtLepton {
   bool operator() (const reco::CompositeCandidate a, 
-                   reco::CompositeCandidate b) {
+                   const reco::CompositeCandidate b) {
     return a.daughter(0)->pt() > b.daughter(0)->pt();
   }
 };
 
-
-inline bool areIdentical(const reco::Candidate & p1, 
-                         const reco::Candidate & p2)
+template<class C, class D>
+inline bool areIdentical(const C & p1, const D & p2)
 {
   float tolerance = 0.0001;
   if (p1.pdgId() == p2.pdgId() &&
@@ -133,8 +133,8 @@ inline bool areIdentical(const reco::Candidate & p1,
   return false;
 }
 
-inline bool areOverlapping(const reco::Candidate & p1, 
-                           const reco::Candidate & p2)
+template<class C, class D>
+inline bool areOverlapping(const C & p1, const D & p2)
 {
   if (p1.numberOfDaughters() == 0 && p2.numberOfDaughters() == 0)
     return areIdentical(p1, p2);
