@@ -1,177 +1,179 @@
-integrated lumi = 715 pb^-1
+Top Level Dir = /
+integrated lumi = 1092 pb^-1
 
 samplename = data
 description = Double E+Mu
 x-section = 1
-pathname = filelists_WZ/TrileptonPatTuple-W05-07-01A-DoubleLepton2011A.txt
+pathname = filelists_WZ/TrileptonPatTuple-W05-08-02-DoubleLepton-Run2011A.txt
 Nprod_evt = 9999999
 
 samplename = DYJetsToLL
-description = DYJetsToLL_TuneD6T_M-50_7TeV-madgraph-tauola
+description = DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola
 x-section = 3048
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola.txt
-Nprod_evt = 2329439
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola.txt
+Nprod_evt = 35673968
+
+samplename = GVJets
+description = GVJets_7TeV-madgraph
+x-section = 173
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-GVJets_7TeV-madgraph.txt
+Nprod_evt = 1067879
+
+samplename = TTJets
+description = TTJets_TuneZ2_7TeV-madgraph-tauola
+x-section = 157.5
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-TTJets_TuneZ2_7TeV-madgraph-tauola.txt
+Nprod_evt = 3138588
+
+samplename = WJetsToLNu
+description = WJetsToLNu_TuneZ2_7TeV-madgraph-tauola
+x-section = 31314
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-WJetsToLNu_TuneZ2_7TeV-madgraph-tauola.txt
+Nprod_evt = 38361442
+
+samplename = WWTo2L2Nu
+description = WWTo2L2Nu_TuneZ2_7TeV-pythia6
+x-section = 4.65
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola.txt
+Nprod_evt = 210667
+
+samplename = WZTo3LNu
+description = WZTo3LNu_7TeV-pythia6
+x-section = 0.594
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola.txt
+Nprod_evt = 204725
+
+samplename = ZZTo2e2mu
+description = ZZTo2e2mu_7TeV-powheg-pythia6
+x-section = 0.03078
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZZTo2e2mu_7TeV-powheg-pythia6.txt
+Nprod_evt = 499917
+
+samplename = ZZTo4e
+description = ZZTo4e_7TeV-powheg-pythia6
+x-section = 0.0154
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZZTo4e_7TeV-powheg-pythia6.txt
+Nprod_evt = 499929
+
+samplename = ZZTo4mu
+description = ZZTo4mu_7TeV-powheg-pythia6
+x-section = 0.0154
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZZTo4mu_7TeV-powheg-pythia6.txt
+Nprod_evt = 499918
+
+samplename = WprimeToWZTo3LNu_M-300
+description = WprimeToWZTo3LNu_M-300
+x-section = 0.3783
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-WprimeToWZTo3LNu_M-300_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = WprimeToWZTo3LNu_M-400
+description = WprimeToWZTo3LNu_M-400
+x-section = 0.1213
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-WprimeToWZTo3LNu_M-400_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = WprimeToWZTo3LNu_M-500
+description = WprimeToWZTo3LNu_M-500
+x-section = 0.04770
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-WprimeToWZTo3LNu_M-500_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = WprimeToWZTo3LNu_M-600
+description = WprimeToWZTo3LNu_M-600
+x-section = 0.02149
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-WprimeToWZTo3LNu_M-600_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = WprimeToWZTo3LNu_M-700
+description = WprimeToWZTo3LNu_M-700
+x-section = 0.01091
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-WprimeToWZTo3LNu_M-700_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = WprimeToWZTo3LNu_M-800
+description = WprimeToWZTo3LNu_M-800
+x-section = 0.005816
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-WprimeToWZTo3LNu_M-800_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = WprimeToWZTo3LNu_M-900
+description = WprimeToWZTo3LNu_M-900
+x-section = 0.003316
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-WprimeToWZTo3LNu_M-900_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = TC_WZ_300
+description = pythia_TC_WZ_300_413_GEN_SIMv1
+x-section = 0.05822
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-pythia_TC_WZ_300_413_GEN_SIMv1.txt
+Nprod_evt = 10000
+
+samplename = TC_WZ_400
+description = pythia_TC_WZ_400_413_GEN_SIMv1
+x-section = 0.01751
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-pythia_TC_WZ_400_413_GEN_SIMv1.txt
+Nprod_evt = 10000
+
+samplename = TC_WZ_500
+description = pythia_TC_WZ_500_413_GEN_SIMv1
+x-section = 0.007056
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04H-pythia_TC_WZ_500_413_GEN_SIMv1.txt
+Nprod_evt = 10000
+
+DONE
 
 samplename = ZBB0JetsToLNu
 description = ZBB0JetsToLNu_TuneZ2_7TeV-alpgen-tauola
 x-section = 2.9
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-ZBB0JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZBB0JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
 Nprod_evt = 347393
 
 samplename = ZBB1JetsToLNu
 description = ZBB1JetsToLNu_TuneZ2_7TeV-alpgen-tauola
 x-section = 1.645
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-ZBB1JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZBB1JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
 Nprod_evt = 202581
 
 samplename = ZBB2JetsToLNu
 description = ZBB2JetsToLNu_TuneZ2_7TeV-alpgen-tauola
 x-section = 0.622
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-ZBB2JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZBB2JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
 Nprod_evt = 10842
 
 samplename = ZBB3JetsToLNu
 description = ZBB3JetsToLNu_TuneZ2_7TeV-alpgen-tauola
 x-section = 0.273
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04A-ZBB3JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZBB3JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
 Nprod_evt = 10898
 
 samplename = ZCC0JetsToLNu
 description = ZCC0JetsToLNu_TuneZ2_7TeV-alpgen-tauola
 x-section = 2.92
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-ZCC0JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZCC0JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
 Nprod_evt = 438067
 
 samplename = ZCC1JetsToLNu
 description = ZCC1JetsToLNu_TuneZ2_7TeV-alpgen-tauola
 x-section = 1.629
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-ZCC1JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZCC1JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
 Nprod_evt = 184365
 
 samplename = ZCC2JetsToLNu
 description = ZCC2JetsToLNu_TuneZ2_7TeV-alpgen-tauola
 x-section = 0.626
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-ZCC2JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZCC2JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
 Nprod_evt = 10735
 
 samplename = ZCC3JetsToLNu
 description = ZCC3JetsToLNu_TuneZ2_7TeV-alpgen-tauola
 x-section = 0.28
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04A-ZCC3JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZCC3JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
 Nprod_evt = 10177 
-
-samplename = TTTo2L2Nu2B
-description = TTTo2L2Nu2B_7TeV-powheg-pythia6
-x-section = 16.53
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-TTTo2L2Nu2B_7TeV-powheg-pythia6.txt
-Nprod_evt = 768595
-
-samplename = WJetsToLNu
-description = WJetsToLNu_TuneZ2_7TeV-madgraph-tauola
-x-section = 31314
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04A-WJetsToLNu_TuneZ2_7TeV-madgraph-tauola.txt
-Nprod_evt = 15168266
-
-samplename = WprimeToWZTo3LNu_M-300
-description = WprimeToWZTo3LNu_M-300
-x-section = 0.35828
-pathname = filelists_WZ/TrileptonMCPatTuple-B05-06-08-WprimeToWZTo3LNu_M-300_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WprimeToWZTo3LNu_M-400
-description = WprimeToWZTo3LNu_M-400
-x-section = 0.115531
-pathname = filelists_WZ/TrileptonMCPatTuple-B05-06-08-WprimeToWZTo3LNu_M-400_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WprimeToWZTo3LNu_M-500
-description = WprimeToWZTo3LNu_M-500
-x-section = 0.046371
-pathname = filelists_WZ/TrileptonMCPatTuple-B05-06-08-WprimeToWZTo3LNu_M-500_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WprimeToWZTo3LNu_M-600
-description = WprimeToWZTo3LNu_M-600
-x-section = 0.019981
-pathname = filelists_WZ/TrileptonMCPatTuple-B05-06-08-WprimeToWZTo3LNu_M-600_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WprimeToWZTo3LNu_M-700
-description = WprimeToWZTo3LNu_M-700
-x-section = 0.0101673
-pathname = filelists_WZ/TrileptonMCPatTuple-B05-06-08-WprimeToWZTo3LNu_M-700_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WprimeToWZTo3LNu_M-800
-description = WprimeToWZTo3LNu_M-800
-x-section = 0.0057109
-pathname = filelists_WZ/TrileptonMCPatTuple-B05-06-08-WprimeToWZTo3LNu_M-800_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WprimeToWZTo3LNu_M-900
-description = WprimeToWZTo3LNu_M-900
-x-section = 0.0030277
-pathname = filelists_WZ/TrileptonMCPatTuple-B05-06-08-WprimeToWZTo3LNu_M-900_7TeV-pythia6.txt
-Nprod_evt = 10000
-
-samplename = WWTo2L2Nu
-description = WWTo2L2Nu_TuneZ2_7TeV-pythia6
-x-section = 4.65
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04A-WWTo2L2Nu_TuneZ2_7TeV-pythia6.txt
-Nprod_evt = 110000
-
-samplename = WZTo3LNu
-description = WZTo3LNu_7TeV-pythia6
-x-section = 0.594
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-WZTo3LNu_7TeV-pythia6.txt
-Nprod_evt = 103434
-
-samplename = PhotonVJets
-description = PhotonVJets_7TeV-madgraph
-x-section = 173
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-PhotonVJets_7TeV-madgraph.txt
-Nprod_evt = 996116
 
 samplename = ZZTo4L_TuneZ2
 description = ZZTo4L_TuneZ2_7TeV-pythia6-tauola
 x-section = 0.082
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-ZZTo4L_TuneZ2_7TeV-pythia6-tauola.txt
+pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZZTo4L_TuneZ2_7TeV-pythia6-tauola.txt
 Nprod_evt = 159600
 
-DONE
-
-samplename = ZZtoAnything
-description = ZZtoAnything_TuneZ2_7TeV-pythia6-tauola
-x-section = 5.9
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-ZZtoAnything_TuneZ2_7TeV-pythia6-tauola.txt
-Nprod_evt = 2108608
-
-samplename = DYToEE
-description = DYToEE_M-20_TuneZ2_7TeV-pythia6
-x-section = 2149
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-DYToEE_M-20_TuneZ2_7TeV-pythia6.txt
-Nprod_evt = 2059987
-
-samplename = DYToMuMu
-description = DYToMuMu_M-20_TuneZ2_7TeV-pythia6
-x-section = 2149
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-DYToMuMu_M-20_TuneZ2_7TeV-pythia6.txt
-Nprod_evt = 2244733
-
-samplename = WToENu
-description = WToENu_TuneZ2_7TeV-pythia6
-x-section = 10038
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-WToENu_TuneZ2_7TeV-pythia6.txt
-Nprod_evt = 5076954
-
-samplename = WToMuNu
-description = WToMuNu_TuneZ2_7TeV-pythia6
-x-section = 10038
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-WToMuNu_TuneZ2_7TeV-pythia6.txt
-Nprod_evt = 5038640
-
-samplename = ZGToLLG
-description = ZGtoLLG_TuneZ2_7TeV-pythia6-tauola
-x-section = 19.6
-pathname = filelists_WZ/TrileptonMCPatTuple-W05-07-04-ZGtoLLG_TuneZ2_7TeV-pythia6-tauola.txt
-Nprod_evt = 165000
