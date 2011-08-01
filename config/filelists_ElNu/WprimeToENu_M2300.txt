@@ -1,0 +1,10 @@
+patTuple_10_1_QQI.root
+patTuple_1_1_pnX.root
+patTuple_2_1_SOZ.root
+patTuple_3_1_Ma0.root
+patTuple_4_1_pyk.root
+patTuple_5_1_mpX.root
+patTuple_6_1_8jl.root
+patTuple_7_1_KlR.root
+patTuple_8_1_vbu.root
+patTuple_9_1_VCD.root

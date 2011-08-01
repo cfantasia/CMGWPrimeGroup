@@ -1,0 +1,10 @@
+patTuple_10_1_NaY.root
+patTuple_1_1_JJS.root
+patTuple_2_1_xtC.root
+patTuple_3_1_M9S.root
+patTuple_4_1_16D.root
+patTuple_5_1_3TQ.root
+patTuple_6_1_V68.root
+patTuple_7_1_iJI.root
+patTuple_8_1_a6O.root
+patTuple_9_1_UJM.root

@@ -1,0 +1,10 @@
+patTuple_10_1_33G.root
+patTuple_1_1_Iwy.root
+patTuple_2_1_76x.root
+patTuple_3_1_crI.root
+patTuple_4_1_aul.root
+patTuple_5_1_94q.root
+patTuple_6_1_QFf.root
+patTuple_7_1_Dvi.root
+patTuple_8_1_OQQ.root
+patTuple_9_1_Wal.root
