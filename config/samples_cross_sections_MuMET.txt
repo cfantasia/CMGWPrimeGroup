@@ -1,31 +1,87 @@
 integrated lumi = 1019.3 pb^-1
 
 samplename = data
-description = Muon pt > 25 GeV skim, May10th ReReco v1 (221.43 ipb)
+description = Muon pt > 25 GeV skim, May10th ReReco v1
 x-section = 1
 subdir = May10ReRecoV1
-pathname = filelists_MuNu/listOfInputFiles_mu_May10ReReco_160431-163869.txt
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part1.root
 Nprod_evt = 1
 
 samplename = data2
-description = Muon pt > 25 GeV skim, PRv4 165071-166763 (435.71 ipb)
+description = Muon pt > 25 GeV skim, May10th ReReco v1
 x-section = 1
-subdir = PromptRecoV4_SingleMuon/165071_166763
-pathname = filelists_MuNu/listOfInputFiles_mu_PRv4_165071-166763.txt
+subdir = May10ReRecoV1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part2.root
 Nprod_evt = 1
 
 samplename = data3
-description = Muon pt > 25 GeV skim, PRv4 166764-167043 (168.59 ipb)
+description = Muon pt > 25 GeV skim, May10th ReReco v1
 x-section = 1
-subdir = PromptRecoV4_SingleMuon/166764_167043
-pathname = filelists_MuNu/listOfInputFiles_mu_PRv4_166764-167043.txt
+subdir = May10ReRecoV1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part3.root
 Nprod_evt = 1
 
 samplename = data4
-description = Muon pt > 25 GeV skim, PRv4 167044-167969 (193.57 ipb)
+description = Muon pt > 25 GeV skim, May10th ReReco v1
+x-section = 1
+subdir = May10ReRecoV1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part4.root
+Nprod_evt = 1
+
+samplename = data5
+description = Muon pt > 25 GeV skim, May10th ReReco v1
+x-section = 1
+subdir = May10ReRecoV1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part5.root
+Nprod_evt = 1
+
+samplename = data5b
+description = Muon pt > 25 GeV skim, May10th ReReco v1
+x-section = 1
+subdir = May10ReRecoV1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part5001.root
+Nprod_evt = 1
+
+samplename = data6
+description = Muon pt > 25 GeV skim, May10th ReReco v1
+x-section = 1
+subdir = May10ReRecoV1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part6.root
+Nprod_evt = 1
+
+samplename = data7
+description = Muon pt > 25 GeV skim, May10th ReReco v1
+x-section = 1
+subdir = May10ReRecoV1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part7.root
+Nprod_evt = 1
+
+samplename = data8
+description = Muon pt > 25 GeV skim, May10th ReReco v1
+x-section = 1
+subdir = May10ReRecoV1
+pathname = SingleMuon_May10ReReco_v1_uptoRun163869_part8.root
+Nprod_evt = 1
+
+samplename = data9
+description = Muon pt > 25 GeV skim, PRv4 165071-166763
+x-section = 1
+subdir = PromptRecoV4_SingleMuon/165071_166763
+pathname = listOfInputFiles_mu_PRv4_165071-166763.txt
+Nprod_evt = 1
+
+samplename = data10
+description = Muon pt > 25 GeV skim, PRv4 166764-167043
+x-section = 1
+subdir = PromptRecoV4_SingleMuon/166764_167043
+pathname = listOfInputFiles_mu_PRv4_166764-167043.txt
+Nprod_evt = 1
+
+samplename = data11
+description = Muon pt > 25 GeV skim, PRv4 167044-167969
 x-section = 1
 subdir = PromptRecoV4_SingleMuon/167044_167969
-pathname = filelists_MuNu/listOfInputFiles_mu_PRv4_167044-167969.txt
+pathname = listOfInputFiles_mu_PRv4_167044-167969.txt
 Nprod_evt = 1
 
 DONE
