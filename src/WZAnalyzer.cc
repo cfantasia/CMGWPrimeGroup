@@ -38,7 +38,7 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   muonsLabel_ = cfg.getParameter<string>("muons");
   metLabel_ = cfg.getParameter<string>("met");
 
-  muonAlgo_ = cfg.getParameter<uint>("muonAlgo");if(debugme) cout<<"Using muon algo "<<muonAlgo_<<endl;
+  muonAlgo_ = cfg.getParameter<uint>("muonAlgo");if(debugme) cout<<"Using muon algo "<<algo_desc_long[muonAlgo_]<<endl;
   useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
 
   hltEventLabel_ = cfg.getParameter<string>("hltEventTag");
@@ -80,6 +80,8 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   minZeePt2_ = cfg.getParameter<double>("minZeePt2");
   minZmmPt1_ = cfg.getParameter<double>("minZmmPt1");
   minZmmPt2_ = cfg.getParameter<double>("minZmmPt2");
+
+  ClearEvtVariables();
 }
 
 WZAnalyzer::~WZAnalyzer(){
@@ -133,9 +135,7 @@ void WZAnalyzer::FillCutFns(){
 
 inline void
 WZAnalyzer::ResetCounters(){
-  if(debugme) printf("Reset Counters\n");
-  for(uint i=0; i<Num_surv_cut_.size(); ++i)
-    Num_surv_cut_[i] = 0.;
+  Num_surv_cut_.assign(NCuts_,0.);
 }
 
 //--------------------------------------------------------------
@@ -145,20 +145,24 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
 
   DeclareHistoSet("hEvtType", "Event Type",
                   "N_{#mu}", 4, 0, 4, "NONE", hEvtType,dir);
+  DeclareHistoSet("hEvtTypeP", "Event Type for Q=+1",
+                  "N_{#mu},W^{+}", 4, 0, 4, "NONE", hEvtTypeP,dir);
+  DeclareHistoSet("hEvtTypeM", "Event Type for Q=-1",
+                  "N_{#mu},W^{-}", 4, 0, 4, "NONE", hEvtTypeM,dir);
 
-  DeclareHistoSet("hWZInvMass", "Reconstructed WZ Invariant Mass",
-                  "m_{WZ} (GeV)", 100, 0, 1000, "GeV", hWZInvMass,dir);
-  DeclareHistoSet("hWZ3e0muInvMass", "Reconstructed WZ(3e0\\mu) Invariant Mass",
-                  "m_{WZ}^(3e0\\mu) (GeV)", 100, 0, 1000, "GeV", hWZ3e0muInvMass,dir);
-  DeclareHistoSet("hWZ2e1muInvMass", "Reconstructed WZ(2e1\\mu) Invariant Mass",
-                  "m_{WZ}^(2e1\\mu) (GeV)", 100, 0, 1000, "GeV", hWZ2e1muInvMass,dir);
-  DeclareHistoSet("hWZ1e2muInvMass", "Reconstructed WZ(1e2\\mu) Invariant Mass",
-                  "m_{WZ}^(1e2\\mu) (GeV)", 100, 0, 1000, "GeV", hWZ1e2muInvMass,dir);
-  DeclareHistoSet("hWZ0e3muInvMass", "Reconstructed WZ(0e3\\mu) Invariant Mass",
-                  "m_{WZ}^(0e3\\mu) (GeV)", 100, 0, 1000, "GeV", hWZ0e3muInvMass,dir);
+  DeclareHistoSet("hWZMass", "Reconstructed WZ Invariant Mass",
+                  "M_{WZ} (GeV)", 1200, 0, 1200, "GeV", hWZMass,dir);
+  DeclareHistoSet("hWZ3e0muMass", "Reconstructed WZ(3e0\\mu) Invariant Mass",
+                  "M_{WZ}^(3e0\\mu) (GeV)", 1200, 0, 1200, "GeV", hWZ3e0muMass,dir);
+  DeclareHistoSet("hWZ2e1muMass", "Reconstructed WZ(2e1\\mu) Invariant Mass",
+                  "M_{WZ}^(2e1\\mu) (GeV)", 1200, 0, 1200, "GeV", hWZ2e1muMass,dir);
+  DeclareHistoSet("hWZ1e2muMass", "Reconstructed WZ(1e2\\mu) Invariant Mass",
+                  "M_{WZ}^(1e2\\mu) (GeV)", 1200, 0, 1200, "GeV", hWZ1e2muMass,dir);
+  DeclareHistoSet("hWZ0e3muMass", "Reconstructed WZ(0e3\\mu) Invariant Mass",
+                  "M_{WZ}^(0e3\\mu) (GeV)", 1200, 0, 1200, "GeV", hWZ0e3muMass,dir);
 
   DeclareHistoSet("hWZTransMass", "Reconstructed WZ Transverse Mass",
-                  "m_{WZ} (GeV)", 100, 0, 1000, "GeV", hWZTransMass,dir);
+                  "M_{WZ} (GeV)", 100, 0, 1000, "GeV", hWZTransMass,dir);
 //Ht Histos
   DeclareHistoSet("hHt", "H_{T}", 
                   "Lepton Pt Sum: H_{T} (GeV)", 80, 0, 800, "GeV", hHt,dir);
@@ -170,59 +174,59 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
                   "p_{T}^{Z} (GeV)", 40, 0, 400, "GeV", hZpt,dir);
 //MET Histos
   DeclareHistoSet("hMET", "MET",
-                  "MET (GeV)", 30, 0, 300, "GeV", hMET,dir);
+                  "#slash{E}_{T} (GeV)", 30, 0, 300, "GeV", hMET,dir);
   DeclareHistoSet("hMETee", "MET",
-                  "MET^{ee} (GeV)", 30, 0, 300, "GeV", hMETee,dir);
+                  "#slash{E}_{T}^{ee} (GeV)", 30, 0, 300, "GeV", hMETee,dir);
   DeclareHistoSet("hMETmumu", "MET",
-                  "MET^{#mu#mu} (GeV)", 30, 0, 300, "GeV", hMETmumu,dir);
+                  "#slash{E}_{T}^{#mu#mu} (GeV)", 30, 0, 300, "GeV", hMETmumu,dir);
   DeclareHistoSet("hMET3e0mu", "MET",
-                  "MET^{3e0#mu} (GeV)", 30, 0, 300, "GeV", hMET3e0mu,dir);
+                  "#slash{E}_{T}^{3e0#mu} (GeV)", 30, 0, 300, "GeV", hMET3e0mu,dir);
   DeclareHistoSet("hMET2e1mu", "MET",
-                  "MET^{2e1#mu} (GeV)", 30, 0, 300, "GeV", hMET2e1mu,dir);
+                  "#slash{E}_{T}^{2e1#mu} (GeV)", 30, 0, 300, "GeV", hMET2e1mu,dir);
   DeclareHistoSet("hMET1e2mu", "MET",
-                  "MET^{1e2#mu} (GeV)", 30, 0, 300, "GeV", hMET1e2mu,dir);
+                  "#slash{E}_{T}^{1e2#mu} (GeV)", 30, 0, 300, "GeV", hMET1e2mu,dir);
   DeclareHistoSet("hMET0e3mu", "MET",
-                  "MET^{0e3#mu} (GeV)", 30, 0, 300, "GeV", hMET0e3mu,dir);
+                  "#slash{E}_{T}^{0e3#mu} (GeV)", 30, 0, 300, "GeV", hMET0e3mu,dir);
 
 //Z Mass Histos
   DeclareHistoSet("hZMass" , "Reconstructed Mass of Z",
-                  "m_{Z} (GeV)", 30, 60, 120, "GeV", hZMass,dir);
+                  "M_{Z} (GeV)", 30, 60, 120, "GeV", hZMass,dir);
   DeclareHistoSet("hZeeMass","Reconstructed Mass of Zee",
-                  "m_{Z}^{ee} (GeV)", 30, 60, 120, "GeV", hZeeMass,dir);
+                  "M_{Z}^{ee} (GeV)", 30, 60, 120, "GeV", hZeeMass,dir);
   DeclareHistoSet("hZmumuMass","Reconstructed Mass of Z\\mu\\mu",
-                  "m_{Z}^{#mu#mu} (GeV)", 30, 60, 120, "GeV", hZmumuMass,dir);
+                  "M_{Z}^{#mu#mu} (GeV)", 30, 60, 120, "GeV", hZmumuMass,dir);
   DeclareHistoSet("hZ3e0muMass" , "Reconstructed Mass of Z(3e0\\mu)",
-                  "m_{Z}^{3e0#mu} (GeV)", 30, 60, 120, "GeV", hZ3e0muMass,dir);
+                  "M_{Z}^{3e0#mu} (GeV)", 30, 60, 120, "GeV", hZ3e0muMass,dir);
   DeclareHistoSet("hZ2e1muMass" , "Reconstructed Mass of Z(2e1\\mu)",
-                  "m_{Z}^{2e1#mu} (GeV)", 30, 60, 120, "GeV", hZ2e1muMass,dir);
+                  "M_{Z}^{2e1#mu} (GeV)", 30, 60, 120, "GeV", hZ2e1muMass,dir);
   DeclareHistoSet("hZ1e2muMass" , "Reconstructed Mass of Z(1e2\\mu)",
-                  "m_{Z}^{1e2#mu} (GeV)", 30, 60, 120, "GeV", hZ1e2muMass,dir);
+                  "M_{Z}^{1e2#mu} (GeV)", 30, 60, 120, "GeV", hZ1e2muMass,dir);
   DeclareHistoSet("hZ0e3muMass" , "Reconstructed Mass of Z(0e3\\mu)",
-                  "m_{Z}^{0e3#mu} (GeV)", 30, 60, 120, "GeV", hZ0e3muMass,dir);
+                  "M_{Z}^{0e3#mu} (GeV)", 30, 60, 120, "GeV", hZ0e3muMass,dir);
   DeclareHistoSet("hZeeMassTT","Reconstructed MassTT of ZeeTT",
-                  "m_{Z}^{ee,TT} (GeV)", 30, 60, 120, "GeV", hZeeMassTT,dir);
+                  "M_{Z}^{ee,TT} (GeV)", 30, 60, 120, "GeV", hZeeMassTT,dir);
   DeclareHistoSet("hZeeMassTF","Reconstructed Mass of ZeeTF",
-                  "m_{Z}^{ee,TF} (GeV)", 30, 60, 120, "GeV", hZeeMassTF,dir);
+                  "M_{Z}^{ee,TF} (GeV)", 30, 60, 120, "GeV", hZeeMassTF,dir);
   DeclareHistoSet("hZmumuMassTT","Reconstructed Mass of Z\\mu\\muTT",
-                  "m_{Z}^{#mu#mu,TT} (GeV)", 30, 60, 120, "GeV", hZmumuMassTT,dir);
+                  "M_{Z}^{#mu#mu,TT} (GeV)", 30, 60, 120, "GeV", hZmumuMassTT,dir);
   DeclareHistoSet("hZmumuMassTF","Reconstructed Mass of Z\\mu\\muTF",
-                  "m_{Z}^{#mu#mu,TF} (GeV)", 30, 60, 120, "GeV", hZmumuMassTF,dir);
+                  "M_{Z}^{#mu#mu,TF} (GeV)", 30, 60, 120, "GeV", hZmumuMassTF,dir);
 
 //W Trans Mass Histos
   DeclareHistoSet("hWTransMass", "Reconstructed Transverse Mass of W",
-                  "m_{T} (GeV)", 20, 0, 100, "GeV", hWTransMass,dir);
+                  "M_{T} (GeV)", 20, 0, 100, "GeV", hWTransMass,dir);
   DeclareHistoSet("hWenuTransMass", "Reconstructed Transverse Mass of We\\nu",
-                  "m_{T}^{e#nu} (GeV)", 20, 0, 100, "GeV", hWenuTransMass,dir);
+                  "M_{T}^{e#nu} (GeV)", 20, 0, 100, "GeV", hWenuTransMass,dir);
   DeclareHistoSet("hWmunuTransMass", "Reconstructed TransverseMass of W\\mu\\nu",
-                  "m_{T}^{#mu#nu} (GeV)", 20, 0, 100, "GeV", hWmunuTransMass,dir);
+                  "M_{T}^{#mu#nu} (GeV)", 20, 0, 100, "GeV", hWmunuTransMass,dir);
   DeclareHistoSet("hW3e0muTransMass", "Reconstructed Transverse Mass of W(3e0\\mu)",
-                  "m_{T}^{3e0#mu} (GeV)", 20, 0, 100, "GeV", hW3e0muTransMass,dir);
+                  "M_{T}^{3e0#mu} (GeV)", 20, 0, 100, "GeV", hW3e0muTransMass,dir);
   DeclareHistoSet("hW2e1muTransMass", "Reconstructed Transverse Mass of W(2e1\\mu)",
-                  "m_{T}^{2e1#mu} (GeV)", 20, 0, 100, "GeV", hW2e1muTransMass,dir);
+                  "M_{T}^{2e1#mu} (GeV)", 20, 0, 100, "GeV", hW2e1muTransMass,dir);
   DeclareHistoSet("hW1e2muTransMass", "Reconstructed Transverse Mass of W(1e2\\mu)",
-                  "m_{T}^{1e2#mu} (GeV)", 20, 0, 100, "GeV", hW1e2muTransMass,dir);
+                  "M_{T}^{1e2#mu} (GeV)", 20, 0, 100, "GeV", hW1e2muTransMass,dir);
   DeclareHistoSet("hW0e3muTransMass", "Reconstructed Transverse Mass of W(0e3\\mu)",
-                  "m_{T}^{0e3#mu} (GeV)", 20, 0, 100, "GeV", hW0e3muTransMass,dir);
+                  "M_{T}^{0e3#mu} (GeV)", 20, 0, 100, "GeV", hW0e3muTransMass,dir);
 
   //W Charge Histos
   DeclareHistoSet("hWQ", "Reconstructed Charge of W",
@@ -259,9 +263,9 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
                   "N_{l}", 10, 0, 10, "NONE", hNTLeps,dir);
 
   DeclareHistoSet("hNJets", "Number of Jets in Event",
-                  "N_{j}", 20, 0, 20, "NONE", hNJets,dir);
+                  "N_{Jets}", 10, 0, 10, "NONE", hNJets,dir);
   DeclareHistoSet("hNVtxs", "Number of Vertexs in Event",
-                  "N_{vtx}", 20, 0, 20, "NONE", hNVtxs,dir);
+                  "N_{Vtx}", 20, 0, 20, "NONE", hNVtxs,dir);
 
   DeclareHistoSet("hWenuCombRelIso", "Comb Rel Iso of W Electron",
                   "Electron Combined Relative Isolation", 20, 0, 0.2, "NONE", hWenuCombRelIso,dir);
@@ -277,6 +281,17 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
 
   DeclareHistoSet("hMuonTightCombIso", "hMuonTightCombIso",
                   "Muon Combined Isolation", 20, 0., 1., "NONE", hMuonTightCombIso, dir);
+
+  DeclareHistoSet("hTriLepMass", "hTriLepMass",
+                  "Trilepton Invariant Mass", 100, 0., 1000., "GeV", hTriLepMass, dir);
+
+  tWZCand = dir.make<TTree>("tWZCand", "Analysis Variables after WZCand");//Only 1 for now;
+  tWZCand->Branch("WZMass", &WZMass_);
+  tWZCand->Branch("EvtType", &evtType_);
+  tWZCand->Branch("Ht", &Ht_);
+  tWZCand->Branch("Zpt", &Zpt_);
+  tWZCand->Branch("Wpt", &Wpt_);
+  tWZCand->Branch("weight", &weight_);
 
 ///Eff Plots///////
   string title = Form("Expected # of Events / %.0f pb^{-1}",  wprimeUtil_->getLumi_ipb());
@@ -302,18 +317,24 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
 //-----------------------------------------------------------
   if(debugme) printf("Filling Histos\n");
   if(wCand_ && zCand_){
-    hWZInvMass[index]->Fill(wzCand_.mass("minPz"), weight);
-    if     (evtType_ == 0) hWZ3e0muInvMass[index]->Fill(wzCand_.mass("minPz"), weight);
-    else if(evtType_ == 1) hWZ2e1muInvMass[index]->Fill(wzCand_.mass("minPz"), weight);
-    else if(evtType_ == 2) hWZ1e2muInvMass[index]->Fill(wzCand_.mass("minPz"), weight);
-    else if(evtType_ == 3) hWZ0e3muInvMass[index]->Fill(wzCand_.mass("minPz"), weight);
+    hWZMass[index]->Fill(wzCand_.mass("minPz"), weight);
+    if     (evtType_ == 0) hWZ3e0muMass[index]->Fill(wzCand_.mass("minPz"), weight);
+    else if(evtType_ == 1) hWZ2e1muMass[index]->Fill(wzCand_.mass("minPz"), weight);
+    else if(evtType_ == 2) hWZ1e2muMass[index]->Fill(wzCand_.mass("minPz"), weight);
+    else if(evtType_ == 3) hWZ0e3muMass[index]->Fill(wzCand_.mass("minPz"), weight);
     hEvtType[index]->Fill(evtType_, weight);
+    if     (wCand_.charge() > 0) hEvtTypeP[index]->Fill(evtType_, weight);
+    else if(wCand_.charge() < 0) hEvtTypeM[index]->Fill(evtType_, weight);
     hQ[index]->Fill(Q_, weight); 
     hWZTransMass[index]->Fill(wzCand_.transMass(), weight);
     hHt[index]->Fill(Ht_, weight);
+    hTriLepMass[index]->Fill(TriLepMass_, weight);
     hLeadPt[index]->Fill(LeadPt_, weight);
     hLeadElecPt[index]->Fill(LeadElecPt_, weight);
     hLeadMuonPt[index]->Fill(LeadMuonPt_, weight);
+    if(Cuts_[index] == "ValidWZCand"){//All, Wpt, Zpt, Ht + 1 for starting @ 0
+      tWZCand->Fill();
+    }
   }
   if(zCand_){
     hZpt[index]->Fill(zCand_.pt(), weight);
@@ -346,13 +367,13 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
     hWQ[index]->Fill(wCand_.charge(), weight);
     if      (wCand_.flavor() == PDGELEC){
       hWenuTransMass[index]->Fill(wCand_.mt(), weight);
-      hWmunuQ[index]->Fill(wCand_.charge(), weight);
-      const heep::Ele & e = FindElectron(*wCand_.daughter(0));
+      hWenuQ[index]->Fill(wCand_.charge(), weight);
+      const heep::Ele& e = *wCand_.elec();
       hWenuCombRelIso[index]->Fill(CalcCombRelIso(e.patEle(), ElecPU(e)), weight);
     }else if (wCand_.flavor() == PDGMUON){
       hWmunuTransMass[index]->Fill(wCand_.mt(), weight);
       hWmunuQ[index]->Fill(wCand_.charge(), weight);
-      const TeVMuon m = FindMuon(*wCand_.daughter(0));
+      const TeVMuon& m = *wCand_.muon();
       hWmunuCombRelIso[index]->Fill(m.combRelIsolation03(MuonPU(m)), weight);
     }
     if(evtType_ == 0) hW3e0muTransMass[index]->Fill(wCand_.mt(), weight);
@@ -381,6 +402,7 @@ void WZAnalyzer::Fill_Histos(int index, float weight)
     hMuonTightCombIso[index]->Fill(tightMuons_[i].combRelIsolation03(MuonPU(tightMuons_[i])), weight);
   }
 }//Fill_Histos
+
 int
 WZAnalyzer::CountZCands(ZCandV & Zs){
   int count =0;
@@ -390,23 +412,107 @@ WZAnalyzer::CountZCands(ZCandV & Zs){
   return count;
 }
 
-inline void
+void
 WZAnalyzer::CalcZVariables(){
   if (debugme) cout<<"In Calc Z Variables\n";
   // Reconstruct the Z
-  ZCandV looseZCands = getZCands(looseElectrons_, looseMuons_, maxZMassDiff_);
-  zCand_ = looseZCands.size() ? looseZCands[0] : ZCandidate();
-  if(debugme) printf("    Contains: %i loose Z candidate(s)\n", (int)looseZCands.size());
-  numZs_ = CountZCands(looseZCands); 
-  if(debugme) PrintEventLeptons();
+  float matchptcut = 0.;
+  bool minHighPt = false;
+  
+  matchptcut = 10.;
+  ElectronV zElectrons;
+  for (size_t i=0; i < looseElectrons_.size(); i++)
+    if(PassTriggerEmulation(looseElectrons_[i], matchptcut))
+      zElectrons.push_back(looseElectrons_[i]);
+  matchptcut = 20.;
+  minHighPt = false;
+  for (size_t i=0; i < zElectrons.size(); i++){
+    if(PassTriggerEmulation(looseElectrons_[i], matchptcut)){
+      minHighPt= true; 
+      break;  
+    }
+  }
+  if(!minHighPt) zElectrons.clear();
+  
+  matchptcut = 8.;
+  MuonV zMuons;
+  for (size_t i=0; i < looseMuons_.size(); i++)
+    if(PassTriggerMatch(looseMuons_[i], matchptcut, triggersToUse_))
+      zMuons.push_back(looseMuons_[i]);
+  
+  matchptcut = 13.;
+  minHighPt = false;
+  for (size_t i=0; i < zMuons.size(); i++){
+    if(PassTriggerMatch(zMuons[i], matchptcut, triggersToUse_)){
+      minHighPt= true;
+      break;
+    }
+  }
+  if(!minHighPt) zMuons.clear();
+
+  if(debugme) printf("    Contains: %i z electron(s), %i z muon(s)\n",
+                     (int)zElectrons.size(), (int)zMuons.size());
+
+  ZCandV zeeCands = getZCands(zElectrons, maxZMassDiff_, false);
+  removeLowLepPtCands(zeeCands, minZeePt1_, minZeePt2_);
+  ZCandV zmmCands = getZCands(zMuons    , maxZMassDiff_, false);
+  removeLowLepPtCands(zmmCands, minZmmPt1_, minZmmPt2_);
+  ZCandV zCands;
+  zCands.insert(zCands.end(), zeeCands.begin(), zeeCands.end());
+  zCands.insert(zCands.end(), zmmCands.begin(), zmmCands.end());
+  removeWorstCands(zCands, minZmass_, maxZmass_);
+  sort(zCands.begin(), zCands.end(), closestToZMass());
+  removeOverlapping(zCands);
+  zCand_ = zCands.size() ? zCands[0] : ZCandidate();
+
+  ZCandV zCandsAll;
+  if(zCand_){
+    ZCandV zeeCandsAll = getZCands(looseElectrons_, maxZMassDiff_, false);
+    //removeLowLepPtCands(zeeCandsAll, minZeePt1_, minZeePt2_);
+    ZCandV zmmCandsAll = getZCands(looseMuons_    , maxZMassDiff_, false);
+    //removeLowLepPtCands(zmmCandsAll, minZmmPt1_, minZmmPt2_);
+
+    zCandsAll.insert(zCandsAll.end(), zeeCandsAll.begin(), zeeCandsAll.end());
+    zCandsAll.insert(zCandsAll.end(), zmmCandsAll.begin(), zmmCandsAll.end());
+    removeWorstCands(zCandsAll, minZmass_, maxZmass_);
+
+    bool tight1=false, tight2=false;
+    if(zCand_.flavor() == PDGELEC){
+      for(uint i=0; i<tightElectrons_.size(); ++i){
+        if(!tight1 && Match(tightElectrons_[i], *zCand_.daughter(0))) tight1 = true;
+        if(!tight2 && Match(tightElectrons_[i], *zCand_.daughter(1))) tight2 = true;
+      }
+    }else if(zCand_.flavor() == PDGMUON){
+      for(uint i=0; i<tightMuons_.size(); ++i){
+        if(!tight1 && Match(tightMuons_[i], *zCand_.daughter(0))) tight1 = true;
+        if(!tight2 && Match(tightMuons_[i], *zCand_.daughter(1))) tight2 = true;
+      } 
+    }
+    TT = tight1 && tight2;
+    TF = (tight1 && !tight2) || (!tight1 && tight2);
+  }
+  zCandsAll.insert(zCandsAll.begin(), zCand_);
+  removeOverlapping(zCandsAll);
+  numZs_ = CountZCands(zCandsAll); 
+  Zpt_ = zCand_.pt();
+
+  if(debugme){
+    printf("    Contains: %i Z candidate(s)\n", (int)zCandsAll.size());
+    PrintEventLeptons();
+    PrintEventDetails();
+  }
 }
 
 inline void
 WZAnalyzer::CalcWVariables(){
   if (debugme) cout<<"In Calc W Variables\n";
   wCand_ = getWCand(tightElectrons_, tightMuons_, met_, zCand_, minDeltaR_);
+  Wpt_ = wCand_.pt();
   if(debugme) printf("    Contains: %i tight W candidate(s)\n", (bool)wCand_);
-  if(debugme) PrintEventLeptons(); 
+  if(debugme){
+    PrintEventLeptons(); 
+    PrintEventDetails();
+  }
 }
 
 inline void
@@ -427,7 +533,9 @@ inline void
 WZAnalyzer::CalcWZVariables(){
   if (debugme) cout<<"In Calc WZ Variables\n";
   wzCand_ = (zCand_ && wCand_) ? WZCandidate(zCand_, wCand_) : WZCandidate();
+  WZMass_ = wzCand_.mass("minPz");
   Q_ = (zCand_ && wCand_) ? Calc_Q() : -999.;
+  if(debugme) PrintEventDetails();
 }
 
 void
@@ -439,21 +547,7 @@ WZAnalyzer::CalcEventVariables(){
   LeadElecPt_ = CalcLeadPt(PDGELEC);
   LeadMuonPt_ = CalcLeadPt(PDGMUON);
   Ht_ = (zCand_ && wCand_) ? Calc_Ht() : -999.;
-  TT = TF = false;
-  bool tight1=false, tight2=false;
-  if(zCand_.flavor() == PDGELEC){
-    for(uint i=0; i<tightElectrons_.size(); ++i){
-      if(!tight1 && Match(tightElectrons_[i], *zCand_.daughter(0))) tight1 = true;
-      if(!tight2 && Match(tightElectrons_[i], *zCand_.daughter(1))) tight2 = true;
-    }
-  }else if(zCand_.flavor() == PDGMUON){
-    for(uint i=0; i<tightMuons_.size(); ++i){
-      if(!tight1 && Match(tightMuons_[i], *zCand_.daughter(0))) tight1 = true;
-      if(!tight2 && Match(tightMuons_[i], *zCand_.daughter(1))) tight2 = true;
-    } 
-  }
-  TT = tight1 && tight2;
-  TF = (tight1 && !tight2) || (!tight1 && tight2);
+  TriLepMass_ = (zCand_ && wCand_) ? CalcTriLepMass() : -999.;
 }
 
 void
@@ -529,7 +623,6 @@ void WZAnalyzer::printSummary(const string& dir, ofstream & out)
 void 
 WZAnalyzer::eventLoop(edm::EventBase const & event){
   ClearEvtVariables();
-
   if(debugme) PrintEvent(event);
 
   // Preselection - skip events that don't look promising
@@ -552,7 +645,6 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   // Get leptons
   const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, electronsLabel_);
   const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
-  jets_  = getProduct< JetV>(event, "selectedPatJets");
   if(debugme) printf("    Contains: %i electron(s), %i muon(s)\n",
                      (int)patElectrons.size(), (int)patMuons.size());
 
@@ -568,21 +660,24 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
       tightElectrons_.push_back(electrons_[i]);
   }
   for (size_t i = 0; i < patMuons.size(); i++) {
-    muons_.push_back(TeVMuon(patMuons[i],muonAlgo_));   
+    muons_.push_back(TeVMuon(patMuons[i],muonAlgo_));
     const float pu = MuonPU(muons_[i]);
     if (looseMuon_(muons_[i], muonResult_,pu))
       looseMuons_.push_back(muons_[i]);
 
     if (tightMuon_(muons_[i], muonResult_,pu))
       tightMuons_.push_back(muons_[i]);
-
   }
+  if(looseElectrons_.size() + looseMuons_.size() == 0) return;
 
   if(debugme) PrintLeptons();
   if(debugme) printf("    Contains: %i loose electron(s), %i loose muon(s)\n",
                      (int)looseElectrons_.size(), (int)looseMuons_.size());
   if(debugme) printf("    Contains: %i tight electron(s), %i tightmuon(s)\n",
                      (int)tightElectrons_.size(), (int)tightMuons_.size());
+
+  //Get Jets
+  jets_  = getProduct< JetV>(event, "selectedPatJets");
 
   // Get MET
   met_ = getProduct<METV>(event, metLabel_)[0];
@@ -617,15 +712,14 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
           <<endl;   
   }//MC Only If
 
-  if((event.id().run() == 166033 && event.id().luminosityBlock() == 801 && event.id().event() == 1091994700) ||
-     (event.id().run() == 166699 && event.id().luminosityBlock() == 664 && event.id().event() == 714495816)){
+  if(wprimeUtil_->DebugEvent(event)){
     cout<<"This is a missing event\n";
     PrintEvent(event);
     PrintLeptons();
   }
 
-/////////////////////
-  if(!PassCuts(wprimeUtil_->getWeight()*PU_Weight)) return;
+  weight_ = wprimeUtil_->getWeight()*PU_Weight;
+  if(!PassCuts(weight_)) return;
   if(wprimeUtil_->runningOnData()){
     cout<<" The following data events passed All Cuts!!!\n";
     PrintPassingEvent(event);
@@ -694,17 +788,20 @@ void WZAnalyzer::PrintEventDetails(){
 void
 WZAnalyzer::PrintEventLeptons(){
   if     (zCand_.flavor() == PDGELEC){
-    PrintElectron(FindElectron(*zCand_.daughter(0)), PDGZ);
-    PrintElectron(FindElectron(*zCand_.daughter(1)), PDGZ);
+    PrintElectron(*zCand_.elec1(), PDGZ);
+    PrintElectron(*zCand_.elec2(), PDGZ);
   }else if(zCand_.flavor() == PDGMUON){
-    PrintMuon(FindMuon(*zCand_.daughter(0)), PDGZ);
-    PrintMuon(FindMuon(*zCand_.daughter(1)), PDGZ);
+    PrintMuon(*zCand_.muon1(), PDGZ);
+    PrintMuon(*zCand_.muon2(), PDGZ);
   }
 
   if     (wCand_.flavor() == PDGELEC){   
-    PrintElectron(FindElectron(*wCand_.daughter(0)), PDGW);
-  }else if(wCand_.flavor() == PDGMUON) 
-    PrintMuon    (FindMuon(*wCand_.daughter(0)), PDGW);
+    //PrintElectron(*wCand_.daughter(0), PDGW);
+    PrintElectron(*wCand_.elec(), PDGW);
+  }else if(wCand_.flavor() == PDGMUON){
+    //PrintMuon    (FindMuon(*wCand_.daughter(0)), PDGW);
+    PrintMuon    (*wCand_.muon(), PDGW);
+  }
 }
 
 void
@@ -783,6 +880,13 @@ WZAnalyzer::PrintMuon(const TeVMuon& mu, int parent){
   else                    cout<<"-----Muon from ?-------------------------"<<endl;
   reco::TrackRef gm = mu.globalTrack();
   cout<<" Muon Pt: "  <<mu.pt()<<endl
+      <<" Muon Global Pt: "  <<mu.pt(kGLOBAL)<<endl
+      <<" Muon Inner  Pt: "  <<mu.pt(kINNER)<<endl
+      <<" Muon TPFMS  Pt: "  <<mu.pt(kTPFMS)<<endl
+      <<" Muon COCKTA Pt: "  <<mu.pt(kCOCKTAIL)<<endl
+      <<" Muon Picky  Pt: "  <<mu.pt(kPICKY)<<endl
+      <<" Muon TeV    Pt: "  <<mu.pt(kTEV)<<endl
+      <<" Muon DYT    Pt: "  <<mu.pt(kDYT)<<endl
       <<" Muon Charge: "<<mu.charge()<<endl
       <<" Muon Eta: " <<mu.eta()<<endl
       <<" Muon Dxy: " <<mu.userFloat("d0")<<endl //Dxy
@@ -854,10 +958,10 @@ inline bool WZAnalyzer::PassEvtSetupCut(){
 
 inline bool WZAnalyzer::PassWLepTightCut(){
   if(wCand_.flavor() == PDGELEC){
-    const heep::Ele & e = FindElectron(*wCand_.daughter(0));
+    const heep::Ele & e = *wCand_.elec();
     return tightElectron_(e.patEle(),electronResult_,ElecPU(e));
   }else if(wCand_.flavor() == PDGMUON){
-    const TeVMuon & m = FindMuon(*wCand_.daughter(0));
+    const TeVMuon & m = *wCand_.muon();
     return tightMuon_(m, muonResult_,MuonPU(m));
 }
   return false;
@@ -997,16 +1101,52 @@ WZAnalyzer::PassZLepPtCut(){
 bool
 WZAnalyzer::PassZLepTriggerMatchCut(){
   if     (zCand_.flavor() == PDGELEC){ 
-    heep::Ele& e1 = FindElectron(*zCand_.daughter(0));
-    heep::Ele& e2 = FindElectron(*zCand_.daughter(1));
+    const heep::Ele& e1 = *zCand_.elec1();
+    const heep::Ele& e2 = *zCand_.elec2();
     return (PassTriggerEmulation(e1) && PassTriggerEmulation(e2));
   }else if(zCand_.flavor() == PDGMUON){
-    TeVMuon& m1 = FindMuon(*zCand_.daughter(0));
-    TeVMuon& m2 = FindMuon(*zCand_.daughter(1));
-    return PassTriggerMatch(m1, m2); 
+    return true;//Trigger matching now before making zs
+    //TeVMuon& m1 = FindMuon(*zCand_.daughter(0));
+    //TeVMuon& m2 = FindMuon(*zCand_.daughter(1));
+    //return PassTriggerMatch(m1, m2); 
   }
   return false;
 }
+
+bool 
+WZAnalyzer::PassTriggerMatch(const pat::Electron & p, const float cut, const vstring& triggers){
+  for (size_t i=0; i < triggers.size(); ++i){
+    if (p.triggerObjectMatchesByPath(triggers[i], true, false).size() > 0){
+      const pat::TriggerObjectStandAlone * trigRef = p.triggerObjectMatchByPath(triggers[i], true, false);
+      if(trigRef->et() > cut) return true;
+    }
+  }
+  return false;
+}
+
+bool 
+WZAnalyzer::PassTriggerMatch(const TeVMuon & p, const float cut, const vstring& triggers){
+  for(uint i=0; i<p.triggerObjectMatches().size(); ++i){
+    vector<string> names = p.triggerObjectMatches()[i].pathNames(true, false);
+    for(uint j=0; j<names.size(); ++j){
+      string A = names[j];
+      for (size_t k=0; k < triggers.size(); ++k){
+        string B = triggers[k];
+        if(SameTrigger(A, B)){
+          if(debugme){
+            cout<<"old way "<<p.triggerObjectMatches().size()<<" name "<<A<<endl;
+            cout<<p.triggerObjectMatchesByPath(A, true, false).size()<<" matches for path "<<B<<endl;
+          }
+          if (p.triggerObjectMatchesByPath(A, true, false).size() > 0){
+            if(p.triggerObjectMatchByPath(A, true, false)->et() > cut) return true;
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+
 
 inline bool
 WZAnalyzer::PassTriggerMatch(const heep::Ele& e1, const heep::Ele& e2){
@@ -1048,8 +1188,9 @@ WZAnalyzer::PassWLepPtCut(){
 ////////////////////////////////
 /////////Check Electron Properties/////
 ////////////////////////////////
-bool WZAnalyzer::PassTriggerEmulation(const heep::Ele& elec){
-  if(!elec.isEcalDriven()) return false;
+bool WZAnalyzer::PassTriggerEmulation(const heep::Ele& elec, const float minPt){
+  if(!elec.patEle().ecalDrivenSeed()) return false;
+  if(elec.patEle().pt() < minPt) return false;
   float e = elec.patEle().energy() * 
     fabs(sin(elec.patEle().superCluster()->position().theta()));
   if(elec.isEB()){
@@ -1130,6 +1271,12 @@ inline float WZAnalyzer::Calc_Ht(){
   return WLepPt() + ZLepPt(0) + ZLepPt(1);
 }//--- CalcHt
 
+inline float WZAnalyzer::CalcTriLepMass(){
+  return (zCand_.daughter(0)->p4() +
+          zCand_.daughter(1)->p4() + 
+          wCand_.daughter(0)->p4()).M();
+}//--- CalcTriLepMass
+
 inline float WZAnalyzer::Calc_Q(){
   return wzCand_.mass("minPz") - zCand_.mass() - WMASS;
 }
@@ -1162,10 +1309,15 @@ WZAnalyzer::ClearEvtVariables(){
   LeadPt_ = -999;
   LeadElecPt_ = -999;
   LeadMuonPt_ = -999;
+  WZMass_ = -999;
   Ht_= -999;
+  TriLepMass_ = -999;
+  Zpt_ = -999;
+  Wpt_ = -999;
   Q_ = -999;
   TT = TF = false;
   PU_NumInteractions_ = -999.;
+  weight_ = 0;
 }
 
 void WZAnalyzer::beginFile(std::vector<wprime::InputFile>::const_iterator fi){

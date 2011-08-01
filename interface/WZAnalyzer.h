@@ -25,6 +25,8 @@
 #include "UserCode/CMGWPrimeGroup/interface/WZUtilities.h"
 #include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
+#include "TH3F.h"
+#include "TTree.h"
 
 class WZAnalyzer  {
 public:
@@ -102,6 +104,8 @@ public:
   bool PassZLepTriggerMatchCut();
   bool PassTriggerMatch(const heep::Ele& e1, const heep::Ele& e2);
   bool PassTriggerMatch(const TeVMuon& m1, const TeVMuon& m2);
+  bool PassTriggerMatch(const pat::Electron& p, const float cut, const vstring& triggers);
+  bool PassTriggerMatch(const TeVMuon& p, const float cut, const vstring& triggers);
   bool PassZeePtCut();
   bool PassZmumuPtCut();
 
@@ -117,12 +121,13 @@ public:
   bool PassFakeLeptonProbeLooseCut();
   bool PassFakeLeptonProbeTightCut();
 
-  bool PassTriggerEmulation(const heep::Ele& elec);
+  bool PassTriggerEmulation(const heep::Ele& elec, const float minPt=0.);
 
   int   Calc_EvtType();
   float CalcLeadPt(int type=0);
   float Calc_Q();
   float Calc_Ht();
+  float CalcTriLepMass();
   float Calc_GenWZInvMass();
   bool inEE(const TeVMuon& mu);
 
@@ -168,7 +173,12 @@ public:
   std::vector<double> effectiveMuonArea_;
 
 ///My calculated qualities//////////////////
+  float WZMass_;
+  float Zpt_;
+  float Wpt_;
+  float weight_;
   float Ht_;
+  float TriLepMass_;
   float Q_;
   uint evtType_;
   uint numZs_;
@@ -226,12 +236,14 @@ public:
   TH1F * hNumEvts;
 
   std::vector<TH1F*> hEvtType;
+  std::vector<TH1F*> hEvtTypeP;
+  std::vector<TH1F*> hEvtTypeM;
 
-  std::vector<TH1F*> hWZInvMass     ;
-  std::vector<TH1F*> hWZ3e0muInvMass;
-  std::vector<TH1F*> hWZ2e1muInvMass;
-  std::vector<TH1F*> hWZ1e2muInvMass;
-  std::vector<TH1F*> hWZ0e3muInvMass;
+  std::vector<TH1F*> hWZMass     ;
+  std::vector<TH1F*> hWZ3e0muMass;
+  std::vector<TH1F*> hWZ2e1muMass;
+  std::vector<TH1F*> hWZ1e2muMass;
+  std::vector<TH1F*> hWZ0e3muMass;
 
   std::vector<TH1F*> hWZTransMass;
   std::vector<TH1F*> hHt;
@@ -314,6 +326,10 @@ public:
   std::vector<TH1F*> hMuonStation;
   std::vector<TH1F*> hMuonSip;
   std::vector<TH1F*> hMuonTightCombIso;
+
+  std::vector<TH1F*> hTriLepMass;
+
+  TTree* tWZCand;
 //Cuts
   
   int NCuts_;
