@@ -1,15 +1,19 @@
 from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
+#process.WprimeAnalyzer.maxEvents   = cms.int32(500)
+#process.WprimeAnalyzer.debugme = cms.bool(True)
+
 process.WprimeAnalyzer.debugme = cms.bool(False)
+process.WprimeAnalyzer.reportAfter = cms.uint32(25000)
 process.WprimeAnalyzer.runWZAnalysis    = cms.bool(True)
 process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_sections_WZ.txt")
 
 process.WprimeAnalyzer.doRecoilCorrectionForW = cms.bool(False)
 process.WprimeAnalyzer.useAdjustedMET = cms.bool(False)
-process.WprimeAnalyzer.muonAlgo = cms.uint32(0)
+process.WprimeAnalyzer.muonAlgo = cms.uint32(1)
 
 process.WprimeAnalyzer.useJSON = cms.bool(False)
-process.WprimeAnalyzer.countGenEvts = cms.bool(True)
+process.WprimeAnalyzer.countGenEvts = cms.bool(False)
 process.WprimeAnalyzer.eventCounters = cms.vstring(
     'nEventsTotal',
     'nEventsHLT',
@@ -39,9 +43,9 @@ EWKWZCuts = cms.vstring(
     "MinNLeptons",
     
     "ValidZ", 
-    "ZMass", 
-    "ZLepTrigMatch",
-    "ZLepPt",
+#    "ZMass", 
+#    "ZLepTrigMatch",
+#    "ZLepPt",
     "HLT", 
     "NumZs", 
     
@@ -55,9 +59,9 @@ WprimeWZCuts = cms.vstring(
     "MinNLeptons",
     
     "ValidZ", 
-    "ZMass", 
-    "ZLepTrigMatch",
-    "ZLepPt",
+#    "ZMass", 
+#    "ZLepTrigMatch",
+#    "ZLepPt",
     "HLT", 
     "NumZs", 
     
@@ -84,7 +88,7 @@ WZFakeElecCuts = cms.vstring(
     
     "FakeLepProbeLoose",
     "FakeLepProbeTight",
-    ),
+    )
 WZFakeMuonCuts = cms.vstring(
     "NoCuts", 
     "HLT",
@@ -98,15 +102,12 @@ WZFakeMuonCuts = cms.vstring(
     
     "FakeLepProbeLoose",
     "FakeLepProbeTight",
-    ),
+    )
 WZEffCuts = cms.vstring(
     "NoCuts", 
     "MinNLeptons",
-
     "ValidZ", 
-    "ZLepPt",
-    
-    "AllCuts"),    
+    "AllCuts")
 
 process.WprimeAnalyzer.LooseElectronType = cms.string("WZLoose")
 process.WprimeAnalyzer.TightElectronType = cms.string("WZTight")
@@ -121,17 +122,20 @@ DoubleTriggers = cms.vstring(
 
     'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
     )
+SingleElecTriggers = cms.vstring('HLT_Ele15_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
+                                 'HLT_Ele17_CaloIdL_CaloIsoVL_v*','HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
+                                 'HLT_Ele17_CaloIdVT_CaloIsoVT_TrkIdT_TrkIsoVT_SC8_Mass30_v*',
+                                 'HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v*',
+                                 'HLT_Ele17_CaloIdL_CaloIsoVL_Ele15_HFL_v*','HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
+                                 'HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
+                                 'HLT_Ele32_CaloIdL_CaloIsoVL_SC17_v*','HLT_Ele45_CaloIdVT_TrkIdT_v*',
+                                 'HLT_Ele17_SW_L1R_v*','HLT_Ele17_SW_Isol_L1R_v*',
+                                 'HLT_Ele17_SW_TighterEleIdIsol_L1R_v*','HLT_Ele17_SW_TightCaloEleId_Ele8HE_L1R_v*',
+                                 'HLT_Ele22_SW_L1R_v*','HLT_Ele22_SW_TighterCaloIdIsol_L1R_v*',
+                                 'HLT_Ele22_SW_TighterEleId_L1R_v*','HLT_Ele32_SW_TighterEleId_L1R_v*'
+                                 )
 
-SingleElecTriggers = cms.vstring('HLT_Ele10_SW_L1R_v2','HLT_Ele12_SW_TighterEleId_L1R_v2',
-                                 'HLT_Ele17_SW_L1R_v2','HLT_Ele17_SW_Isol_L1R_v2',
-                                 'HLT_Ele17_SW_TighterEleIdIsol_L1R_v3','HLT_Ele17_SW_TightCaloEleId_Ele8HE_L1R_v2',
-                                 'HLT_Ele22_SW_L1R_v2','HLT_Ele22_SW_TighterCaloIdIsol_L1R_v2',
-                                 'HLT_Ele22_SW_TighterEleId_L1R_v3','HLT_Ele32_SW_TighterEleId_L1R_v2')
-
-SingleMuonTriggers = cms.vstring('HLT_Mu3_v2','HLT_Mu5','HLT_Mu7','HLT_Mu9','HLT_Mu11',
-                                 'HLT_Mu13_v1','HLT_Mu15_v1','HLT_Mu17_v1','HLT_Mu19_v1',
-                                 'HLT_Mu21_v1','HLT_Mu25_v1')
-
+SingleMuonTriggers = cms.vstring('HLT_Mu15_v*','HLT_Mu17_v*','HLT_Mu19_v*','HLT_Mu20_v*','HLT_Mu21_v*','HLT_Mu24_v*','HLT_Mu25_v*','HLT_Mu30_v*')
 process.WprimeAnalyzer.triggersToUse = DoubleTriggers
 
 ####################
@@ -143,13 +147,8 @@ process.WprimeAnalyzer.maxNLeptons = cms.uint32(3)
 process.WprimeAnalyzer.minLeadPt = cms.double(35.)
 process.WprimeAnalyzer.minMET = cms.double(30.)
 
-# +++++++++++++++++++Ht Cuts
-process.WprimeAnalyzer.minHt = cms.double(190.)#150 for TC300) 190 for W'400
-
 # +++++++++++++++++++W Cuts
 process.WprimeAnalyzer.minWtransMass = cms.double(0.)#Cory: Removed cut
-process.WprimeAnalyzer.minWpt = cms.double(110.)#90 for TC300) 110 for W'400
-
 process.WprimeAnalyzer.minWlepPt = cms.double(20.)
 
 process.WprimeAnalyzer.cutWenuWPRelIsoMask = cms.int32(2)#Cory: Iso only
@@ -160,6 +159,11 @@ process.WprimeAnalyzer.minZeePt1 =  cms.double(20.)
 process.WprimeAnalyzer.minZeePt2 =  cms.double(10.)
 process.WprimeAnalyzer.minZmmPt1 =  cms.double(15.)
 process.WprimeAnalyzer.minZmmPt2 =  cms.double(15.)
-process.WprimeAnalyzer.minZpt =  cms.double(110.)#90 for TC300) 110 for W'400
+
 process.WprimeAnalyzer.minZmass =  cms.double(60.)
 process.WprimeAnalyzer.maxZmass =  cms.double(120.)
+
+# +++++++++++++++++++Analysis Cuts
+process.WprimeAnalyzer.minHt = cms.double(220.)
+process.WprimeAnalyzer.minZpt =  cms.double(140.)#90 for TC300) 110 for W'400
+process.WprimeAnalyzer.minWpt = cms.double(110.)#90 for TC300) 110 for W'400
