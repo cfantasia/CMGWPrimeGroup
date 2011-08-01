@@ -72,16 +72,6 @@ void WPrimeUtil::setRecoilProjections()
 // get input files (to be retrieved from samples_cross_sections.txt)
 void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
 {
-  ifstream topdir_file("UserCode/CMGWPrimeGroup/config/top_directory.txt");
-  getline(topdir_file, top_level_dir);
-  if(top_level_dir.empty())
-    {
-      cerr << " *** Failed to load top level directory! " << endl;
-      return;
-    }
-
-  cout << "\n Reading PAT-tuples from directory " << top_level_dir << endl;
-
   string txt_file = "UserCode/CMGWPrimeGroup/config/" + sample_cross_sections;
   ifstream in(txt_file.c_str());
   string new_line; wprime::InputFile * new_file = 0;
@@ -89,7 +79,7 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
   {
     // if DONE, we are done!
     if(new_line == "DONE")break;
-    
+
     if(new_line.find("samplename = ") != string::npos)
       // new file found! create structure to put in info
       new_file = new wprime::InputFile();
@@ -131,11 +121,11 @@ int WPrimeUtil::GetPU1BX(const std::vector< PileupSummaryInfo > & PupInfo){
   return -1;
 }
 
-inline float WPrimeUtil::GetPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInfo){
+float WPrimeUtil::GetPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInfo){
   return LumiWeights_.weight(GetPU1BX(PupInfo));
 }
 
-#if 0
+#if 1
 float WPrimeUtil::GetPU3BX(const std::vector< PileupSummaryInfo > & PupInfo){
   std::vector<PileupSummaryInfo>::const_iterator PVI;
   float sum_nvtx = 0;
@@ -148,12 +138,12 @@ float WPrimeUtil::GetPU3BX(const std::vector< PileupSummaryInfo > & PupInfo){
 }
 
 #endif
-/*
+
 //weight3BX not implemented until PhysicsTools/Utilities V08-03-06
-inline float WPrimeUtil::GetPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo){
+float WPrimeUtil::GetPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo){
   return LumiWeights_.weight3BX( GetPU3BX(PupInfo) );
 }
-*/
+
 void WPrimeUtil::CheckStream(ofstream& stream, std::string & s){
   if(!stream) { 
     std::cout << "Cannot open file " << s << std::endl; 
@@ -178,6 +168,18 @@ void WPrimeUtil::getEff(float & eff, float & deff,float Num,float Denom)
 void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
 {
   size_t i = 0;
+
+  if(top_level_dir.empty())
+  {
+    string search = "Top Level Dir = ";
+    i = new_line.find(search);
+    if(i != string::npos)
+    {
+      top_level_dir = new_line.substr(search.length(), new_line.length() - search.length());
+      cout << "\n Reading PAT-tuples from directory " << top_level_dir << endl;
+      return;
+    }
+  }
   // this is where we extract the integrated luminosity
   if(lumi_ipb < 0)
 	{
@@ -198,6 +200,7 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
              << endl;
         abort();
       }
+      return;
     }
   }
 
@@ -327,4 +330,15 @@ TVector2 WPrimeUtil::getHadronicMET(edm::EventBase const & event)
 bool WPrimeUtil::runningOnData() const
 {
   return (getSampleName().find("data") != string::npos);
+}
+
+//Check if Run/Evt is in Debug list
+bool WPrimeUtil::DebugEvent(edm::EventBase const& event) const
+{
+  const edm::EventID & evtToCheck = event.id();
+  for(uint i=0; i<vEventsToDebug_.size(); ++i){
+    if(evtToCheck == vEventsToDebug_[i])
+      return true;
+  }
+  return false;
 }

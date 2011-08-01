@@ -59,15 +59,17 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
   WPrimeUtil::CheckStream(outLogFile_, logFile_);
 
   ctrNames_ = (cfg.getParameter<vstring>("eventCounters"));
-  
-  
+
   MCPUDistFile_   = cfg.getParameter<string>("MCPUDistFile" );
   MCPUDistHist_   = cfg.getParameter<string>("MCPUDistHist" );
   DataPUDistFile_ = cfg.getParameter<string>("DataPUDistFile" );
   DataPUDistHist_ = cfg.getParameter<string>("DataPUDistHist" );
   
+  std::vector<edm::EventID> vEventsToDebug = cfg.getParameter<std::vector<edm::EventID> >("vEventsToDebug");
+  
   wprimeUtil = new WPrimeUtil(outputFile_.c_str(), genParticles_, sample_cross_sections);
   wprimeUtil->SetLumiWeights(MCPUDistFile_, DataPUDistFile_, MCPUDistHist_, DataPUDistHist_);
+  wprimeUtil->SetEventsToDebug(vEventsToDebug);
 
   if(runMuMETAnalysis_)
     muMETAnalyzer = new MuMETAnalyzer(cfg, wprimeUtil);

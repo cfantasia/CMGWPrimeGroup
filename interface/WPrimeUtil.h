@@ -44,19 +44,24 @@ class WPrimeUtil
 
   void setSampleName(std::string samplename){samplename_ = samplename;}
   void setWeight(float weight){weight_ = weight;}
+  void SetEventsToDebug(const std::vector<edm::EventID>& vEvents){vEventsToDebug_ = vEvents;}
 
   std::string getSampleName() const{return samplename_;}
   float getWeight() const{return weight_;}
-  float getLumiWeight (int & nInt) {return LumiWeights_.weight(nInt);}
+  float getLumiWeight   (const int   & nInt){ return LumiWeights_.weight   (nInt);}
+  float getLumiWeight3BX(const float & nInt){ return LumiWeights_.weight3BX(nInt);}
   int   GetPU1BX(const std::vector< PileupSummaryInfo > & PupInfo);
   float GetPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInfo);
-  //float GetPU3BX(const std::vector< PileupSummaryInfo > & PupInfo);
+  float GetPU3BX(const std::vector< PileupSummaryInfo > & PupInfo);
   float GetPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo);
 
   static void getEff(float & eff, float & deff,float Num,float Denom);
 
   // true if current file under processing contains "data" in description
   bool runningOnData() const;
+  
+  //Check if Run/Evt is in Debug list
+  bool DebugEvent(edm::EventBase const& event) const;
 
   // integrated luminosity in pb^-1
   float getLumi_ipb(){return lumi_ipb;}
@@ -100,6 +105,8 @@ class WPrimeUtil
   // values set at beginFile
   std::string samplename_;
   float weight_;
+
+  std::vector<edm::EventID> vEventsToDebug_;
 
   float lumi_ipb; // in pb^-1, to be retrieved from samples_cross_sections.txt
 
