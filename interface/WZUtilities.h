@@ -178,22 +178,21 @@ public:
   bool operator()(const TeVMuon & p, pat::strbitset & ret, const float pu) {
     ret.set(false);
     reco::TrackRef global = p.globalTrack();
-    setPassCut("minPt", p.pt(), ret);
-    setPassCut("maxEta", p.eta(), ret);
-    setPassCut("maxDxy", fabs(p.dB()), ret);
-    setPassCut("maxNormalizedChi2", global.isNull() ? 0. : 
-               global->normalizedChi2(), ret);
-    setPassCut("maxIso", p.combRelIsolation(), ret);
-    setPassCut("maxIso03", p.combRelIsolation03(pu), ret);
-    setPassCut("minIsGlobal", p.isGlobalMuon(), ret);
-    setPassCut("minIsTracker", p.isTrackerMuon(), ret);
-    setPassCut("minNTrackerHits", global.isNull() ? 0 :
-               global->hitPattern().numberOfValidTrackerHits(), ret);
-    setPassCut("minNPixelHits", global.isNull() ? 0 :
-               global->hitPattern().numberOfValidPixelHits(), ret);
-    setPassCut("minNMuonHits", global.isNull() ? 0 :
-               global->hitPattern().numberOfValidMuonHits(), ret);
-    setPassCut("minNMatches", p.numberOfMatches(), ret);
+    const reco::HitPattern& hp = global->hitPattern();
+    if(!global.isNull()){
+      setPassCut("minPt", p.pt(), ret);
+      setPassCut("maxEta", p.eta(), ret);
+      setPassCut("maxDxy", fabs(p.dB()), ret);
+      setPassCut("maxNormalizedChi2", global->normalizedChi2(), ret);
+      setPassCut("maxIso", p.combRelIsolation(), ret);
+      setPassCut("maxIso03", p.combRelIsolation03(pu), ret);
+      setPassCut("minIsGlobal", p.isGlobalMuon(), ret);
+      setPassCut("minIsTracker", p.isTrackerMuon(), ret);
+      setPassCut("minNTrackerHits", hp.numberOfValidTrackerHits(), ret);
+      setPassCut("minNPixelHits", hp.numberOfValidPixelHits(), ret);
+      setPassCut("minNMuonHits", hp.numberOfValidMuonHits(), ret);
+      setPassCut("minNMatches", p.numberOfMatches(), ret);
+    }
     setIgnored(ret);
     return (bool) ret;
   }
@@ -231,6 +230,18 @@ std::string getDatasetName(const P & event, const std::string datasetName) {
   return datasetName;
 }
 
+
+
+template <class P>
+bool PassTriggerMatch(const P & p, float cut, std::vector<std::string>& triggers){
+  for (size_t i=0; i < triggers.size(); ++i){
+    if (p.triggerObjectMatchesByPath(triggers[i], true, false).size() > 0){
+      const pat::TriggerObjectStandAlone * trigRef = p.triggerObjectMatchByPath(triggers[i], true, false);
+      if(trigRef->et() > cut) return true;;
+    }
+  }
+  return false;
+}
 
 
 
