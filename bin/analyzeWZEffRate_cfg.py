@@ -7,9 +7,9 @@ process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_section
 
 process.WprimeAnalyzer.Cuts = WZEffCuts
 
-process.WprimeAnalyzer.LooseElecCuts = "WZRelaxed"
-process.WprimeAnalyzer.TightElecCuts = "WZTight"
-process.WprimeAnalyzer.LooseMuonCuts = "WZRelaxed"
-process.WprimeAnalyzer.TightMuonCuts = "WZTight"
+process.WprimeAnalyzer.LooseElectronType = "WZRelaxed"
+process.WprimeAnalyzer.TightElectronType = "WZTight"
+process.WprimeAnalyzer.LooseMuonType = "WZRelaxed"
+process.WprimeAnalyzer.TightMuonType = "WZTight"
 
 process.WprimeAnalyzer.minNLeptons = cms.uint32(2)
