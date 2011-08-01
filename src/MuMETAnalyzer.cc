@@ -393,15 +393,14 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, TeVMuon & muon
 
   for(It it = reconstructors.begin(); it != reconstructors.end(); ++it)
     {
-      bool isInvalid = true;
       unsigned rec_i(*it);
-      TLorentzVector p4 = muon.p4(rec_i, isInvalid);
-      if(isInvalid)continue;
+      if(!muon.isValid(rec_i)) continue;
+      TLorentzVector p4 = muon.p4(rec_i);
       TVector2 newMET = getNewMET(event, p4);
       cout << " " << algo_desc_long[rec_i] << " pt = "
-	   << muon.GetTrack(rec_i)->pt() << " +- " 
-	   << muon.GetTrack(rec_i)->ptError()
-	   << " GeV, charge = " << muon.GetTrack(rec_i)->charge() 
+	   << muon.getTrack(rec_i)->pt() << " +- " 
+	   << muon.getTrack(rec_i)->ptError()
+	   << " GeV, charge = " << muon.getTrack(rec_i)->charge() 
 	   << ", TM = " << WPrimeUtil::TMass(p4, newMET) << " GeV " << endl;
     }
       
