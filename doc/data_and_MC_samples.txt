@@ -1,0 +1,55 @@
+All these samples should be transferred into location specified by
+top-level directory given in config/top_directory.txt (which should be
+edited and reflect the actual location!) and organized in following
+subdirectories: 
+
+
+(1) Mu+MET analysis
+
+(a) Data:
+
+(a1) Muon pt > 25 GeV skim, May10th ReReco v1 (221.43 ipb)
+Files located at: /castor/cern.ch/user/c/cleonido/wprime/V270/Data/May10ReRecoV1
+Subdirectory name: May10ReRecoV1
+(Created from /SingleMu/Run2011A-May10ReReco-v1/AOD)
+
+(a2) Muon pt > 25 GeV skim, PRv4 165071-166763 (435.71 ipb)
+Files located at:
+/castor/cern.ch/user/c/cleonido/wprime/V270/Data/PromptRecoV4_SingleMuon/165071_166763
+Subdirectory name: PromptRecoV4_SingleMuon/165071_166763
+(Created from /SingleMu/Run2011A-PromptReco-v4/AOD)
+
+(a3) Muon pt > 25 GeV skim, PRv4 166764-167043 (168.59 ipb)
+Files located at:
+/castor/cern.ch/user/c/cleonido/wprime/V270/Data/PromptRecoV4_SingleMuon/166764_167043
+Subdirectory name: PromptRecoV4_SingleMuon/166764_167043
+(Created from /SingleMu/Run2011A-PromptReco-v4/AOD)
+
+(a4) Muon pt > 25 GeV skim, PRv4 167044-167969 (193.57 ipb)
+Files located at:
+/castor/cern.ch/user/c/cleonido/wprime/V270/Data/PromptRecoV4_SingleMuon/167044_167969
+Subdirectory name: PromptRecoV4_SingleMuon/167044_167969
+(Created from /SingleMu/Run2011A-PromptReco-v4/AOD)
+
+
+
+
+(2) El+MET analysis
+
+(a) Data: 
+
+(a1) Electron pt > 25 GeV skim, May10th ReReco v1 (204 ipb)
+Files located at: /castor/cern.ch/user/c/cleonido/wprime/V270/Data/May10ReRecoV1
+Subdirectory name: May10ReRecoV1
+(Created from /SingleElectron/Run2011A-May10ReReco-v1/AOD
+
+(a2) Electron pt > 25 GeV skim, PR v4, PR v4, 165071-167913 (932 ipb)
+Files located at:
+/castor/cern.ch/user/s/shchang/Wprime/CRAB/DATA/2011/SingleElectron_Run2011A-PromptReco-v4_AOD_DCS160404-167913_v0/
+Subdirectory name: PromptRecoV4_SingleElectron/165071_167913
+(Created from /SingleElectron/Run2011A-PromptReco-v4/AOD)
+
+
+(3) WZ analysis
+
+
