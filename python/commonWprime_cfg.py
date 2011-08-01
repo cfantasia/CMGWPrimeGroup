@@ -65,10 +65,14 @@ process.WprimeAnalyzer = cms.PSet(
     inputs = process.inputs,
 
     #PileUp Inputs
-    MCPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/MCPUDist.root'),
-    MCPUDistHist = cms.string('pileup'),
+    MCPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/MCSummer11S4PUDist.root'),
+    MCPUDistHist = cms.string('PoissonIntDist'),
     DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/DataPUDist.root'),
     DataPUDistHist = cms.string('pileup'),
+
+    vEventsToDebug = cms.VEventID(#'1:1:1', '2:2:22','3:33:3'
+    ),
+    
     
     )
 
