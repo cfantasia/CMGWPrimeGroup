@@ -106,8 +106,8 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
   }
 }
 
-void WPrimeUtil::SetLumiWeights(string & MCFile, string & DataFile,
-                                string & MCHist, string & DataHist){
+void WPrimeUtil::SetLumiWeights(const string & MCFile, const string & DataFile,
+                                const string & MCHist, const string & DataHist){
   LumiWeights_ = edm::LumiReWeighting(MCFile, DataFile, MCHist, DataHist);
 }
 
@@ -144,7 +144,7 @@ float WPrimeUtil::GetPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInf
   return LumiWeights_.weight3BX( GetPU3BX(PupInfo) );
 }
 
-void WPrimeUtil::CheckStream(ofstream& stream, std::string & s){
+void WPrimeUtil::CheckStream(const ofstream& stream, const std::string & s){
   if(!stream) { 
     std::cout << "Cannot open file " << s << std::endl; 
     abort();

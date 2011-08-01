@@ -233,14 +233,14 @@ class WZCandidate {
 
   }
 
-  double transMass() {return transMass_;}
-  double mt() {return transMass_;}
+  double transMass() const {return transMass_;}
+  double mt() const {return transMass_;}
 
-  double neutrinoPz(std::string type) {
+  double neutrinoPz(std::string type) const{
     return neutrinoPz_[index_(type)];
   }
 
-  double mass(std::string type) {
+  double mass(std::string type) const{
     return invariantMass_[index_(type)];
   }
 
@@ -256,7 +256,7 @@ class WZCandidate {
     invariantMass_ = std::vector<double>(4, 0.);
   }
 
-  size_t index_(std::string type) {
+  size_t index_(std::string type) const{
     if (type == "minAngle") return 0;
     if (type == "maxAngle") return 1;
     if (type == "maxPz"   ) return 2;
@@ -340,10 +340,10 @@ TVector2 adjustPt(const ElectronV & electrons);
 TVector2 adjustPt(const MuonV & muons);
 
 pat::MET AdjustedMET(const ElectronV & electrons,
-                            const pat::MET & met);
+                     const pat::MET & met);
 
 pat::MET AdjustedMET(const MuonV & muons,
-                             const pat::MET & met);
+                     const pat::MET & met);
 
 pat::MET AdjustedMET(const ElectronV & electrons,
                      const MuonV & muons,

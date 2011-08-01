@@ -44,6 +44,7 @@ class WPrimeUtil
 
   void setSampleName(std::string samplename){samplename_ = samplename;}
   void setWeight(float weight){weight_ = weight;}
+  void setInputFile(float weight){weight_ = weight;}
   void SetEventsToDebug(const std::vector<edm::EventID>& vEvents){vEventsToDebug_ = vEvents;}
 
   std::string getSampleName() const{return samplename_;}
@@ -82,9 +83,9 @@ class WPrimeUtil
   // activity from Z->mumu reconstructed events
   TVector2 getHadronicMET(edm::EventBase const & event);
 
-  void SetLumiWeights(std::string & MCFile, std::string & DataFile, 
-                      std::string & MCHist, std::string & DataHist);
-  static void CheckStream(ofstream& stream, std::string & s);
+  void SetLumiWeights(const std::string & MCFile, const std::string & DataFile, 
+                      const std::string & MCHist, const std::string & DataHist);
+  static void CheckStream(const ofstream& stream, const std::string & s);
 
  private:
   fwlite::TFileService * fs;
