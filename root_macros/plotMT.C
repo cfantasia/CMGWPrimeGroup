@@ -5,6 +5,7 @@
 #include <TStyle.h>
 #include <TLine.h>
 #include <TLatex.h>
+#include <THStack.h>
 
 #include <string>
 #include <iostream>
@@ -35,7 +36,10 @@ float Lumi_ipb = -1;
 
 // 1 -> Mu+MET
 // 2 -> El+MET
-const unsigned analysis_channel = 1;
+const unsigned analysis_channel = 2;
+
+// electron channel: if want colored histogram set "wClr" to true. 
+bool wClr = true;
 
 // availability of data + MC samples indicated in these arrays
 const unsigned NbgdSamplesMuMET = 19;
@@ -53,18 +57,35 @@ const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "dat
 
 TH1F * dataMuMET[NdataSamplesMuMET] = {0};
 
-const unsigned NbgdSamplesElMET = 16;
+const unsigned NbgdSamplesElMET = 27;
+// color distributions for MC background
+//  1      -> Wenu    : kAzure+1
+//  2-4,   -> QCD     : kGray+2
+//  5-7,   -> ttbar   : kMagenta
+//  8-10,  -> DY      : kOrange
+// 11-12,  -> Diboson : kGreen
+// 13-15,  -> Wlepton : kTeal
+// 16-     -> Gamma   : kRed
 const string bgdNamesElMET[NbgdSamplesElMET] = {
-  "WtoEnu_highPt", "DYtoEE_highPt", "DYtautau_highPt", "ttbar_highPt", 
-  "WW_highPt", "WZ_highPt", "ZZ_highPt", "QCD_5to15_highPt", 
-  "QCD_15to30_highPt", "QCD_30to50_highPt", "QCD_50to80_highPt", 
-  "QCD_80to120_highPt", "QCD_120to170_highPt", "QCD_170to300_highPt", 
-  "QCD_300to470_highPt", "QCD_470to600_highPt"};
+  "WtoEnu_highPt",     
+  "QCD_20to30_highPt", "QCD_30to80_highPt",  "QCD_80to170_highPt",
+  "ttjet_highPt",      "TtoBLNus_highPt",    "TtoBLNutW_highPt", 
+  "DYtoEE_highPt",     "DYtoMuMu_highPt",    "DYtoTauTau_highPt",  
+  "WtoMunu_highPt",    "WtoTaunu_highPt",  
+  "ZZ_highPt",         "WW_highPt",          "WZ_highPt",
+  "G_0to15_highPt",    "G_15to30_highPt",    "G_30to50_highPt",    
+  "G_50to80_highPt",   "G_80to120_highPt",
+  "G_120to170_highPt", "G_170to300_highPt",  "G_300to470_highPt",  
+  "G_470to800_highPt",
+  "G_800to1400_highPt","G_1400to1800_highPt","G_1800_highPt"
+};
+const Color_t bgdColorElMET[7] = {kAzure+1,kGray+2,kMagenta,kOrange,kGreen,kTeal,kRed};
+Color_t bgdClr;
 
 TH1F * bgdElMET[NbgdSamplesElMET] = {0};
 
-const unsigned NdataSamplesElMET = 5;
-const string dataNamesElMET[NdataSamplesElMET] = {"data", "data2", "data3", "data4", "data5"};
+const unsigned NdataSamplesElMET = 2;
+const string dataNamesElMET[NdataSamplesElMET] = {"data", "data2"};
 
 TH1F * dataElMET[NdataSamplesElMET] = {0};
 
@@ -73,7 +94,13 @@ void plotMT()
 {
   assert(tracking_option <= Num_MuTeVtrkAlgos-1);
 
-  string input_file = "Wprime_analysis.root";
+  string input_file = "";
+  if(analysis_channel == 1)
+    input_file = "Wprime_analysis_MuMET.root";
+  else  if(analysis_channel == 2)
+    input_file = "Wprime_analysis_ElMET.root";
+  else
+    abort();
 
   _file0 = TFile::Open(input_file.c_str());
   if(!_file0 || _file0->IsZombie())
@@ -221,7 +248,12 @@ void doPlots(int option)
     {
       hname += "_TM";
       hname_ratio += "_TM";
-      desc = "#mu&ME_{T} transverse mass: 2011 data (" 
+      string desc0 = "";
+      if(analysis_channel == 1)
+	desc0 = "#mu";
+      else if(analysis_channel == 2)
+	desc0 = "e";
+      desc = desc0 + "&ME_{T} transverse mass: 2011 data (" 
 	+ string(lumi_value2) + ")";
       xmin = 50; xmax = 1000; xmax_cumu = 1200; xmax_ratio = 740;
       title = "M_{T} (GeV/c^{2})";
@@ -238,9 +270,27 @@ void doPlots(int option)
   TH1F * bgd = new TH1F(hname.c_str(), desc.c_str(), 
 			Nbins, data->GetXaxis()->GetXmin(), 
 			data->GetXaxis()->GetXmax());
-  for(unsigned i = 0; i != NbgdSamples; ++i)
-    bgd->Add(bgdSamples[i]);
 
+  THStack *hsbgd =new THStack(hname.c_str(),desc.c_str());//+++++++++
+  //  for(unsigned i = 0; i != NbgdSamples; ++i){
+  for(int i = NbgdSamples - 1; i != -1; i--){
+    if(analysis_channel == 2){
+      //  1, 2-4, 5-7, 8-10,11-12,13-15,16-
+      if(i<1){bgdClr=bgdColorElMET[0];}
+      else if(i>1 && i<5){bgdClr=bgdColorElMET[1];}
+      else if(4<i && i<8){bgdClr=bgdColorElMET[2];}
+      else if(7<i && i<11){bgdClr=bgdColorElMET[3];}
+      else if(10<i && i<13){bgdClr=bgdColorElMET[4];}
+      else if(12<i && i<16){bgdClr=bgdColorElMET[5];}
+      else if(i>15){bgdClr=bgdColorElMET[6];}
+
+      bgdSamples[i]->SetLineColor(bgdClr);bgdSamples[i]->SetFillColor(bgdClr);
+      hsbgd->Add(bgdSamples[i]);//+++++++++
+    }
+    bgd->Add(bgdSamples[i]);
+  }
+
+  
   data->SetTitle(desc.c_str());
   data->SetMarkerStyle(8);
 
@@ -289,7 +339,8 @@ void doPlots(int option)
   if(data->GetMinimum() < 0.00001)data->SetMinimum(0.00001);
   
   data->Draw("e");
-  bgd->Draw("hist same");
+  if(wClr)hsbgd->Draw("hist same");
+  else bgd->Draw("hist same");
 
 #if 0
   wp10->SetLineColor(kRed);
