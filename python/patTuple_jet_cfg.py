@@ -4,16 +4,21 @@ from UserCode.CMGWPrimeGroup.patTuple_common_cfg import *
 from CommonTools.ParticleFlow.PF2PAT_cff import *
 
 def CMGWPswitchToPFJets(process) :
+    ## Trying to change Jet algorithm
+    process.pfJets = jetAlgo('AK7')
+
+
     # IMPORTANT: must have patTemplate loaded
     # Setup so that my patJets are PFJets and not calojets
     process.patJets.jetSource='pfJets'
+    
     # Corrections
     process.patJetCorrFactors.src = 'pfJets'
     process.patJetCorrFactors.levels = cms.vstring('L2Relative',
                                                    'L3Absolute')
-    process.patJetCorrFactors.payload = cms.string('AK5PF')
-
-    # Turn off other extra factores
+    process.patJetCorrFactors.payload = cms.string('AK7PF')
+    
+    # Turn off other extra factors
     process.patJets.addJetCorrFactors = True
     process.patJets.addBTagInfo = False
     process.patJets.addDiscriminators = False
