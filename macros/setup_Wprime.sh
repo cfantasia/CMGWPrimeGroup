@@ -9,7 +9,7 @@ exit
 fi
 
 # Definitions
-RELEASE_VERSION=CMSSW_4_2_3
+RELEASE_VERSION=CMSSW_4_2_5
 WORKING_AREA=V290
 # end definitions
 
@@ -71,6 +71,7 @@ echo -e "\n************************"
 echo -e " Done. Now will compile"
 echo -e "************************"
 sleep 2
+
 source /afs/cern.ch/cms/sw/cmsset_default.sh
 # Not sure how to make script aware of cmsenv alias...
 #cmsenv
