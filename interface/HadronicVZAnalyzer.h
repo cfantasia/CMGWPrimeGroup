@@ -31,7 +31,9 @@
 /// The class HadronicVZAnalyzer will analyze X -> VZ -> (heavy) jet + dilepton.
 /// For now, we do only simple cuts and simple histograms - fancy things come later.
 /// We also have only the dimuon channel for the time being. 
+
 class HadronicVZAnalyzer  {
+
 public:
   HadronicVZAnalyzer();                         // constructor; initialize the list to be empty
   HadronicVZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil);
@@ -218,6 +220,7 @@ public:
   ElectronV electrons_, looseElectrons_, tightElectrons_;
   MuonV muons_, looseMuons_, tightMuons_;
   JetV jets_;
+  JetV jetsDR_;
   // Not using now
   //pat::MET met;
 
@@ -277,14 +280,51 @@ public:
   TH1F* h_jet_mult;
   TH1F* h_jet_mult_inc;
 
+  TH1F* h_jet1jet2_mass;
+  TH1F* h_dptpt2;
+ 
   TH2F* h_dptpt_vs_pt;
   TH2F* h_dptpt2_vs_pt;
-
   TH2F* h_dptpt_vs_invpt;
   TH2F* h_dptpt2_vs_invpt;
-
   TH2F* h_dptpt_vs_eta;
   TH2F* h_dptpt2_vs_eta;
+
+
+  TH2F* h_dptpt_vs_pt_meta09;
+  TH2F* h_dptpt2_vs_pt_meta09;
+  TH2F* h_dptpt_vs_invpt_meta09;
+  TH2F* h_dptpt2_vs_invpt_meta09;
+
+  TH2F* h_dptpt_vs_pt_meta0912;
+  TH2F* h_dptpt2_vs_pt_meta0912;
+  TH2F* h_dptpt_vs_invpt_meta0912;
+  TH2F* h_dptpt2_vs_invpt_meta0912;
+
+  TH2F* h_dptpt_vs_pt_meta1225;
+  TH2F* h_dptpt2_vs_pt_meta1225;
+  TH2F* h_dptpt_vs_invpt_meta1225;
+  TH2F* h_dptpt2_vs_invpt_meta1225;
+
+
+  TH2F* h_dptpt_vs_pt_teta09;
+  TH2F* h_dptpt2_vs_pt_teta09;
+  TH2F* h_dptpt_vs_invpt_teta09;
+  TH2F* h_dptpt2_vs_invpt_teta09;
+
+  TH2F* h_dptpt_vs_pt_teta0915;
+  TH2F* h_dptpt2_vs_pt_teta0915;
+  TH2F* h_dptpt_vs_invpt_teta0915;
+  TH2F* h_dptpt2_vs_invpt_teta0915;
+
+  TH2F* h_dptpt_vs_pt_teta1524;
+  TH2F* h_dptpt2_vs_pt_teta1524;
+  TH2F* h_dptpt_vs_invpt_teta1524;
+  TH2F* h_dptpt2_vs_invpt_teta1524;
+
+
+
+
 
   // http://www.parashift.com/c++-faq-lite/pointers-to-members.html#faq-33.5
   // Good manners!
