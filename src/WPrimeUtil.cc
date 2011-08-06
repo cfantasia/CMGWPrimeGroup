@@ -111,7 +111,11 @@ void WPrimeUtil::SetLumiWeights(const string & MCFile, const string & DataFile,
   LumiWeights_ = edm::LumiReWeighting(MCFile, DataFile, MCHist, DataHist);
 }
 
-int WPrimeUtil::GetPU1BX(const std::vector< PileupSummaryInfo > & PupInfo){
+float WPrimeUtil::getTotalWeight3BX(edm::EventBase const & event, const std::string& label){
+  return runningOnData() ? getWeight() : getWeight()*getPUWeight3BX(event, label);
+}
+
+int WPrimeUtil::getPU1BX(const std::vector< PileupSummaryInfo > & PupInfo){
   std::vector<PileupSummaryInfo>::const_iterator PVI;                       
   for(PVI = PupInfo.begin(); PVI != PupInfo.end(); ++PVI) {               
     if(PVI->getBunchCrossing() == 0){//Only care about in time PU for now 
@@ -121,27 +125,30 @@ int WPrimeUtil::GetPU1BX(const std::vector< PileupSummaryInfo > & PupInfo){
   return -1;
 }
 
-float WPrimeUtil::GetPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInfo){
-  return LumiWeights_.weight(GetPU1BX(PupInfo));
+float WPrimeUtil::getPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInfo){
+  return LumiWeights_.weight(getPU1BX(PupInfo));
 }
 
-#if 1
-float WPrimeUtil::GetPU3BX(const std::vector< PileupSummaryInfo > & PupInfo){
+/////////////////////////////////////////////////
+////Average Over In-time & out-of-time PU////////
+/////////////////////////////////////////////////
+float WPrimeUtil::getPUWeight3BX(edm::EventBase const & event, const std::string& label){
+  std::vector< PileupSummaryInfo > PupInfo = getProduct<std::vector< PileupSummaryInfo > >(event, label);   
+  return getPUWeight3BX(PupInfo);
+}
+
+float WPrimeUtil::getPU3BX(const std::vector< PileupSummaryInfo > & PupInfo){
   std::vector<PileupSummaryInfo>::const_iterator PVI;
   float sum_nvtx = 0;
   for(PVI = PupInfo.begin(); PVI != PupInfo.end(); ++PVI) {
     float npv = PVI->getPU_NumInteractions();
     sum_nvtx += float(npv);
   }
-
   return sum_nvtx/3.;//+1, 0, -1 BX
 }
 
-#endif
-
-//weight3BX not implemented until PhysicsTools/Utilities V08-03-06
-float WPrimeUtil::GetPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo){
-  return LumiWeights_.weight3BX( GetPU3BX(PupInfo) );
+float WPrimeUtil::getPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo){
+  return LumiWeights_.weight3BX( getPU3BX(PupInfo) );
 }
 
 void WPrimeUtil::CheckStream(const ofstream& stream, const std::string & s){

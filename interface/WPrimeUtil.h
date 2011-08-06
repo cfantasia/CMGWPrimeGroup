@@ -49,12 +49,14 @@ class WPrimeUtil
 
   std::string getSampleName() const{return samplename_;}
   float getWeight() const{return weight_;}
+  float getTotalWeight3BX(edm::EventBase const & event, const std::string& label);
   float getLumiWeight   (const int   & nInt){ return LumiWeights_.weight   (nInt);}
   float getLumiWeight3BX(const float & nInt){ return LumiWeights_.weight3BX(nInt);}
-  int   GetPU1BX(const std::vector< PileupSummaryInfo > & PupInfo);
-  float GetPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInfo);
-  float GetPU3BX(const std::vector< PileupSummaryInfo > & PupInfo);
-  float GetPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo);
+  int   getPU1BX(const std::vector< PileupSummaryInfo > & PupInfo);
+  float getPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInfo);
+  float getPUWeight3BX(edm::EventBase const & event, const std::string& label);
+  float getPU3BX(const std::vector< PileupSummaryInfo > & PupInfo);
+  float getPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo);
 
   static void getEff(float & eff, float & deff,float Num,float Denom);
 

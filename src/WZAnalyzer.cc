@@ -708,9 +708,9 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
 */
     PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
-    PU_NumInteractions_ = wprimeUtil_->GetPU3BX(PupInfo_);
-    PU_Weight = wprimeUtil_->GetPUWeight3BX(PupInfo_);
-    //PU_NumInteractions_ = wprimeUtil_->GetPU1BX(PupInfo_);
+    PU_NumInteractions_ = wprimeUtil_->getPU3BX(PupInfo_);
+    PU_Weight = wprimeUtil_->getPUWeight3BX(PupInfo_);
+    //PU_NumInteractions_ = wprimeUtil_->getPU1BX(PupInfo_);
     //int PU_NumInteractions_tmp = int(PU_NumInteractions_);
     //PU_Weight = wprimeUtil_->getLumiWeight(PU_NumInteractions_tmp);
     if(debugme) 
