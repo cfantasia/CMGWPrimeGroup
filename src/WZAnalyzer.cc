@@ -152,13 +152,13 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
   DeclareHistoSet("hWZMass", "Reconstructed WZ Invariant Mass",
                   "M_{WZ} (GeV)", 1200, 0, 1200, "GeV", hWZMass,dir);
   DeclareHistoSet("hWZ3e0muMass", "Reconstructed WZ(3e0\\mu) Invariant Mass",
-                  "M_{WZ}^(3e0\\mu) (GeV)", 1200, 0, 1200, "GeV", hWZ3e0muMass,dir);
+                  "M_{WZ}^{3e0\\mu} (GeV)", 1200, 0, 1200, "GeV", hWZ3e0muMass,dir);
   DeclareHistoSet("hWZ2e1muMass", "Reconstructed WZ(2e1\\mu) Invariant Mass",
-                  "M_{WZ}^(2e1\\mu) (GeV)", 1200, 0, 1200, "GeV", hWZ2e1muMass,dir);
+                  "M_{WZ}^{2e1\\mu} (GeV)", 1200, 0, 1200, "GeV", hWZ2e1muMass,dir);
   DeclareHistoSet("hWZ1e2muMass", "Reconstructed WZ(1e2\\mu) Invariant Mass",
-                  "M_{WZ}^(1e2\\mu) (GeV)", 1200, 0, 1200, "GeV", hWZ1e2muMass,dir);
+                  "M_{WZ}^{1e2\\mu} (GeV)", 1200, 0, 1200, "GeV", hWZ1e2muMass,dir);
   DeclareHistoSet("hWZ0e3muMass", "Reconstructed WZ(0e3\\mu) Invariant Mass",
-                  "M_{WZ}^(0e3\\mu) (GeV)", 1200, 0, 1200, "GeV", hWZ0e3muMass,dir);
+                  "M_{WZ}^{0e3\\mu} (GeV)", 1200, 0, 1200, "GeV", hWZ0e3muMass,dir);
 
   DeclareHistoSet("hWZTransMass", "Reconstructed WZ Transverse Mass",
                   "M_{WZ} (GeV)", 100, 0, 1000, "GeV", hWZTransMass,dir);
@@ -708,11 +708,11 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
 */
     PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
-    //    PU_NumInteractions_ = wprimeUtil_->GetPU3BX(PupInfo_);
-    // PU_Weight = wprimeUtil_->GetPUWeight3BX(PupInfo_);
-    PU_NumInteractions_ = wprimeUtil_->GetPU1BX(PupInfo_);
-    int PU_NumInteractions_tmp = int(PU_NumInteractions_);
-    PU_Weight = wprimeUtil_->getLumiWeight(PU_NumInteractions_tmp);
+    PU_NumInteractions_ = wprimeUtil_->GetPU3BX(PupInfo_);
+    PU_Weight = wprimeUtil_->GetPUWeight3BX(PupInfo_);
+    //PU_NumInteractions_ = wprimeUtil_->GetPU1BX(PupInfo_);
+    //int PU_NumInteractions_tmp = int(PU_NumInteractions_);
+    //PU_Weight = wprimeUtil_->getLumiWeight(PU_NumInteractions_tmp);
     if(debugme) 
       cout<<" PU_NumInteractions: "<<PU_NumInteractions_
           <<" PU Weight: "<<PU_Weight
@@ -720,7 +720,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   }//MC Only If
 
   if(wprimeUtil_->DebugEvent(event)){
-    cout<<"This is a missing event\n";
+    cout<<"This is a debug event\n";
     PrintEvent(event);
     PrintLeptons();
   }
@@ -738,7 +738,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 void
 WZAnalyzer::PrintEventFull(edm::EventBase const & event) const{
   PrintEvent(event);
-  PrintTrigger();
+  WPrimeUtil::PrintPassingTriggers(triggerEvent_,triggersToUse_);
   PrintEventDetails();
   PrintEventLeptons();
 }
@@ -750,7 +750,7 @@ void WZAnalyzer::PrintPassingEvent(edm::EventBase const & event){
 }
 
 void WZAnalyzer::PrintDebugEvent() const{
-  PrintTrigger();
+  WPrimeUtil::PrintPassingTriggers(triggerEvent_,triggersToUse_);
   PrintEventDetails();
   PrintEventLeptons();
 }
@@ -784,6 +784,7 @@ void WZAnalyzer::PrintEventDetails() const{
   }
   if(zCand_ && wCand_ && wzCand_.mass("minPz")>0.){
     cout<<" WZ Mass: "<<wzCand_.mass("minPz")
+        <<" Neu Pz: "<<wzCand_.neutrinoPz("minPz")
         <<" Ht: "<<Ht_
         <<" Zpt: "<<zCand_.pt()
         <<" Wpt: "<<wCand_.pt()
@@ -803,23 +804,9 @@ WZAnalyzer::PrintEventLeptons() const{
   }
 
   if     (wCand_.flavor() == PDGELEC){   
-    //PrintElectron(*wCand_.daughter(0), PDGW);
     PrintElectron(*wCand_.elec(), PDGW);
   }else if(wCand_.flavor() == PDGMUON){
-    //PrintMuon    (FindMuon(*wCand_.daughter(0)), PDGW);
     PrintMuon    (*wCand_.muon(), PDGW);
-  }
-}
-
-void
-WZAnalyzer::PrintTrigger() const{
-  const pat::TriggerPathRefVector acceptedPaths = triggerEvent_.acceptedPaths();
-  for (size_t i = 0; i < acceptedPaths.size(); i++){
-    for (size_t j = 0; j < triggersToUse_.size(); j++){
-      if(SameTrigger(acceptedPaths[i]->name(), triggersToUse_[j])){
-        if(acceptedPaths[i]->prescale() == 1  && acceptedPaths[i]->wasAccept()) cout<<"Passed path: "<<acceptedPaths[i]->name()<<endl;
-      }
-    }
   }
 }
 
@@ -854,6 +841,7 @@ WZAnalyzer::PrintElectron(const heep::Ele& elec, int parent) const{
       <<" Elec energy: "<<elec.patEle().energy()<<endl
       <<" Elec Charge: "<<elec.patEle().charge()<<endl
       <<" Elec Eta: "<<elec.patEle().eta()<<", isEB="<<elec.patEle().isEB()<<endl //Eta
+      <<" Elec Phi: "<<elec.patEle().phi()<<endl
       <<" Elec NMiss: "<<elec.patEle().gsfTrack().get()->trackerExpectedHitsInner().numberOfHits()<<endl
       <<" Elec Dist: "<<elec.patEle().convDist()<<endl
       <<" Elec dCotTheta: "<<elec.patEle().convDcot()<<endl
@@ -895,6 +883,7 @@ WZAnalyzer::PrintMuon(const TeVMuon& mu, int parent) const{
       <<" Muon DYT    Pt: "  <<mu.pt(kDYT)<<endl
       <<" Muon Charge: "<<mu.charge()<<endl
       <<" Muon Eta: " <<mu.eta()<<endl
+      <<" Muon Phi: " <<mu.phi()<<endl
       <<" Muon Dxy: " <<mu.userFloat("d0")<<endl //Dxy
       <<" Muon NormX2: "<<gm->normalizedChi2()<<endl //NormX2
       <<" Muon NPix: "  <<gm->hitPattern().numberOfValidPixelHits()<<endl //Npixhit
@@ -924,11 +913,6 @@ WZAnalyzer::CalcLeadPt(int type) const{
     return leadpt;
   }
   return TMath::Max(CalcLeadPt(PDGELEC), CalcLeadPt(PDGMUON));
-}
-
-inline bool
-WZAnalyzer::SameTrigger(const string & A, const string & B) const{
-  return (B.find("*") == string::npos) ? !A.compare(B) : !A.compare(0, A.size()-1, B, 0, B.size()-1);
 }
 
 /////////////////Accessors///////////////////////
@@ -980,17 +964,7 @@ bool WZAnalyzer::PassTriggersCut(){
   //Apply the trigger if running on data or MC 
   //If MC, apply if no Z or if Z exists, zCand == PDGMuon)
   if(wprimeUtil_->runningOnData() || !zCand_ || zCand_.flavor() == PDGMUON){
-    const pat::TriggerPathRefVector acceptedPaths = triggerEvent_.acceptedPaths();
-    if(debugme) cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
-    for (size_t i = 0; i < acceptedPaths.size(); i++){
-      for (size_t j = 0; j < triggersToUse_.size(); j++){
-        if(SameTrigger(acceptedPaths[i]->name(), triggersToUse_[j])){
-          if(debugme) cout<<"Matched names: "<<acceptedPaths[i]->name()<<" and "<<triggersToUse_[j]<<endl;
-          if(acceptedPaths[i]->prescale() == 1  && acceptedPaths[i]->wasAccept()) return true;
-          break;
-        }
-      }
-    }
+    return WPrimeUtil::PassTriggersCut(triggerEvent_,triggersToUse_);
   }else{
     return true;//Cory: This is not good, but will pass HLT in the meantime.
   }
@@ -1127,7 +1101,7 @@ WZAnalyzer::PassTriggerMatch(const TeVMuon & p, const float cut, const vstring& 
     vector<string> names = p.triggerObjectMatches()[i].pathNames(true, false);
     for(uint j=0; j<names.size(); ++j){
       for (size_t k=0; k < triggers.size(); ++k){
-        if(SameTrigger(names[j], triggers[k])){
+        if(WPrimeUtil::SameTrigger(names[j], triggers[k])){
           if (p.triggerObjectMatchesByPath(names[j], true, false).size() > 0){
             if(p.triggerObjectMatchByPath(names[j], true, false)->pt() > cut) return true;
           }

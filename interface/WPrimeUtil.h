@@ -67,6 +67,19 @@ class WPrimeUtil
   // integrated luminosity in pb^-1
   float getLumi_ipb(){return lumi_ipb;}
 
+  static inline bool SameTrigger(const std::string & versionedName, const std::string & wildcardedName){
+    return (wildcardedName.find("*") == std::string::npos) ? 
+      !versionedName.compare(wildcardedName) : //No '*', early triggers
+      !versionedName.compare(0, versionedName.size()-1, wildcardedName, 0, wildcardedName.size()-1);//This assumes v is under 10, need to fix
+  }
+
+  static bool PassTriggersCut(edm::EventBase const & event, std::string label,const std::vector<std::string>& triggerNames);
+  static bool PassTriggersCut(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames);
+  static void PrintPassingTriggers(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames);
+  static bool FoundAndPassed(const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames);
+  static bool Passed(const pat::TriggerPathRef path);
+  static bool FindTrigger(const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames);
+
   //transverse mass with a given MET object (TVector2)
   static float TMass(const TLorentzVector& lv, const TVector2& themet)
     {

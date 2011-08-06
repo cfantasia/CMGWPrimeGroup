@@ -273,6 +273,47 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
   
 }
 
+bool WPrimeUtil::PassTriggersCut(edm::EventBase const & event, std::string label, const std::vector<std::string>& triggerNames){
+  pat::TriggerEvent triggerEvent = getProduct<pat::TriggerEvent>(event, label);
+  return PassTriggersCut(triggerEvent,triggerNames);
+}
+
+bool WPrimeUtil::PassTriggersCut(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames){
+  const pat::TriggerPathRefVector acceptedPaths = triggerEvent.acceptedPaths();
+  //cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
+  for (size_t i = 0; i < acceptedPaths.size(); i++){
+    if(FoundAndPassed(acceptedPaths[i], triggerNames)) return true;
+  }//acceptedPaths loop
+  return false;
+}
+
+void
+WPrimeUtil::PrintPassingTriggers(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames){
+  const pat::TriggerPathRefVector acceptedPaths = triggerEvent.acceptedPaths();
+  for (size_t i = 0; i < acceptedPaths.size(); i++){
+    if(FoundAndPassed(acceptedPaths[i], triggerNames))
+      cout<<"Passed path: "<<acceptedPaths[i]->name()<<endl;
+  }
+}
+
+inline bool
+WPrimeUtil::FoundAndPassed(const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames){
+  return Passed(path) && FindTrigger(path, triggerNames);
+}
+
+inline bool
+WPrimeUtil::Passed(const pat::TriggerPathRef path){
+  return (path->prescale() == 1  && path->wasAccept());
+}
+
+inline bool
+WPrimeUtil::FindTrigger(const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames){
+  for (size_t j = 0; j < triggerNames.size(); j++){
+    if(SameTrigger(path->name(), triggerNames[j])) return true;
+  }
+  return false;
+}
+
 // get hadronic MET component (that needs to be corrected 
 // if applyMETCorrection=true)from Z data; this will be done according to hadronic 
 // activity from Z->mumu reconstructed events
