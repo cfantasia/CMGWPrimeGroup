@@ -1,4 +1,4 @@
-Top Level Dir = /
+Top Level Dir = root://cmsxrootd.hep.wisc.edu/
 integrated lumi = 1092 pb^-1
 
 samplename = data
@@ -176,4 +176,12 @@ description = ZZTo4L_TuneZ2_7TeV-pythia6-tauola
 x-section = 0.082
 pathname = filelists_WZ/MCPatTrilepton-W05-08-04D-ZZTo4L_TuneZ2_7TeV-pythia6-tauola.txt
 Nprod_evt = 159600
+
+DONE
+
+samplename = dataTest
+description = test
+x-section = 1
+pathname = filelists_WZ/TrileptonPatTuple-W05-08-02F-DoubleElectron-Run2011A-PromptReco-v4.txt
+Nprod_evt = 9999999
 

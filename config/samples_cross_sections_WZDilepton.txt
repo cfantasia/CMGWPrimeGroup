@@ -1,4 +1,4 @@
-Top Level Dir = /
+Top Level Dir = root://cmsxrootd.hep.wisc.edu/
 integrated lumi = 1092 pb^-1
 
 samplename = DYJetsToLL
