@@ -1,5 +1,5 @@
 //
-// $Id: Muon.h,v 1.2 2011/04/05 09:24:10 cleonido Exp $
+// $Id: Muon.h,v 1.36 2011/06/08 20:40:18 rwolf Exp $
 //
 
 #ifndef DataFormats_PatCandidates_Muon_h
@@ -17,7 +17,7 @@
 
   \author   Steven Lowette, Giovanni Petrucciani, Frederic Ronga, Colin Bernet
 
-  \version  $Id: Muon.h,v 1.2 2011/04/05 09:24:10 cleonido Exp $
+  \version  $Id: Muon.h,v 1.36 2011/06/08 20:40:18 rwolf Exp $
 */
 
 #include "DataFormats/MuonReco/interface/Muon.h"
@@ -39,6 +39,10 @@ namespace pat {
   typedef edm::RefVector<MuonCollection> MuonRefVector; 
 }
 
+namespace reco {
+  /// pipe operator (introduced to use pat::Muon with PFTopProjectors)
+  std::ostream& operator<<(std::ostream& out, const pat::Muon& obj);
+}
 
 // Class definition
 namespace pat {
@@ -195,14 +199,13 @@ namespace pat {
 	void initImpactParameters(void); // init IP defaults in a constructor
 	double dB(IpType type = None) const;
 	double edB(IpType type = None) const;
-	void   setDB ( double dB, double edB, IpType type = None ) {
+	void   setDB ( double dB, double edB, IpType type = None ) { 
 	  if (type == None) {
 	    dB_ = dB; edB_ = edB; 
 	    cachedDB_ = true;
 	  }
 	  ip_[type] = dB; eip_[type] = edB; cachedIP_[type] = true;
 	}
-	
 
       /// numberOfValidHits returns the number of valid hits on the global track.
       unsigned int numberOfValidHits() const;
@@ -216,6 +219,9 @@ namespace pat {
 
       /// Returns the segment compatibility, using muon::segmentCompatibility (DataFormats/MuonReco/interface/MuonSelectors.h)
       double segmentCompatibility(reco::Muon::ArbitrationType arbitrationType = reco::Muon::SegmentAndTrackArbitration) const ;
+
+      /// pipe operator (introduced to use pat::Muon with PFTopProjectors)
+      friend std::ostream& reco::operator<<(std::ostream& out, const Muon& obj);
 
     protected:
 
@@ -251,7 +257,6 @@ namespace pat {
       reco::TrackRef defaultTeVMuonRef_;
       reco::TrackRef dytMuonRef_;
       reco::TrackRef cocktailMuonRef_;
-
       std::vector<reco::Track> pickyMuon_;
       std::vector<reco::Track> tpfmsMuon_;
       std::vector<reco::Track> defaultTeVMuon_;

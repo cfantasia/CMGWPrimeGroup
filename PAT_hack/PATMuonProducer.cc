@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.cc,v 1.2 2011/04/05 09:24:10 cleonido Exp $
+// $Id: PATMuonProducer.cc,v 1.42 2011/03/15 22:21:49 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -322,6 +322,7 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 	// If the getByLabel calls failed above (i.e. if the TeV refit
 	// maps/collections were not in the event), then the TrackRefs
 	// in the Muon object will remain null.
+	
 	if (!pickyMap.failedToGet()) {
 	  it_picky = pickyMap->find(globalTrack);
 	  if (it_picky != pickyMap->end()) 
@@ -330,7 +331,7 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 	  if (embedPickyMuon_) aMuon.embedPickyMuon();
 	}
 	else TeVfailed = true;
- 
+	
 	if (!tpfmsMap.failedToGet()) {
 	  it_tpfms = tpfmsMap->find(globalTrack);
 	  if (it_tpfms != tpfmsMap->end()) 
@@ -339,7 +340,7 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 	  if (embedTpfmsMuon_) aMuon.embedTpfmsMuon();
 	}
 	else TeVfailed = true;
-
+	
 	if (!defaultTeVMap.failedToGet()) {
 	  it_defTeV = defaultTeVMap->find(globalTrack);
 	  if (it_defTeV != defaultTeVMap->end())
@@ -348,13 +349,13 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 	  if (embedDefaultTeVMuon_) aMuon.embedDefaultTeVMuon();
 	}
 	else TeVfailed = true;
-
+	
 	if (!dytMap.failedToGet()) {
 	  it_dyt = dytMap->find(globalTrack);
 	  if (it_dyt != dytMap->end()) aMuon.setDytMuon(it_dyt->val);
 	  if (embedDytMuon_) aMuon.embedDytMuon();
 	}
-
+	
 	if(!TeVfailed)
 	  {
 	    reco::TrackRef cocktail = 
@@ -364,7 +365,8 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 	    if(embedCocktailMuon_)aMuon.embedCocktailMuon();
 	  }
 
-      }
+
+     }
       
       // Isolation
       if (isolator_.enabled()) {
