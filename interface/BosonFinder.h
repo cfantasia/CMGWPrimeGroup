@@ -194,6 +194,7 @@ class WZCandidate {
     double term1 = sqrt(trilepP4.M2() + pow(trilepP4.pt(),2)) + met->pt();
     double term2 = (trilepP4 + met->p4()).pt();
     transMass_ = sqrt(pow(term1, 2) - pow(term2, 2));
+    pt_        = (Z.p4()+W.p4()).pt();
 
     double dPhi         = deltaPhi(wLep->phi(), met->phi());
     double g            = (WMASS * WMASS / 2. + 
@@ -235,6 +236,7 @@ class WZCandidate {
 
   double transMass() const {return transMass_;}
   double mt() const {return transMass_;}
+  double pt() const {return pt_;}
 
   double neutrinoPz(std::string type) const{
     return neutrinoPz_[index_(type)];
@@ -247,6 +249,7 @@ class WZCandidate {
  private:
 
   double transMass_;
+  double pt_;
   std::vector<double> neutrinoPz_;
   std::vector<double> invariantMass_;
 
