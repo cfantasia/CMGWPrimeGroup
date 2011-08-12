@@ -70,6 +70,7 @@ public:
   void PrintEventLeptons() const;
   void PrintTrigger() const;
   void PrintLeptons() const;
+  void PrintElectron(const pat::Electron& elec, int parent=0) const;
   void PrintElectron(const heep::Ele& elec, int parent=0) const;
   void PrintMuon(const TeVMuon& mu, int parent=0) const;
   
@@ -193,7 +194,8 @@ public:
   float LeadElecPt_;
   float LeadMuonPt_;
   bool TT, TF;
-  float PU_NumInteractions_;
+  float PU_NumInteractions3BX_;
+  float PU_NumInteractions1BX_;
 
 // +++++++++++++++++++General Cut values
   uint maxNumZs_;
@@ -242,99 +244,45 @@ public:
   TH1F * hEffAbs;
   TH1F * hNumEvts;
 
-  std::vector<TH1F*> hEvtType;
-  std::vector<TH1F*> hEvtTypeP;
-  std::vector<TH1F*> hEvtTypeM;
-
-  std::vector<TH1F*> hWZMass     ;
-  std::vector<TH1F*> hWZ3e0muMass;
-  std::vector<TH1F*> hWZ2e1muMass;
-  std::vector<TH1F*> hWZ1e2muMass;
-  std::vector<TH1F*> hWZ0e3muMass;
-
-  std::vector<TH1F*> hWZTransMass;
-  std::vector<TH1F*> hHt;
-  std::vector<TH1F*> hWpt;
-  std::vector<TH1F*> hZpt;
-
-  std::vector<TH1F*> hMET;
-  std::vector<TH1F*> hMETee;
-  std::vector<TH1F*> hMETmumu;
-  std::vector<TH1F*> hMET3e0mu;
-  std::vector<TH1F*> hMET2e1mu;
-  std::vector<TH1F*> hMET1e2mu;
-  std::vector<TH1F*> hMET0e3mu;
-
-  std::vector<TH1F*> hZMass     ;
-  std::vector<TH1F*> hZeeMass   ;
-  std::vector<TH1F*> hZmumuMass ;
-  std::vector<TH1F*> hZ3e0muMass;
-  std::vector<TH1F*> hZ2e1muMass;
-  std::vector<TH1F*> hZ1e2muMass;
-  std::vector<TH1F*> hZ0e3muMass;
-  std::vector<TH1F*> hZeeMassTT;
-  std::vector<TH1F*> hZeeMassTF;
-  std::vector<TH1F*> hZmumuMassTT ;
-  std::vector<TH1F*> hZmumuMassTF ;
-
-  std::vector<TH1F*> hWTransMass     ;
-  std::vector<TH1F*> hWenuTransMass  ;
-  std::vector<TH1F*> hWmunuTransMass ;
-  std::vector<TH1F*> hW3e0muTransMass;
-  std::vector<TH1F*> hW2e1muTransMass;
-  std::vector<TH1F*> hW1e2muTransMass;
-  std::vector<TH1F*> hW0e3muTransMass;
-
-  std::vector<TH1F*> hWQ     ;
-  std::vector<TH1F*> hWenuQ  ;
-  std::vector<TH1F*> hWmunuQ ;
-  std::vector<TH1F*> hW3e0muQ;
-  std::vector<TH1F*> hW2e1muQ;
-  std::vector<TH1F*> hW1e2muQ;
-  std::vector<TH1F*> hW0e3muQ;
+  std::vector<TH1F*> hWZMass;
+  std::vector<TH1F*> hWZ3e0muMass, hWZ2e1muMass, hWZ1e2muMass, hWZ0e3muMass;
 
   std::vector<TH1F*> hQ;
+  std::vector<TH1F*> hWZTransMass;
+  std::vector<TH1F*> hWZpt;
+  std::vector<TH1F*> hHt;
+  std::vector<TH1F*> hTriLepMass;
+  std::vector<TH1F*> hEvtType, hEvtTypeP, hEvtTypeM;
+  std::vector<TH1F*> hLeadPt, hLeadPtZee, hLeadPtZmm;
+  std::vector<TH1F*> hLeadElecPt, hLeadMuonPt;
+
+  std::vector<TH1F*> hZMass, hZeeMass, hZmmMass ;
+  std::vector<TH1F*> hZ3e0muMass, hZ2e1muMass, hZ1e2muMass, hZ0e3muMass;
+  std::vector<TH1F*> hZeeMassTT, hZeeMassTF, hZmmMassTT, hZmmMassTF;
+  std::vector<TH1F*> hZpt,hZeept,hZmmpt;
+
+  std::vector<TH1F*> hMET, hMETee, hMETmm;
+  std::vector<TH1F*> hMET3e0mu, hMET2e1mu, hMET1e2mu, hMET0e3mu;
+
+  std::vector<TH1F*> hWTransMass, hWenuTransMass, hWmnuTransMass;
+  std::vector<TH1F*> hW3e0muTransMass, hW2e1muTransMass, hW1e2muTransMass, hW0e3muTransMass;
+  std::vector<TH1F*> hWpt,hWptZee,hWptZmm;
+  std::vector<TH1F*> hWQ, hWenuQ, hWmnuQ;
+  std::vector<TH1F*> hW3e0muQ, hW2e1muQ, hW1e2muQ, hW0e3muQ;
 
   std::vector<TH1F*> hNLElec;
   std::vector<TH1F*> hNLMuon;
-  std::vector<TH1F*> hNLLeps;
+  std::vector<TH1F*> hNLLeps, hNLLepsZee, hNLLepsZmm;
 
   std::vector<TH1F*> hNTElec;
   std::vector<TH1F*> hNTMuon;
   std::vector<TH1F*> hNTLeps;
 
-  std::vector<TH1F*> hNJets;
-  std::vector<TH1F*> hNVtxs;
+  std::vector<TH1F*> hNJets,hNJetsZee,hNJetsZmm;
+  std::vector<TH1F*> hNVtxs3BX, hNVtxs3BXZee, hNVtxs3BXZmm;
+  std::vector<TH1F*> hNVtxs1BX, hNVtxs1BXZee, hNVtxs1BXZmm;
 
-  std::vector<TH1F*> hLeadPt;
-  std::vector<TH1F*> hLeadElecPt;
-  std::vector<TH1F*> hLeadMuonPt;
-
-  std::vector<TH1F*> hWenuCombRelIso;
-  std::vector<TH1F*> hWmunuCombRelIso;
-
-  std::vector<TH1F*> hElecPt;
-  std::vector<TH1F*> hElecEt;
-  std::vector<TH1F*> hElecdEta;
-  std::vector<TH1F*> hElecdPhi;
-  std::vector<TH1F*> hElecSigmann;
-  std::vector<TH1F*> hElecEP;
-  std::vector<TH1F*> hElecHE;
-  std::vector<TH1F*> hElecTrkRelIso;
-  std::vector<TH1F*> hElecECalRelIso;
-  std::vector<TH1F*> hElecHCalRelIso;
-
-  std::vector<TH1F*> hMuonPt;
-  std::vector<TH1F*> hMuonDxy;
-  std::vector<TH1F*> hMuonNormChi2;
-  std::vector<TH1F*> hMuonNPix;
-  std::vector<TH1F*> hMuonNTrk;
-  std::vector<TH1F*> hMuonRelIso;
-  std::vector<TH1F*> hMuonStation;
-  std::vector<TH1F*> hMuonSip;
-  std::vector<TH1F*> hMuonTightCombIso;
-
-  std::vector<TH1F*> hTriLepMass;
+  std::vector<TH1F*> hWenuCombRelIso, hWmnuCombRelIso;
 
   TTree* tWZCand;
 //Cuts
