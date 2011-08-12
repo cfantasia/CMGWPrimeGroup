@@ -10,7 +10,7 @@ process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_section
 
 process.WprimeAnalyzer.doRecoilCorrectionForW = cms.bool(False)
 process.WprimeAnalyzer.useAdjustedMET = cms.bool(False)
-process.WprimeAnalyzer.muonAlgo = cms.uint32(1)
+process.WprimeAnalyzer.muonAlgo = cms.uint32(7)
 
 process.WprimeAnalyzer.useJSON = cms.bool(False)
 process.WprimeAnalyzer.countGenEvts = cms.bool(False)
@@ -71,8 +71,8 @@ WprimeWZCuts = cms.vstring(
 
     "ValidWZCand",   
     "Ht", 
-    "Zpt", 
-    "Wpt",
+#    "Zpt", 
+#    "Wpt",
 
     "AllCuts")
 WZFakeElecCuts = cms.vstring(
@@ -164,6 +164,6 @@ process.WprimeAnalyzer.minZmass =  cms.double(60.)
 process.WprimeAnalyzer.maxZmass =  cms.double(120.)
 
 # +++++++++++++++++++Analysis Cuts
-process.WprimeAnalyzer.minHt = cms.double(220.)
-process.WprimeAnalyzer.minZpt =  cms.double(140.)#90 for TC300) 110 for W'400
-process.WprimeAnalyzer.minWpt = cms.double(110.)#90 for TC300) 110 for W'400
+process.WprimeAnalyzer.minHt = cms.double(250.)
+process.WprimeAnalyzer.minZpt =  cms.double(0.)#90 for TC300) 110 for W'400
+process.WprimeAnalyzer.minWpt = cms.double(0.)#90 for TC300) 110 for W'400
