@@ -9,9 +9,14 @@
 class TeVMuon : public pat::Muon{
  public:
   TeVMuon(const reco::Muon & muon, const unsigned muReconstructor=kTEV, bool isValid=1) :
-    pat::Muon(muon), muReconstructor_(muReconstructor),isValid_(isValid) {setMuLorentzVector(muReconstructor);}
+    pat::Muon(muon), muReconstructor_(muReconstructor),isValid_(isValid),patP4_(muon.px(),muon.py(),muon.pz(),muon.energy()){
+    setMuLorentzVector(muReconstructor);
+  }
   TeVMuon(const pat::Muon & muon, const unsigned muReconstructor=kTEV, bool isValid=1) :
-    pat::Muon(muon), muReconstructor_(muReconstructor),isValid_(isValid) {setMuLorentzVector(muReconstructor);}
+    pat::Muon(muon), muReconstructor_(muReconstructor),isValid_(isValid),patP4_(muon.px(),muon.py(),muon.pz(),muon.energy()){
+    
+    setMuLorentzVector(muReconstructor);
+  }
   ~TeVMuon(){}
   
   //////////////////////////////
@@ -20,6 +25,7 @@ class TeVMuon : public pat::Muon{
   const unsigned getmuReconstructor() const;
   const bool isValid() const;
   const bool isValid(const unsigned muReconstructor);
+  const TLorentzVector getPatP4() const;
   const reco::TrackRef getTrack(const unsigned muReconstructor) const;
   const TLorentzVector getTrkLorentzVector(const reco::TrackRef trk) const;
 
@@ -62,6 +68,7 @@ class TeVMuon : public pat::Muon{
  private:
   unsigned muReconstructor_;
   bool isValid_;
+  TLorentzVector patP4_;
 
   //////////////////////////////
   ///TeV Modifier Functions/////
@@ -89,13 +96,19 @@ TeVMuon::isValid(const unsigned muReconstructor){
   isValid_ = !(getTrack(muReconstructor).isNull());
   return isValid_;
 }
+
+inline const TLorentzVector TeVMuon::getPatP4() const{
+  return patP4_;
+}
+
 /*
 inline const TLorentzVector TeVMuon::P4() const{
   return TLorentzVector(px(), py(), pz(), energy());
 }
 */
 inline const TLorentzVector TeVMuon::p4(const unsigned muReconstructor) const{
-  return getTrkLorentzVector(getTrack(muReconstructor));
+  return muReconstructor==kPAT ? getPatP4() :
+    getTrkLorentzVector(getTrack(muReconstructor));
 }
 
 inline double TeVMuon::pt() const{
@@ -192,7 +205,7 @@ inline void TeVMuon::setMuLorentzVector(const reco::TrackRef & trk)
 
 inline void TeVMuon::setMuLorentzVector(const unsigned muReconstructor)
 {
-  if(isValid(muReconstructor))
+  if(muReconstructor!=kPAT && isValid(muReconstructor))
     setMuLorentzVector(getTrack(muReconstructor));
 }
 
