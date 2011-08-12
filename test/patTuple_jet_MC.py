@@ -22,12 +22,37 @@ process.lowPtJetFilter = cms.EDFilter("CandViewCountFilter",
                                 minNumber = cms.uint32(1)
                                 )
 
+
+from RecoJets.JetProducers.kt4PFJets_cfi import kt4PFJets
+process.kt6PFJetsPFlow = kt4PFJets.clone(
+    rParam = cms.double(0.6),
+    src = cms.InputTag('pfNoElectron'),
+    doAreaFastjet = cms.bool(True),
+    doRhoFastjet = cms.bool(True)
+    )
+process.patJetCorrFactors.rho = cms.InputTag("kt6PFJetsPFlow", "rho")
+
+
+
+getattr(process,"PF2PATmod").replace(
+    getattr(process,"pfNoElectron"),
+    getattr(process,"pfNoElectron")*process.kt6PFJetsPFlow )
+
+
+#process.patseq = cms.Sequence(
+#    process.goodOfflinePrimaryVertices*
+#    getattr(process,"PF2PATMOD")
+#    )
+
+
 ## let it run
 process.p = cms.Path(
     process.muonMatch + 
     process.patMuons + 
     process.selectedPatMuons +
-    process.PF2PATmod *
+    process.goodOfflinePrimaryVertices*
+    getattr(process,"PF2PATmod")*  
+    # process.PF2PATmod *
     (process.patJetCorrFactors + 
      process.patJets +
      process.selectedPatJets +
@@ -35,7 +60,7 @@ process.p = cms.Path(
 )
 
 process.source.fileNames = [
-#    'file:/home/fladias/WPrime/RSGravitonToZZToMuMuJJ_kMpl005_M_1000_pythia6_cff_py_GEN_FASTSIM_HLT.root'
+    'file:/data/fladias/RSGravitonToZZToMuMuJJ_kMpl005_M_1000_pythia6_cff_py_GEN_FASTSIM_HLT.root'
 #    'file:/afs/cern.ch/user/t/tomei/public/PYTHIA6_EXOTICA_RSGravZZ_kMpl005_M1000_7TeV_mumujj_cff_py_GEN_FASTSIM_HLT.root',
     ] 
 

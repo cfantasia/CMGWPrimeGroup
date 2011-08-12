@@ -2,6 +2,8 @@ import FWCore.ParameterSet.Config as cms
 from UserCode.CMGWPrimeGroup.patTuple_common_cfg import *
 #from PhysicsTools.PFCandProducer.PF2PAT_cff import *
 from CommonTools.ParticleFlow.PF2PAT_cff import *
+from PhysicsTools.PatAlgos.tools.pfTools import *
+
 
 def CMGWPswitchToPFJets(process) :
     ## Trying to change Jet algorithm
@@ -34,6 +36,17 @@ def CMGWPswitchToPFJets(process) :
     process.patJets.embedPFCandidates = True
     process.patJets.addAssociatedTracks = True
     process.patJets.trackAssociationSource = "jetTracksAssociatorAtVertex"
+
+
+
+
+    from PhysicsTools.SelectorUtils.pvSelector_cfi import pvSelector
+    process.goodOfflinePrimaryVertices = cms.EDFilter(
+        "PrimaryVertexObjectFilter",
+        filterParams = pvSelector.clone( minNdof = cms.double(4.0), maxZ = cms.double(24.0) ),
+        src=cms.InputTag('offlinePrimaryVertices')
+        )
+
     
 def jet_config(process, reportEveryNum=100, maxEvents=-1) :
     common_config(process, reportEveryNum, maxEvents)
