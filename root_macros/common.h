@@ -1,7 +1,9 @@
 #ifndef _common_h_
 #define _common_h_
 
+#include "TFile.h"
 #include "TH1F.h"
+#include "TH2F.h"
 #include "TTree.h"
 
 TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
@@ -42,23 +44,40 @@ TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
   return hall;
 }
 
-////
-TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
-                       const std::string& objName, const std::string& variable,
-                       const std::string& cuts, const std::string& histParam){
-  TH1F* hall = NULL;
+void get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
+                      const std::string& objName, const std::string& variable,
+                      const std::string& cuts, TH1F & hist){
   for(unsigned j=0; j<samples.size(); ++j){
     std::string fullName = samples[j] + "/" + objName; 
     TTree* tree = (TTree*) f->Get(fullName.c_str()); assert(tree != NULL);
-    tree->Draw(Form("%s>>hist%s", variable.c_str(), histParam.c_str()),cuts.c_str());
-    TH1F* hist = (TH1F*)gDirectory->Get("hist");
-    if(j==0) hall = (TH1F*)hist->Clone("hall");
-    else     hall->Add(hist);
+    tree->Draw(Form("weight:%s",variable.c_str()), cuts.c_str(), "goff");
+    int n = tree->GetSelectedRows();
+    for(int ientry=0; ientry<n; ++ientry){
+      const float weight = tree->GetVal(0)[ientry];
+      const float var = tree->GetVal(1)[ientry];
+      hist.Fill(var, weight);
+    }
     delete tree;
   }
-  return hall;
 }
-//
+
+void get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
+                      const std::string& objName, const std::string& variable,
+                      const std::string& cuts, TH2F & hist){
+  for(unsigned j=0; j<samples.size(); ++j){
+    std::string fullName = samples[j] + "/" + objName; 
+    TTree* tree = (TTree*) f->Get(fullName.c_str()); assert(tree != NULL);
+    tree->Draw(Form("weight:%s",variable.c_str()), cuts.c_str(), "goff");
+    int n = tree->GetSelectedRows();
+    for(int ientry=0; ientry<n; ++ientry){
+      const float weight = tree->GetVal(0)[ientry];
+      const float varX = tree->GetVal(1)[ientry];
+      const float varY = tree->GetVal(2)[ientry];
+      hist.Fill(varX, varY, weight);
+    }
+    delete tree;
+  }
+}
 
 float
 GetLumiUsed(TFile* f){
