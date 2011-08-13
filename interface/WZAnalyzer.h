@@ -236,6 +236,7 @@ public:
   WCandidate wCand_;
   WZCandidate wzCand_;
   pat::TriggerEvent triggerEvent_; 
+  std::vector<reco::Vertex>  vertices_;
   std::vector< PileupSummaryInfo > PupInfo_; 
   std::vector<wprime::FilterEff> results_;
 
@@ -279,8 +280,7 @@ public:
   std::vector<TH1F*> hNTLeps;
 
   std::vector<TH1F*> hNJets,hNJetsZee,hNJetsZmm;
-  std::vector<TH1F*> hNVtxs3BX, hNVtxs3BXZee, hNVtxs3BXZmm;
-  std::vector<TH1F*> hNVtxs1BX, hNVtxs1BXZee, hNVtxs1BXZmm;
+  std::vector<TH1F*> hNVtxs, hNVtxsZee, hNVtxsZmm;
 
   std::vector<TH1F*> hWenuCombRelIso, hWmnuCombRelIso;
 
