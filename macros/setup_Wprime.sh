@@ -10,7 +10,7 @@ fi
 
 # Definitions
 RELEASE_VERSION=CMSSW_4_2_5
-WORKING_AREA=V290
+WORKING_AREA=V295
 # end definitions
 
 export RELEASE_VERSION WORKING_AREA
@@ -34,8 +34,8 @@ cvs -Q co -r $RELEASE_VERSION DataFormats/PatCandidates
 cvs -Q co -r $RELEASE_VERSION PhysicsTools/PatAlgos
 cvs -Q co -r V00-05-00 -d SHarper/HEEPAnalyzer UserCode/SHarper/HEEPAnalyzer 
 cvs -Q co -r V08-03-09 PhysicsTools/Utilities
-cvs -Q co -r V00-02-90 UserCode/CMGWPrimeGroup
-# cvs -Q co UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-02-95 UserCode/CMGWPrimeGroup
+#cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"
 echo -e  " Hack PAT Muon content to include high-pt reconstructors..."

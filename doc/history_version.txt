@@ -1,3 +1,35 @@
+16-AUG-11 (Christos, Cory, Flavia), V00-02-95
+================================================================== 
+General improvements:
+ - Updated working environment to 4_2_5 (incorporates out-of-time PU)
+ - Can now produce PU distributions for different scenarios (EPS dataset,
+flat, 1BX, 3BX)
+ - Updates in BosonFinder class to deal with TeVMuon/HEEP selection/pt
+ - Added "evtToDebug" option in common configuration file
+
+
+o Mu+MET analysis
+ - Updates due to changes in TeVMuon class
+
+o WZ analysis:
+ - Upgraded for 3bx PU-weighting
+ - Switched to Summer11 MC samples
+ - Updated cuts to LP11 analysis
+ - Updates to jet configuration from switching to 4_2_5
+ - Bugfixes in efficiency, fake rate calculations
+
+o Hadronic VZ analysis:
+ - Changed jet algo to AK7
+ - Added more plots
+
+Misc:
+ - Changes in top-directory location of input samples
+ - Improvements in TeVMuon class
+ - Bugfix in setting of 4-momentum in TeVMuon class
+ - Templated common functions in util.h 
+ - Updated PhysicsTools/Utilities tag in setup macro
+
+
 01-AUG-11 (Christos, Cory, Federico, Flavia, Sunghyun), V00-02-90 
 ================================================================== 
 o General improvements: 
