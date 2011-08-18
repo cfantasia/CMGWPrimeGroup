@@ -10,7 +10,7 @@ fi
 
 # Definitions
 RELEASE_VERSION=CMSSW_4_2_5
-WORKING_AREA=V295
+WORKING_AREA=V296
 # end definitions
 
 export RELEASE_VERSION WORKING_AREA
@@ -30,11 +30,13 @@ cd $RELEASE_VERSION/src
 echo -e  "\n**************************"
 echo -e  " Checking out the code..."
 echo -e  "**************************"
-cvs -Q co -r $RELEASE_VERSION DataFormats/PatCandidates
-cvs -Q co -r $RELEASE_VERSION PhysicsTools/PatAlgos
+#cvs -Q co -r $RELEASE_VERSION DataFormats/PatCandidates
+#cvs -Q co -r $RELEASE_VERSION PhysicsTools/PatAlgos
+cvs -Q co -r V06-04-19-01 DataFormats/PatCandidates
+cvs -Q co -r V08-06-41 PhysicsTools/PatAlgos
 cvs -Q co -r V00-05-00 -d SHarper/HEEPAnalyzer UserCode/SHarper/HEEPAnalyzer 
 cvs -Q co -r V08-03-09 PhysicsTools/Utilities
-cvs -Q co -r V00-02-95 UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-02-96 UserCode/CMGWPrimeGroup
 #cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"
