@@ -1,3 +1,9 @@
+18-AUG-11 (Christos, Cory, Flavia), V00-02-96
+===============================================
+Updated to latest set of PAT tags recommended for 4_2_5
+environment. Adjusted modifications to PAT Muon class accordingly. 
+
+
 16-AUG-11 (Christos, Cory, Flavia), V00-02-95
 ================================================================== 
 General improvements:
