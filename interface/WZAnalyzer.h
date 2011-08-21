@@ -93,13 +93,13 @@ public:
   bool inEE(const TeVMuon& mu) const;
 
   bool EMuOverlap(const pat::Electron & e,
-                  const std::vector<pat::Muon > & ms) const;
+                  const MuonV & ms) const;
   
   const heep::Ele & FindElectron(const reco::Candidate & p) const;
   const TeVMuon & FindMuon(const reco::Candidate & p) const ;
 
-  bool Match(const heep::Ele & p1, const reco::Candidate & p2) const;
-  bool Match(const TeVMuon & p1, const reco::Candidate & p2) const;
+//  bool Match(const heep::Ele & p1, const reco::Candidate & p2) const;
+//  bool Match(const TeVMuon & p1, const reco::Candidate & p2) const;
   
   float WLepPt() const;
   float ZLepPt(int idx) const;
@@ -163,11 +163,14 @@ public:
   std::string looseElectronType_, tightElectronType_;
   std::string looseMuonType_, tightMuonType_;
 
-  std::string electronsLabel_;
-  std::string muonsLabel_;
-  std::string metLabel_;
-  std::string hltEventLabel_;
-  std::string pileupLabel_;
+  edm::InputTag electronsLabel_;
+  edm::InputTag muonsLabel_;
+  edm::InputTag pfCandsLabel_;
+  edm::InputTag metLabel_;
+  edm::InputTag hltEventLabel_;
+  edm::InputTag pileupLabel_;
+  edm::InputTag vertexLabel_;
+  edm::InputTag jetsLabel_;
   vstring triggersToUse_;
 
 // +++++++++++++++++++location of data files and samples info

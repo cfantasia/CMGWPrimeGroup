@@ -34,17 +34,20 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
 
   debugme = cfg.getParameter<bool>("debugme");
 
-  electronsLabel_ = cfg.getParameter<string>("electrons");
-  muonsLabel_ = cfg.getParameter<string>("muons");
-  metLabel_ = cfg.getParameter<string>("met");
+  electronsLabel_ = cfg.getParameter<edm::InputTag>("electrons");
+  muonsLabel_ = cfg.getParameter<edm::InputTag>("muons");
+  pfCandsLabel_ = cfg.getParameter<edm::InputTag>("particleFlow");
+  metLabel_ = cfg.getParameter<edm::InputTag>("met");
 
-  muonAlgo_ = cfg.getParameter<uint>("muonAlgo");if(debugme) cout<<"Using muon algo "<<algo_desc_long[muonAlgo_]<<endl;
+  muonAlgo_ = cfg.getParameter<uint>("muonReconstructor");if(debugme) cout<<"Using muon algo "<<algo_desc_long[muonAlgo_]<<endl;
   useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
 
-  hltEventLabel_ = cfg.getParameter<string>("hltEventTag");
-  pileupLabel_ = cfg.getParameter<string>("pileupTag");
-
-  triggersToUse_          = cfg.getParameter<vstring>("triggersToUse");
+  hltEventLabel_ = cfg.getParameter<edm::InputTag>("hltEventTag");
+  pileupLabel_ = cfg.getParameter<edm::InputTag>("pileupTag");
+  vertexLabel_ = cfg.getParameter<edm::InputTag>("vertexTag");
+  jetsLabel_ = cfg.getParameter<edm::InputTag>("jets");
+  
+  triggersToUse_ = cfg.getParameter<vstring>("triggersToUse");
 
   maxZMassDiff_ = cfg.getParameter<double>("maxZMassDiff");
   minDeltaR_ = cfg.getParameter<double>("minDeltaR");
@@ -174,15 +177,15 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
                   "N_{#mu},W^{-}", 4, 0, 4, "NONE", hEvtTypeM,dir);
 //Lead Lepton Pt
   DeclareHistoSet("hLeadPt", "Leading Lepton Pt",
-                  "p_{T}^{Max}", 20, 0, 200., "GeV", hLeadPt,dir);
+                  "p_{T}^{Max}", 40, 0, 400., "GeV", hLeadPt,dir);
   DeclareHistoSet("hLeadPtZee", "Leading Lepton Pt Zee",
-                  "p_{T}^{Max, ee}", 20, 0, 200., "GeV", hLeadPtZee,dir);
+                  "p_{T}^{Max, ee}", 40, 0, 400., "GeV", hLeadPtZee,dir);
   DeclareHistoSet("hLeadPtZmm", "Leading Lepton Pt Zmm",
-                  "p_{T}^{Max #mu#mu}", 20, 0, 200., "GeV", hLeadPtZmm,dir);
+                  "p_{T}^{Max #mu#mu}", 40, 0, 400., "GeV", hLeadPtZmm,dir);
   DeclareHistoSet("hLeadElecPt", "Leading Electron Pt",
-                  "p_{T}^{Max e}", 20, 0, 200., "GeV", hLeadElecPt,dir);
+                  "p_{T}^{Max e}", 40, 0, 400., "GeV", hLeadElecPt,dir);
   DeclareHistoSet("hLeadMuonPt", "Leading Muon Pt",
-                  "p_{T}^{Max #mu}", 20, 0, 200., "GeV", hLeadMuonPt,dir);
+                  "p_{T}^{Max #mu}", 40, 0, 400., "GeV", hLeadMuonPt,dir);
 
 ///////////////////////////
 //Z Mass Histos
@@ -252,7 +255,7 @@ void WZAnalyzer::Declare_Histos(TFileDirectory & dir)
   DeclareHistoSet("hWpt", "p_{T}^{W}", 
                   "p_{T}^{W} (GeV)", 40, 0, 400, "GeV", hWpt,dir);
   DeclareHistoSet("hWptZee", "p_{T}^{W,Z#rightarrowee}", 
-                  "p_{T}^{W,Z#rightarrow#mu#mu} (GeV)", 40, 0, 400, "GeV", hWptZee,dir);
+                  "p_{T}^{W,Z#rightarrowee} (GeV)", 40, 0, 400, "GeV", hWptZee,dir);
   DeclareHistoSet("hWptZmm", "p_{T}^{W,Z#rightarrow#mu#mu}", 
                   "p_{T}^{W,Z#rightarrow#mu#mu} (GeV)", 40, 0, 400, "GeV", hWptZmm,dir);
 
@@ -670,7 +673,7 @@ void WZAnalyzer::printSummary(const string& dir, ofstream & out) const
 void 
 WZAnalyzer::eventLoop(edm::EventBase const & event){
   ClearEvtVariables();
-  if(debugme) PrintEvent(event);
+  if(debugme) WPrimeUtil::PrintEvent(event);
 
   // Preselection - skip events that don't look promising
   if (doPreselect_){
@@ -687,18 +690,24 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 //  const uint flavorType = getProduct<uint>(event, "flavorHistoryFilter", 0);
 //  if(debugme) printf("    FlavorType: %i", flavorType);
 
-  rhoFastJet_ = getProduct<double>(event,"kt6PFJets:rho");
-
   // Get leptons
   const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, electronsLabel_);
   const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
-  if(debugme) printf("    Contains: %i electron(s), %i muon(s)\n",
+  if(debugme) printf("    Contains: %i pat electron(s), %i pat muon(s)\n",
                      (int)patElectrons.size(), (int)patMuons.size());
+  WPrimeUtil::getLeptonsMET(event, 
+                            patElectrons, electrons_,
+                            patMuons, muonAlgo_, muons_,
+                            metLabel_, useAdjustedMET_, met_,
+                            pfCandsLabel_);
+  if(debugme) printf("    Contains: %i electron(s), %i muon(s)\n",
+                          (int)electrons_.size(), (int)muons_.size());
+
+  rhoFastJet_ = getProduct<double>(event,"kt6PFJets:rho");
 
   // Make vectors of leptons passing various criteria
-  for (size_t i = 0; i < patElectrons.size(); i++) {
-    electrons_.push_back(heep::Ele(patElectrons[i]));   
-    if(EMuOverlap(patElectrons[i], patMuons)) continue;
+  for (size_t i = 0; i < electrons_.size(); i++) {
+    if(EMuOverlap(electrons_[i].patEle(), muons_)) continue;
     const float pu = ElecPU(electrons_[i]);
     if (looseElectron_(electrons_[i].patEle(), electronResult_, pu))
       looseElectrons_.push_back(electrons_[i]);
@@ -706,8 +715,8 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     if (tightElectron_(electrons_[i].patEle(), electronResult_, pu))
       tightElectrons_.push_back(electrons_[i]);
   }
-  for (size_t i = 0; i < patMuons.size(); i++) {
-    muons_.push_back(TeVMuon(patMuons[i],muonAlgo_));
+
+  for (size_t i = 0; i < muons_.size(); i++) {
     const float pu = MuonPU(muons_[i]);
     if (looseMuon_(muons_[i], muonResult_,pu))
       looseMuons_.push_back(muons_[i]);
@@ -717,26 +726,22 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   }
   if(looseElectrons_.size() + looseMuons_.size() == 0) return;
 
-  if(debugme) PrintLeptons();
-  if(debugme) printf("    Contains: %i loose electron(s), %i loose muon(s)\n",
-                     (int)looseElectrons_.size(), (int)looseMuons_.size());
-  if(debugme) printf("    Contains: %i tight electron(s), %i tightmuon(s)\n",
-                     (int)tightElectrons_.size(), (int)tightMuons_.size());
-
-  //Get Jets
-  jets_  = getProduct< JetV>(event, "selectedPatJets");
-
-  // Get MET
-  met_ = getProduct<METV>(event, metLabel_)[0];
-  if(useAdjustedMET_){
-    if(debugme) cout<<"Before met et: "<<met_.et()<<" met phi: "<<met_.phi()<<endl;
-    met_ = AdjustedMET(looseElectrons_,looseMuons_, met_);
-    if(debugme) cout<<"After  met et: "<<met_.et()<<" met phi: "<<met_.phi()<<endl;
+  if(debugme){
+    PrintLeptons();
+    printf("    Contains: %i loose electron(s), %i loose muon(s)\n",
+           (int)looseElectrons_.size(), (int)looseMuons_.size());
+    printf("    Contains: %i tight electron(s), %i tightmuon(s)\n",
+           (int)tightElectrons_.size(), (int)tightMuons_.size());
   }
 
+  //Get Jets
+  jets_  = getProduct< JetV>(event,jetsLabel_);
+
+  //Get Trigger 
   triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
 
-  vertices_ = getProduct<vector<reco::Vertex> >(event,"offlinePrimaryVertices");
+  //Get Vertex
+  vertices_ = getProduct<vector<reco::Vertex> >(event,vertexLabel_);
 
   float PU_Weight = 1.;
   if(!wprimeUtil_->runningOnData()){//Don't do this for data
@@ -758,15 +763,12 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     //PU_Weight = wprimeUtil_->getLumiWeight(PU_NumInteractions_tmp);
   }//MC Only If
   if(debugme) 
-    cout<<" PU_NumInteractions3BX: "<<PU_NumInteractions3BX_
-        <<" PU_NumInteractions1BX: "<<PU_NumInteractions1BX_
-        <<" PU Weight: "<<PU_Weight
-        <<endl;   
+    cout<<" PU Weight: "<<PU_Weight<<endl;   
 
   if(wprimeUtil_->DebugEvent(event)){
     cout<<"This is a debug event\n";
-    PrintEvent(event);
-    PrintLeptons();
+    PrintPassingEvent(event);
+    PrintDebugEvent();
   }
 
   weight_ = wprimeUtil_->getWeight()*PU_Weight;
@@ -781,7 +783,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
 void
 WZAnalyzer::PrintEventFull(edm::EventBase const & event) const{
-  PrintEvent(event);
+  WPrimeUtil::PrintEvent(event);
   WPrimeUtil::PrintPassingTriggers(triggerEvent_,triggersToUse_);
   PrintEventDetails();
   PrintEventLeptons();
@@ -789,7 +791,7 @@ WZAnalyzer::PrintEventFull(edm::EventBase const & event) const{
 
 void WZAnalyzer::PrintPassingEvent(edm::EventBase const & event){
   PrintEventToFile(event);
-  PrintEvent(event);
+  WPrimeUtil::PrintEvent(event);
   PrintEventDetails();
 }
 
@@ -797,18 +799,13 @@ void WZAnalyzer::PrintDebugEvent() const{
   WPrimeUtil::PrintPassingTriggers(triggerEvent_,triggersToUse_);
   PrintEventDetails();
   PrintEventLeptons();
+  PrintLeptons();
 }
 
 void WZAnalyzer::PrintEventToFile(edm::EventBase const & event){
   outCandEvt_<<event.id().run()<<":"
              <<event.id().luminosityBlock()<<":"
              <<event.id().event()<<endl;
-}
-
-void WZAnalyzer::PrintEvent(edm::EventBase const & event) const{
-  cout<<"run #: "<<event.id().run()
-      <<" lumi: "<<event.id().luminosityBlock()
-      <<" eventID: "<<event.id().event()<<endl;
 }
 
 void WZAnalyzer::PrintEventDetails() const{
@@ -1033,7 +1030,7 @@ bool WZAnalyzer::PassTriggersCut(){
 
 bool
 WZAnalyzer::EMuOverlap(const pat::Electron & e, 
-                       const vector<pat::Muon    > & ms) const{
+                       const MuonV & ms) const{
   //Eliminate electrons that fall within a cone of dR=0.01 around a muon
   for (size_t i = 0; i < ms.size(); i++) {
     if(debugme) cout<<" with muon "<<i<<": "<<reco::deltaR(e, ms[i])<<endl;
@@ -1380,7 +1377,7 @@ WZAnalyzer::FindMuon(const reco::Candidate & p) const{
   cout<<"Didn't find match for muon!!!, returning random one\n";
   return muons_[0];
 }
-
+/*
 bool
 WZAnalyzer::Match(const heep::Ele & p1, const reco::Candidate & p2) const{
   float tolerance = 0.0001;
@@ -1402,7 +1399,7 @@ WZAnalyzer::Match(const TeVMuon & p1, const reco::Candidate & p2) const{
     return true;
   return false;
 }
-
+*/
 float
 WZAnalyzer::WLepPt() const{
   if(wCand_.flavor() == PDGELEC){
