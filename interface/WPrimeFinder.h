@@ -16,14 +16,14 @@ class WPrimeFinder
 {
  public:
   // constructor: needs configuration file to set things up
-  explicit WPrimeFinder(char * config_file);
+  explicit WPrimeFinder(char * config_file, int fileToRun);
   ~WPrimeFinder();
   
   void run();
 
  private: 
   // parse configuration, extract parameters
-  void getConfiguration(char * config_file);
+  void getConfiguration(char * config_file, int fileToRun);
 
   // operations to be done when changing input file (e.g. create new histograms)
   void beginFile(std::vector<wprime::InputFile>::const_iterator it);

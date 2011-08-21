@@ -8,10 +8,21 @@ using std::string;
 #include <TH1F.h>
 
 // constructor: needs configuration file to set things up
-WPrimeFinder::WPrimeFinder(char * config_file)
+WPrimeFinder::WPrimeFinder(char * config_file, int fileToRun)
 {
-  getConfiguration(config_file);
+  getConfiguration(config_file,fileToRun);
   wprimeUtil->getInputFiles(inputFiles);
+  if(fileToRun != -1){
+    if(fileToRun < (int)inputFiles.size()){
+      inputFiles.assign(1,inputFiles[fileToRun]);
+    }else{
+      cerr<<"You asked for sample "<<fileToRun
+          <<" but only "<<inputFiles.size()
+          <<" are listed!\n";
+      inputFiles.clear();
+      abort();
+    }
+  }
 }
 
 WPrimeFinder::~WPrimeFinder()
@@ -24,7 +35,7 @@ WPrimeFinder::~WPrimeFinder()
 }
 
 // parse configuration, extract parameters
-void WPrimeFinder::getConfiguration(char * cfg_file)
+void WPrimeFinder::getConfiguration(char * cfg_file, int fileToRun)
 {
   PythonProcessDesc builder(cfg_file);
   const edm::ParameterSet& cfg = builder.processDesc()->getProcessPSet()->getParameter<edm::ParameterSet>("WprimeAnalyzer");
@@ -54,6 +65,12 @@ void WPrimeFinder::getConfiguration(char * cfg_file)
       jsonVector.resize( lumisTemp.size() );
       copy( lumisTemp.begin(), lumisTemp.end(), jsonVector.begin() );
     }
+
+  if(fileToRun != -1){
+    logFile_ = Form("Sample%i_%s",fileToRun,logFile_.c_str()); 
+    outputFile_ = Form("Sample%i_%s",fileToRun,outputFile_.c_str()); 
+  }
+
 
   outLogFile_.open(logFile_.c_str());
   WPrimeUtil::CheckStream(outLogFile_, logFile_);

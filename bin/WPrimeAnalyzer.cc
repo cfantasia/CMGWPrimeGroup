@@ -23,12 +23,13 @@ int main(int argc, char* argv[])
   // only allow one argument for this simple example which should be the
   // the python cfg file
   if ( argc < 2 ) {
-    std::cout << "Usage : " << argv[0] << " [parameters.py]" << std::endl;
+    std::cout << "Usage : " << argv[0] << " [parameters.py] <fileToRun" << std::endl;
     return -1;
   }
 
   char * config_file = argv[1];
-  WPrimeFinder a(config_file);
+  int fileToRun = argc >= 2 ? atoi(argv[2]) : -1;
+  WPrimeFinder a(config_file, fileToRun);
 
   a.run();
 
