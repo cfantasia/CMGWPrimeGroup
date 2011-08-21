@@ -38,8 +38,6 @@ class TeVMuon : public pat::Muon{
   ///TeV Helper Functions///////
   //////////////////////////////
 
-  TVector2 getPtDiff() const;
-
   // computes the tracker-based relative isolation value
   float trkRelIsolation() const;
 

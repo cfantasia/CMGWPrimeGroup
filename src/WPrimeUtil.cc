@@ -5,7 +5,8 @@
 #include <TFile.h>
 
 using std::cout; using std::cerr; using std::endl;
-using std::string;
+using std::string; using std::vector;
+
 
 WPrimeUtil::WPrimeUtil(const char * out_filename, edm::InputTag genParticles, string cross_sections)
 {
@@ -280,6 +281,18 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
   
 }
 
+//////////////////
+//Print Functions/
+//////////////////
+void WPrimeUtil::PrintEvent(edm::EventBase const & event){
+  cout<<"run #: "<<event.id().run()
+      <<" lumi: "<<event.id().luminosityBlock()
+      <<" eventID: "<<event.id().event()<<endl;
+}
+
+//////////////////
+//Trigger Fns/////
+//////////////////
 bool WPrimeUtil::PassTriggersCut(edm::EventBase const & event, std::string label, const std::vector<std::string>& triggerNames){
   pat::TriggerEvent triggerEvent = getProduct<pat::TriggerEvent>(event, label);
   return PassTriggersCut(triggerEvent,triggerNames);
@@ -289,7 +302,7 @@ bool WPrimeUtil::PassTriggersCut(const pat::TriggerEvent & triggerEvent,const st
   const pat::TriggerPathRefVector acceptedPaths = triggerEvent.acceptedPaths();
   //cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
   for (size_t i = 0; i < acceptedPaths.size(); i++){
-    if(FoundAndPassed(acceptedPaths[i], triggerNames)) return true;
+    if(FoundAndPassed(triggerEvent, acceptedPaths[i], triggerNames)) return true;
   }//acceptedPaths loop
   return false;
 }
@@ -297,20 +310,50 @@ bool WPrimeUtil::PassTriggersCut(const pat::TriggerEvent & triggerEvent,const st
 void
 WPrimeUtil::PrintPassingTriggers(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames){
   const pat::TriggerPathRefVector acceptedPaths = triggerEvent.acceptedPaths();
+//  const pat::TriggerAlgorithmRefVector algoBits = triggerEvent.physAlgorithms();
+//  for (size_t i = 0; i < algoBits.size(); i++){
+//    cout<<" L1 algo: "<<algoBits[i]->name()<<" with prescale "<<algoBits[i]->prescale()<<endl;
+//  }
   for (size_t i = 0; i < acceptedPaths.size(); i++){
-    if(FoundAndPassed(acceptedPaths[i], triggerNames))
+    if(FoundAndPassed(triggerEvent, acceptedPaths[i], triggerNames))
       cout<<"Passed path: "<<acceptedPaths[i]->name()<<endl;
   }
 }
 
 inline bool
-WPrimeUtil::FoundAndPassed(const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames){
-  return Passed(path) && FindTrigger(path, triggerNames);
+WPrimeUtil::FoundAndPassed(const pat::TriggerEvent & triggerEvent,const pat::TriggerPathRef path,const std::vector<std::string>& triggerNames){
+  return FindTrigger(path, triggerNames) && Passed(triggerEvent,path);
 }
 
 inline bool
-WPrimeUtil::Passed(const pat::TriggerPathRef path){
-  return (path->prescale() == 1  && path->wasAccept());
+WPrimeUtil::Passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path){
+  return (path->wasAccept() && path->prescale() == 1 && MaxL1Prescale(triggerEvent,path)==1 );
+}
+
+inline unsigned
+WPrimeUtil::L1Prescale(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path){
+  assert(path->l1Seeds().size() == 1);
+  return triggerEvent.algorithm(path->l1Seeds()[0].second)->prescale();
+}
+
+unsigned
+WPrimeUtil::MaxL1Prescale(const pat::TriggerEvent & triggerEvent,const pat::TriggerPathRef path){
+  unsigned ps = 1;
+  pat::L1SeedCollection l1algos = path->l1Seeds();
+  //cout<<" Looking at "<<path->name()<<" and its "<<l1algos.size()<<" l1 seeds"<<endl;
+  for (size_t j = 0; j < l1algos.size(); j++){
+    //cout<<" and its seed "<<l1algos[j].second<<" and decision "<<l1algos[j].first<<endl;
+    const pat::TriggerAlgorithm * l1algo = triggerEvent.algorithm(l1algos[j].second);
+    ////////////////////
+    //Looks like the format is l1algos[0] && l1algos[1] ....
+    //but l1algos can be 'L1seedA OR L1seedB', with the word 'OR' actually in the string!
+    ////////////////////
+    //if(l1algo) cout<<" and name "<<l1algo->name()<<" and decision "<<l1algo->decision()<<" prescale "<<l1algo->prescale()<<endl;
+    //else       cout<<" and name "<<l1algos[j].second<<" failed!!!!"<<endl;
+    if(!l1algo) return 0;
+    ps = std::max(ps, l1algo->prescale());
+  }
+  return ps;
 }
 
 inline bool
@@ -374,10 +417,10 @@ TVector2 WPrimeUtil::getHadronicMET(edm::EventBase const & event)
 
 }
 
-// true if current file under processing contains "data" in description
-bool WPrimeUtil::runningOnData() const
+// true if current file under processing contains "data" in name/description
+void WPrimeUtil::setRunningOnData()
 {
-  return (getSampleName().find("data") != string::npos);
+  runningOnData_ = (getSampleName().find("data") != string::npos);
 }
 
 //Check if Run/Evt is in Debug list
@@ -390,3 +433,108 @@ bool WPrimeUtil::DebugEvent(edm::EventBase const& event) const
   }
   return false;
 }
+
+/////////////////////
+void WPrimeUtil::convertElectrons(const vector<pat::Electron>& patElectrons,
+                                  ElectronV & electrons){
+  for (size_t i = 0; i < patElectrons.size(); i++) {
+    electrons.push_back(heep::Ele(patElectrons[i]));   
+  }
+}
+
+void WPrimeUtil::convertMuons(const vector<pat::Muon>& patMuons, const uint& muAlgo,
+                              MuonV & muons){
+  for (size_t i = 0; i < patMuons.size(); i++) {
+    muons.push_back(TeVMuon(patMuons[i], muAlgo));   
+  }
+}
+
+void WPrimeUtil::getElectrons(edm::EventBase const & event, const edm::InputTag& label, ElectronV & electrons){
+  const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, label);
+  convertElectrons(patElectrons, electrons);
+}
+
+void WPrimeUtil::getMuons(edm::EventBase const & event, const edm::InputTag& label, const uint& muAlgo, MuonV & muons){
+  const vector<pat::Muon> patMuons = getProduct<vector<pat::Muon> >(event, label);
+  convertMuons(patMuons, muAlgo, muons);
+}
+
+inline void WPrimeUtil::getPFCands(edm::EventBase const & event, const edm::InputTag& label, vector<pat::PFParticle> & pfCands){
+  pfCands = getProduct<vector<pat::PFParticle> >(event, label); 
+}
+
+inline void WPrimeUtil::getMET(edm::EventBase const & event, const edm::InputTag& label, pat::MET & met){
+  met = getProduct<METV>(event, label)[0];
+}
+
+void
+WPrimeUtil::AdjustMET(edm::EventBase const & event, 
+                      const ElectronV & electrons, const MuonV & muons,
+                      const edm::InputTag& pfLabel,  pat::MET & met){
+  vector<pat::PFParticle> pfCands;
+  getPFCands(event, pfLabel, pfCands);
+  AdjustMET(electrons, pfCands, met);
+  AdjustMET(muons, pfCands, met);
+}
+
+/*
+void WPrimeUtil::getElectronsMET(edm::EventBase const & event,
+                                 const edm::InputTag& eLabel, ElectronV & electrons,
+                                 const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
+                                 const edm::InputTag& pfLabel){
+  getElectrons(event, eLabel, electrons);
+  getMET(event, metLabel, met);
+  if(adjMET) AdjustMET(event, pfLabel, met);
+}
+
+void WPrimeUtil::getMuonsMET(edm::EventBase const & event,
+                             const edm::InputTag& muLabel, const uint& muAlgo, MuonV & muons,
+                             const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
+                             const edm::InputTag& pfLabel){
+  getMuons(event, muLabel, muAlgo, muons);
+  getMET(event, metLabel, met);
+  if(adjMET) AdjustMET(event, pfLabel, met);
+}
+
+void WPrimeUtil::getLeptonsMET(edm::EventBase const & event, 
+                               const edm::InputTag& eLabel, ElectronV & electrons,
+                               const edm::InputTag& muLabel, const uint& muAlgo, MuonV & muons,
+                               const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
+                               const edm::InputTag& pfLabel){
+  getElectrons(event, eLabel, electrons);
+  getMuons(event, muLabel, muAlgo, muons);
+  getMET(event, metLabel, met);
+  if(adjMET) AdjustMET(event, pfLabel, met);
+}
+*/
+
+void WPrimeUtil::getElectronsMET(edm::EventBase const & event,
+                                 const vector<pat::Electron>& patElectrons, ElectronV & electrons,
+                                 const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
+                                 const edm::InputTag& pfLabel){
+  convertElectrons(patElectrons, electrons);
+  getMET(event, metLabel, met);
+  if(adjMET) AdjustMET(event, electrons, pfLabel, met);
+}
+
+void WPrimeUtil::getMuonsMET(edm::EventBase const & event,
+                             const vector<pat::Muon    >& patMuons, const uint& muAlgo, MuonV & muons,
+                             const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
+                             const edm::InputTag& pfLabel){
+  convertMuons(patMuons, muAlgo, muons);
+  getMET(event, metLabel, met);
+  if(adjMET) AdjustMET(event, muons, pfLabel, met);
+}
+
+void WPrimeUtil::getLeptonsMET(edm::EventBase const & event, 
+                               const vector<pat::Electron>& patElectrons, ElectronV & electrons,
+                               const vector<pat::Muon    >& patMuons, const uint& muAlgo, MuonV & muons,
+                               const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
+                               const edm::InputTag& pfLabel){
+  convertElectrons(patElectrons, electrons);
+  convertMuons(patMuons, muAlgo, muons);
+  getMET(event, metLabel, met);
+  if(adjMET) AdjustMET(event, electrons, muons, pfLabel, met);
+}
+
+

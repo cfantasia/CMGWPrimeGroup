@@ -10,6 +10,7 @@
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
+#include <DataFormats/PatCandidates/interface/PFParticle.h>
 #include "DataFormats/Common/interface/MergeableCounter.h"
 #include "DataFormats/Math/interface/deltaR.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenRunInfoProduct.h"
@@ -46,6 +47,27 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
 #include "UserCode/CMGWPrimeGroup/interface/NewElec.h"
+#include "SHarper/HEEPAnalyzer/interface/HEEPEle.h"
+
+typedef unsigned int uint;
+typedef std::vector<int> vint;
+typedef std::vector<std::string> vstring;
+typedef math::XYZPoint Point;
+typedef math::XYZTLorentzVector LorentzVector;
+typedef edm::ParameterSet PSet;
+typedef edm::MergeableCounter Counter;
+
+//typedef vector<pat::Electron> ElectronV;
+//typedef vector<pat::Muon    > MuonV;
+typedef std::vector<heep::Ele > ElectronV;
+typedef std::vector<TeVMuon  > MuonV;
+
+typedef std::vector<pat::Jet     > JetV;
+typedef std::vector<pat::MET     > METV;
+typedef std::vector<reco::Track  > TrackV;
+typedef std::vector<edm::InputTag> VInputTag;
+typedef std::vector<reco::Candidate> CandV;
+typedef std::vector<reco::GenParticle> GenParticleV;
 
 //////
 
@@ -232,31 +254,11 @@ bool PassTriggerMatch(const P & p, float cut, std::vector<std::string>& triggers
   return false;
 }
 
-
-
-/*
-TVector2
-Heep::getPtDiff(){
-  
-}
-
-TVector2
-adjustPt(const ElectronV & electrons){
-  TVector2 diff(0.,0.);
-  for (ElectronV::const_iterator i = electrons.begin(); 
-       i != electrons.end(); ++i){
-//Cory: Under development    
-    diff += i.getPtDiff();
-  }
-  return diff;
-}
-*/
-
 ////Selectors//////////
 
 /// Functions to get products from the event
-template <class T, class P>
-  T getProduct(const P & event, std::string productName) {
+template <class T, class P, class R>
+  T getProduct(const P & event, R productName) {
   edm::Handle<T> handle;
   event.getByLabel(edm::InputTag(productName), handle);
   return * handle;
@@ -440,5 +442,35 @@ public:
   }
 };
 
+
+/////////////////////
+////Others Fns///////
+/////////////////////
+
+template<class T1,class T2>
+bool
+Match(const T1 & p1, const T2 & p2){
+  float tolerance = 0.0001;
+  if (p1.pdgId() == p2.pdgId() &&
+      fabs(p1.eta() - p2.eta()) < tolerance &&
+      fabs(reco::deltaPhi(p1.phi(),p2.phi())) < tolerance
+    )
+    return true;
+  return false;
+}
+
+template<class T>
+bool Match(const heep::Ele & p1, const T & p2){
+  return Match(p1.patEle(), p2);
+}
+
+template<class T1, class T2>
+uint FindIndex(const T1 & p, const std::vector<T2>& vec){
+  for(uint i=0; i<vec.size(); ++i){
+    if(Match(vec[i], p)) return i;
+  }
+  std::cerr<<"Didn't find match for electron, returning random one!!!\n";
+  return 0;
+}
 
 #endif // _util_h

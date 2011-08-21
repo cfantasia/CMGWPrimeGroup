@@ -33,26 +33,6 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/util.h"
 
-typedef unsigned int uint;
-typedef std::vector<int> vint;
-typedef std::vector<std::string> vstring;
-typedef math::XYZPoint Point;
-typedef math::XYZTLorentzVector LorentzVector;
-typedef edm::ParameterSet PSet;
-typedef edm::MergeableCounter Counter;
-
-//typedef vector<pat::Electron> ElectronV;
-//typedef vector<pat::Muon    > MuonV;
-typedef std::vector<heep::Ele > ElectronV;
-typedef std::vector<TeVMuon  > MuonV;
-
-typedef std::vector<pat::Jet     > JetV;
-typedef std::vector<pat::MET     > METV;
-typedef std::vector<reco::Track  > TrackV;
-typedef std::vector<edm::InputTag> VInputTag;
-typedef std::vector<reco::Candidate> CandV;
-typedef std::vector<reco::GenParticle> GenParticleV;
-
 class BosonCandidate : public reco::CompositeCandidate {
  public:
   int flavor() const {
@@ -336,20 +316,5 @@ WCandidate getWCand(const ElectronV & electrons,
                     const ZCandidate & zCand,
                     double minDeltaR = 0.);
 WCandidate getWCand(const JetV & jets);
-
-TVector2 getPtDiff(heep::Ele & e);
-
-TVector2 adjustPt(const ElectronV & electrons);
-TVector2 adjustPt(const MuonV & muons);
-
-pat::MET AdjustedMET(const ElectronV & electrons,
-                     const pat::MET & met);
-
-pat::MET AdjustedMET(const MuonV & muons,
-                     const pat::MET & met);
-
-pat::MET AdjustedMET(const ElectronV & electrons,
-                     const MuonV & muons,
-                     const pat::MET & met);
 
 #endif

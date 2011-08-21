@@ -45,13 +45,6 @@ const TLorentzVector TeVMuon::getTrkLorentzVector(const reco::TrackRef trk) cons
 ///TeV Helper Functions///////
 //////////////////////////////
 
-TVector2 TeVMuon::getPtDiff() const {
-  TVector2  chosenAlgo( px(), py() );
-  const TLorentzVector& p4Def = p4(kGLOBAL);
-  TVector2 defaultAlgo( p4Def.Px(), p4Def.Py() );
-  return chosenAlgo - defaultAlgo;
-}
-
 //////////////////////////////
 ///TeV Cut Functions//////////
 //////////////////////////////

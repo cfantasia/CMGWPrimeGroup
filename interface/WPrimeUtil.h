@@ -61,8 +61,9 @@ class WPrimeUtil
   static void getEff(float & eff, float & deff,float Num,float Denom);
 
   // true if current file under processing contains "data" in description
-  bool runningOnData() const;
-  
+  bool runningOnData() const{return runningOnData_;};
+  void setRunningOnData();
+
   //Check if Run/Evt is in Debug list
   bool DebugEvent(edm::EventBase const& event) const;
 
@@ -74,12 +75,15 @@ class WPrimeUtil
       !versionedName.compare(wildcardedName) : //No '*', early triggers
       !versionedName.compare(0, versionedName.size()-1, wildcardedName, 0, wildcardedName.size()-1);//This assumes v is under 10, need to fix
   }
+  static void PrintEvent(edm::EventBase const & event);
 
   static bool PassTriggersCut(edm::EventBase const & event, std::string label,const std::vector<std::string>& triggerNames);
   static bool PassTriggersCut(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames);
   static void PrintPassingTriggers(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames);
-  static bool FoundAndPassed(const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames);
-  static bool Passed(const pat::TriggerPathRef path);
+  static bool FoundAndPassed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames);
+  static bool Passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path);
+  static unsigned L1Prescale(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path);
+  static unsigned MaxL1Prescale(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path);
   static bool FindTrigger(const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames);
 
   //transverse mass with a given MET object (TVector2)
@@ -101,8 +105,109 @@ class WPrimeUtil
   void SetLumiWeights(const std::string & MCFile, const std::string & DataFile, 
                       const std::string & MCHist, const std::string & DataHist);
   static void CheckStream(const ofstream& stream, const std::string & s);
+  
+  /////////////////////
+  ////Adjust Pt Fns////
+  /////////////////////
+  
+  template<class T>
+    static TVector2
+    adjustPt(const std::vector<T>& leptons, const std::vector<pat::PFParticle>& pfCands ){
+    TVector2 diff(0.,0.);
+    for (uint i=0; i<leptons.size(); ++i){
+      int pfCandIdx = FindPFCand(leptons[i], pfCands);
+      if(pfCandIdx == -1) continue; //PF Obj not found
+      diff = diff + getPtDiff(leptons[i],pfCands[pfCandIdx]);
+    }
+    return diff;
+  }
+  
+  template<class T>
+    static int 
+    FindPFCand(const T & lep, const std::vector<pat::PFParticle>& pfCands){
+    for(unsigned i=0; i<pfCands.size(); ++i){
+      if(Match(lep,pfCands[i])) return i;
+    }
+    return -1;
+  }
+  
+  static TVector2 getPtDiff(const heep::Ele & e, const pat::PFParticle & pfCand){
+    TVector2  chosenAlgo( e.p4().px(), e.p4().py() );
+    TVector2 defaultAlgo( pfCand.px(), pfCand.py() );
+    return chosenAlgo - defaultAlgo;
+  }
 
- private:
+  template<class T>
+    static TVector2 getPtDiff(const T & p, const pat::PFParticle & pfCand){
+    TVector2  chosenAlgo(      p.px(),      p.py() );
+    TVector2 defaultAlgo( pfCand.px(), pfCand.py() );
+    return chosenAlgo - defaultAlgo;
+  }
+  
+/////////////////////
+////Adjust MET Fns///
+/////////////////////
+  template<class T>
+    static void AdjustMET(const std::vector<T> & leptons,
+                          const std::vector<pat::PFParticle> & pfCands,
+                          pat::MET & met){
+    TVector2 adj = adjustPt(leptons, pfCands);
+    TVector2 newmet(met.px()-adj.Px(), met.py()-adj.Py());
+    //std::cout<<"Before met et: "<<met.et()<<" met phi: "<<met.phi()<<std::endl;
+    //Note: Should the new met be wrt beamspot??, what is old met wrt?
+    met = pat::MET(reco::MET(met.sumEt()+adj.Mod(), LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), reco::MET::Point(0,0,0)));
+    //std::cout<<"After  met et: "<<met.et()<<" met phi: "<<met.phi()<<std::endl;
+  }
+  
+  template<class T>
+    static void AdjustMET(edm::EventBase const & event, const std::vector<T>& leptons, const edm::InputTag& pfLabel,  pat::MET & met){
+    std::vector<pat::PFParticle> pfCands;
+    getPFCands(event, pfLabel, pfCands);
+    AdjustMET(leptons, pfCands, met);
+  }
+
+  static void AdjustMET(edm::EventBase const & event, 
+                        const ElectronV & electrons, const MuonV & muons,
+                        const edm::InputTag& pfLabel,  pat::MET & met);
+
+/*
+//These functions don't work as written, bc the patEle go out of scope
+  static void getElectronsMET(edm::EventBase const & event,
+                              const edm::InputTag& eLabel, ElectronV & electrons,
+                              const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
+                              const edm::InputTag& pfLabel);
+  static void getMuonsMET(edm::EventBase const & event,
+                          const edm::InputTag& muLabel, const uint& muAlgo, MuonV & muons,
+                          const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
+                          const edm::InputTag& pfLabel);
+  static void getLeptonsMET(edm::EventBase const & event, 
+                            const edm::InputTag& eLabel, ElectronV & electrons,
+                            const edm::InputTag& muLabel, const uint& muAlgo, MuonV & muons,
+                            const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met, 
+                            const edm::InputTag& pfLabel);
+*/
+  static void getElectronsMET(edm::EventBase const & event,
+                              const std::vector<pat::Electron>& patElectrons, ElectronV & electrons,
+                              const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
+                              const edm::InputTag& pfLabel);
+  static void getMuonsMET(edm::EventBase const & event,
+                          const std::vector<pat::Muon    >& patMuons, const uint& muAlgo, MuonV & muons,
+                          const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
+                          const edm::InputTag& pfLabel);
+  static void getLeptonsMET(edm::EventBase const & event, 
+                            const std::vector<pat::Electron>& patElectrons, ElectronV & electrons,
+                            const std::vector<pat::Muon    >& patMuons, const uint& muAlgo, MuonV & muons,
+                            const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
+                            const edm::InputTag& pfLabel);
+    
+  static void convertElectrons(const std::vector<pat::Electron>& patElectrons, ElectronV & electrons);
+  static void convertMuons(const std::vector<pat::Muon>& patMuons, const uint& muAlgo, MuonV & muons);
+  static void getElectrons(edm::EventBase const & event, const edm::InputTag& label, ElectronV & electrons);
+  static void getMuons    (edm::EventBase const & event, const edm::InputTag& label, const uint&  muonAlgo, MuonV & muons);
+  static void getPFCands  (edm::EventBase const & event, const edm::InputTag& label, std::vector<pat::PFParticle> & pfCands);
+  static void getMET      (edm::EventBase const & event, const edm::InputTag& label, pat::MET & met);
+  
+private:
   fwlite::TFileService * fs;
   // directory containing all input samples
   std::string top_level_dir; 
@@ -121,6 +226,7 @@ class WPrimeUtil
   // values set at beginFile
   std::string samplename_;
   float weight_;
+  bool runningOnData_;
 
   std::vector<edm::EventID> vEventsToDebug_;
 

@@ -149,59 +149,5 @@ WCandV getWCands(const ElectronV & electrons,
   return wCands;
 }
 
-TVector2 getPtDiff(const heep::Ele & e){ 
-  TVector2  chosenAlgo( e.p4().px(), e.p4().py() );
-  LorentzVector p4Def = e.patEle().p4();
-  TVector2 defaultAlgo( p4Def.Px(), p4Def.Py() );
-  return chosenAlgo - defaultAlgo;
-}
-
-TVector2
-adjustPt(const ElectronV & electrons){
-  TVector2 diff(0.,0.);
-  for (ElectronV::const_iterator i = electrons.begin(); 
-       i != electrons.end(); ++i){
-    diff = diff + getPtDiff(*i);
-  }
-  return diff;
-}
-
-TVector2
-adjustPt(const MuonV & muons){
-  TVector2 diff(0.,0.);
-  for (MuonV::const_iterator i = muons.begin(); 
-       i != muons.end(); ++i){
-    diff = diff + i->getPtDiff();
-  }
-  return diff;
-}
-
-pat::MET AdjustedMET(const ElectronV & electrons,
-                     const pat::MET & met){
-  TVector2 adj = adjustPt(electrons);
-  TVector2 newmet(met.px()-adj.Px(), met.py()-adj.Py());
-  return pat::MET(reco::MET(LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), reco::MET::Point(0,0,0)));
-//Note: This should include a change of sumET for significance measurements
-//  return pat::MET(reco::MET(met.sumEt()+dSumEt, LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), reco::MET::Point(0,0,0)));
-//Note: Should the new met be wrt beamspot??, what is old met wrt?
-//  pat::MET scaledMET(reco::MET(met.sumEt()+dSumEt, reco::MET::LorentzVector(scaledMETPx, scaledMETPy, 0, sqrt(scaledMETPx*scaledMETPx+scaledMETPy*scaledMETPy)), reco::MET::Point(0,0,0)));
-}
-
-pat::MET AdjustedMET(const MuonV & muons,
-                     const pat::MET & met){
-  TVector2 adj = adjustPt(muons);
-  TVector2 newmet(met.px()-adj.Px(), met.py()-adj.Py());
-  return pat::MET(reco::MET(LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), reco::MET::Point(0,0,0)));
-//Note: This should include a change of sumET for significance measurements
-//  return pat::MET(reco::MET(met.sumEt()+dSumEt, LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), reco::MET::Point(0,0,0)));
-}
  
-pat::MET AdjustedMET(const ElectronV & electrons,
-                           const MuonV & muons,
-                           const pat::MET & met){
-  pat::MET met1 = AdjustedMET(electrons, met);
-  pat::MET met2 = AdjustedMET(muons    , met1);
-
-  return met2;
-}
 
