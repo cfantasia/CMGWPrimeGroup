@@ -10,7 +10,7 @@ process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_section
 
 process.WprimeAnalyzer.doRecoilCorrectionForW = cms.bool(False)
 process.WprimeAnalyzer.useAdjustedMET = cms.bool(False)
-process.WprimeAnalyzer.muonAlgo = cms.uint32(7)
+process.WprimeAnalyzer.muonReconstructor = cms.uint32(7)
 
 process.WprimeAnalyzer.useJSON = cms.bool(False)
 process.WprimeAnalyzer.countGenEvts = cms.bool(False)
