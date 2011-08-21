@@ -53,11 +53,13 @@ process.WprimeAnalyzer = cms.PSet(
 
     muons = cms.string('userPatMuons'),
     electrons = cms.string('userPatElectrons'),
+    jets = cms.string('selectedPatJets'),
     met   = cms.string('patMETsPF'),
     particleFlow = cms.InputTag('selectedPatPFParticles'),
     genParticles = cms.InputTag('prunedGenParticles'),
     hltEventTag = cms.string('patTriggerEvent'),
     pileupTag  = cms.string('addPileupInfo'),
+    vertexTag  = cms.string('offlinePrimaryVertices'),
 
     electronSelectors = electronSelectors,
     muonSelectors = muonSelectors,
