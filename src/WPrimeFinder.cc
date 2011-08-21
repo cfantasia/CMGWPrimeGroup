@@ -107,6 +107,7 @@ void WPrimeFinder::beginFile(vector<wprime::InputFile>::const_iterator it)
 
   wprimeUtil->setSampleName(it->samplename);
   wprimeUtil->setWeight(it->weight);
+  wprimeUtil->setRunningOnData();
 
   // call beginFile for each finder here
   if(runMuMETAnalysis_)
