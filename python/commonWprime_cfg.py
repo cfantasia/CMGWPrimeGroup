@@ -51,15 +51,15 @@ process.WprimeAnalyzer = cms.PSet(
     ## input specific for this analyzer
     muonReconstructor = cms.int32(3), ## see TeVMuon_tracking.h
 
-    muons = cms.string('userPatMuons'),
-    electrons = cms.string('userPatElectrons'),
-    jets = cms.string('selectedPatJets'),
-    met   = cms.string('patMETsPF'),
+    muons = cms.InputTag('userPatMuons'),
+    electrons = cms.InputTag('userPatElectrons'),
+    jets = cms.InputTag('selectedPatJets'),
+    met   = cms.InputTag('patMETsPF'),
     particleFlow = cms.InputTag('selectedPatPFParticles'),
     genParticles = cms.InputTag('prunedGenParticles'),
-    hltEventTag = cms.string('patTriggerEvent'),
-    pileupTag  = cms.string('addPileupInfo'),
-    vertexTag  = cms.string('offlinePrimaryVertices'),
+    hltEventTag = cms.InputTag('patTriggerEvent'),
+    pileupTag  = cms.InputTag('addPileupInfo'),
+    vertexTag  = cms.InputTag('offlinePrimaryVertices'),
 
     electronSelectors = electronSelectors,
     muonSelectors = muonSelectors,

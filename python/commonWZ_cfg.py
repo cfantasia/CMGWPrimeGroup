@@ -22,12 +22,12 @@ process.WprimeAnalyzer.eventCounters = cms.vstring(
 
 
 ## input specific for this analyzer
-process.WprimeAnalyzer.muons = cms.string('userPatMuons')
-process.WprimeAnalyzer.electrons = cms.string('userPatElectrons')
-process.WprimeAnalyzer.met   = cms.string('patMETsPF')
-process.WprimeAnalyzer.particleFlow = cms.InputTag('selectedPatPFParticles')
-process.WprimeAnalyzer.genParticles = cms.InputTag('prunedGenParticles')
-process.WprimeAnalyzer.hltEventTag = cms.string('patTriggerEvent')
+process.WprimeAnalyzer.muons = 'userPatMuons'
+process.WprimeAnalyzer.electrons = 'userPatElectrons'
+process.WprimeAnalyzer.met   = 'patMETsPF'
+process.WprimeAnalyzer.particleFlow = 'selectedPatPFParticles'
+process.WprimeAnalyzer.genParticles = 'prunedGenParticles'
+process.WprimeAnalyzer.hltEventTag = 'patTriggerEvent'
 
 process.WprimeAnalyzer.preselect = cms.bool(False)
 
