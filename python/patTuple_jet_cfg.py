@@ -37,7 +37,7 @@ def CMGWPswitchToPFJets(process) :
     process.patJets.addAssociatedTracks = True
     process.patJets.trackAssociationSource = "jetTracksAssociatorAtVertex"
 
-
+    process.selectedPatPFParticles.cut = ""
 
 
     from PhysicsTools.SelectorUtils.pvSelector_cfi import pvSelector
