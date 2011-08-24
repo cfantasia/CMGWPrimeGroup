@@ -50,8 +50,6 @@ public:
   void DeclareHisto(std::string n, std::string t, std::string xtitle,
                     int nbins, float min, float max,
                     TH1F* h, TFileDirectory& d);
-  void tabulateSummary();
-  void printSummary(const std::string& dir, ofstream & out) const;
 
   //methods for stuff to be done for each event
   void eventLoop(edm::EventBase const & event);
@@ -197,8 +195,6 @@ public:
   float LeadElecPt_;
   float LeadMuonPt_;
   bool TT, TF;
-  float PU_NumInteractions3BX_;
-  float PU_NumInteractions1BX_;
 
 // +++++++++++++++++++General Cut values
   uint maxNumZs_;
@@ -230,6 +226,12 @@ public:
   float minZmmPt1_;
   float minZmmPt2_;
 
+  //Handles
+  PatElectronVH patElectronsH_;
+  PatMuonVH patMuonsH_;
+  METVH metH_;
+  PFCandidateVH pfCandidatesH_;
+
 //////Chosen Candidates
   ElectronV electrons_, looseElectrons_, tightElectrons_;
   MuonV muons_, looseMuons_, tightMuons_;
@@ -241,7 +243,7 @@ public:
   pat::TriggerEvent triggerEvent_; 
   std::vector<reco::Vertex>  vertices_;
   std::vector< PileupSummaryInfo > PupInfo_; 
-  std::vector<wprime::FilterEff> results_;
+  wprime::EffV results_;
 
 // +++++++++++++++++++ Histogram Definitions
   TH1F * hEffRel;

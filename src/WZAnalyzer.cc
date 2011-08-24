@@ -620,55 +620,14 @@ void WZAnalyzer::Tabulate_Me(int& cut_index, const float& weight)
                   <<cut_index<<" = "<<Cuts_[cut_index]<<endl;
 
 //increase the number of events passing the cuts
+  hNumEvts->Fill(cut_index,weight);
+  
   results_[cut_index].Nsurv_evt_cut_w += weight;
   results_[cut_index].Nsurv_evt_cut++;
 //fill the histograms
   Fill_Histos(cut_index,weight);
     
 }//Tabulate_Me
-
-void WZAnalyzer::tabulateSummary(){
-  for(int i = 0; i < NCuts_; ++i){
-    hNumEvts->SetBinContent(i+1,results_[i].Nsurv_evt_cut_w);
-    //calculate efficiencies
-    float num =   results_[i].Nsurv_evt_cut_w;
-    float denom = results_[max(i-1,0)].Nsurv_evt_cut_w;
-    WPrimeUtil::getEff(results_[i].eff, results_[i].deff, num, denom);
-    hEffRel->SetBinContent(i+1,results_[i].eff *100);
-    hEffRel->SetBinError  (i+1,results_[i].deff*100);
-
-    WPrimeUtil::getEff(results_[i].eff, results_[i].deff, num, results_[0].Nsurv_evt_cut_w);
-    hEffAbs->SetBinContent(i+1,results_[i].eff *100);
-    hEffAbs->SetBinError  (i+1,results_[i].deff*100);
-  } // loop over different cuts
-}//tabulateSummary
-
-//Writing results to a txt file
-//--------------------------------------------------------------------------
-void WZAnalyzer::printSummary(const string& dir, ofstream & out) const
-{ 
-//------------------------------------------------------------------------
-  if(debugme) cout<<"Writing results to a txt file"<<endl;
-
-  out << setiosflags(ios::fixed) << setprecision(2);
-  out<<"$$$$$$$$$$$$$$$$$$$$$$$ Type of sample: "<<dir<<endl;
-//  out << " xsec*lumi expected events = " << Nthe_evt << endl;
-//  out << " # of evt passing preselection = " << Nexp_evt << " per "<<Form("%.0f", wprimeUtil_->getLumi_ipb())<<" inv pb"<<endl;
-  
-  for(int i = 0; i < NCuts_; ++i){
-    out<<right<<"Cut " << setw(2) << i << "("
-       <<left<< setw(15) << Cuts_[i]
-       <<right << "): " <<"expected evts = " << setw(10) << results_[i].Nsurv_evt_cut_w;
-    
-    out << setw(15) <<"\tRelative eff = "<<setw(6)<<hEffRel->GetBinContent(i+1)
-        << " +/- " << setw(6)<<hEffRel->GetBinError(i+1) << "%"
-        << setw(15) <<"\tAbsolute eff = "<<setw(6)<<hEffAbs->GetBinContent(i+1) 
-        << " +/- " << setw(6)<<hEffAbs->GetBinError(i+1) << "%"
-        << endl;
-    
-  } // loop over different cuts
-}//printSummary
-
 
 void 
 WZAnalyzer::eventLoop(edm::EventBase const & event){
@@ -691,15 +650,14 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 //  if(debugme) printf("    FlavorType: %i", flavorType);
 
   // Get leptons
-  const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, electronsLabel_);
-  const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
-  if(debugme) printf("    Contains: %i pat electron(s), %i pat muon(s)\n",
-                     (int)patElectrons.size(), (int)patMuons.size());
-  WPrimeUtil::getLeptonsMET(event, 
-                            patElectrons, electrons_,
-                            patMuons, muonAlgo_, muons_,
-                            metLabel_, useAdjustedMET_, met_,
-                            pfCandsLabel_);
+  event.getByLabel(electronsLabel_,patElectronsH_);
+  //const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, electronsLabel_);
+  event.getByLabel(muonsLabel_,patMuonsH_);
+  //const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
+  WPrimeUtil::getLeptonsMET(patElectronsH_, electrons_,
+                            patMuonsH_, muonAlgo_, muons_,
+                            metH_, useAdjustedMET_, met_,
+                            pfCandidatesH_);
   if(debugme) printf("    Contains: %i electron(s), %i muon(s)\n",
                           (int)electrons_.size(), (int)muons_.size());
 
@@ -745,25 +703,27 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
   float PU_Weight = 1.;
   if(!wprimeUtil_->runningOnData()){//Don't do this for data
-/*    
-    GenParticleV genParticles = getUntrackedProduct<GenParticleV>(event, "genParticles");
-    const Candidate * genZ = 0;
-    const Candidate * genW = 0;
-    for (size_t i = 0; i < genParticles.size(); i++){
-      if (abs(genParticles[i].pdgId()) == 23) genZ = & genParticles[i];
-      else if (abs(genParticles[i].pdgId()) == 24) genW = & genParticles[i];
+    if(debugme){
+      GenParticleV genParticles = getProduct<GenParticleV>(event, "genParticles");
+      const reco::Candidate * genZ = 0;
+      const reco::Candidate * genW = 0;
+      for (size_t i = 0; i < genParticles.size(); i++){
+        if (abs(genParticles[i].pdgId()) == 23){
+          genZ = & genParticles[i];
+          cout<<"Mass of gen Z is "<<genZ->mass()<<endl;
+        }else if (abs(genParticles[i].pdgId()) == 24){ 
+          genW = & genParticles[i];
+        cout<<"Mass of gen W is "<<genW->mass()<<endl;
+        }
+      }
     }
-*/
     PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
-    PU_NumInteractions3BX_ = wprimeUtil_->getPU3BX(PupInfo_);
-    PU_NumInteractions1BX_ = wprimeUtil_->getPU1BX(PupInfo_);
     PU_Weight = wprimeUtil_->getPUWeight3BX(PupInfo_);
 
-    //int PU_NumInteractions_tmp = int(PU_NumInteractions_);
-    //PU_Weight = wprimeUtil_->getLumiWeight(PU_NumInteractions_tmp);
+    if(debugme) 
+      cout<<" PU Weight: "<<PU_Weight<<endl;   
+
   }//MC Only If
-  if(debugme) 
-    cout<<" PU Weight: "<<PU_Weight<<endl;   
 
   if(wprimeUtil_->DebugEvent(event)){
     cout<<"This is a debug event\n";
@@ -776,9 +736,10 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   if(wprimeUtil_->runningOnData()){
     cout<<" The following data events passed All Cuts!!!\n";
     PrintPassingEvent(event);
-    if(1 || debugme) PrintEventLeptons();
+    if(debugme) PrintEventLeptons();
     cout<<" ------------------\n";
   }
+  if(debugme) PrintEventLeptons();
 }
 
 void
@@ -840,20 +801,20 @@ WZAnalyzer::PrintEventLeptons() const{
   if     (zCand_.flavor() == PDGELEC){
 //    PrintElectron(*zCand_.elec1(), PDGZ);
 //    PrintElectron(*zCand_.elec2(), PDGZ);
-    PrintElectron(FindElectron(*zCand_.daughter(0)), PDGZ);
-    PrintElectron(FindElectron(*zCand_.daughter(1)), PDGZ);
+    PrintElectron(Find(*zCand_.daughter(0), electrons_), PDGZ);
+    PrintElectron(Find(*zCand_.daughter(1), electrons_), PDGZ);
   }else if(zCand_.flavor() == PDGMUON){
-    PrintMuon(FindMuon(*zCand_.daughter(0)), PDGZ);
-    PrintMuon(FindMuon(*zCand_.daughter(1)), PDGZ);
+    PrintMuon(Find(*zCand_.daughter(0), muons_), PDGZ);
+    PrintMuon(Find(*zCand_.daughter(1), muons_), PDGZ);
 //    PrintMuon(*zCand_.muon1(), PDGZ);
 //    PrintMuon(*zCand_.muon2(), PDGZ);
   }
 
   if     (wCand_.flavor() == PDGELEC){   
-    PrintElectron(FindElectron(*wCand_.daughter(0)), PDGW);
+    PrintElectron(Find(*wCand_.daughter(0), electrons_), PDGW);
 //    PrintElectron(*wCand_.elec(), PDGW);
   }else if(wCand_.flavor() == PDGMUON){
-    PrintMuon(FindMuon(*wCand_.daughter(0)), PDGW);
+    PrintMuon(Find(*wCand_.daughter(0), muons_), PDGW);
 //    PrintMuon    (*wCand_.muon(), PDGW);
   }
 }
@@ -1009,8 +970,8 @@ inline bool WZAnalyzer::PassWLepTightCut(){
 }
 /*
 inline bool WZAnalyzer::PassWLepIsoCut() const{
-  if(wCand_.flavor() == PDGELEC) return PassElecTightCombRelIsoCut(FindElectron(*wCand_.daughter(0))); 
-  if(wCand_.flavor() == PDGMUON) return FindMuon(*wCand_.daughter(0)).combRelIsolation03();
+  if(wCand_.flavor() == PDGELEC) return PassElecTightCombRelIsoCut(Find(*wCand_.daughter(0))); 
+  if(wCand_.flavor() == PDGMUON) return Find(*wCand_.daughter(0)).combRelIsolation03();
   return false;
 }
 */
@@ -1134,8 +1095,8 @@ WZAnalyzer::PassZLepTriggerMatchCut(){
     return (PassTriggerEmulation(e1) && PassTriggerEmulation(e2));
   }else if(zCand_.flavor() == PDGMUON){
     return true;//Trigger matching now before making zs
-    //TeVMuon& m1 = FindMuon(*zCand_.daughter(0));
-    //TeVMuon& m2 = FindMuon(*zCand_.daughter(1));
+    //TeVMuon& m1 = Find(*zCand_.daughter(0));
+    //TeVMuon& m2 = Find(*zCand_.daughter(1));
     //return PassTriggerMatch(m1, m2); 
   }
   return false;
@@ -1338,8 +1299,6 @@ WZAnalyzer::ClearEvtVariables(){
   Wpt_ = -999;
   Q_ = -999;
   TT = TF = false;
-  PU_NumInteractions3BX_ = -999.;
-  PU_NumInteractions1BX_ = -999.;
   weight_ = 0;
 }
 
@@ -1353,59 +1312,19 @@ void WZAnalyzer::beginFile(std::vector<wprime::InputFile>::const_iterator fi){
 // (e.g. print summary)
 void WZAnalyzer::endFile(std::vector<wprime::InputFile>::const_iterator fi,
                          ofstream & out){
-  tabulateSummary();
-  printSummary(fi->samplename, out);  
+  WPrimeUtil::tabulateSummary(results_);
+  WPrimeUtil::printSummary(fi->samplename, fi->description, Cuts_, results_, out);  
 }
 
 void WZAnalyzer::endAnalysis(ofstream & out){
 }
 
-const heep::Ele &
-WZAnalyzer::FindElectron(const reco::Candidate & p) const{
-  for(uint i=0; i<electrons_.size(); ++i){
-    if(Match(electrons_[i], p)) return electrons_[i];
-  }
-  cout<<"Didn't find match for electron, returning random one!!!\n";
-  return electrons_[0];
-}
-
-const TeVMuon &
-WZAnalyzer::FindMuon(const reco::Candidate & p) const{
-  for(uint i=0; i<muons_.size(); ++i){
-    if(Match(muons_[i], p)) return muons_[i];
-  }
-  cout<<"Didn't find match for muon!!!, returning random one\n";
-  return muons_[0];
-}
-/*
-bool
-WZAnalyzer::Match(const heep::Ele & p1, const reco::Candidate & p2) const{
-  float tolerance = 0.0001;
-  if (p1.patEle().pdgId() == p2.pdgId() &&
-      fabs(p1.eta() - p2.eta()) < tolerance &&
-      fabs(p1.phi() - p2.phi()) < tolerance
-    )
-    return true;
-  return false;
-}
-
-bool
-WZAnalyzer::Match(const TeVMuon & p1, const reco::Candidate & p2) const{
-  float tolerance = 0.0001;
-  if (p1.pdgId() == p2.pdgId() &&
-      fabs(p1.eta() - p2.eta()) < tolerance &&
-      fabs(p1.phi() - p2.phi()) < tolerance
-    )
-    return true;
-  return false;
-}
-*/
 float
 WZAnalyzer::WLepPt() const{
   if(wCand_.flavor() == PDGELEC){
-    return FindElectron(*wCand_.daughter(0)).patEle().pt();
+    return Find(*wCand_.daughter(0), electrons_).patEle().pt();
   }else if(wCand_.flavor() == PDGMUON){
-    return FindMuon(*wCand_.daughter(0)).pt();
+    return Find(*wCand_.daughter(0), muons_).pt();
   }
   return -999.;
 }
@@ -1413,9 +1332,9 @@ WZAnalyzer::WLepPt() const{
 inline float
 WZAnalyzer::ZLepPt(int idx) const{
   if(zCand_.flavor() == PDGELEC)
-    return FindElectron(*zCand_.daughter(idx)).patEle().pt();
+    return Find(*zCand_.daughter(idx), electrons_).patEle().pt();
   else if(zCand_.flavor() == PDGMUON)
-    return FindMuon(*zCand_.daughter(idx)).pt();
+    return Find(*zCand_.daughter(idx), muons_).pt();
   return -999.;
 }
 

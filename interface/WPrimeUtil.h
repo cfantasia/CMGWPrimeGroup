@@ -200,12 +200,27 @@ class WPrimeUtil
                             const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
                             const edm::InputTag& pfLabel);
     
+  static void getElectronsMET(const PatElectronVH & patElectronsH, ElectronV & electrons,
+                              const METVH & metH, const bool & adjMET, pat::MET & met,
+                              const PFCandidateVH & pfCandidatesH);
+  static void getMuonsMET(const PatMuonVH & patMuonsH, const uint& muAlgo, MuonV & muons,
+                          const METVH & metH, const bool & adjMET, pat::MET & met,
+                          const PFCandidateVH & pfCandidatesH);
+  static void getLeptonsMET(const PatElectronVH & patElectronsH, ElectronV & electrons,
+                            const PatMuonVH & patMuonsH, const uint& muAlgo, MuonV & muons,
+                            const METVH & metH, const bool & adjMET, pat::MET & met,
+                            const PFCandidateVH & pfCandidatesH);
+
+
   static void convertElectrons(const std::vector<pat::Electron>& patElectrons, ElectronV & electrons);
   static void convertMuons(const std::vector<pat::Muon>& patMuons, const uint& muAlgo, MuonV & muons);
   static void getElectrons(edm::EventBase const & event, const edm::InputTag& label, ElectronV & electrons);
   static void getMuons    (edm::EventBase const & event, const edm::InputTag& label, const uint&  muonAlgo, MuonV & muons);
   static void getPFCands  (edm::EventBase const & event, const edm::InputTag& label, std::vector<pat::PFParticle> & pfCands);
   static void getMET      (edm::EventBase const & event, const edm::InputTag& label, pat::MET & met);
+
+  static void tabulateSummary(wprime::EffV results);
+  static void printSummary(const std::string& dir, const std::string& description, const vstring & Cuts, const wprime::EffV results, ofstream & out);
   
 private:
   fwlite::TFileService * fs;

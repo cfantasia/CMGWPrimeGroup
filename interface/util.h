@@ -35,6 +35,7 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 
 #include <TROOT.h>
 #include <TH1F.h>
@@ -131,6 +132,7 @@ namespace wprime{
 
   // key: samplename, value: vector<FilterEff> (ie. statistics for selection steps)
   typedef std::map<std::string, std::vector<FilterEff> > SampleStat;
+  typedef std::vector<FilterEff> EffV;
 
   const float MUON_MASS = 0.105658366;      // GeV
   const float ELECTRON_MASS = 0.000511;     // GeV

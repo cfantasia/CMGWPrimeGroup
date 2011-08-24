@@ -327,7 +327,7 @@ WPrimeUtil::FoundAndPassed(const pat::TriggerEvent & triggerEvent,const pat::Tri
 
 inline bool
 WPrimeUtil::Passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path){
-  return (path->wasAccept() && path->prescale() == 1 && MaxL1Prescale(triggerEvent,path)==1 );
+  return (path->wasAccept() && path->prescale() == 1 && (1 || MaxL1Prescale(triggerEvent,path)==1) );
 }
 
 inline unsigned
@@ -462,7 +462,10 @@ void WPrimeUtil::getMuons(edm::EventBase const & event, const edm::InputTag& lab
 }
 
 inline void WPrimeUtil::getPFCands(edm::EventBase const & event, const edm::InputTag& label, vector<pat::PFParticle> & pfCands){
-  pfCands = getProduct<vector<pat::PFParticle> >(event, label); 
+  edm::Handle<vector<pat::PFParticle> > handle;
+  event.getByLabel(label, handle);
+  if(handle.isValid()) pfCands = *handle.product();
+  else std::cerr<<" Didn't find pfCands in event, skipping\n";
 }
 
 inline void WPrimeUtil::getMET(edm::EventBase const & event, const edm::InputTag& label, pat::MET & met){
@@ -539,4 +542,66 @@ void WPrimeUtil::getLeptonsMET(edm::EventBase const & event,
   if(adjMET) AdjustMET(event, electrons, muons, pfLabel, met);
 }
 
+void WPrimeUtil::getElectronsMET(const PatElectronVH & patElectronsH, ElectronV & electrons,
+                                 const METVH & metH, const bool & adjMET, pat::MET & met,
+                                 const PFCandidateVH & pfCandidatesH){
+  convertElectrons(*patElectronsH.product(), electrons);
+  if(adjMET) AdjustMET(electrons, *pfCandidatesH.product(), met);
+}
+
+void WPrimeUtil::getMuonsMET(const PatMuonVH & patMuonsH, const uint& muAlgo, MuonV & muons,
+                             const METVH & metH, const bool & adjMET, pat::MET & met,
+                             const PFCandidateVH & pfCandidatesH){
+  convertMuons(*patMuonsH.product(), muAlgo, muons);
+  if(adjMET) AdjustMET(muons, *pfCandidatesH.product(), met);
+}
+
+void WPrimeUtil::getLeptonsMET(const PatElectronVH & patElectronsH, ElectronV & electrons,
+                               const PatMuonVH & patMuonsH, const uint& muAlgo, MuonV & muons,
+                               const METVH & metH, const bool & adjMET, pat::MET & met,
+                               const PFCandidateVH & pfCandidatesH){
+  convertElectrons(*patElectronsH.product(), electrons);
+  convertMuons(*patMuonsH.product(), muAlgo, muons);
+  if(adjMET){
+    AdjustMET(electrons, *pfCandidatesH.product(), met);
+    AdjustMET(muons, *pfCandidatesH.product(), met);
+  }
+}
+
+////////////////////////
+///Tabulating Functions
+////////////////////////
+
+//Writing results to a txt file
+//--------------------------------------------------------------------------
+void WPrimeUtil::tabulateSummary(wprime::EffV results){
+  for(uint i = 0; i < results.size(); ++i){
+    //calculate efficiencies
+    int idx = std::max((int)i-1,0);
+    float num =   results[i].Nsurv_evt_cut_w;
+    float denom = results[idx].Nsurv_evt_cut_w;
+    WPrimeUtil::getEff(results[i].eff, results[i].deff, num, denom);
+    WPrimeUtil::getEff(results[i].eff_abs, results[i].deff_abs, num, results[0].Nsurv_evt_cut_w);
+  } // loop over different cuts
+}//tabulateSummary
+
+void WPrimeUtil::printSummary(const string& dir, const string& description, const vstring & Cuts, const wprime::EffV results, ofstream & out){ 
+  out << setiosflags(std::ios::fixed) << std::setprecision(2);
+  out<<"$$$$$$$$$$$$$$$$$$$$$$$ Type of sample: "<<dir<<" ( "<<description<<" )"<<endl;
+//  out << " xsec*lumi expected events = " << Nthe_evt << endl;
+//  out << " # of evt passing preselection = " << Nexp_evt << " per "<<Form("%.0f", wprimeUtil_->getLumi_ipb())<<" inv pb"<<endl;
+  
+  for(uint i = 0; i < Cuts.size(); ++i){
+    out<<std::right<<"Cut " << std::setw(2) << i << "("
+       <<std::left<< std::setw(15) << Cuts[i]
+       <<std::right << "): " <<"Evts = " << std::setw(10) << results[i].Nsurv_evt_cut_w
+       <<" (" << std::right << std::setw(7) << results[i].Nsurv_evt_cut << ")";
+    
+    out << std::setw(9) <<"\tRel eff: "<<std::setw(6)<<results[i].eff*100
+        << " +/- " << std::setw(6)<<results[i].deff*100 << "%"
+        << std::setw(9) <<"\tAbs eff: "<<std::setw(6)<<results[i].eff_abs *100
+        << " +/- " << std::setw(6)<<results[i].deff_abs*100 << "%"
+        << endl;
+  } // loop over different cuts
+}//printSummary
 
