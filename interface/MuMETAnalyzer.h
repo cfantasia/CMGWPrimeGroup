@@ -47,15 +47,20 @@ class MuMETAnalyzer
  private:
   WPrimeUtil * wprimeUtil_;
 
-  edm::InputTag muons_;
-  edm::InputTag met_;
-  edm::InputTag particleFlow_;
+  edm::InputTag muonsLabel_;
+  edm::InputTag metLabel_;
+  edm::InputTag pfLabel_;
   // Handle to the muon collection
   edm::Handle<pat::MuonCollection > muons;
   // Handle to the (pf)MET collection
-  edm::Handle<pat::METCollection > met;
+  edm::Handle<pat::METCollection > defMet;
+  pat::MET met;
    // keeps track of selection efficiencies for all input samples & cuts
   wprime::SampleStat stats;
+
+  MuonV vmuons;
+
+  bool useAdjustedMET_;
 
   // true if TrackRef for chosen high-pt muon reconstructor is null;
   // to be reset at beginning of loop-over-muons
