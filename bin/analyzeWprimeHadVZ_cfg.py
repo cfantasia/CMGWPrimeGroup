@@ -1,10 +1,10 @@
 from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
-process.WprimeAnalyzer.outputFile  = cms.string('test.root')## mandatory
+process.WprimeAnalyzer.outputFile  = cms.string('HadVZAnalyzer.root')## mandatory
 process.WprimeAnalyzer.maxEvents   = cms.int32(-1)                      ## optional
 process.WprimeAnalyzer.reportAfter = cms.uint32(1000)                     ## optional
 process.WprimeAnalyzer.useJSON = cms.bool(True)
-process.WprimeAnalyzer.logFile     = cms.string("test.log")
+process.WprimeAnalyzer.logFile     = cms.string("HadVZAnalyzer.log")
 process.WprimeAnalyzer.candEvtFile = cms.string("testCandEvtFile.txt")
 process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_sections_HadVZ.txt")
 process.WprimeAnalyzer.debugme = cms.bool(False)
@@ -36,16 +36,16 @@ process.WprimeAnalyzer.maxHadVmass = cms.double(110.0)
 # +++++++++++++++++++Muon General Cuts
 process.WprimeAnalyzer.maxMuonEta = cms.double(2.5)
 process.WprimeAnalyzer.minMuonLoosePt = cms.double(10.)
-process.WprimeAnalyzer.minMuonTightPt = cms.double(20.)
+process.WprimeAnalyzer.minMuonTightPt = cms.double(35.)
 #VBTF Recommended Cuts
 process.WprimeAnalyzer.maxMuonDxy = cms.double(0.2)
 process.WprimeAnalyzer.maxMuonNormChi2 = cms.double(10.)
-process.WprimeAnalyzer.minMuonNPixHit = cms.uint32(0)
+process.WprimeAnalyzer.minMuonNPixHit = cms.uint32(1)
 process.WprimeAnalyzer.minMuonNTrkHit = cms.uint32(10)
 process.WprimeAnalyzer.minMuonStations = cms.uint32(1)
 process.WprimeAnalyzer.minMuonHitsUsed = cms.uint32(0)
 # +++++++++++++++++++Jet General Cuts
-process.WprimeAnalyzer.minJetPt = cms.double(30.0)
+process.WprimeAnalyzer.minJetPt = cms.double(150.)
 process.WprimeAnalyzer.maxJetEta = cms.double(2.4)
 process.WprimeAnalyzer.maxJetNHF = cms.double(0.99)
 process.WprimeAnalyzer.maxJetNEF = cms.double(0.99)
