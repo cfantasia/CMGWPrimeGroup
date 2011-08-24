@@ -437,6 +437,7 @@ bool WPrimeUtil::DebugEvent(edm::EventBase const& event) const
 /////////////////////
 void WPrimeUtil::convertElectrons(const vector<pat::Electron>& patElectrons,
                                   ElectronV & electrons){
+  electrons.clear();
   for (size_t i = 0; i < patElectrons.size(); i++) {
     electrons.push_back(heep::Ele(patElectrons[i]));   
   }
@@ -444,6 +445,7 @@ void WPrimeUtil::convertElectrons(const vector<pat::Electron>& patElectrons,
 
 void WPrimeUtil::convertMuons(const vector<pat::Muon>& patMuons, const uint& muAlgo,
                               MuonV & muons){
+  muons.clear();
   for (size_t i = 0; i < patMuons.size(); i++) {
     muons.push_back(TeVMuon(patMuons[i], muAlgo));   
   }
