@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
   }
 
   char * config_file = argv[1];
-  int fileToRun = argc >= 2 ? atoi(argv[2]) : -1;
+  int fileToRun = argc > 2 ? atoi(argv[2]) : -1;
   WPrimeFinder a(config_file, fileToRun);
 
   a.run();
