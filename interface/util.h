@@ -480,7 +480,7 @@ uint FindIndex(const T1 & p, const std::vector<T2>& vec){
   for(uint i=0; i<vec.size(); ++i){
     if(Match(vec[i], p)) return i;
   }
-  std::cerr<<"Didn't find match for electron, returning random one!!!\n";
+  std::cerr<<"Didn't find match for particle, returning random one!!!\n";
   return 0;
 }
 
@@ -489,7 +489,7 @@ const T2 & Find(const T1 & p, const std::vector<T2>& vec){
   for(uint i=0; i<vec.size(); ++i){
     if(Match(vec[i], p)) return vec[i];
   }
-  std::cerr<<"Didn't find match for electron, returning random one!!!\n";
+  std::cerr<<"Didn't find match for particle, returning random one!!!\n";
   return vec[0];
 }
 
