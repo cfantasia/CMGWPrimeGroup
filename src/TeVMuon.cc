@@ -34,10 +34,13 @@ TeVMuon::getTrack(const unsigned muReconstructor) const{
 
 const TLorentzVector TeVMuon::getTrkLorentzVector(const reco::TrackRef trk) const
 {
+  const float dummy = -9999;
   TLorentzVector trkP4;
-  if(!trk.isNull()){
+  if(!trk.isNull())
     trkP4.SetXYZM(trk->px(), trk->py(), trk->pz(), wprime::MUON_MASS);
-  } 
+  else
+    trkP4.SetXYZM(dummy, dummy, dummy, wprime::MUON_MASS);
+    
   return trkP4;
 }
 
