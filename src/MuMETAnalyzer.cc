@@ -11,9 +11,9 @@ MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUti
   wprimeUtil_ = wprimeUtil;
   assert(wprimeUtil_);
 
-  muons_       = cfg.getParameter<edm::InputTag>("muons"  );
-  met_       = cfg.getParameter<edm::InputTag>("met"  );
-  particleFlow_ = cfg.getParameter<edm::InputTag>("particleFlow" );
+  muonsLabel_       = cfg.getParameter<edm::InputTag>("muons"  );
+  metLabel_       = cfg.getParameter<edm::InputTag>("met"  );
+  pfLabel_ = cfg.getParameter<edm::InputTag>("particleFlow" );
   muReconstructor_   = cfg.getParameter<int>("muonReconstructor");
   muonPtThreshold_   = cfg.getParameter<double>("muonPtThreshold");
   chi2Cut_           = cfg.getParameter<double>("chi2Cut");
@@ -23,7 +23,8 @@ MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUti
   highestPtMuonOnly_ = cfg.getParameter<bool>("highestPtMuonOnly");
   dumpHighPtMuons_   = cfg.getParameter<bool>("dumpHighPtMuons");
   dumpHighPtMuonThreshold_ = cfg.getParameter<double>("dumpHighPtMuonThreshold");
-
+  useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
+  
   assert(muReconstructor_ < Num_MuTeVtrkAlgos);
 
   setupCutOrder();
@@ -76,8 +77,8 @@ int MuMETAnalyzer::getTheHardestMuon()
 
 void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 {
-  event.getByLabel(muons_, muons);
-  event.getByLabel(met_, met);
+  event.getByLabel(muonsLabel_, muons);
+  event.getByLabel(metLabel_, defMet);
 
   // switch to help us keep track of whether a muon has already
   // been found in current event surviving the ith-cut;
@@ -99,15 +100,19 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 	}
     }
 
+  // convert patMuons collection to vector-of TeVMuons
+  WPrimeUtil::getMuonsMET(event, *muons, muReconstructor_, vmuons, 
+			  metLabel_, useAdjustedMET_, met, pfLabel_); 
+
   //loop over muons
   for (unsigned theMu = iMuMin; theMu != iMuMax; ++theMu){//loop over muons
     bool fill_entry = true; // if true, will histogram muon
-    isInvalidMuon_ = false;
     pfMETwithoutMuCalculated_ = false;
 
     TeVMuon muon((*muons)[theMu], muReconstructor_);
-    mu4D = muon.p4(isInvalidMuon_);
-    if(isInvalidMuon_)continue;
+    if(!muon.isValid())continue;
+
+    mu4D = muon.P4();
     if(mu4D.Pt() < muonPtThreshold_) continue;
     for(int cut_index = 0; cut_index != Num_mumet_cuts; ++cut_index)
       { // loop over selection cuts
@@ -385,7 +390,7 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, TeVMuon & muon
        << event.id().event() << " LS = " << event.id().luminosityBlock() 
        << endl;
   cout << " Muon eta = " << mu4D.Eta() << "  phi = " << mu4D.Phi() << endl;
-  pat::METCollection::const_iterator oldMET = met->begin();
+  pat::METCollection::const_iterator oldMET = defMet->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
   //  cout << " default pfMET = " << oldMET->pt() << " GeV ";
 
@@ -395,7 +400,7 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, TeVMuon & muon
     {
       unsigned rec_i(*it);
       if(!muon.isValid(rec_i)) continue;
-      TLorentzVector p4 = muon.p4(rec_i);
+      TLorentzVector p4 = muon.P4(rec_i);
       TVector2 newMET = getNewMET(event, p4);
       cout << " " << algo_desc_long[rec_i] << " pt = "
 	   << muon.getTrack(rec_i)->pt() << " +- " 
@@ -429,13 +434,13 @@ TVector2 MuMETAnalyzer::getPFMETwithoutMu(edm::EventBase const & event)
   if(pfMETwithoutMuCalculated_)
     return pfMETwithoutMuCached_;
 
-  pat::METCollection::const_iterator oldMET = met->begin();
+  pat::METCollection::const_iterator oldMET = defMet->begin();
   float met_x = oldMET->px(); float met_y = oldMET->py();
 
   //----Loop over PFCandidates to get the hardest muon and put its
   //pT back to the MET TVector2; create a new object
   edm::Handle<pat::PFParticleCollection > PFCandidates;
-  event.getByLabel(particleFlow_,PFCandidates);
+  event.getByLabel(pfLabel_,PFCandidates);
   int nmuon = 0;
   pat::PFParticleCollection::const_iterator iParticle;
   pat::PFParticleCollection::const_iterator icorrespondingPFMu;
