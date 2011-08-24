@@ -710,8 +710,8 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   //Make HadVZ from goodZ's tight and loose
   if (goodZ)
     {
-      const TeVMuon m1 = FindMuon(*zCand_.daughter(0));
-      const TeVMuon m2 = FindMuon(*zCand_.daughter(1));
+      const TeVMuon & m1 = Find(*zCand_.daughter(0), muons_);
+      const TeVMuon & m2 = Find(*zCand_.daughter(1), muons_);
       if (debugme)
 	cout << "Found my muons from loose Z" << endl;
       h_Zmuon1_pt->Fill(m1.pt(), weight_);
@@ -727,8 +727,8 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     {
       if (goodZTight)
 	{
-	  const TeVMuon m1 = FindMuon(*zCandTight_.daughter(0));
-	  const TeVMuon m2 = FindMuon(*zCandTight_.daughter(1));
+	  const TeVMuon & m1 = Find(*zCandTight_.daughter(0), muons_);
+	  const TeVMuon & m2 = Find(*zCandTight_.daughter(1), muons_);
 	  if (debugme)
 	    cout << "Found my muons from tight Z" << endl;
 	  h_tight_Zmuon1_pt->Fill(m1.pt(), weight_);
@@ -764,8 +764,8 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     h_HadVZphi->Fill(hadVZ.phi(), weight_);
     if (debugme)
       cout << "Filled my histos from HadVZ" << endl;
-    const TeVMuon VZm1 = FindMuon(*zCand_.daughter(0));
-    const TeVMuon VZm2 = FindMuon(*zCand_.daughter(1));
+    const TeVMuon & VZm1 = Find(*zCand_.daughter(0), muons_);
+    const TeVMuon & VZm2 = Find(*zCand_.daughter(1), muons_);
     //cout << "Muon from loose zCand" << endl;
     h_Zmuon1_VZCut_pt->Fill(VZm1.pt(), weight_);
     h_Zmuon1_VZCut_eta->Fill(VZm1.eta(), weight_);
@@ -804,8 +804,8 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 	h_tight_HadVZphi->Fill(hadVZ.phi(), weight_);
 	if (debugme)
 	  cout << "Filled my HadVZTight histos" << endl;
-	const TeVMuon VZm1 = FindMuon(*zCandTight_.daughter(0));
-	const TeVMuon VZm2 = FindMuon(*zCandTight_.daughter(1));
+	const TeVMuon & VZm1 = Find(*zCandTight_.daughter(0), muons_);
+	const TeVMuon & VZm2 = Find(*zCandTight_.daughter(1), muons_);
 	if (debugme)
 	  cout << "Found my tight muons from HadVZ" << endl;
 	h_tight_Zmuon1_VZCut_pt->Fill(VZm1.pt(), weight_);
@@ -1113,6 +1113,7 @@ HadronicVZAnalyzer::ClearEvtVariables(){
   looseMuons_.clear();
   tightMuons_.clear();
   zCand_ = ZCandidate();
+  zCandTight_ = ZCandidate();
   wCand = WCandidate();
 }
 
@@ -1156,28 +1157,6 @@ void HadronicVZAnalyzer::endFile(std::vector<wprime::InputFile>::const_iterator 
 }
 
 void HadronicVZAnalyzer::endAnalysis(ofstream & out){
-}
-
-
-TeVMuon &
-HadronicVZAnalyzer::FindMuon(reco::Candidate & p){
-  for(uint i=0; i<muons_.size(); ++i){
-    if(Match(muons_[i], p)) return muons_[i];
-  }
-  cout<<"Didn't find match for muon!!!, returning random one\n";
-  return muons_[0];
-}
-
-
-bool
-HadronicVZAnalyzer::Match(TeVMuon & p1, reco::Candidate & p2){
-  float tolerance = 0.0001;
-  if (p1.pdgId() == p2.pdgId() &&
-      fabs(p1.eta() - p2.eta()) < tolerance &&
-      fabs(p1.phi() - p2.phi()) < tolerance
-    )
-    return true;
-  return false;
 }
 
 
