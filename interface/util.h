@@ -57,8 +57,9 @@ typedef math::XYZTLorentzVector LorentzVector;
 typedef edm::ParameterSet PSet;
 typedef edm::MergeableCounter Counter;
 
-//typedef vector<pat::Electron> ElectronV;
-//typedef vector<pat::Muon    > MuonV;
+typedef std::vector<pat::Electron> PatElectronV;
+typedef std::vector<pat::Muon    > PatMuonV;
+typedef std::vector<pat::PFParticle > PFCandidateV;
 typedef std::vector<heep::Ele > ElectronV;
 typedef std::vector<TeVMuon  > MuonV;
 
@@ -68,6 +69,12 @@ typedef std::vector<reco::Track  > TrackV;
 typedef std::vector<edm::InputTag> VInputTag;
 typedef std::vector<reco::Candidate> CandV;
 typedef std::vector<reco::GenParticle> GenParticleV;
+
+typedef edm::Handle<PatElectronV > PatElectronVH;
+typedef edm::Handle<PatMuonV > PatMuonVH;
+typedef edm::Handle<PFCandidateV > PFCandidateVH;
+typedef edm::Handle<METV > METVH;
+
 
 //////
 
@@ -114,8 +121,12 @@ namespace wprime{
     float eff;
     // efficiency uncertainty
     float deff;
+    // absolute efficiency for all selection cuts
+    float eff_abs;
+    // absolute efficiency uncertainty
+    float deff_abs;
 
-    FilterEff(){Nsurv_evt_cut = 0; Nsurv_evt_cut_w = eff = deff = 0.0;}
+    FilterEff(){Nsurv_evt_cut = 0; Nsurv_evt_cut_w = eff = deff = eff_abs = deff_abs = 0.0;}
   };
 
   // key: samplename, value: vector<FilterEff> (ie. statistics for selection steps)
@@ -472,5 +483,15 @@ uint FindIndex(const T1 & p, const std::vector<T2>& vec){
   std::cerr<<"Didn't find match for electron, returning random one!!!\n";
   return 0;
 }
+
+template<class T1, class T2>
+const T2 & Find(const T1 & p, const std::vector<T2>& vec){
+  for(uint i=0; i<vec.size(); ++i){
+    if(Match(vec[i], p)) return vec[i];
+  }
+  std::cerr<<"Didn't find match for electron, returning random one!!!\n";
+  return vec[0];
+}
+
 
 #endif // _util_h
