@@ -81,8 +81,10 @@ void get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
 
 float
 GetLumiUsed(TFile* f){
-  TH1F* hist = (TH1F*) f->Get("lumi_ipb");
-  return hist ? hist->GetBinContent(1) : 0;
+  TH1F* hLumi = (TH1F*) f->Get("lumi_ipb");
+  TH1F* hNFiles = (TH1F*) f->Get("hFileCounter");
+  bool valid = hLumi && hNFiles;
+  return valid ? hLumi->GetBinContent(1) / hNFiles->GetBinContent(1) : 0;
 }
 
 #endif//#define _common_h_

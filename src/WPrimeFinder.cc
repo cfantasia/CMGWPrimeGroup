@@ -170,7 +170,8 @@ void WPrimeFinder::run()
 
   for(it = inputFiles.begin(); it != inputFiles.end(); ++it, ++i_sample){
     int ievt=0;  
-    cout << "\n Opening sample " << it->samplename << " ... ";
+    cout << "\n Opening sample " << it->samplename 
+         << "( " << it->description << " ) ... ";
     fwlite::ChainEvent ev(it->pathnames);
     it->Nact_evt = ev.size();
     cout<<" Done. \n";
@@ -234,6 +235,8 @@ void WPrimeFinder::run()
   TH1F * h = new TH1F("lumi_ipb", "Integrated luminosity in pb^{-1}", 1, 0, 1);
   h->SetBinContent(1, wprimeUtil->getLumi_ipb());
   //  h->Write();
+  TH1F * hFileCounter = new TH1F("hFileCounter", "Counter indicates number of files merged", 1, 0, 1);
+  hFileCounter->SetBinContent(1, 1);
   
   endAnalysis();
 
