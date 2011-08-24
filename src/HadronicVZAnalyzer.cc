@@ -101,32 +101,23 @@ void HadronicVZAnalyzer::Declare_Histos(TFileDirectory & dir)
 {
   // Extend later.
   printf("Declare histos\n");
+  //Loose histos
   h_HadVZMass = dir.make<TH1F>("h_HadVZMass","h_HadVZMass",250,0.0,2500.0);
-
-  //New histos
-  
   h_Zmuon1_pt = dir.make<TH1F>("h_Zmuon1_pt", "h_Zmuon1_pt", 100, 0.0, 1000.0);
   h_Zmuon1_eta = dir.make<TH1F>("h_Zmuon1_eta", "h_Zmuon1_eta", 40, -5.0, 5.0);
   h_Zmuon1_phi = dir.make<TH1F>("h_Zmuon1_phi", "h_Zmuon1_phi", 20, -4.0, 4.0);
   h_Zmuon2_pt = dir.make<TH1F>("h_Zmuon2_pt", "h_Zmuon2_pt", 100, 0.0, 1000.0);
   h_Zmuon2_eta = dir.make<TH1F>("h_Zmuon2_eta", "h_Zmuon2_eta", 40, -5.0, 5.0);
   h_Zmuon2_phi = dir.make<TH1F>("h_Zmuon2_phi", "h_Zmuon2_phi", 20, -4.0, 4.0);
-
-
   h_Zmuon1_VZCut_pt = dir.make<TH1F>("h_Zmuon1_VZCut_pt", "h_Zmuon1_VZCut_pt", 100, 0.0, 1000.0);
   h_Zmuon1_VZCut_eta = dir.make<TH1F>("h_Zmuon1_VZCut_eta", "h_Zmuon1_VZCut_eta", 40, -5.0, 5.0);
   h_Zmuon1_VZCut_phi = dir.make<TH1F>("h_Zmuon1_VZCut_phi", "h_Zmuon1_VZCut_phi", 20, -4.0, 4.0);
   h_Zmuon2_VZCut_pt = dir.make<TH1F>("h_Zmuon2_VZCut_pt", "h_Zmuon2_VZCut_pt", 100, 0.0, 1000.0);
   h_Zmuon2_VZCut_eta = dir.make<TH1F>("h_Zmuon2_VZCut_eta", "h_Zmuon2_VZCut_eta", 40, -5.0, 5.0);
   h_Zmuon2_VZCut_phi = dir.make<TH1F>("h_Zmuon2_VZCut_phi", "h_Zmuon2_VZCut_phi", 20, -4.0, 4.0);
-
   h_deltaR_muon1muon2 = dir.make<TH1F>("h_deltaR_muon1muon2", "h_deltaR_muon1muon2", 50, 0., 5.);
-
   h_deltaR_HadVmuon1 = dir.make<TH1F>("h_deltaR_HadVmuon1", "h_deltaR_HadVmuon1", 50, 0., 5.);
   h_deltaR_HadVmuon2 = dir.make<TH1F>("h_deltaR_HadVmuon2", "h_deltaR_HadVmuon2", 50, 0., 5.);
-
-
-
   h_jet1_pt = dir.make<TH1F>("h_jet1_pt", "h_jet1_pt", 100, 0.0, 1000.0);
   h_jet1_eta = dir.make<TH1F>("h_jet1_eta", "h_jet1_eta", 40, -5.0, 5.0);
   h_jet1_phi = dir.make<TH1F>("h_jet1_phi", "h_jet1_phi", 20, -4.0, 4.0);
@@ -135,98 +126,111 @@ void HadronicVZAnalyzer::Declare_Histos(TFileDirectory & dir)
   h_jet2_phi = dir.make<TH1F>("h_jet2_phi", "h_jet2_phi", 20, -4.0, 4.0);
   h_jet1_mass = dir.make<TH1F>("h_jet1_mass", "h_jet1_mass", 100, 0.0, 500.);
   h_jet2_mass = dir.make<TH1F>("h_jet2_mass", "h_jet2_mass", 100, 0.0, 500.);
-
-
   h_deltaR_jet1muon1 = dir.make<TH1F>("h_deltaR_jet1muon1", "h_deltaR_jet1muon1", 50, 0., 5.);
   h_deltaR_jet1muon2 = dir.make<TH1F>("h_deltaR_jet1muon2", "h_deltaR_jet1muon2", 50, 0., 5.);
   h_deltaR_jet2muon1 = dir.make<TH1F>("h_deltaR_jet2muon1", "h_deltaR_jet2muon1", 50, 0., 5.);
   h_deltaR_jet2muon2 = dir.make<TH1F>("h_deltaR_jet2muon2", "h_deltaR_jet2muon2", 50, 0., 5.);
-
   h_HadVZpt = dir.make<TH1F>("h_HadVZpt", "h_HadVZpt", 30, 0.0, 300.0);
   h_HadVZeta = dir.make<TH1F>("h_HadVZeta", "h_HadVZeta", 40, -5.0, 5.0);
   h_HadVZphi = dir.make<TH1F>("h_HadVZphi", "h_HadVZphi", 20, -4.0, 4.0);
-  
   h_muons_pt = dir.make<TH1F>("h_muons_pt", "h_muons_pt", 100, 0.0, 1000.);
   h_muons_eta = dir.make<TH1F>("h_muons_eta", "h_muons_eta", 40, -5.0, 5.);  
   h_muons_phi = dir.make<TH1F>("h_muons_phi", "h_muons_phi", 20, -4.0, 4.);
-
-
   h_jets_pt = dir.make<TH1F>("h_jets_pt", "h_jets_pt", 100, 0.0, 1000.);
   h_jets_eta = dir.make<TH1F>("h_jets_eta", "h_jets_eta", 40, -5.0, 5.);  
   h_jets_phi = dir.make<TH1F>("h_jets_phi", "h_jets_phi", 20, -4.0, 4.);
-  
-
   h_jet_HadV_pt = dir.make<TH1F>("h_jet_HadV_pt", "h_jet_HadV_pt", 100, 0.0, 1000.);
   h_jet_HadV_eta = dir.make<TH1F>("h_jet_HadV_eta", "h_jet_HadV_eta", 40, -5.0, 5.);  
   h_jet_HadV_phi = dir.make<TH1F>("h_jet_HadV_phi", "h_jet_HadV_phi", 20, -4.0, 4.);
-
-
   h_jet_VZCut_pt = dir.make<TH1F>("h_jet_VZCut_pt", "h_jet_VZCut_pt", 100, 0.0, 1000.);
   h_jet_VZCut_eta = dir.make<TH1F>("h_jet_VZCut_eta", "h_jet_VZCut_eta", 40, -5.0, 5.);  
   h_jet_VZCut_phi = dir.make<TH1F>("h_jet_VZCut_phi", "h_jet_VZCut_phi", 20, -4.0, 4.);
-  
-
   h_jet_mult = dir.make<TH1F>("h_jet_mult", "h_jet_mult", 10, -0.5, 9.5); 
   h_jet_mult_inc = dir.make<TH1F>("h_jet_mult_incl", "h_jet_mult_incl", 10, -0.5, 9.5); 
-
-
   h_jet1jet2_mass = dir.make<TH1F>("h_jet1jet2_mass", "h_jet1jet2_mass", 100, 0.0, 500.);
+  //tight histos
+  h_tight_HadVZMass = dir.make<TH1F>("h_tight_HadVZMass","h_tight_HadVZMass",250,0.0,2500.0);
+  h_tight_Zmuon1_pt = dir.make<TH1F>("h_tight_Zmuon1_pt", "h_tight_Zmuon1_pt", 100, 0.0, 1000.0);
+  h_tight_Zmuon1_eta = dir.make<TH1F>("h_tight_Zmuon1_eta", "h_tight_Zmuon1_eta", 40, -5.0, 5.0);
+  h_tight_Zmuon1_phi = dir.make<TH1F>("h_tight_Zmuon1_phi", "h_tight_Zmuon1_phi", 20, -4.0, 4.0);
+  h_tight_Zmuon2_pt = dir.make<TH1F>("h_tight_Zmuon2_pt", "h_tight_Zmuon2_pt", 100, 0.0, 1000.0);
+  h_tight_Zmuon2_eta = dir.make<TH1F>("h_tight_Zmuon2_eta", "h_tight_Zmuon2_eta", 40, -5.0, 5.0);
+  h_tight_Zmuon2_phi = dir.make<TH1F>("h_tight_Zmuon2_phi", "h_tight_Zmuon2_phi", 20, -4.0, 4.0);
+  h_tight_Zmuon1_VZCut_pt = dir.make<TH1F>("h_tight_Zmuon1_VZCut_pt", "h_tight_Zmuon1_VZCut_pt", 100, 0.0, 1000.0);
+  h_tight_Zmuon1_VZCut_eta = dir.make<TH1F>("h_tight_Zmuon1_VZCut_eta", "h_tight_Zmuon1_VZCut_eta", 40, -5.0, 5.0);
+  h_tight_Zmuon1_VZCut_phi = dir.make<TH1F>("h_tight_Zmuon1_VZCut_phi", "h_tight_Zmuon1_VZCut_phi", 20, -4.0, 4.0);
+  h_tight_Zmuon2_VZCut_pt = dir.make<TH1F>("h_tight_Zmuon2_VZCut_pt", "h_tight_Zmuon2_VZCut_pt", 100, 0.0, 1000.0);
+  h_tight_Zmuon2_VZCut_eta = dir.make<TH1F>("h_tight_Zmuon2_VZCut_eta", "h_tight_Zmuon2_VZCut_eta", 40, -5.0, 5.0);
+  h_tight_Zmuon2_VZCut_phi = dir.make<TH1F>("h_tight_Zmuon2_VZCut_phi", "h_tight_Zmuon2_VZCut_phi", 20, -4.0, 4.0);
+  h_tight_deltaR_muon1muon2 = dir.make<TH1F>("h_tight_deltaR_muon1muon2", "h_tight_deltaR_muon1muon2", 50, 0., 5.);
+  h_tight_deltaR_HadVmuon1 = dir.make<TH1F>("h_tight_deltaR_HadVmuon1", "h_tight_deltaR_HadVmuon1", 50, 0., 5.);
+  h_tight_deltaR_HadVmuon2 = dir.make<TH1F>("h_tight_deltaR_HadVmuon2", "h_tight_deltaR_HadVmuon2", 50, 0., 5.);
+  /*  h_tight_jet1_pt = dir.make<TH1F>("h_tight_jet1_pt", "h_tight_jet1_pt", 100, 0.0, 1000.0);
+  h_tight_jet1_eta = dir.make<TH1F>("h_tight_jet1_eta", "h_tight_jet1_eta", 40, -5.0, 5.0);
+  h_tight_jet1_phi = dir.make<TH1F>("h_tight_jet1_phi", "h_tight_jet1_phi", 20, -4.0, 4.0);
+  h_tight_jet2_pt = dir.make<TH1F>("h_tight_jet2_pt", "h_tight_jet2_pt", 100, 0.0, 1000.0);
+  h_tight_jet2_eta = dir.make<TH1F>("h_tight_jet2_eta", "h_tight_jet2_eta", 40, -5.0, 5.0);
+  h_tight_jet2_phi = dir.make<TH1F>("h_tight_jet2_phi", "h_tight_jet2_phi", 20, -4.0, 4.0);
+  h_tight_jet1_mass = dir.make<TH1F>("h_tight_jet1_mass", "h_tight_jet1_mass", 100, 0.0, 500.);
+  h_tight_jet2_mass = dir.make<TH1F>("h_tight_jet2_mass", "h_tight_jet2_mass", 100, 0.0, 500.);
+  h_tight_deltaR_jet1muon1 = dir.make<TH1F>("h_tight_deltaR_jet1muon1", "h_tight_deltaR_jet1muon1", 50, 0., 5.);
+  h_tight_deltaR_jet1muon2 = dir.make<TH1F>("h_tight_deltaR_jet1muon2", "h_tight_deltaR_jet1muon2", 50, 0., 5.);
+  h_tight_deltaR_jet2muon1 = dir.make<TH1F>("h_tight_deltaR_jet2muon1", "h_tight_deltaR_jet2muon1", 50, 0., 5.);
+  h_tight_deltaR_jet2muon2 = dir.make<TH1F>("h_tight_deltaR_jet2muon2", "h_tight_deltaR_jet2muon2", 50, 0., 5.);*/
+  h_tight_HadVZpt = dir.make<TH1F>("h_tight_HadVZpt", "h_tight_HadVZpt", 30, 0.0, 300.0);
+  h_tight_HadVZeta = dir.make<TH1F>("h_tight_HadVZeta", "h_tight_HadVZeta", 40, -5.0, 5.0);
+  h_tight_HadVZphi = dir.make<TH1F>("h_tight_HadVZphi", "h_tight_HadVZphi", 20, -4.0, 4.0);
+  h_tight_muons_pt = dir.make<TH1F>("h_tight_muons_pt", "h_tight_muons_pt", 100, 0.0, 1000.);
+  h_tight_muons_eta = dir.make<TH1F>("h_tight_muons_eta", "h_tight_muons_eta", 40, -5.0, 5.);  
+  h_tight_muons_phi = dir.make<TH1F>("h_tight_muons_phi", "h_tight_muons_phi", 20, -4.0, 4.);
+  /*  h_tight_jets_pt = dir.make<TH1F>("h_tight_jets_pt", "h_tight_jets_pt", 100, 0.0, 1000.);
+  h_tight_jets_eta = dir.make<TH1F>("h_tight_jets_eta", "h_tight_jets_eta", 40, -5.0, 5.);  
+  h_tight_jets_phi = dir.make<TH1F>("h_tight_jets_phi", "h_tight_jets_phi", 20, -4.0, 4.);
+  h_tight_jet_HadV_pt = dir.make<TH1F>("h_tight_jet_HadV_pt", "h_tight_jet_HadV_pt", 100, 0.0, 1000.);
+  h_tight_jet_HadV_eta = dir.make<TH1F>("h_tight_jet_HadV_eta", "h_tight_jet_HadV_eta", 40, -5.0, 5.);  
+  h_tight_jet_HadV_phi = dir.make<TH1F>("h_tight_jet_HadV_phi", "h_tight_jet_HadV_phi", 20, -4.0, 4.);*/
+  h_tight_jet_VZCut_pt = dir.make<TH1F>("h_tight_jet_VZCut_pt", "h_tight_jet_VZCut_pt", 100, 0.0, 1000.);
+  h_tight_jet_VZCut_eta = dir.make<TH1F>("h_tight_jet_VZCut_eta", "h_tight_jet_VZCut_eta", 40, -5.0, 5.);  
+  h_tight_jet_VZCut_phi = dir.make<TH1F>("h_tight_jet_VZCut_phi", "h_tight_jet_VZCut_phi", 20, -4.0, 4.);
+  //  h_tight_jet_mult = dir.make<TH1F>("h_tight_jet_mult", "h_tight_jet_mult", 10, -0.5, 9.5); 
+  // h_tight_jet_mult_inc = dir.make<TH1F>("h_tight_jet_mult_incl", "h_tight_jet_mult_incl", 10, -0.5, 9.5); 
+  // h_tight_jet1jet2_mass = dir.make<TH1F>("h_tight_jet1jet2_mass", "h_tight_jet1jet2_mass", 100, 0.0, 500.);
+
+  // Muon POG histos
   h_dptpt2 = dir.make<TH1F>("h_dptpt2", "h_dptpt2", 500, 0., 0.1);
-
-  // 2D Piotr histos
-
   h_dptpt_vs_pt = dir.make<TH2F>("h_dptpt_vs_pt", "h_dptpt_vs_pt", 50, 0., 0.5, 50, 0.0, 500.);
   h_dptpt2_vs_pt = dir.make<TH2F>("h_dptpt2_vs_pt", "h_dptpt2_vs_pt", 500, 0., 0.1, 150, 0.0, 500.);
   h_dptpt_vs_invpt = dir.make<TH2F>("h_dptpt_vs_invpt","h_dptpt_vs_invpt", 50, 0., 0.5, 50, 0., 0.1);
   h_dptpt2_vs_invpt = dir.make<TH2F>("h_dptpt2_vs_invpt","h_dptpt2_vs_invpt", 500, 0., 0.1, 150, 0., 0.1);
-
-
   h_dptpt_vs_eta = dir.make<TH2F>("h_dptpt_vs_eta","h_dptpt_vs_eta", 50, 0., 0.5, 50, -5., 5.);
   h_dptpt2_vs_eta = dir.make<TH2F>("h_dptpt2_vs_eta","h_dptpt2_vs_eta", 500, 0., 0.1, 150, -5., 5.);
-
-
-
   h_dptpt_vs_pt_meta09 = dir.make<TH2F>("h_dptpt_vs_pt_meta09", "h_dptpt_vs_pt_meta09", 50, 0., 0.5, 50, 0.0, 500.);
   h_dptpt2_vs_pt_meta09 = dir.make<TH2F>("h_dptpt2_vs_pt_meta09", "h_dptpt2_vs_pt_meta09", 500, 0., 0.1, 150, 0.0, 500.);
   h_dptpt_vs_invpt_meta09 = dir.make<TH2F>("h_dptpt_vs_invpt_meta09","h_dptpt_vs_invpt_meta09", 50, 0., 0.5, 50, 0., 0.1);
   h_dptpt2_vs_invpt_meta09 = dir.make<TH2F>("h_dptpt2_vs_invpt_meta09","h_dptpt2_vs_invpt_meta09", 500, 0., 0.1, 150, 0., 0.1);
-
-
   h_dptpt_vs_pt_meta0912 = dir.make<TH2F>("h_dptpt_vs_pt_meta0912", "h_dptpt_vs_pt_meta0912", 50, 0., 0.5, 50, 0.0, 500.);
   h_dptpt2_vs_pt_meta0912 = dir.make<TH2F>("h_dptpt2_vs_pt_meta0912", "h_dptpt2_vs_pt_meta0912", 500, 0., 0.1, 150, 0.0, 500.);
   h_dptpt_vs_invpt_meta0912 = dir.make<TH2F>("h_dptpt_vs_invpt_meta0912","h_dptpt_vs_invpt_meta0912", 50, 0., 0.5, 50, 0., 0.1);
   h_dptpt2_vs_invpt_meta0912 = dir.make<TH2F>("h_dptpt2_vs_invpt_meta0912","h_dptpt2_vs_invpt_meta0912", 500, 0., 0.1, 150, 0., 0.1);
-
-
   h_dptpt_vs_pt_meta1225 = dir.make<TH2F>("h_dptpt_vs_pt_meta1225", "h_dptpt_vs_pt_meta1225", 50, 0., 0.5, 50, 0.0, 500.);
   h_dptpt2_vs_pt_meta1225 = dir.make<TH2F>("h_dptpt2_vs_pt_meta1225", "h_dptpt2_vs_pt_meta1225", 500, 0., 0.1, 150, 0.0, 500.);
   h_dptpt_vs_invpt_meta1225 = dir.make<TH2F>("h_dptpt_vs_invpt_meta1225","h_dptpt_vs_invpt_meta1225", 50, 0., 0.5, 50, 0., 0.1);
   h_dptpt2_vs_invpt_meta1225 = dir.make<TH2F>("h_dptpt2_vs_invpt_meta1225","h_dptpt2_vs_invpt_meta1225", 500, 0., 0.1, 150, 0., 0.1);
-
-
   h_dptpt_vs_pt_teta09 = dir.make<TH2F>("h_dptpt_vs_pt_teta09", "h_dptpt_vs_pt_teta09", 50, 0., 0.5, 50, 0.0, 500.);
   h_dptpt2_vs_pt_teta09 = dir.make<TH2F>("h_dptpt2_vs_pt_teta09", "h_dptpt2_vs_pt_teta09", 500, 0., 0.1, 150, 0.0, 500.);
   h_dptpt_vs_invpt_teta09 = dir.make<TH2F>("h_dptpt_vs_invpt_teta09","h_dptpt_vs_invpt_teta09", 50, 0., 0.5, 50, 0., 0.1);
   h_dptpt2_vs_invpt_teta09 = dir.make<TH2F>("h_dptpt2_vs_invpt_teta09","h_dptpt2_vs_invpt_teta09", 500, 0., 0.1, 150, 0., 0.1);
-
-
   h_dptpt_vs_pt_teta0915 = dir.make<TH2F>("h_dptpt_vs_pt_teta0915", "h_dptpt_vs_pt_teta0915", 50, 0., 0.5, 50, 0.0, 500.);
   h_dptpt2_vs_pt_teta0915 = dir.make<TH2F>("h_dptpt2_vs_pt_teta0915", "h_dptpt2_vs_pt_teta0915", 500, 0., 0.1, 150, 0.0, 500.);
   h_dptpt_vs_invpt_teta0915 = dir.make<TH2F>("h_dptpt_vs_invpt_teta0915","h_dptpt_vs_invpt_teta0915", 50, 0., 0.5, 50, 0., 0.1);
   h_dptpt2_vs_invpt_teta0915 = dir.make<TH2F>("h_dptpt2_vs_invpt_teta0915","h_dptpt2_vs_invpt_teta0915", 500, 0., 0.1, 150, 0., 0.1);
-
   h_dptpt_vs_pt_teta1524 = dir.make<TH2F>("h_dptpt_vs_pt_teta1524", "h_dptpt_vs_pt_teta1524", 50, 0., 0.5, 50, 0.0, 500.);
   h_dptpt2_vs_pt_teta1524 = dir.make<TH2F>("h_dptpt2_vs_pt_teta1524", "h_dptpt2_vs_pt_teta1524", 500, 0., 0.1, 150, 0.0, 500.);
   h_dptpt_vs_invpt_teta1524 = dir.make<TH2F>("h_dptpt_vs_invpt_teta1524","h_dptpt_vs_invpt_teta1524", 50, 0., 0.5, 50, 0., 0.1);
   h_dptpt2_vs_invpt_teta1524 = dir.make<TH2F>("h_dptpt2_vs_invpt_teta1524","h_dptpt2_vs_invpt_teta1524", 500, 0., 0.1, 150, 0., 0.1);
-
-
-
-
-
   //
 
-
+  cout << "Histos declared" << endl;
 
 }//Declare_Histos
 
@@ -234,7 +238,6 @@ void HadronicVZAnalyzer::Declare_Histos(TFileDirectory & dir)
 //-----------------------------------------------------------
 void HadronicVZAnalyzer::Fill_Histos(int index, float weight)
 {
-  // For now we have only one histo, so no need for this function.
   printf("Filling Histos\n");
 }//Fill_Histos
 
@@ -248,9 +251,6 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     // We could setup some preselection here. To be implemented.
   }
 
-  //  rhoFastJet_ = getProduct<double>(event,"kt6PFJets:rho");
-
-
   // Get leptons
   const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
   // Get jets
@@ -263,16 +263,27 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 	   (int)patJets.size());
   }
 
+  //PU STUFF
+  float PU_Weight = 1.;
+  if(!wprimeUtil_->runningOnData()){//Don't do this for data
+    PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
+    PU_NumInteractions3BX_ = wprimeUtil_->getPU3BX(PupInfo_);
+    PU_NumInteractions1BX_ = wprimeUtil_->getPU1BX(PupInfo_);
+    PU_Weight = wprimeUtil_->getPUWeight3BX(PupInfo_);
+  }//MC Only If
+  
+  if(debugme) 
+    cout<<" PU_NumInteractions3BX: "<<PU_NumInteractions3BX_
+        <<" PU_NumInteractions1BX: "<<PU_NumInteractions1BX_
+        <<" PU Weight: "<<PU_Weight
+        <<endl;   
 
+  weight_ = wprimeUtil_->getWeight()*PU_Weight;
 
   // Make vectors of leptons passing various criteria
   // Loop over muons, and see if they pass the TeVMuon criteria  
   for (size_t i = 0; i < patMuons.size(); i++) {
     muons_.push_back(TeVMuon(patMuons[i],muonAlgo_));   
-
-
-    //New simple implementation of muon cuts
-    //Chi2 cut dropped
 
     bool TightMuonCuts = PassMuonTightPtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonNtrkhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
 
@@ -280,31 +291,14 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
     //    bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonNtrkhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
     
-bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
-
-
+    bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
+    
     if (LooseMuonCuts)
       looseMuons_.push_back(muons_[i]);
     
     if (TightMuonCuts)
       tightMuons_.push_back(muons_[i]);
 
-
-
-
-    //    if (PassMuonCut(&muons_[i]))
-    //  looseMuons_.push_back(muons_[i]);
-
-    //New stuff
-
-    /*    const float pu = MuonPU(muons_[i]);
-    if (looseMuon_(muons_[i], muonResult_, pu))
-      looseMuons_.push_back(muons_[i]);
-
-    if (tightMuon_(muons_[i], muonResult_, pu))
-      tightMuons_.push_back(muons_[i]);
-    //
-    */
   }
 
   if (debugme){
@@ -313,14 +307,11 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
 
     printf("    Contains: %i tightMuons_(s)\n",
 	   (int)tightMuons_.size());
-
   }
-
 
   if (looseMuons_.size() > 0)
     {
       sort(looseMuons_.begin(), looseMuons_.end(), highestMuonPt());
-
       if(debugme)
 	{
 	  for (uint k=0; k<looseMuons_.size(); k++)
@@ -328,40 +319,42 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
 	      cout << "looseMuons_ " << k << " has pt of " << looseMuons_.at(k).pt() <<  endl;
 	    }
 	}
-
     }
-
   if (tightMuons_.size() > 0)
     {
       sort(tightMuons_.begin(), tightMuons_.end(), highestMuonPt());
     }
-  
-  //Fill histos for all muons in the event
+
+  //Fill histos for all tight muons in the event
+  for (size_t nM=0; nM<tightMuons_.size(); nM++)
+    {
+      h_tight_muons_pt->Fill(tightMuons_.at(nM).pt(), weight_);
+      h_tight_muons_eta->Fill(tightMuons_.at(nM).eta(), weight_);
+      h_tight_muons_phi->Fill(tightMuons_.at(nM).phi(), weight_);
+    }
+
+  //Fill histos for all loose muons in the event
   for (size_t nM=0; nM<looseMuons_.size(); nM++)
     {
-      h_muons_pt->Fill(looseMuons_.at(nM).pt(), wprimeUtil_->getWeight());
-      h_muons_eta->Fill(looseMuons_.at(nM).eta(), wprimeUtil_->getWeight());
-      h_muons_phi->Fill(looseMuons_.at(nM).phi(), wprimeUtil_->getWeight());
+      h_muons_pt->Fill(looseMuons_.at(nM).pt(), weight_);
+      h_muons_eta->Fill(looseMuons_.at(nM).eta(), weight_);
+      h_muons_phi->Fill(looseMuons_.at(nM).phi(), weight_);
 
+      //Muon POG work
       double trackpT = looseMuons_.at(nM).track()->pt();
       double trackpT2 = trackpT*trackpT;
       double invpt = 1/trackpT;
       double trackpTError = looseMuons_.at(nM).track()->ptError();
-
       double dptpt = trackpTError/trackpT;
       double dptpt2 =trackpTError/trackpT2;
 
-      //  cout << "Muon number " << nM << " in the event had ptError = " << trackpTError << " and track pt " << trackpT << " and dpt/pt " << dptpt << " and dpt/pt2 " << dptpt2 << endl;
       h_dptpt2->Fill(dptpt2);
-
       h_dptpt_vs_pt->Fill(dptpt, trackpT);
       h_dptpt2_vs_pt->Fill(dptpt2, trackpT);
       h_dptpt_vs_invpt->Fill(dptpt, invpt);
       h_dptpt2_vs_invpt->Fill(dptpt2, invpt);
-
       h_dptpt_vs_eta->Fill(dptpt, looseMuons_.at(nM).track()->eta());
       h_dptpt2_vs_eta->Fill(dptpt2, looseMuons_.at(nM).track()->eta());
-
 
       if (fabs(looseMuons_.at(nM).track()->eta()) < 0.9)
 	{
@@ -369,68 +362,42 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
 	  h_dptpt2_vs_pt_meta09->Fill(dptpt2, trackpT);
 	  h_dptpt_vs_invpt_meta09->Fill(dptpt, invpt);
 	  h_dptpt2_vs_invpt_meta09->Fill(dptpt2, invpt);
-
 	}
-
       if (fabs(looseMuons_.at(nM).track()->eta()) >= 0.9 && fabs(looseMuons_.at(nM).track()->eta()) < 1.2)
 	{
 	  h_dptpt_vs_pt_meta0912->Fill(dptpt, trackpT);
 	  h_dptpt2_vs_pt_meta0912->Fill(dptpt2, trackpT);
 	  h_dptpt_vs_invpt_meta0912->Fill(dptpt, invpt);
 	  h_dptpt2_vs_invpt_meta0912->Fill(dptpt2, invpt);
-
 	}
-
-
       if (fabs(looseMuons_.at(nM).track()->eta()) >= 1.2 && fabs(looseMuons_.at(nM).track()->eta()) < 2.5)
 	{
 	  h_dptpt_vs_pt_meta1225->Fill(dptpt, trackpT);
 	  h_dptpt2_vs_pt_meta1225->Fill(dptpt2, trackpT);
 	  h_dptpt_vs_invpt_meta1225->Fill(dptpt, invpt);
 	  h_dptpt2_vs_invpt_meta1225->Fill(dptpt2, invpt);
-
 	}
-
-
-
-
       if (fabs(looseMuons_.at(nM).eta()) < 0.9)
 	{
 	  h_dptpt_vs_pt_teta09->Fill(dptpt, trackpT);
 	  h_dptpt2_vs_pt_teta09->Fill(dptpt2, trackpT);
 	  h_dptpt_vs_invpt_teta09->Fill(dptpt, invpt);
 	  h_dptpt2_vs_invpt_teta09->Fill(dptpt2, invpt);
-
 	}
-
       if (fabs(looseMuons_.at(nM).eta()) >= 0.9 && fabs(looseMuons_.at(nM).eta()) < 1.5)
 	{
 	  h_dptpt_vs_pt_teta0915->Fill(dptpt, trackpT);
 	  h_dptpt2_vs_pt_teta0915->Fill(dptpt2, trackpT);
 	  h_dptpt_vs_invpt_teta0915->Fill(dptpt, invpt);
 	  h_dptpt2_vs_invpt_teta0915->Fill(dptpt2, invpt);
-
 	}
-
-
       if (fabs(looseMuons_.at(nM).eta()) >= 1.5 && fabs(looseMuons_.at(nM).eta()) < 2.4)
 	{
 	  h_dptpt_vs_pt_teta1524->Fill(dptpt, trackpT);
 	  h_dptpt2_vs_pt_teta1524->Fill(dptpt2, trackpT);
 	  h_dptpt_vs_invpt_teta1524->Fill(dptpt, invpt);
 	  h_dptpt2_vs_invpt_teta1524->Fill(dptpt2, invpt);
-
 	}
-
-
-
-
-
-      /*
-      h_dptpt_vs_pt->Fill((looseMuons_.at(nM).track()->ptError())/(looseMuons_.at(nM).track()->pt()),looseMuons_.at(nM).pt());
-      h_dptpt2_vs_pt->Fill((looseMuons_.at(nM).track()->ptError())/((looseMuons_.at(nM).track()->pt())*(looseMuons_.at(nM).track()->pt())),looseMuons_.at(nM).pt());
-      */
-      
     }
 
 
@@ -439,23 +406,24 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
   int twoMu = 0;
   if (looseMuons_.size() > 0)
     {
-      /*      h_Zmuon1_pt->Fill(looseMuons_.at(0).pt());
-      h_Zmuon1_eta->Fill(looseMuons_.at(0).eta());
-      h_Zmuon1_phi->Fill(looseMuons_.at(0).phi());*/
       oneMu=1;
       if (looseMuons_.size() > 1)
 	{
-	  /*
-	  h_Zmuon2_pt->Fill(looseMuons_.at(1).pt());
-	  h_Zmuon2_eta->Fill(looseMuons_.at(1).eta());
-	  h_Zmuon2_phi->Fill(looseMuons_.at(1).phi());	  */
 	  twoMu=1;
-	  //  h_deltaR_muon1muon2->Fill(deltaR(looseMuons_.at(0).eta(), looseMuons_.at(0).phi(), looseMuons_.at(1).eta(), looseMuons_.at(1).phi()));
-
 	}
-
     }
-  
+
+  //Fill muon histos for tight muons
+  int oneTightMu = 0;
+  int twoTightMu = 0;
+  if (tightMuons_.size() > 0)
+    {
+      oneTightMu=1;
+      if (tightMuons_.size() > 1)
+	{
+	  twoTightMu=1;
+	}
+    }
 
   // Loop over jets, and see if they pass the jet criteria
   for (size_t i = 0; i < patJets.size(); ++i) {
@@ -473,7 +441,6 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
 	      jets_.push_back(jetsDR_.at(i));
 	    }
 	}
-
       
       //If I have only one Mu
       if (oneMu == 1 && twoMu == 0)
@@ -484,77 +451,59 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
 	    }
 	}
     }
-
   
-  h_jet_mult->Fill(jets_.size(), wprimeUtil_->getWeight());
+  h_jet_mult->Fill(jets_.size(), weight_);
 
   double zero = 0.0;
-  h_jet_mult_inc->Fill(zero, wprimeUtil_->getWeight());
-    
+  h_jet_mult_inc->Fill(zero, weight_);
 
   if (jets_.size()>=1)
     {
-      h_jet_mult_inc->Fill(1, wprimeUtil_->getWeight());
+      h_jet_mult_inc->Fill(1, weight_);
     }
-
-
   if (jets_.size()>=2)
     {
-      h_jet_mult_inc->Fill(2, wprimeUtil_->getWeight());
+      h_jet_mult_inc->Fill(2, weight_);
     }
-
   if (jets_.size()>=3)
     {
-      h_jet_mult_inc->Fill(3, wprimeUtil_->getWeight());
+      h_jet_mult_inc->Fill(3, weight_);
     }
-
   if (jets_.size()>=4)
     {
-      h_jet_mult_inc->Fill(4, wprimeUtil_->getWeight());
+      h_jet_mult_inc->Fill(4, weight_);
     }
-
   if (jets_.size()>=5)
     {
-      h_jet_mult_inc->Fill(5, wprimeUtil_->getWeight());
+      h_jet_mult_inc->Fill(5, weight_);
     }
-
   if (jets_.size()>=6)
     {
-      h_jet_mult_inc->Fill(6, wprimeUtil_->getWeight());
+      h_jet_mult_inc->Fill(6, weight_);
     }
-
-
   if (jets_.size()>=7)
     {
-      h_jet_mult_inc->Fill(7, wprimeUtil_->getWeight());
+      h_jet_mult_inc->Fill(7, weight_);
     }
-
   if (jets_.size()>=8)
     {
-      h_jet_mult_inc->Fill(8, wprimeUtil_->getWeight());
+      h_jet_mult_inc->Fill(8, weight_);
     }
-
   if (jets_.size()>=9)
     {
-      h_jet_mult_inc->Fill(9, wprimeUtil_->getWeight());
+      h_jet_mult_inc->Fill(9, weight_);
     }
-
   if (jets_.size()>=10)
     {
-      h_jet_mult_inc->Fill(10, wprimeUtil_->getWeight());
+      h_jet_mult_inc->Fill(10, weight_);
     }
-
-
-
 
   for (size_t nJ=0; nJ<jets_.size(); nJ++)
     {
-      h_jets_pt->Fill(jets_.at(nJ).pt(), wprimeUtil_->getWeight());
-      h_jets_eta->Fill(jets_.at(nJ).eta(), wprimeUtil_->getWeight());
-      h_jets_phi->Fill(jets_.at(nJ).phi(), wprimeUtil_->getWeight());
+      h_jets_pt->Fill(jets_.at(nJ).pt(), weight_);
+      h_jets_eta->Fill(jets_.at(nJ).eta(), weight_);
+      h_jets_phi->Fill(jets_.at(nJ).phi(), weight_);
     }
-
-
 
   //Fill jet histos for jets who passes the criteria
   if (jets_.size() > 0)
@@ -572,33 +521,33 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
 
   if (jets_.size() > 0)
     {
-      h_jet1_pt->Fill(jets_.at(0).pt(), wprimeUtil_->getWeight());
-      h_jet1_eta->Fill(jets_.at(0).eta(), wprimeUtil_->getWeight());    
-      h_jet1_phi->Fill(jets_.at(0).phi(), wprimeUtil_->getWeight());
-      h_jet1_mass->Fill(jets_.at(0).mass(), wprimeUtil_->getWeight());
+      h_jet1_pt->Fill(jets_.at(0).pt(), weight_);
+      h_jet1_eta->Fill(jets_.at(0).eta(), weight_);    
+      h_jet1_phi->Fill(jets_.at(0).phi(), weight_);
+      h_jet1_mass->Fill(jets_.at(0).mass(), weight_);
 
       if (oneMu==1)
 	{
-	  h_deltaR_jet1muon1->Fill(deltaR(jets_.at(0).eta(), jets_.at(0).phi(), looseMuons_.at(0).eta(), looseMuons_.at(0).phi()), wprimeUtil_->getWeight());
+	  h_deltaR_jet1muon1->Fill(deltaR(jets_.at(0).eta(), jets_.at(0).phi(), looseMuons_.at(0).eta(), looseMuons_.at(0).phi()), weight_);
 	}
       if (twoMu ==1)
 	{
-	  h_deltaR_jet1muon2->Fill(deltaR(jets_.at(0).eta(), jets_.at(0).phi(), looseMuons_.at(1).eta(), looseMuons_.at(1).phi()), wprimeUtil_->getWeight());
+	  h_deltaR_jet1muon2->Fill(deltaR(jets_.at(0).eta(), jets_.at(0).phi(), looseMuons_.at(1).eta(), looseMuons_.at(1).phi()), weight_);
 	  }
       
       if (jets_.size() > 1)
 	{
-	  h_jet2_pt->Fill(jets_.at(1).pt(), wprimeUtil_->getWeight());
-	  h_jet2_eta->Fill(jets_.at(1).eta(), wprimeUtil_->getWeight());    
-	  h_jet2_phi->Fill(jets_.at(1).phi(), wprimeUtil_->getWeight());
-	  h_jet2_mass->Fill(jets_.at(1).mass(), wprimeUtil_->getWeight());
+	  h_jet2_pt->Fill(jets_.at(1).pt(), weight_);
+	  h_jet2_eta->Fill(jets_.at(1).eta(), weight_);    
+	  h_jet2_phi->Fill(jets_.at(1).phi(), weight_);
+	  h_jet2_mass->Fill(jets_.at(1).mass(), weight_);
 	  if (oneMu==1)
 	    {
-	      h_deltaR_jet2muon1->Fill(deltaR(jets_.at(1).eta(), jets_.at(1).phi(), looseMuons_.at(0).eta(), looseMuons_.at(0).phi()), wprimeUtil_->getWeight());
+	      h_deltaR_jet2muon1->Fill(deltaR(jets_.at(1).eta(), jets_.at(1).phi(), looseMuons_.at(0).eta(), looseMuons_.at(0).phi()), weight_);
 	    }
 	  if (twoMu ==1)
 	    {
-	      h_deltaR_jet2muon2->Fill(deltaR(jets_.at(1).eta(), jets_.at(1).phi(), looseMuons_.at(1).eta(), looseMuons_.at(1).phi()), wprimeUtil_->getWeight());
+	      h_deltaR_jet2muon2->Fill(deltaR(jets_.at(1).eta(), jets_.at(1).phi(), looseMuons_.at(1).eta(), looseMuons_.at(1).phi()), weight_);
 	    }
 	  
 	  reco::CompositeCandidate j1j2;
@@ -606,16 +555,9 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
 	  j1j2.addDaughter(jets_.at(1));
 	  AddFourMomenta addFM;
 	  addFM.set(j1j2);
-	  
-	  h_jet1jet2_mass->Fill(j1j2.mass(), wprimeUtil_->getWeight());
-	  
-
+	  h_jet1jet2_mass->Fill(j1j2.mass(), weight_);
 	}
-      
-
     }
-
-
 
   if (debugme){
     printf("    Contains: %i jets_(s)\n",
@@ -624,12 +566,16 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
 
   int passedNLeptons = 0;
   int passedNJets = 0;
+  int passedNTightLeptons = 0;
 
   if (looseMuons_.size() > minNLeptons)
     {
       passedNLeptons = 1;
     }
-
+  if (tightMuons_.size() > minNLeptons)
+    {
+      passedNTightLeptons = 1;
+    }
   if (jets_.size() > minNJets)
     {
       passedNJets = 1;
@@ -640,16 +586,17 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
       cout << "Passed #leptons cut" << endl;
     else 
       cout << "Didnt pass #leptons cut" << endl;
-
+    if (passedNTightLeptons==1)
+      cout << "Passed # tight leptons cut" << endl;
+    else 
+      cout << "Didnt pass # tight leptons cut" << endl;
     if (passedNJets==1)
       cout << "Passed #jets cut" << endl;
     else
       cout << "Didnt pass #jets cut" << endl;
-
   }
   
   if(!(passedNLeptons==1 && passedNJets==1)){
-  
     if(debugme) 
       cout << "No leptons or jets. Bad bad event, returning now..." << endl;
     return;
@@ -658,9 +605,9 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
   if (debugme) 
     cout << "Im just before boson cands" << endl;
 
+
   // Make a Z candidate out of the muons. 
   int oppCharge=0;
-
   for (size_t i=0; i<looseMuons_.size(); i++){
     if (debugme) 
       cout << "looseMuons_ has charge "  << looseMuons_.at(i).charge() << endl;
@@ -669,13 +616,8 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
 	oppCharge=1;
     }
   }
-
   if (oppCharge==1){
-    //  zCand = getZCands(looseMuons_).front();
-    //    zCand = getZCands(looseMuons_).at(0);
-
     ZCandV zCand = getZCands(looseMuons_, 25.0);
-    
     if(zCand.size()>0)
       { 
 	zCand_ =  zCand[0];
@@ -684,114 +626,223 @@ bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_
 	    cout << "Daugh 1 pT is " << zCand[0].daughter(0)->pt() << endl;
 	    cout << "Daugh 2 pT is " << zCand[0].daughter(1)->pt() << endl;
 	  }
-	
-	/*	const TeVMuon m1 = FindMuon(*zCand_.daughter(0));
-	const TeVMuon m2 = FindMuon(*zCand_.daughter(1));
-	h_Zmuon1_pt->Fill(m1.pt());
-	h_Zmuon1_eta->Fill(m1.eta());
-	h_Zmuon1_phi->Fill(m1.phi());
-	h_Zmuon2_pt->Fill(m2.pt());
-	h_Zmuon2_eta->Fill(m2.eta());
-	h_Zmuon2_phi->Fill(m2.phi());	  
-	h_deltaR_muon1muon2->Fill(deltaR(m1.eta(), m1.phi(), m2.eta(), m2.phi()));*/
-	    
-	
       }
-
     else                           
       zCand_ = ZCandidate();
-   
-    // zCand_ = zCand.size() ? zCand[0] : ZCandidate();
-
     if (debugme)
       cout << "Passed zCand" << endl;
   }
+
+  //Make a Z cand out of tight muons
+  ZCandV zCandTight;
+
+  if (passedNTightLeptons==1)
+    {
+      int oppChargeTight=0;
+      for (size_t i=0; i<tightMuons_.size(); i++){
+	if (debugme) 
+	  cout << "tightMuons_ has charge "  << tightMuons_.at(i).charge() << endl;
+	for (size_t j=i+1; j<tightMuons_.size(); j++){
+	  if (tightMuons_[i].charge() != tightMuons_[j].charge())
+	    oppChargeTight=1;
+	}
+      }
+      if (oppChargeTight==1){
+	zCandTight = getZCands(tightMuons_, 25.0);
+	if(zCandTight.size()>0)
+	  { 
+	    zCandTight_ =  zCandTight[0];
+	    if (debugme)
+	      {
+		cout << "Daugh 1 pT is " << zCandTight[0].daughter(0)->pt() << endl;
+		cout << "Daugh 2 pT is " << zCandTight[0].daughter(1)->pt() << endl;
+	      }
+	  }
+	else                           
+	  zCandTight_ = ZCandidate();
+	if (debugme)
+	  cout << "Passed zCandTight" << endl;
+      }
+    }
  
-  // Make a W candidate out of the jets.
-
+ // Make a W candidate out of the jets.
+  
   wCand = getWCand(jets_);
-
   if (debugme)
     cout << "Passed wCand" << endl;
+  
 
+  //Valid Z for loose and tight 
+  bool validZTight = false;
+  bool goodZTight = false;
 
-  bool validZ    = PassValidZCut();
+  bool validZ = PassValidZCut();
   if (debugme && validZ)
     cout << "Valid Z from muon" << endl;
 
+  if (passedNTightLeptons==1)
+    {
+      validZTight = PassValidZCutTight();
+      if (debugme && validZTight)
+	cout << "Valid Z from tight muons" << endl;
+    }
   bool validHadV = PassValidHadVCut();
   if(debugme && validHadV)
     cout << "Valid Z from jet" << endl;
 
-
-  bool goodZ     = PassZMassCut() && PassZptCut();
+  bool goodZ = PassZMassCut() && PassZptCut();
   if (debugme && goodZ)
     cout << "Good Z from muon" << endl;
 
+
+  if (passedNTightLeptons==1)
+    {
+      goodZTight = PassZMassCutTight() && PassZptCutTight();
+      if (debugme && goodZTight)
+	cout << "Good Z from tight muons" << endl;
+    }
 
   bool goodHadV  = PassHadVMassCut() && PassHadVptCut();
   if (debugme && goodHadV)
     cout << "Good Z from jet" << endl;
 
 
-
+  //Make HadVZ from goodZ's tight and loose
   if (goodZ)
     {
       const TeVMuon m1 = FindMuon(*zCand_.daughter(0));
       const TeVMuon m2 = FindMuon(*zCand_.daughter(1));
-      h_Zmuon1_pt->Fill(m1.pt(), wprimeUtil_->getWeight());
-      h_Zmuon1_eta->Fill(m1.eta(), wprimeUtil_->getWeight());
-      h_Zmuon1_phi->Fill(m1.phi(), wprimeUtil_->getWeight());
-      h_Zmuon2_pt->Fill(m2.pt(), wprimeUtil_->getWeight());
-      h_Zmuon2_eta->Fill(m2.eta(), wprimeUtil_->getWeight());
-      h_Zmuon2_phi->Fill(m2.phi(), wprimeUtil_->getWeight());	  
-      h_deltaR_muon1muon2->Fill(deltaR(m1.eta(), m1.phi(), m2.eta(), m2.phi()), wprimeUtil_->getWeight());
+      if (debugme)
+	cout << "Found my muons from loose Z" << endl;
+      h_Zmuon1_pt->Fill(m1.pt(), weight_);
+      h_Zmuon1_eta->Fill(m1.eta(), weight_);
+      h_Zmuon1_phi->Fill(m1.phi(), weight_);
+      h_Zmuon2_pt->Fill(m2.pt(), weight_);
+      h_Zmuon2_eta->Fill(m2.eta(), weight_);
+      h_Zmuon2_phi->Fill(m2.phi(), weight_);	  
+      h_deltaR_muon1muon2->Fill(deltaR(m1.eta(), m1.phi(), m2.eta(), m2.phi()), weight_);
     }
 
+  if (passedNTightLeptons==1)
+    {
+      if (goodZTight)
+	{
+	  const TeVMuon m1 = FindMuon(*zCandTight_.daughter(0));
+	  const TeVMuon m2 = FindMuon(*zCandTight_.daughter(1));
+	  if (debugme)
+	    cout << "Found my muons from tight Z" << endl;
+	  h_tight_Zmuon1_pt->Fill(m1.pt(), weight_);
+	  h_tight_Zmuon1_eta->Fill(m1.eta(), weight_);
+	  h_tight_Zmuon1_phi->Fill(m1.phi(), weight_);
+	  h_tight_Zmuon2_pt->Fill(m2.pt(), weight_);
+	  h_tight_Zmuon2_eta->Fill(m2.eta(), weight_);
+	  h_tight_Zmuon2_phi->Fill(m2.phi(), weight_);	  
+	  h_tight_deltaR_muon1muon2->Fill(deltaR(m1.eta(), m1.phi(), m2.eta(), m2.phi()), weight_);
+	}
+    }
   if (goodHadV)
     {
-      h_jet_HadV_pt->Fill(wCand.pt(), wprimeUtil_->getWeight());
-      h_jet_HadV_eta->Fill(wCand.eta(), wprimeUtil_->getWeight());
-      h_jet_HadV_phi->Fill(wCand.phi(), wprimeUtil_->getWeight());
+      h_jet_HadV_pt->Fill(wCand.pt(), weight_);
+      h_jet_HadV_eta->Fill(wCand.eta(), weight_);
+      h_jet_HadV_phi->Fill(wCand.phi(), weight_);
+      if (debugme)
+	cout << "Filled my HadV histos" << endl;
     }
 
   
+
+  //Loose muons
   if(validZ && validHadV && goodZ && goodHadV) {
     reco::CompositeCandidate hadVZ;
     hadVZ.addDaughter(zCand_);
     hadVZ.addDaughter(wCand);
     AddFourMomenta addP4;
     addP4.set(hadVZ);
-    h_HadVZMass->Fill(hadVZ.mass(), wprimeUtil_->getWeight());
-    h_HadVZpt->Fill(hadVZ.pt(), wprimeUtil_->getWeight());
-    h_HadVZeta->Fill(hadVZ.eta(), wprimeUtil_->getWeight());
-    h_HadVZphi->Fill(hadVZ.phi(), wprimeUtil_->getWeight());
-
-
+    h_HadVZMass->Fill(hadVZ.mass(), weight_);
+    h_HadVZpt->Fill(hadVZ.pt(), weight_);
+    h_HadVZeta->Fill(hadVZ.eta(), weight_);
+    h_HadVZphi->Fill(hadVZ.phi(), weight_);
+    if (debugme)
+      cout << "Filled my histos from HadVZ" << endl;
     const TeVMuon VZm1 = FindMuon(*zCand_.daughter(0));
     const TeVMuon VZm2 = FindMuon(*zCand_.daughter(1));
-    h_Zmuon1_VZCut_pt->Fill(VZm1.pt(), wprimeUtil_->getWeight());
-    h_Zmuon1_VZCut_eta->Fill(VZm1.eta(), wprimeUtil_->getWeight());
-    h_Zmuon1_VZCut_phi->Fill(VZm1.phi(), wprimeUtil_->getWeight());
-    h_Zmuon2_VZCut_pt->Fill(VZm2.pt(), wprimeUtil_->getWeight());
-    h_Zmuon2_VZCut_eta->Fill(VZm2.eta(), wprimeUtil_->getWeight());
-    h_Zmuon2_VZCut_phi->Fill(VZm2.phi(), wprimeUtil_->getWeight());
+    //cout << "Muon from loose zCand" << endl;
+    h_Zmuon1_VZCut_pt->Fill(VZm1.pt(), weight_);
+    h_Zmuon1_VZCut_eta->Fill(VZm1.eta(), weight_);
+    h_Zmuon1_VZCut_phi->Fill(VZm1.phi(), weight_);
+    h_Zmuon2_VZCut_pt->Fill(VZm2.pt(), weight_);
+    h_Zmuon2_VZCut_eta->Fill(VZm2.eta(), weight_);
+    h_Zmuon2_VZCut_phi->Fill(VZm2.phi(), weight_);
     
-    h_jet_VZCut_pt->Fill(wCand.pt(), wprimeUtil_->getWeight());
-    h_jet_VZCut_eta->Fill(wCand.eta(), wprimeUtil_->getWeight());
-    h_jet_VZCut_phi->Fill(wCand.phi(), wprimeUtil_->getWeight());
+    h_jet_VZCut_pt->Fill(wCand.pt(), weight_);
+    h_jet_VZCut_eta->Fill(wCand.eta(), weight_);
+    h_jet_VZCut_phi->Fill(wCand.phi(), weight_);
 
-    h_deltaR_HadVmuon1->Fill(deltaR(wCand.eta(), wCand.phi(), VZm1.eta(), VZm1.phi()), wprimeUtil_->getWeight());
-    h_deltaR_HadVmuon2->Fill(deltaR(wCand.eta(), wCand.phi(), VZm2.eta(), VZm2.phi()), wprimeUtil_->getWeight());
-
-
+    h_deltaR_HadVmuon1->Fill(deltaR(wCand.eta(), wCand.phi(), VZm1.eta(), VZm1.phi()), weight_);
+    h_deltaR_HadVmuon2->Fill(deltaR(wCand.eta(), wCand.phi(), VZm2.eta(), VZm2.phi()), weight_);
   }
   else{
     if (debugme)
       cout << "Didnt manage to make a HadVZ Candidate" << endl;
   }
 
-  
+
+  if (passedNTightLeptons==1)
+    {
+      //Tight muons
+      if(validZTight && validHadV && goodZTight && goodHadV) {
+	reco::CompositeCandidate hadVZ;
+	hadVZ.addDaughter(zCandTight_);
+	hadVZ.addDaughter(wCand);
+	AddFourMomenta addP4;
+	addP4.set(hadVZ);
+	if(debugme)
+	  cout << "Made my hadVZ tight" << endl;
+	h_tight_HadVZMass->Fill(hadVZ.mass(), weight_);
+	h_tight_HadVZpt->Fill(hadVZ.pt(), weight_);
+	h_tight_HadVZeta->Fill(hadVZ.eta(), weight_);
+	h_tight_HadVZphi->Fill(hadVZ.phi(), weight_);
+	if (debugme)
+	  cout << "Filled my HadVZTight histos" << endl;
+	const TeVMuon VZm1 = FindMuon(*zCandTight_.daughter(0));
+	const TeVMuon VZm2 = FindMuon(*zCandTight_.daughter(1));
+	if (debugme)
+	  cout << "Found my tight muons from HadVZ" << endl;
+	h_tight_Zmuon1_VZCut_pt->Fill(VZm1.pt(), weight_);
+	h_tight_Zmuon1_VZCut_eta->Fill(VZm1.eta(), weight_);
+	h_tight_Zmuon1_VZCut_phi->Fill(VZm1.phi(), weight_);
+	h_tight_Zmuon2_VZCut_pt->Fill(VZm2.pt(), weight_);
+	h_tight_Zmuon2_VZCut_eta->Fill(VZm2.eta(), weight_);
+	h_tight_Zmuon2_VZCut_phi->Fill(VZm2.phi(), weight_);
+	if (debugme)
+	  {
+	    cout << "Filled tight muons histos from HadVZ" << endl;
+	    cout << "wCand pT is " << wCand.pt() << endl;
+	  }
+	h_tight_jet_VZCut_pt->Fill(wCand.pt(), weight_);
+	if (debugme)
+	  cout << "Filled more tight muons histos from HadVZ -- 1" << endl;
+	h_tight_jet_VZCut_eta->Fill(wCand.eta(), weight_);
+	if (debugme)
+	  cout << "Filled more tight muons histos from HadVZ -- 2" << endl;
+	h_tight_jet_VZCut_phi->Fill(wCand.phi(), weight_);
+	if (debugme)
+	  cout << "Filled more tight muons histos from HadVZ -- 3" << endl;
+	
+	h_tight_deltaR_HadVmuon1->Fill(deltaR(wCand.eta(), wCand.phi(), VZm1.eta(), VZm1.phi()), weight_);
+	if (debugme)
+	  cout << "Filled more tight muons histos from HadVZ -- 4" << endl;
+	h_tight_deltaR_HadVmuon2->Fill(deltaR(wCand.eta(), wCand.phi(), VZm2.eta(), VZm2.phi()), weight_);
+	if (debugme)
+	  cout << "Filled more tight muons histos from HadVZ -- 5" << endl;
+	
+      }
+      
+      else{
+	if (debugme)
+	  cout << "Didnt manage to make a HadVZ Candidate with tight muons" << endl;
+      }
+    }
 }
 
 
@@ -854,6 +905,11 @@ HadronicVZAnalyzer::PassValidZCut(){
 }
 
 bool
+HadronicVZAnalyzer::PassValidZCutTight(){
+  return zCandTight_ && zCandTight_.mass()>0.;
+}
+
+bool
 HadronicVZAnalyzer::PassValidHadVZCandCut(){
   // To be implemented
   return true;
@@ -881,6 +937,16 @@ bool
 HadronicVZAnalyzer::PassZptCut(){
   return zCand_.pt() > minZpt;
 }
+
+bool
+HadronicVZAnalyzer::PassZMassCutTight(){
+  return (zCandTight_.mass() > minZmass) && (zCandTight_.mass() < maxZmass);  
+}
+
+bool
+HadronicVZAnalyzer::PassZptCutTight(){
+  return zCandTight_.pt() > minZpt;
+}
 ////////////////////////////////
 ///////Check Had. V Properties//
 ////////////////////////////////
@@ -897,7 +963,7 @@ HadronicVZAnalyzer::PassHadVptCut(){
 ////////////////////////////////
 //////Check Muon Properties/////
 ////////////////////////////////
-/// Big function to check all cuts.
+/// Big fution to check all cuts.
 bool HadronicVZAnalyzer::PassMuonCut(const TeVMuon* mu){
   for(uint i=0; i<MuonCutFns_.size(); ++i){
     bool result = CALL_MEMBER_FN(*this,MuonCutFns_[i])(mu);
@@ -1115,23 +1181,5 @@ HadronicVZAnalyzer::Match(TeVMuon & p1, reco::Candidate & p2){
 }
 
 
-/*
-inline bool HadronicVZAnalyzer::inEE(const TeVMuon& mu){
-  return fabs(mu.eta()) >= 1.05;
-}
-
-inline float
-  HadronicVZAnalyzer::MuonPU(const TeVMuon & m){
-  return rhoFastJet_*effectiveMuonArea_[inEE(m)];
-}
-*/
-/* FROM WZUtilities.h
-struct highestPt {
-  bool operator() (const reco::Candidate * a, const reco::Candidate * b){
-
-    return a->pt() > b->pt();
-  }
-};
-*/
 
 

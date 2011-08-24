@@ -1,11 +1,89 @@
-Top Level Dir = /tmp/cleonido/
-integrated lumi = 204.18 pb^-1
+Top Level Dir = rfio:/castor/cern.ch/user/f/fladias/
+integrated lumi = 1514 pb^-1
 
-samplename = data_May10ReReco_AK7
-description = SingleMuData
+samplename = Summer11_RSZZmmjj_750
+description = Summer11_RSZZmmjj_750
+x-section = 0.00835
+subdir = Summer11_RSZZmmjj_750
+pathname = filelists_HadVZ/RSZZmmjj_750.txt
+Nprod_evt = 56754
+
+samplename = Summer11_RSZZmmjj_1000
+description = Summer11_RSZZmmjj_1000
+x-section = 0.00152
+subdir = Summer11_RSZZmmjj_1000
+pathname = filelists_HadVZ/RSZZmmjj_1000.txt
+Nprod_evt = 54030
+
+samplename = Summer11_RSZZmmjj_1250
+description = Summer11_RSZZmmjj_1250
+x-section = 0.000347
+subdir = Summer11_RSZZmmjj_1250
+pathname = filelists_HadVZ/RSZZmmjj_1250.txt
+Nprod_evt = 54153
+
+samplename = Summer11_RSZZmmjj_1500
+description = Summer11_RSZZmmjj_1500
+x-section = 0.0000883
+subdir = Summer11_RSZZmmjj_1500
+pathname = filelists_HadVZ/RSZZmmjj_1500.txt
+Nprod_evt = 57176
+
+samplename = Summer11_RSZZmmjj_1750
+description = Summer11_RSZZmmjj_1750
+x-section = 0.0000243
+subdir = Summer11_RSZZmmjj_1750
+pathname = filelists_HadVZ/RSZZmmjj_1750.txt
+Nprod_evt = 54901
+
+samplename = Summer11_RSZZmmjj_2000
+description = Summer11_RSZZmmjj_2000
+x-section = 0.00000705
+subdir = Summer11_RSZZmmjj_2000
+pathname = filelists_HadVZ/RSZZmmjj_2000.txt
+Nprod_evt = 56140
+
+samplename = Summer11_DYJetsToLL
+description = Summer11_DYJetsToLL
+x-section = 3048 
+subdir = Summer11_DYJetsToLL
+pathname = filelists_HadVZ/DYJetsToLL.txt
+Nprod_evt = 35991285
+
+samplename = Summer11_TTJets
+description = Summer11_TTJets
+x-section = 157.5
+subdir = Summer11_TTJets
+pathname = filelists_HadVZ/TTJets.txt
+Nprod_evt = 3701947
+
+samplename = Summer11_ZZ
+description = Summer11_ZZ
+x-section = 5.9
+subdir = Summer11_ZZ
+pathname = filelists_HadVZ/ZZ.txt
+Nprod_evt = 4187885
+
+samplename = data_SingleMu_May10ReReco
+description = data_SingleMu_May10ReReco
 x-section = 1
-subdir = patTuples_data_SingleMu_May10ReReco_AK7
-pathname = filelists_HadVZ/patTupleDataSingleMuAK7.txt
-Nprod_evt = 9999999
+subdir = data_May10ReReco
+pathname = filelists_HadVZ/data_May10ReReco
+Nprod_evt = 99999999
+
+samplename = data_SingleMu_PromptReco_v4
+description = data_SingleMu_PromptReco_v4
+x-section = 1
+subdir = data_PromptReco_v4
+pathname = filelists_HadVZ/data_SingleMu_PromptReco_v4
+Nprod_evt = 99999999
+
+samplename = data_SingleMu_PromptReco_v5
+description = data_SingleMu_PromptReco_v5
+x-section = 1
+subdir = data_PromptReco_v5
+pathname = filelists_HadVZ/data_SingleMu_PromptReco_v5
+Nprod_evt = 99999999
 
 DONE
+

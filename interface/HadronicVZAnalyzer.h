@@ -4,26 +4,20 @@
 #include <vector>
 #include <string>
 #include <TH2F.h>
-
-
 #include "DataFormats/FWLite/interface/Handle.h"
 #include "DataFormats/FWLite/interface/Event.h"
 #include "DataFormats/FWLite/interface/LuminosityBlock.h"
 #include "DataFormats/FWLite/interface/ChainEvent.h"
-
 #include "FWCore/FWLite/interface/AutoLibraryLoader.h"
 #include "FWCore/PythonParameterSet/interface/PythonProcessDesc.h"
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
-
 #include "PhysicsTools/FWLite/interface/TFileService.h"
-
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h" 
-
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
@@ -60,18 +54,6 @@ public:
   float minHadVpt;
   float minHadVmass;
   float maxHadVmass;
-
-  // +++++++++++++++++++Electron General Cuts
-  // Later, for now we have only muons.
-  //VBTF Recommended Cuts
-  //float minElecLooseEt;
-  //float minElecTightEt;
-  //int cutElecWPLooseMask;
-  //string cutElecWPLooseType;
-  //std::vector<double> maxElecSigmaiEtaiEta;
-  //std::vector<double> maxElecDeltaPhiIn;
-  //std::vector<double> maxElecDeltaEtaIn;
-  //std::vector<double> maxElecHOverE    ;
 
 // +++++++++++++++++++Muon General Cuts
   float maxMuonEta;
@@ -113,13 +95,12 @@ public:
   void SetLogFile(std::string s);
   void SetOutputFile(std::string s);
 
-//methods for histograms 
+  //methods for histograms 
   void Declare_Histos(TFileDirectory& dir);
   void Fill_Histos(int index, float weight=1.);
 
   //clean stuff
   void ClearEvtVariables();
-
 
 //methods for the cuts
   bool PassNoCut();
@@ -127,12 +108,15 @@ public:
   bool PassNLeptonsCut();
   bool PassNJetsCut();
   bool PassValidHadVCut();
-  bool PassValidZCut();
+  bool PassValidZCut();  
+  bool PassValidZCutTight();
   bool PassValidHadVZCandCut();
   bool PassLeadingLeptonPtCut();
   bool PassNumberOfZsCut();
   bool PassZMassCut();
+  bool PassZMassCutTight();
   bool PassZptCut();
+  bool PassZptCutTight();
   bool PassHadVMassCut();
   bool PassHadVptCut();
 
@@ -194,6 +178,9 @@ public:
   double PI;
   double TWOPI;
   float NOCUT;
+  float weight_;
+  float PU_NumInteractions3BX_;
+  float PU_NumInteractions1BX_;
 
 // +++++++++++++++++++
   std::vector<uint> nEvents;
@@ -233,7 +220,7 @@ public:
   std::vector< PileupSummaryInfo > PupInfo_; 
   std::vector<float> Num_surv_cut_;
 
-// +++++++++++++++++++ Histogram Definitions
+// +++++++++++++++++++ Histogram Definitions - loose
   TH1F* h_HadVZMass;
   TH1F* h_Zmuon1_pt;	
   TH1F* h_Zmuon1_eta;
@@ -279,51 +266,92 @@ public:
   TH1F* h_jet_VZCut_phi;
   TH1F* h_jet_mult;
   TH1F* h_jet_mult_inc;
-
   TH1F* h_jet1jet2_mass;
-  TH1F* h_dptpt2;
- 
+
+
+
+// +++++++++++++++++++ Histogram Definitions - tight
+  TH1F* h_tight_HadVZMass;
+  TH1F* h_tight_Zmuon1_pt;	
+  TH1F* h_tight_Zmuon1_eta;
+  TH1F* h_tight_Zmuon1_phi;
+  TH1F* h_tight_Zmuon2_pt;
+  TH1F* h_tight_Zmuon2_eta;
+  TH1F* h_tight_Zmuon2_phi;
+  /*  TH1F* h_tight_jet1_pt;
+  TH1F* h_tight_jet1_eta;
+  TH1F* h_tight_jet1_phi;
+  TH1F* h_tight_jet2_pt;
+  TH1F* h_tight_jet2_eta;
+  TH1F* h_tight_jet2_phi;
+  TH1F* h_tight_jet1_mass;
+  TH1F* h_tight_jet2_mass;
+  */
+  TH1F* h_tight_deltaR_muon1muon2;
+  TH1F* h_tight_deltaR_HadVmuon1;
+  TH1F* h_tight_deltaR_HadVmuon2;
+  /*  TH1F* h_tight_deltaR_jet1muon1;
+  TH1F* h_tight_deltaR_jet1muon2;
+  TH1F* h_tight_deltaR_jet2muon1;
+  TH1F* h_tight_deltaR_jet2muon2;*/	
+  TH1F* h_tight_HadVZpt;
+  TH1F* h_tight_HadVZeta;
+  TH1F* h_tight_HadVZphi;		
+  TH1F* h_tight_muons_pt;
+  TH1F* h_tight_muons_eta;
+  TH1F* h_tight_muons_phi;
+  /*  TH1F* h_tight_jets_pt;
+  TH1F* h_tight_jets_eta;
+  TH1F* h_tight_jets_phi;
+  TH1F* h_tight_jet_HadV_pt;
+  TH1F* h_tight_jet_HadV_eta;
+  TH1F* h_tight_jet_HadV_phi;*/
+  TH1F* h_tight_Zmuon1_VZCut_pt;
+  TH1F* h_tight_Zmuon1_VZCut_eta;
+  TH1F* h_tight_Zmuon1_VZCut_phi;
+  TH1F* h_tight_Zmuon2_VZCut_pt;
+  TH1F* h_tight_Zmuon2_VZCut_eta;
+  TH1F* h_tight_Zmuon2_VZCut_phi;
+  TH1F* h_tight_jet_VZCut_pt;
+  TH1F* h_tight_jet_VZCut_eta;
+  TH1F* h_tight_jet_VZCut_phi;
+  //  TH1F* h_tight_jet_mult;
+  //  TH1F* h_tight_jet_mult_inc;
+  //  TH1F* h_tight_jet1jet2_mass;
+
+
+  //Muon work histos
+  TH1F* h_dptpt2; 
   TH2F* h_dptpt_vs_pt;
   TH2F* h_dptpt2_vs_pt;
   TH2F* h_dptpt_vs_invpt;
   TH2F* h_dptpt2_vs_invpt;
   TH2F* h_dptpt_vs_eta;
   TH2F* h_dptpt2_vs_eta;
-
-
   TH2F* h_dptpt_vs_pt_meta09;
   TH2F* h_dptpt2_vs_pt_meta09;
   TH2F* h_dptpt_vs_invpt_meta09;
   TH2F* h_dptpt2_vs_invpt_meta09;
-
   TH2F* h_dptpt_vs_pt_meta0912;
   TH2F* h_dptpt2_vs_pt_meta0912;
   TH2F* h_dptpt_vs_invpt_meta0912;
   TH2F* h_dptpt2_vs_invpt_meta0912;
-
   TH2F* h_dptpt_vs_pt_meta1225;
   TH2F* h_dptpt2_vs_pt_meta1225;
   TH2F* h_dptpt_vs_invpt_meta1225;
   TH2F* h_dptpt2_vs_invpt_meta1225;
-
-
   TH2F* h_dptpt_vs_pt_teta09;
   TH2F* h_dptpt2_vs_pt_teta09;
   TH2F* h_dptpt_vs_invpt_teta09;
   TH2F* h_dptpt2_vs_invpt_teta09;
-
   TH2F* h_dptpt_vs_pt_teta0915;
   TH2F* h_dptpt2_vs_pt_teta0915;
   TH2F* h_dptpt_vs_invpt_teta0915;
   TH2F* h_dptpt2_vs_invpt_teta0915;
-
   TH2F* h_dptpt_vs_pt_teta1524;
   TH2F* h_dptpt2_vs_pt_teta1524;
   TH2F* h_dptpt_vs_invpt_teta1524;
   TH2F* h_dptpt2_vs_invpt_teta1524;
-
-
-
 
 
   // http://www.parashift.com/c++-faq-lite/pointers-to-members.html#faq-33.5
@@ -344,53 +372,8 @@ public:
   // Map between strings and member function pointers
   std::map<std::string, MuonCutFnPtr> mMuonFnPtrs_;
 
-
-  //NEW STUFF
- // void FillCutFNS();
-
-
-//  std::string looseMuonType_, tightMuonType_;
-//  float maxZMassDiff_;
-//  float minDeltaR_;
-  //  std::vector<float> Num_surv_cut_;
-//  std::vector<double> effectiveMuonArea_;
-
-/*
-
-  int NCuts_;
-  std::vector<std::string> Cuts_;
-  typedef bool (HadronicVZAnalyzer::*    CutFnPtr)(); 
-#ifndef __CINT__
-  std::map<std::string,     CutFnPtr> mFnPtrs_;
-  std::vector<    CutFnPtr> CutFns_;
-#endif
-
-
-  PSet mSelectorPset_;
-  MuonSelector looseMuon_;
-  MuonSelector tightMuon_;
-  pat::strbitset muonResult_;
-
-
-
-  double rhoFastJet_;
-
-  void ResetCounters();
-
-  float MuonPU(const TeVMuon & m);
   ZCandidate zCand_;
-  bool inEE(const TeVMuon& mu);
-*/
-
-  ZCandidate zCand_;
-
-  
-  /*  struct highestPt {
-    bool operator() (const reco::Candidate & a, const reco::Candidate & b){
-      
-      return a.pt() > b.pt();
-    }
-    };*/
+  ZCandidate zCandTight_;
 
 
 };
