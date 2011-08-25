@@ -1,5 +1,3 @@
-from PhysicsTools.PatAlgos.tools.pfTools import addPFCandidates
-
 from UserCode.CMGWPrimeGroup.patTuple_common_cfg import *
 
 def mumet_config(process, reportEveryNum=100, maxEvents=-1) :
