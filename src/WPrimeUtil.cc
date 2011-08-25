@@ -364,6 +364,40 @@ WPrimeUtil::FindTrigger(const pat::TriggerPathRef path, const std::vector<std::s
   return false;
 }
 
+////////////////////
+//Trigger Matching//
+////////////////////
+/*
+bool 
+HadronicVWAnalyzer::PassTriggerMatch(const pat::Electron & p, const float cut, const vstring& triggers) const{
+  for (size_t i=0; i < triggers.size(); ++i){
+    if (p.triggerObjectMatchesByPath(triggers[i], true, false).size() > 0){
+      const pat::TriggerObjectStandAlone * trigRef = p.triggerObjectMatchByPath(triggers[i], true, false);
+      if(trigRef->et() > cut) return true;
+    }
+  }
+  return false;
+}
+
+bool 
+HadronicVWAnalyzer::PassTriggerMatch(const TeVMuon & p, const float cut, const vstring& triggers) const{
+  for(uint i=0; i<p.triggerObjectMatches().size(); ++i){
+    vector<string> names = p.triggerObjectMatches()[i].pathNames(true, false);
+    for(uint j=0; j<names.size(); ++j){
+      for (size_t k=0; k < triggers.size(); ++k){
+        if(WPrimeUtil::SameTrigger(names[j], triggers[k])){
+          if (p.triggerObjectMatchesByPath(names[j], true, false).size() > 0){
+            if(p.triggerObjectMatchByPath(names[j], true, false)->pt() > cut) return true;
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+*/
+
+
 // get hadronic MET component (that needs to be corrected 
 // if applyMETCorrection=true)from Z data; this will be done according to hadronic 
 // activity from Z->mumu reconstructed events
@@ -546,6 +580,7 @@ void WPrimeUtil::getElectronsMET(const PatElectronVH & patElectronsH, ElectronV 
                                  const METVH & metH, const bool & adjMET, pat::MET & met,
                                  const PFCandidateVH & pfCandidatesH){
   convertElectrons(*patElectronsH.product(), electrons);
+  met = (*metH.product())[0];
   if(adjMET) AdjustMET(electrons, *pfCandidatesH.product(), met);
 }
 
@@ -553,6 +588,7 @@ void WPrimeUtil::getMuonsMET(const PatMuonVH & patMuonsH, const uint& muAlgo, Mu
                              const METVH & metH, const bool & adjMET, pat::MET & met,
                              const PFCandidateVH & pfCandidatesH){
   convertMuons(*patMuonsH.product(), muAlgo, muons);
+  met = (*metH.product())[0];
   if(adjMET) AdjustMET(muons, *pfCandidatesH.product(), met);
 }
 
@@ -562,6 +598,7 @@ void WPrimeUtil::getLeptonsMET(const PatElectronVH & patElectronsH, ElectronV & 
                                const PFCandidateVH & pfCandidatesH){
   convertElectrons(*patElectronsH.product(), electrons);
   convertMuons(*patMuonsH.product(), muAlgo, muons);
+  met = (*metH.product())[0];
   if(adjMET){
     AdjustMET(electrons, *pfCandidatesH.product(), met);
     AdjustMET(muons, *pfCandidatesH.product(), met);
