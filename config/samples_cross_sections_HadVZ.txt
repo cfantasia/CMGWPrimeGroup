@@ -68,21 +68,21 @@ samplename = data_SingleMu_May10ReReco
 description = data_SingleMu_May10ReReco
 x-section = 1
 subdir = data_May10ReReco
-pathname = filelists_HadVZ/data_May10ReReco
+pathname = filelists_HadVZ/data_May10ReReco.txt
 Nprod_evt = 99999999
 
 samplename = data_SingleMu_PromptReco_v4
 description = data_SingleMu_PromptReco_v4
 x-section = 1
 subdir = data_PromptReco_v4
-pathname = filelists_HadVZ/data_SingleMu_PromptReco_v4
+pathname = filelists_HadVZ/data_SingleMu_PromptReco_v4.txt
 Nprod_evt = 99999999
 
 samplename = data_SingleMu_PromptReco_v5
 description = data_SingleMu_PromptReco_v5
 x-section = 1
 subdir = data_PromptReco_v5
-pathname = filelists_HadVZ/data_SingleMu_PromptReco_v5
+pathname = filelists_HadVZ/data_SingleMu_PromptReco_v5.txt
 Nprod_evt = 99999999
 
 DONE
