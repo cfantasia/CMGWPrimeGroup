@@ -149,8 +149,9 @@ class WCandidate : public BosonCandidate {
   double mt() const { return mt_;}
  private:
   const reco::Candidate * genLepton_;
-  double CalcMT(){return sqrt(2 * daughter(0)->et() * daughter(1)->et() * CalcDPhi());}
-  double CalcDPhi(){return 1 - cos(reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi()));}
+  double CalcMT(){return sqrt(2 * daughter(0)->et() * daughter(1)->et() * OneMinusCosine());}
+  double CalcDPhi(){return reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi());}
+  double OneMinusCosine(){return 1 - cos(CalcDPhi());}
   double mt_;
   const heep::Ele * elec_;
   const TeVMuon * muon_;
