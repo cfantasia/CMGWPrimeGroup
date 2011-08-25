@@ -147,10 +147,10 @@ class WCandidate : public BosonCandidate {
 
   int genMotherId() const {return findGenMotherId(genLepton_);}
   double mt() const { return mt_;}
+  double CalcDPhi(){return reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi());}
  private:
   const reco::Candidate * genLepton_;
   double CalcMT(){return sqrt(2 * daughter(0)->et() * daughter(1)->et() * OneMinusCosine());}
-  double CalcDPhi(){return reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi());}
   double OneMinusCosine(){return 1 - cos(CalcDPhi());}
   double mt_;
   const heep::Ele * elec_;
