@@ -73,6 +73,7 @@ typedef std::vector<reco::GenParticle> GenParticleV;
 
 typedef edm::Handle<PatElectronV > PatElectronVH;
 typedef edm::Handle<PatMuonV > PatMuonVH;
+typedef edm::Handle<JetV > JetVH;
 typedef edm::Handle<PFCandidateV > PFCandidateVH;
 typedef edm::Handle<METV > METVH;
 
@@ -417,7 +418,7 @@ public:
     const reco::HitPattern& hp = global->hitPattern();
     if(!global.isNull()){
       setPassCut("minPt", p.pt(), ret);
-      setPassCut("maxEta", p.eta(), ret);
+      setPassCut("maxEta", fabs(p.eta()), ret);
       setPassCut("maxDxy", fabs(p.dB()), ret);
       setPassCut("maxNormalizedChi2", global->normalizedChi2(), ret);
       setPassCut("maxIso", p.combRelIsolation(), ret);
@@ -445,14 +446,30 @@ public:
     // Set the last parameter to false to turn off the cut
     loadFromPset<double>(params, "minPt", true);
     loadFromPset<double>(params, "maxEta", true);
+    loadFromPset<double>(params, "maxNHF", true);
+    loadFromPset<double>(params, "maxNEF", true);
+    loadFromPset<int>(params, "minNDaughters", true);
+    loadFromPset<double>(params, "minCHF", true);
+    loadFromPset<double>(params, "maxCEF", true);
+    loadFromPset<int>(params, "minCMult", true);
   }
   virtual bool operator()(const pat::Jet & p, pat::strbitset & ret) {
     ret.set(false);
+    bool inTracking = fabs(p.eta()) > 2.4;
     setPassCut("minPt", p.pt(), ret);
-    setPassCut("maxEta", p.eta(), ret);
+    setPassCut("maxEta", fabs(p.eta()), ret);
+    setPassCut("maxNHF", p.neutralHadronEnergyFraction(), ret);
+    setPassCut("maxNEF", p.neutralEmEnergyFraction(), ret);
+    setPassCut("minNDaughters", (int)p.numberOfDaughters(), ret);
+    //Below are only used for fabs(eta) < 2.4 b/c of tracking needed?
+    setPassCut("minCHF", inTracking && p.chargedHadronEnergyFraction(), ret);
+    setPassCut("maxCEF", inTracking && p.chargedEmEnergyFraction(), ret);
+    setPassCut("minCMult", inTracking && p.chargedMultiplicity(), ret);
     setIgnored(ret);
     return (bool) ret;
   }
+
+  
 };
 
 
