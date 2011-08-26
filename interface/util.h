@@ -512,5 +512,14 @@ const T2 & Find(const T1 & p, const std::vector<T2>& vec){
   return vec[0];
 }
 
+template<class T1, class T2>
+  bool Overlap(const T1 & p, const std::vector<T2>& vec, const float minDR=0.01){
+  for(uint i=0; i<vec.size(); ++i){
+    if(reco::deltaR(p, vec[i]) < minDR) return false;
+  }
+  return true;
+}
+
+
 
 #endif // _util_h
