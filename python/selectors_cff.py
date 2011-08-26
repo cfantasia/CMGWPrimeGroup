@@ -85,3 +85,18 @@ electronSelectors.WZTight = electronSelectors.wp80.clone()
 electronSelectors.WZTight.barrel.minPt = cms.untracked.double(20.)
 electronSelectors.WZTight.endcap.minPt = cms.untracked.double(20.)
 
+####################
+#####  Jets  #######
+####################
+jetSelectors = cms.PSet(
+    Base = cms.PSet(#are these >= or >
+       minPt = cms.untracked.double(150.),
+       maxEta = cms.untracked.double(2.4),
+       maxNHF = cms.untracked.double(0.99),
+       maxNEF = cms.untracked.double(0.99),
+       minNDaughters = cms.untracked.int32(1),
+       minCHF = cms.untracked.double(0.0),#Why is this min?
+       maxCEF = cms.untracked.double(0.99),
+       minCMult = cms.untracked.int32(0),
+       ),
+    )
