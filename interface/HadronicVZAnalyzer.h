@@ -85,32 +85,44 @@ public:
   void PrintMuon(const TeVMuon* mu, int parent);
   void PrintJet(const pat::Jet* jet, int parent);
     
-  bool SameTrigger(std::string & A, std::string & B);
-
 //methods for utilities
 //  void CheckStream(ofstream& stream, std::string s);
 
 //methods for modifiers
   void SetCandEvtFile(std::string s);
-  void SetLogFile(std::string s);
-  void SetOutputFile(std::string s);
+  void Tabulate_Me(int& cut_index,const float& weight);
 
   //methods for histograms 
   void Declare_Histos(TFileDirectory& dir);
   void Fill_Histos(int index, float weight=1.);
+  void FillJetMultiplicityHists();
+  void FillLooseMuonHists();
+  void FillTightMuonHists();
+  void FillGoodZHistos();
+  void FillGoodZTightHistos();
+  void FillGoodHadVHistos();
+  void FillValidVZHistos();
+  void FillGoodVZHistos();
 
   //clean stuff
   void ClearEvtVariables();
 
+  ZCandidate MakeZs(const MuonV & muons);
+
 //methods for the cuts
   bool PassNoCut();
   bool PassTriggersCut();
+  bool PassMinNLooseLeptonsCut();
+  bool PassMinNTightLeptonsCut();
   bool PassNLeptonsCut();
+  bool PassMinNJetsCut();
   bool PassNJetsCut();
   bool PassValidHadVCut();
   bool PassValidZCut();  
   bool PassValidZCutTight();
   bool PassValidHadVZCandCut();
+  bool PassValidHadVZTightCandCut();
+
   bool PassLeadingLeptonPtCut();
   bool PassNumberOfZsCut();
   bool PassZMassCut();
@@ -149,9 +161,6 @@ public:
   bool PassJetIDCut(const pat::Jet* jet); 
 
 //////////
-  void reportProgress(int eventNum);
-  void verbose(const char *string, ...);
-
   void beginFile(std::vector<wprime::InputFile>::const_iterator fi);
   void endFile(std::vector<wprime::InputFile>::const_iterator fi, ofstream & out);
   void endAnalysis(ofstream & out);
@@ -207,18 +216,15 @@ public:
   ElectronV electrons_, looseElectrons_, tightElectrons_;
   MuonV muons_, looseMuons_, tightMuons_;
   JetV jets_;
-  JetV jetsDR_;
-  // Not using now
-  //pat::MET met;
 
 //////Chosen Vector Boson Candidates 
-  ZCandidate zCand;
-  WCandidate wCand;
-  WZCandidate wzCand;
+  ZCandidate zCand_, zCandTight_;
+  WCandidate wCand_;
+  VZCandidate hadVZ_, hadVZTight_;
 
   pat::TriggerEvent triggerEvent_; 
   std::vector< PileupSummaryInfo > PupInfo_; 
-  std::vector<float> Num_surv_cut_;
+  wprime::EffV results_;
 
 // +++++++++++++++++++ Histogram Definitions - loose
   TH1F* h_HadVZMass;
@@ -357,10 +363,8 @@ public:
   // http://www.parashift.com/c++-faq-lite/pointers-to-members.html#faq-33.5
   // Good manners!
   
-  TeVMuon & FindMuon(reco::Candidate & p);
-  bool Match(TeVMuon & p1, reco::Candidate & p2);
-
-
+  int NCuts_;
+  std::vector<std::string> Cuts_;
   // MuonCutFnPtr type is: "pointer to member function of HadronicVZAnalyzer"
   // It takes a const TeVMuon* as argument, and returns a bool.
   typedef bool (HadronicVZAnalyzer::*MuonCutFnPtr)(const TeVMuon*); 
@@ -371,10 +375,6 @@ public:
   std::vector<MuonCutFnPtr> MuonCutFns_;
   // Map between strings and member function pointers
   std::map<std::string, MuonCutFnPtr> mMuonFnPtrs_;
-
-  ZCandidate zCand_;
-  ZCandidate zCandTight_;
-
 
 };
 

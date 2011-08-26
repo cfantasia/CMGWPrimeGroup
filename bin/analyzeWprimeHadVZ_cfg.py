@@ -5,7 +5,7 @@ process.WprimeAnalyzer.maxEvents   = cms.int32(-1)                      ## optio
 process.WprimeAnalyzer.reportAfter = cms.uint32(1000)                     ## optional
 process.WprimeAnalyzer.useJSON = cms.bool(True)
 process.WprimeAnalyzer.logFile     = cms.string("HadVZAnalyzer.log")
-process.WprimeAnalyzer.candEvtFile = cms.string("testCandEvtFile.txt")
+process.WprimeAnalyzer.candEvtFile = cms.string("HadVZ_CandEvtFile.txt")
 process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_sections_HadVZ.txt")
 process.WprimeAnalyzer.debugme = cms.bool(False)
 process.WprimeAnalyzer.preselect = cms.bool(False)
@@ -54,3 +54,26 @@ process.WprimeAnalyzer.minJetCHF = cms.double(0.0)
 process.WprimeAnalyzer.minJetcMult = cms.uint32(0)
 process.WprimeAnalyzer.maxJetCEF = cms.double(0.99)
 
+process.WprimeAnalyzer.Cuts = cms.vstring(
+        "NoCuts",
+
+        "MinNLeptons",
+        "MinNJets",
+
+        "ValidV",
+        "VMass",
+        "VPt",
+        
+        "ValidZ",
+        "ZMass",
+        "Zpt",
+        "ValidVZ",
+        
+        "MinNTightLeptons",
+        "ValidZTight",
+        "ZTightMass",
+        "ZTightpt",
+        "ValidVZTight",
+        
+        #    "HLT",
+        "AllCuts")
