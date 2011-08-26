@@ -280,6 +280,8 @@ void WPrimeFinder::endAnalysis()
       WmunugammaAnalyzer->endAnalysis(outLogFile_);
   if(runWZAnalysis_)
       wzAnalyzer->endAnalysis(outLogFile_);
+  if(runHadVZAnalysis_)
+    hadvzAnalyzer->endAnalysis(outLogFile_);
   if(runHadVWAnalysis_)
     hadvwAnalyzer->endAnalysis(outLogFile_);
 }
