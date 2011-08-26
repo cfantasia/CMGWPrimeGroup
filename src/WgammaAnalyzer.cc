@@ -723,7 +723,7 @@ void WgammaAnalyzer::printHighPtPhoton(edm::EventBase const & event, int thePho)
 // of the dedicated high-pt muon reconstructors
 TVector2 WgammaAnalyzer::getNewMET(edm::EventBase const & event, const TLorentzVector & mu_p)
 {
-  if(wprimeUtil_->shouldApplyMETCorrection())
+  if(wprimeUtil_->shouldApplyHadronicRecoilCorrection())
     return wprimeUtil_->getHadronicMET(event) - TVector2(mu_p.Px(), mu_p.Py());
 
   return getPFMETwithoutMu(event) - TVector2(mu_p.Px(), mu_p.Py());
