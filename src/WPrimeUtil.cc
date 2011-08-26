@@ -8,7 +8,8 @@ using std::cout; using std::cerr; using std::endl;
 using std::string; using std::vector;
 
 
-WPrimeUtil::WPrimeUtil(const char * out_filename, edm::InputTag genParticles, string cross_sections)
+WPrimeUtil::WPrimeUtil(const char * out_filename, edm::InputTag genLabel, 
+		       edm::InputTag pfLabel, string cross_sections)
 {
   fs = new fwlite::TFileService(out_filename);
 
@@ -16,7 +17,8 @@ WPrimeUtil::WPrimeUtil(const char * out_filename, edm::InputTag genParticles, st
   hRecoilParalvsVBPt = 0;
   histRecoilParal = NULL;
   lumi_ipb = -1;
-  genParticles_ = genParticles;
+  genLabel_ = genLabel;
+  pfLabel_ = pfLabel;
   sample_cross_sections = cross_sections;
   setupZMETcorrection();
 
@@ -112,7 +114,7 @@ void WPrimeUtil::SetLumiWeights(const string & MCFile, const string & DataFile,
   LumiWeights_ = edm::LumiReWeighting(MCFile, DataFile, MCHist, DataHist);
 }
 
-float WPrimeUtil::getTotalWeight3BX(edm::EventBase const & event, const std::string& label){
+float WPrimeUtil::getTotalWeight3BX(const edm::EventBase & event, const std::string& label){
   return runningOnData() ? getWeight() : getWeight()*getPUWeight3BX(event, label);
 }
 
@@ -133,7 +135,7 @@ float WPrimeUtil::getPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInf
 /////////////////////////////////////////////////
 ////Average Over In-time & out-of-time PU////////
 /////////////////////////////////////////////////
-float WPrimeUtil::getPUWeight3BX(edm::EventBase const & event, const std::string& label){
+float WPrimeUtil::getPUWeight3BX(const edm::EventBase & event, const std::string& label){
   std::vector< PileupSummaryInfo > PupInfo = getProduct<std::vector< PileupSummaryInfo > >(event, label);   
   return getPUWeight3BX(PupInfo);
 }
@@ -284,7 +286,7 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
 //////////////////
 //Print Functions/
 //////////////////
-void WPrimeUtil::PrintEvent(edm::EventBase const & event){
+void WPrimeUtil::PrintEvent(const edm::EventBase & event){
   cout<<"run #: "<<event.id().run()
       <<" lumi: "<<event.id().luminosityBlock()
       <<" eventID: "<<event.id().event()<<endl;
@@ -293,7 +295,7 @@ void WPrimeUtil::PrintEvent(edm::EventBase const & event){
 //////////////////
 //Trigger Fns/////
 //////////////////
-bool WPrimeUtil::PassTriggersCut(edm::EventBase const & event, std::string label, const std::vector<std::string>& triggerNames){
+bool WPrimeUtil::PassTriggersCut(const edm::EventBase & event, std::string label, const std::vector<std::string>& triggerNames){
   pat::TriggerEvent triggerEvent = getProduct<pat::TriggerEvent>(event, label);
   return PassTriggersCut(triggerEvent,triggerNames);
 }
@@ -401,7 +403,7 @@ HadronicVWAnalyzer::PassTriggerMatch(const TeVMuon & p, const float cut, const v
 // get hadronic MET component (that needs to be corrected 
 // if applyMETCorrection=true)from Z data; this will be done according to hadronic 
 // activity from Z->mumu reconstructed events
-TVector2 WPrimeUtil::getHadronicMET(edm::EventBase const & event)
+TVector2 WPrimeUtil::getHadronicMET(const edm::EventBase & event)
 {
   if(hadronicMETcalculated_)
     return hadronicMETcached;
@@ -409,7 +411,7 @@ TVector2 WPrimeUtil::getHadronicMET(edm::EventBase const & event)
   assert(event.isRealData() == false);
 
   int W_index = -1;
-  event.getByLabel(genParticles_, genParticles);
+  event.getByLabel(genLabel_, genParticles);
   for(size_t i = 0; i != genParticles->size(); ++i) {
     const reco::GenParticle & W_p = (*genParticles)[i];
     if (W_p.pdgId() == 24 && W_p.status() == 3)
@@ -458,7 +460,7 @@ void WPrimeUtil::setRunningOnData()
 }
 
 //Check if Run/Evt is in Debug list
-bool WPrimeUtil::DebugEvent(edm::EventBase const& event) const
+bool WPrimeUtil::DebugEvent(const edm::EventBase & event) const
 {
   const edm::EventID & evtToCheck = event.id();
   for(uint i=0; i<vEventsToDebug_.size(); ++i){
@@ -485,29 +487,29 @@ void WPrimeUtil::convertMuons(const vector<pat::Muon>& patMuons, const uint& muA
   }
 }
 
-void WPrimeUtil::getElectrons(edm::EventBase const & event, const edm::InputTag& label, ElectronV & electrons){
+void WPrimeUtil::getElectrons(const edm::EventBase & event, const edm::InputTag& label, ElectronV & electrons){
   const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, label);
   convertElectrons(patElectrons, electrons);
 }
 
-void WPrimeUtil::getMuons(edm::EventBase const & event, const edm::InputTag& label, const uint& muAlgo, MuonV & muons){
+void WPrimeUtil::getMuons(const edm::EventBase & event, const edm::InputTag& label, const uint& muAlgo, MuonV & muons){
   const vector<pat::Muon> patMuons = getProduct<vector<pat::Muon> >(event, label);
   convertMuons(patMuons, muAlgo, muons);
 }
 
-inline void WPrimeUtil::getPFCands(edm::EventBase const & event, const edm::InputTag& label, vector<pat::PFParticle> & pfCands){
+inline void WPrimeUtil::getPFCands(const edm::EventBase & event, const edm::InputTag& label, vector<pat::PFParticle> & pfCands){
   edm::Handle<vector<pat::PFParticle> > handle;
   event.getByLabel(label, handle);
   if(handle.isValid()) pfCands = *handle.product();
   else std::cerr<<" Didn't find pfCands in event, skipping\n";
 }
 
-inline void WPrimeUtil::getMET(edm::EventBase const & event, const edm::InputTag& label, pat::MET & met){
+inline void WPrimeUtil::getMET(const edm::EventBase & event, const edm::InputTag& label, pat::MET & met){
   met = getProduct<METV>(event, label)[0];
 }
 
 void
-WPrimeUtil::AdjustMET(edm::EventBase const & event, 
+WPrimeUtil::AdjustMET(const edm::EventBase & event, 
                       const ElectronV & electrons, const MuonV & muons,
                       const edm::InputTag& pfLabel,  pat::MET & met){
   vector<pat::PFParticle> pfCands;
@@ -547,7 +549,7 @@ void WPrimeUtil::getLeptonsMET(edm::EventBase const & event,
 }
 */
 
-void WPrimeUtil::getElectronsMET(edm::EventBase const & event,
+void WPrimeUtil::getElectronsMET(const edm::EventBase & event,
                                  const vector<pat::Electron>& patElectrons, ElectronV & electrons,
                                  const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
                                  const edm::InputTag& pfLabel){
@@ -556,7 +558,7 @@ void WPrimeUtil::getElectronsMET(edm::EventBase const & event,
   if(adjMET) AdjustMET(event, electrons, pfLabel, met);
 }
 
-void WPrimeUtil::getMuonsMET(edm::EventBase const & event,
+void WPrimeUtil::getMuonsMET(const edm::EventBase & event,
                              const vector<pat::Muon    >& patMuons, const uint& muAlgo, MuonV & muons,
                              const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
                              const edm::InputTag& pfLabel){
@@ -565,7 +567,7 @@ void WPrimeUtil::getMuonsMET(edm::EventBase const & event,
   if(adjMET) AdjustMET(event, muons, pfLabel, met);
 }
 
-void WPrimeUtil::getLeptonsMET(edm::EventBase const & event, 
+void WPrimeUtil::getLeptonsMET(const edm::EventBase & event, 
                                const vector<pat::Electron>& patElectrons, ElectronV & electrons,
                                const vector<pat::Muon    >& patMuons, const uint& muAlgo, MuonV & muons,
                                const edm::InputTag& metLabel, const bool & adjMET, pat::MET & met,
