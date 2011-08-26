@@ -11,6 +11,7 @@
 #include "UserCode/CMGWPrimeGroup/interface/WgammaAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/WZAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/HadronicVZAnalyzer.h"
+#include "UserCode/CMGWPrimeGroup/interface/HadronicVWAnalyzer.h"
 
 class WPrimeFinder
 {
@@ -62,6 +63,7 @@ class WPrimeFinder
   bool runElMETAnalysis_;
   bool runWZAnalysis_;
   bool runHadVZAnalysis_;
+  bool runHadVWAnalysis_;
   bool runTBAnalysis_;
   bool runWgammaAnalysis_;
   bool doRecoilCorrectionForW_;
@@ -73,6 +75,7 @@ class WPrimeFinder
   WgammaAnalyzer * WmunugammaAnalyzer;
   WZAnalyzer * wzAnalyzer;
   HadronicVZAnalyzer * hadvzAnalyzer;
+  HadronicVWAnalyzer * hadvwAnalyzer;
   WPrimeUtil * wprimeUtil;
 
   std::vector< edm::LuminosityBlockRange > jsonVector;

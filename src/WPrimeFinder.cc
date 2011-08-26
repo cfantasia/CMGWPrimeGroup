@@ -54,6 +54,7 @@ void WPrimeFinder::getConfiguration(char * cfg_file, int fileToRun)
   runElMETAnalysis_ = cfg.getParameter<bool>("runElMETAnalysis" );
   runWZAnalysis_ = cfg.getParameter<bool>("runWZAnalysis" );
   runHadVZAnalysis_ = cfg.getParameter<bool>("runHadVZAnalysis" );
+  runHadVWAnalysis_ = cfg.getParameter<bool>("runHadVWAnalysis" );
   runTBAnalysis_ = cfg.getParameter<bool>("runTBAnalysis" );
   runWgammaAnalysis_ =cfg.getParameter<bool>("runWgammaAnalysis"); 
   string sample_cross_sections = cfg.getParameter<string>("sample_cross_sections");
@@ -112,6 +113,8 @@ void WPrimeFinder::getConfiguration(char * cfg_file, int fileToRun)
     hadvzAnalyzer = new HadronicVZAnalyzer(cfg, wprimeUtil);
   else
     hadvzAnalyzer = 0;
+
+  hadvwAnalyzer = runHadVWAnalysis_ ? new HadronicVWAnalyzer(cfg, wprimeUtil) : 0;
 }
 
 // operations to be done when changing input file (e.g. create new histograms)
@@ -137,6 +140,8 @@ void WPrimeFinder::beginFile(vector<wprime::InputFile>::const_iterator it)
       wzAnalyzer->beginFile(it);
   if(runHadVZAnalysis_)
     hadvzAnalyzer->beginFile(it);
+  if(runHadVWAnalysis_)
+    hadvwAnalyzer->beginFile(it);
 
 }
 
@@ -158,6 +163,9 @@ void WPrimeFinder::eventLoop(edm::EventBase const & event)
 
   if(runHadVZAnalysis_)
     hadvzAnalyzer->eventLoop(event);
+
+  if(runHadVWAnalysis_)
+    hadvwAnalyzer->eventLoop(event);
 }
 
 
@@ -257,6 +265,8 @@ void WPrimeFinder::endFile(vector<wprime::InputFile>::const_iterator it)
       wzAnalyzer->endFile(it, outLogFile_);  
   if(runHadVZAnalysis_)
     hadvzAnalyzer->endFile(it, outLogFile_);  
+  if(runHadVWAnalysis_)
+    hadvwAnalyzer->endFile(it, outLogFile_);  
 }
 
 // e.g. print summmary of expected events for all samples
@@ -270,8 +280,8 @@ void WPrimeFinder::endAnalysis()
       WmunugammaAnalyzer->endAnalysis(outLogFile_);
   if(runWZAnalysis_)
       wzAnalyzer->endAnalysis(outLogFile_);
-  if(runHadVZAnalysis_)
-    hadvzAnalyzer->endAnalysis(outLogFile_);
+  if(runHadVWAnalysis_)
+    hadvwAnalyzer->endAnalysis(outLogFile_);
 }
 
 bool WPrimeFinder::jsonContainsEvent (const vector<edm::LuminosityBlockRange>&jsonVec, const edm::EventBase &event)

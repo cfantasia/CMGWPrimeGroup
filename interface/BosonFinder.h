@@ -157,6 +157,112 @@ class WCandidate : public BosonCandidate {
   const TeVMuon * muon_;
 };
 
+class DiBosonWLeptonic {
+public:
+  DiBosonWLeptonic(){initialize_();}
+
+  double transMass() const {return transMass_;}
+  double mt() const {return transMass_;}
+  double pt() const {return pt_;}
+
+  double neutrinoPz(std::string type) const{
+    return neutrinoPz_[index_(type)];
+  }
+
+  double mass(std::string type) const{
+    return invariantMass_[index_(type)];
+  }
+
+protected:
+
+  double transMass_;
+  double pt_;
+  std::vector<double> neutrinoPz_;
+  std::vector<double> invariantMass_;
+
+  void initialize_() {
+    transMass_ = 0.;
+    pt_ = 0;
+    neutrinoPz_ = std::vector<double>(4, 0.);
+    invariantMass_ = std::vector<double>(4, 0.);
+  }
+
+  size_t index_(std::string type) const{
+    if (type == "minAngle") return 0;
+    if (type == "maxAngle") return 1;
+    if (type == "maxPz"   ) return 2;
+    if (type == "minPz"   ) return 3;
+    printf("Used a non-existent index in WZCandidate\n");
+    return 9;
+  }
+
+  void setTransMass(const LorentzVector & V, const LorentzVector & wLep, const LorentzVector & met){
+    LorentzVector VplusLep = V + wLep;
+    double term1 = sqrt(VplusLep.M2() + pow(VplusLep.pt(),2)) + met.pt();
+    //double term1 = sqrt(trilepP4.M2() + trilepP4.Perp2()) + met.pt();
+    double term2 = (VplusLep + met).pt();
+    transMass_ = sqrt(pow(term1, 2) - pow(term2, 2));
+  }
+
+  void setPt(const LorentzVector & A, const LorentzVector & B){
+    pt_ = (A+B).pt();
+  }
+
+  void setNuSolns(const LorentzVector & wLep, const LorentzVector & met){
+    double dPhi         = deltaPhi(wLep.phi(), met.phi());
+    double g            = (WMASS * WMASS / 2. + 
+                           wLep.pt() * met.pt() * cos(dPhi));
+    double a            = - pow(wLep.pt(), 2);
+    double b            = 2 * g * wLep.pz();
+    double c            = pow(g, 2) - pow(wLep.mag(), 2) * pow(met.pt(), 2);
+    double discriminant = (b * b) - (4 * a * c);
+    
+    if (discriminant > 0) {
+      
+      TVector3 leptonP3(wLep.px(), wLep.py(), wLep.pz());
+    
+      double   pz1 = -b/(2*a) + sqrt(discriminant)/(2*a);
+      TVector3 p1  = TVector3(met.px(), met.py(), pz1);
+      double   dr1 = p1.DeltaR(leptonP3);
+      
+      double   pz2 = -b/(2*a) - sqrt(discriminant)/(2*a);
+      TVector3 p2  = TVector3(met.px(), met.py(), pz2);
+      double   dr2 = p2.DeltaR(leptonP3);
+
+      neutrinoPz_[0] = (dr1 < dr2) ? pz1 : pz2;
+      neutrinoPz_[1] = (dr1 < dr2) ? pz2 : pz1;
+      neutrinoPz_[2] = (fabs(pz1) > fabs(pz2)) ? pz1 : pz2;
+      neutrinoPz_[3] = (fabs(pz1) > fabs(pz2)) ? pz2 : pz1;
+    }
+  }
+
+  void setMassSolns(const LorentzVector & V, const LorentzVector & wLep, const LorentzVector & met){
+    for (size_t i = 0; i < neutrinoPz_.size(); i++) {
+      double        px = met.px();
+      double        py = met.py();
+      double        pz = neutrinoPz_[i];
+      double        E  = sqrt(pow(px,2) + pow(py,2) + pow(pz,2));
+      LorentzVector p4 = LorentzVector(px, py, pz, E);
+      invariantMass_[i] = (V + wLep + p4).M();
+    }
+  }
+
+  
+};
+
+class WVCandidate : public DiBosonWLeptonic {
+public:
+  WVCandidate(){initialize_();}
+  WVCandidate(const WCandidate & V, const WCandidate & W) {
+    initialize_();
+    setTransMass(V.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
+    setPt(V.p4(), W.p4());
+    setNuSolns(W.daughter(0)->p4(), W.daughter(1)->p4());
+    setMassSolns(V.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
+  }
+};
+
+
 class WZCandidate {
 
  public:
@@ -173,6 +279,7 @@ class WZCandidate {
 
     LorentzVector trilepP4 = zLep1->p4() + zLep2->p4() + wLep->p4();
     double term1 = sqrt(trilepP4.M2() + pow(trilepP4.pt(),2)) + met->pt();
+    //double term1 = sqrt(trilepP4.M2() + trilepP4.Perp2()) + met->pt();
     double term2 = (trilepP4 + met->p4()).pt();
     transMass_ = sqrt(pow(term1, 2) - pow(term2, 2));
     pt_        = (Z.p4()+W.p4()).pt();
@@ -236,6 +343,7 @@ class WZCandidate {
 
   void initialize_() {
     transMass_ = 0.;
+    pt_ = 0;
     neutrinoPz_ = std::vector<double>(4, 0.);
     invariantMass_ = std::vector<double>(4, 0.);
   }
