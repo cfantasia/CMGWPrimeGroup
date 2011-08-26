@@ -68,7 +68,8 @@ class WPrimeFinder
   bool runWgammaAnalysis_;
   bool doRecoilCorrectionForW_;
 
-  edm::InputTag genParticles_;
+  edm::InputTag genLabel_;
+  edm::InputTag pfLabel_;
 
   MuMETAnalyzer * muMETAnalyzer;
   EleMETAnalyzer * eleMETAnalyzer;
