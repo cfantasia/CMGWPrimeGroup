@@ -373,7 +373,7 @@ void EleMETAnalyzer::printHighEtElectron(edm::EventBase const & event)
   TVector2 oldMETv(oldMET->px(), oldMET->py());
   cout << " pfMET = " << oldMET->pt() << " GeV";
   cout << " TM = " << WPrimeUtil::TMass(el4D, oldMETv) << " GeV " << endl;
-  if(wprimeUtil_->shouldApplyMETCorrection())
+  if(wprimeUtil_->shouldApplyHadronicRecoilCorrection())
     {
       TVector2 newMET = getNewMET(event, el4D);
       cout << " hadronic-recoil-adjusted pfMET = " << newMET.Mod() 
@@ -411,7 +411,7 @@ void EleMETAnalyzer::printHighEtElectron(edm::EventBase const & event)
 // activity from Z->mumu (not ee?) reconstructed events
 TVector2 EleMETAnalyzer::getNewMET(edm::EventBase const & event, const TLorentzVector & el_p)
 {
-  if(wprimeUtil_->shouldApplyMETCorrection())
+  if(wprimeUtil_->shouldApplyHadronicRecoilCorrection())
     return wprimeUtil_->getHadronicMET(event) - TVector2(el_p.Px(), el_p.Py());
 
   pat::METCollection::const_iterator pfMET = met->begin();
