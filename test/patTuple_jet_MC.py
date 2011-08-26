@@ -15,6 +15,14 @@ mumet_config(process, 1000, -1)
 jetExtra_config(process, 1000, -1)
 mc_config(process, cms)
 
+# keep all events with 2 global muons above 10 GeV, |eta| < 2.4
+process.selectedPatMuons.cut = "pt > 10. & abs(eta) < 2.4 & isGlobalMuon"
+
+process.lowPtMuonFilter = cms.EDFilter("CandViewCountFilter",
+                                src = cms.InputTag("selectedPatMuons"),
+                                minNumber = cms.uint32(2)
+                                )
+
 # keep all events with jet-pt above 30 GeV, |eta| < 2.4
 process.selectedPatJets.cut = "pt > 30. & abs(eta) < 2.4"
 process.lowPtJetFilter = cms.EDFilter("CandViewCountFilter",
@@ -48,8 +56,9 @@ getattr(process,"PF2PATmod").replace(
 ## let it run
 process.p = cms.Path(
     process.muonMatch + 
-    process.patMuons + 
-    process.selectedPatMuons +
+    process.patMuons * 
+    process.selectedPatMuons *
+    process.lowPtMuonFilter +
     process.goodOfflinePrimaryVertices*
     getattr(process,"PF2PATmod")*  
     # process.PF2PATmod *
