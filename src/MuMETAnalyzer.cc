@@ -13,7 +13,6 @@ MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUti
 
   muonsLabel_       = cfg.getParameter<edm::InputTag>("muons"  );
   metLabel_       = cfg.getParameter<edm::InputTag>("met"  );
-  pfLabel_ = cfg.getParameter<edm::InputTag>("particleFlow" );
   muReconstructor_   = cfg.getParameter<int>("muonReconstructor");
   muonPtThreshold_   = cfg.getParameter<double>("muonPtThreshold");
   chi2Cut_           = cfg.getParameter<double>("chi2Cut");
@@ -100,22 +99,19 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 	}
     }
 
-  // convert patMuons collection to vector-of TeVMuons
-  WPrimeUtil::getMuonsMET(event, *muons, muReconstructor_, vmuons, 
-			  metLabel_, useAdjustedMET_, met, pfLabel_); 
-
   //loop over muons
   for (unsigned theMu = iMuMin; theMu != iMuMax; ++theMu){//loop over muons
     bool fill_entry = true; // if true, will histogram muon
-    pfMETwithoutMuCalculated_ = false;
 
     TeVMuon muon((*muons)[theMu], muReconstructor_);
     if(!muon.isValid())continue;
+    if(muon.pt() < muonPtThreshold_) continue;
+    
+    Wcand = wprimeUtil_->getNewMETandW(event, muon, met);
 
-    mu4D = muon.P4();
-    if(mu4D.Pt() < muonPtThreshold_) continue;
     for(int cut_index = 0; cut_index != Num_mumet_cuts; ++cut_index)
       { // loop over selection cuts
+	
 	string arg = mumet_cuts_desc_short[cut_index];
 	// call to function [as implemented in setupCutOder]
 	// don't get me started about the syntax!
@@ -129,7 +125,7 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 	   && cut_index == Num_mumet_cuts-1
 	   && wprimeUtil_->runningOnData() && 
 	   muon.innerTrack()->pt() > dumpHighPtMuonThreshold_)
-	  printHighPtMuon(event, muon);
+	  printHighPtMuon(event, (*muons)[theMu]);
       
       } // loop over selection cuts
 
@@ -156,11 +152,10 @@ void MuMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
     }
   float weight = wprimeUtil_->getWeight();
   // fill the histograms
-  hPT[cut_index]->Fill(mu4D.Pt(), weight);
-  hETA[cut_index]->Fill(mu4D.Eta(), weight);
-  hPHI[cut_index]->Fill(mu4D.Phi(), weight);
-  //  hMJDPHI[cut_index]->Fill( XJetDPhi(mu4D, event), weight);
-  hTM[cut_index]->Fill(WPrimeUtil::TMass(mu4D, getNewMET(event, mu4D)), weight);
+  hPT[cut_index]->Fill(muon->pt(), weight);
+  hETA[cut_index]->Fill(muon->eta(), weight);
+  hPHI[cut_index]->Fill(muon->phi(), weight);
+  hTM[cut_index]->Fill(Wcand.mt(), weight);
   hISO[cut_index]->Fill(muon->trkRelIsolation(),weight);
 }
 
@@ -384,12 +379,12 @@ void MuMETAnalyzer::setupCutOrder()
 }
 
 // dump on screen info about high-pt muon
-void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, TeVMuon & muon) 
+void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const pat::Muon & muon) 
 {
   cout << "\n Run # = " << event.id().run() << " Event # = " 
        << event.id().event() << " LS = " << event.id().luminosityBlock() 
        << endl;
-  cout << " Muon eta = " << mu4D.Eta() << "  phi = " << mu4D.Phi() << endl;
+  cout << " Muon eta = " << muon.eta() << "  phi = " << muon.phi() << endl;
   pat::METCollection::const_iterator oldMET = defMet->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
   //  cout << " default pfMET = " << oldMET->pt() << " GeV ";
@@ -398,92 +393,21 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, TeVMuon & muon
 
   for(It it = reconstructors.begin(); it != reconstructors.end(); ++it)
     {
-      unsigned rec_i(*it);
-      if(!muon.isValid(rec_i)) continue;
-      TLorentzVector p4 = muon.P4(rec_i);
-      TVector2 newMET = getNewMET(event, p4);
-      cout << " " << algo_desc_long[rec_i] << " pt = "
-	   << muon.getTrack(rec_i)->pt() << " +- " 
-	   << muon.getTrack(rec_i)->ptError()
-	   << " GeV, charge = " << muon.getTrack(rec_i)->charge() 
-	   << ", TM = " << WPrimeUtil::TMass(p4, newMET) << " GeV " << endl;
+      TeVMuon mu(muon, *it);
+      if(!mu.isValid())continue;
+
+      pat::MET myMet;    
+      WCandidate w = wprimeUtil_->getNewMETandW(event, mu, myMet);
+
+      cout << " " << algo_desc_long[*it] << " pt = "
+	   << mu.getTrack(*it)->pt() << " +- " 
+	   << mu.getTrack(*it)->ptError()
+	   << " GeV, charge = " << mu.getTrack(*it)->charge() 
+	   << ", TM = " << w.mt() << " GeV " << endl;
     }
       
 
 }
-
-// Get new MET: there are two corrections to be made:
-// (a) the hadronic MET component (that needs to be corrected 
-// if applyMETCorrection=true)from Z data; this will be done according to hadronic 
-// activity from Z->mumu reconstructed events
-// (b) the muon-pt component that needs to be updated if we switch to one
-// of the dedicated high-pt muon reconstructors
-TVector2 MuMETAnalyzer::getNewMET(edm::EventBase const & event, const TLorentzVector & mu_p)
-{
-  if(wprimeUtil_->shouldApplyMETCorrection())
-    return wprimeUtil_->getHadronicMET(event) - TVector2(mu_p.Px(), mu_p.Py());
-
-  return getPFMETwithoutMu(event) - TVector2(mu_p.Px(), mu_p.Py());
-}
-
-// get (PF) MET without the default-pt for the running muon in event (mu4D);
-// this is done so that we can adjust the muon-pt component of the MET by 
-// switching to one of the dedicated high-pt muon reconstructors
-TVector2 MuMETAnalyzer::getPFMETwithoutMu(edm::EventBase const & event)
-{
-  if(pfMETwithoutMuCalculated_)
-    return pfMETwithoutMuCached_;
-
-  pat::METCollection::const_iterator oldMET = defMet->begin();
-  float met_x = oldMET->px(); float met_y = oldMET->py();
-
-  //----Loop over PFCandidates to get the hardest muon and put its
-  //pT back to the MET TVector2; create a new object
-  edm::Handle<pat::PFParticleCollection > PFCandidates;
-  event.getByLabel(pfLabel_,PFCandidates);
-  int nmuon = 0;
-  pat::PFParticleCollection::const_iterator iParticle;
-  pat::PFParticleCollection::const_iterator icorrespondingPFMu;
-  for( iParticle = (PFCandidates.product())->begin() ; 
-       iParticle != (PFCandidates.product())->end() ; ++iParticle ){
-    const reco::Candidate* candidate = &(*iParticle);
-    if (candidate) {
-      const reco::PFCandidate* pfCandidate = 
-	dynamic_cast<const reco::PFCandidate*> (candidate);
-      if (pfCandidate){
-	//check that it is a muon
-	if (!(pfCandidate->particleId() == 3)) continue;
-	double deta = mu4D.Eta() - pfCandidate->eta();
-	double dphi = reco::deltaPhi(mu4D.Phi(), pfCandidate->phi());
-	double dR = TMath::Sqrt(deta*deta + dphi*dphi);
-	if(dR < 0.01)
-	  {
-	    icorrespondingPFMu = iParticle;
-	    ++nmuon;
-	    break;
-	  }
-         
-      }//pfCandidate
-    }//if candidate
-  }//loop over PFCandidates
-  
-  //Add back the pT for the hardest muon if found.
-  if (nmuon > 0){
-    const reco::Candidate* mycandidate = &(*icorrespondingPFMu);
-    const reco::PFCandidate* mypfCandidate = 
-      dynamic_cast<const reco::PFCandidate*> (mycandidate);
-    met_x += mypfCandidate->px();
-    met_y += mypfCandidate->py();
-  }//if nmuon >0
-  else { // if no match found, use mu4D value
-    met_x += mu4D.Px();
-    met_y += mu4D.Py();
-  }
-  pfMETwithoutMuCached_.Set(met_x,met_y);
-  pfMETwithoutMuCalculated_ = true;
-  return pfMETwithoutMuCached_;
-}
-
 
 // whether HLT accepted the event
 bool MuMETAnalyzer::passedHLT(bool *, const TeVMuon *, edm::EventBase const &)
@@ -540,15 +464,12 @@ bool MuMETAnalyzer::isolatedMuon(bool * goodQual, const TeVMuon * muon,
 
 // check if muon, MET pass kinematic cuts, updated goodQual
 // always returns true
-bool MuMETAnalyzer::kinematicCuts(bool * goodQual, const TeVMuon *, 
+bool MuMETAnalyzer::kinematicCuts(bool * goodQual, const TeVMuon * muon, 
 				  edm::EventBase const & event)
 {
-  TVector2 MET = getNewMET(event, mu4D);
-  float ratio = mu4D.Pt()/MET.Mod();
-  
-  TVector2 muon_T(mu4D.Px(), mu4D.Py());
-  float delta_phi = MET.DeltaPhi(muon_T);
-  
+  float ratio = muon->pt()/met.et();
+  float delta_phi = Wcand.CalcDPhi();
+
   if(ratio < 0.4 || ratio > 1.5 || TMath::Abs(delta_phi) < 2.5)
     *goodQual = false;
 
