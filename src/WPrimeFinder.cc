@@ -48,7 +48,8 @@ void WPrimeFinder::getConfiguration(char * cfg_file, int fileToRun)
   maxEvents_   = cfg.getParameter<int>("maxEvents") ;
   useJSON_   = cfg.getParameter<bool>("useJSON") ;
   countGenEvts_ = cfg.getParameter<bool>("countGenEvts");
-  genParticles_ = cfg.getParameter<edm::InputTag>("genParticles" );
+  genLabel_ = cfg.getParameter<edm::InputTag>("genParticles" );
+  pfLabel_ = cfg.getParameter<edm::InputTag>("particleFlow" );
   doRecoilCorrectionForW_ = cfg.getParameter<bool>("doRecoilCorrectionForW");
   runMuMETAnalysis_ = cfg.getParameter<bool>("runMuMETAnalysis" );
   runElMETAnalysis_ = cfg.getParameter<bool>("runElMETAnalysis" );
@@ -85,7 +86,7 @@ void WPrimeFinder::getConfiguration(char * cfg_file, int fileToRun)
   
   std::vector<edm::EventID> vEventsToDebug = cfg.getParameter<std::vector<edm::EventID> >("vEventsToDebug");
   
-  wprimeUtil = new WPrimeUtil(outputFile_.c_str(), genParticles_, sample_cross_sections);
+  wprimeUtil = new WPrimeUtil(outputFile_.c_str(), genLabel_, pfLabel_, sample_cross_sections);
   wprimeUtil->SetLumiWeights(MCPUDistFile_, DataPUDistFile_, MCPUDistHist_, DataPUDistHist_);
   wprimeUtil->SetEventsToDebug(vEventsToDebug);
 
@@ -123,7 +124,7 @@ void WPrimeFinder::beginFile(vector<wprime::InputFile>::const_iterator it)
   bool shouldCorrectMt = 
     ((it->samplename=="W" || it->samplename=="Wlowpt") 
      && doRecoilCorrectionForW_);
-  wprimeUtil->setApplyMETCorrection(shouldCorrectMt);
+  wprimeUtil->setApplyHadronicRecoilCorrection(shouldCorrectMt);
 
   wprimeUtil->setSampleName(it->samplename);
   wprimeUtil->setWeight(it->weight);
