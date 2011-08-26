@@ -7,6 +7,7 @@
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/mumet_histo_constants.h"
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
+#include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
 
 #include "TLorentzVector.h"
 
@@ -94,17 +95,9 @@ class MuMETAnalyzer
 		  edm::EventBase const & event, const TeVMuon * muon);
   
   // dump on screen info about high-pt muon
-  void printHighPtMuon(edm::EventBase const & event, TeVMuon & muon);
+  void printHighPtMuon(edm::EventBase const & event, const pat::Muon & muon);
 
   TLorentzVector mu4D;
-
-  // Get new MET: there are two corrections to be made:
-  // (a) the hadronic MET component (that needs to be corrected 
-  // if applyCorrection=true) from Z data; this will be done according to hadronic 
-  // activity from Z->mumu reconstructed events
-  // (b) the muon-pt component that needs to be updated if we switch to one
-  // of the dedicated high-pt muon reconstructors
-  TVector2 getNewMET(edm::EventBase const & event, const TLorentzVector & mu_p);
 
   // whether HLT accepted the event
   bool passedHLT(bool *, const TeVMuon * muon, edm::EventBase const &);
@@ -125,21 +118,14 @@ class MuMETAnalyzer
 
   // check if muon, MET pass kinematic cuts, updated goodQual
   // always returns true
-  bool kinematicCuts(bool * goodQual, const TeVMuon *, edm::EventBase const & event);
+  bool kinematicCuts(bool * goodQual, const TeVMuon * muon, edm::EventBase const & event);
 
   // print summary of efficiencies
   void printFileSummary(std::vector<wprime::InputFile>::const_iterator,
 			ofstream & out);
+
+  WCandidate Wcand;
   
-  // get (PF) MET without the default-pt for the running muon in event (mu4D);
-  // this is done so that we can adjust the muon-pt component of the MET by 
-  // switching to one of the dedicated high-pt muon reconstructors
-  TVector2 getPFMETwithoutMu(edm::EventBase const & event);
-  bool pfMETwithoutMuCalculated_; // want to calculate this max. once for each muon
-  TVector2 pfMETwithoutMuCached_; 
-
-
-			
   float muonPtThreshold_;
   float chi2Cut_;
   float muonEtaCut_;
