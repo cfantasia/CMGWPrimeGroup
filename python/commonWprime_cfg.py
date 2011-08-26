@@ -45,6 +45,7 @@ process.WprimeAnalyzer = cms.PSet(
     runElMETAnalysis = cms.bool(False),
     runWZAnalysis    = cms.bool(False),
     runHadVZAnalysis = cms.bool(False),
+    runHadVWAnalysis = cms.bool(False),
     runTBAnalysis    = cms.bool(False),
     runWgammaAnalysis = cms.bool(False),
 
@@ -63,6 +64,7 @@ process.WprimeAnalyzer = cms.PSet(
 
     electronSelectors = electronSelectors,
     muonSelectors = muonSelectors,
+    jetSelectors = jetSelectors,
 
     inputs = process.inputs,
 
