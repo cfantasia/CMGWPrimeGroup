@@ -359,6 +359,21 @@ class WZCandidate {
 
 };
 
+class VZCandidate : public reco::CompositeCandidate{
+public:
+  VZCandidate(){};
+  VZCandidate(const ZCandidate & Z, const WCandidate & W){
+    addDaughter(Z);
+    addDaughter(W);
+    AddFourMomenta addP4;
+    addP4.set(* this);
+  }
+  operator bool() const {
+    return (numberOfDaughters() > 0);
+  }
+private:
+};
+
 typedef std::vector<ZCandidate > ZCandV;
 typedef std::vector<WCandidate > WCandV;
 typedef std::vector<WZCandidate> WZCandV;
