@@ -27,8 +27,8 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
   looseMuon_ = MuonSelector(mSelectorPset_, looseMuonType_);
   tightMuon_ = MuonSelector(mSelectorPset_, tightMuonType_);
   muonResult_ = looseMuon_.getBitTemplate();
-  if(debugme) cout<<"Using "<<looseElectronType_<<" for Z muons and "
-                  <<tightElectronType_<<" for W muons\n";
+  if(debugme) cout<<"Using "<<looseMuonType_<<" for Z muons and "
+                  <<tightMuonType_<<" for W muons\n";
 
   doPreselect_ = cfg.getParameter<bool>("preselect");
 
@@ -654,6 +654,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   //const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, electronsLabel_);
   event.getByLabel(muonsLabel_,patMuonsH_);
   //const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
+  event.getByLabel(metLabel_, metH_);
   WPrimeUtil::getLeptonsMET(patElectronsH_, electrons_,
                             patMuonsH_, muonAlgo_, muons_,
                             metH_, useAdjustedMET_, met_,
