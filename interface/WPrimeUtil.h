@@ -12,6 +12,7 @@
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 
 #include "UserCode/CMGWPrimeGroup/interface/util.h"
+#include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
 
 #include <TVector2.h>
 #include <TLorentzVector.h>
@@ -28,7 +29,7 @@ class TH2D;
 class WPrimeUtil
 {
  public:
-  WPrimeUtil(const char * out_filename, edm::InputTag genParticles, std::string cross_sections);
+  WPrimeUtil(const char * out_filename, edm::InputTag genLabel, edm::InputTag pfLabel, std::string cross_sections);
 
   ~WPrimeUtil();
 
@@ -37,10 +38,10 @@ class WPrimeUtil
   // get input files (to be retrieved from samples_cross_sections.txt)
   void getInputFiles(std::vector<wprime::InputFile> & inputFiles);
 
-  void setApplyMETCorrection(bool flag){applyMETCorrection_ = flag;}
+  void setApplyHadronicRecoilCorrection(bool flag){applyHadronicRecoilCorrection_ = flag;}
   void setHadronicMETCalculated(bool flag){hadronicMETcalculated_ = flag;}
 
-  bool shouldApplyMETCorrection(){return applyMETCorrection_;}
+  bool shouldApplyHadronicRecoilCorrection(){return applyHadronicRecoilCorrection_;}
 
   void setSampleName(std::string samplename){samplename_ = samplename;}
   void setWeight(float weight){weight_ = weight;}
@@ -143,6 +144,18 @@ class WPrimeUtil
     TVector2 defaultAlgo( pfCand.px(), pfCand.py() );
     return chosenAlgo - defaultAlgo;
   }
+
+  // adjust MET <met> by subtracting <subtract>; 
+  // takes MET significance properly into account by adjusting sumEt
+  static void AdjustMET(pat::MET & met, const TVector2 & subtract)
+    {
+      TVector2 newmet(met.px()-subtract.Px(), met.py()-subtract.Py());
+      //std::cout<<"Before met et: "<<met.et()<<" met phi: "<<met.phi()<<std::endl;
+      //Note: Should the new met be wrt beamspot??, what is old met wrt?
+      met = pat::MET(reco::MET(met.sumEt()+subtract.Mod(), 
+			       LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), 
+			       reco::MET::Point(0,0,0)));
+    }
   
 /////////////////////
 ////Adjust MET Fns///
@@ -151,12 +164,7 @@ class WPrimeUtil
     static void AdjustMET(const std::vector<T> & leptons,
                           const std::vector<pat::PFParticle> & pfCands,
                           pat::MET & met){
-    TVector2 adj = adjustPt(leptons, pfCands);
-    TVector2 newmet(met.px()-adj.Px(), met.py()-adj.Py());
-    //std::cout<<"Before met et: "<<met.et()<<" met phi: "<<met.phi()<<std::endl;
-    //Note: Should the new met be wrt beamspot??, what is old met wrt?
-    met = pat::MET(reco::MET(met.sumEt()+adj.Mod(), LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), reco::MET::Point(0,0,0)));
-    //std::cout<<"After  met et: "<<met.et()<<" met phi: "<<met.phi()<<std::endl;
+    AdjustMET(met, adjustPt(leptons, pfCands));
   }
   
   template<class T>
@@ -214,14 +222,48 @@ class WPrimeUtil
 
   static void convertElectrons(const std::vector<pat::Electron>& patElectrons, ElectronV & electrons);
   static void convertMuons(const std::vector<pat::Muon>& patMuons, const uint& muAlgo, MuonV & muons);
-  static void getElectrons(edm::EventBase const & event, const edm::InputTag& label, ElectronV & electrons);
-  static void getMuons    (edm::EventBase const & event, const edm::InputTag& label, const uint&  muonAlgo, MuonV & muons);
-  static void getPFCands  (edm::EventBase const & event, const edm::InputTag& label, std::vector<pat::PFParticle> & pfCands);
-  static void getMET      (edm::EventBase const & event, const edm::InputTag& label, pat::MET & met);
+  static void getElectrons(const edm::EventBase & event, const edm::InputTag& label, ElectronV & electrons);
+  static void getMuons    (const edm::EventBase & event, const edm::InputTag& label, const uint&  muonAlgo, MuonV & muons);
+  static void getPFCands  (const edm::EventBase & event, const edm::InputTag& label, std::vector<pat::PFParticle> & pfCands);
+  static void getMET      (const edm::EventBase & event, const edm::InputTag& label, pat::MET & met);
 
   static void tabulateSummary(wprime::EffV results);
   static void printSummary(const std::string& dir, const std::string& description, const vstring & Cuts, const wprime::EffV results, ofstream & out);
-  
+
+  // MET adjustments, designed for lepton+MET signatures. There are two corrections to be made:
+  // (a) the hadronic recoil component (that needs to be adjusted in simulated W->lepton samples 
+  // if applyHadronicRecoilCorrection=true) from Z data; this will be done according to hadronic 
+  // activity from Z->ll reconstructed events, with the addition of the lepton pt; if enabled, 
+  // this ignores completely the measured (pf)MET in the event
+  // (b) the lepton-pt component that needs to be updated if we switch to one
+  // of the dedicated high-pt TeV or HEEP reconstructors
+  template<class T>
+    void getNewMET(const edm::EventBase & event, const T & lepton, pat::MET & met)
+    {
+      if(shouldApplyHadronicRecoilCorrection())
+	{ // this is correction (a)
+	  TVector2 hadronMET = getHadronicMET(event);
+	  // initialize event's MET to hadronic-MET
+	  met = pat::MET(reco::MET(LorentzVector(hadronMET.Px(), hadronMET.Py(), 0, hadronMET.Mod()), reco::MET::Point(0,0,0)));
+	  // adjust by subtracting the lepton pt
+	  AdjustMET(met, TVector2(lepton.px(), lepton.py()));
+	}
+      else
+	{ // this is correction (b)
+	  std::vector<T> vl; vl.push_back(lepton);
+	  // correct (pf)MET by taking into account TeV/heep reconstruction for muons/electrons
+	  AdjustMET(event, vl, pfLabel_, met);
+	}
+    }
+
+  // calls getNewMET; returns W canidate from lepton and (adjusted) MET
+  template<class T>
+    WCandidate getNewMETandW(const edm::EventBase & event, const T & lepton, pat::MET & met)
+    {
+      getNewMET(event, lepton, met);
+      return WCandidate(lepton, met);
+    }
+
 private:
   fwlite::TFileService * fs;
   // directory containing all input samples
@@ -250,12 +292,13 @@ private:
   // used for the parsing of samples_cross_sections.txt
   void parseLine(const std::string & new_line, wprime::InputFile * in_file);
 
-  bool applyMETCorrection_; // wether to apply hadronic recoil correction (aimed for W)
+  bool applyHadronicRecoilCorrection_; // wether to apply hadronic recoil correction (aimed for W)
   bool hadronicMETcalculated_; // want to calculate this max. once per event
 
   TVector2 hadronicMETcached;
 
-  edm::InputTag genParticles_;
+  edm::InputTag genLabel_;
+  edm::InputTag pfLabel_;
  // Handle to GenParticleCollectiom>
   edm::Handle<reco::GenParticleCollection> genParticles;
   
