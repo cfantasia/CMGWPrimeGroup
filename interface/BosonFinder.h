@@ -169,8 +169,12 @@ public:
     return neutrinoPz_[index_(type)];
   }
 
-  double mass(std::string type) const{
+  double mass(std::string type="minPz") const{
     return invariantMass_[index_(type)];
+  }
+
+  operator bool() const {
+    return (invariantMass_[0] > 0);
   }
 
 protected:
@@ -192,7 +196,7 @@ protected:
     if (type == "maxAngle") return 1;
     if (type == "maxPz"   ) return 2;
     if (type == "minPz"   ) return 3;
-    printf("Used a non-existent index in WZCandidate\n");
+    printf("Used a non-existent index in DiBoson Candidate\n");
     return 9;
   }
 
@@ -255,6 +259,7 @@ public:
   WVCandidate(){initialize_();}
   WVCandidate(const WCandidate & V, const WCandidate & W) {
     initialize_();
+    if(!V || !W) return;
     setTransMass(V.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
     setPt(V.p4(), W.p4());
     setNuSolns(W.daughter(0)->p4(), W.daughter(1)->p4());
@@ -330,10 +335,13 @@ class WZCandidate {
     return neutrinoPz_[index_(type)];
   }
 
-  double mass(std::string type) const{
+  double mass(std::string type="minPz") const{
     return invariantMass_[index_(type)];
   }
 
+  operator bool() const {
+    return (invariantMass_[0] > 0);
+  }
  private:
 
   double transMass_;
@@ -363,6 +371,7 @@ class VZCandidate : public reco::CompositeCandidate{
 public:
   VZCandidate(){};
   VZCandidate(const ZCandidate & Z, const WCandidate & W){
+    if(!Z || !W) return;
     addDaughter(Z);
     addDaughter(W);
     AddFourMomenta addP4;
