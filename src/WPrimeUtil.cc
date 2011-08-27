@@ -613,7 +613,7 @@ void WPrimeUtil::getLeptonsMET(const PatElectronVH & patElectronsH, ElectronV & 
 
 //Writing results to a txt file
 //--------------------------------------------------------------------------
-void WPrimeUtil::tabulateSummary(wprime::EffV results){
+void WPrimeUtil::tabulateSummary(wprime::EffV& results){
   for(uint i = 0; i < results.size(); ++i){
     //calculate efficiencies
     int idx = std::max((int)i-1,0);
@@ -624,7 +624,7 @@ void WPrimeUtil::tabulateSummary(wprime::EffV results){
   } // loop over different cuts
 }//tabulateSummary
 
-void WPrimeUtil::printSummary(const string& dir, const string& description, const vstring & Cuts, const wprime::EffV results, ofstream & out){ 
+void WPrimeUtil::printSummary(const string& dir, const string& description, const vstring & Cuts, const wprime::EffV& results, ofstream& out){ 
   out << setiosflags(std::ios::fixed) << std::setprecision(2);
   out<<"$$$$$$$$$$$$$$$$$$$$$$$ Type of sample: "<<dir<<" ( "<<description<<" )"<<endl;
 //  out << " xsec*lumi expected events = " << Nthe_evt << endl;

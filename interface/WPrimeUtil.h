@@ -227,9 +227,9 @@ class WPrimeUtil
   static void getPFCands  (const edm::EventBase & event, const edm::InputTag& label, std::vector<pat::PFParticle> & pfCands);
   static void getMET      (const edm::EventBase & event, const edm::InputTag& label, pat::MET & met);
 
-  static void tabulateSummary(wprime::EffV results);
-  static void printSummary(const std::string& dir, const std::string& description, const vstring & Cuts, const wprime::EffV results, ofstream & out);
-
+  static void tabulateSummary(wprime::EffV& results);
+  static void printSummary(const std::string& dir, const std::string& description, const vstring & Cuts, const wprime::EffV& results, ofstream& out);
+  
   // MET adjustments, designed for lepton+MET signatures. There are two corrections to be made:
   // (a) the hadronic recoil component (that needs to be adjusted in simulated W->lepton samples 
   // if applyHadronicRecoilCorrection=true) from Z data; this will be done according to hadronic 
