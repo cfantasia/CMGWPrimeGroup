@@ -166,6 +166,9 @@ struct highestPt {
   bool operator() (const C * a, const D * b) {
     return a->pt() > b->pt();
   }
+  bool operator() (const C & a, const D & b) {
+    return a.pt() > b.pt();
+  }
 };
 struct highestPtLepton {
   bool operator() (const reco::CompositeCandidate a, 
@@ -415,8 +418,8 @@ public:
   bool operator()(const TeVMuon & p, pat::strbitset & ret, const float pu) {
     ret.set(false);
     reco::TrackRef global = p.globalTrack();
-    const reco::HitPattern& hp = global->hitPattern();
     if(!global.isNull()){
+      const reco::HitPattern& hp = global->hitPattern();
       setPassCut("minPt", p.pt(), ret);
       setPassCut("maxEta", fabs(p.eta()), ret);
       setPassCut("maxDxy", fabs(p.dB()), ret);
@@ -455,7 +458,7 @@ public:
   }
   virtual bool operator()(const pat::Jet & p, pat::strbitset & ret) {
     ret.set(false);
-    bool inTracking = fabs(p.eta()) > 2.4;
+    bool inTracking = fabs(p.eta()) < 2.4;
     setPassCut("minPt", p.pt(), ret);
     setPassCut("maxEta", fabs(p.eta()), ret);
     setPassCut("maxNHF", p.neutralHadronEnergyFraction(), ret);
@@ -478,8 +481,7 @@ public:
 /////////////////////
 
 template<class T1,class T2>
-bool
-Match(const T1 & p1, const T2 & p2){
+bool Match(const T1 & p1, const T2 & p2){
   float tolerance = 0.0001;
   if (p1.pdgId() == p2.pdgId() &&
       fabs(p1.eta() - p2.eta()) < tolerance &&
@@ -492,6 +494,13 @@ Match(const T1 & p1, const T2 & p2){
 template<class T>
 bool Match(const heep::Ele & p1, const T & p2){
   return Match(p1.patEle(), p2);
+}
+template<class T>
+bool Match(const T & p1, const heep::Ele & p2){
+  return Match(p1, p2.patEle());
+}
+static bool Match(const heep::Ele & p1, const heep::Ele & p2){
+  return Match(p1.patEle(), p2.patEle());
 }
 
 template<class T1, class T2>
@@ -513,13 +522,19 @@ const T2 & Find(const T1 & p, const std::vector<T2>& vec){
 }
 
 template<class T1, class T2>
-  bool Overlap(const T1 & p, const std::vector<T2>& vec, const float minDR=0.01){
+bool Contains(const T1 & p, const std::vector<T2>& vec){
   for(uint i=0; i<vec.size(); ++i){
-    if(reco::deltaR(p, vec[i]) < minDR) return false;
+    if(Match(vec[i], p)) return true;
   }
-  return true;
+  return false;
 }
 
-
+template<class T1, class T2>
+  bool Overlap(const T1 & p, const std::vector<T2>& vec, const float minDR=0.01){
+  for(uint i=0; i<vec.size(); ++i){
+    if(reco::deltaR(p, vec[i]) < minDR) return true;
+  }
+  return false;
+}
 
 #endif // _util_h
