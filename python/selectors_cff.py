@@ -1,7 +1,12 @@
 import FWCore.ParameterSet.Config as cms
+
+#####################
+######  Muons  ######
+#####################
+
 #Note: These cuts are <= and >= 
 muonSelectors = cms.PSet(
-    WZBase = cms.PSet(
+    VBTF = cms.PSet(
        minPt = cms.untracked.double(10.),
        maxEta = cms.untracked.double(2.4),
        minIsGlobal = cms.untracked.int32(1),
@@ -15,19 +20,31 @@ muonSelectors = cms.PSet(
     WZLoose = cms.PSet(),
     WZRelaxed = cms.PSet(),
     WZTight = cms.PSet(),
+    HadVZLoose = cms.PSet(),
+    HadVZTight = cms.PSet(),
     exotica = cms.PSet(
     ),
     )
-muonSelectors.WZLoose = muonSelectors.WZBase.clone()
+muonSelectors.WZLoose = muonSelectors.VBTF.clone()
 muonSelectors.WZLoose.minPt = cms.untracked.double(10.)
 muonSelectors.WZLoose.maxIso03 = cms.untracked.double(0.15)
 
-muonSelectors.WZRelaxed = muonSelectors.WZBase.clone()
+muonSelectors.WZRelaxed = muonSelectors.VBTF.clone()
 muonSelectors.WZRelaxed.minPt = cms.untracked.double(20.)
 
-muonSelectors.WZTight = muonSelectors.WZBase.clone()
+muonSelectors.WZTight = muonSelectors.VBTF.clone()
 muonSelectors.WZTight.minPt = cms.untracked.double(20.)
 muonSelectors.WZTight.maxIso03 = cms.untracked.double(0.1)
+
+muonSelectors.HadVZLoose = muonSelectors.VBTF.clone()
+muonSelectors.HadVZLoose.minPt = cms.untracked.double(10.)
+
+muonSelectors.HadVZTight = muonSelectors.VBTF.clone()
+muonSelectors.HadVZTight.minPt = cms.untracked.double(35.)
+
+#####################
+####  Electrons  ####
+#####################
 
 cutsMissingHits = [0, 0, 0, 0, 0, 0]
 cutsConvDist = [0., 0., 0.02, 0.02, 0.02, 0.02]
@@ -94,9 +111,9 @@ jetSelectors = cms.PSet(
        maxEta = cms.untracked.double(2.4),
        maxNHF = cms.untracked.double(0.99),
        maxNEF = cms.untracked.double(0.99),
-       minNDaughters = cms.untracked.int32(1),
+       minNDaughters = cms.untracked.int32(2),
        minCHF = cms.untracked.double(0.0),#Why is this min?
        maxCEF = cms.untracked.double(0.99),
-       minCMult = cms.untracked.int32(0),
+       minCMult = cms.untracked.int32(1),
        ),
     )
