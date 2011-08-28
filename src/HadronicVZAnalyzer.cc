@@ -553,7 +553,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   // Loop over jets, and see if they pass the jet criteria
   for (size_t i = 0; i < patJets.size(); ++i) {
-    if (PassJetCut(&patJets[i]) && !Overlap(patJets[i], looseMuons_))
+    if (PassJetCut(&patJets[i]) && !Overlap(patJets[i], looseMuons_, 0.5, 2))
       jets_.push_back(patJets[i]);
   }
   
