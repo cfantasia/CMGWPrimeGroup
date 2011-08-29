@@ -456,8 +456,9 @@ void HadronicVZAnalyzer::FillGoodVZHistos(){
 
 void 
 HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
+  if(debugme) WPrimeUtil::PrintEvent(event);
   ClearEvtVariables();
-
+  
   // Preselection - skip events that don't look promising
   if (doPreselect_){
     if(debugme) cout<<"Testing Preselection...\n";
@@ -739,6 +740,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   bool validZTight = PassValidZCutTight();
   if (debugme && validZTight)
     cout << "Valid Z from tight muons" << endl;
+  Tabulate_Me(iCut, weight_);
   
   //Cory: CutTightZMass
   //Cory: CutTightZpt
@@ -1095,10 +1097,14 @@ HadronicVZAnalyzer::ClearEvtVariables(){
   hadVZTight_ = VZCandidate();
 }
 
+void HadronicVZAnalyzer::ResetCounters(){
+  results_.assign(NCuts_,wprime::FilterEff());
+}
+
 void HadronicVZAnalyzer::beginFile(std::vector<wprime::InputFile>::const_iterator fi){
   TFileDirectory dir = wprimeUtil_->getFileService()->mkdir(fi->samplename); 
   Declare_Histos(dir);
-  //ResetCounters();
+  ResetCounters();
 }
 
 // operations to be done when closing input file 

@@ -106,6 +106,7 @@ public:
 
   //clean stuff
   void ClearEvtVariables();
+  void ResetCounters();
 
   ZCandidate MakeZs(const MuonV & muons);
 
