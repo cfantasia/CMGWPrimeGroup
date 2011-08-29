@@ -358,8 +358,8 @@ void HadronicVZAnalyzer::FillTightMuonHists(){
 }
 
 void HadronicVZAnalyzer::FillGoodZHistos(){
-  const TeVMuon & m1 = Find(*zCand_.daughter(0), muons_);
-  const TeVMuon & m2 = Find(*zCand_.daughter(1), muons_);
+  const TeVMuon & m1 = WPrimeUtil::Find(*zCand_.daughter(0), muons_);
+  const TeVMuon & m2 = WPrimeUtil::Find(*zCand_.daughter(1), muons_);
   if (debugme)
     cout << "Found my muons from loose Z" << endl;
   h_Zmuon1_pt->Fill(m1.pt(), weight_);
@@ -372,8 +372,8 @@ void HadronicVZAnalyzer::FillGoodZHistos(){
 }
 
 void HadronicVZAnalyzer::FillGoodZTightHistos(){
-  const TeVMuon & m1 = Find(*zCandTight_.daughter(0), muons_);
-  const TeVMuon & m2 = Find(*zCandTight_.daughter(1), muons_);
+  const TeVMuon & m1 = WPrimeUtil::Find(*zCandTight_.daughter(0), muons_);
+  const TeVMuon & m2 = WPrimeUtil::Find(*zCandTight_.daughter(1), muons_);
   if (debugme)
     cout << "Found my muons from tight Z" << endl;
   h_tight_Zmuon1_pt->Fill(m1.pt(), weight_);
@@ -400,8 +400,8 @@ void HadronicVZAnalyzer::FillValidVZHistos(){
   h_HadVZphi->Fill(hadVZ_.phi(), weight_);
   if (debugme)
     cout << "Filled my histos from HadVZ" << endl;
-  const TeVMuon & VZm1 = Find(*zCand_.daughter(0), muons_);
-  const TeVMuon & VZm2 = Find(*zCand_.daughter(1), muons_);
+  const TeVMuon & VZm1 = WPrimeUtil::Find(*zCand_.daughter(0), muons_);
+  const TeVMuon & VZm2 = WPrimeUtil::Find(*zCand_.daughter(1), muons_);
   //cout << "Muon from loose zCand" << endl;
   h_Zmuon1_VZCut_pt->Fill(VZm1.pt(), weight_);
   h_Zmuon1_VZCut_eta->Fill(VZm1.eta(), weight_);
@@ -425,8 +425,8 @@ void HadronicVZAnalyzer::FillGoodVZHistos(){
   h_tight_HadVZphi->Fill(hadVZTight_.phi(), weight_);
   if (debugme)
     cout << "Filled my HadVZTight histos" << endl;
-  const TeVMuon & VZm1 = Find(*zCandTight_.daughter(0), muons_);
-  const TeVMuon & VZm2 = Find(*zCandTight_.daughter(1), muons_);
+  const TeVMuon & VZm1 = WPrimeUtil::Find(*zCandTight_.daughter(0), muons_);
+  const TeVMuon & VZm2 = WPrimeUtil::Find(*zCandTight_.daughter(1), muons_);
   if (debugme)
     cout << "Found my tight muons from HadVZ" << endl;
   h_tight_Zmuon1_VZCut_pt->Fill(VZm1.pt(), weight_);

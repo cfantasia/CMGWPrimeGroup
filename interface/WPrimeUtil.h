@@ -264,6 +264,57 @@ class WPrimeUtil
       return WCandidate(lepton, met);
     }
 
+/////////////
+//Matching///
+/////////////
+template<class T1,class T2>
+static bool Match(const T1 & p1, const T2 & p2){
+  float tolerance = 0.0001;
+  if (p1.pdgId() == p2.pdgId() &&
+      fabs(p1.eta() - p2.eta()) < tolerance &&
+      fabs(reco::deltaPhi(p1.phi(),p2.phi())) < tolerance
+    )
+    return true;
+  return false;
+}
+
+template<class T>
+static bool Match(const heep::Ele & p1, const T & p2){
+  return Match(p1.patEle(), p2);
+}
+template<class T>
+static bool Match(const T & p1, const heep::Ele & p2){
+  return Match(p1, p2.patEle());
+}
+static bool Match(const heep::Ele & p1, const heep::Ele & p2);
+
+template<class T1, class T2>
+static uint FindIndex(const T1 & p, const std::vector<T2>& vec){
+  for(uint i=0; i<vec.size(); ++i){
+    if(Match(vec[i], p)) return i;
+  }
+  std::cerr<<"Didn't find match for particle, returning random one!!!\n";
+  return 0;
+}
+
+template<class T1, class T2>
+static const T2 & Find(const T1 & p, const std::vector<T2>& vec){
+  for(uint i=0; i<vec.size(); ++i){
+    if(Match(vec[i], p)) return vec[i];
+  }
+  std::cerr<<"Didn't find match for particle, returning random one!!!\n";
+  return vec[0];
+}
+
+template<class T1, class T2>
+static bool Contains(const T1 & p, const std::vector<T2>& vec){
+  for(uint i=0; i<vec.size(); ++i){
+    if(Match(vec[i], p)) return true;
+  }
+  return false;
+}
+
+
 private:
   fwlite::TFileService * fs;
   // directory containing all input samples
