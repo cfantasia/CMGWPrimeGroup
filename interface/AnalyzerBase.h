@@ -17,11 +17,11 @@ public:
 
 //Tabulate results after the cut has been passed
   virtual void Tabulate_Me(const int& cut_index, const float& weight);
-  virtual void Fill_Histos(const int& index, const float& weight=1.);
-  virtual void Declare_Histos(const TFileDirectory & dir);
-  virtual void DeclareHistoSet(std::string n, std::string t, std::string xtitle,
-                               int nbins, float min, float max, std::string units,
-                               std::vector<TH1F*>& h, TFileDirectory& d);
+  virtual void Fill_Histos(const int& index, const float& weight=1.) = 0;//Pure Virtual
+  virtual void Declare_Histos(const TFileDirectory & dir) = 0;//Pure Virtual
+  virtual void DeclareHistoSet(const std::string& n, const std::string& t, const std::string& xtitle,
+                               const int& nbins, const float& min, const float& max, const std::string& units,
+                               std::vector<TH1F*>& h, const TFileDirectory& d);
   virtual void ResetCounters();
 
   //methods for printers
@@ -100,7 +100,6 @@ protected:
 
   edm::InputTag hltEventLabel_;
   edm::InputTag pileupLabel_;
-  edm::InputTag vertexLabel_;
   vstring triggersToUse_;
 
   WPrimeUtil * wprimeUtil_;

@@ -54,7 +54,7 @@ void HadronicVWAnalyzer::FillCutFns(){
 }
 
 //--------------------------------------------------------------
-void HadronicVWAnalyzer::Declare_Histos(TFileDirectory & dir)
+void HadronicVWAnalyzer::Declare_Histos(const TFileDirectory & dir)
 {
   if(debugme) printf("Declare histos\n");
 
@@ -220,7 +220,7 @@ void HadronicVWAnalyzer::Declare_Histos(TFileDirectory & dir)
 
 //Fill Histograms
 //-----------------------------------------------------------
-void HadronicVWAnalyzer::Fill_Histos(int index, float weight)
+void HadronicVWAnalyzer::Fill_Histos(const int& index, const float& weight)
 {
 //-----------------------------------------------------------
   if(debugme) printf("Filling Histos\n");
@@ -549,20 +549,20 @@ HadronicVWAnalyzer::PrintEventLeptons() const{
   if     (vCand_.flavor() == PDGELEC){
 //    PrintElectron(*vCand_.elec1(), PDGZ);
 //    PrintElectron(*vCand_.elec2(), PDGZ);
-    PrintElectron(Find(*vCand_.daughter(0), electrons_));
-    PrintElectron(Find(*vCand_.daughter(1), electrons_));
+    PrintElectron(WPrimeUtil::Find(*vCand_.daughter(0), electrons_));
+    PrintElectron(WPrimeUtil::Find(*vCand_.daughter(1), electrons_));
   }else if(vCand_.flavor() == PDGMUON){
-    PrintMuon(Find(*vCand_.daughter(0), muons_));
-    PrintMuon(Find(*vCand_.daughter(1), muons_));
+    PrintMuon(WPrimeUtil::Find(*vCand_.daughter(0), muons_));
+    PrintMuon(WPrimeUtil::Find(*vCand_.daughter(1), muons_));
 //    PrintMuon(*vCand_.muon1(), PDGZ);
 //    PrintMuon(*vCand_.muon2(), PDGZ);
   }
 
   if     (wCand_.flavor() == PDGELEC){   
-    PrintElectron(Find(*wCand_.daughter(0), electrons_));
+    PrintElectron(WPrimeUtil::Find(*wCand_.daughter(0), electrons_));
 //    PrintElectron(*wCand_.elec(), PDGW);
   }else if(wCand_.flavor() == PDGMUON){
-    PrintMuon(Find(*wCand_.daughter(0), muons_));
+    PrintMuon(WPrimeUtil::Find(*wCand_.daughter(0), muons_));
 //    PrintMuon    (*wCand_.muon(), PDGW);
   }
 }
@@ -674,9 +674,9 @@ HadronicVWAnalyzer::ClearEvtVariables(){
 float
 HadronicVWAnalyzer::WLepPt() const{
   if(wCand_.flavor() == PDGELEC){
-    return Find(*wCand_.daughter(0), electrons_).patEle().pt();
+    return WPrimeUtil::Find(*wCand_.daughter(0), electrons_).patEle().pt();
   }else if(wCand_.flavor() == PDGMUON){
-    return Find(*wCand_.daughter(0), muons_).pt();
+    return WPrimeUtil::Find(*wCand_.daughter(0), muons_).pt();
   }
   return -999.;
 }

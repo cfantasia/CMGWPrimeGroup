@@ -644,3 +644,6 @@ void WPrimeUtil::printSummary(const string& dir, const string& description, cons
   } // loop over different cuts
 }//printSummary
 
+bool WPrimeUtil::Match(const heep::Ele & p1, const heep::Ele & p2){
+  return Match(p1.patEle(), p2.patEle());
+}

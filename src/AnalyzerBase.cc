@@ -45,38 +45,38 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUti
   doPreselect_ = cfg.getParameter<bool>("preselect");
 
   electronsLabel_ = cfg.getParameter<edm::InputTag>("electrons");
-  muonsLabel_ = cfg.getParameter<string>("muons");
-  jetsLabel_ = cfg.getParameter<string>("jets");
+  muonsLabel_ = cfg.getParameter<edm::InputTag>("muons");
+  jetsLabel_ = cfg.getParameter<edm::InputTag>("jets");
   pfCandsLabel_ = cfg.getParameter<edm::InputTag>("particleFlow");
   metLabel_ = cfg.getParameter<edm::InputTag>("met");
 
-  muonAlgo_ = cfg.getParameter<uint>("muonAlgo");
-  if(debugme) cout<<"Using muon algo "<<muonAlgo_<<endl;
+  muonAlgo_ = cfg.getParameter<uint>("muonReconstructor");
+  if(debugme) cout<<"Using muon algo "<<algo_desc_long[muonAlgo_]<<endl;
   useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
   
-  hltEventLabel_ = cfg.getParameter<string>("hltEventTag");
-  pileupLabel_ = cfg.getParameter<string>("pileupTag");
+  hltEventLabel_ = cfg.getParameter<edm::InputTag>("hltEventTag");
+  pileupLabel_ = cfg.getParameter<edm::InputTag>("pileupTag");
 
   triggersToUse_ = cfg.getParameter<vstring>("triggersToUse");
 
   ////////////////////Default Cuts/////////////////
-  minNLeptons_ = cfg.getParameter<uint>("minNLeptons");
-  maxNLeptons_ = cfg.getParameter<uint>("maxNLeptons");
-  minNTightLeptons_ = cfg.getParameter<uint>("minNTightLeptons");
-  minNJets_ = cfg.getParameter<uint>("minNJets");
+  minNLeptons_ = cfg.getUntrackedParameter<uint>("minNLeptons", 0);
+  maxNLeptons_ = cfg.getUntrackedParameter<uint>("maxNLeptons", 999);
+  minNTightLeptons_ = cfg.getUntrackedParameter<uint>("minNTightLeptons", 0);
+  minNJets_ = cfg.getUntrackedParameter<uint>("minNJets", 0);
   
-  minMET_ = cfg.getParameter<double>("minMET");
+  minMET_ = cfg.getUntrackedParameter<double>("minMET", 0.);
 
-  minZmass_ = cfg.getParameter<double>("minZmass");
-  maxZmass_ = cfg.getParameter<double>("maxZmass");
-  minZpt_ = cfg.getParameter<double>("minZpt");
+  minZmass_ = cfg.getUntrackedParameter<double>("minZmass", 0.);
+  maxZmass_ = cfg.getUntrackedParameter<double>("maxZmass", 9e9);
+  minZpt_ = cfg.getUntrackedParameter<double>("minZpt", 0.);
 
-  minVmass_ = cfg.getParameter<double>("minVmass");
-  maxVmass_ = cfg.getParameter<double>("maxVmass");
-  minVpt_ = cfg.getParameter<double>("minVpt");
+  minVmass_ = cfg.getUntrackedParameter<double>("minVmass", 0.);
+  maxVmass_ = cfg.getUntrackedParameter<double>("maxVmass", 9e9);
+  minVpt_ = cfg.getUntrackedParameter<double>("minVpt", 0.);
 
-  minWtransMass_ = cfg.getParameter<double>("minWtransMass");
-  minWpt_ = cfg.getParameter<double>("minWpt");
+  minWtransMass_ = cfg.getUntrackedParameter<double>("minWtransMass", 0.);
+  minWpt_ = cfg.getUntrackedParameter<double>("minWpt", 0.);
 
 }
 
@@ -93,7 +93,7 @@ void AnalyzerBase::Tabulate_Me(const int& cut_index, const float& weight){
 
 //increase the number of events passing the cuts
   hNumEvts->Fill(cut_index,weight);
-  
+
   results_[cut_index].Nsurv_evt_cut_w += weight;
   results_[cut_index].Nsurv_evt_cut++;
 
@@ -101,8 +101,8 @@ void AnalyzerBase::Tabulate_Me(const int& cut_index, const float& weight){
   Fill_Histos(cut_index,weight);
 }//Tabulate_Me
 
-void AnalyzerBase::Fill_Histos(const int& index, const float& weight){}
-void AnalyzerBase::Declare_Histos(const TFileDirectory & dir){}
+//void AnalyzerBase::Fill_Histos(const int& index, const float& weight){}
+//void AnalyzerBase::Declare_Histos(const TFileDirectory & dir){}
 
 void AnalyzerBase::ResetCounters(){
   results_.assign(NCuts_,wprime::FilterEff());
@@ -140,6 +140,8 @@ void AnalyzerBase::PrintEventDetails() const{
   if(zCand_){
     cout<<" Z Flavor: "<<zCand_.flavor()
         <<" Z Mass: "<<zCand_.mass()
+        <<" Z Eta: "<<zCand_.eta()
+        <<" Z Phi: "<<zCand_.phi()
         <<endl;
   }
   if(wCand_){
@@ -151,13 +153,16 @@ void AnalyzerBase::PrintEventDetails() const{
   }
   if(vCand_){
     cout<<" V Flavor: "<<vCand_.flavor()
-        <<" V MT: "<<vCand_.mass()
+        <<" V Mass: "<<vCand_.mass()
+        <<" V Mass: "<<vCand_.eta()
+        <<" V Mass: "<<vCand_.phi()
         <<endl;
   }
 }
 
 void
 AnalyzerBase::PrintEventLeptons() const{
+  cout<<"You shouldn't be seeing this! Implement your own.\n";
 }
 
 void
@@ -169,32 +174,32 @@ AnalyzerBase::PrintLeptons() const{
 
 void
 AnalyzerBase::PrintElectrons() const{
-  cout<<"----All Electrons: ("<<electrons_.size()<<" )------\n";
+  cout<<"----All Electrons: ( "<<electrons_.size()<<" )------\n";
   for(uint i=0; i<electrons_.size(); ++i){
-    if(Contains(electrons_[i], looseElectrons_)) cout<<"Loose";
-    if(Contains(electrons_[i], tightElectrons_)) cout<<"Tight";
-    cout<<"\n";
+    if(WPrimeUtil::Contains(electrons_[i], looseElectrons_)) cout<<"( Loose ";
+    if(WPrimeUtil::Contains(electrons_[i], tightElectrons_)) cout<<"& Tight ";
+    cout<<" )\n";
     PrintElectron(electrons_[i]);
   }
 }
 
 void
 AnalyzerBase::PrintMuons() const{
-  cout<<"----All Muons: ("<<muons_.size()<<" )------\n";
+  cout<<"----All Muons: ( "<<muons_.size()<<" )------\n";
   for(uint i=0; i<muons_.size(); ++i){
-    if(Contains(muons_[i], looseMuons_)) cout<<"Loose";
-    if(Contains(muons_[i], tightMuons_)) cout<<"Tight";
-    cout<<"\n";
+    if(WPrimeUtil::Contains(muons_[i], looseMuons_)) cout<<"( Loose ";
+    if(WPrimeUtil::Contains(muons_[i], tightMuons_)) cout<<"& Tight ";
+    cout<<" )\n";
     PrintMuon(muons_[i]);
   }
 }
 
 void
 AnalyzerBase::PrintJets() const{
-  cout<<"----All Jets: ("<<jets_.size()<<" )------\n";
+  cout<<"----All Jets: ( "<<jets_.size()<<" )------\n";
   for(uint i=0; i<jets_.size(); ++i){
-    if(Contains(jets_[i], looseJets_)) cout<<"Loose";
-    cout<<"\n";
+    if(WPrimeUtil::Contains(jets_[i], looseJets_)) cout<<"(Loose ";
+    cout<<" )\n";
     PrintJet(jets_[i]);
   }
 }
@@ -257,8 +262,8 @@ void
 AnalyzerBase::PrintJet(const pat::Jet& jet) const{
   cout << setiosflags(ios::fixed) << setprecision(3);
   cout<<" Jet Pt: "  <<jet.pt()<<endl
-      <<" Muon Eta: " <<jet.eta()<<endl
-      <<" Muon Phi: " <<jet.phi()<<endl;
+      <<" Jet Eta: " <<jet.eta()<<endl
+      <<" Jet Phi: " <<jet.phi()<<endl;
 }
 
 ////////////////////////////
@@ -280,7 +285,7 @@ inline bool AnalyzerBase::PassNoCut() const{
 inline bool AnalyzerBase::PassTriggersCut() const{
 //-----------------------------------------------------------
   return WPrimeUtil::PassTriggersCut(triggerEvent_,triggersToUse_);
-}//--- PassTriggersCut()
+}//--- PassTriggersCut
 
 inline bool
 AnalyzerBase::PassMinNLeptonsCut() const{
@@ -373,9 +378,9 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::const_iterator fi){
 }
 
 void
-AnalyzerBase::DeclareHistoSet(string n, string t, string xtitle,
-                              int nbins, float min, float max, string units,
-                              vector<TH1F*>& h, TFileDirectory& d){
+AnalyzerBase::DeclareHistoSet(const string& n, const string& t, const string& xtitle,
+                              const int& nbins, const float& min, const float& max, const string& units,
+                              vector<TH1F*>& h, const TFileDirectory& d){
   h.assign(NCuts_,NULL);
   
   float binWidth = (max-min)/nbins;

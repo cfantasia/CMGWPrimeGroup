@@ -14,13 +14,13 @@ public:
   void FillCutFns();
 
   //methods for stuff to be done for each sample
-  void Declare_Histos(TFileDirectory& dir);
+  void Declare_Histos(const TFileDirectory& dir);
 
   //methods for stuff to be done for each event
   void eventLoop(edm::EventBase const & event);
   bool PassCuts(const float& weight=1.);
   void ClearEvtVariables();
-  void Fill_Histos(int index, float weight=1.);
+  void Fill_Histos(const int& index, const float& weight=1.);
 
   //methods for printers
   void PrintEventFull(edm::EventBase const & event) const;
@@ -90,6 +90,8 @@ public:
   JetVH patJetsH_;
   METVH metH_;
   PFCandidateVH pfCandidatesH_;
+
+  edm::InputTag vertexLabel_;
 
 //////Chosen Candidates
   WVCandidate wvCand_;

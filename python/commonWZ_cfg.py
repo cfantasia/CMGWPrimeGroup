@@ -113,6 +113,7 @@ process.WprimeAnalyzer.LooseElectronType = cms.string("WZLoose")
 process.WprimeAnalyzer.TightElectronType = cms.string("WZTight")
 process.WprimeAnalyzer.LooseMuonType = cms.string("WZLoose")
 process.WprimeAnalyzer.TightMuonType = cms.string("WZTight")
+process.WprimeAnalyzer.LooseJetType = cms.string("Base")
 
 ####Triggers
 DoubleTriggers = cms.vstring(
@@ -142,13 +143,12 @@ process.WprimeAnalyzer.triggersToUse = DoubleTriggers
 
 # +++++++++++++++++++General Cut values
 process.WprimeAnalyzer.maxNumZs = cms.uint32(1)
-process.WprimeAnalyzer.minNLeptons = cms.uint32(3)
-process.WprimeAnalyzer.maxNLeptons = cms.uint32(3)
+process.WprimeAnalyzer.minNLeptons = cms.untracked.uint32(3)
 process.WprimeAnalyzer.minLeadPt = cms.double(35.)
-process.WprimeAnalyzer.minMET = cms.double(30.)
+process.WprimeAnalyzer.minMET = cms.untracked.double(30.)
 
 # +++++++++++++++++++W Cuts
-process.WprimeAnalyzer.minWtransMass = cms.double(0.)#Cory: Removed cut
+process.WprimeAnalyzer.minWtransMass = cms.untracked.double(0.)#Cory: Removed cut
 process.WprimeAnalyzer.minWlepPt = cms.double(20.)
 
 process.WprimeAnalyzer.cutWenuWPRelIsoMask = cms.int32(2)#Cory: Iso only
@@ -160,10 +160,10 @@ process.WprimeAnalyzer.minZeePt2 =  cms.double(10.)
 process.WprimeAnalyzer.minZmmPt1 =  cms.double(15.)
 process.WprimeAnalyzer.minZmmPt2 =  cms.double(15.)
 
-process.WprimeAnalyzer.minZmass =  cms.double(60.)
-process.WprimeAnalyzer.maxZmass =  cms.double(120.)
+process.WprimeAnalyzer.minZmass =  cms.untracked.double(60.)
+process.WprimeAnalyzer.maxZmass =  cms.untracked.double(120.)
 
 # +++++++++++++++++++Analysis Cuts
 process.WprimeAnalyzer.minHt = cms.double(250.)
-process.WprimeAnalyzer.minZpt =  cms.double(0.)#90 for TC300) 110 for W'400
-process.WprimeAnalyzer.minWpt = cms.double(0.)#90 for TC300) 110 for W'400
+process.WprimeAnalyzer.minZpt =  cms.untracked.double(0.)#90 for TC300) 110 for W'400
+process.WprimeAnalyzer.minWpt = cms.untracked.double(0.)#90 for TC300) 110 for W'400
