@@ -562,7 +562,8 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
   // Make vectors of leptons passing various criteria
   for (size_t i = 0; i < electrons_.size(); i++) {
-    if(Overlap(electrons_[i].patEle(), muons_), 0.01) continue;
+//    if(Overlap(electrons_[i].patEle(), muons_, 0.01)) continue;//Use pat muons?
+    if(Overlap(electrons_[i].patEle(), *patMuonsH_.product(), 0.01)) continue;
     const float pu = ElecPU(electrons_[i]);
     if (looseElectron_(electrons_[i].patEle(), electronResult_, pu))
       looseElectrons_.push_back(electrons_[i]);
