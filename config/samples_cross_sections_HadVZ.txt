@@ -1,5 +1,5 @@
 Top Level Dir = rfio:/castor/cern.ch/user/f/fladias/
-integrated lumi = 1514 pb^-1
+integrated lumi = 2067 pb^-1
 
 samplename = Summer11_RSZZmmjj_750
 description = Summer11_RSZZmmjj_750
@@ -65,25 +65,28 @@ pathname = filelists_HadVZ/ZZ.txt
 Nprod_evt = 4187885
 
 samplename = data_SingleMu_May10ReReco
-description = data_SingleMu_May10ReReco
+description = Single Mu May 10 ReReco
 x-section = 1
-subdir = data_May10ReReco
-pathname = filelists_HadVZ/data_May10ReReco.txt
-Nprod_evt = 99999999
+pathname = filelists_HadVZ/DiLeptonJet-V296-SingleMu-2011A-May10ReReco-v1.txt
+Nprod_evt = 9999999
 
 samplename = data_SingleMu_PromptReco_v4
-description = data_SingleMu_PromptReco_v4
+description = Single Mu Prompt v4
 x-section = 1
-subdir = data_PromptReco_v4
-pathname = filelists_HadVZ/data_SingleMu_PromptReco_v4.txt
-Nprod_evt = 99999999
+pathname = filelists_HadVZ/DiLeptonJet-V296-SingleMu-2011A-PromptReco-v4.txt
+Nprod_evt = 9999999
 
-samplename = data_SingleMu_PromptReco_v5
-description = data_SingleMu_PromptReco_v5
+samplename = data_SingleMu_Aug05ReReco
+description = Single Mu Aug 05ReReco
 x-section = 1
-subdir = data_PromptReco_v5
-pathname = filelists_HadVZ/data_SingleMu_PromptReco_v5.txt
-Nprod_evt = 99999999
+pathname = filelists_HadVZ/DiLeptonJet-V296-SingleMu-2011A-05Aug2011-v1.txt
+Nprod_evt = 9999999
+
+samplename = data_SingleMu_PromptReco_v6
+description = Single Mu Prompt v6
+x-section = 1
+pathname = filelists_HadVZ/DiLeptonJet-V296-SingleMu-2011A-PromptReco-v6.txt
+Nprod_evt = 9999999
 
 DONE
 
