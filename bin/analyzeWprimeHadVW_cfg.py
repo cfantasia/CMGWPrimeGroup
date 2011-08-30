@@ -1,40 +1,40 @@
 from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
-process.WprimeAnalyzer.outputFile  = cms.string('HadVW_analysis.root')## mandatory
-process.WprimeAnalyzer.logFile     = cms.string("HadVW_event_counts.txt")
+process.WprimeAnalyzer.outputFile  = 'HadVW_analysis.root'
+process.WprimeAnalyzer.logFile     = "HadVW_event_counts.txt"
 process.WprimeAnalyzer.candEvtFile = cms.string("HadVW_CandEvts.txt")
-process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_sections_HadVW.txt")
-process.WprimeAnalyzer.maxEvents   = cms.int32(100)                      ## optional
-process.WprimeAnalyzer.reportAfter = cms.uint32(1000)                     ## optional
-process.WprimeAnalyzer.useJSON = cms.bool(False)
+process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_HadVW.txt"
+process.WprimeAnalyzer.maxEvents   = 100
+process.WprimeAnalyzer.reportAfter = 1000
+process.WprimeAnalyzer.useJSON = False
 process.WprimeAnalyzer.debugme = cms.bool(True)
 process.WprimeAnalyzer.preselect = cms.bool(False)
 
 ## enable analysis in individual channels
-process.WprimeAnalyzer.runHadVWAnalysis = cms.bool(True)
+process.WprimeAnalyzer.runHadVWAnalysis = True
 process.WprimeAnalyzer.triggersToUse = cms.vstring()
 
 ## input specific for this analyzer
-process.WprimeAnalyzer.useAdjustedMET = cms.bool(False)
-process.WprimeAnalyzer.muonReconstructor = cms.uint32(7)
+process.WprimeAnalyzer.useAdjustedMET = False
+process.WprimeAnalyzer.muonReconstructor = 7
 
-process.WprimeAnalyzer.muons = 'userPatMuons'
-process.WprimeAnalyzer.electrons = 'userPatElectrons'
+process.WprimeAnalyzer.muons = 'selectedPatMuons'
+process.WprimeAnalyzer.electrons = 'selectedPatElectrons'
+process.WprimeAnalyzer.jets = 'selectedPatJets'
 
-process.WprimeAnalyzer.minNLeptons =cms.uint32(1)
-process.WprimeAnalyzer.maxNLeptons =cms.uint32(9999999)
-process.WprimeAnalyzer.minNJets = cms.uint32(1) 
+process.WprimeAnalyzer.minNLeptons =cms.untracked.uint32(1)
+process.WprimeAnalyzer.minNJets = cms.untracked.uint32(1) 
 process.WprimeAnalyzer.maxAngleBetweenJets = cms.double(9999.9)
 #
 process.WprimeAnalyzer.minHt = cms.double(0.0) # All units in GeV
 
-process.WprimeAnalyzer.minMET = cms.double(30.0) # All units in GeV
-process.WprimeAnalyzer.minWtransMass = cms.double(0.0) # All units in GeV
-process.WprimeAnalyzer.minWpt = cms.double(0.0) # All units in GeV
+process.WprimeAnalyzer.minMET = cms.untracked.double(30.0) # All units in GeV
+process.WprimeAnalyzer.minWtransMass = cms.untracked.double(0.0) # All units in GeV
+process.WprimeAnalyzer.minWpt = cms.untracked.double(0.0) # All units in GeV
 
-process.WprimeAnalyzer.minVmass = cms.double(70.0)
-process.WprimeAnalyzer.maxVmass = cms.double(110.0)
-process.WprimeAnalyzer.minVpt = cms.double(0.0)
+process.WprimeAnalyzer.minVmass = cms.untracked.double(70.0)
+process.WprimeAnalyzer.maxVmass = cms.untracked.double(110.0)
+process.WprimeAnalyzer.minVpt = cms.untracked.double(0.0)
 
 process.WprimeAnalyzer.Cuts = cms.vstring(
     "NoCuts", 

@@ -4,16 +4,16 @@ from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 #process.WprimeAnalyzer.debugme = cms.bool(True)
 
 process.WprimeAnalyzer.debugme = cms.bool(False)
-process.WprimeAnalyzer.reportAfter = cms.uint32(25000)
-process.WprimeAnalyzer.runWZAnalysis    = cms.bool(True)
-process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_sections_WZ.txt")
+process.WprimeAnalyzer.reportAfter = 25000
+process.WprimeAnalyzer.runWZAnalysis    = True
+process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_WZ.txt"
 
 process.WprimeAnalyzer.doRecoilCorrectionForW = cms.bool(False)
-process.WprimeAnalyzer.useAdjustedMET = cms.bool(False)
-process.WprimeAnalyzer.muonReconstructor = cms.uint32(7)
+process.WprimeAnalyzer.useAdjustedMET = False
+process.WprimeAnalyzer.muonReconstructor = 7
 
-process.WprimeAnalyzer.useJSON = cms.bool(False)
-process.WprimeAnalyzer.countGenEvts = cms.bool(False)
+process.WprimeAnalyzer.useJSON = False
+process.WprimeAnalyzer.countGenEvts = False
 process.WprimeAnalyzer.eventCounters = cms.vstring(
     'nEventsTotal',
     'nEventsHLT',
