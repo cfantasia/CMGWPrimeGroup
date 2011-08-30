@@ -50,7 +50,7 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUti
   pfCandsLabel_ = cfg.getParameter<edm::InputTag>("particleFlow");
   metLabel_ = cfg.getParameter<edm::InputTag>("met");
 
-  muonAlgo_ = cfg.getParameter<uint>("muonReconstructor");
+  muonAlgo_ = cfg.getParameter<int>("muonReconstructor");
   if(debugme) cout<<"Using muon algo "<<algo_desc_long[muonAlgo_]<<endl;
   useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
   
@@ -100,9 +100,6 @@ void AnalyzerBase::Tabulate_Me(const int& cut_index, const float& weight){
   //fill the histograms
   Fill_Histos(cut_index,weight);
 }//Tabulate_Me
-
-//void AnalyzerBase::Fill_Histos(const int& index, const float& weight){}
-//void AnalyzerBase::Declare_Histos(const TFileDirectory & dir){}
 
 void AnalyzerBase::ResetCounters(){
   results_.assign(NCuts_,wprime::FilterEff());

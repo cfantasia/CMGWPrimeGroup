@@ -23,10 +23,7 @@ public:
   void Fill_Histos(const int& index, const float& weight=1.);
 
   //methods for printers
-  void PrintEventFull(edm::EventBase const & event) const;
-  void PrintPassingEvent(edm::EventBase const & event);
   void PrintDebugEvent() const;
-  void PrintEventToFile(edm::EventBase const & event);
   void PrintEventDetails() const;
   void PrintEventLeptons() const;
   

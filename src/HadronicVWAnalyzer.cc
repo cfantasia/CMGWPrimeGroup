@@ -394,11 +394,17 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
 
 
   // Get leptons
-  event.getByLabel(electronsLabel_,patElectronsH_);
-  //const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, electronsLabel_);
+  ////////Cory:Not using electrons yet
+  //event.getByLabel(electronsLabel_,patElectronsH_);
   event.getByLabel(muonsLabel_,patMuonsH_);
-  //const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
-  event.getByLabel(metLabel_, metH_);
+  //Cory: Didn't save pfMET
+  //event.getByLabel(metLabel_, metH_);
+  if(useAdjustedMET_) event.getByLabel(pfCandsLabel_, pfCandidatesH_);
+  WPrimeUtil::getMuonsMET(patMuonsH_, muonAlgo_, muons_,
+                          metH_, useAdjustedMET_, met_,
+                          pfCandidatesH_);
+  
+/*
   WPrimeUtil::getLeptonsMET(patElectronsH_, electrons_,
                             patMuonsH_, muonAlgo_, muons_,
                             metH_, useAdjustedMET_, met_,
@@ -407,6 +413,7 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
                           (int)electrons_.size(), (int)muons_.size());
 
   rhoFastJet_ = getProduct<double>(event,"kt6PFJets:rho");
+
 
   // Make vectors of leptons passing various criteria
   for (size_t i = 0; i < electrons_.size(); i++) {
@@ -418,7 +425,7 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
     if (tightElectron_(electrons_[i].patEle(), electronResult_, pu))
       tightElectrons_.push_back(electrons_[i]);
   }
-
+*/
   for (size_t i = 0; i < muons_.size(); i++) {
     const float pu = MuonPU(muons_[i]);
     if (looseMuon_(muons_[i], muonResult_,pu))
@@ -491,31 +498,11 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
   if(debugme) PrintEventLeptons();
 }
 
-void
-HadronicVWAnalyzer::PrintEventFull(edm::EventBase const & event) const{
-  WPrimeUtil::PrintEvent(event);
-  WPrimeUtil::PrintPassingTriggers(triggerEvent_,triggersToUse_);
-  PrintEventDetails();
-  PrintEventLeptons();
-}
-
-void HadronicVWAnalyzer::PrintPassingEvent(edm::EventBase const & event){
-  PrintEventToFile(event);
-  WPrimeUtil::PrintEvent(event);
-  PrintEventDetails();
-}
-
 void HadronicVWAnalyzer::PrintDebugEvent() const{
   WPrimeUtil::PrintPassingTriggers(triggerEvent_,triggersToUse_);
   PrintEventDetails();
   PrintEventLeptons();
   PrintLeptons();
-}
-
-void HadronicVWAnalyzer::PrintEventToFile(edm::EventBase const & event){
-  outCandEvt_<<event.id().run()<<":"
-             <<event.id().luminosityBlock()<<":"
-             <<event.id().event()<<endl;
 }
 
 void HadronicVWAnalyzer::PrintEventDetails() const{
@@ -669,6 +656,7 @@ HadronicVWAnalyzer::ClearEvtVariables(){
   Wpt_ = -999;
   Q_ = -999;
   weight_ = 0;
+  rhoFastJet_ = 0;
 }
 
 float

@@ -550,6 +550,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   event.getByLabel(muonsLabel_,patMuonsH_);
   //const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
   event.getByLabel(metLabel_, metH_);
+  if(useAdjustedMET_) event.getByLabel(pfCandsLabel_, pfCandidatesH_);
   WPrimeUtil::getLeptonsMET(patElectronsH_, electrons_,
                             patMuonsH_, muonAlgo_, muons_,
                             metH_, useAdjustedMET_, met_,
@@ -638,31 +639,11 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   if(debugme) PrintEventLeptons();
 }
 
-void
-WZAnalyzer::PrintEventFull(edm::EventBase const & event) const{
-  WPrimeUtil::PrintEvent(event);
-  WPrimeUtil::PrintPassingTriggers(triggerEvent_,triggersToUse_);
-  PrintEventDetails();
-  PrintEventLeptons();
-}
-
-void WZAnalyzer::PrintPassingEvent(edm::EventBase const & event){
-  PrintEventToFile(event);
-  WPrimeUtil::PrintEvent(event);
-  PrintEventDetails();
-}
-
 void WZAnalyzer::PrintDebugEvent() const{
   WPrimeUtil::PrintPassingTriggers(triggerEvent_,triggersToUse_);
   PrintEventDetails();
   PrintEventLeptons();
   PrintLeptons();
-}
-
-void WZAnalyzer::PrintEventToFile(edm::EventBase const & event){
-  outCandEvt_<<event.id().run()<<":"
-             <<event.id().luminosityBlock()<<":"
-             <<event.id().event()<<endl;
 }
 
 void WZAnalyzer::PrintEventDetails() const{
