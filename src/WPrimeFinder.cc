@@ -28,8 +28,11 @@ WPrimeFinder::WPrimeFinder(char * config_file, int fileToRun)
 WPrimeFinder::~WPrimeFinder()
 {
   if(muMETAnalyzer) delete muMETAnalyzer;
+  if(eleMETAnalyzer) delete eleMETAnalyzer;
   if(WmunugammaAnalyzer) delete WmunugammaAnalyzer;
   if(wzAnalyzer) delete wzAnalyzer;
+  if(hadvzAnalyzer) delete hadvzAnalyzer;
+  if(hadvwAnalyzer) delete hadvwAnalyzer;
   delete wprimeUtil;
   outLogFile_.close(); 
 }
