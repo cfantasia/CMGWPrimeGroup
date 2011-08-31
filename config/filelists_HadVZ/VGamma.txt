@@ -1,0 +1,3 @@
+/pnfs/sprace.org.br/data/cms/store/user/fladias/Summer11_VGamma/patTuple_1_1_fYf.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/Summer11_VGamma/patTuple_2_1_7Rk.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/Summer11_VGamma/patTuple_3_1_64F.root

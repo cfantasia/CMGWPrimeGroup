@@ -1,7 +1,2 @@
-patTuple_1_1_zwa.root
-patTuple_2_1_OHU.root
-patTuple_3_1_qll.root
-patTuple_4_1_P2c.root
-patTuple_5_1_17F.root
-patTuple_6_2_r6h.root
-patTuple_7_1_RyY.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/Summer11_RSZZmmjj_1000/patTuple_1_1_48c.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/Summer11_RSZZmmjj_1000/patTuple_2_1_1Us.root

@@ -1,6 +1,1 @@
-patTuple_1_1_E9E.root
-patTuple_2_1_BNO.root
-patTuple_3_1_zCw.root
-patTuple_4_1_sKs.root
-patTuple_5_1_3ME.root
-patTuple_6_1_ucq.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/Summer11_RSZZmmjj_2000/patTuple_1_1_4Cp.root
