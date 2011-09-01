@@ -133,7 +133,7 @@ public:
   edm::InputTag vertexLabel_;
 
 //////Chosen Candidates
-  WZCandidate wzCand_;
+  DiBosonWLeptonic wzCand_;
   std::vector<reco::Vertex>  vertices_;
 
 // +++++++++++++++++++ Histogram Definitions
@@ -142,7 +142,7 @@ public:
 
   std::vector<TH1F*> hQ;
   std::vector<TH1F*> hWZTransMass;
-  std::vector<TH1F*> hWZpt;
+  std::vector<TH1F*> hWZpt, hWZTheta;
   std::vector<TH1F*> hHt;
   std::vector<TH1F*> hTriLepMass;
   std::vector<TH1F*> hEvtType, hEvtTypeP, hEvtTypeM;
@@ -162,6 +162,7 @@ public:
   std::vector<TH1F*> hWpt,hWptZee,hWptZmm;
   std::vector<TH1F*> hWQ, hWenuQ, hWmnuQ;
   std::vector<TH1F*> hW3e0muQ, hW2e1muQ, hW1e2muQ, hW0e3muQ;
+  std::vector<TH1F*> hWTheta;
 
   std::vector<TH1F*> hNLElec;
   std::vector<TH1F*> hNLMuon;

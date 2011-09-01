@@ -1,32 +1,14 @@
 #ifndef _HadronicVZAnalyzer_h_
 #define _HadronicVZAnalyzer_h_
 
-#include <vector>
-#include <string>
-#include <TH2F.h>
-#include "DataFormats/FWLite/interface/Handle.h"
-#include "DataFormats/FWLite/interface/Event.h"
-#include "DataFormats/FWLite/interface/LuminosityBlock.h"
-#include "DataFormats/FWLite/interface/ChainEvent.h"
-#include "FWCore/FWLite/interface/AutoLibraryLoader.h"
-#include "FWCore/PythonParameterSet/interface/PythonProcessDesc.h"
-#include "FWCore/ParameterSet/interface/ProcessDesc.h"
-#include "PhysicsTools/FWLite/interface/TFileService.h"
-#include "DataFormats/PatCandidates/interface/Electron.h"
-#include "DataFormats/PatCandidates/interface/Muon.h"
-#include "DataFormats/PatCandidates/interface/MET.h"
-#include "DataFormats/PatCandidates/interface/Jet.h"
-#include "DataFormats/PatCandidates/interface/TriggerEvent.h"
-#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h" 
-#include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
-#include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
-#include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
+#include "UserCode/CMGWPrimeGroup/interface/AnalyzerBase.h"
+#include "TH2F.h"
 
 /// The class HadronicVZAnalyzer will analyze X -> VZ -> (heavy) jet + dilepton.
 /// For now, we do only simple cuts and simple histograms - fancy things come later.
 /// We also have only the dimuon channel for the time being. 
 
-class HadronicVZAnalyzer  {
+class HadronicVZAnalyzer : public AnalyzerBase {
 
 public:
   HadronicVZAnalyzer();                         // constructor; initialize the list to be empty
@@ -34,26 +16,14 @@ public:
   ~HadronicVZAnalyzer();
 
   // +++++++++++++++++++Event Characteristics
-  uint numZs;
-  float LeadPt;
-  
+
   // +++++++++++++++++++General Cut values
-  uint maxNumZs;
-  uint minNLeptons;
-  uint minNJets;
   uint maxNJets;
   float maxAngleBetweenJets;
-  float minLeadPt;
   
   // +++++++++++++++++++Z Cuts
-  float minZpt;
-  float minZmass;
-  float maxZmass;
 
   // +++++++++++++++++++Hadronic Boson Cuts
-  float minHadVpt;
-  float minHadVmass;
-  float maxHadVmass;
 
 // +++++++++++++++++++Muon General Cuts
   float maxMuonEta;
@@ -81,20 +51,13 @@ public:
   // This is actually the equivalent of the analyze() method in CMSSW.
   void eventLoop(edm::EventBase const & event);
 
-  //void PrintElectron(const heep::Ele* elec, int parent);
-  void PrintMuon(const TeVMuon* mu, int parent);
-  void PrintJet(const pat::Jet* jet, int parent);
-    
 //methods for utilities
-//  void CheckStream(ofstream& stream, std::string s);
 
 //methods for modifiers
-  void SetCandEvtFile(std::string s);
-  void Tabulate_Me(int& cut_index,const float& weight);
 
   //methods for histograms 
-  void Declare_Histos(TFileDirectory& dir);
-  void Fill_Histos(int index, float weight=1.);
+  void Declare_Histos(const TFileDirectory& dir);
+  void Fill_Histos(const int& index, const float& weight=1.);
   void FillJetMultiplicityHists();
   void FillLooseMuonHists();
   void FillTightMuonHists();
@@ -108,35 +71,16 @@ public:
 
   //clean stuff
   void ClearEvtVariables();
-  void ResetCounters();
-
-  ZCandidate MakeZs(const MuonV & muons);
 
 //methods for the cuts
-  bool PassNoCut();
-  bool PassTriggersCut();
-  bool PassMinNLooseLeptonsCut();
   bool PassMinNTightLeptonsCut();
-  bool PassNLeptonsCut();
-  bool PassMinNJetsCut();
-  bool PassNJetsCut();
-  bool PassValidHadVCut();
-  bool PassValidZCut();  
   bool PassValidZCutTight();
-  bool PassValidHadVZCandCut();
-  bool PassValidHadVZTightCandCut();
+  bool PassValidVZCandCut();
+  bool PassValidVZTightCandCut();
 
-  bool PassLeadingLeptonPtCut();
-  bool PassNumberOfZsCut();
-  bool PassZMassCut();
   bool PassZMassCutTight();
-  bool PassZptCut();
   bool PassZptCutTight();
-  bool PassHadVMassCut();
-  bool PassHadVptCut();
 
-  //  bool PassZLepPtCut();
-  
   bool PassMuonCut(const TeVMuon* mu);
   bool PassMuonLooseCut(const TeVMuon* mu);
   bool PassMuonTightCut(const TeVMuon* mu);
@@ -163,71 +107,16 @@ public:
   bool PassJetCEFCut(const pat::Jet* jet);
   bool PassJetIDCut(const pat::Jet* jet); 
 
-//////////
-  void beginFile(std::vector<wprime::InputFile>::const_iterator fi);
-  void endFile(std::vector<wprime::InputFile>::const_iterator fi, ofstream & out);
-  void endAnalysis(ofstream & out);
 
 // +++++++++++++++++++useful constants
-  bool debugme;//print stuff if active
-  bool doPreselect_;
 
-  std::string electronsLabel_;
-  std::string muonsLabel_;
-  std::string jetsLabel_;
-  std::string metLabel_;
-  std::string hltEventLabel_;
-  std::string pileupLabel_;
-  vstring triggersToUse_;
-
-  int PDGMUON;
-  int PDGELEC;
-  int PDGW;
-  int PDGZ;
-  int PDGZPRIME;
-  int PDGWPRIME;
-
-  double PI;
-  double TWOPI;
-  float NOCUT;
   float weight_;
-  float PU_NumInteractions3BX_;
-  float PU_NumInteractions1BX_;
-
-// +++++++++++++++++++
-  std::vector<uint> nEvents;
-  int eventNum;
-  uint runNumber;
-  uint lumiID;
-
-  typedef std::pair< std::map<std::string, bool>, std::vector<std::string> > OptArgPair;
-  std::map<std::string, int> intOptions_;
-  std::map<std::string, std::string> stringOptions_;
-  std::vector<std::string> filenames_;
-  std::string datasetName;
   
 // +++++++++++++++++++location of data files and samples info
-  std::string top_level_dir;
-  ofstream outCandEvt;
-  ofstream outLogFile;
-
-  WPrimeUtil * wprimeUtil_;
-  
-  uint muonAlgo_;
-
-//////Chosen Candidates
-  ElectronV electrons_, looseElectrons_, tightElectrons_;
-  MuonV muons_, looseMuons_, tightMuons_;
-  JetV jets_;
 
 //////Chosen Vector Boson Candidates 
-  ZCandidate zCand_, zCandTight_;
-  WCandidate wCand_;
+  ZCandidate zCandTight_;
   VZCandidate hadVZ_, hadVZTight_;
-
-  pat::TriggerEvent triggerEvent_; 
-  std::vector< PileupSummaryInfo > PupInfo_; 
-  wprime::EffV results_;
 
 // +++++++++++++++++++ Histogram Definitions - loose
   TH1F* h_HadVZMass;
@@ -389,8 +278,6 @@ public:
   // http://www.parashift.com/c++-faq-lite/pointers-to-members.html#faq-33.5
   // Good manners!
   
-  int NCuts_;
-  std::vector<std::string> Cuts_;
   // MuonCutFnPtr type is: "pointer to member function of HadronicVZAnalyzer"
   // It takes a const TeVMuon* as argument, and returns a bool.
   typedef bool (HadronicVZAnalyzer::*MuonCutFnPtr)(const TeVMuon*); 

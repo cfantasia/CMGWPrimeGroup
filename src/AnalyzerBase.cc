@@ -171,33 +171,33 @@ AnalyzerBase::PrintLeptons() const{
 
 void
 AnalyzerBase::PrintElectrons() const{
-  cout<<"----All Electrons: ( "<<electrons_.size()<<" )------\n";
-  for(uint i=0; i<electrons_.size(); ++i){
-    if(WPrimeUtil::Contains(electrons_[i], looseElectrons_)) cout<<"( Loose ";
-    if(WPrimeUtil::Contains(electrons_[i], tightElectrons_)) cout<<"& Tight ";
+  cout<<"----All Electrons: ( "<<allElectrons_.size()<<" )------\n";
+  for(uint i=0; i<allElectrons_.size(); ++i){
+    if(WPrimeUtil::Contains(allElectrons_[i], looseElectrons_)) cout<<"( Loose ";
+    if(WPrimeUtil::Contains(allElectrons_[i], tightElectrons_)) cout<<"& Tight ";
     cout<<" )\n";
-    PrintElectron(electrons_[i]);
+    PrintElectron(allElectrons_[i]);
   }
 }
 
 void
 AnalyzerBase::PrintMuons() const{
-  cout<<"----All Muons: ( "<<muons_.size()<<" )------\n";
-  for(uint i=0; i<muons_.size(); ++i){
-    if(WPrimeUtil::Contains(muons_[i], looseMuons_)) cout<<"( Loose ";
-    if(WPrimeUtil::Contains(muons_[i], tightMuons_)) cout<<"& Tight ";
+  cout<<"----All Muons: ( "<<allMuons_.size()<<" )------\n";
+  for(uint i=0; i<allMuons_.size(); ++i){
+    if(WPrimeUtil::Contains(allMuons_[i], looseMuons_)) cout<<"( Loose ";
+    if(WPrimeUtil::Contains(allMuons_[i], tightMuons_)) cout<<"& Tight ";
     cout<<" )\n";
-    PrintMuon(muons_[i]);
+    PrintMuon(allMuons_[i]);
   }
 }
 
 void
 AnalyzerBase::PrintJets() const{
-  cout<<"----All Jets: ( "<<jets_.size()<<" )------\n";
-  for(uint i=0; i<jets_.size(); ++i){
-    if(WPrimeUtil::Contains(jets_[i], looseJets_)) cout<<"(Loose ";
+  cout<<"----All Jets: ( "<<allJets_.size()<<" )------\n";
+  for(uint i=0; i<allJets_.size(); ++i){
+    if(WPrimeUtil::Contains(allJets_[i], looseJets_)) cout<<"(Loose ";
     cout<<" )\n";
-    PrintJet(jets_[i]);
+    PrintJet(allJets_[i]);
   }
 }
 

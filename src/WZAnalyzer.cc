@@ -105,6 +105,8 @@ void WZAnalyzer::Declare_Histos(const TFileDirectory & dir)
 //WZpt Histos
   DeclareHistoSet("hWZpt", "Reconstructed WZ Transverse Momentum",
                   "p_{WZ}^{T} (GeV)", 50, 0, 500, "GeV", hWZpt,dir);
+  DeclareHistoSet("hWZTheta", "Theta of WZ",
+                  "#theta_{WZ}", 50, 0, PI, "NONE", hWZTheta,dir);
 //Ht Histos
   DeclareHistoSet("hHt", "H_{T}", 
                   "Lepton Pt Sum: H_{T} (GeV)", 80, 0, 800, "GeV", hHt,dir);
@@ -215,6 +217,8 @@ void WZAnalyzer::Declare_Histos(const TFileDirectory & dir)
                   "q_{W}^{1e2#mu}", 3, -1.5, 1.5, "", hW1e2muQ,dir);
   DeclareHistoSet("hW0e3muQ", "Reconstructed Charge of W(0e3#mu)",
                   "q_{W}^{0e3#mu}", 3, -1.5, 1.5, "", hW0e3muQ,dir);
+  DeclareHistoSet("hWTheta", "Theta of W",
+                  "#theta_{W}", 50, 0, PI, "NONE", hWTheta,dir);
 
   DeclareHistoSet("hNLElec", "Number of Loose Electrons in Event",
                   "N_{e}^{Loose}", 10, 0, 10, "NONE", hNLElec,dir);
@@ -285,6 +289,7 @@ void WZAnalyzer::Fill_Histos(const int& index, const float& weight)
     hQ[index]->Fill(Q_, weight); 
     hWZTransMass[index]->Fill(wzCand_.transMass(), weight);
     hWZpt[index]->Fill(wzCand_.pt(), weight);
+    /////////////hWZTheta[index]->Fill(wzCand_.theta(), weight);
     hHt[index]->Fill(Ht_, weight);
     hTriLepMass[index]->Fill(TriLepMass_, weight);
     hEvtType[index]->Fill(evtType_, weight);
@@ -297,13 +302,13 @@ void WZAnalyzer::Fill_Histos(const int& index, const float& weight)
       hLeadPtZee[index]->Fill(LeadPt_, weight);
       hWptZee[index]->Fill(wCand_.pt(), weight);
       hNLLepsZee[index]->Fill(looseElectrons_.size()+looseMuons_.size(), weight);
-      hNJetsZee[index]->Fill(jets_.size(), weight);
+      hNJetsZee[index]->Fill(allJets_.size(), weight);
       hNVtxsZee[index]->Fill(vertices_.size(), weight);
     }else if(zCand_.flavor() == PDGMUON){ 
       hLeadPtZmm[index]->Fill(LeadPt_, weight);
       hWptZmm[index]->Fill(wCand_.pt(), weight);
       hNLLepsZmm[index]->Fill(looseElectrons_.size()+looseMuons_.size(), weight);
-      hNJetsZmm[index]->Fill(jets_.size(), weight);
+      hNJetsZmm[index]->Fill(allJets_.size(), weight);
       hNVtxsZmm[index]->Fill(vertices_.size(), weight);
     }
     if(Cuts_[index] == "ValidWZCand"){//All, Wpt, Zpt, Ht + 1 for starting @ 0
@@ -341,6 +346,7 @@ void WZAnalyzer::Fill_Histos(const int& index, const float& weight)
     hWTransMass[index]->Fill(wCand_.mt(), weight);
     hWpt[index]->Fill(wCand_.pt(), weight);
     hWQ[index]->Fill(wCand_.charge(), weight);
+    ///////////hWTheta[index]->Fill(wCand_.theta(), weight);
     if      (wCand_.flavor() == PDGELEC){
       hWenuTransMass[index]->Fill(wCand_.mt(), weight);
       hWenuQ[index]->Fill(wCand_.charge(), weight);
@@ -372,7 +378,7 @@ void WZAnalyzer::Fill_Histos(const int& index, const float& weight)
   hNTMuon[index]->Fill(tightMuons_    .size(), weight);
   hNTLeps[index]->Fill(tightElectrons_.size()+tightMuons_.size(), weight);
 
-  hNJets[index]->Fill(jets_.size(), weight);
+  hNJets[index]->Fill(allJets_.size(), weight);
   hNVtxs[index]->Fill(vertices_.size(), weight);
 
 }//Fill_Histos
@@ -506,7 +512,7 @@ WZAnalyzer::CalcWMuonVariables(){
 inline void
 WZAnalyzer::CalcWZVariables(){
   if (debugme) cout<<"In Calc WZ Variables\n";
-  wzCand_ = (zCand_ && wCand_) ? WZCandidate(zCand_, wCand_) : WZCandidate();
+  wzCand_ = (zCand_ && wCand_) ? DiBosonWLeptonic(zCand_, wCand_) : DiBosonWLeptonic();
   WZMass_ = wzCand_.mass("minPz");
   Q_ = (zCand_ && wCand_) ? Calc_Q() : -999.;
   if(debugme) PrintEventDetails();
@@ -551,34 +557,34 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   //const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
   event.getByLabel(metLabel_, metH_);
   if(useAdjustedMET_) event.getByLabel(pfCandsLabel_, pfCandidatesH_);
-  WPrimeUtil::getLeptonsMET(patElectronsH_, electrons_,
-                            patMuonsH_, muonAlgo_, muons_,
+  WPrimeUtil::getLeptonsMET(patElectronsH_, allElectrons_,
+                            patMuonsH_, muonAlgo_, allMuons_,
                             metH_, useAdjustedMET_, met_,
                             pfCandidatesH_);
   if(debugme) printf("    Contains: %i electron(s), %i muon(s)\n",
-                          (int)electrons_.size(), (int)muons_.size());
+                          (int)allElectrons_.size(), (int)allMuons_.size());
 
   rhoFastJet_ = getProduct<double>(event,"kt6PFJets:rho");
 
   // Make vectors of leptons passing various criteria
-  for (size_t i = 0; i < electrons_.size(); i++) {
+  for (size_t i = 0; i < allElectrons_.size(); i++) {
 //    if(Overlap(electrons_[i].patEle(), muons_, 0.01)) continue;//Use pat muons?
-    if(Overlap(electrons_[i].patEle(), *patMuonsH_.product(), 0.01)) continue;
-    const float pu = ElecPU(electrons_[i]);
-    if (looseElectron_(electrons_[i].patEle(), electronResult_, pu))
-      looseElectrons_.push_back(electrons_[i]);
+    if(Overlap(allElectrons_[i].patEle(), *patMuonsH_.product(), 0.01)) continue;
+    const float pu = ElecPU(allElectrons_[i]);
+    if (looseElectron_(allElectrons_[i].patEle(), electronResult_, pu))
+      looseElectrons_.push_back(allElectrons_[i]);
 
-    if (tightElectron_(electrons_[i].patEle(), electronResult_, pu))
-      tightElectrons_.push_back(electrons_[i]);
+    if (tightElectron_(allElectrons_[i].patEle(), electronResult_, pu))
+      tightElectrons_.push_back(allElectrons_[i]);
   }
 
-  for (size_t i = 0; i < muons_.size(); i++) {
-    const float pu = MuonPU(muons_[i]);
-    if (looseMuon_(muons_[i], muonResult_,pu))
-      looseMuons_.push_back(muons_[i]);
+  for (size_t i = 0; i < allMuons_.size(); i++) {
+    const float pu = MuonPU(allMuons_[i]);
+    if (looseMuon_(allMuons_[i], muonResult_,pu))
+      looseMuons_.push_back(allMuons_[i]);
 
-    if (tightMuon_(muons_[i], muonResult_,pu))
-      tightMuons_.push_back(muons_[i]);
+    if (tightMuon_(allMuons_[i], muonResult_,pu))
+      tightMuons_.push_back(allMuons_[i]);
   }
   if(looseElectrons_.size() + looseMuons_.size() == 0) return;
 
@@ -591,7 +597,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   }
 
   //Get Jets
-  jets_  = getProduct< JetV>(event,jetsLabel_);
+  allJets_  = getProduct< JetV>(event,jetsLabel_);
 
   //Get Trigger 
   triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
@@ -631,13 +637,37 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
   weight_ = wprimeUtil_->getWeight()*PU_Weight;
   if(!PassCuts(weight_)) return;
-  if(wprimeUtil_->runningOnData()){
+  if(1 || wprimeUtil_->runningOnData()){
     cout<<" The following data events passed All Cuts!!!\n";
     PrintPassingEvent(event);
-    if(debugme) PrintEventLeptons();
+    if(1 || debugme) PrintEventLeptons();
     cout<<" ------------------\n";
   }
   if(debugme) PrintEventLeptons();
+
+  if(!wprimeUtil_->runningOnData()){//Don't do this for data
+    GenParticleV genParticles = getProduct<GenParticleV>(event, "genParticles");
+    const reco::Candidate * genE = 0;
+    for (size_t i = 0; i < genParticles.size(); i++){
+      if (abs(genParticles[i].pdgId()) == PDGELEC){
+        genE = & genParticles[i];
+        cout<<"Gen e : "
+            <<" pt: "<<genE->pt()
+            <<" eta: "<<genE->eta()
+            <<" phi: "<<genE->phi()
+            <<endl;
+      }
+    }
+  }
+/*
+  const reco::Candidate * genE1 = zCand_.genLepton1();
+  const reco::Candidate * genE2 = zCand_.genLepton2();
+  cout<<"Gen e 2: "
+      <<" pt: "<<genE2->pt()
+      <<" eta: "<<genE2->eta()
+      <<" phi: "<<genE2->phi()
+      <<endl;
+*/
 }
 
 void WZAnalyzer::PrintDebugEvent() const{
@@ -677,22 +707,28 @@ void WZAnalyzer::PrintEventDetails() const{
 void
 WZAnalyzer::PrintEventLeptons() const{
   if     (zCand_.flavor() == PDGELEC){
+    cout<<"------- Electron 1 from Z -------\n";
 //    PrintElectron(*zCand_.elec1(), PDGZ);
+    PrintElectron(WPrimeUtil::Find(*zCand_.daughter(0), allElectrons_));
+    cout<<"------- Electron 2 from Z -------\n";
 //    PrintElectron(*zCand_.elec2(), PDGZ);
-    PrintElectron(WPrimeUtil::Find(*zCand_.daughter(0), electrons_));
-    PrintElectron(WPrimeUtil::Find(*zCand_.daughter(1), electrons_));
+    PrintElectron(WPrimeUtil::Find(*zCand_.daughter(1), allElectrons_));
   }else if(zCand_.flavor() == PDGMUON){
-    PrintMuon(WPrimeUtil::Find(*zCand_.daughter(0), muons_));
-    PrintMuon(WPrimeUtil::Find(*zCand_.daughter(1), muons_));
+    cout<<"------- Muon 1 from Z -------\n";
 //    PrintMuon(*zCand_.muon1(), PDGZ);
+    PrintMuon(WPrimeUtil::Find(*zCand_.daughter(0), allMuons_));
+    cout<<"------- Muon 2 from Z -------\n";
 //    PrintMuon(*zCand_.muon2(), PDGZ);
+    PrintMuon(WPrimeUtil::Find(*zCand_.daughter(1), allMuons_));
   }
 
   if     (wCand_.flavor() == PDGELEC){   
-    PrintElectron(WPrimeUtil::Find(*wCand_.daughter(0), electrons_));
+    cout<<"------- Electron from W -------\n";
+    PrintElectron(WPrimeUtil::Find(*wCand_.daughter(0), allElectrons_));
 //    PrintElectron(*wCand_.elec(), PDGW);
   }else if(wCand_.flavor() == PDGMUON){
-    PrintMuon(WPrimeUtil::Find(*wCand_.daughter(0), muons_));
+    cout<<"------- Muon from W -------\n";
+    PrintMuon(WPrimeUtil::Find(*wCand_.daughter(0), allMuons_));
 //    PrintMuon    (*wCand_.muon(), PDGW);
   }
 }
@@ -971,17 +1007,17 @@ inline bool WZAnalyzer::inEE(const TeVMuon& mu) const{
 
 inline void
 WZAnalyzer::ClearEvtVariables(){
-  jets_.clear();
-  electrons_.clear();
+  allJets_.clear();
+  allElectrons_.clear();
   looseElectrons_.clear();
   tightElectrons_.clear();
-  muons_.clear();
+  allMuons_.clear();
   looseMuons_.clear();
   tightMuons_.clear();
   met_ = pat::MET();
   zCand_ = ZCandidate();
   wCand_ = WCandidate();
-  wzCand_ = WZCandidate();
+  wzCand_ = DiBosonWLeptonic();
   evtType_ = -999;
   LeadPt_ = -999;
   LeadElecPt_ = -999;
@@ -999,9 +1035,9 @@ WZAnalyzer::ClearEvtVariables(){
 float
 WZAnalyzer::WLepPt() const{
   if(wCand_.flavor() == PDGELEC){
-    return WPrimeUtil::Find(*wCand_.daughter(0), electrons_).patEle().pt();
+    return WPrimeUtil::Find(*wCand_.daughter(0), allElectrons_).patEle().pt();
   }else if(wCand_.flavor() == PDGMUON){
-    return WPrimeUtil::Find(*wCand_.daughter(0), muons_).pt();
+    return WPrimeUtil::Find(*wCand_.daughter(0), allMuons_).pt();
   }
   return -999.;
 }
@@ -1009,9 +1045,9 @@ WZAnalyzer::WLepPt() const{
 inline float
 WZAnalyzer::ZLepPt(int idx) const{
   if(zCand_.flavor() == PDGELEC)
-    return WPrimeUtil::Find(*zCand_.daughter(idx), electrons_).patEle().pt();
+    return WPrimeUtil::Find(*zCand_.daughter(idx), allElectrons_).patEle().pt();
   else if(zCand_.flavor() == PDGMUON)
-    return WPrimeUtil::Find(*zCand_.daughter(idx), muons_).pt();
+    return WPrimeUtil::Find(*zCand_.daughter(idx), allMuons_).pt();
   return -999.;
 }
 

@@ -33,12 +33,12 @@ public:
   void CalcWVariables();
   void CalcWElecVariables();
   void CalcWMuonVariables();
-  void CalcWVVariables();
+  void CalcVWVariables();
   void CalcEventVariables();
 
   int   Calc_EvtType() const;
   float Calc_Q() const;
-  float Calc_GenWVInvMass() const;
+  float Calc_GenVWInvMass() const;
   bool inEE(const TeVMuon& mu) const;
 
   float WLepPt() const;
@@ -51,7 +51,7 @@ public:
 
 //methods for the cuts
   bool PassTriggersCut() const;
-  bool PassValidWVCut() const;
+  bool PassValidVWCut() const;
 
   bool PassTriggerMatch(const heep::Ele& e1, const heep::Ele& e2) const;
   bool PassTriggerMatch(const TeVMuon& m1, const TeVMuon& m2) const;
@@ -69,7 +69,7 @@ public:
 
 ///My calculated qualities//////////////////
   float weight_;
-  float WVMass_;
+  float VWMass_;
   float Vpt_;
   float Wpt_;
   float Q_;
@@ -91,16 +91,16 @@ public:
   edm::InputTag vertexLabel_;
 
 //////Chosen Candidates
-  WVCandidate wvCand_;
+  DiBosonWLeptonic vwCand_;
   std::vector<reco::Vertex>  vertices_;
 
 // +++++++++++++++++++ Histogram Definitions
-  std::vector<TH1F*> hWVMass;
-  std::vector<TH1F*> hWV3e0muMass, hWV2e1muMass, hWV1e2muMass, hWV0e3muMass;
+  std::vector<TH1F*> hVWMass;
+  std::vector<TH1F*> hVW3e0muMass, hVW2e1muMass, hVW1e2muMass, hVW0e3muMass;
 
   std::vector<TH1F*> hQ;
-  std::vector<TH1F*> hWVTransMass;
-  std::vector<TH1F*> hWVpt;
+  std::vector<TH1F*> hVWTransMass;
+  std::vector<TH1F*> hVWpt;
   std::vector<TH1F*> hEvtType, hEvtTypeP, hEvtTypeM;
 
   std::vector<TH1F*> hVMass, hVeeMass, hVmmMass ;
@@ -129,7 +129,7 @@ public:
 
   std::vector<TH1F*> hWenuCombRelIso, hWmnuCombRelIso;
 
-  TTree* tWVCand;
+  TTree* tVWCand;
 
 //Cuts
   typedef bool (HadronicVWAnalyzer::*CutFnPtr)() const; 

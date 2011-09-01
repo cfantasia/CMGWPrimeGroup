@@ -134,9 +134,9 @@ protected:
   PFCandidateVH pfCandidatesH_;
 
 //////Chosen Candidates
-  ElectronV electrons_, looseElectrons_, tightElectrons_;
-  MuonV muons_, looseMuons_, tightMuons_;
-  JetV  jets_, looseJets_, tightJets_;
+  ElectronV allElectrons_, looseElectrons_, tightElectrons_;
+  MuonV allMuons_, looseMuons_, tightMuons_;
+  JetV  allJets_, looseJets_, tightJets_;
   pat::MET met_;
   ZCandidate zCand_;
   WCandidate wCand_, vCand_;
