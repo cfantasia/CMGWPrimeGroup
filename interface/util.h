@@ -150,7 +150,7 @@ const int PDGW = 24;
 const int PDGZ = 23;
 const int PDGWPRIME = 34;
 
-//const float PI    = 2.0 * TMath::ACos(0.);
+const float PI    = 2.0 * TMath::ACos(0.);
 //const float TWOPI = 2.0 * PI;
 const float NOCUT = 9e9;
 
