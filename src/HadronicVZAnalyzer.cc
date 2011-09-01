@@ -220,6 +220,29 @@ void HadronicVZAnalyzer::Declare_Histos(TFileDirectory & dir)
   h_dptpt2_vs_invpt_teta1524 = dir.make<TH2F>("h_dptpt2_vs_invpt_teta1524","h_dptpt2_vs_invpt_teta1524", 500, 0., 0.1, 150, 0., 0.1);
   //
 
+  //Jet merging histos
+
+  h_deltaR_jet1jet2 = dir.make<TH1F>("h_deltaR_jet1jet2", "h_deltaR_jet1jet2", 50, 0.0, 5.0);
+  h_deltaR_jet1Z = dir.make<TH1F>("h_deltaR_jet1Z", "h_deltaR_jet1Z", 50, 0.0, 5.0);
+  h_deltaR_jet2Z = dir.make<TH1F>("h_deltaR_jet2Z", "h_deltaR_jet2Z", 50, 0.0, 5.0);
+  h_deltaR_jet3Z = dir.make<TH1F>("h_deltaR_jet3Z", "h_deltaR_jet3Z", 50, 0.0, 5.0);
+
+  h_deltaR_jet1jet2_R1_cut40 = dir.make<TH1F>("h_deltaR_jet1jet2_R1_cut40", "h_deltaR_jet1jet2_R1_cut40", 50, 0.0, 5.0);
+  h_deltaR_jet1jet2_R1_cut50 = dir.make<TH1F>("h_deltaR_jet1jet2_R1_cut50", "h_deltaR_jet1jet2_R1_cut50", 50, 0.0, 5.0);
+  h_deltaR_jet1jet2_R1_cut60 = dir.make<TH1F>("h_deltaR_jet1jet2_R1_cut60", "h_deltaR_jet1jet2_R1_cut60", 50, 0.0, 5.0);
+  h_deltaR_jet1jet2_R1_cut65 = dir.make<TH1F>("h_deltaR_jet1jet2_R1_cut65", "h_deltaR_jet1jet2_R1_cut65", 50, 0.0, 5.0);
+  h_deltaR_jet1jet2_R1_cut70 = dir.make<TH1F>("h_deltaR_jet1jet2_R1_cut70", "h_deltaR_jet1jet2_R1_cut70", 50, 0.0, 5.0);
+  h_deltaR_jet1jet2_R1_cut80 = dir.make<TH1F>("h_deltaR_jet1jet2_R1_cut80", "h_deltaR_jet1jet2_R1_cut80", 50, 0.0, 5.0);
+  h_deltaR_jet1jet2_R1_cut90 = dir.make<TH1F>("h_deltaR_jet1jet2_R1_cut90", "h_deltaR_jet1jet2_R1_cut90", 50, 0.0, 5.0);
+
+  h_deltaR_jet1jet2_R2_cut40 = dir.make<TH1F>("h_deltaR_jet1jet2_R2_cut40", "h_deltaR_jet1jet2_R2_cut40", 50, 0.0, 5.0);
+  h_deltaR_jet1jet2_R2_cut50 = dir.make<TH1F>("h_deltaR_jet1jet2_R2_cut50", "h_deltaR_jet1jet2_R2_cut50", 50, 0.0, 5.0);
+  h_deltaR_jet1jet2_R2_cut60 = dir.make<TH1F>("h_deltaR_jet1jet2_R2_cut60", "h_deltaR_jet1jet2_R2_cut60", 50, 0.0, 5.0);
+  h_deltaR_jet1jet2_R2_cut65 = dir.make<TH1F>("h_deltaR_jet1jet2_R2_cut65", "h_deltaR_jet1jet2_R2_cut65", 50, 0.0, 5.0);
+  h_deltaR_jet1jet2_R2_cut70 = dir.make<TH1F>("h_deltaR_jet1jet2_R2_cut70", "h_deltaR_jet1jet2_R2_cut70", 50, 0.0, 5.0);
+  h_deltaR_jet1jet2_R2_cut80 = dir.make<TH1F>("h_deltaR_jet1jet2_R2_cut80", "h_deltaR_jet1jet2_R2_cut80", 50, 0.0, 5.0);
+  h_deltaR_jet1jet2_R2_cut90 = dir.make<TH1F>("h_deltaR_jet1jet2_R2_cut90", "h_deltaR_jet1jet2_R2_cut90", 50, 0.0, 5.0);
+
   cout << "Histos declared" << endl;
 
 }//Declare_Histos
@@ -452,6 +475,73 @@ void HadronicVZAnalyzer::FillGoodVZHistos(){
   h_tight_deltaR_HadVmuon2->Fill(reco::deltaR(wCand_, VZm2), weight_);
   if (debugme)
     cout << "Filled more tight muons histos from HadVZ -- 5" << endl;
+}
+
+void HadronicVZAnalyzer::FillJetMergingHistos(){
+
+  if (jets_.size()>1){
+    h_deltaR_jet1jet2->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);
+    
+    //Region histos
+    if (jets_.at(0).mass() < 40){
+      h_deltaR_jet1jet2_R1_cut40->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);
+    }
+    if (jets_.at(0).mass() > 40){
+      h_deltaR_jet1jet2_R2_cut40->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);  
+    }
+
+    if (jets_.at(0).mass() < 50){
+      h_deltaR_jet1jet2_R1_cut50->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);
+    }
+    if (jets_.at(0).mass() > 50){
+      h_deltaR_jet1jet2_R2_cut50->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);  
+    }
+
+    if (jets_.at(0).mass() < 60){
+      h_deltaR_jet1jet2_R1_cut60->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);
+    }
+    if (jets_.at(0).mass() > 60){
+      h_deltaR_jet1jet2_R2_cut60->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);  
+    }
+
+    if (jets_.at(0).mass() < 65){
+      h_deltaR_jet1jet2_R1_cut65->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);
+    }
+    if (jets_.at(0).mass() > 65){
+      h_deltaR_jet1jet2_R2_cut65->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);  
+    }
+
+    if (jets_.at(0).mass() < 70){
+      h_deltaR_jet1jet2_R1_cut70->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);
+    }
+    if (jets_.at(0).mass() > 70){
+      h_deltaR_jet1jet2_R2_cut70->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);  
+    }
+
+    if (jets_.at(0).mass() < 80){
+      h_deltaR_jet1jet2_R1_cut80->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);
+    }
+    if (jets_.at(0).mass() > 80){
+      h_deltaR_jet1jet2_R2_cut80->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);  
+    }
+
+    if (jets_.at(0).mass() < 90){
+      h_deltaR_jet1jet2_R1_cut90->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);
+    }
+    if (jets_.at(0).mass() > 90){
+      h_deltaR_jet1jet2_R2_cut90->Fill(reco::deltaR(jets_.at(0), jets_.at(1)), weight_);  
+    }
+    
+    h_deltaR_jet2Z->Fill(reco::deltaR(jets_.at(1), zCand_), weight_);
+    if (jets_.size()>2)
+      h_deltaR_jet3Z->Fill(reco::deltaR(jets_.at(2), zCand_), weight_);
+
+
+  }
+  if (jets_.size()>0)
+    h_deltaR_jet1Z->Fill(reco::deltaR(jets_.at(0), zCand_), weight_);
+
+
 }
 
 void 
@@ -696,6 +786,9 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   if (debugme && goodZ)
     cout << "Good Z from muon" << endl;
   if (goodZ) FillGoodZHistos();
+
+  if (goodZ) FillJetMergingHistos();
+
 
   ///////////////////////////////////////
   //// Make VZ Candidate With Loose Muons

@@ -103,6 +103,8 @@ public:
   void FillGoodHadVHistos();
   void FillValidVZHistos();
   void FillGoodVZHistos();
+  void FillJetMergingHistos();
+
 
   //clean stuff
   void ClearEvtVariables();
@@ -325,6 +327,29 @@ public:
   //  TH1F* h_tight_jet_mult;
   //  TH1F* h_tight_jet_mult_inc;
   //  TH1F* h_tight_jet1jet2_mass;
+
+  //Jet merging histos
+  TH1F* h_deltaR_jet1jet2;
+
+  TH1F* h_deltaR_jet1jet2_R1_cut40;
+  TH1F* h_deltaR_jet1jet2_R1_cut50;
+  TH1F* h_deltaR_jet1jet2_R1_cut60;
+  TH1F* h_deltaR_jet1jet2_R1_cut65;
+  TH1F* h_deltaR_jet1jet2_R1_cut70;
+  TH1F* h_deltaR_jet1jet2_R1_cut80;
+  TH1F* h_deltaR_jet1jet2_R1_cut90;
+
+  TH1F* h_deltaR_jet1jet2_R2_cut40;
+  TH1F* h_deltaR_jet1jet2_R2_cut50;
+  TH1F* h_deltaR_jet1jet2_R2_cut60;
+  TH1F* h_deltaR_jet1jet2_R2_cut65;
+  TH1F* h_deltaR_jet1jet2_R2_cut70;
+  TH1F* h_deltaR_jet1jet2_R2_cut80;
+  TH1F* h_deltaR_jet1jet2_R2_cut90;
+
+  TH1F* h_deltaR_jet1Z;
+  TH1F* h_deltaR_jet2Z;
+  TH1F* h_deltaR_jet3Z;
 
 
   //Muon work histos
