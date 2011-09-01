@@ -25,12 +25,12 @@ process.WprimeAnalyzer.minNJets = cms.untracked.uint32(1) # Larger than
 process.WprimeAnalyzer.maxNJets = cms.uint32(99999) # Smaller than
 process.WprimeAnalyzer.maxAngleBetweenJets = cms.double(9999.9)
 #
-process.WprimeAnalyzer.minZpt = cms.untracked.double(0.0) # All units in GeV
+process.WprimeAnalyzer.minZpt = cms.untracked.double(50.0) # All units in GeV
 process.WprimeAnalyzer.minZmass = cms.untracked.double(70.0)
 process.WprimeAnalyzer.maxZmass = cms.untracked.double(110.0)
-process.WprimeAnalyzer.minHadVPt = cms.untracked.double(0.0)
-process.WprimeAnalyzer.minHadVmass = cms.untracked.double(60.0)
-process.WprimeAnalyzer.maxHadVmass = cms.untracked.double(110.0)
+process.WprimeAnalyzer.minVPt = cms.untracked.double(50.0)
+process.WprimeAnalyzer.minVmass = cms.untracked.double(60.0)
+process.WprimeAnalyzer.maxVmass = cms.untracked.double(110.0)
 # +++++++++++++++++++Muon General Cuts
 process.WprimeAnalyzer.maxMuonEta = cms.double(2.5)
 process.WprimeAnalyzer.minMuonLoosePt = cms.double(10.)
@@ -66,12 +66,6 @@ process.WprimeAnalyzer.Cuts = cms.vstring(
         "ZMass",
         "Zpt",
         "ValidVZ",
-        
-        "MinNTightLeptons",
-        "ValidZTight",
-        "ZTightMass",
-        "ZTightpt",
-        "ValidVZTight",
-        
+              
         #    "HLT",
         "AllCuts")

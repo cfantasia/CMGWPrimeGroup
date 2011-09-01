@@ -102,53 +102,11 @@ void HadronicVZAnalyzer::Declare_Histos(const TFileDirectory & dir)
   h_jet_mult = dir.make<TH1F>("h_jet_mult", "h_jet_mult", 10, -0.5, 9.5); 
   h_jet_mult_inc = dir.make<TH1F>("h_jet_mult_incl", "h_jet_mult_incl", 10, -0.5, 9.5); 
   h_jet1jet2_mass = dir.make<TH1F>("h_jet1jet2_mass", "h_jet1jet2_mass", 100, 0.0, 500.);
-  //tight histos
-  h_tight_HadVZMass = dir.make<TH1F>("h_tight_HadVZMass","h_tight_HadVZMass",250,0.0,2500.0);
-  h_tight_Zmuon1_pt = dir.make<TH1F>("h_tight_Zmuon1_pt", "h_tight_Zmuon1_pt", 100, 0.0, 1000.0);
-  h_tight_Zmuon1_eta = dir.make<TH1F>("h_tight_Zmuon1_eta", "h_tight_Zmuon1_eta", 40, -5.0, 5.0);
-  h_tight_Zmuon1_phi = dir.make<TH1F>("h_tight_Zmuon1_phi", "h_tight_Zmuon1_phi", 20, -4.0, 4.0);
-  h_tight_Zmuon2_pt = dir.make<TH1F>("h_tight_Zmuon2_pt", "h_tight_Zmuon2_pt", 100, 0.0, 1000.0);
-  h_tight_Zmuon2_eta = dir.make<TH1F>("h_tight_Zmuon2_eta", "h_tight_Zmuon2_eta", 40, -5.0, 5.0);
-  h_tight_Zmuon2_phi = dir.make<TH1F>("h_tight_Zmuon2_phi", "h_tight_Zmuon2_phi", 20, -4.0, 4.0);
-  h_tight_Zmuon1_VZCut_pt = dir.make<TH1F>("h_tight_Zmuon1_VZCut_pt", "h_tight_Zmuon1_VZCut_pt", 100, 0.0, 1000.0);
-  h_tight_Zmuon1_VZCut_eta = dir.make<TH1F>("h_tight_Zmuon1_VZCut_eta", "h_tight_Zmuon1_VZCut_eta", 40, -5.0, 5.0);
-  h_tight_Zmuon1_VZCut_phi = dir.make<TH1F>("h_tight_Zmuon1_VZCut_phi", "h_tight_Zmuon1_VZCut_phi", 20, -4.0, 4.0);
-  h_tight_Zmuon2_VZCut_pt = dir.make<TH1F>("h_tight_Zmuon2_VZCut_pt", "h_tight_Zmuon2_VZCut_pt", 100, 0.0, 1000.0);
-  h_tight_Zmuon2_VZCut_eta = dir.make<TH1F>("h_tight_Zmuon2_VZCut_eta", "h_tight_Zmuon2_VZCut_eta", 40, -5.0, 5.0);
-  h_tight_Zmuon2_VZCut_phi = dir.make<TH1F>("h_tight_Zmuon2_VZCut_phi", "h_tight_Zmuon2_VZCut_phi", 20, -4.0, 4.0);
-  h_tight_deltaR_muon1muon2 = dir.make<TH1F>("h_tight_deltaR_muon1muon2", "h_tight_deltaR_muon1muon2", 50, 0., 5.);
-  h_tight_deltaR_HadVmuon1 = dir.make<TH1F>("h_tight_deltaR_HadVmuon1", "h_tight_deltaR_HadVmuon1", 50, 0., 5.);
-  h_tight_deltaR_HadVmuon2 = dir.make<TH1F>("h_tight_deltaR_HadVmuon2", "h_tight_deltaR_HadVmuon2", 50, 0., 5.);
-  /*  h_tight_jet1_pt = dir.make<TH1F>("h_tight_jet1_pt", "h_tight_jet1_pt", 100, 0.0, 1000.0);
-      h_tight_jet1_eta = dir.make<TH1F>("h_tight_jet1_eta", "h_tight_jet1_eta", 40, -5.0, 5.0);
-      h_tight_jet1_phi = dir.make<TH1F>("h_tight_jet1_phi", "h_tight_jet1_phi", 20, -4.0, 4.0);
-      h_tight_jet2_pt = dir.make<TH1F>("h_tight_jet2_pt", "h_tight_jet2_pt", 100, 0.0, 1000.0);
-      h_tight_jet2_eta = dir.make<TH1F>("h_tight_jet2_eta", "h_tight_jet2_eta", 40, -5.0, 5.0);
-      h_tight_jet2_phi = dir.make<TH1F>("h_tight_jet2_phi", "h_tight_jet2_phi", 20, -4.0, 4.0);
-      h_tight_jet1_mass = dir.make<TH1F>("h_tight_jet1_mass", "h_tight_jet1_mass", 100, 0.0, 500.);
-      h_tight_jet2_mass = dir.make<TH1F>("h_tight_jet2_mass", "h_tight_jet2_mass", 100, 0.0, 500.);
-      h_tight_deltaR_jet1muon1 = dir.make<TH1F>("h_tight_deltaR_jet1muon1", "h_tight_deltaR_jet1muon1", 50, 0., 5.);
-      h_tight_deltaR_jet1muon2 = dir.make<TH1F>("h_tight_deltaR_jet1muon2", "h_tight_deltaR_jet1muon2", 50, 0., 5.);
-      h_tight_deltaR_jet2muon1 = dir.make<TH1F>("h_tight_deltaR_jet2muon1", "h_tight_deltaR_jet2muon1", 50, 0., 5.);
-      h_tight_deltaR_jet2muon2 = dir.make<TH1F>("h_tight_deltaR_jet2muon2", "h_tight_deltaR_jet2muon2", 50, 0., 5.);*/
-  h_tight_HadVZpt = dir.make<TH1F>("h_tight_HadVZpt", "h_tight_HadVZpt", 30, 0.0, 300.0);
-  h_tight_HadVZeta = dir.make<TH1F>("h_tight_HadVZeta", "h_tight_HadVZeta", 40, -5.0, 5.0);
-  h_tight_HadVZphi = dir.make<TH1F>("h_tight_HadVZphi", "h_tight_HadVZphi", 20, -4.0, 4.0);
+
+  //
   h_tight_muons_pt = dir.make<TH1F>("h_tight_muons_pt", "h_tight_muons_pt", 100, 0.0, 1000.);
   h_tight_muons_eta = dir.make<TH1F>("h_tight_muons_eta", "h_tight_muons_eta", 40, -5.0, 5.);  
   h_tight_muons_phi = dir.make<TH1F>("h_tight_muons_phi", "h_tight_muons_phi", 20, -4.0, 4.);
-  /*  h_tight_jets_pt = dir.make<TH1F>("h_tight_jets_pt", "h_tight_jets_pt", 100, 0.0, 1000.);
-      h_tight_jets_eta = dir.make<TH1F>("h_tight_jets_eta", "h_tight_jets_eta", 40, -5.0, 5.);  
-      h_tight_jets_phi = dir.make<TH1F>("h_tight_jets_phi", "h_tight_jets_phi", 20, -4.0, 4.);
-      h_tight_jet_HadV_pt = dir.make<TH1F>("h_tight_jet_HadV_pt", "h_tight_jet_HadV_pt", 100, 0.0, 1000.);
-      h_tight_jet_HadV_eta = dir.make<TH1F>("h_tight_jet_HadV_eta", "h_tight_jet_HadV_eta", 40, -5.0, 5.);  
-      h_tight_jet_HadV_phi = dir.make<TH1F>("h_tight_jet_HadV_phi", "h_tight_jet_HadV_phi", 20, -4.0, 4.);*/
-  h_tight_jet_VZCut_pt = dir.make<TH1F>("h_tight_jet_VZCut_pt", "h_tight_jet_VZCut_pt", 100, 0.0, 1000.);
-  h_tight_jet_VZCut_eta = dir.make<TH1F>("h_tight_jet_VZCut_eta", "h_tight_jet_VZCut_eta", 40, -5.0, 5.);  
-  h_tight_jet_VZCut_phi = dir.make<TH1F>("h_tight_jet_VZCut_phi", "h_tight_jet_VZCut_phi", 20, -4.0, 4.);
-  //  h_tight_jet_mult = dir.make<TH1F>("h_tight_jet_mult", "h_tight_jet_mult", 10, -0.5, 9.5); 
-  // h_tight_jet_mult_inc = dir.make<TH1F>("h_tight_jet_mult_incl", "h_tight_jet_mult_incl", 10, -0.5, 9.5); 
-  // h_tight_jet1jet2_mass = dir.make<TH1F>("h_tight_jet1jet2_mass", "h_tight_jet1jet2_mass", 100, 0.0, 500.);
 
   // Muon POG histos
   h_dptpt2 = dir.make<TH1F>("h_dptpt2", "h_dptpt2", 500, 0., 0.1);
@@ -182,7 +140,6 @@ void HadronicVZAnalyzer::Declare_Histos(const TFileDirectory & dir)
   h_dptpt2_vs_pt_teta1524 = dir.make<TH2F>("h_dptpt2_vs_pt_teta1524", "h_dptpt2_vs_pt_teta1524", 500, 0., 0.1, 150, 0.0, 500.);
   h_dptpt_vs_invpt_teta1524 = dir.make<TH2F>("h_dptpt_vs_invpt_teta1524","h_dptpt_vs_invpt_teta1524", 50, 0., 0.5, 50, 0., 0.1);
   h_dptpt2_vs_invpt_teta1524 = dir.make<TH2F>("h_dptpt2_vs_invpt_teta1524","h_dptpt2_vs_invpt_teta1524", 500, 0., 0.1, 150, 0., 0.1);
-  //
 
   //Jet merging histos
 
@@ -207,6 +164,28 @@ void HadronicVZAnalyzer::Declare_Histos(const TFileDirectory & dir)
   h_deltaR_jet1jet2_R2_cut80 = dir.make<TH1F>("h_deltaR_jet1jet2_R2_cut80", "h_deltaR_jet1jet2_R2_cut80", 50, 0.0, 5.0);
   h_deltaR_jet1jet2_R2_cut90 = dir.make<TH1F>("h_deltaR_jet1jet2_R2_cut90", "h_deltaR_jet1jet2_R2_cut90", 50, 0.0, 5.0);
 
+
+  /////////////////
+  DeclareHistoSet("hVZMass", "Reconstructed VZ Invariant Mass",
+                  "M_{VZ} (GeV)", 120, 0, 1200, "GeV", hVZMass,dir);
+  DeclareHistoSet("hVZpt", "Reconstructed VZ Transverse Momentum",
+                  "p_{VZ}^{T} (GeV)", 50, 0, 500, "GeV", hVZpt,dir);
+
+  DeclareHistoSet("hZMass" , "Reconstructed Mass of Z",
+                  "M_{Z} (GeV)", 30, 60, 120, "GeV", hZMass,dir);
+  DeclareHistoSet("hZpt", "p_{T}^{Z}", 
+                  "p_{T}^{Z} (GeV)", 40, 0, 400, "GeV", hZpt,dir);
+  DeclareHistoSet("hVMass" , "Reconstructed Mass of V",
+                  "M_{V} (GeV)", 30, 60, 120, "GeV", hVMass,dir);
+  DeclareHistoSet("hVpt", "p_{T}^{V}", 
+                  "p_{T}^{V} (GeV)", 40, 0, 400, "GeV", hVpt,dir);
+
+  DeclareHistoSet("hNLLeps", "Number of Loose Leptons in Event",
+                  "N_{l}^{Loose}", 10, 0, 10, "NONE", hNLLeps,dir);
+  DeclareHistoSet("hNLJets", "Number of Loose Jets in Event",
+                  "N_{Jets}^{Loose}", 10, 0, 10, "NONE", hNLJets,dir);
+
+
   string title = Form("Expected # of Events / %.0f pb^{-1}",  wprimeUtil_->getLumi_ipb());
   title = title + ";;" + title;
   hNumEvts = NULL; hNumEvts = dir.make<TH1F>("hNumEvts",title.c_str(),NCuts_,0, NCuts_);
@@ -221,6 +200,22 @@ void HadronicVZAnalyzer::Declare_Histos(const TFileDirectory & dir)
 void HadronicVZAnalyzer::Fill_Histos(const int& index, const float& weight)
 {
   if(debugme) printf("Filling Histos\n");
+
+  if(hadVZ_){
+    hVZMass[index]->Fill(hadVZ_.mass(), weight);
+    hVZpt[index]->Fill(hadVZ_.pt(), weight);
+  }
+  if(zCand_){
+    hZMass[index]->Fill(zCand_.mass(), weight);
+    hZpt[index]->Fill(zCand_.pt(), weight);
+  }
+  if(vCand_){
+    hVMass[index]->Fill(vCand_.mass(), weight);
+    hVpt[index]->Fill(vCand_.pt(), weight);
+  }
+  hNLLeps[index]->Fill(looseElectrons_.size()+looseMuons_.size(), weight);
+  hNLJets[index]->Fill(looseJets_.size(), weight);
+
 }//Fill_Histos
 
 void HadronicVZAnalyzer::FillJetMultiplicityHists(){
@@ -363,20 +358,6 @@ void HadronicVZAnalyzer::FillGoodZHistos(){
   h_deltaR_muon1muon2->Fill(reco::deltaR(m1, m2), weight_);
 }
 
-void HadronicVZAnalyzer::FillGoodZTightHistos(){
-  const TeVMuon & m1 = WPrimeUtil::Find(*zCandTight_.daughter(0), allMuons_);
-  const TeVMuon & m2 = WPrimeUtil::Find(*zCandTight_.daughter(1), allMuons_);
-  if (debugme)
-    cout << "Found my muons from tight Z" << endl;
-  h_tight_Zmuon1_pt->Fill(m1.pt(), weight_);
-  h_tight_Zmuon1_eta->Fill(m1.eta(), weight_);
-  h_tight_Zmuon1_phi->Fill(m1.phi(), weight_);
-  h_tight_Zmuon2_pt->Fill(m2.pt(), weight_);
-  h_tight_Zmuon2_eta->Fill(m2.eta(), weight_);
-  h_tight_Zmuon2_phi->Fill(m2.phi(), weight_);	  
-  h_tight_deltaR_muon1muon2->Fill(reco::deltaR(m1, m2), weight_);
-}
-
 void HadronicVZAnalyzer::FillGoodHadVHistos(){
   h_jet_HadV_pt->Fill(vCand_.pt(), weight_);
   h_jet_HadV_eta->Fill(vCand_.eta(), weight_);
@@ -408,42 +389,6 @@ void HadronicVZAnalyzer::FillValidVZHistos(){
   
   h_deltaR_HadVmuon1->Fill(reco::deltaR(vCand_, VZm1), weight_);
   h_deltaR_HadVmuon2->Fill(reco::deltaR(vCand_, VZm2), weight_);
-}
-
-void HadronicVZAnalyzer::FillGoodVZHistos(){
-  h_tight_HadVZMass->Fill(hadVZTight_.mass(), weight_);
-  h_tight_HadVZpt->Fill(hadVZTight_.pt(), weight_);
-  h_tight_HadVZeta->Fill(hadVZTight_.eta(), weight_);
-  h_tight_HadVZphi->Fill(hadVZTight_.phi(), weight_);
-  if (debugme)
-    cout << "Filled my HadVZTight histos" << endl;
-  const TeVMuon & VZm1 = WPrimeUtil::Find(*zCandTight_.daughter(0), allMuons_);
-  const TeVMuon & VZm2 = WPrimeUtil::Find(*zCandTight_.daughter(1), allMuons_);
-  if (debugme)
-    cout << "Found my tight muons from HadVZ" << endl;
-  h_tight_Zmuon1_VZCut_pt->Fill(VZm1.pt(), weight_);
-  h_tight_Zmuon1_VZCut_eta->Fill(VZm1.eta(), weight_);
-  h_tight_Zmuon1_VZCut_phi->Fill(VZm1.phi(), weight_);
-  h_tight_Zmuon2_VZCut_pt->Fill(VZm2.pt(), weight_);
-  h_tight_Zmuon2_VZCut_eta->Fill(VZm2.eta(), weight_);
-  h_tight_Zmuon2_VZCut_phi->Fill(VZm2.phi(), weight_);
-
-  h_tight_jet_VZCut_pt->Fill(vCand_.pt(), weight_);
-  if (debugme)
-    cout << "Filled more tight muons histos from HadVZ -- 1" << endl;
-  h_tight_jet_VZCut_eta->Fill(vCand_.eta(), weight_);
-  if (debugme)
-    cout << "Filled more tight muons histos from HadVZ -- 2" << endl;
-  h_tight_jet_VZCut_phi->Fill(vCand_.phi(), weight_);
-  if (debugme)
-    cout << "Filled more tight muons histos from HadVZ -- 3" << endl;
-	
-  h_tight_deltaR_HadVmuon1->Fill(reco::deltaR(vCand_, VZm1), weight_);
-  if (debugme)
-    cout << "Filled more tight muons histos from HadVZ -- 4" << endl;
-  h_tight_deltaR_HadVmuon2->Fill(reco::deltaR(vCand_, VZm2), weight_);
-  if (debugme)
-    cout << "Filled more tight muons histos from HadVZ -- 5" << endl;
 }
 
 void HadronicVZAnalyzer::FillJetMergingHistos(){
@@ -690,38 +635,34 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   ///Hadronic V/////////////////
   //////////////////////////////
   int iCut=0;
-  //NoCuts
+  if( !PassNoCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
 
-  //Cory: CutMinNLooseLep
-  if( !PassMinNLeptonsCut() ){
-    return;
-  }
+  //CutMinNLooseLep
+  if( !PassMinNLeptonsCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
 
-  //Cory: CutMinNJets
-  if( !PassMinNJetsCut() ){
-    return;
-  }
+  //CutMinNJets
+  if( !PassMinNJetsCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
 
   // Make a V candidate out of the jets.
-  //Cory: CutValidW
+  //CutValidW
   vCand_ = getWCand(looseJets_);
   if (debugme)
     cout << "Made vCand" << endl;
 
-  //Cory: CutValidV
+  //CutValidV
   if( !PassValidVCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
   if (debugme) cout << "Passed vCand" << endl;
 
-  //Cory: CutVMass
+  //CutVMass
   if( !PassVMassCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
   if (debugme) cout << "Passed vCand Mass" << endl;
 
-  //Cory: CutVpt
+  //CutVpt
   if( !PassVptCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
   if (debugme) cout << "Good vCand Pt" << endl;
@@ -730,7 +671,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   FillGoodHadVHistos();
 
   //////////////////////////////
-  ///Z With Loose Muons/////////
+  ///////  Z With Muons  ///////
   //////////////////////////////
   
   // Make a Z candidate out of the loose muons. 
@@ -744,20 +685,19 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   if (debugme)
     cout << "Valid Z from muon" << endl;
 
-  //Cory: CutZMass
-  bool goodZ = true;
-  if( !PassZMassCut() ){ goodZ = false; }
+  //CutZMass
+  if( !PassZMassCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
 
-  //Cory: CutZpt
-  if( !PassZptCut  () ){ goodZ = false;}
+  //CutZpt
+  if( !PassZptCut  () ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
 
-  if (debugme && goodZ)
+  if (debugme)
     cout << "Good Z from muon" << endl;
-  if (goodZ) FillGoodZHistos();
-
-  if (goodZ) FillJetMergingHistos();
+  
+  FillGoodZHistos();
+  FillJetMergingHistos();
 
 
   ///////////////////////////////////////
@@ -766,84 +706,14 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   if (debugme) 
     cout << "Im just before boson cands" << endl;
   
-  //Cory: CutValidVZ
-  if(goodZ) {
-    hadVZ_ = VZCandidate(zCand_, vCand_);
-    if(debugme) cout << "Made my hadVZ" << endl;  
-  }
-  else{
-    if (debugme)
-      cout << "Didnt manage to make a HadVZ Candidate" << endl;
-  }
+  //CutValidVZ
+  hadVZ_ = VZCandidate(zCand_, vCand_);
+  if(debugme) cout << "Made my hadVZ" << endl;  
 
-  if( !PassValidVZCandCut()){
-    //Do Nothing
-  }else
-    FillValidVZHistos();
+  if( !PassValidVZCandCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
 
-
-  //////////////////////////////
-  ///Z With Tight Muons/////////
-  //////////////////////////////
-
-  //Cory: CutMinNTightLep
-  if( PassMinNTightLeptonsCut() ){ 
-    if(debugme) cout << "Passed # tight leptons cut" << endl;
-  }else
-    if(debugme) cout << "Didnt pass # tight leptons cut" << endl;
-  Tabulate_Me(iCut, weight_); ++iCut;
-
-  //Make a Z cand out of tight muons
-  //Cory: CutValidTightZ
-  ZCandV zCandsTight = getZCands(tightMuons_, 25.0);
-  zCandTight_ = zCandsTight.size() ? zCandsTight[0] : ZCandidate();
-  if (debugme)
-    cout << "Made zCandTight" << endl;
-
-  bool validZTight = PassValidZCutTight();
-  if (debugme && validZTight)
-    cout << "Valid Z from tight muons" << endl;
-  Tabulate_Me(iCut, weight_); ++iCut;
-  
-  //Cory: CutTightZMass
-  //Cory: CutTightZpt
-  bool goodZTight = true;
-  if( !validZTight || !PassZMassCutTight()){ goodZTight = false; }
-  Tabulate_Me(iCut, weight_); ++iCut;
-
-  if( !validZTight || !PassZptCutTight  ()){ goodZTight = false; }
-  Tabulate_Me(iCut, weight_); ++iCut;
-  
-  if (debugme && goodZTight)
-    cout << "Good Z from tight muons" << endl;
-  if (goodZTight) FillGoodZTightHistos();
-  
-  ///////////////////////////////////////
-  //// Make VZ Candidate With Tight Muons
-  ////////////////////////////////////////
-
-  //Cory: CutValidTightVZ
-  if(goodZTight) {
-    hadVZTight_ = VZCandidate(zCandTight_, vCand_);
-    if(debugme) cout << "Made my hadVZ tight" << endl;
-    
-    if (debugme)
-    {
-      cout << "Filled tight muons histos from HadVZ" << endl;
-      cout << "vCand pT is " << vCand_.pt() << endl;
-    }
-  }else{
-    if (debugme)
-      cout << "Didnt manage to make a HadVZ Candidate with tight muons" << endl;
-  }
-
-  if( !PassValidVZTightCandCut() ){
-    //Do Nothing
-  }else
-    FillGoodVZHistos();
-
-  Tabulate_Me(iCut, weight_); ++iCut;
+  FillValidVZHistos();
 
   //AllCuts
   Tabulate_Me(iCut, weight_); ++iCut;
@@ -857,38 +727,15 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   
 /////////////////Cuts///////////////////////
 
-inline bool
-HadronicVZAnalyzer::PassMinNTightLeptonsCut(){
-  return tightMuons_.size() > minNLeptons_;
-}
-
 bool
 HadronicVZAnalyzer::PassValidVZCandCut(){
   return hadVZ_ && hadVZ_.mass()>0.;
 }
 
-bool
-HadronicVZAnalyzer::PassValidVZTightCandCut(){
-  return hadVZTight_ && hadVZTight_.mass()>0.;
-}
-
 ////////////////////////////////
 /////////Check Z Properties/////
 ////////////////////////////////
-bool
-HadronicVZAnalyzer::PassValidZCutTight(){
-  return zCandTight_ && zCandTight_.mass()>0.;
-}
 
-bool
-HadronicVZAnalyzer::PassZMassCutTight(){
-  return (zCandTight_.mass() > minZmass_) && (zCandTight_.mass() < maxZmass_);  
-}
-
-bool
-HadronicVZAnalyzer::PassZptCutTight(){
-  return zCandTight_.pt() > minZpt_;
-}
 ////////////////////////////////
 ///////Check Had. V Properties//
 ////////////////////////////////
@@ -1029,9 +876,7 @@ HadronicVZAnalyzer::ClearEvtVariables(){
   looseMuons_.clear();
   tightMuons_.clear();
   zCand_ = ZCandidate();
-  zCandTight_ = ZCandidate();
   vCand_ = WCandidate();
   hadVZ_ = VZCandidate();
-  hadVZTight_ = VZCandidate();
 }
 

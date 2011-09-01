@@ -62,7 +62,6 @@ public:
   void FillLooseMuonHists();
   void FillTightMuonHists();
   void FillGoodZHistos();
-  void FillGoodZTightHistos();
   void FillGoodHadVHistos();
   void FillValidVZHistos();
   void FillGoodVZHistos();
@@ -73,13 +72,7 @@ public:
   void ClearEvtVariables();
 
 //methods for the cuts
-  bool PassMinNTightLeptonsCut();
-  bool PassValidZCutTight();
   bool PassValidVZCandCut();
-  bool PassValidVZTightCandCut();
-
-  bool PassZMassCutTight();
-  bool PassZptCutTight();
 
   bool PassMuonCut(const TeVMuon* mu);
   bool PassMuonLooseCut(const TeVMuon* mu);
@@ -115,8 +108,7 @@ public:
 // +++++++++++++++++++location of data files and samples info
 
 //////Chosen Vector Boson Candidates 
-  ZCandidate zCandTight_;
-  VZCandidate hadVZ_, hadVZTight_;
+  VZCandidate hadVZ_;
 
 // +++++++++++++++++++ Histogram Definitions - loose
   TH1F* h_HadVZMass;
@@ -168,54 +160,10 @@ public:
 
 
 
-// +++++++++++++++++++ Histogram Definitions - tight
-  TH1F* h_tight_HadVZMass;
-  TH1F* h_tight_Zmuon1_pt;	
-  TH1F* h_tight_Zmuon1_eta;
-  TH1F* h_tight_Zmuon1_phi;
-  TH1F* h_tight_Zmuon2_pt;
-  TH1F* h_tight_Zmuon2_eta;
-  TH1F* h_tight_Zmuon2_phi;
-  /*  TH1F* h_tight_jet1_pt;
-  TH1F* h_tight_jet1_eta;
-  TH1F* h_tight_jet1_phi;
-  TH1F* h_tight_jet2_pt;
-  TH1F* h_tight_jet2_eta;
-  TH1F* h_tight_jet2_phi;
-  TH1F* h_tight_jet1_mass;
-  TH1F* h_tight_jet2_mass;
-  */
-  TH1F* h_tight_deltaR_muon1muon2;
-  TH1F* h_tight_deltaR_HadVmuon1;
-  TH1F* h_tight_deltaR_HadVmuon2;
-  /*  TH1F* h_tight_deltaR_jet1muon1;
-  TH1F* h_tight_deltaR_jet1muon2;
-  TH1F* h_tight_deltaR_jet2muon1;
-  TH1F* h_tight_deltaR_jet2muon2;*/	
-  TH1F* h_tight_HadVZpt;
-  TH1F* h_tight_HadVZeta;
-  TH1F* h_tight_HadVZphi;		
+// +++++++++++++++++++ Histogram Definitions 
   TH1F* h_tight_muons_pt;
   TH1F* h_tight_muons_eta;
   TH1F* h_tight_muons_phi;
-  /*  TH1F* h_tight_jets_pt;
-  TH1F* h_tight_jets_eta;
-  TH1F* h_tight_jets_phi;
-  TH1F* h_tight_jet_HadV_pt;
-  TH1F* h_tight_jet_HadV_eta;
-  TH1F* h_tight_jet_HadV_phi;*/
-  TH1F* h_tight_Zmuon1_VZCut_pt;
-  TH1F* h_tight_Zmuon1_VZCut_eta;
-  TH1F* h_tight_Zmuon1_VZCut_phi;
-  TH1F* h_tight_Zmuon2_VZCut_pt;
-  TH1F* h_tight_Zmuon2_VZCut_eta;
-  TH1F* h_tight_Zmuon2_VZCut_phi;
-  TH1F* h_tight_jet_VZCut_pt;
-  TH1F* h_tight_jet_VZCut_eta;
-  TH1F* h_tight_jet_VZCut_phi;
-  //  TH1F* h_tight_jet_mult;
-  //  TH1F* h_tight_jet_mult_inc;
-  //  TH1F* h_tight_jet1jet2_mass;
 
   //Jet merging histos
   TH1F* h_deltaR_jet1jet2;
@@ -274,6 +222,19 @@ public:
   TH2F* h_dptpt_vs_invpt_teta1524;
   TH2F* h_dptpt2_vs_invpt_teta1524;
 
+  /////////////////////
+  std::vector<TH1F*> hVZMass;
+  std::vector<TH1F*> hVZpt;
+
+  std::vector<TH1F*> hZMass;
+  std::vector<TH1F*> hZpt;
+  std::vector<TH1F*> hVMass;
+  std::vector<TH1F*> hVpt;
+
+  std::vector<TH1F*> hNLLeps;
+  std::vector<TH1F*> hNLJets;
+
+  ////////////////////
 
   // http://www.parashift.com/c++-faq-lite/pointers-to-members.html#faq-33.5
   // Good manners!
