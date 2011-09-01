@@ -109,11 +109,11 @@ WZEffCuts = cms.vstring(
     "ValidZ", 
     "AllCuts")
 
-process.WprimeAnalyzer.LooseElectronType = cms.string("WZLoose")
-process.WprimeAnalyzer.TightElectronType = cms.string("WZTight")
-process.WprimeAnalyzer.LooseMuonType = cms.string("WZLoose")
-process.WprimeAnalyzer.TightMuonType = cms.string("WZTight")
-process.WprimeAnalyzer.LooseJetType = cms.string("Base")
+process.WprimeAnalyzer.LooseElectronType = cms.untracked.string("WZLoose")
+process.WprimeAnalyzer.TightElectronType = cms.untracked.string("WZTight")
+process.WprimeAnalyzer.LooseMuonType = cms.untracked.string("WZLoose")
+process.WprimeAnalyzer.TightMuonType = cms.untracked.string("WZTight")
+process.WprimeAnalyzer.LooseJetType = cms.untracked.string("Base")
 
 ####Triggers
 DoubleTriggers = cms.vstring(
