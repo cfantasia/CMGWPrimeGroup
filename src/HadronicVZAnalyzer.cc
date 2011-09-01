@@ -378,9 +378,9 @@ void HadronicVZAnalyzer::FillGoodZTightHistos(){
 }
 
 void HadronicVZAnalyzer::FillGoodHadVHistos(){
-  h_jet_HadV_pt->Fill(wCand_.pt(), weight_);
-  h_jet_HadV_eta->Fill(wCand_.eta(), weight_);
-  h_jet_HadV_phi->Fill(wCand_.phi(), weight_);
+  h_jet_HadV_pt->Fill(vCand_.pt(), weight_);
+  h_jet_HadV_eta->Fill(vCand_.eta(), weight_);
+  h_jet_HadV_phi->Fill(vCand_.phi(), weight_);
   if (debugme)
     cout << "Filled my HadV histos" << endl;
 }
@@ -402,12 +402,12 @@ void HadronicVZAnalyzer::FillValidVZHistos(){
   h_Zmuon2_VZCut_eta->Fill(VZm2.eta(), weight_);
   h_Zmuon2_VZCut_phi->Fill(VZm2.phi(), weight_);
   
-  h_jet_VZCut_pt->Fill(wCand_.pt(), weight_);
-  h_jet_VZCut_eta->Fill(wCand_.eta(), weight_);
-  h_jet_VZCut_phi->Fill(wCand_.phi(), weight_);
+  h_jet_VZCut_pt->Fill(vCand_.pt(), weight_);
+  h_jet_VZCut_eta->Fill(vCand_.eta(), weight_);
+  h_jet_VZCut_phi->Fill(vCand_.phi(), weight_);
   
-  h_deltaR_HadVmuon1->Fill(reco::deltaR(wCand_, VZm1), weight_);
-  h_deltaR_HadVmuon2->Fill(reco::deltaR(wCand_, VZm2), weight_);
+  h_deltaR_HadVmuon1->Fill(reco::deltaR(vCand_, VZm1), weight_);
+  h_deltaR_HadVmuon2->Fill(reco::deltaR(vCand_, VZm2), weight_);
 }
 
 void HadronicVZAnalyzer::FillGoodVZHistos(){
@@ -428,20 +428,20 @@ void HadronicVZAnalyzer::FillGoodVZHistos(){
   h_tight_Zmuon2_VZCut_eta->Fill(VZm2.eta(), weight_);
   h_tight_Zmuon2_VZCut_phi->Fill(VZm2.phi(), weight_);
 
-  h_tight_jet_VZCut_pt->Fill(wCand_.pt(), weight_);
+  h_tight_jet_VZCut_pt->Fill(vCand_.pt(), weight_);
   if (debugme)
     cout << "Filled more tight muons histos from HadVZ -- 1" << endl;
-  h_tight_jet_VZCut_eta->Fill(wCand_.eta(), weight_);
+  h_tight_jet_VZCut_eta->Fill(vCand_.eta(), weight_);
   if (debugme)
     cout << "Filled more tight muons histos from HadVZ -- 2" << endl;
-  h_tight_jet_VZCut_phi->Fill(wCand_.phi(), weight_);
+  h_tight_jet_VZCut_phi->Fill(vCand_.phi(), weight_);
   if (debugme)
     cout << "Filled more tight muons histos from HadVZ -- 3" << endl;
 	
-  h_tight_deltaR_HadVmuon1->Fill(reco::deltaR(wCand_, VZm1), weight_);
+  h_tight_deltaR_HadVmuon1->Fill(reco::deltaR(vCand_, VZm1), weight_);
   if (debugme)
     cout << "Filled more tight muons histos from HadVZ -- 4" << endl;
-  h_tight_deltaR_HadVmuon2->Fill(reco::deltaR(wCand_, VZm2), weight_);
+  h_tight_deltaR_HadVmuon2->Fill(reco::deltaR(vCand_, VZm2), weight_);
   if (debugme)
     cout << "Filled more tight muons histos from HadVZ -- 5" << endl;
 }
@@ -705,11 +705,11 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   }
   Tabulate_Me(iCut, weight_); ++iCut;
 
-  // Make a W candidate out of the jets.
+  // Make a V candidate out of the jets.
   //Cory: CutValidW
-  wCand_ = getWCand(looseJets_);
+  vCand_ = getWCand(looseJets_);
   if (debugme)
-    cout << "Made wCand" << endl;
+    cout << "Made vCand" << endl;
 
   //Cory: CutValidV
   if( !PassValidVCut() ) return;
@@ -768,7 +768,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   
   //Cory: CutValidVZ
   if(goodZ) {
-    hadVZ_ = VZCandidate(zCand_, wCand_);
+    hadVZ_ = VZCandidate(zCand_, vCand_);
     if(debugme) cout << "Made my hadVZ" << endl;  
   }
   else{
@@ -825,13 +825,13 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   //Cory: CutValidTightVZ
   if(goodZTight) {
-    hadVZTight_ = VZCandidate(zCandTight_, wCand_);
+    hadVZTight_ = VZCandidate(zCandTight_, vCand_);
     if(debugme) cout << "Made my hadVZ tight" << endl;
     
     if (debugme)
     {
       cout << "Filled tight muons histos from HadVZ" << endl;
-      cout << "wCand pT is " << wCand_.pt() << endl;
+      cout << "vCand pT is " << vCand_.pt() << endl;
     }
   }else{
     if (debugme)
@@ -1030,7 +1030,7 @@ HadronicVZAnalyzer::ClearEvtVariables(){
   tightMuons_.clear();
   zCand_ = ZCandidate();
   zCandTight_ = ZCandidate();
-  wCand_ = WCandidate();
+  vCand_ = WCandidate();
   hadVZ_ = VZCandidate();
   hadVZTight_ = VZCandidate();
 }
