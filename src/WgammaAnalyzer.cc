@@ -28,7 +28,7 @@ WgammaAnalyzer::WgammaAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeU
   chi2Cut_           = cfg.getParameter<double>("chi2Cut");
   muonEtaCut_        = cfg.getParameter<double>("muonEtaCut");
   oneMuPtTrackCut_   = cfg.getParameter<double>("oneMuPtTrackCut");
-  combRelCut_        = cfg.getParameter<double>("combRelCut");
+  relIsoCut_        = cfg.getParameter<double>("relIsoCut");
   highestPtMuonOnly_ = cfg.getParameter<bool>("highestPtMuonOnly");
   dumpHighPtMuons_   = cfg.getParameter<bool>("dumpHighPtMuons");
   dumpHighPtMuonThreshold_ = cfg.getParameter<double>("dumpHighPtMuonThreshold");
@@ -112,7 +112,7 @@ int WgammaAnalyzer::getTheHardestMuon()
 void WgammaAnalyzer::eventLoop(edm::EventBase const & event)
 {
   event.getByLabel(muons_, muons);
-  event.getByLabel(met_, met);
+  event.getByLabel(met_, defMet);
   event.getByLabel(photons_, photons);
 
   //edm::Handle< edm::View<pat::Photon> >  photonHandle;
@@ -170,11 +170,10 @@ void WgammaAnalyzer::eventLoop(edm::EventBase const & event)
   for (int theMu = iMuMin; theMu != iMuMax; ++theMu){
       bool fill_entry = true; // if true, will histogram muon
       
-      isInvalidMuon_ = false;
-      pfMETwithoutMuCalculated_ = false;
-      
-      setMuonMomentum(theMu);
-      if (isInvalidMuon_) continue;
+    TeVMuon muon((*muons)[theMu], muReconstructor_);
+    if(!muon.isValid())continue;
+
+    Wcand = wprimeUtil_->getNewMETandW(event, muon, met);
 
       for(int cut_index = 0; cut_index != Num_mumet_cuts; ++cut_index) { // loop over selection cuts
           // call to funcxtion [as implemented in setupCutOder]
@@ -183,13 +182,13 @@ void WgammaAnalyzer::eventLoop(edm::EventBase const & event)
           if (!survived_cut) break; // skip rest of selection cuts
 	
           if(fill_entry) {
-	    tabulateMu(cut_index, accountMe, event, theMu);
+	    tabulateMu(cut_index, accountMe, event, &muon);
 	    
 	    if(dumpHighPtMuons_
 	       && cut_index == Num_mumet_cuts-1
 	       && wprimeUtil_->runningOnData() &&
 	       (*muons)[theMu].innerTrack()->pt() > dumpHighPtMuonThreshold_ )
-	      printHighPtMuon(event);
+	      printHighPtMuon(event, &muon);
 	    
 	    // Start looking at photons if the muon passed all the cuts
 	    if (cut_index == Num_mumet_cuts-1) {
@@ -204,7 +203,7 @@ void WgammaAnalyzer::eventLoop(edm::EventBase const & event)
 		  if (!survived_cut) break; // skip rest of selection cuts
 		  double invMass = -999.999;
 
-		  LorentzVector neutrinoP4 = calculateNeutrinoP4((*muons)[theMu].p4(), getNewMET(event,mu4D) );
+		  LorentzVector neutrinoP4 = calculateNeutrinoP4(mu4D, met );
 		  if (neutrinoP4.E() > 0) {
 		    LorentzVector wP4   =  (*muons)[theMu].p4() + neutrinoP4;
 		    LorentzVector totalP4 = wP4+PhotonP4;
@@ -227,79 +226,39 @@ void WgammaAnalyzer::eventLoop(edm::EventBase const & event)
   } // loop over muons
 }// events
 
-void WgammaAnalyzer::setMuLorentzVector(TLorentzVector& P, const reco::TrackRef & trk)
-{
-  if(trk.isNull())
-    {
-      isInvalidMuon_ = true;
-      return;
-    }
-  TVector3 p3(trk->px(), trk->py(), trk->pz());
-  P.SetVectM(p3, wprime::MUON_MASS);
-}
-
-// set muon 4-d momentum according to muonReconstructor_ value (sets mu4D)
-void WgammaAnalyzer::setMuonMomentum(int theMu)
-{
-  switch(muReconstructor_)
-    {
-    case 0:
-      setMuLorentzVector(mu4D, (*muons)[theMu].globalTrack());
-      break;
-    case 1:
-      setMuLorentzVector(mu4D, (*muons)[theMu].innerTrack());
-      break;
-    case 2:
-      setMuLorentzVector(mu4D, (*muons)[theMu].tpfmsMuon());
-      break;
-    case 3:
-      setMuLorentzVector(mu4D, (*muons)[theMu].cocktailMuon());
-      break;
-    case 4:
-      setMuLorentzVector(mu4D, (*muons)[theMu].pickyMuon());
-      break;
-    case 5:
-      setMuLorentzVector(mu4D, (*muons)[theMu].defaultTeVMuon());
-      break;
-    case 6:
-      setMuLorentzVector(mu4D, (*muons)[theMu].dytMuon());
-      break;
-    }
-
-}
-
 LorentzVector
-WgammaAnalyzer::calculateNeutrinoP4(LorentzVector mu4D, TVector2 met) 
+WgammaAnalyzer::calculateNeutrinoP4(const TLorentzVector & mu4D, const pat::MET & myMet) 
 {
+  // Christos (Sep 11): I believe this is now obsolete/can be simplified A LOT
 
-  double dPhi         = kinem::delta_phi (mu4D.phi(), met.Phi());
+  double dPhi         = kinem::delta_phi (mu4D.Phi(), myMet.p4().phi());
   double wMass        = 80.398;
   double g            = wMass * wMass / 2. + 
-                        mu4D.Pt() * met.Mod() * cos (dPhi);
+                        mu4D.Pt() * myMet.et() * cos (dPhi);
   double a            = - pow (mu4D.Pt(), 2);
   double b            = 2 * g * mu4D.Pz();
-  double c            = pow (g,2) - pow (mu4D.P(),2) * pow (met.Mod(),2);
+  double c            = pow (g,2) - pow (mu4D.P(),2) * pow (myMet.et(),2);
 
   double discriminant = (b * b) - (4 * a * c);
   double neutrinoPz   = 0;
 
   if (discriminant < 0) return LorentzVector (0., 0., 0., -999.);
 
-  TVector3 leptonP3(mu4D.px(), mu4D.py(), mu4D.pz());
+  TVector3 leptonP3(mu4D.Px(), mu4D.Py(), mu4D.Pz());
 
   double   pz1     = -b/(2*a) + sqrt (discriminant)/(2*a);
-  TVector3 p1      (met.Px(), met.Py(), pz1);
+  TVector3 p1      (myMet.p4().px(), myMet.p4().py(), pz1);
   double   deltaR1 = p1.DeltaR (leptonP3);
 
   double   pz2     = -b/(2*a) + sqrt (discriminant)/(2*a);
-  TVector3 p2      (met.Px(), met.Py(), pz2);
+  TVector3 p2      (myMet.p4().px(), myMet.p4().py(), pz2);
   double   deltaR2 = p2.DeltaR (leptonP3);
   
   // Choose the smaller opening angle between the lepton and neutrino
   neutrinoPz = (deltaR1 < deltaR2 ) ? pz1 : pz2;
   
-  double E = sqrt (pow (met.Px(),2) + pow (met.Py(),2) + pow (neutrinoPz,2));
-  LorentzVector neutrinoP4(met.Px(), met.Py(), neutrinoPz, E);
+  double E = sqrt (pow (myMet.p4().px(),2) + pow (myMet.p4().py(),2) + pow (neutrinoPz,2));
+  LorentzVector neutrinoP4(myMet.p4().px(), myMet.p4().py(), neutrinoPz, E);
   
   return neutrinoP4;
   
@@ -311,7 +270,7 @@ WgammaAnalyzer::calculateNeutrinoP4(LorentzVector mu4D, TVector2 met)
 // fill histograms for muon if fill_entry=true; update book-keeping 
 // (via private member: stats); make sure stats gets updated maximum once per event
 void WgammaAnalyzer::tabulateMu(int cut_index, bool accountMe[], 
-                                edm::EventBase const& event, int theMu)
+                                edm::EventBase const& event, const TeVMuon * muon)
 {
   // if the accountMe switch is on, increase the number of events passing the cuts
   // and turn the switch off so we don't count more than once per event
@@ -325,12 +284,11 @@ void WgammaAnalyzer::tabulateMu(int cut_index, bool accountMe[],
     }
   float weight = wprimeUtil_->getWeight();
   // fill the histograms
-  hPT[cut_index]->Fill(mu4D.Pt(), weight);
-  hETA[cut_index]->Fill(mu4D.Eta(), weight);
-  hPHI[cut_index]->Fill(mu4D.Phi(), weight);
-  //  hMJDPHI[cut_index]->Fill( XJetDPhi(mu4D, event), weight);
-  hWTM[cut_index]->Fill(WPrimeUtil::TMass(mu4D, getNewMET(event, mu4D)), weight);
-  hISO[cut_index]->Fill(combRelIsolation(theMu),weight);
+  hPT[cut_index]->Fill(muon->pt(), weight);
+  hETA[cut_index]->Fill(muon->eta(), weight);
+  hPHI[cut_index]->Fill(muon->phi(), weight);
+  hWTM[cut_index]->Fill(Wcand.mt(), weight);
+  hISO[cut_index]->Fill(muon->trkRelIsolation(),weight);
 
 }
 
@@ -662,44 +620,20 @@ void WgammaAnalyzer::setupCutOrderPhotons()
 }
 
 // dump on screen info about high-pt muon
-void WgammaAnalyzer::printHighPtMuon(edm::EventBase const & event)
+void WgammaAnalyzer::printHighPtMuon(edm::EventBase const & event, const TeVMuon * muon) 
 {
-  cout << " Run # = " << event.id().run() << " Event # = " 
+  cout << "\n Run # = " << event.id().run() << " Event # = " 
        << event.id().event() << " LS = " << event.id().luminosityBlock() 
        << endl;
-
-  cout << " Muon eta = " << mu4D.Eta() << "  phi = " << mu4D.Phi()
-       << " pt = " << mu4D.Pt() << endl;
-  pat::METCollection::const_iterator oldMET = met->begin();
+  cout << " Muon eta = " << muon->eta() << "  phi = " << muon->phi() << endl;
+  pat::METCollection::const_iterator oldMET = defMet->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
-  TVector2 newMET = getNewMET(event, mu4D);
-  cout << " default pfMET = " << oldMET->pt();
-  cout << " muTeV-adjusted pfMET = " << newMET.Mod() << endl;
+  cout << " default pfMET = " << oldMET->pt() << " GeV ";
 
-  cout << " default TM = " << WPrimeUtil::TMass(mu4D, oldMETv);
-  cout << " muTeV-adjusted TM = " << WPrimeUtil::TMass(mu4D, newMET) << endl;
-
-#if 0
-  cout << " P = " << 
-
-  printMe("  pt = ", theMu);
-  printMe(" dpt = ", theMu);
-  cout << " # of layers: (strip, pixel) " << endl;
-  printMe("layers", theMu);
-  cout << " # of layers w/o measurement: (strip, pixel) " << endl;
-  printMe("layersNoMeas", theMu);
-  cout << " # of hits (strip, pixel, muon) " << endl;
-  printMe("hits", theMu);
-  cout << " Chi2/Ndof " << endl;
-  printMe("chi2", theMu);
-  cout << " Tracker eta =  " << theMu->tracker.p.Eta()
-       << ", Tracker phi = " << theMu->tracker.p.Phi() << endl;
-  cout << " # of standalone muon hits = " << theMu->Nmu_hits << endl;
-  cout << " Global: " << theMu->AllGlobalMuons
-       << " Tracker: " << theMu->AllTrackerMuons
-       << " Standalone: " << theMu->AllStandAloneMuons
-       << " Global prompt tight: " << theMu->GlobalMuonPromptTight << endl;
-#endif
+  cout << " pt = " << muon->getTrack(muReconstructor_)->pt() << " +- " 
+       << muon->getTrack(muReconstructor_)->ptError()
+       << " GeV, charge = " << muon->getTrack(muReconstructor_)->charge() 
+       << ", TM = " << Wcand.mt() << " GeV " << endl;
 }
 
 // dump on screen info about high-pt muon
@@ -715,86 +649,8 @@ void WgammaAnalyzer::printHighPtPhoton(edm::EventBase const & event, int thePho)
  
 }
 
-// Get new MET: there are two corrections to be made:
-// (a) the hadronic MET component (that needs to be corrected 
-// if applyMETCorrection=true)from Z data; this will be done according to hadronic 
-// activity from Z->mumu reconstructed events
-// (b) the muon-pt component that needs to be updated if we switch to one
-// of the dedicated high-pt muon reconstructors
-TVector2 WgammaAnalyzer::getNewMET(edm::EventBase const & event, const TLorentzVector & mu_p)
-{
-  if(wprimeUtil_->shouldApplyHadronicRecoilCorrection())
-    return wprimeUtil_->getHadronicMET(event) - TVector2(mu_p.Px(), mu_p.Py());
-
-  return getPFMETwithoutMu(event) - TVector2(mu_p.Px(), mu_p.Py());
-}
-
-// get (PF) MET without the default-pt for the running muon in event (mu4D);
-// this is done so that we can adjust the muon-pt component of the MET by 
-// switching to one of the dedicated high-pt muon reconstructors
-TVector2 WgammaAnalyzer::getPFMETwithoutMu(edm::EventBase const & event)
-{
-  if(pfMETwithoutMuCalculated_)
-    return pfMETwithoutMuCached_;
-
-  pat::METCollection::const_iterator oldMET = met->begin();
-  float met_x = oldMET->px(); float met_y = oldMET->py();
-
-  //----Loop over PFCandidates to get the hardest muon and put its
-  //pT back to the MET TVector2; create a new object
-  edm::Handle<pat::PFParticleCollection > PFCandidates;
-  event.getByLabel(particleFlow_,PFCandidates);
-  int nmuon = 0;
-  pat::PFParticleCollection::const_iterator iParticle;
-  pat::PFParticleCollection::const_iterator icorrespondingPFMu;
-  for( iParticle = (PFCandidates.product())->begin() ; 
-       iParticle != (PFCandidates.product())->end() ; ++iParticle ){
-    
-    const reco::Candidate* candidate = &(*iParticle);
-    if (candidate) {
-      const reco::PFCandidate* pfCandidate = 
-	dynamic_cast<const reco::PFCandidate*> (candidate);
-      if (pfCandidate){
-	//check that it is a muon
-	if (!(pfCandidate->particleId() == 3)) continue;
-	double deta = mu4D.Eta() - pfCandidate->eta();
-	double dphi = mu4D.Phi() - pfCandidate->phi();
-	double dR = TMath::Sqrt(deta*deta + dphi*dphi);
-	if(dR < 0.01)
-	  {
-	    icorrespondingPFMu = iParticle;
-	    ++nmuon;
-	    break;
-	  }
-         
-      }//pfCandidate
-    }//if candidate
-  }//loop over PFCandidates
-  
-  //Add back the pT for the hardest muon if found.
-  if (nmuon > 0){
-    const reco::Candidate* mycandidate = &(*icorrespondingPFMu);
-    const reco::PFCandidate* mypfCandidate = 
-      dynamic_cast<const reco::PFCandidate*> (mycandidate);
-    met_x += mypfCandidate->px();
-    met_y += mypfCandidate->py();
-  }//if nmuon >0
-  pfMETwithoutMuCached_.Set(met_x,met_y);
-  pfMETwithoutMuCalculated_ = true;
-  return pfMETwithoutMuCached_;
-}
-
-//computes the combined rel isolation value
-float WgammaAnalyzer::combRelIsolation(int theMu)
-{
-  // maybe we should divide by the pt of the high-pt muon reconstructor
-  // and not always use the tracker-only pt measurement
-  return ( (*muons)[theMu].ecalIso() + (*muons)[theMu].hcalIso() + 
-	   (*muons)[theMu].trackIso() ) / mu4D.Pt();
-}
-
 // whether HLT accepted the event
-bool WgammaAnalyzer::passedHLT(bool *, int, edm::EventBase const &)
+bool WgammaAnalyzer::passedHLT(bool *, int theMu, edm::EventBase const &)
 {
   // needs implementation
   return true;
@@ -802,9 +658,10 @@ bool WgammaAnalyzer::passedHLT(bool *, int, edm::EventBase const &)
 
 // check if muon has minimum pt, fill isThere accordingly
 // always returns true
-bool WgammaAnalyzer::muonMinimumPt(bool * isThere, int, edm::EventBase const &)
+bool WgammaAnalyzer::muonMinimumPt(bool * isThere, int theMu, edm::EventBase const &)
 {
-  if(mu4D.Pt() <= muonPtThreshold_)
+  TeVMuon muon((*muons)[theMu], muReconstructor_);
+  if(muon.pt() <= muonPtThreshold_)
     *isThere = false;
 
   return true;
@@ -814,36 +671,8 @@ bool WgammaAnalyzer::muonMinimumPt(bool * isThere, int, edm::EventBase const &)
 // fill goodQual; always returns true
 bool WgammaAnalyzer::goodQualityMuon(bool * goodQual, int theMu, edm::EventBase const &)
 {
-  //See twiki: https://twiki.cern.ch/twiki/bin/view/CMS/ExoticaWprime
-  //for the latest quality cuts
-
-  bool muonID = (*muons)[theMu].isGood("AllGlobalMuons") &&
-    (*muons)[theMu].isGood("AllTrackerMuons");
-
-  reco::TrackRef glb = (*muons)[theMu].globalTrack();
-  if(glb.isNull())
-    {
-      *goodQual = false;
-      return true;
-    }
-
-  bool muon_hits = glb->hitPattern().numberOfValidTrackerHits() > 10
-    && glb->hitPattern().numberOfValidMuonHits() > 0
-    && glb->hitPattern().numberOfValidPixelHits() > 0;
-
-  // NB: also need to implement reco::Muon::numberOfMatches() > 1
-  // how do I do this?
-  
-  TVector3 p3(glb->px(), glb->py(), glb->pz());
-
-  bool checkqual = (glb->chi2()/glb->ndof() / chi2Cut_)
-    && TMath::Abs(p3.Eta()) < muonEtaCut_
-    // is this d0 wrt to the beamspot???
-    && TMath::Abs((*muons)[theMu].dB()) < 0.02;
-   
-  if(!muonID || !muon_hits || !checkqual)
-    *goodQual = false;
-
+  TeVMuon muon((*muons)[theMu], muReconstructor_);
+  *goodQual = muon.goodQualityMuon(chi2Cut_, muonEtaCut_);
    return true;
 }
 
@@ -1006,7 +835,8 @@ unsigned WgammaAnalyzer::nMuAboveThresh(float tracker_muon_pt)
 bool WgammaAnalyzer::isolatedMuon(bool * goodQual, int theMu,
                                   edm::EventBase const &)
 {
-  if(combRelIsolation(theMu) > combRelCut_)
+  TeVMuon muon((*muons)[theMu], muReconstructor_);
+  if(muon.trkRelIsolation() > relIsoCut_)
     *goodQual = false;
 
   return true;
@@ -1014,27 +844,12 @@ bool WgammaAnalyzer::isolatedMuon(bool * goodQual, int theMu,
 
 // check if muon, MET, and Photon pass kinematic cuts, updated goodQual
 // always returns true
-bool WgammaAnalyzer::kinematicCuts(bool * goodQual, int,
+bool WgammaAnalyzer::kinematicCuts(bool * goodQual, int theMu, 
                                    edm::EventBase const & event)
 {
-  TVector2 MET = getNewMET(event, mu4D);
-  float ratio = mu4D.Pt()/MET.Mod();
-  
-  TVector2 muon_T(mu4D.Px(), mu4D.Py());
-  float delta_phi = MET.DeltaPhi(muon_T);
-  
-  // calculate w trans mass
-  // W transverse mass calculation from doi:10.1016/j.physletb.2003.10.071
-  //double dPhi = kinem::delta_phi (mu4D.Phi(), patMET->phi());
-  //double mt2  = 2 * patMET.et() * mu4D.Et() - 
-  //      		  2 * patMET.pt() * mu4D.Pt() * cos (dPhi);
-  //double WtransMass = sqrt (mt2);
-
-  double WtransMass = WPrimeUtil::TMass(mu4D, getNewMET(event, mu4D));
-
-   if (debugmepho) cout << "Found with transverse mass " << WtransMass << endl;
-
- 
+  TeVMuon muon((*muons)[theMu], muReconstructor_);
+  float ratio = muon.pt()/met.et();
+  float delta_phi = Wcand.CalcDPhi();
 
   if(ratio < 0.4 || ratio > 1.5 || TMath::Abs(delta_phi) < 2.5)
     *goodQual = false;
