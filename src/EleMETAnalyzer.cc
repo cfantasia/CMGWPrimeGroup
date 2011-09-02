@@ -14,6 +14,7 @@ EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeU
 
   electrons_       = cfg.getParameter<edm::InputTag>("electrons"  );
   met_       = cfg.getParameter<edm::InputTag>("met"  );
+  electronPtThreshold_   = cfg.getParameter<double>("electronPtThreshold");
   oneEleEtCut_   = cfg.getParameter<double>("oneEleEtCut");
   highestEtElectronOnly_ = cfg.getParameter<bool>("highestEtElectronOnly");
   dumpHighEtElectrons_   = cfg.getParameter<bool>("dumpHighEtElectrons");
@@ -76,7 +77,7 @@ void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
   ClearWprimeVariables(vars, analysis);
 
   event.getByLabel(electrons_, electrons);
-  event.getByLabel(met_, met);
+  event.getByLabel(met_, defMet);
 
   // switch to help us keep track of whether a electron has already
   // been found in current event surviving the ith-cut;
@@ -104,7 +105,11 @@ void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
 
     heep::Ele el((*electrons)[theEle]);
     cutCode = -1; // this means HEEP cuts have not been run for this electron
-    setElectronMomentum(el);
+    setElectronMomentum(el); // this is needed for the ntuple-making
+    if(el.p4().pt() < electronPtThreshold_) continue;
+
+    Wcand = wprimeUtil_->getNewMETandW(event, el, met);
+
     for(int cut_index = 0; cut_index != Num_elmet_cuts; ++cut_index)
       { // loop over selection cuts
 	string arg = elmet_cuts_desc_short[cut_index];
@@ -157,7 +162,7 @@ void EleMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
   hPT[cut_index]->Fill(el4D.Pt(), weight);
   hETA[cut_index]->Fill(el4D.Eta(), weight);
   hPHI[cut_index]->Fill(el4D.Phi(), weight);
-  hTM[cut_index]->Fill(WPrimeUtil::TMass(el4D, getNewMET(event, el4D)), weight);
+  hTM[cut_index]->Fill(Wcand.mt(), weight);
  
   //fill the TTrees
   vars.ele = el4D;
@@ -369,53 +374,11 @@ void EleMETAnalyzer::printHighEtElectron(edm::EventBase const & event)
   cout << " Electron eta = " << el4D.Eta() << "  phi = " << el4D.Phi()
        << " Et = " << el4D.Et() << " GeV " << endl;
 
-  pat::METCollection::const_iterator oldMET = met->begin();
+  pat::METCollection::const_iterator oldMET = defMet->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
-  cout << " pfMET = " << oldMET->pt() << " GeV";
-  cout << " TM = " << WPrimeUtil::TMass(el4D, oldMETv) << " GeV " << endl;
-  if(wprimeUtil_->shouldApplyHadronicRecoilCorrection())
-    {
-      TVector2 newMET = getNewMET(event, el4D);
-      cout << " hadronic-recoil-adjusted pfMET = " << newMET.Mod() 
-	   << " GeV " << endl;
-      cout << " hadronic-recoil-adjusted TM = " 
-	   << WPrimeUtil::TMass(el4D, newMET) << " GeV " << endl;
-    }
+  cout << " default pfMET = " << oldMET->pt() << " GeV" << " corrected MET = " 
+       << met.et() << " GeV " << endl << " TM = " << Wcand.mt() << " GeV " << endl;
 
-#if 0
-  cout << " P = " << 
-
-  printMe("  pt = ", theEle);
-  printMe(" dpt = ", theEle);
-  cout << " # of layers: (strip, pixel) " << endl;
-  printMe("layers", theEle);
-  cout << " # of layers w/o measurement: (strip, pixel) " << endl;
-  printMe("layersNoMeas", theEle);
-  cout << " # of hits (strip, pixel, muon) " << endl;
-  printMe("hits", theEle);
-  cout << " Chi2/Ndof " << endl;
-  printMe("chi2", theEle);
-  cout << " Tracker eta =  " << theEle->tracker.p.Eta()
-       << ", Tracker phi = " << theEle->tracker.p.Phi() << endl;
-  cout << " # of standalone muon hits = " << theEle->Nmu_hits << endl;
-  cout << " Global: " << theEle->AllGlobalElectrons
-       << " Tracker: " << theEle->AllTrackerElectrons
-       << " Standalone: " << theEle->AllStandAloneElectrons
-       << " Global prompt tight: " << theEle->GlobalElectronPromptTight << endl;
-#endif
-}
-
-// Get new MET: here (unlike the muon case) there is only one correction to be made:
-// the hadronic MET component (that needs to be corrected 
-// if applyCorrection=true) from Z data; this will be done according to hadronic 
-// activity from Z->mumu (not ee?) reconstructed events
-TVector2 EleMETAnalyzer::getNewMET(edm::EventBase const & event, const TLorentzVector & el_p)
-{
-  if(wprimeUtil_->shouldApplyHadronicRecoilCorrection())
-    return wprimeUtil_->getHadronicMET(event) - TVector2(el_p.Px(), el_p.Py());
-
-  pat::METCollection::const_iterator pfMET = met->begin();
-  return TVector2 (pfMET->px(), pfMET->py());
 }
 
 //##Trigger
@@ -537,11 +500,8 @@ bool EleMETAnalyzer::isolatedElectron(bool * goodQual, const heep::Ele & el,
 bool EleMETAnalyzer::kinematicCuts(bool * goodQual, const heep::Ele &, 
 				  edm::EventBase const & event)
 {
-  TVector2 MET = getNewMET(event, el4D);
-  float ratio = el4D.Et()/MET.Mod();
-  
-  TVector2 electron_T(el4D.Px(), el4D.Py());
-  float delta_phi = MET.DeltaPhi(electron_T);
+  float ratio = el4D.Et()/met.et();
+  float delta_phi = Wcand.CalcDPhi();
   
   if(ratio < 0.4 || ratio > 1.5 || TMath::Abs(delta_phi) < 2.5)
     *goodQual = false;
