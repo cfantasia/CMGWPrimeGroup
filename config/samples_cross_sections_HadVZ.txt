@@ -1,92 +1,115 @@
-Top Level Dir = rfio:/castor/cern.ch/user/f/fladias/
+Top Level Dir = dcap://osg-se.sprace.org.br/
 integrated lumi = 2067 pb^-1
 
 samplename = Summer11_RSZZmmjj_750
 description = Summer11_RSZZmmjj_750
 x-section = 0.00835
-subdir = Summer11_RSZZmmjj_750
 pathname = filelists_HadVZ/RSZZmmjj_750.txt
 Nprod_evt = 56754
 
 samplename = Summer11_RSZZmmjj_1000
 description = Summer11_RSZZmmjj_1000
 x-section = 0.00152
-subdir = Summer11_RSZZmmjj_1000
 pathname = filelists_HadVZ/RSZZmmjj_1000.txt
 Nprod_evt = 54030
 
 samplename = Summer11_RSZZmmjj_1250
 description = Summer11_RSZZmmjj_1250
 x-section = 0.000347
-subdir = Summer11_RSZZmmjj_1250
 pathname = filelists_HadVZ/RSZZmmjj_1250.txt
 Nprod_evt = 54153
 
 samplename = Summer11_RSZZmmjj_1500
 description = Summer11_RSZZmmjj_1500
 x-section = 0.0000883
-subdir = Summer11_RSZZmmjj_1500
 pathname = filelists_HadVZ/RSZZmmjj_1500.txt
 Nprod_evt = 57176
 
 samplename = Summer11_RSZZmmjj_1750
 description = Summer11_RSZZmmjj_1750
 x-section = 0.0000243
-subdir = Summer11_RSZZmmjj_1750
 pathname = filelists_HadVZ/RSZZmmjj_1750.txt
 Nprod_evt = 54901
 
 samplename = Summer11_RSZZmmjj_2000
 description = Summer11_RSZZmmjj_2000
 x-section = 0.00000705
-subdir = Summer11_RSZZmmjj_2000
 pathname = filelists_HadVZ/RSZZmmjj_2000.txt
 Nprod_evt = 56140
 
 samplename = Summer11_DYJetsToLL
 description = Summer11_DYJetsToLL
 x-section = 3048 
-subdir = Summer11_DYJetsToLL
 pathname = filelists_HadVZ/DYJetsToLL.txt
-Nprod_evt = 35991285
+Nprod_evt = 35453462
 
 samplename = Summer11_TTJets
 description = Summer11_TTJets
 x-section = 157.5
-subdir = Summer11_TTJets
 pathname = filelists_HadVZ/TTJets.txt
 Nprod_evt = 3701947
 
 samplename = Summer11_ZZ
 description = Summer11_ZZ
 x-section = 5.9
-subdir = Summer11_ZZ
 pathname = filelists_HadVZ/ZZ.txt
 Nprod_evt = 4187885
+
+samplename = Summer11_WW
+description = Summer11_WW
+x-section = 42.9
+pathname = filelists_HadVZ/WW.txt
+Nprod_evt = 4225916
+
+samplename = Summer11_WZ
+description = Summer11_WZ
+x-section = 18.3
+pathname = filelists_HadVZ/WZ.txt
+Nprod_evt = 3198932
+
+samplename = Summer11_ZZJets_2l2q
+description = Summer11_ZZJets_2l2q
+x-section = 0.5742
+pathname = filelists_HadVZ/ZZJets_2l2q.txt
+Nprod_evt = 675579
+
+samplename = Summer11_VGamma
+description = Summer11_VGamma
+x-section = 56.54
+pathname = filelists_HadVZ/VGamma.txt
+Nprod_evt = 1067879
+
+DONE
+
+Top Level Dir = /home/fladias/WPrime/patTuples_data/
+integrated lumi = 2067 pb^-1
 
 samplename = data_SingleMu_May10ReReco
 description = Single Mu May 10 ReReco
 x-section = 1
+subdir = DiLeptonJet-V296-SingleMu-2011A-May10ReReco-v1
 pathname = filelists_HadVZ/DiLeptonJet-V296-SingleMu-2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu_PromptReco_v4
 description = Single Mu Prompt v4
 x-section = 1
+subdir = DiLeptonJet-V296-SingleMu-2011A-PromptReco-v4
 pathname = filelists_HadVZ/DiLeptonJet-V296-SingleMu-2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu_Aug05ReReco
 description = Single Mu Aug 05ReReco
 x-section = 1
+subdir = DiLeptonJet-V296-SingleMu-2011A-05Aug2011-v1
 pathname = filelists_HadVZ/DiLeptonJet-V296-SingleMu-2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu_PromptReco_v6
 description = Single Mu Prompt v6
 x-section = 1
+subdir = DiLeptonJet-V296-SingleMu-2011A-PromptReco-v6
 pathname = filelists_HadVZ/DiLeptonJet-V296-SingleMu-2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
 
-DONE
 
