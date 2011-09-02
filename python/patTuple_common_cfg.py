@@ -6,8 +6,9 @@ from PhysicsTools.PatAlgos.tools.pfTools import addPFCandidates
 def common_config(process, reportEveryNum=100, maxEvents=-1) :
     addPfMET(process, 'PF')
 
-#    process.patTrigger.addL1Algos = cms.bool(True)
-#    switchOnTrigger(process) # to fix event content
+    switchOnTrigger(process)
+    process.patTrigger.addL1Algos = cms.bool(True)
+    switchOnTrigger(process) # to fix event content
                 
     # this is needed so we can correct the pfMET by adjusting the e/mu-pt
     # when switching to one of the dedicated Heep/TeV muon reconstructors
@@ -18,6 +19,7 @@ def common_config(process, reportEveryNum=100, maxEvents=-1) :
     process.MessageLogger.cerr.FwkReport.reportEvery = reportEveryNum
 
     process.maxEvents.input = maxEvents    ##  (e.g. -1 to run on all events)
+    process.GlobalTag.globaltag = cms.string('GR_R_42_V18::All')
     #                                         ##
     process.out.outputCommands = [
     # GEN
