@@ -2,7 +2,6 @@
 #include "DataFormats/PatCandidates/interface/PFParticle.h"
 
 #include <TH1F.h>
-#include <TLorentzVector.h>
 
 using std::string; using std::cout; using std::endl;
 
@@ -387,7 +386,7 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const pat::Muo
   cout << " Muon eta = " << muon.eta() << "  phi = " << muon.phi() << endl;
   pat::METCollection::const_iterator oldMET = defMet->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
-  //  cout << " default pfMET = " << oldMET->pt() << " GeV ";
+  cout << " default pfMET = " << oldMET->pt() << " GeV ";
 
   typedef std::vector<unsigned>::iterator It;
 
