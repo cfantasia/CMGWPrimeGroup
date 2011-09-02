@@ -1,36 +1,3 @@
-Top Level Dir = /home/fladias/WPrime/patTuples_data/
-integrated lumi = 2067 pb^-1
-
-samplename = data_SingleMu_May10ReReco
-description = Single Mu May 10 ReReco
-x-section = 1
-subdir = DiLeptonJet-V296-SingleMu-2011A-May10ReReco-v1
-pathname = filelists_HadVZ/DiLeptonJet-V296-SingleMu-2011A-May10ReReco-v1.txt
-Nprod_evt = 9999999
-
-samplename = data_SingleMu_PromptReco_v4
-description = Single Mu Prompt v4
-x-section = 1
-subdir = DiLeptonJet-V296-SingleMu-2011A-PromptReco-v4
-pathname = filelists_HadVZ/DiLeptonJet-V296-SingleMu-2011A-PromptReco-v4.txt
-Nprod_evt = 9999999
-
-samplename = data_SingleMu_Aug05ReReco
-description = Single Mu Aug 05ReReco
-x-section = 1
-subdir = DiLeptonJet-V296-SingleMu-2011A-05Aug2011-v1
-pathname = filelists_HadVZ/DiLeptonJet-V296-SingleMu-2011A-05Aug2011-v1.txt
-Nprod_evt = 9999999
-
-samplename = data_SingleMu_PromptReco_v6
-description = Single Mu Prompt v6
-x-section = 1
-subdir = DiLeptonJet-V296-SingleMu-2011A-PromptReco-v6
-pathname = filelists_HadVZ/DiLeptonJet-V296-SingleMu-2011A-PromptReco-v6.txt
-Nprod_evt = 9999999
-
-DONE
-
 Top Level Dir = dcap://osg-se.sprace.org.br/
 integrated lumi = 2067 pb^-1
 

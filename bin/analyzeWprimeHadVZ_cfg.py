@@ -43,7 +43,7 @@ process.WprimeAnalyzer.minMuonNTrkHit = cms.uint32(10)
 process.WprimeAnalyzer.minMuonStations = cms.uint32(1)
 process.WprimeAnalyzer.minMuonHitsUsed = cms.uint32(0)
 # +++++++++++++++++++Jet General Cuts
-process.WprimeAnalyzer.minJetPt = cms.double(150.)
+process.WprimeAnalyzer.minJetPt = cms.double(30.)
 process.WprimeAnalyzer.maxJetEta = cms.double(2.4)
 process.WprimeAnalyzer.maxJetNHF = cms.double(0.99)
 process.WprimeAnalyzer.maxJetNEF = cms.double(0.99)
