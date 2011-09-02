@@ -15,6 +15,8 @@ process.WprimeAnalyzer.electrons = cms.InputTag('selectedPatElectrons')
 process.WprimeAnalyzer.met   = cms.InputTag('patMETsPF')
 process.WprimeAnalyzer.genParticles = cms.InputTag('prunedGenParticles')
 #
+# do not consider electrons below this pt-threshold
+process.WprimeAnalyzer.electronPtThreshold   = cms.double(25) ## in GeV
 process.WprimeAnalyzer.oneEleEtCut   = cms.double(25) ## in GeV
 process.WprimeAnalyzer.highestEtElectronOnly = cms.bool(False)
 process.WprimeAnalyzer.dumpHighEtElectrons   = cms.bool(True)
