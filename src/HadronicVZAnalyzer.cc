@@ -56,7 +56,7 @@ void HadronicVZAnalyzer::Declare_Histos(const TFileDirectory & dir)
   // Extend later.
   printf("Declare histos\n");
   //Loose histos
-  h_HadVZMass = dir.make<TH1F>("h_HadVZMass","h_HadVZMass",250,0.0,2500.0);
+  h_HadVZMass = dir.make<TH1F>("h_HadVZMass","h_HadVZMass",100,0.0,2500.0);
   h_Zmuon1_pt = dir.make<TH1F>("h_Zmuon1_pt", "h_Zmuon1_pt", 100, 0.0, 1000.0);
   h_Zmuon1_eta = dir.make<TH1F>("h_Zmuon1_eta", "h_Zmuon1_eta", 40, -5.0, 5.0);
   h_Zmuon1_phi = dir.make<TH1F>("h_Zmuon1_phi", "h_Zmuon1_phi", 20, -4.0, 4.0);
@@ -144,9 +144,12 @@ void HadronicVZAnalyzer::Declare_Histos(const TFileDirectory & dir)
   //Jet merging histos
 
   h_deltaR_jet1jet2 = dir.make<TH1F>("h_deltaR_jet1jet2", "h_deltaR_jet1jet2", 50, 0.0, 5.0);
-  h_deltaR_jet1Z = dir.make<TH1F>("h_deltaR_jet1Z", "h_deltaR_jet1Z", 50, 0.0, 5.0);
-  h_deltaR_jet2Z = dir.make<TH1F>("h_deltaR_jet2Z", "h_deltaR_jet2Z", 50, 0.0, 5.0);
-  h_deltaR_jet3Z = dir.make<TH1F>("h_deltaR_jet3Z", "h_deltaR_jet3Z", 50, 0.0, 5.0);
+  h_deltaR_jet1Z_R1 = dir.make<TH1F>("h_deltaR_jet1Z_R1", "h_deltaR_jet1Z_R1", 50, 0.0, 5.0);
+  h_deltaR_jet2Z_R1 = dir.make<TH1F>("h_deltaR_jet2Z_R1", "h_deltaR_jet2Z_R1", 50, 0.0, 5.0);
+  h_deltaR_jet3Z_R1 = dir.make<TH1F>("h_deltaR_jet3Z_R1", "h_deltaR_jet3Z_R1", 50, 0.0, 5.0);
+  h_deltaR_jet1Z_R2 = dir.make<TH1F>("h_deltaR_jet1Z_R2", "h_deltaR_jet1Z_R2", 50, 0.0, 5.0);
+  h_deltaR_jet2Z_R2 = dir.make<TH1F>("h_deltaR_jet2Z_R2", "h_deltaR_jet2Z_R2", 50, 0.0, 5.0);
+  h_deltaR_jet3Z_R2 = dir.make<TH1F>("h_deltaR_jet3Z_R2", "h_deltaR_jet3Z_R2", 50, 0.0, 5.0);
 
   h_deltaR_jet1jet2_R1_cut40 = dir.make<TH1F>("h_deltaR_jet1jet2_R1_cut40", "h_deltaR_jet1jet2_R1_cut40", 50, 0.0, 5.0);
   h_deltaR_jet1jet2_R1_cut50 = dir.make<TH1F>("h_deltaR_jet1jet2_R1_cut50", "h_deltaR_jet1jet2_R1_cut50", 50, 0.0, 5.0);
@@ -446,14 +449,32 @@ void HadronicVZAnalyzer::FillJetMergingHistos(){
       h_deltaR_jet1jet2_R2_cut90->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);  
     }
     
-    h_deltaR_jet2Z->Fill(reco::deltaR(allJets_.at(1), zCand_), weight_);
-    if (allJets_.size()>2)
-      h_deltaR_jet3Z->Fill(reco::deltaR(allJets_.at(2), zCand_), weight_);
 
+    if (allJets_.at(0).mass() < 65){
+      h_deltaR_jet2Z_R1->Fill(reco::deltaR(allJets_.at(1), zCand_), weight_);
+      if (allJets_.size()>2)
+	h_deltaR_jet3Z_R1->Fill(reco::deltaR(allJets_.at(2), zCand_), weight_);
+    }
+
+    if (allJets_.at(0).mass() > 65){
+      h_deltaR_jet2Z_R2->Fill(reco::deltaR(allJets_.at(1), zCand_), weight_);
+      if (allJets_.size()>2)
+	h_deltaR_jet3Z_R2->Fill(reco::deltaR(allJets_.at(2), zCand_), weight_);
+    }
 
   }
-  if (allJets_.size()>0)
-    h_deltaR_jet1Z->Fill(reco::deltaR(allJets_.at(0), zCand_), weight_);
+
+
+  if (allJets_.at(0).mass() < 65){
+    if (allJets_.size()>0)
+      h_deltaR_jet1Z_R1->Fill(reco::deltaR(allJets_.at(0), zCand_), weight_);
+  }
+
+  if (allJets_.at(0).mass() > 65){
+    if (allJets_.size()>0)
+      h_deltaR_jet1Z_R2->Fill(reco::deltaR(allJets_.at(0), zCand_), weight_);
+  }
+
 
 
 }

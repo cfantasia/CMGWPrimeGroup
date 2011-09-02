@@ -184,10 +184,13 @@ public:
   TH1F* h_deltaR_jet1jet2_R2_cut80;
   TH1F* h_deltaR_jet1jet2_R2_cut90;
 
-  TH1F* h_deltaR_jet1Z;
-  TH1F* h_deltaR_jet2Z;
-  TH1F* h_deltaR_jet3Z;
+  TH1F* h_deltaR_jet1Z_R1;
+  TH1F* h_deltaR_jet2Z_R1;
+  TH1F* h_deltaR_jet3Z_R1;
 
+  TH1F* h_deltaR_jet1Z_R2;
+  TH1F* h_deltaR_jet2Z_R2;
+  TH1F* h_deltaR_jet3Z_R2;
 
   //Muon work histos
   TH1F* h_dptpt2; 
