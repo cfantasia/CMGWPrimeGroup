@@ -76,16 +76,14 @@ class WgammaAnalyzer
   // Handle to the muon collection
   edm::Handle<pat::MuonCollection > muons;
   // Handle to the (pf)MET collection
-  edm::Handle<pat::METCollection > met;
+  edm::Handle<pat::METCollection > defMet;
+  pat::MET met;
   // Handle to the pat::Photon collection
   edm::Handle<pat::PhotonCollection> photons;
 
    // keeps track of selection efficiencies for all input samples & cuts
   wprime::SampleStat stats;
 
-  // true if TrackRef for chosen high-pt muon reconstructor is null;
-  // to be reset at beginning of loop-over-muons
-  bool isInvalidMuon_;
   bool isInvalidPhoton_;
 
   // identifies muon reconstructor (see mumet_histo_constants.h)
@@ -141,22 +139,22 @@ class WgammaAnalyzer
   int getTheHardestMuon();
   int getTheHardestPhoton();
 
-  void setMuLorentzVector(TLorentzVector& P, const reco::TrackRef & trk);
-  LorentzVector calculateNeutrinoP4(LorentzVector muonP4, TVector2 met);
+  LorentzVector calculateNeutrinoP4(const TLorentzVector & muonP4, 
+				    const pat::MET & myMet);
  
 
   // fill histograms for muon if fill_entry=true; update book-keeping 
   // (via private member: stats); make sure stats gets updated maximum 
   // once per event
   void tabulateMu(int cut_index, bool accountMe[], 
-		  edm::EventBase const & event, int theMu);
+		  edm::EventBase const & event, const TeVMuon * muon);
   void tabulatePho(int pho_cut_index, bool accountMe[Num_photon_cuts], 
                    edm::EventBase const & event, double & InvMass);
 
 
   
   // dump on screen info about high-pt muon
-  void printHighPtMuon(edm::EventBase const & event);
+  void printHighPtMuon(edm::EventBase const & event, const TeVMuon * muon);
   void printHighPtPhoton(edm::EventBase const & event, int thePho);
 
   TLorentzVector mu4D;
@@ -165,23 +163,12 @@ class WgammaAnalyzer
   TLorentzVector PhotonP4;
   void setPhotonMomentum(int thePhoton);
 
-  // Get new MET: there are two corrections to be made:
-  // (a) the hadronic MET component (that needs to be corrected 
-  // if applyCorrection=true) from Z data; this will be done according to hadronic 
-  // activity from Z->mumu reconstructed events
-  // (b) the muon-pt component that needs to be updated if we switch to one
-  // of the dedicated high-pt muon reconstructors
-  TVector2 getNewMET(edm::EventBase const & event, const TLorentzVector & mu_p);
-
-  //computes the combined rel isolation value
-  float combRelIsolation(int theMu);
-
   // whether HLT accepted the event
   bool passedHLT(bool *, int, edm::EventBase const &);
 
   // check if muon has minimum pt, fill isThere accordingly
   // always returns true
-  bool muonMinimumPt(bool * isThere, int, edm::EventBase const &);
+  bool muonMinimumPt(bool * isThere, int theMu, edm::EventBase const &);
     
   // check if muon satisfies quality requirements
   // fill goodQual; always returns true
@@ -200,7 +187,7 @@ class WgammaAnalyzer
 
   // check if muon, MET pass kinematic cuts, updated goodQual
   // always returns true
-  bool kinematicCuts(bool * goodQual, int, edm::EventBase const & event);
+  bool kinematicCuts(bool * goodQual, int theMu, edm::EventBase const & event);
 
   // min Photon Pt, max Eta
   bool photonPt(bool * goodQual, int thePho, edm::EventBase const &);
@@ -222,20 +209,13 @@ class WgammaAnalyzer
   void printFileSummary(std::vector<wprime::InputFile>::const_iterator,
 			ofstream & out);
   
-  // get (PF) MET without the default-pt for the running muon in event (mu4D);
-  // this is done so that we can adjust the muon-pt component of the MET by 
-  // switching to one of the dedicated high-pt muon reconstructors
-  TVector2 getPFMETwithoutMu(edm::EventBase const & event);
-  bool pfMETwithoutMuCalculated_; // want to calculate this max. once for each muon
-  TVector2 pfMETwithoutMuCached_; 
+  WCandidate Wcand;
 
-
-			
   float muonPtThreshold_;
   float chi2Cut_;
   float muonEtaCut_;
   float oneMuPtTrackCut_;
-  float combRelCut_;
+  float relIsoCut_;
 
   TH1F * hPT[Num_mumet_cuts];
   TH1F * hETA[Num_mumet_cuts];

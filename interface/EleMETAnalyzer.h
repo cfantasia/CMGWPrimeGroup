@@ -63,7 +63,8 @@ class EleMETAnalyzer
   // Handle to the electron collection
   edm::Handle<pat::ElectronCollection > electrons;
   // Handle to the (pf)MET collection
-  edm::Handle<pat::METCollection > met;
+  edm::Handle<pat::METCollection > defMet;
+  pat::MET met;
    // keeps track of selection efficiencies for all input samples & cuts
   wprime::SampleStat stats;
 
@@ -119,12 +120,6 @@ class EleMETAnalyzer
   // set electron 4-d momentum (sets el4D)
   void setElectronMomentum(const heep::Ele & el);
 
-  // Get new MET: here (unlike the muon case) there is only one correction to be made:
-  // the hadronic MET component (that needs to be corrected 
-  // if applyCorrection=true) from Z data; this will be done according to hadronic 
-  // activity from Z->mumu (not ee?) reconstructed events
-  TVector2 getNewMET(edm::EventBase const & event, const TLorentzVector & el_p);
-
   // whether HLT accepted the event
   bool passedHLT(bool *, const heep::Ele &, edm::EventBase const & event);
 
@@ -150,6 +145,8 @@ class EleMETAnalyzer
   void printFileSummary(std::vector<wprime::InputFile>::const_iterator,
 			ofstream & out);
   
+  WCandidate Wcand;
+
   float electronPtThreshold_;
   float oneEleEtCut_;
  
