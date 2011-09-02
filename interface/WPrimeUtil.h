@@ -87,17 +87,6 @@ class WPrimeUtil
   static unsigned MaxL1Prescale(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path);
   static bool FindTrigger(const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames);
 
-  //transverse mass with a given MET object (TVector2)
-  static float TMass(const TLorentzVector& lv, const TVector2& themet)
-    {
-      //------------------------------------------------------------------------
-      float tmass = 0;
-      float cdphi = TMath::Cos(lv.Phi()-themet.Phi());
-      float tmass_sqr = 2*lv.Pt()*themet.Mod()*(1-cdphi);
-      tmass = (tmass_sqr>0) ? sqrt(tmass_sqr) : 0;
-    return tmass;
-    }
-
   // get hadronic MET component (that needs to be corrected 
   // if applyMETCorrection=true)from Z data; this will be done according to hadronic 
   // activity from Z->mumu reconstructed events
@@ -246,7 +235,7 @@ class WPrimeUtil
 	  // initialize event's MET to hadronic-MET
 	  met = pat::MET(reco::MET(LorentzVector(hadronMET.Px(), hadronMET.Py(), 0, hadronMET.Mod()), reco::MET::Point(0,0,0)));
 	  // adjust by subtracting the lepton pt
-	  AdjustMET(met, TVector2(lepton.px(), lepton.py()));
+	  AdjustMET(met, TVector2(lepton.p4().px(), lepton.p4().py()));
 	}
       else
 	{ // this is correction (b)
