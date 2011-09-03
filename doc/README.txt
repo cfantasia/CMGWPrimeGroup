@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V296, release:
+o Setup a new working area (Default name: V300, release:
 CMSSW_4_2_5)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-02-96)
+V00-03-00)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos, V08-03-03 PhysicsTools/Utilities and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
@@ -85,7 +85,8 @@ To run:
 
 Options:
 - enable/disable analyzers for Mu+MET (available), W(mu)+gamma (available),
-El+MET (available), WZ (available), tb (missing)
+El+MET (available), WZ (available), hadV+Z (available), hadV + Z
+(available), tb (missing)
 - specify input collections 
 - specify parameters for Mu+MET/El+MET/WZ/W+gamma analysis
 

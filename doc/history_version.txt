@@ -1,3 +1,36 @@
+03-SEP-11 (Christos, Cory, Flavia), V00-03-00
+=============================================
+General improvements:
+ - Corrections to pfMET due to dedicated TeV lepton reconstructors now applied
+uniformly to both (high-pt) muons & electrons by saving pfCandidates in event
+(electron-based analyses need to recreate pat-tuples with latest
+configuration; analyzers remain backwards compatible when dealing with
+older pat-tuples)
+ - Now saving both L1 and HLT prescales in event (analyzers remain
+backwards compatible when dealing with pat-tuples w/o prescale
+info). Global tag updated to GR_R_42_V18::All to deal with latest trigger menus
+- First version of hadronic-boson + W class (watch out CDF and Ken Lane!)
+
+
+Muon/Electron+MET and W+gamma analyses:
+- Now using BosonFinder class for constructing W candidates and applying MET
+corrections 
+
+Hadronic V + Z analysis:
+- General updates, new data + MC samples
+- First MC-data comparisons
+
+Misc:
+- TeV Muon class: users should check isValid before accessing kinematic
+info; momentum returns dummy values for muons with null tracks. 
+- TeV Muon class: isValid flag now set in ctor once and for all
+- Added uniform treatment of MET corrections for lepton+MET signatures:
+  o takes into account hadronic corrections and adjustments due to high-pt
+TeV-muon/HEEP reconstruction 
+  o returns "W" (ie. lepton+MET) candidate with full kinematic info
+- Added configuration for jet selectors
+
+
 18-AUG-11 (Christos, Cory, Flavia), V00-02-96
 ===============================================
 Updated to latest set of PAT tags recommended for 4_2_5
