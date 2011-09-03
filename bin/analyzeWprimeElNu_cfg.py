@@ -2,6 +2,7 @@ from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
 process.WprimeAnalyzer.outputFile  = cms.string('Wprime_analysis_ElMET.root')## mandatory
 process.WprimeAnalyzer.reportAfter = cms.uint32(15000)                     ## optional
+process.WprimeAnalyzer.useJSON = True
 process.WprimeAnalyzer.doRecoilCorrectionForW = cms.bool(False)
 process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_sections_ElMET.txt")
 process.WprimeAnalyzer.logFile = cms.string("event_counts_ElMET.txt")
@@ -36,4 +37,4 @@ process.WprimeAnalyzer.hltPaths = cms.vstring('HLT_Ele22_SW_TighterEleId_L1R_v1'
     'HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v1','HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2','HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v3',
     'HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_ TrkIsoT_v1','HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_ TrkIsoT_v2','HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_ TrkIsoT_v3',
     'HLT_Ele25_WP80_PFMT40_v1')
-##process.WprimeAnalyzer.pileupTag  = cms.string('addPileupInfo'),
+
