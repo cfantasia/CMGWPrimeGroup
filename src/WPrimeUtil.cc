@@ -497,11 +497,20 @@ void WPrimeUtil::getMuons(const edm::EventBase & event, const edm::InputTag& lab
   convertMuons(patMuons, muAlgo, muons);
 }
 
+bool WPrimeUtil::warningShown_ = false;
+
 inline void WPrimeUtil::getPFCands(const edm::EventBase & event, const edm::InputTag& label, vector<pat::PFParticle> & pfCands){
   edm::Handle<vector<pat::PFParticle> > handle;
   event.getByLabel(label, handle);
   if(handle.isValid()) pfCands = *handle.product();
-  else std::cerr<<" Didn't find pfCands in event, skipping\n";
+  else 
+    {
+      if(!warningShown_)
+	{
+	  std::cerr << " WARNING!!! Didn't find pfCands in event, skipping corrections to pfMET\n";
+	  warningShown_ = true;
+	}
+    }
 }
 
 // inline void WPrimeUtil::getMET(const edm::EventBase & event, const edm::InputTag& label, pat::MET & met){

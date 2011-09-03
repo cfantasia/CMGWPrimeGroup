@@ -43,6 +43,7 @@ class WPrimeUtil
 
   bool shouldApplyHadronicRecoilCorrection(){return applyHadronicRecoilCorrection_;}
 
+  void resetWarnings(){warningShown_ = false;}
   void setSampleName(std::string samplename){samplename_ = samplename;}
   void setWeight(float weight){weight_ = weight;}
   void setInputFile(float weight){weight_ = weight;}
@@ -327,7 +328,7 @@ private:
   std::string samplename_;
   float weight_;
   bool runningOnData_;
-
+  static bool warningShown_;
   std::vector<edm::EventID> vEventsToDebug_;
 
   float lumi_ipb; // in pb^-1, to be retrieved from samples_cross_sections.txt
