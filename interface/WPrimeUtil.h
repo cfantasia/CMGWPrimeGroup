@@ -106,7 +106,7 @@ class WPrimeUtil
     TVector2 diff(0.,0.);
     for (uint i=0; i<leptons.size(); ++i){
       int pfCandIdx = FindPFCand(leptons[i], pfCands);
-      if(pfCandIdx == -1) continue; //PF Obj not found
+      if(pfCandIdx == -1) {continue;} //PF Obj not found
       diff = diff + getPtDiff(leptons[i],pfCands[pfCandIdx]);
     }
     return diff;
@@ -139,11 +139,12 @@ class WPrimeUtil
   static void AdjustMET(pat::MET & met, const TVector2 & subtract)
     {
       TVector2 newmet(met.px()-subtract.Px(), met.py()-subtract.Py());
-      //std::cout<<"Before met et: "<<met.et()<<" met phi: "<<met.phi()<<std::endl;
+      //      std::cout<<"Before met et: "<<met.et()<<" met phi: "<<met.phi()<<std::endl;
       //Note: Should the new met be wrt beamspot??, what is old met wrt?
       met = pat::MET(reco::MET(met.sumEt()+subtract.Mod(), 
 			       LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()), 
 			       reco::MET::Point(0,0,0)));
+      //      std::cout<<"after met et: "<<met.et()<<" met phi: "<<met.phi()<<std::endl;
     }
   
 /////////////////////
@@ -214,7 +215,8 @@ class WPrimeUtil
   static void getElectrons(const edm::EventBase & event, const edm::InputTag& label, ElectronV & electrons);
   static void getMuons    (const edm::EventBase & event, const edm::InputTag& label, const uint&  muonAlgo, MuonV & muons);
   static void getPFCands  (const edm::EventBase & event, const edm::InputTag& label, std::vector<pat::PFParticle> & pfCands);
-  static void getMET      (const edm::EventBase & event, const edm::InputTag& label, pat::MET & met);
+  static void getMET      (const edm::EventBase & event, const edm::InputTag& label, pat::MET & met)
+    {met = getProduct<METV>(event, label)[0];}
 
   static void tabulateSummary(wprime::EffV& results);
   static void printSummary(const std::string& dir, const std::string& description, const vstring & Cuts, const wprime::EffV& results, ofstream& out);
@@ -227,7 +229,7 @@ class WPrimeUtil
   // (b) the lepton-pt component that needs to be updated if we switch to one
   // of the dedicated high-pt TeV or HEEP reconstructors
   template<class T>
-    void getNewMET(const edm::EventBase & event, const T & lepton, pat::MET & met)
+    void getNewMET(const edm::EventBase & event, const T & lepton, pat::MET & met, const edm::InputTag & metLabel)
     {
       if(shouldApplyHadronicRecoilCorrection())
 	{ // this is correction (a)
@@ -240,6 +242,7 @@ class WPrimeUtil
       else
 	{ // this is correction (b)
 	  std::vector<T> vl; vl.push_back(lepton);
+	  getMET(event, metLabel, met);
 	  // correct (pf)MET by taking into account TeV/heep reconstruction for muons/electrons
 	  AdjustMET(event, vl, pfLabel_, met);
 	}
@@ -247,9 +250,9 @@ class WPrimeUtil
 
   // calls getNewMET; returns W canidate from lepton and (adjusted) MET
   template<class T>
-    WCandidate getNewMETandW(const edm::EventBase & event, const T & lepton, pat::MET & met)
+    WCandidate getNewMETandW(const edm::EventBase & event, const T & lepton, pat::MET & met, const edm::InputTag & metLabel)
     {
-      getNewMET(event, lepton, met);
+      getNewMET(event, lepton, met, metLabel);
       return WCandidate(lepton, met);
     }
 
@@ -258,7 +261,7 @@ class WPrimeUtil
 /////////////
 template<class T1,class T2>
 static bool Match(const T1 & p1, const T2 & p2){
-  float tolerance = 0.0001;
+  float tolerance = 0.01;
   if (p1.pdgId() == p2.pdgId() &&
       fabs(p1.eta() - p2.eta()) < tolerance &&
       fabs(reco::deltaPhi(p1.phi(),p2.phi())) < tolerance
