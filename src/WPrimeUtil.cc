@@ -504,9 +504,9 @@ inline void WPrimeUtil::getPFCands(const edm::EventBase & event, const edm::Inpu
   else std::cerr<<" Didn't find pfCands in event, skipping\n";
 }
 
-inline void WPrimeUtil::getMET(const edm::EventBase & event, const edm::InputTag& label, pat::MET & met){
-  met = getProduct<METV>(event, label)[0];
-}
+// inline void WPrimeUtil::getMET(const edm::EventBase & event, const edm::InputTag& label, pat::MET & met){
+//   met = getProduct<METV>(event, label)[0];
+// }
 
 void
 WPrimeUtil::AdjustMET(const edm::EventBase & event, 
