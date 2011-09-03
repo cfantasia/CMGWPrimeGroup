@@ -24,7 +24,7 @@ EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeU
   HLTPathsByName_= cfg.getParameter<std::vector<std::string > >("hltPaths");
   HLTPathsByIndex_.resize(HLTPathsByName_.size());
   
-  pileupLabel_ = cfg.getParameter<string>("pileupTag");
+  pileupLabel_ = cfg.getParameter<edm::InputTag>("pileupTag");
   
 
   setupCutOrder();
@@ -367,7 +367,7 @@ void EleMETAnalyzer::setupCutOrder()
 // dump on screen info about high-Et electron
 void EleMETAnalyzer::printHighEtElectron(edm::EventBase const & event)
 {
-  cout << " Run # = " << event.id().run() << " Event # = " 
+  cout << "\n Run # = " << event.id().run() << " Event # = " 
        << event.id().event() << " LS = " << event.id().luminosityBlock() 
        << endl;
 

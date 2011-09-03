@@ -76,7 +76,7 @@ class EleMETAnalyzer
   bool SameTrigger(std::string & A, std::string & B);
 
   // PileUp
-  std::string pileupLabel_;
+  edm::InputTag pileupLabel_;
   // std::vector< PileupSummaryInfo > PupInfo_; 
 
   bool highestEtElectronOnly_; // whether to only consider highest-pt electron in event
