@@ -58,8 +58,8 @@ class EleMETAnalyzer
 
   heep::EleSelector cuts_; //allows us to apply the heep selection
 
-  edm::InputTag electrons_;
-  edm::InputTag met_;
+  edm::InputTag electronsLabel_;
+  edm::InputTag metLabel_;
   // Handle to the electron collection
   edm::Handle<pat::ElectronCollection > electrons;
   // Handle to the (pf)MET collection

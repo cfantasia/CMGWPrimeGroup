@@ -50,11 +50,9 @@ class WgammaAnalyzer
 
  private:
   WPrimeUtil * wprimeUtil_;
-  edm::InputTag muons_;
-  edm::InputTag met_;
+  edm::InputTag muonsLabel_;
   edm::InputTag metLabel_;
-  edm::InputTag particleFlow_;
-  edm::InputTag photons_;
+  edm::InputTag photonsLabel_;
 
 
   class ParticleStruct {
