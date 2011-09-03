@@ -1,7 +1,5 @@
 #include "UserCode/CMGWPrimeGroup/interface/WgammaAnalyzer.h"
 #include "DataFormats/PatCandidates/interface/PFParticle.h"
-//#include "ElectroWeakAnalysis/MultiBosons/interface/VGammaPhotonSelector.h"
-//#include "UserCode/CMGWPrimeGroup/interface/MuMETAnalyzer.h"
 
 #include <TH1F.h>
 #include <TLorentzVector.h>
@@ -19,10 +17,9 @@ WgammaAnalyzer::WgammaAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeU
   wprimeUtil_ = wprimeUtil;
   assert(wprimeUtil_);
 
-  muons_       = cfg.getParameter<edm::InputTag>("muons"  );
-  met_       = cfg.getParameter<edm::InputTag>("mets"  );
-  particleFlow_ = cfg.getParameter<edm::InputTag>("particleFlow" );
-  photons_ = cfg.getParameter<edm::InputTag>("photons" );
+  muonsLabel_       = cfg.getParameter<edm::InputTag>("muons"  );
+  metLabel_       = cfg.getParameter<edm::InputTag>("mets"  );
+  photonsLabel_ = cfg.getParameter<edm::InputTag>("photons" );
   muReconstructor_   = cfg.getParameter<int>("muonReconstructor");
   muonPtThreshold_   = cfg.getParameter<double>("muonPtThreshold");
   chi2Cut_           = cfg.getParameter<double>("chi2Cut");
@@ -111,9 +108,9 @@ int WgammaAnalyzer::getTheHardestMuon()
 
 void WgammaAnalyzer::eventLoop(edm::EventBase const & event)
 {
-  event.getByLabel(muons_, muons);
-  event.getByLabel(met_, defMet);
-  event.getByLabel(photons_, photons);
+  event.getByLabel(muonsLabel_, muons);
+  event.getByLabel(metLabel_, defMet);
+  event.getByLabel(photonsLabel_, photons);
 
   //edm::Handle< edm::View<pat::Photon> >  photonHandle;
   //event.getByLabel(photons_, photonHandle);
@@ -173,7 +170,7 @@ void WgammaAnalyzer::eventLoop(edm::EventBase const & event)
     TeVMuon muon((*muons)[theMu], muReconstructor_);
     if(!muon.isValid())continue;
 
-    Wcand = wprimeUtil_->getNewMETandW(event, muon, met);
+    Wcand = wprimeUtil_->getNewMETandW(event, muon, met, metLabel_);
 
       for(int cut_index = 0; cut_index != Num_mumet_cuts; ++cut_index) { // loop over selection cuts
           // call to funcxtion [as implemented in setupCutOder]

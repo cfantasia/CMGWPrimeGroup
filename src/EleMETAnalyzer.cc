@@ -12,8 +12,8 @@ EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeU
   wprimeUtil_ = wprimeUtil;
   assert(wprimeUtil_);
 
-  electrons_       = cfg.getParameter<edm::InputTag>("electrons"  );
-  met_       = cfg.getParameter<edm::InputTag>("met"  );
+  electronsLabel_       = cfg.getParameter<edm::InputTag>("electrons"  );
+  metLabel_       = cfg.getParameter<edm::InputTag>("met"  );
   electronPtThreshold_   = cfg.getParameter<double>("electronPtThreshold");
   oneEleEtCut_   = cfg.getParameter<double>("oneEleEtCut");
   highestEtElectronOnly_ = cfg.getParameter<bool>("highestEtElectronOnly");
@@ -76,8 +76,8 @@ void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
 {
   ClearWprimeVariables(vars, analysis);
 
-  event.getByLabel(electrons_, electrons);
-  event.getByLabel(met_, defMet);
+  event.getByLabel(electronsLabel_, electrons);
+  event.getByLabel(metLabel_, defMet);
 
   // switch to help us keep track of whether a electron has already
   // been found in current event surviving the ith-cut;
@@ -108,7 +108,7 @@ void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
     setElectronMomentum(el); // this is needed for the ntuple-making
     if(el.p4().pt() < electronPtThreshold_) continue;
 
-    Wcand = wprimeUtil_->getNewMETandW(event, el, met);
+    Wcand = wprimeUtil_->getNewMETandW(event, el, met, metLabel_);
 
     for(int cut_index = 0; cut_index != Num_elmet_cuts; ++cut_index)
       { // loop over selection cuts

@@ -77,7 +77,6 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 {
   event.getByLabel(muonsLabel_, muons);
   event.getByLabel(metLabel_, defMet);
-
   // switch to help us keep track of whether a muon has already
   // been found in current event surviving the ith-cut;
   // this will ensure that we increase Num_surv_cut maximum once per evet
@@ -106,7 +105,7 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
     if(!muon.isValid())continue;
     if(muon.pt() < muonPtThreshold_) continue;
     
-    Wcand = wprimeUtil_->getNewMETandW(event, muon, met);
+    Wcand = wprimeUtil_->getNewMETandW(event, muon, met, metLabel_);
 
     for(int cut_index = 0; cut_index != Num_mumet_cuts; ++cut_index)
       { // loop over selection cuts
@@ -386,7 +385,7 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const pat::Muo
   cout << " Muon eta = " << muon.eta() << "  phi = " << muon.phi() << endl;
   pat::METCollection::const_iterator oldMET = defMet->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
-  cout << " default pfMET = " << oldMET->pt() << " GeV ";
+  cout << " default pfMET = " << oldMET->pt() << " GeV " << endl;
 
   typedef std::vector<unsigned>::iterator It;
 
@@ -396,13 +395,14 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const pat::Muo
       if(!mu.isValid())continue;
 
       pat::MET myMet;    
-      WCandidate w = wprimeUtil_->getNewMETandW(event, mu, myMet);
+      WCandidate w = wprimeUtil_->getNewMETandW(event, mu, myMet, metLabel_);
 
       cout << " " << algo_desc_long[*it] << " pt = "
 	   << mu.getTrack(*it)->pt() << " +- " 
 	   << mu.getTrack(*it)->ptError()
 	   << " GeV, charge = " << mu.getTrack(*it)->charge() 
-	   << ", TM = " << w.mt() << " GeV " << endl;
+	   << " MET = " << myMet.et()
+	   << " GeV, TM = " << w.mt() << " GeV " << endl;
     }
       
 
