@@ -18,20 +18,20 @@ TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
     TH1F* hist = (TH1F*)h->Clone("hist");
 
     if(hist == NULL){
-      cout<<"Failed Getting "<<histname<<endl;
+      std::cout<<"Failed Getting "<<histname<<std::endl;
       abort();
     }
 
     if(!hist->GetSumw2N()) hist->Sumw2();
     if (rebinme){
       float binwidth = hist->GetBinWidth(1);
-      string oldbin = Form("Events / %.0f", binwidth);
-      string newbin = Form("Events / %.0f", binwidth*rebinme);
+      std::string oldbin = Form("Events / %.0f", binwidth);
+      std::string newbin = Form("Events / %.0f", binwidth*rebinme);
 
       hist->Rebin(rebinme);
 
-      string title = hist->GetYaxis()->GetTitle();
-      string::size_type pos = title.find(oldbin);
+      std::string title = hist->GetYaxis()->GetTitle();
+      std::string::size_type pos = title.find(oldbin);
       title.replace( pos, oldbin.size(), newbin );
       hist->SetYTitle(title.c_str());
       
