@@ -40,7 +40,6 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUti
   if(debugme) cout<<"Using "<<looseJetType_<<" for jets\n";
 
   SetCandEvtFile(cfg.getParameter<string>("candEvtFile"));
-  results_.assign(NCuts_,wprime::FilterEff());
 
   doPreselect_ = cfg.getParameter<bool>("preselect");
 
@@ -151,8 +150,8 @@ void AnalyzerBase::PrintEventDetails() const{
   if(vCand_){
     cout<<" V Flavor: "<<vCand_.flavor()
         <<" V Mass: "<<vCand_.mass()
-        <<" V Mass: "<<vCand_.eta()
-        <<" V Mass: "<<vCand_.phi()
+        <<" V Eta: "<<vCand_.eta()
+        <<" V Phi: "<<vCand_.phi()
         <<endl;
   }
 }
@@ -173,9 +172,10 @@ void
 AnalyzerBase::PrintElectrons() const{
   cout<<"----All Electrons: ( "<<allElectrons_.size()<<" )------\n";
   for(uint i=0; i<allElectrons_.size(); ++i){
-    if(WPrimeUtil::Contains(allElectrons_[i], looseElectrons_)) cout<<"( Loose ";
-    if(WPrimeUtil::Contains(allElectrons_[i], tightElectrons_)) cout<<"& Tight ";
-    cout<<" )\n";
+    cout<<" ---  ";
+    if(WPrimeUtil::Contains(allElectrons_[i], looseElectrons_)) cout<<" Loose ";
+    if(WPrimeUtil::Contains(allElectrons_[i], tightElectrons_)) cout<<" Tight ";
+    cout<<"  ---\n";
     PrintElectron(allElectrons_[i]);
   }
 }
@@ -184,9 +184,10 @@ void
 AnalyzerBase::PrintMuons() const{
   cout<<"----All Muons: ( "<<allMuons_.size()<<" )------\n";
   for(uint i=0; i<allMuons_.size(); ++i){
-    if(WPrimeUtil::Contains(allMuons_[i], looseMuons_)) cout<<"( Loose ";
-    if(WPrimeUtil::Contains(allMuons_[i], tightMuons_)) cout<<"& Tight ";
-    cout<<" )\n";
+    cout<<" ---  ";
+    if(WPrimeUtil::Contains(allMuons_[i], looseMuons_)) cout<<" Loose ";
+    if(WPrimeUtil::Contains(allMuons_[i], tightMuons_)) cout<<" Tight ";
+    cout<<"  ---\n";
     PrintMuon(allMuons_[i]);
   }
 }
@@ -195,15 +196,16 @@ void
 AnalyzerBase::PrintJets() const{
   cout<<"----All Jets: ( "<<allJets_.size()<<" )------\n";
   for(uint i=0; i<allJets_.size(); ++i){
-    if(WPrimeUtil::Contains(allJets_[i], looseJets_)) cout<<"(Loose ";
-    cout<<" )\n";
+    cout<<" ---  ";
+    if(WPrimeUtil::Contains(allJets_[i], looseJets_)) cout<<" Loose ";
+    cout<<"  ---\n";
     PrintJet(allJets_[i]);
   }
 }
 
 void
 AnalyzerBase::PrintElectron(const heep::Ele& elec) const{
-  cout << setiosflags(ios::fixed) << setprecision(3);
+  cout << setiosflags(ios::fixed) << setprecision(2);
   cout<<" Elec ScEt: "<<elec.et()<<endl; //ScEt
   if(!elec.isPatEle()){
     cout<<"Not a pat electron, why???\n";
@@ -214,6 +216,7 @@ AnalyzerBase::PrintElectron(const heep::Ele& elec) const{
 
 void
 AnalyzerBase::PrintElectron(const pat::Electron& elec) const{
+  cout << setiosflags(ios::fixed) << setprecision(2);
   cout<<" Elec Pt: "<<elec.pt()<<endl
       <<" Elec P4Pt: "<<elec.p4().Pt()<<endl
       <<" Elec energy: "<<elec.energy()<<endl
@@ -233,7 +236,7 @@ AnalyzerBase::PrintElectron(const pat::Electron& elec) const{
 
 void
 AnalyzerBase::PrintMuon(const TeVMuon& mu) const{
-  cout << setiosflags(ios::fixed) << setprecision(3);
+  cout << setiosflags(ios::fixed) << setprecision(2);
   reco::TrackRef gm = mu.globalTrack();
   cout<<" Muon Pt: "  <<mu.pt()<<endl
       <<" Muon Global Pt: "  <<mu.pt(kGLOBAL)<<endl
@@ -257,10 +260,17 @@ AnalyzerBase::PrintMuon(const TeVMuon& mu) const{
 
 void
 AnalyzerBase::PrintJet(const pat::Jet& jet) const{
-  cout << setiosflags(ios::fixed) << setprecision(3);
+  cout << setiosflags(ios::fixed) << setprecision(2);
   cout<<" Jet Pt: "  <<jet.pt()<<endl
+      <<" Jet Mass: " <<jet.mass()<<endl
       <<" Jet Eta: " <<jet.eta()<<endl
-      <<" Jet Phi: " <<jet.phi()<<endl;
+      <<" Jet Phi: " <<jet.phi()<<endl
+      <<" Jet NHF: " <<jet.neutralHadronEnergyFraction()<<endl
+      <<" Jet NEF: " <<jet.neutralEmEnergyFraction()<<endl
+      <<" Jet NDau: " <<jet.numberOfDaughters()<<endl
+      <<" Jet CHF: " <<jet.chargedHadronEnergyFraction()<<endl
+      <<" Jet CEF: " <<jet.chargedEmEnergyFraction()<<endl
+      <<" Jet CMult: " <<jet.chargedMultiplicity()<<endl;
 }
 
 ////////////////////////////
