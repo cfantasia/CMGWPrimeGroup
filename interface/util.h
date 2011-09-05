@@ -459,15 +459,15 @@ public:
   virtual bool operator()(const pat::Jet & p, pat::strbitset & ret) {
     ret.set(false);
     bool inTracking = fabs(p.eta()) < 2.4;
-    setPassCut("minPt", p.pt(), ret);
-    setPassCut("maxEta", fabs(p.eta()), ret);
-    setPassCut("maxNHF", p.neutralHadronEnergyFraction(), ret);
-    setPassCut("maxNEF", p.neutralEmEnergyFraction(), ret);
-    setPassCut("minNDaughters", (int)p.numberOfDaughters(), ret);
-    //Below are only used for fabs(eta) < 2.4 b/c of tracking needed?
-    setPassCut("minCHF", inTracking && p.chargedHadronEnergyFraction(), ret);
-    setPassCut("maxCEF", inTracking && p.chargedEmEnergyFraction(), ret);
-    setPassCut("minCMult", inTracking && p.chargedMultiplicity(), ret);
+    if(ignoreCut("minPt")  || p.pt() > cut("minPt", double())) passCut(ret, "minPt");
+    if(ignoreCut("maxEta") || fabs(p.eta()) < cut("maxEta", double())) passCut(ret, "maxEta");
+    if(ignoreCut("maxNHF") || p.neutralHadronEnergyFraction() < cut("maxNHF", double())) passCut(ret, "maxNHF");
+    if(ignoreCut("maxNEF") || p.neutralEmEnergyFraction()     < cut("maxNEF", double())) passCut(ret, "maxNEF");
+    if(ignoreCut("minNDaughters") || (int)p.numberOfDaughters() > cut("minNDaughters", int())) passCut(ret, "minNDaughters");
+    //Below are only used for fabs(eta) < 2.4 b/c tracking needed
+    if(ignoreCut("minCHF")   || !inTracking || p.chargedHadronEnergyFraction() > cut("minCHF",   double())) passCut(ret, "minCHF");
+    if(ignoreCut("maxCEF")   || !inTracking || p.chargedEmEnergyFraction()     < cut("maxCEF",   double())) passCut(ret, "maxCEF");
+    if(ignoreCut("minCMult") || !inTracking || (int)p.chargedMultiplicity()    > cut("minCMult",    int())) passCut(ret, "minCMult");
     setIgnored(ret);
     return (bool) ret;
   }
