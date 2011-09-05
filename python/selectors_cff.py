@@ -37,10 +37,12 @@ muonSelectors.WZTight.minPt = cms.untracked.double(20.)
 muonSelectors.WZTight.maxIso03 = cms.untracked.double(0.1)
 
 muonSelectors.HadVZLoose = muonSelectors.VBTF.clone()
-muonSelectors.HadVZLoose.minPt = cms.untracked.double(10.)
+muonSelectors.HadVZLoose.minPt = cms.untracked.double(15.)
+muonSelectors.HadVZLoose.maxNormalizedChi2 = 9999999
 
 muonSelectors.HadVZTight = muonSelectors.VBTF.clone()
 muonSelectors.HadVZTight.minPt = cms.untracked.double(35.)
+muonSelectors.HadVZTight.maxNormalizedChi2 = 9999999
 
 #####################
 ####  Electrons  ####
@@ -107,13 +109,13 @@ electronSelectors.WZTight.endcap.minPt = cms.untracked.double(20.)
 ####################
 jetSelectors = cms.PSet(
     Base = cms.PSet(#are these >= or >
-       minPt = cms.untracked.double(150.),
+       minPt = cms.untracked.double(30.),
        maxEta = cms.untracked.double(2.4),
        maxNHF = cms.untracked.double(0.99),
        maxNEF = cms.untracked.double(0.99),
-       minNDaughters = cms.untracked.int32(2),
-       minCHF = cms.untracked.double(0.0),#Why is this min?
+       minNDaughters = cms.untracked.int32(1),
+       minCHF = cms.untracked.double(0.0),
        maxCEF = cms.untracked.double(0.99),
-       minCMult = cms.untracked.int32(1),
+       minCMult = cms.untracked.int32(0),
        ),
     )
