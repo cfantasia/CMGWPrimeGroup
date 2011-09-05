@@ -169,6 +169,15 @@ public:
   TH1F* h_tight_muons_phi;
 
   //Jet merging histos
+
+
+  TH2F* h_jet1mass_jet2mass;
+  TH1F* h_HadVZmass_Cory;
+  TH1F* h_jet1jet2_mass_Restricted;
+  TH1F* h_HadVZmass_Flavia;
+  TH1F* h_HadV_mass_Cory;
+  TH1F* h_HadV_mass_Flavia;
+
   TH2F* h_m1_vs_m12;
   TH1F* h_bestmass;
 
@@ -197,6 +206,9 @@ public:
   TH1F* h_deltaR_jet1Z_R2;
   TH1F* h_deltaR_jet2Z_R2;
   TH1F* h_deltaR_jet3Z_R2;
+
+
+
 
   //Muon work histos
   TH1F* h_dptpt2; 

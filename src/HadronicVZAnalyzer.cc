@@ -145,6 +145,14 @@ void HadronicVZAnalyzer::Declare_Histos(const TFileDirectory & dir)
   h_m1_vs_m12 = dir.make<TH2F>("h_m1_vs_m12", "Mass Jet1 vs Mass Jet12;M_{j1};M_{j1,j2}", 100, 0., 200., 100, 0., 200.);
   h_bestmass = dir.make<TH1F>("h_bestmass", "Best V Mass;M_{V}^{Best}", 75, 0., 150.);//Cory: Change back
 
+  h_jet1mass_jet2mass = dir.make<TH2F>("h_jet1mass_jet2mass", "h_jet1mass_jet2mass", 100, 0.0, 500.0, 100, 0.0, 500.0);
+  h_jet1jet2_mass_Restricted = dir.make<TH1F>("h_jet1jet2_mass_Restricted", "h_jet1jet2_mass_Restricted", 100, 0.0, 500.0);
+  h_HadVZmass_Cory = dir.make<TH1F>("h_HadVZmass_Cory", "h_HadVZmass_Cory", 100, 0.0, 2500.0);
+  h_HadVZmass_Flavia = dir.make<TH1F>("h_HadVZmass_Flavia", "h_HadVZmass_Flavia", 100, 0.0, 2500.0);
+  h_HadV_mass_Cory = dir.make<TH1F>("h_HadVmass_Cory", "h_HadVmass_Cory", 100, 0.0, 500.0);
+  h_HadV_mass_Flavia = dir.make<TH1F>("h_HadVmass_Flavia", "h_HadVmass_Flavia", 100, 0.0, 500.0);
+
+
   h_deltaR_jet1jet2 = dir.make<TH1F>("h_deltaR_jet1jet2", "h_deltaR_jet1jet2", 50, 0.0, 5.0);
   h_deltaR_jet1Z_R1 = dir.make<TH1F>("h_deltaR_jet1Z_R1", "h_deltaR_jet1Z_R1", 50, 0.0, 5.0);
   h_deltaR_jet2Z_R1 = dir.make<TH1F>("h_deltaR_jet2Z_R1", "h_deltaR_jet2Z_R1", 50, 0.0, 5.0);
@@ -356,86 +364,190 @@ void HadronicVZAnalyzer::FillValidVZHistos(){
 
 void HadronicVZAnalyzer::FillJetMergingHistos(){
 
-  if (allJets_.size()>1){
-    h_deltaR_jet1jet2->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);
+  double jet1jet2mass=-99.0;
+
+
+  if (looseJets_.size()>1){
+    h_deltaR_jet1jet2->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);
     
     //Region histos
-    if (allJets_.at(0).mass() < 40){
-      h_deltaR_jet1jet2_R1_cut40->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);
+    if (looseJets_.at(0).mass() < 40){
+      h_deltaR_jet1jet2_R1_cut40->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);
     }
-    if (allJets_.at(0).mass() > 40){
-      h_deltaR_jet1jet2_R2_cut40->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);  
-    }
-
-    if (allJets_.at(0).mass() < 50){
-      h_deltaR_jet1jet2_R1_cut50->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);
-    }
-    if (allJets_.at(0).mass() > 50){
-      h_deltaR_jet1jet2_R2_cut50->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);  
+    if (looseJets_.at(0).mass() > 40){
+      h_deltaR_jet1jet2_R2_cut40->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);  
     }
 
-    if (allJets_.at(0).mass() < 60){
-      h_deltaR_jet1jet2_R1_cut60->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);
+    if (looseJets_.at(0).mass() < 50){
+      h_deltaR_jet1jet2_R1_cut50->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);
     }
-    if (allJets_.at(0).mass() > 60){
-      h_deltaR_jet1jet2_R2_cut60->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);  
-    }
-
-    if (allJets_.at(0).mass() < 65){
-      h_deltaR_jet1jet2_R1_cut65->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);
-    }
-    if (allJets_.at(0).mass() > 65){
-      h_deltaR_jet1jet2_R2_cut65->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);  
+    if (looseJets_.at(0).mass() > 50){
+      h_deltaR_jet1jet2_R2_cut50->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);  
     }
 
-    if (allJets_.at(0).mass() < 70){
-      h_deltaR_jet1jet2_R1_cut70->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);
+    if (looseJets_.at(0).mass() < 60){
+      h_deltaR_jet1jet2_R1_cut60->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);
     }
-    if (allJets_.at(0).mass() > 70){
-      h_deltaR_jet1jet2_R2_cut70->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);  
-    }
-
-    if (allJets_.at(0).mass() < 80){
-      h_deltaR_jet1jet2_R1_cut80->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);
-    }
-    if (allJets_.at(0).mass() > 80){
-      h_deltaR_jet1jet2_R2_cut80->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);  
+    if (looseJets_.at(0).mass() > 60){
+      h_deltaR_jet1jet2_R2_cut60->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);  
     }
 
-    if (allJets_.at(0).mass() < 90){
-      h_deltaR_jet1jet2_R1_cut90->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);
+    if (looseJets_.at(0).mass() < 65){
+      h_deltaR_jet1jet2_R1_cut65->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);
     }
-    if (allJets_.at(0).mass() > 90){
-      h_deltaR_jet1jet2_R2_cut90->Fill(reco::deltaR(allJets_.at(0), allJets_.at(1)), weight_);  
+    if (looseJets_.at(0).mass() > 65){
+      h_deltaR_jet1jet2_R2_cut65->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);  
+    }
+
+    if (looseJets_.at(0).mass() < 70){
+      h_deltaR_jet1jet2_R1_cut70->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);
+    }
+    if (looseJets_.at(0).mass() > 70){
+      h_deltaR_jet1jet2_R2_cut70->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);  
+    }
+
+    if (looseJets_.at(0).mass() < 80){
+      h_deltaR_jet1jet2_R1_cut80->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);
+    }
+    if (looseJets_.at(0).mass() > 80){
+      h_deltaR_jet1jet2_R2_cut80->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);  
+    }
+
+    if (looseJets_.at(0).mass() < 90){
+      h_deltaR_jet1jet2_R1_cut90->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);
+    }
+    if (looseJets_.at(0).mass() > 90){
+      h_deltaR_jet1jet2_R2_cut90->Fill(reco::deltaR(looseJets_.at(0), looseJets_.at(1)), weight_);  
     }
     
 
-    if (allJets_.at(0).mass() < 65){
-      h_deltaR_jet2Z_R1->Fill(reco::deltaR(allJets_.at(1), zCand_), weight_);
-      if (allJets_.size()>2)
-	h_deltaR_jet3Z_R1->Fill(reco::deltaR(allJets_.at(2), zCand_), weight_);
+    if (looseJets_.at(0).mass() < 65){
+      h_deltaR_jet2Z_R1->Fill(reco::deltaR(looseJets_.at(1), zCand_), weight_);
+      if (looseJets_.size()>2)
+	h_deltaR_jet3Z_R1->Fill(reco::deltaR(looseJets_.at(2), zCand_), weight_);
     }
 
-    if (allJets_.at(0).mass() > 65){
-      h_deltaR_jet2Z_R2->Fill(reco::deltaR(allJets_.at(1), zCand_), weight_);
-      if (allJets_.size()>2)
-	h_deltaR_jet3Z_R2->Fill(reco::deltaR(allJets_.at(2), zCand_), weight_);
+    if (looseJets_.at(0).mass() > 65){
+      h_deltaR_jet2Z_R2->Fill(reco::deltaR(looseJets_.at(1), zCand_), weight_);
+      if (looseJets_.size()>2)
+	h_deltaR_jet3Z_R2->Fill(reco::deltaR(looseJets_.at(2), zCand_), weight_);
     }
 
+
+    reco::CompositeCandidate j1j2;
+    j1j2.addDaughter(looseJets_.at(0));
+    j1j2.addDaughter(looseJets_.at(1));
+    AddFourMomenta addFM;
+    addFM.set(j1j2);
+    jet1jet2mass = j1j2.mass();
+    
+    if (looseJets_.at(0).mass()>110.0 || looseJets_.at(0).mass()<60)
+      {
+	h_jet1jet2_mass_Restricted->Fill(j1j2.mass(), weight_);
+      }
+
+    h_jet1mass_jet2mass->Fill(looseJets_.at(0).mass(), looseJets_.at(1).mass(), weight_);
+
+
+  }//# jets > 1 loop
+
+
+  if (looseJets_.at(0).mass() < 65){
+    if (looseJets_.size()>0)
+      h_deltaR_jet1Z_R1->Fill(reco::deltaR(looseJets_.at(0), zCand_), weight_);
+  }
+
+  if (looseJets_.at(0).mass() > 65){
+    if (looseJets_.size()>0)
+      h_deltaR_jet1Z_R2->Fill(reco::deltaR(looseJets_.at(0), zCand_), weight_);
   }
 
 
-  if (allJets_.at(0).mass() < 65){
-    if (allJets_.size()>0)
-      h_deltaR_jet1Z_R1->Fill(reco::deltaR(allJets_.at(0), zCand_), weight_);
-  }
+  //Out of jets>1 loop
+  int k = 0; //if zero, only 1 jet to HadV candidate
+  double jet1mass=-99.0;
+  double deltaR_jet1jet2=-99.0;
+  reco::CompositeCandidate hadronicVZ;
+  reco::CompositeCandidate hadronicVZF;
+ 
 
-  if (allJets_.at(0).mass() > 65){
-    if (allJets_.size()>0)
-      h_deltaR_jet1Z_R2->Fill(reco::deltaR(allJets_.at(0), zCand_), weight_);
-  }
+  if (looseJets_.at(0).mass() > 60 && looseJets_.at(0).mass() < 110)
+    {
+      jet1mass = looseJets_.at(0).mass(); 
+ 
+    }
+  
+  if (looseJets_.size()>1)
+    {
+      deltaR_jet1jet2=reco::deltaR(looseJets_.at(0), looseJets_.at(1));
+      if (fabs(jet1mass - 85.0) > fabs(jet1jet2mass - 85.0))
+	{
+	  k = 1;
+	}
 
+    }
+  
+  if (jet1mass > 0 && k==0)
+    {
+      h_HadV_mass_Cory->Fill(jet1mass,weight_);
+      
+      hadronicVZ.addDaughter(looseJets_.at(0));
+      hadronicVZ.addDaughter(zCand_);
+      AddFourMomenta addFRM;
+      addFRM.set(hadronicVZ);
+      
+      h_HadVZmass_Cory->Fill(hadronicVZ.mass(),weight_);
+    }
 
+  else
+    if (jet1jet2mass > 0 && k==1)
+      {
+	h_HadV_mass_Cory->Fill(jet1jet2mass, weight_);
+
+	reco::CompositeCandidate j1j2;
+	j1j2.addDaughter(looseJets_.at(0));
+	j1j2.addDaughter(looseJets_.at(1));
+	AddFourMomenta addFM;
+	addFM.set(j1j2);
+	
+	hadronicVZ.addDaughter(j1j2);
+	hadronicVZ.addDaughter(zCand_);
+	AddFourMomenta addFRM;
+	addFRM.set(hadronicVZ);
+
+	h_HadVZmass_Cory->Fill(hadronicVZ.mass(),weight_);
+      }
+
+ 
+  if (jet1mass > 0 && k==0)
+    {
+      h_HadV_mass_Flavia->Fill(jet1mass, weight_);
+
+      hadronicVZF.addDaughter(looseJets_.at(0));
+      hadronicVZF.addDaughter(zCand_);
+      AddFourMomenta addFRM;
+      addFRM.set(hadronicVZF);
+
+      h_HadVZmass_Flavia->Fill(hadronicVZF.mass(), weight_);
+    }
+  else
+    if (jet1jet2mass > 0 && k==1 && deltaR_jet1jet2<2)
+      {
+  	h_HadV_mass_Flavia->Fill(jet1jet2mass, weight_);
+
+	reco::CompositeCandidate j1j2;
+	j1j2.addDaughter(looseJets_.at(0));
+	j1j2.addDaughter(looseJets_.at(1));
+	AddFourMomenta addFM;
+	addFM.set(j1j2);
+	
+	hadronicVZF.addDaughter(j1j2);
+	hadronicVZF.addDaughter(zCand_);
+	AddFourMomenta addFRM;
+	addFRM.set(hadronicVZF);
+
+	h_HadVZmass_Flavia->Fill(hadronicVZF.mass(),weight_);
+      }
 
 }
 
@@ -639,6 +751,9 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   //////// Make V from Jets  ////////////
   ///////////////////////////////////////
 
+
+  FillJetMergingHistos();
+
   vCand_ = getWCand(looseJets_);
   if (debugme) cout << "Made vCand" << endl;
 
@@ -660,6 +775,35 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   if (debugme) cout << "Good V from jet" << endl;
   FillGoodHadVHistos();
+
+
+
+
+  // Make a V candidate out of the jets.
+  //CutValidW
+  vCand_ = getWCand(looseJets_);
+  if (debugme)
+    cout << "Made vCand" << endl;
+
+  //CutValidV
+  if( !PassValidVCut() ) return;
+  Tabulate_Me(iCut, weight_); ++iCut;
+  if (debugme) cout << "Passed vCand" << endl;
+
+  //CutVMass
+  if( !PassVMassCut() ) return;
+  Tabulate_Me(iCut, weight_); ++iCut;
+  if (debugme) cout << "Passed vCand Mass" << endl;
+
+  //CutVpt
+  if( !PassVptCut() ) return;
+  Tabulate_Me(iCut, weight_); ++iCut;
+  if (debugme) cout << "Good vCand Pt" << endl;
+
+  if (debugme) cout << "Good V from jet" << endl;
+  FillGoodHadVHistos();
+
+
 
   ///////////////////////////////////////
   //////// Make VZ Candidate ////////////
@@ -688,6 +832,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     cout<<" ------------------\n";
   }
   
+
 }//End of Event Loop
 
 
@@ -830,7 +975,7 @@ bool HadronicVZAnalyzer::PassJetIDCut(const pat::Jet* jet){
     PassJetNConstCut(jet);
   bool chargedStatus = (fabs(jet->eta()) > 2.4) ||
     (PassJetCHFCut(jet) &&
-     PassJetCEFCut(jet) &&//Typo?, should be CEF?
+     PassJetCEFCut(jet) &&
      PassJetCMultCut(jet)
       );
   return (neutralStatus && chargedStatus);
