@@ -51,6 +51,7 @@ std::vector<Sample> Sig;
 std::map<std::string, std::string> SampleNames;
 
 const bool debug = false;
+//const bool debug = true;
 float lumiUsed_ = 0.;
 
 int main(int argc, char ** argv);
@@ -68,10 +69,8 @@ MakePlots(string inName, string outName, string opt){
   gErrorIgnoreLevel = kWarning;
   CMSstyle();
   
-  TFile *fin = TFile::Open(inName.c_str(), "read");//Cory:
+  TFile *fin = TFile::Open(inName.c_str(), "read");
   lumiUsed_ = GetLumiUsed(fin);
-  cout<<"Cory: Using lumiUsed Hack bc merging histos!!!\n";
-
   cout<<"Lumi Used is "<<lumiUsed_<<" inv pb\n";
 
   SampleNames["data"]="Data";
@@ -82,6 +81,7 @@ MakePlots(string inName, string outName, string opt){
   SampleNames["PhotonVJets"]="V\\gamma";
   SampleNames["VV"]="VV";
   SampleNames["DYJetsToLL"]="DY+Jets\\rightarrow2l";
+  SampleNames["ZJets"]="Z+Jets";
   SampleNames["ZBB0JetsToLNu"]="Z+0Jets\\rightarrowbb";
   SampleNames["ZBB1JetsToLNu"]="Z+1Jets\\rightarrowbb";
   SampleNames["ZBB2JetsToLNu"]="Z+2Jets\\rightarrowbb";
@@ -90,7 +90,8 @@ MakePlots(string inName, string outName, string opt){
   SampleNames["ZCC1JetsToLNu"]="Z+1Jets\\rightarrowcc";
   SampleNames["ZCC2JetsToLNu"]="Z+2Jets\\rightarrowcc";
   SampleNames["ZCC3JetsToLNu"]="Z+3Jets\\rightarrowcc";
-  SampleNames["WZTo3LNu"]="WZ\\rightarrow3l\\nu";
+  SampleNames["WZ"]="WZ";
+  SampleNames["WZJetsTo3LNu"]="WZ\\rightarrow3l\\nu";
   SampleNames["WprimeToWZTo3LNu_M-300"]="W' 300";
   SampleNames["WprimeToWZTo3LNu_M-400"]="W' 400";
   SampleNames["WprimeToWZTo3LNu_M-500"]="W' 500";
@@ -102,44 +103,60 @@ MakePlots(string inName, string outName, string opt){
   SampleNames["TC_WZ_300"]="\\rho_{TC} 300";
   SampleNames["TC_WZ_400"]="\\rho_{TC} 400";
   SampleNames["TC_WZ_500"]="\\rho_{TC} 500";
+  SampleNames["RSZZmmjj_750"]="RS 750";
+  SampleNames["RSZZmmjj_1000"]="RS 1000";
+  SampleNames["RSZZmmjj_1250"]="RS 1250";
+  SampleNames["RSZZmmjj_1500"]="RS 1500";
+  SampleNames["RSZZmmjj_1750"]="RS 1750";
+  SampleNames["RSZZmmjj_2000"]="RS 2000";
+
+  /////Data Samples
 
   Data.push_back(Sample("data"));
   CheckSamples(fin,Data);
   
-  Bkg.push_back(Sample("WJetsToLNu", kOrange+3, 1, kOrange+10));
-  vector<string> VV;
-  VV.push_back("ZZTo4e");
-  VV.push_back("ZZTo4mu");
-  VV.push_back("ZZTo2e2mu");
-  VV.push_back("GVJets");
-  VV.push_back("WWTo2L2Nu");
-  Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
+  /////Background Samples
 
-  Bkg.push_back(Sample("TTJets"  , kRed+4, 1, kRed+2));
-  
-  vector<string> ZJets; 
-  ZJets.push_back("DYJetsToLL");
-
-  ZJets.push_back("ZBB0JetsToLNu");
-  ZJets.push_back("ZBB1JetsToLNu");
-  ZJets.push_back("ZBB2JetsToLNu");
-  ZJets.push_back("ZBB3JetsToLNu");
-  ZJets.push_back("ZCC0JetsToLNu");
-  ZJets.push_back("ZCC1JetsToLNu");
-  ZJets.push_back("ZCC2JetsToLNu");
-  ZJets.push_back("ZCC3JetsToLNu");
-
-  Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
-
-  Bkg.push_back(Sample("WZTo3LNu"       , kOrange+3, 1, kOrange-2));
-  
+  if(inName.find("Wprime") != string::npos || inName.find("EWKWZ") != string::npos){
+    Bkg.push_back(Sample("WJetsToLNu", kOrange+3, 1, kOrange+10));
+    vector<string> VV;
+    VV.push_back("ZZ");
+    VV.push_back("VGamma");
+    VV.push_back("WW");
+    Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
+    
+    Bkg.push_back(Sample("TTJets"  , kRed+4, 1, kRed+2));
+    
+    vector<string> ZJets; 
+    ZJets.push_back("DYJetsToLL");
+    Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
+ 
+    Bkg.push_back(Sample("WZJetsTo3LNu"       , kOrange+3, 1, kOrange-2));
+  }else if(inName.find("HadVZ") != string::npos){
+    vector<string> VV;
+    VV.push_back("ZZ");
+    VV.push_back("ZZJets_2l2q");
+    VV.push_back("VGamma");
+    VV.push_back("WW");
+    VV.push_back("WZ");
+    Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
+    
+    Bkg.push_back(Sample("TTJets"  , kRed+4, 1, kRed+2));
+    
+    vector<string> ZJets; 
+    ZJets.push_back("DYJetsToLL");
+    Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
+    
+  }
   CheckSamples(fin,Bkg);
+
+  /////Signal Samples
 
   if(inName.find("Wprime") != string::npos){
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-300", 1, 1, kGreen));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-400", 1, 1, 10));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-500", 1, 1, 10));
-    Sig.push_back(Sample("WprimeToWZTo3LNu_M-600", 1, 1, 10));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-600", 1, 1, 10));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-700", 1, 1, 10));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-800", 1, 1, 10));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-900", 1, 1, 10));
@@ -148,6 +165,13 @@ MakePlots(string inName, string outName, string opt){
     //Sig.push_back(Sample("TC_WZ_300",     1, 1, kBlue));
     //Sig.push_back(Sample("TC_WZ_400",     1, 1, kBlue));
     //Sig.push_back(Sample("TC_WZ_500",     1, 1, kRed));
+  }else if(inName.find("HadVZ") != string::npos){
+    Sig.push_back(Sample("RSZZmmjj_750",     1, 1, kGreen));
+    //Sig.push_back(Sample("RSZZmmjj_1000",     1, 1, kBlue));
+    //Sig.push_back(Sample("RSZZmmjj_1250",     1, 1, 10));
+    //Sig.push_back(Sample("RSZZmmjj_1500",     1, 1, 10));
+    //Sig.push_back(Sample("RSZZmmjj_1750",     1, 1, 10));
+    //Sig.push_back(Sample("RSZZmmjj_2000",     1, 1, 10));
   }
   CheckSamples(fin,Sig);
 
@@ -161,13 +185,18 @@ MakePlots(string inName, string outName, string opt){
 
   string efftitle[] = {"hNumEvts", "hEffAbs", "hEffRel"};
 
+
+  //Cuts plotted after every cut
   vector<string> Cuts = GetListofCuts(fin);
   vector<string> variable; 
   
   if(inName.find("Wprime") != string::npos){
     variable.push_back("hWZMass");
     variable.push_back("hHt");
+    variable.push_back("hMET");
+    variable.push_back("hWTransMass");
     variable.push_back("hWpt");
+    variable.push_back("hZMass");
     variable.push_back("hZpt");
   }else if(inName.find("EWKWZ") != string::npos){
       variable.push_back("hZMass");
@@ -182,7 +211,7 @@ MakePlots(string inName, string outName, string opt){
   }
 
   if(opt.find("show") == string::npos){//Extra Plots
-    if(!inName.find("Wprime") != string::npos){
+    if(inName.find("Wprime") != string::npos){
       variable.push_back("hWZ3e0muMass");
       variable.push_back("hWZ2e1muMass");
       variable.push_back("hWZ1e2muMass");
@@ -192,6 +221,63 @@ MakePlots(string inName, string outName, string opt){
       variable.push_back("hWZpt");
     
       variable.push_back("hQ");       
+
+      variable.push_back("hEvtType");
+      variable.push_back("hEvtTypeP");
+      variable.push_back("hEvtTypeM");
+
+      variable.push_back("hZMass");
+      variable.push_back("hZeeMass");
+      variable.push_back("hZmmMass");
+
+      variable.push_back("hZ3e0muMass");
+      variable.push_back("hZ2e1muMass");
+      variable.push_back("hZ1e2muMass");
+      variable.push_back("hZ0e3muMass");
+
+      variable.push_back("hWTransMass");
+      variable.push_back("hWenuTransMass");
+      variable.push_back("hWmnuTransMass");
+
+      variable.push_back("hW3e0muTransMass");
+      variable.push_back("hW2e1muTransMass");
+      variable.push_back("hW1e2muTransMass");
+      variable.push_back("hW0e3muTransMass");
+
+      variable.push_back("hMET");
+      variable.push_back("hMETee");
+      variable.push_back("hMETmm");
+
+      variable.push_back("hMET3e0mu");
+      variable.push_back("hMET2e1mu");
+      variable.push_back("hMET1e2mu");
+      variable.push_back("hMET0e3mu");
+
+      variable.push_back("hWenuCombRelIso");
+      variable.push_back("hWmnuCombRelIso");
+
+      variable.push_back("hLeadPt");
+      variable.push_back("hLeadElecPt");
+      variable.push_back("hLeadMuonPt");
+
+      variable.push_back("hNJets");
+      variable.push_back("hNJetsZee");
+      variable.push_back("hNJetsZmm");
+
+      variable.push_back("hNVtxs");
+      variable.push_back("hNVtxsZee");
+      variable.push_back("hNVtxsZmm");
+
+      variable.push_back("hNLLeps");
+      variable.push_back("hNLLepsZee");
+      variable.push_back("hNLLepsZmm");
+
+      variable.push_back("hLeadPt");
+      variable.push_back("hLeadPtZee");
+      variable.push_back("hLeadPtZmm");
+
+      variable.push_back("hTriLepMass");
+
     }else if(inName.find("EWKWZ") != string::npos){
       variable.push_back("hEvtType");          
       variable.push_back("hEvtTypeP");          
@@ -207,8 +293,9 @@ MakePlots(string inName, string outName, string opt){
     }else if(inName.find("HadVZ") != string::npos){
       variable.push_back("hVZpt");
       variable.push_back("hNLJets");
+      variable.push_back("hNLLeps");
     }
-
+  }
   TCanvas c1;
   
   c1.Print(Form("%s[", outName.c_str()), "pdf"); 
@@ -237,7 +324,16 @@ MakePlots(string inName, string outName, string opt){
     }
   }
 
+  //Single Plots 
+  if(inName.find("Wprime") != string::npos){
+  }else if(inName.find("EWKWZ") != string::npos){
+  }else if(inName.find("HadVZ") != string::npos){
+    DrawandSave(fin,outName,"h_bestmass","Title: Best Mass",1,0,0);
+    DrawandSave(fin,outName,"hVMass_ValidV","Title: Leading Jet Mass",1,0,0);
+  }
+
   c1.Print(Form("%s]", outName.c_str()), "pdf"); 
+
 }
 
 void
@@ -257,6 +353,7 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
                title.find("WZ2e1muMass") != string::npos ||
                title.find("WZ1e2muMass") != string::npos ||
                title.find("WZ0e3muMass") != string::npos) ? 10 : 0;
+  if(title.find("VZMass") != string::npos) rebin = 2;
 
   for(unsigned int i=0; i<samples_.size(); ++i){
     for(unsigned int j=0; j<samples_[i]->size(); ++j){
@@ -320,6 +417,8 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
     for(unsigned int i=0; i<Sig.size(); i++){
       max = TMath::Max(max, sSigs[i]->GetMaximum());
       sSigs[i]->Draw("HIST SAME");
+      //This is if you want to see the shape of a low xsec signal
+      //Sig[i].hist->Draw("HIST SAME");
     }
     if(hData){
       max = TMath::Max(max, hData->GetMaximum());
@@ -340,9 +439,11 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
   }else{
     THStack* hs = new THStack("hs",title.c_str());
     for(unsigned int i=0; i<Bkg.size(); ++i){
+      Bkg[i].hist->SetLineWidth(3);
       hs->Add(Bkg[i].hist);
     }
     for(unsigned int i=0; i<Sig.size(); ++i){
+      Sig[i].hist->SetLineWidth(3);
       hs->Add(Sig[i].hist);
     }
 
