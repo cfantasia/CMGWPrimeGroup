@@ -142,6 +142,8 @@ void HadronicVZAnalyzer::Declare_Histos(const TFileDirectory & dir)
   h_dptpt2_vs_invpt_teta1524 = dir.make<TH2F>("h_dptpt2_vs_invpt_teta1524","h_dptpt2_vs_invpt_teta1524", 500, 0., 0.1, 150, 0., 0.1);
 
   //Jet merging histos
+  h_m1_vs_m12 = dir.make<TH2F>("h_m1_vs_m12", "Mass Jet1 vs Mass Jet12;M_{j1};M_{j1,j2}", 100, 0., 200., 100, 0., 200.);
+  h_bestmass = dir.make<TH1F>("h_bestmass", "Best V Mass;M_{V}^{Best}", 75, 0., 150.);//Cory: Change back
 
   h_deltaR_jet1jet2 = dir.make<TH1F>("h_deltaR_jet1jet2", "h_deltaR_jet1jet2", 50, 0.0, 5.0);
   h_deltaR_jet1Z_R1 = dir.make<TH1F>("h_deltaR_jet1Z_R1", "h_deltaR_jet1Z_R1", 50, 0.0, 5.0);
@@ -170,18 +172,18 @@ void HadronicVZAnalyzer::Declare_Histos(const TFileDirectory & dir)
 
   /////////////////
   DeclareHistoSet("hVZMass", "Reconstructed VZ Invariant Mass",
-                  "M_{VZ} (GeV)", 120, 0, 1200, "GeV", hVZMass,dir);
+                  "M_{VZ} (GeV)", 100, 0, 2500, "GeV", hVZMass,dir);
   DeclareHistoSet("hVZpt", "Reconstructed VZ Transverse Momentum",
-                  "p_{VZ}^{T} (GeV)", 50, 0, 500, "GeV", hVZpt,dir);
+                  "p_{VZ}^{T} (GeV)", 100, 0, 1000, "GeV", hVZpt,dir);
 
   DeclareHistoSet("hZMass" , "Reconstructed Mass of Z",
                   "M_{Z} (GeV)", 30, 60, 120, "GeV", hZMass,dir);
   DeclareHistoSet("hZpt", "p_{T}^{Z}", 
-                  "p_{T}^{Z} (GeV)", 40, 0, 400, "GeV", hZpt,dir);
+                  "p_{T}^{Z} (GeV)", 100, 0, 1000, "GeV", hZpt,dir);
   DeclareHistoSet("hVMass" , "Reconstructed Mass of V",
-                  "M_{V} (GeV)", 30, 60, 120, "GeV", hVMass,dir);
+                  "M_{V} (GeV)", 75, 0, 150, "GeV", hVMass,dir);//Cory: Change back
   DeclareHistoSet("hVpt", "p_{T}^{V}", 
-                  "p_{T}^{V} (GeV)", 40, 0, 400, "GeV", hVpt,dir);
+                  "p_{T}^{V} (GeV)", 100, 0, 1000, "GeV", hVpt,dir);
 
   DeclareHistoSet("hNLLeps", "Number of Loose Leptons in Event",
                   "N_{l}^{Loose}", 10, 0, 10, "NONE", hNLLeps,dir);
@@ -223,51 +225,9 @@ void HadronicVZAnalyzer::Fill_Histos(const int& index, const float& weight)
 
 void HadronicVZAnalyzer::FillJetMultiplicityHists(){
   h_jet_mult->Fill(looseJets_.size(), weight_);
-
-  double zero = 0.0;
-  h_jet_mult_inc->Fill(zero, weight_);
-
-  if (looseJets_.size()>=1)
-  {
-    h_jet_mult_inc->Fill(1, weight_);
-  }
-  if (looseJets_.size()>=2)
-  {
-    h_jet_mult_inc->Fill(2, weight_);
-  }
-  if (looseJets_.size()>=3)
-  {
-    h_jet_mult_inc->Fill(3, weight_);
-  }
-  if (looseJets_.size()>=4)
-  {
-    h_jet_mult_inc->Fill(4, weight_);
-  }
-  if (looseJets_.size()>=5)
-  {
-    h_jet_mult_inc->Fill(5, weight_);
-  }
-  if (looseJets_.size()>=6)
-  {
-    h_jet_mult_inc->Fill(6, weight_);
-  }
-  if (looseJets_.size()>=7)
-  {
-    h_jet_mult_inc->Fill(7, weight_);
-  }
-  if (looseJets_.size()>=8)
-  {
-    h_jet_mult_inc->Fill(8, weight_);
-  }
-  if (looseJets_.size()>=9)
-  {
-    h_jet_mult_inc->Fill(9, weight_);
-  }
-  if (looseJets_.size()>=10)
-  {
-    h_jet_mult_inc->Fill(10, weight_);
-  }
-
+  uint max = min(10, (int)looseJets_.size());
+  for(uint i=0; i<=max; ++i)
+    h_jet_mult_inc->Fill(i, weight_);
 }
 
 void HadronicVZAnalyzer::FillLooseMuonHists(){
@@ -542,19 +502,15 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
            (int)tightMuons_.size());
   }
 
-  if (looseMuons_.size() > 0)
-  {
+  if (looseMuons_.size() > 0){
     sort(looseMuons_.begin(), looseMuons_.end(), highestMuonPt());
-    if(debugme)
-    {
-      for (uint k=0; k<looseMuons_.size(); k++)
-	    {
+    if(debugme){
+      for (uint k=0; k<looseMuons_.size(); k++){
 	      cout << "looseMuons_ " << k << " has pt of " << looseMuons_.at(k).pt() <<  endl;
 	    }
     }
   }
-  if (tightMuons_.size() > 0)
-  {
+  if (tightMuons_.size() > 0){
     sort(tightMuons_.begin(), tightMuons_.end(), highestMuonPt());
   }
 
@@ -593,21 +549,17 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   }
 
   //Fill jet histos for jets who passes the criteria
-  if (looseJets_.size() > 0)
-  {
+  if (looseJets_.size() > 0){
     sort(looseJets_.begin(), looseJets_.end(), highestJetPt());
-    if(debugme)
-    {
-      for (uint k=0; k<looseJets_.size(); k++)
-	    {
+    if(debugme){
+      for (uint k=0; k<looseJets_.size(); k++){
 	      cout << "jets_ " << k << " has pt of " << looseJets_.at(k).pt() <<  endl;
 	    }
     }
   }
 
 
-  if (looseJets_.size() > 0)
-  {
+  if (looseJets_.size() > 0){
     h_jet1_pt->Fill(looseJets_.at(0).pt(), weight_);
     h_jet1_eta->Fill(looseJets_.at(0).eta(), weight_);    
     h_jet1_phi->Fill(looseJets_.at(0).phi(), weight_);
@@ -647,6 +599,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     printf("    Contains: %i jets(s)\n",
            (int)looseJets_.size());
   }
+  FillJetMergingHistos();
 
   //////////////////////////////////////////////
   /// Start Applying Cuts///////////////////////
@@ -659,11 +612,9 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   if( !PassNoCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
 
-  //CutMinNLooseLep
   if( !PassMinNLeptonsCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
 
-  //CutMinNJets
   if( !PassMinNJetsCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
 
@@ -696,38 +647,29 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   //////////////////////////////
   
   // Make a Z candidate out of the loose muons. 
-  ZCandV zCands = getZCands(looseMuons_, 25.0);
+  ZCandV zCands = getZCands(looseMuons_, 100.);
   zCand_ = zCands.size() ? zCands[0] : ZCandidate();
   if (debugme)
     cout << "Made zCand" << endl;
 
   if( !PassValidZCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
-  if (debugme)
-    cout << "Valid Z from muon" << endl;
 
-  //CutZMass
   if( !PassZMassCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
 
-  //CutZpt
   if( !PassZptCut  () ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
 
-  if (debugme)
-    cout << "Good Z from muon" << endl;
-  
   FillGoodZHistos();
-  FillJetMergingHistos();
 
 
   ///////////////////////////////////////
-  //// Make VZ Candidate With Loose Muons
+  //////// Make VZ Candidate ////////////
   ///////////////////////////////////////
   if (debugme) 
     cout << "Im just before boson cands" << endl;
   
-  //CutValidVZ
   hadVZ_ = VZCandidate(zCand_, vCand_);
   if(debugme) cout << "Made my hadVZ" << endl;  
 
@@ -739,6 +681,17 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   //AllCuts
   Tabulate_Me(iCut, weight_); ++iCut;
 
+  if(wprimeUtil_->runningOnData()){
+    cout<<" The following data event passed All Cuts!!!\n";
+    PrintPassingEvent(event);
+    if(1 || debugme){ 
+      //PrintEventLeptons();
+      PrintMuons();
+      PrintJets();
+    }
+    cout<<" ------------------\n";
+  }
+  
 }//End of Event Loop
 
 
@@ -888,6 +841,30 @@ bool HadronicVZAnalyzer::PassJetIDCut(const pat::Jet* jet){
 }
 
 ///////////////Utilities//////////////////
+void HadronicVZAnalyzer::PrintEventDetails() const{
+  if(zCand_){
+    cout<<" Z Flavor: "<<zCand_.flavor()
+        <<" Z Mass: "<<zCand_.mass()
+        <<" Z Eta: "<<zCand_.eta()
+        <<" Z Phi: "<<zCand_.phi()
+        <<endl;
+  }
+  if(vCand_){
+    cout<<" V Mass: "<<vCand_.mass()
+        <<" V Eta: "<<vCand_.eta()
+        <<" V Phi: "<<vCand_.phi()
+        <<endl;
+  }
+  if(zCand_ && vCand_ && hadVZ_.mass()>0.){
+    cout<<" VZ Mass: "<<hadVZ_.mass()
+      <<" VZ Eta: "<<hadVZ_.eta()
+      <<" VZ Phi: "<<hadVZ_.phi()
+        <<" VZpt: "<<hadVZ_.pt()
+        <<" Zpt: "<<zCand_.pt()
+        <<" Vpt: "<<vCand_.pt()
+        <<endl;
+  }
+}
 
 void
 HadronicVZAnalyzer::ClearEvtVariables(){

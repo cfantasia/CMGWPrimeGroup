@@ -71,7 +71,10 @@ public:
   //clean stuff
   void ClearEvtVariables();
 
-//methods for the cuts
+  //Printers
+  void PrintEventDetails() const;
+
+  //methods for the cuts
   bool PassValidVZCandCut();
 
   bool PassMuonCut(const TeVMuon* mu);
@@ -166,6 +169,9 @@ public:
   TH1F* h_tight_muons_phi;
 
   //Jet merging histos
+  TH2F* h_m1_vs_m12;
+  TH1F* h_bestmass;
+
   TH1F* h_deltaR_jet1jet2;
 
   TH1F* h_deltaR_jet1jet2_R1_cut40;
