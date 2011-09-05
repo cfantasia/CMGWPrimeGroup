@@ -711,7 +711,6 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     printf("    Contains: %i jets(s)\n",
            (int)looseJets_.size());
   }
-  FillJetMergingHistos();
 
   //////////////////////////////////////////////
   /// Start Applying Cuts///////////////////////
@@ -775,35 +774,6 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   if (debugme) cout << "Good V from jet" << endl;
   FillGoodHadVHistos();
-
-
-
-
-  // Make a V candidate out of the jets.
-  //CutValidW
-  vCand_ = getWCand(looseJets_);
-  if (debugme)
-    cout << "Made vCand" << endl;
-
-  //CutValidV
-  if( !PassValidVCut() ) return;
-  Tabulate_Me(iCut, weight_); ++iCut;
-  if (debugme) cout << "Passed vCand" << endl;
-
-  //CutVMass
-  if( !PassVMassCut() ) return;
-  Tabulate_Me(iCut, weight_); ++iCut;
-  if (debugme) cout << "Passed vCand Mass" << endl;
-
-  //CutVpt
-  if( !PassVptCut() ) return;
-  Tabulate_Me(iCut, weight_); ++iCut;
-  if (debugme) cout << "Good vCand Pt" << endl;
-
-  if (debugme) cout << "Good V from jet" << endl;
-  FillGoodHadVHistos();
-
-
 
   ///////////////////////////////////////
   //////// Make VZ Candidate ////////////
