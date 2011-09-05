@@ -593,13 +593,10 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   for (size_t i = 0; i < patMuons.size(); i++) {
     allMuons_.push_back(TeVMuon(patMuons[i],muonAlgo_));   
 
-    //  bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonNtrkhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
-    //    bool LooseMuonCuts = PassMuonLoosePtCut(&muons_[i]) && PassMuonGlobalCut(&muons_[i]) && PassMuonNpixhitCut(&muons_[i]) && PassMuonNtrkhitCut(&muons_[i]) && PassMuonHitsUsedCut(&muons_[i]) && PassMuonStationsCut(&muons_[i]) && PassMuonEtaCut(&muons_[i]) && PassMuonDxyCut(&muons_[i]);
-    
-    bool LooseMuonCuts = PassMuonLoosePtCut(&allMuons_[i]) && PassMuonGlobalCut(&allMuons_[i]) && PassMuonNpixhitCut(&allMuons_[i]) && PassMuonHitsUsedCut(&allMuons_[i]) && PassMuonStationsCut(&allMuons_[i]) && PassMuonEtaCut(&allMuons_[i]) && PassMuonDxyCut(&allMuons_[i]);
+    bool LooseMuonCuts = PassMuonLoosePtCut(&allMuons_[i]) && PassMuonGlobalCut(&allMuons_[i]) && PassMuonNpixhitCut(&allMuons_[i]) && PassMuonNtrkhitCut(&allMuons_[i]) && PassMuonHitsUsedCut(&allMuons_[i]) && PassMuonStationsCut(&allMuons_[i]) && PassMuonEtaCut(&allMuons_[i]) && PassMuonDxyCut(&allMuons_[i]);
     if (LooseMuonCuts)
       looseMuons_.push_back(allMuons_[i]);
-    
+
     bool TightMuonCuts = PassMuonTightPtCut(&allMuons_[i]) && PassMuonGlobalCut(&allMuons_[i]) && PassMuonNpixhitCut(&allMuons_[i]) && PassMuonNtrkhitCut(&allMuons_[i]) && PassMuonHitsUsedCut(&allMuons_[i]) && PassMuonStationsCut(&allMuons_[i]) && PassMuonEtaCut(&allMuons_[i]) && PassMuonDxyCut(&allMuons_[i]);
     if (TightMuonCuts)
       tightMuons_.push_back(allMuons_[i]);
@@ -647,8 +644,10 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   // Loop over jets, and see if they pass the jet criteria
   for (size_t i = 0; i < allJets_.size(); ++i) {
+
     if (PassJetCut(&allJets_[i]) && !Overlap(allJets_[i], looseMuons_, 0.5, 2))
       looseJets_.push_back(allJets_[i]);
+
   }
   
   FillJetMultiplicityHists();
@@ -885,7 +884,7 @@ bool HadronicVZAnalyzer::PassMuonEtaCut(const TeVMuon* mu){
 
 bool HadronicVZAnalyzer::PassMuonDxyCut(const TeVMuon* mu){
   if(debugme) cout<<"Check Muon Dxy Cut"<<endl;
-  return (fabs(mu->userFloat("d0")) < maxMuonDxy);
+  return (fabs(mu->dB()) < maxMuonDxy);
 }//--- PassMuonDxyCut
 
 ////////////////////////////////
