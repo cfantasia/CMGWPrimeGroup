@@ -605,9 +605,6 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   /// Start Applying Cuts///////////////////////
   //////////////////////////////////////////////
 
-  //////////////////////////////
-  ///Hadronic V/////////////////
-  //////////////////////////////
   int iCut=0;
   if( !PassNoCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
@@ -618,30 +615,6 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   if( !PassMinNJetsCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
 
-  // Make a V candidate out of the jets.
-  //CutValidW
-  vCand_ = getWCand(looseJets_);
-  if (debugme)
-    cout << "Made vCand" << endl;
-
-  //CutValidV
-  if( !PassValidVCut() ) return;
-  Tabulate_Me(iCut, weight_); ++iCut;
-  if (debugme) cout << "Passed vCand" << endl;
-
-  //CutVMass
-  if( !PassVMassCut() ) return;
-  Tabulate_Me(iCut, weight_); ++iCut;
-  if (debugme) cout << "Passed vCand Mass" << endl;
-
-  //CutVpt
-  if( !PassVptCut() ) return;
-  Tabulate_Me(iCut, weight_); ++iCut;
-  if (debugme) cout << "Good vCand Pt" << endl;
-
-  if (debugme) cout << "Good V from jet" << endl;
-  FillGoodHadVHistos();
-
   //////////////////////////////
   ///////  Z With Muons  ///////
   //////////////////////////////
@@ -649,8 +622,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   // Make a Z candidate out of the loose muons. 
   ZCandV zCands = getZCands(looseMuons_, 100.);
   zCand_ = zCands.size() ? zCands[0] : ZCandidate();
-  if (debugme)
-    cout << "Made zCand" << endl;
+  if (debugme) cout << "Made zCand" << endl;
 
   if( !PassValidZCut() ) return;
   Tabulate_Me(iCut, weight_); ++iCut;
@@ -663,12 +635,36 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   FillGoodZHistos();
 
+  ///////////////////////////////////////
+  //////// Make V from Jets  ////////////
+  ///////////////////////////////////////
+
+  vCand_ = getWCand(looseJets_);
+  if (debugme) cout << "Made vCand" << endl;
+
+  if( !PassValidVCut() ) return;
+  Tabulate_Me(iCut, weight_); ++iCut;
+
+  LorentzVector j1j2 = looseJets_.at(0).p4();
+  if(looseJets_.size()>1) j1j2 += looseJets_.at(1).p4();
+  h_m1_vs_m12->Fill(looseJets_.at(0).mass(), j1j2.mass(), weight_);
+  float bestMass = fabs(j1j2.mass() - 85.) < fabs(looseJets_.at(0).mass() - 85.) ? j1j2.mass() : looseJets_.at(0).mass();
+  h_bestmass->Fill(bestMass, weight_);
+  //if(bestMass < 60) cout<<" nJets: "<<looseJets_.size()<<" best: "<<bestMass<<" m1: "<<looseJets_.at(0).mass()<<" m12: "<<j1j2.mass()<<endl;
+
+  if( !PassVMassCut() ) return;
+  Tabulate_Me(iCut, weight_); ++iCut;
+
+  if( !PassVptCut() ) return;
+  Tabulate_Me(iCut, weight_); ++iCut;
+
+  if (debugme) cout << "Good V from jet" << endl;
+  FillGoodHadVHistos();
 
   ///////////////////////////////////////
   //////// Make VZ Candidate ////////////
   ///////////////////////////////////////
-  if (debugme) 
-    cout << "Im just before boson cands" << endl;
+  if (debugme) cout << "Im just before boson cands" << endl;
   
   hadVZ_ = VZCandidate(zCand_, vCand_);
   if(debugme) cout << "Made my hadVZ" << endl;  
