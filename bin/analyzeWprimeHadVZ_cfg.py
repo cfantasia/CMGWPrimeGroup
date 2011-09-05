@@ -32,13 +32,13 @@ process.WprimeAnalyzer.minVPt = cms.untracked.double(50.0)
 process.WprimeAnalyzer.minVmass = cms.untracked.double(60.0)
 process.WprimeAnalyzer.maxVmass = cms.untracked.double(110.0)
 # +++++++++++++++++++Muon General Cuts
-process.WprimeAnalyzer.maxMuonEta = cms.double(2.5)
+process.WprimeAnalyzer.maxMuonEta = cms.double(2.4)
 process.WprimeAnalyzer.minMuonLoosePt = cms.double(10.)
 process.WprimeAnalyzer.minMuonTightPt = cms.double(35.)
 #VBTF Recommended Cuts
 process.WprimeAnalyzer.maxMuonDxy = cms.double(0.2)
 process.WprimeAnalyzer.maxMuonNormChi2 = cms.double(10.)
-process.WprimeAnalyzer.minMuonNPixHit = cms.uint32(1)
+process.WprimeAnalyzer.minMuonNPixHit = cms.uint32(0)
 process.WprimeAnalyzer.minMuonNTrkHit = cms.uint32(10)
 process.WprimeAnalyzer.minMuonStations = cms.uint32(1)
 process.WprimeAnalyzer.minMuonHitsUsed = cms.uint32(0)
@@ -58,14 +58,19 @@ process.WprimeAnalyzer.Cuts = cms.vstring(
         "MinNLeptons",
         "MinNJets",
 
-        "ValidV",
-        "VMass",
-        "VPt",
-        
         "ValidZ",
         "ZMass",
         "Zpt",
+
+        "ValidV",
+        "VMass",
+        "VPt",
+
         "ValidVZ",
               
         #    "HLT",
         "AllCuts")
+
+process.WprimeAnalyzer.LooseMuonType = cms.untracked.string("HadVZLoose")
+process.WprimeAnalyzer.TightMuonType = cms.untracked.string("HadVZTight")
+process.WprimeAnalyzer.LooseJetType = cms.untracked.string("Base")
