@@ -33,7 +33,7 @@ process.WprimeAnalyzer.minVmass = cms.untracked.double(60.0)
 process.WprimeAnalyzer.maxVmass = cms.untracked.double(110.0)
 # +++++++++++++++++++Muon General Cuts
 process.WprimeAnalyzer.maxMuonEta = cms.double(2.4)
-process.WprimeAnalyzer.minMuonLoosePt = cms.double(10.)
+process.WprimeAnalyzer.minMuonLoosePt = cms.double(15.)
 process.WprimeAnalyzer.minMuonTightPt = cms.double(35.)
 #VBTF Recommended Cuts
 process.WprimeAnalyzer.maxMuonDxy = cms.double(0.2)
