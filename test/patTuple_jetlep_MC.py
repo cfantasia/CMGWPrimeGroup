@@ -1,8 +1,10 @@
 from UserCode.CMGWPrimeGroup.patTuple_jetlep_cfg import *
+from UserCode.CMGWPrimeGroup.patTuple_mc_cfg import *
 
 # 2nd argument: message-logger frequency
 # 3rd argument: # of events to process
 jetlep_config(process, 1000, -1)
+mc_config(process, cms)
 
 process.p.replace(process.patMuons, process.muonMatch+process.patMuons)
 process.p.replace(process.patElectrons, process.electronMatch+process.patElectrons)
