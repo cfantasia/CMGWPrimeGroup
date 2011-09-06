@@ -10,8 +10,8 @@ removeMCMatching(process, ['All'])
 # 3rd argument: # of events to process
 mumet_config(process, 1000, 10)
 
-# keep all events with muon-pt above 25 GeV
-process.selectedPatMuons.cut = "pt > 25. & abs(eta) < 2.5"
+# keep all events with muon-pt above 100 GeV
+process.selectedPatMuons.cut = "pt > 100. & abs(eta) < 2.5"
 
 process.lowPtMuonFilter = cms.EDFilter("CandViewCountFilter",
                                 src = cms.InputTag("selectedPatMuons"),
