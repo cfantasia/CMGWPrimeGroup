@@ -48,15 +48,11 @@ def CMGWPswitchToPFJets(process) :
         )
 
     
-def jet_config(process, reportEveryNum=100, maxEvents=-1) :
+def jetFull_config(process, reportEveryNum=100, maxEvents=-1) :
     common_config(process, reportEveryNum, maxEvents)
-    CMGWPswitchToPFJets(process)
-    # RECO
-    process.out.outputCommands.append('keep *_selectedPatJets_*_*')
-    process.out.outputCommands.append('keep *_patJets_*_*')
-    
-    
-def jetExtra_config(process, reportEveryNum=100, maxEvents=-1) :
+    jet_config(process, reportEveryNum, maxEvents)
+       
+def jet_config(process, reportEveryNum=100, maxEvents=-1) :
     CMGWPswitchToPFJets(process)
     # RECO
     process.out.outputCommands.append('keep *_selectedPatJets_*_*')
