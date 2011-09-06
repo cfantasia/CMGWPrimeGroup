@@ -1,3 +1,17 @@
+06-SEP-11 (Christos, Cory, Flavia), V00-03-01
+=============================================
+WZ
+o Updates in plot-making macros for EWK WZ, W'->WZ (leptons & hadrons)
+o hadV + Z: tuning of selection cuts
+
+Mu/El + MET:
+o Skimming configurations for crab
+
+Misc:
+o Scipts for event skimming & lumi calculation
+
+
+
 03-SEP-11 (Christos, Cory, Flavia), V00-03-00
 =============================================
 General improvements:
