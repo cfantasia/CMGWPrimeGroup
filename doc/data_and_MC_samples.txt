@@ -1,6 +1,6 @@
 All these samples should be transferred into location specified by
-top-level directory given in config/top_directory.txt (which should be
-edited and reflect the actual location!) and organized in following
+top-level directory given in config/samples_cross_section_*.txt (which
+should be edited and reflect the actual location!) and organized in following
 subdirectories: 
 
 
