@@ -7,8 +7,6 @@ removeMCMatching(process, ['All'])
 # 3rd argument: # of events to process
 jetlep_config(process, 1000, -1)
 
-print process.out.outputCommands
-
 process.source.fileNames = [
     '/store/data/Run2011A/DoubleMu/AOD/PromptReco-v6/000/173/659/E2C7E831-B8CD-E011-9CA2-BCAEC5329725.root'
 #    'file:/data/fladias/425_data_test.root' 
