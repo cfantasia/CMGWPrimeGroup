@@ -32,6 +32,7 @@ def common_config(process, reportEveryNum=100, maxEvents=-1) :
         'keep *_hltTriggerSummaryAOD_*_*',
         'keep L1GlobalTriggerReadoutRecord_gtDigis_*_*',
         'keep *_userPat*_*_*',
+        'keep *_patTrigger_*_*',
     # PILEUP
         'keep *_addPileupInfo_*_*',     
     # PF CANDS

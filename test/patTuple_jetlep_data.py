@@ -12,7 +12,7 @@ jetlep_config(process, 1000, 100)
 #addHLTFilter(process, 'HLT', "mu")
 addHLTFilter(process, 'HLT', "electron")
 
-process.p.replace(process.countPatJets, process.countPatJets+process.hltFilter)
+process.p.replace(process.patTrigger, process.patTrigger+process.hltFilter)
 
 process.source.fileNames = [
 #    '/store/data/Run2011A/DoubleMu/AOD/PromptReco-v6/000/173/659/E2C7E831-B8CD-E011-9CA2-BCAEC5329725.root'
