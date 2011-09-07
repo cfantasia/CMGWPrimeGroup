@@ -143,6 +143,7 @@ namespace wprime{
 
 const float ZMASS = 91.188;
 const float WMASS = 80.398;
+const float VMASS = (ZMASS+WMASS)/2.;
 
 const int PDGMUON = 13;
 const int PDGELEC = 11;
@@ -158,6 +159,11 @@ const float NOCUT = 9e9;
 struct closestToZMass {
   bool operator() (const reco::Candidate & a, const reco::Candidate & b) {
     return fabs(ZMASS - a.mass()) < fabs(ZMASS - b.mass());
+  }
+};
+struct closestToVMass {
+  bool operator() (const reco::Candidate & a, const reco::Candidate & b) {
+    return fabs(VMASS - a.mass()) < fabs(VMASS - b.mass());
   }
 };
 
