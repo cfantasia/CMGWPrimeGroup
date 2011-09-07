@@ -9,8 +9,10 @@ removeMCMatching(process, ['All'])
 jetlep_config(process, 1000, 100)
 
 
-#addHLTFilter(process, 'HLT', "mu")
-addHLTFilter(process, 'HLT', "electron")
+#addHLTFilter(process, 'HLT', "singlemu")
+addHLTFilter(process, 'HLT', "singleelectron")
+addHLTFilter(process, 'HLT', "doublemu")
+addHLTFilter(process, 'HLT', "doubleelectron")
 
 process.p.replace(process.patTrigger, process.patTrigger+process.hltFilter)
 
