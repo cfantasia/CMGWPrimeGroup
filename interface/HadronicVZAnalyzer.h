@@ -25,29 +25,6 @@ public:
 
   // +++++++++++++++++++Hadronic Boson Cuts
 
-// +++++++++++++++++++Muon General Cuts
-  float maxMuonEta;
-  float minMuonLoosePt;
-  float minMuonTightPt;
-//VBTF Recommended Cuts
-  float maxMuonDxy;
-  float maxMuonNormChi2;
-  int minMuonNPixHit;
-  int minMuonNTrkHit;
-  int minMuonStations;
-  int minMuonHitsUsed;
-
-// +++++++++++++++++++Jet General Cuts
-  float minJetPt;
-  float maxJetEta;
-  //Jet ID Cuts
-  float maxJetNHF;
-  float maxJetNEF;
-  float minJetCHF;
-  float maxJetCEF;
-  size_t minJetnumConst;
-  size_t minJetcMult;
-
   // This is actually the equivalent of the analyze() method in CMSSW.
   void eventLoop(edm::EventBase const & event);
 
@@ -77,31 +54,6 @@ public:
   //methods for the cuts
   bool PassValidVZCandCut();
 
-  bool PassMuonCut(const TeVMuon* mu);
-  bool PassMuonLooseCut(const TeVMuon* mu);
-  bool PassMuonTightCut(const TeVMuon* mu);
-  bool PassMuonLoosePtCut(const TeVMuon* mu);
-  bool PassMuonTightPtCut(const TeVMuon* mu);
-  bool PassMuonGlobalCut(const TeVMuon* mu);
-  bool PassMuonDxyCut(const TeVMuon* mu);
-  bool PassMuonNpixhitCut(const TeVMuon* mu);
-  bool PassMuonNtrkhitCut(const TeVMuon* mu);
-  bool PassMuonNormChi2Cut(const TeVMuon* mu);
-  bool PassMuonHitsUsedCut(const TeVMuon* mu);
-  bool PassMuonStationsCut(const TeVMuon* mu);
-  bool PassMuonEtaCut(const TeVMuon* mu);
-  bool PassMuonCombRelIsoCut(const TeVMuon* mu);
-
-  bool PassJetCut(const pat::Jet* jet);
-  bool PassJetPtCut(const pat::Jet* jet);
-  bool PassJetEtaCut(const pat::Jet* jet);
-  bool PassJetNHFCut(const pat::Jet* jet);
-  bool PassJetNEFCut(const pat::Jet* jet);
-  bool PassJetNConstCut(const pat::Jet* jet);
-  bool PassJetCHFCut(const pat::Jet* jet);
-  bool PassJetCMultCut(const pat::Jet* jet);
-  bool PassJetCEFCut(const pat::Jet* jet);
-  bool PassJetIDCut(const pat::Jet* jet); 
 
 
 // +++++++++++++++++++useful constants
@@ -260,17 +212,6 @@ public:
   // http://www.parashift.com/c++-faq-lite/pointers-to-members.html#faq-33.5
   // Good manners!
   
-  // MuonCutFnPtr type is: "pointer to member function of HadronicVZAnalyzer"
-  // It takes a const TeVMuon* as argument, and returns a bool.
-  typedef bool (HadronicVZAnalyzer::*MuonCutFnPtr)(const TeVMuon*); 
-  // Vector of strings which define cuts.
-  std::vector<std::string> MuonCuts_;
-  int NMuonCuts_;
-  // Vector of member function pointers which APPLY those cuts
-  std::vector<MuonCutFnPtr> MuonCutFns_;
-  // Map between strings and member function pointers
-  std::map<std::string, MuonCutFnPtr> mMuonFnPtrs_;
-
 };
 
 struct highestMuonPt {                                                                                                                                     
