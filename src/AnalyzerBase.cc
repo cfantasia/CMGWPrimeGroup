@@ -104,6 +104,21 @@ void AnalyzerBase::ResetCounters(){
   results_.assign(NCuts_,wprime::FilterEff());
 }
 
+void AnalyzerBase::ClearEvtVariables(){
+  allJets_.clear();
+  looseJets_.clear();
+  tightJets_.clear();
+  allElectrons_.clear();
+  looseElectrons_.clear();
+  tightElectrons_.clear();
+  allMuons_.clear();
+  looseMuons_.clear();
+  tightMuons_.clear();
+  zCand_ = ZCandidate();
+  vCand_ = WCandidate();
+  wCand_ = WCandidate();
+}
+
 /////Printers//////////////
 void
 AnalyzerBase::PrintEventFull(edm::EventBase const & event) const{

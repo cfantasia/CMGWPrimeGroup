@@ -23,6 +23,7 @@ public:
                                const int& nbins, const float& min, const float& max, const std::string& units,
                                std::vector<TH1F*>& h, const TFileDirectory& d);
   virtual void ResetCounters();
+  virtual void ClearEvtVariables();
 
   //methods for printers
   virtual void PrintEventFull(edm::EventBase const & event) const;
