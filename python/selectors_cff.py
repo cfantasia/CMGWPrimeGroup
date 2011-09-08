@@ -26,22 +26,22 @@ muonSelectors = cms.PSet(
     ),
     )
 muonSelectors.WZLoose = muonSelectors.VBTF.clone()
-muonSelectors.WZLoose.minPt = cms.untracked.double(10.)
+muonSelectors.WZLoose.minPt = 10.
 muonSelectors.WZLoose.maxIso03 = cms.untracked.double(0.15)
 
 muonSelectors.WZRelaxed = muonSelectors.VBTF.clone()
-muonSelectors.WZRelaxed.minPt = cms.untracked.double(20.)
+muonSelectors.WZRelaxed.minPt = 20.
 
 muonSelectors.WZTight = muonSelectors.VBTF.clone()
-muonSelectors.WZTight.minPt = cms.untracked.double(20.)
+muonSelectors.WZTight.minPt = 20.
 muonSelectors.WZTight.maxIso03 = cms.untracked.double(0.1)
 
 muonSelectors.HadVZLoose = muonSelectors.VBTF.clone()
-muonSelectors.HadVZLoose.minPt = cms.untracked.double(15.)
+muonSelectors.HadVZLoose.minPt = 15.
 muonSelectors.HadVZLoose.maxNormalizedChi2 = 9999999
 
 muonSelectors.HadVZTight = muonSelectors.VBTF.clone()
-muonSelectors.HadVZTight.minPt = cms.untracked.double(35.)
+muonSelectors.HadVZTight.minPt = 35.
 muonSelectors.HadVZTight.maxNormalizedChi2 = 9999999
 
 #####################
