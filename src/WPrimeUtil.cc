@@ -114,10 +114,6 @@ void WPrimeUtil::SetLumiWeights(const string & MCFile, const string & DataFile,
   LumiWeights_ = edm::LumiReWeighting(MCFile, DataFile, MCHist, DataHist);
 }
 
-float WPrimeUtil::getTotalWeight3BX(const edm::EventBase & event, const std::string& label){
-  return runningOnData() ? getWeight() : getWeight()*getPUWeight3BX(event, label);
-}
-
 int WPrimeUtil::getPU1BX(const std::vector< PileupSummaryInfo > & PupInfo){
   std::vector<PileupSummaryInfo>::const_iterator PVI;                       
   for(PVI = PupInfo.begin(); PVI != PupInfo.end(); ++PVI) {               

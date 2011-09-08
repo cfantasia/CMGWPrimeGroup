@@ -45,13 +45,14 @@ class WPrimeUtil
 
   void resetWarnings(){warningShown_ = false;}
   void setSampleName(std::string samplename){samplename_ = samplename;}
+  void setSampleWeight(float weight){sampleweight_ = weight;}
   void setWeight(float weight){weight_ = weight;}
-  void setInputFile(float weight){weight_ = weight;}
+  void setInputFile(float weight){sampleweight_ = weight;}
   void SetEventsToDebug(const std::vector<edm::EventID>& vEvents){vEventsToDebug_ = vEvents;}
 
   std::string getSampleName() const{return samplename_;}
+  float getSampleWeight() const{return sampleweight_;}
   float getWeight() const{return weight_;}
-  float getTotalWeight3BX(edm::EventBase const & event, const std::string& label);
   float getLumiWeight   (const int   & nInt){ return LumiWeights_.weight   (nInt);}
   float getLumiWeight3BX(const float & nInt){ return LumiWeights_.weight3BX(nInt);}
   int   getPU1BX(const std::vector< PileupSummaryInfo > & PupInfo);
@@ -326,6 +327,7 @@ private:
   // keep track of input file name and weight (e.g. for scaling MC histograms);
   // values set at beginFile
   std::string samplename_;
+  float sampleweight_;
   float weight_;
   bool runningOnData_;
   static bool warningShown_;

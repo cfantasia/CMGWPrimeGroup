@@ -100,7 +100,6 @@ protected:
   edm::InputTag pfCandsLabel_;
 
   edm::InputTag hltEventLabel_;
-  edm::InputTag pileupLabel_;
   vstring triggersToUse_;
 
   WPrimeUtil * wprimeUtil_;
@@ -143,7 +142,6 @@ protected:
   WCandidate wCand_, vCand_;
 
   pat::TriggerEvent triggerEvent_; 
-  std::vector< PileupSummaryInfo > PupInfo_; 
   wprime::EffV results_;
 
   float minNLeptons_;

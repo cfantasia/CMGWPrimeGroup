@@ -53,6 +53,7 @@ void WPrimeFinder::getConfiguration(char * cfg_file, int fileToRun)
   countGenEvts_ = cfg.getParameter<bool>("countGenEvts");
   genLabel_ = cfg.getParameter<edm::InputTag>("genParticles" );
   pfLabel_ = cfg.getParameter<edm::InputTag>("particleFlow" );
+  pileupLabel_ = cfg.getParameter<edm::InputTag>("pileupTag" );
   doRecoilCorrectionForW_ = cfg.getParameter<bool>("doRecoilCorrectionForW");
   runMuMETAnalysis_ = cfg.getParameter<bool>("runMuMETAnalysis" );
   runElMETAnalysis_ = cfg.getParameter<bool>("runElMETAnalysis" );
@@ -130,7 +131,7 @@ void WPrimeFinder::beginFile(vector<wprime::InputFile>::const_iterator it)
   wprimeUtil->setApplyHadronicRecoilCorrection(shouldCorrectMt);
 
   wprimeUtil->setSampleName(it->samplename);
-  wprimeUtil->setWeight(it->weight);
+  wprimeUtil->setSampleWeight(it->weight);
   wprimeUtil->setRunningOnData();
   wprimeUtil->resetWarnings();
 
@@ -153,6 +154,14 @@ void WPrimeFinder::beginFile(vector<wprime::InputFile>::const_iterator it)
 void WPrimeFinder::eventLoop(edm::EventBase const & event)
 {
   wprimeUtil->setHadronicMETCalculated(false);
+
+  if(wprimeUtil->runningOnData()){
+    wprimeUtil->setWeight(wprimeUtil->getSampleWeight());
+  }else{
+    event.getByLabel(pileupLabel_, PupH_);
+    float PU_Weight = wprimeUtil->getPUWeight3BX(*PupH_);
+    wprimeUtil->setWeight(wprimeUtil->getSampleWeight() * PU_Weight);
+  }
 
   if(runMuMETAnalysis_)
     muMETAnalyzer->eventLoop(event);

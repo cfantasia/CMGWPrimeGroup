@@ -70,6 +70,9 @@ class WPrimeFinder
 
   edm::InputTag genLabel_;
   edm::InputTag pfLabel_;
+  edm::InputTag pileupLabel_;
+
+  edm::Handle<std::vector< PileupSummaryInfo > > PupH_;
 
   MuMETAnalyzer * muMETAnalyzer;
   EleMETAnalyzer * eleMETAnalyzer;

@@ -160,13 +160,24 @@ void HadronicVZAnalyzer::Declare_Histos(const TFileDirectory & dir)
   /////////////////
   DeclareHistoSet("hVZMass", "Reconstructed VZ Invariant Mass",
                   "M_{VZ} (GeV)", 100, 0, 2500, "GeV", hVZMass,dir);
+  DeclareHistoSet("hVZeeMass", "Reconstructed VZee Invariant Mass",
+                  "M_{VZ}^{ee} (GeV)", 100, 0, 2500, "GeV", hVZeeMass,dir);
+  DeclareHistoSet("hVZmmMass", "Reconstructed VZmm Invariant Mass",
+                  "M_{VZ}^{#mu#mu} (GeV)", 100, 0, 2500, "GeV", hVZmmMass,dir);
   DeclareHistoSet("hVZpt", "Reconstructed VZ Transverse Momentum",
                   "p_{VZ}^{T} (GeV)", 100, 0, 1000, "GeV", hVZpt,dir);
 
   DeclareHistoSet("hZMass" , "Reconstructed Mass of Z",
                   "M_{Z} (GeV)", 30, 60, 120, "GeV", hZMass,dir);
+  DeclareHistoSet("hZeeMass" , "Reconstructed Mass of Zee",
+                  "M_{Z}^{ee} (GeV)", 30, 60, 120, "GeV", hZeeMass,dir);
+  DeclareHistoSet("hZmmMass" , "Reconstructed Mass of Zmm",
+                  "M_{Z}^{#mu#mu} (GeV)", 30, 60, 120, "GeV", hZmmMass,dir);
   DeclareHistoSet("hZpt", "p_{T}^{Z}", 
                   "p_{T}^{Z} (GeV)", 100, 0, 1000, "GeV", hZpt,dir);
+  DeclareHistoSet("hEvtType", "Event Type",
+                  "N_{#mu}", 3, 0, 3, "NONE", hEvtType,dir);
+
   DeclareHistoSet("hVMass" , "Reconstructed Mass of V",
                   "M_{V} (GeV)", 75, 0, 150, "GeV", hVMass,dir);//Cory: Change back
   DeclareHistoSet("hVpt", "p_{T}^{V}", 
@@ -195,11 +206,16 @@ void HadronicVZAnalyzer::Fill_Histos(const int& index, const float& weight)
 
   if(hadVZ_){
     hVZMass[index]->Fill(hadVZ_.mass(), weight);
+    if      (zCand_.flavor() == PDGELEC) hVZeeMass[index]->Fill(hadVZ_.mass(), weight);
+    else if (zCand_.flavor() == PDGMUON) hVZmmMass[index]->Fill(hadVZ_.mass(), weight);
     hVZpt[index]->Fill(hadVZ_.pt(), weight);
   }
   if(zCand_){
     hZMass[index]->Fill(zCand_.mass(), weight);
+    if      (zCand_.flavor() == PDGELEC) hZeeMass[index]->Fill(zCand_.mass(), weight);
+    else if (zCand_.flavor() == PDGMUON) hZmmMass[index]->Fill(zCand_.mass(), weight);
     hZpt[index]->Fill(zCand_.pt(), weight);
+    hEvtType[index]->Fill(2*zCand_.flavor() == PDGMUON, weight);
   }
   if(vCand_){
     hVMass[index]->Fill(vCand_.mass(), weight);
@@ -557,17 +573,8 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     return;
   }
 
-  //PU STUFF
-  float PU_Weight = 1.;
-  if(!wprimeUtil_->runningOnData()){//Don't do this for data
-    PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
-    PU_Weight = wprimeUtil_->getPUWeight3BX(PupInfo_);
-    if(debugme) 
-      cout <<" PU Weight: "<<PU_Weight
-           <<endl;   
-  }//MC Only If
-  
-  weight_ = wprimeUtil_->getWeight()*PU_Weight;
+
+  weight_ = wprimeUtil_->getWeight();
 
   // Make vectors of leptons passing various criteria
   // Loop over electrons, and see if they pass the criteria

@@ -18,8 +18,6 @@ HadronicVWAnalyzer::HadronicVWAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil
 // +++++++++++++++++++W Cuts
 
 // +++++++++++++++++++V Cuts
-
-  ClearEvtVariables();
 }
 
 HadronicVWAnalyzer::~HadronicVWAnalyzer(){
@@ -456,7 +454,6 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
   //Get Vertex
   vertices_ = getProduct<vector<reco::Vertex> >(event,vertexLabel_);
 
-  float PU_Weight = 1.;
   if(!wprimeUtil_->runningOnData()){//Don't do this for data
     if(debugme){
       //Cory: Update this for VW!
@@ -473,12 +470,6 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
         }
       }
     }
-    PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
-    PU_Weight = wprimeUtil_->getPUWeight3BX(PupInfo_);
-
-    if(debugme) 
-      cout<<" PU Weight: "<<PU_Weight<<endl;   
-
   }//MC Only If
 
   if(wprimeUtil_->DebugEvent(event)){
@@ -487,7 +478,7 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
     PrintDebugEvent();
   }
 
-  weight_ = wprimeUtil_->getWeight()*PU_Weight;
+  weight_ = wprimeUtil_->getWeight();
   if(!PassCuts(weight_)) return;
   if(wprimeUtil_->runningOnData()){
     cout<<" The following data events passed All Cuts!!!\n";
@@ -639,16 +630,8 @@ inline bool HadronicVWAnalyzer::inEE(const TeVMuon& mu) const{
 
 inline void
 HadronicVWAnalyzer::ClearEvtVariables(){
-  looseJets_.clear();
-  allElectrons_.clear();
-  looseElectrons_.clear();
-  tightElectrons_.clear();
-  allMuons_.clear();
-  looseMuons_.clear();
-  tightMuons_.clear();
+  AnalyzerBase::ClearEvtVariables();
   met_ = pat::MET();
-  vCand_ = WCandidate();
-  wCand_ = WCandidate();
   vwCand_ = DiBosonWLeptonic();
   evtType_ = -999;
   VWMass_ = -999;

@@ -54,7 +54,6 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUti
   useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
   
   hltEventLabel_ = cfg.getParameter<edm::InputTag>("hltEventTag");
-  pileupLabel_ = cfg.getParameter<edm::InputTag>("pileupTag");
 
   triggersToUse_ = cfg.getParameter<vstring>("triggersToUse");
 

@@ -605,7 +605,6 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   //Get Vertex
   vertices_ = getProduct<vector<reco::Vertex> >(event,vertexLabel_);
 
-  float PU_Weight = 1.;
   if(!wprimeUtil_->runningOnData()){//Don't do this for data
     if(debugme){
       GenParticleV genParticles = getProduct<GenParticleV>(event, "genParticles");
@@ -621,12 +620,6 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
         }
       }
     }
-    PupInfo_ = getProduct<std::vector< PileupSummaryInfo > >(event, pileupLabel_);   
-    PU_Weight = wprimeUtil_->getPUWeight3BX(PupInfo_);
-
-    if(debugme) 
-      cout<<" PU Weight: "<<PU_Weight<<endl;   
-
   }//MC Only If
 
   if(wprimeUtil_->DebugEvent(event)){
@@ -635,7 +628,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     PrintDebugEvent();
   }
 
-  weight_ = wprimeUtil_->getWeight()*PU_Weight;
+  weight_ = wprimeUtil_->getWeight();
   if(!PassCuts(weight_)) return;
   if(1 || wprimeUtil_->runningOnData()){
     cout<<" The following data event passed All Cuts!!!\n";
@@ -1007,16 +1000,8 @@ inline bool WZAnalyzer::inEE(const TeVMuon& mu) const{
 
 inline void
 WZAnalyzer::ClearEvtVariables(){
-  allJets_.clear();
-  allElectrons_.clear();
-  looseElectrons_.clear();
-  tightElectrons_.clear();
-  allMuons_.clear();
-  looseMuons_.clear();
-  tightMuons_.clear();
+  AnalyzerBase::ClearEvtVariables();
   met_ = pat::MET();
-  zCand_ = ZCandidate();
-  wCand_ = WCandidate();
   wzCand_ = DiBosonWLeptonic();
   evtType_ = -999;
   LeadPt_ = -999;
