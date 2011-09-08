@@ -11,3 +11,5 @@ def mc_config(process, cms):
            "+keep (abs(pdgId) = 11 | abs(pdgId) = 13 | abs(pdgId) = 12 | abs(pdgId) = 14 | abs(pdgId) = 23 | abs(pdgId) = 24 | abs(pdgId) = 34) & status = 1"
     )
 )
+
+    process.GlobalTag.globaltag = 'START42_V13:All'
