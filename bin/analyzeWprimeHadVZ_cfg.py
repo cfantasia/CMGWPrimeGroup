@@ -2,7 +2,7 @@ from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
 process.WprimeAnalyzer.outputFile  = "HadVZAnalyzer.root"
 process.WprimeAnalyzer.logFile     = "HadVZAnalyzer.log"
-process.WprimeAnalyzer.candEvtFile = cms.string("HadVZ_CandEvtFile.txt")
+process.WprimeAnalyzer.candEvtFile = cms.string("HadVZAnalyzer.lst")
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_HadVZ.txt"
 
 process.WprimeAnalyzer.maxEvents   = -1
@@ -52,10 +52,10 @@ process.WprimeAnalyzer.Cuts = cms.vstring(
         #    "HLT",
         "AllCuts")
 
+process.WprimeAnalyzer.LooseElectronType = cms.untracked.string("WZLoose")
+process.WprimeAnalyzer.TightElectronType = cms.untracked.string("WZTight")
+
 process.WprimeAnalyzer.LooseMuonType = cms.untracked.string("HadVZLoose")
 process.WprimeAnalyzer.TightMuonType = cms.untracked.string("HadVZTight")
-
-process.WprimeAnalyzer.LooseMuonType = cms.untracked.string("WZLoose")
-process.WprimeAnalyzer.TightMuonType = cms.untracked.string("WZTight")
 
 process.WprimeAnalyzer.LooseJetType = cms.untracked.string("Base")
