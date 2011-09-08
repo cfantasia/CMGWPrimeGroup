@@ -196,11 +196,13 @@ public:
   TH2F* h_dptpt2_vs_invpt_teta1524;
 
   /////////////////////
-  std::vector<TH1F*> hVZMass;
+  std::vector<TH1F*> hVZMass, hVZeeMass, hVZmmMass;
   std::vector<TH1F*> hVZpt;
 
-  std::vector<TH1F*> hZMass;
+  std::vector<TH1F*> hZMass, hZeeMass, hZmmMass;
   std::vector<TH1F*> hZpt;
+  std::vector<TH1F*> hEvtType;
+
   std::vector<TH1F*> hVMass;
   std::vector<TH1F*> hVpt;
 
