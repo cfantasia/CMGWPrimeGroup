@@ -1,3 +1,10 @@
+09-SEP-11 (Christos), V00-03-11
+===============================
+
+o Fixed electron configuration for patTuple making
+o Updated skimming crab configuration files
+
+
 08-SEP-11 (Christos, Cory), V00-03-10
 ======================================
 General improvements:
