@@ -4,6 +4,6 @@ from UserCode.CMGWPrimeGroup.patTuple_met_cfg import *
 
 def elmet_config(process, reportEveryNum=100, maxEvents=-1) :
     common_config(process, reportEveryNum, maxEvents)
-    mu_config(process)
+    el_config(process)
     met_config(process)
 
