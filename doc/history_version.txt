@@ -1,3 +1,25 @@
+08-SEP-11 (Christos, Cory), V00-03-10
+======================================
+General improvements:
+- Reorganization of patTuple configuration for basic objects (muon,
+electron, met, jet, trigger) to help us ensure event-content is uniformly
+defined among different analyses. 
+
+had-V + Z:
+- Incorporated Z->ee
+- Added single-lepton triggers
+- Fixed loose muon selection
+
+El/Mu + MET:
+- Updated crab skimming jobs
+- Fixed bug in high-pt skimming configurations
+
+Misc:
+- Updated JSON file for processing of latest data
+- PU reweighting moved to WPrimeFinder class
+- Added MC global tag in patTuple configuration
+
+
 06-SEP-11 (Christos, Cory, Flavia), V00-03-01
 =============================================
 WZ
