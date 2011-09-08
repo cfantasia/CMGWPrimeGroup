@@ -10,16 +10,14 @@ def jetlep_config(process, reportEveryNum=100, maxEvents=-1) :
     el_config(process)
     mu_config(process)
 
+    # redefine selectedPatMuons (isGlobalMuon not included in std definition)
+    process.selectedPatMuons.cut = "pt > 10. & abs(eta) < 2.4 & isGlobalMuon"
+    
     # keep all events with 2 leptons above 10 GeV
     process.countPatLeptons.electronSource = "selectedPatElectrons"
     process.countPatLeptons.muonSource     = "selectedPatMuons"
     process.countPatLeptons.minNumber = 2
     
-    process.selectedPatElectrons.cut = "pt > 10. & abs(eta) < 2.5"
-    process.selectedPatMuons.cut = "pt > 10. & abs(eta) < 2.4 & isGlobalMuon"
-    
-    # keep all events with jet-pt above 30 GeV, |eta| < 2.4
-    process.selectedPatJets.cut = "pt > 30. & abs(eta) < 2.4"
     process.countPatJets.minNumber = 1
     process.countPatJets.src = "selectedPatJets"
     
