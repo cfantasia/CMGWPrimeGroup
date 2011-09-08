@@ -10,18 +10,12 @@ removeMCMatching(process, ['All'])
 # 3rd argument: # of events to process
 elmet_config(process, 1000, -1)
 
-# keep all events with electron-pt above 100 GeV
-process.selectedPatElectrons.cut = "pt > 100. & abs(eta) < 2.5"
-
-process.lowPtElectronFilter = cms.EDFilter("CandViewCountFilter",
-                                src = cms.InputTag("selectedPatElectrons"),
-                                minNumber = cms.uint32(1)
-                                )
 
 ## let it run
 process.p = cms.Path(
     process.patDefaultSequence *
-    process.lowPtElectronFilter
+    process.highPtElectrons *
+    process.highPtElectronFilter
 )
 
 #                                         ##

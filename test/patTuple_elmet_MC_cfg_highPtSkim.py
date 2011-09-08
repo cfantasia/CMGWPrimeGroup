@@ -9,19 +9,13 @@ from UserCode.CMGWPrimeGroup.patTuple_mc_cfg import *
 elmet_config(process, 1000, -1)
 mc_config(process, cms)
 
-# keep all events with electron-pt above 100 GeV
-process.selectedPatElectrons.cut = "pt > 100. & abs(eta) < 2.5"
-
-process.highPtElectronFilter = cms.EDFilter("CandViewCountFilter",
-                                src = cms.InputTag("selectedPatElectrons"),
-                                minNumber = cms.uint32(1)
-                                )
 
 ## let it run
 process.p = cms.Path(
     process.patDefaultSequence *
     process.prunedGenParticles *
-    process.highPtElectronFilter
+    process.highPtElectrons *
+    process.highPtElectronFilter 
 )
 
 

@@ -10,28 +10,24 @@ elmet_config(process, 1000, -1)
 mc_config(process, cms)
 
 # keep all events with electron-pt above 25 GeV, but less than 100 GeV
-process.selectedPatElectrons100 = process.selectedPatElectrons.clone()
-
-process.selectedPatElectrons.cut = "pt > 25. & abs(eta) < 2.5"
-process.selectedPatElectrons100.cut = "pt > 100. & abs(eta) < 2.5"
+process.lowPtElectrons = process.selectedPatElectrons.clone()
+process.lowPtElectrons.cut = "pt > 25. & abs(eta) < 2.5"
 
 process.lowPtElectronFilter = cms.EDFilter("CandViewCountFilter",
-                                src = cms.InputTag("selectedPatElectrons"),
-                                minNumber = cms.uint32(1)
-                                )
-process.highPtElectronFilter = cms.EDFilter("CandViewCountFilter",
-                                src = cms.InputTag("selectedPatElectrons100"),
+                                src = cms.InputTag("lowPtElectrons"),
                                 minNumber = cms.uint32(1)
                                 )
 
 ## let it run
 process.p = cms.Path(
     process.patDefaultSequence *
-    process.selectedPatElectrons100 *
+    process.lowPtElectrons *
+    process.highPtElectrons *
     process.prunedGenParticles *
     process.lowPtElectronFilter *
     ~process.highPtElectronFilter
 )
+
 
 
 process.source.fileNames = [          ##

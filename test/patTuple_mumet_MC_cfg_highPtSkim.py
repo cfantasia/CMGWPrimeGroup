@@ -9,18 +9,12 @@ from UserCode.CMGWPrimeGroup.patTuple_mc_cfg import *
 mumet_config(process, 1000, -1)
 mc_config(process, cms)
 
-# keep all events with muon-pt above 100 GeV
-process.selectedPatMuons.cut = "pt > 100. & abs(eta) < 2.5"
-
-process.highPtMuonFilter = cms.EDFilter("CandViewCountFilter",
-                                src = cms.InputTag("selectedPatMuons"),
-                                minNumber = cms.uint32(1)
-                                )
 
 ## let it run
 process.p = cms.Path(
     process.patDefaultSequence *
     process.prunedGenParticles *
+    process.highPtMuons *
     process.highPtMuonFilter
 )
 

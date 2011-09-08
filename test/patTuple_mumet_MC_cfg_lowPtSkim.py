@@ -10,24 +10,19 @@ mumet_config(process, 1000, -1)
 mc_config(process, cms)
 
 # keep all events with muon-pt above 25 GeV, but less than 100 GeV
-process.selectedPatMuons100 = process.selectedPatMuons.clone()
-
-process.selectedPatMuons.cut = "pt > 25. & abs(eta) < 2.5"
-process.selectedPatMuons100.cut = "pt > 100. & abs(eta) < 2.5"
+process.lowPtMuons = process.selectedPatMuons.clone()
+process.lowPtMuons.cut = "pt > 25. & abs(eta) < 2.4"
 
 process.lowPtMuonFilter = cms.EDFilter("CandViewCountFilter",
-                                src = cms.InputTag("selectedPatMuons"),
-                                minNumber = cms.uint32(1)
-                                )
-process.highPtMuonFilter = cms.EDFilter("CandViewCountFilter",
-                                src = cms.InputTag("selectedPatMuons100"),
+                                src = cms.InputTag("lowPtMuons"),
                                 minNumber = cms.uint32(1)
                                 )
 
 ## let it run
 process.p = cms.Path(
     process.patDefaultSequence *
-    process.selectedPatMuons100 *
+    process.lowPtMuons *
+    process.highPtMuons *
     process.prunedGenParticles *
     process.lowPtMuonFilter *
     ~process.highPtMuonFilter
