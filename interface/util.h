@@ -326,6 +326,10 @@ class MinMaxSelector : public Selector<T> {
     if (!this->cutOnMin(param))
       defaultValue = std::numeric_limits<C>::max();
     C val = params.getUntrackedParameter<C>(param, defaultValue);
+    if(!params.exists(param)){
+      shouldSet = false;//If you don't list it, I'll ignore it
+      std::cout<<" You didn't specify param "<<param<<", so it will be ignored\n";
+    }
     this->push_back(param, val);
     this->set(param, shouldSet);
   }
