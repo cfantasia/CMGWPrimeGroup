@@ -13,7 +13,7 @@ def el_config(process) :
     process.highPtElectrons = process.selectedPatElectrons.clone()
     process.highPtElectrons.cut = "pt > 100. & abs(eta) < 2.5"
     
-    process.highPtMuonFilter = cms.EDFilter("CandViewCountFilter",
+    process.highPtElectronFilter = cms.EDFilter("CandViewCountFilter",
                                             src = cms.InputTag("highPtElectrons"),
                                             minNumber = cms.uint32(1)
                                             )
