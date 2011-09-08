@@ -47,7 +47,6 @@ class WPrimeUtil
   void setSampleName(std::string samplename){samplename_ = samplename;}
   void setSampleWeight(float weight){sampleweight_ = weight;}
   void setWeight(float weight){weight_ = weight;}
-  void setInputFile(float weight){sampleweight_ = weight;}
   void SetEventsToDebug(const std::vector<edm::EventID>& vEvents){vEventsToDebug_ = vEvents;}
 
   std::string getSampleName() const{return samplename_;}
