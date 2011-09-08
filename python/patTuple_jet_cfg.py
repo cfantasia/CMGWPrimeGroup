@@ -54,6 +54,9 @@ def jetFull_config(process, reportEveryNum=100, maxEvents=-1) :
        
 def jet_config(process, reportEveryNum=100, maxEvents=-1) :
     CMGWPswitchToPFJets(process)
+    # keep all events with jet-pt above 30 GeV, |eta| < 2.4
+    process.selectedPatJets.cut = "pt > 30. & abs(eta) < 2.4"
+
     # RECO
     process.out.outputCommands.append('keep *_selectedPatJets_*_*')
     process.out.outputCommands.append('keep *_patJets_*_*')
