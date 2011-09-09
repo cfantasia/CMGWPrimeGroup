@@ -1,0 +1,9 @@
+Top Level Dir = /
+integrated lumi = 1019.3 pb^-1
+
+samplename = data
+description = data
+x-section = 1
+pathname = test.root
+Nprod_evt = 1
+
