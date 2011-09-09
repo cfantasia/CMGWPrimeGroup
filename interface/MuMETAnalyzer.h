@@ -4,6 +4,8 @@
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
 
+#include "UserCode/CMGWPrimeGroup/interface/AnalyzerBase.h"
+
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/mumet_histo_constants.h"
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
@@ -28,7 +30,7 @@ typedef bool (MuMETAnalyzer::*funcPtrMu)(bool *, const TeVMuon *, edm::EventBase
 // key: cuts_desc_short[i], value: function pointer corresponding to selection cut
 typedef std::map<std::string, funcPtrMu> selection_map_mumet;
 
-class MuMETAnalyzer
+class MuMETAnalyzer : public AnalyzerBase 
 {
  public:
   explicit MuMETAnalyzer(const edm::ParameterSet& cfg, 
@@ -73,18 +75,18 @@ class MuMETAnalyzer
   bool dumpHighPtMuons_; // whether to dump high-pt muons for data
   float dumpHighPtMuonThreshold_;
 
-  void defineHistos(TFileDirectory & dir);
-  void defineHistos_MuonPt(TFileDirectory & dir);
-  void defineHistos_MuonEta(TFileDirectory & dir);
-  void defineHistos_MuonPhi(TFileDirectory & dir);
-  //  void defineHistos_MuonJetDPhi(TFileDirectory & dir);
-  void defineHistos_MuonIso(TFileDirectory & dir);
-  void defineHistos_TMass(TFileDirectory & dir);
+  void defineHistos(const TFileDirectory & dir);
+  void defineHistos_MuonPt(const TFileDirectory & dir);
+  void defineHistos_MuonEta(const TFileDirectory & dir);
+  void defineHistos_MuonPhi(const TFileDirectory & dir);
+  //  void defineHistos_MuonJetDPhi(const TFileDirectory & dir);
+  void defineHistos_MuonIso(const TFileDirectory & dir);
+  void defineHistos_TMass(const TFileDirectory & dir);
 
   void setupCutOrder();
   selection_map_mumet cuts;
 
-  // Get the hardest muon (based on tracker-pt) in event
+  // get the hardest muon (based on tracker-pt) in event
   // (returns index in pat::MuonCollection)
   int getTheHardestMuon();
 
@@ -123,6 +125,9 @@ class MuMETAnalyzer
   // print summary of efficiencies
   void printFileSummary(std::vector<wprime::InputFile>::const_iterator,
 			ofstream & out);
+
+  ///These are required functions when inheriting from AnalyzerBase
+  void fillHistos(const int& index, const float& weight=1.);
 
   WCandidate Wcand;
   

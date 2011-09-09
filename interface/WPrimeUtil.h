@@ -38,22 +38,22 @@ class WPrimeUtil
   // get input files (to be retrieved from samples_cross_sections.txt)
   void getInputFiles(std::vector<wprime::InputFile> & inputFiles);
 
-  void setApplyHadronicRecoilCorrection(bool flag){applyHadronicRecoilCorrection_ = flag;}
-  void setHadronicMETCalculated(bool flag){hadronicMETcalculated_ = flag;}
+  inline void setApplyHadronicRecoilCorrection(bool flag){applyHadronicRecoilCorrection_ = flag;}
+  inline void setHadronicMETcalculated(bool flag){hadronicMETcalculated_ = flag;}
 
-  bool shouldApplyHadronicRecoilCorrection(){return applyHadronicRecoilCorrection_;}
+  inline bool shouldApplyHadronicRecoilCorrection(){return applyHadronicRecoilCorrection_;}
 
-  void resetWarnings(){warningShown_ = false;}
-  void setSampleName(std::string samplename){samplename_ = samplename;}
-  void setSampleWeight(float weight){sampleweight_ = weight;}
-  void setWeight(float weight){weight_ = weight;}
-  void SetEventsToDebug(const std::vector<edm::EventID>& vEvents){vEventsToDebug_ = vEvents;}
+  inline void resetWarnings(){warningShown_ = false;}
+  inline void setSampleName(std::string samplename){samplename_ = samplename;}
+  inline void setSampleWeight(float weight){sampleweight_ = weight;}
+  inline void setWeight(float weight){weight_ = weight;}
+  inline void setEventsToDebug(const std::vector<edm::EventID>& vEvents){vEventsToDebug_ = vEvents;}
 
-  std::string getSampleName() const{return samplename_;}
-  float getSampleWeight() const{return sampleweight_;}
-  float getWeight() const{return weight_;}
-  float getLumiWeight   (const int   & nInt){ return LumiWeights_.weight   (nInt);}
-  float getLumiWeight3BX(const float & nInt){ return LumiWeights_.weight3BX(nInt);}
+  inline std::string getSampleName() const{return samplename_;}
+  inline float getSampleWeight() const{return sampleweight_;}
+  inline float getWeight() const{return weight_;}
+  inline float getLumiWeight   (const int   & nInt){ return LumiWeights_.weight   (nInt);}
+  inline float getLumiWeight3BX(const float & nInt){ return LumiWeights_.weight3BX(nInt);}
   int   getPU1BX(const std::vector< PileupSummaryInfo > & PupInfo);
   float getPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInfo);
   float getPUWeight3BX(edm::EventBase const & event, const std::string& label);
@@ -62,28 +62,28 @@ class WPrimeUtil
 
   static void getEff(float & eff, float & deff,float Num,float Denom);
 
-  // true if current file under processing contains "data" in description
-  bool runningOnData() const{return runningOnData_;};
-  void setRunningOnData();
+  // true if current file under processing contains "data" in name
+  inline bool runningOnData() const{return runningOnData_;};
+  inline void setRunningOnData(){ runningOnData_ = (getSampleName().find("data") != std::string::npos);};
 
   //Check if Run/Evt is in Debug list
   bool DebugEvent(edm::EventBase const& event) const;
 
   // integrated luminosity in pb^-1
-  float getLumi_ipb(){return lumi_ipb;}
+  inline float getLumi_ipb(){return lumi_ipb;}
 
   static inline bool SameTrigger(const std::string & versionedName, const std::string & wildcardedName){
     return (wildcardedName.find("*") == std::string::npos) ? 
       !versionedName.compare(wildcardedName) : //No '*', early triggers
       !versionedName.compare(0, versionedName.size()-1, wildcardedName, 0, wildcardedName.size()-1);//This assumes v is under 10, need to fix
   }
-  static void PrintEvent(edm::EventBase const & event);
+  static void printEvent(edm::EventBase const & event);
 
-  static bool PassTriggersCut(edm::EventBase const & event, std::string label,const std::vector<std::string>& triggerNames);
-  static bool PassTriggersCut(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames);
-  static void PrintPassingTriggers(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames);
-  static bool FoundAndPassed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames);
-  static bool Passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path);
+  static bool passTriggersCut(edm::EventBase const & event, std::string label,const std::vector<std::string>& triggerNames);
+  static bool passTriggersCut(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames);
+  static void printPassingTriggers(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames);
+  static bool FoundAndpassed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames);
+  static bool passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path);
   static unsigned L1Prescale(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path);
   static unsigned MaxL1Prescale(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path);
   static bool FindTrigger(const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames);
@@ -93,7 +93,7 @@ class WPrimeUtil
   // activity from Z->mumu reconstructed events
   TVector2 getHadronicMET(edm::EventBase const & event);
 
-  void SetLumiWeights(const std::string & MCFile, const std::string & DataFile, 
+  void setLumiWeights(const std::string & MCFile, const std::string & DataFile, 
                       const std::string & MCHist, const std::string & DataHist);
   static void CheckStream(const ofstream& stream, const std::string & s);
   
@@ -219,9 +219,6 @@ class WPrimeUtil
   static void getMET      (const edm::EventBase & event, const edm::InputTag& label, pat::MET & met)
     {met = getProduct<METV>(event, label)[0];}
 
-  static void tabulateSummary(wprime::EffV& results);
-  static void printSummary(const std::string& dir, const std::string& description, const vstring & Cuts, const wprime::EffV& results, ofstream& out);
-  
   // MET adjustments, designed for lepton+MET signatures. There are two corrections to be made:
   // (a) the hadronic recoil component (that needs to be adjusted in simulated W->lepton samples 
   // if applyHadronicRecoilCorrection=true) from Z data; this will be done according to hadronic 

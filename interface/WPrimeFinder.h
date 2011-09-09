@@ -12,6 +12,7 @@
 #include "UserCode/CMGWPrimeGroup/interface/WZAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/HadronicVZAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/HadronicVWAnalyzer.h"
+#include "UserCode/CMGWPrimeGroup/interface/TBAnalyzer.h"
 
 class WPrimeFinder
 {
@@ -28,13 +29,6 @@ class WPrimeFinder
 
   // operations to be done when changing input file (e.g. create new histograms)
   void beginFile(std::vector<wprime::InputFile>::const_iterator it);
-
-  // operations to be done when closing input file 
-  // (e.g. save histograms, print summary)
-  void endFile(std::vector<wprime::InputFile>::const_iterator it);
-
-  // e.g. print summary of expected events for all samples
-  void endAnalysis();
 
   ofstream outLogFile_;
 
@@ -74,12 +68,7 @@ class WPrimeFinder
 
   edm::Handle<std::vector< PileupSummaryInfo > > PupH_;
 
-  MuMETAnalyzer * muMETAnalyzer;
-  EleMETAnalyzer * eleMETAnalyzer;
-  WgammaAnalyzer * WmunugammaAnalyzer;
-  WZAnalyzer * wzAnalyzer;
-  HadronicVZAnalyzer * hadvzAnalyzer;
-  HadronicVWAnalyzer * hadvwAnalyzer;
+  AnalyzerBase * wprimeAnalyzer;
   WPrimeUtil * wprimeUtil;
 
   std::vector< edm::LuminosityBlockRange > jsonVector;

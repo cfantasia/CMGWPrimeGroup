@@ -16,68 +16,75 @@ public:
 ///////////////Utilities//////////////////
 
 //Tabulate results after the cut has been passed
-  virtual void Tabulate_Me(const int& cut_index, const float& weight);
-  virtual void Fill_Histos(const int& index, const float& weight=1.) = 0;//Pure Virtual
-  virtual void Declare_Histos(const TFileDirectory & dir) = 0;//Pure Virtual
-  virtual void DeclareHistoSet(const std::string& n, const std::string& t, const std::string& xtitle,
+  virtual void tabulateEvent(const int& cut_index, const float& weight);
+  virtual void tabulateFile(wprime::EffV& results);
+  virtual void printFileSummary(std::vector<wprime::InputFile>::const_iterator fi, ofstream& out);
+ 
+  virtual void fillHistos(const int& index, const float& weight=1.) = 0;//Pure Virtual
+  virtual void defineHistos(const TFileDirectory & dir);
+  virtual void defineHistoset(const std::string& n, const std::string& t, const std::string& xtitle,
                                const int& nbins, const float& min, const float& max, const std::string& units,
                                std::vector<TH1F*>& h, const TFileDirectory& d);
-  virtual void ResetCounters();
-  virtual void ClearEvtVariables();
+  virtual void resetcounters();
+  virtual void clearEvtVariables();
 
   //methods for printers
-  virtual void PrintEventFull(edm::EventBase const & event) const;
-  virtual void PrintPassingEvent(edm::EventBase const & event);
-  virtual void PrintDebugEvent() const;
-  virtual void PrintEventToFile(edm::EventBase const & event);
-  virtual void PrintEventDetails() const;
-  virtual void PrintEventLeptons() const;
-  virtual void PrintLeptons() const;
-  virtual void PrintElectrons() const;
-  virtual void PrintMuons() const;
-  virtual void PrintJets() const;
-  virtual void PrintElectron(const pat::Electron& elec) const;
-  virtual void PrintElectron(const heep::Ele& elec) const;
-  virtual void PrintMuon(const TeVMuon& mu) const;
-  virtual void PrintJet(const pat::Jet& jet) const;
+  virtual void printEventFull(edm::EventBase const & event) const;
+  virtual void printPassingEvent(edm::EventBase const & event);
+  virtual void printDebugEvent() const;
+  virtual void printEventToFile(edm::EventBase const & event);
+  virtual void printEventDetails() const;
+  virtual void printEventLeptons() const;
+  virtual void printLeptons() const;
+  virtual void printElectrons() const;
+  virtual void printMuons() const;
+  virtual void printJets() const;
+  virtual void printElectron(const pat::Electron& elec) const;
+  virtual void printElectron(const heep::Ele& elec) const;
+  virtual void printMuon(const TeVMuon& mu) const;
+  virtual void printJet(const pat::Jet& jet) const;
 
 
 ////////////////////////////
-//////////Setters///////////
+//////////setters///////////
 ////////////////////////////
-  void SetCandEvtFile(const std::string & s);
+  void setCandEvtFile(const std::string & s);
 
 ////////////////////
 //////Cuts//////////
 ////////////////////
-  virtual bool PassNoCut() const;
-  virtual bool PassTriggersCut() const;
-  virtual bool PassMinNLeptonsCut() const;
-  virtual bool PassMinNTightLeptonsCut() const;
-  virtual bool PassMaxNLeptonsCut() const;
-  virtual bool PassMinNJetsCut() const;
+  virtual bool passCuts(const float& weight);
 
-  virtual bool PassMinMETCut() const;
+  virtual bool passNoCut() const;
+  virtual bool passTriggersCut() const;
+  virtual bool passMinNLeptonsCut() const;
+  virtual bool passMinNTightLeptonsCut() const;
+  virtual bool passMaxNLeptonsCut() const;
+  virtual bool passMinNJetsCut() const;
+
+  virtual bool passMinMETCut() const;
 
 /////////Check Z Properties/////
-  virtual bool PassValidZCut() const;
-  virtual bool PassZMassCut() const;
-  virtual bool PassZptCut() const;
+  virtual bool passValidZCut() const;
+  virtual bool passZMassCut() const;
+  virtual bool passZptCut() const;
 
 /////////Check W Properties/////
-  virtual bool PassValidWCut() const;
-  virtual bool PassWtransMassCut() const;
-  virtual bool PassWptCut() const;
+  virtual bool passValidWCut() const;
+  virtual bool passWtransMassCut() const;
+  virtual bool passWptCut() const;
 
 ///////Check Had. V Properties//
-  virtual bool PassValidVCut() const;
-  virtual bool PassVMassCut() const;
-  virtual bool PassVptCut() const;
+  virtual bool passValidVCut() const;
+  virtual bool passVMassCut() const;
+  virtual bool passVptCut() const;
 
 //////////////////
 //file stuff//////
 //////////////////
+  
   virtual void beginFile(std::vector<wprime::InputFile>::const_iterator fi);
+  virtual void eventLoop(edm::EventBase const & event);
 
 // operations to be done when closing input file 
   virtual void endFile(std::vector<wprime::InputFile>::const_iterator fi,
@@ -98,7 +105,7 @@ protected:
   edm::InputTag jetsLabel_;
   edm::InputTag metLabel_;
   edm::InputTag pfCandsLabel_;
-
+  edm::InputTag vertexLabel_;
   edm::InputTag hltEventLabel_;
   vstring triggersToUse_;
 
@@ -110,20 +117,22 @@ protected:
 
   TH1F * hNumEvts;
 
+  float weight_;
+
   int NCuts_;
   std::vector<std::string> Cuts_;
 
-  PSet eSelectorPset_;
+  Pset eSelectorPset_;
   ElectronSelector looseElectron_;
   ElectronSelector tightElectron_;
   pat::strbitset electronResult_;
 
-  PSet mSelectorPset_;
+  Pset mSelectorPset_;
   MuonSelector looseMuon_;
   MuonSelector tightMuon_;
   pat::strbitset muonResult_;
 
-  PSet jSelectorPset_;
+  Pset jSelectorPset_;
   JetSelector looseJet_;
   JetSelector tightJet_;
   pat::strbitset jetResult_;
@@ -132,6 +141,7 @@ protected:
   PatMuonVH patMuonsH_;
   METVH metH_;
   PFCandidateVH pfCandidatesH_;
+  std::vector<reco::Vertex>  vertices_;
 
 //////Chosen Candidates
   ElectronV allElectrons_, looseElectrons_, tightElectrons_;
@@ -160,6 +170,7 @@ protected:
   float minZpt_;
   float minWpt_;
   float minVpt_;
+
 };
 
 #endif//#define _AnalyzerBase_h_

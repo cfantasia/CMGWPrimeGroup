@@ -24,7 +24,7 @@ ZCandV getZCands(const ElectronV & electrons, const MuonV & muons,
 }
 
 void removeOverlapping(ZCandV & zCands){
-  // Get rid of overlapping candidates
+  // get rid of overlapping candidates
   for (ZCandV::iterator i = zCands.begin(); i != zCands.end(); ++i)
     for (ZCandV::iterator j = i + 1; j != zCands.end(); ++j)
       if (areOverlapping(*i, *j)) {

@@ -36,8 +36,9 @@ EleMETAnalyzer::~EleMETAnalyzer()
 {
 }
 
-void EleMETAnalyzer::defineHistos(TFileDirectory & dir)
+void EleMETAnalyzer::defineHistos(const TFileDirectory & dir)
 {
+  AnalyzerBase::defineHistos(dir);
   for(int i = 0; i != Num_elmet_cuts; ++i)
     {
       hPT[i] = hETA[i] = hPHI[i] = /*hMJDPHI[i] =*/ hTM[i] = 0;
@@ -51,7 +52,7 @@ void EleMETAnalyzer::defineHistos(TFileDirectory & dir)
   defineHistos_TMass(dir);
 }
 
-// Get the hardest muon (based on HEEP Et) in event
+// get the hardest muon (based on HEEP Et) in event
 // (returns index in pat::ElectronCollection)
 int EleMETAnalyzer::getTheHardestElectron()
 {
@@ -273,7 +274,7 @@ void EleMETAnalyzer::endAnalysis(ofstream & out)
 }
 
 
-void EleMETAnalyzer::defineHistos_ElectronEt(TFileDirectory & dir)
+void EleMETAnalyzer::defineHistos_ElectronEt(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_elmet_cuts; ++cut)
     {
@@ -285,7 +286,7 @@ void EleMETAnalyzer::defineHistos_ElectronEt(TFileDirectory & dir)
     }
 }
 
-void EleMETAnalyzer::defineTrees(TFileDirectory & dir)
+void EleMETAnalyzer::defineTrees(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_elmet_cuts; ++cut)
     {
@@ -295,7 +296,7 @@ void EleMETAnalyzer::defineTrees(TFileDirectory & dir)
     }
 }
 
-void EleMETAnalyzer::defineHistos_ElectronEta(TFileDirectory & dir)
+void EleMETAnalyzer::defineHistos_ElectronEta(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_elmet_cuts; ++cut)
     {
@@ -307,7 +308,7 @@ void EleMETAnalyzer::defineHistos_ElectronEta(TFileDirectory & dir)
 
 }
 
-void EleMETAnalyzer::defineHistos_ElectronPhi(TFileDirectory & dir)
+void EleMETAnalyzer::defineHistos_ElectronPhi(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_elmet_cuts; ++cut)
     {
@@ -319,7 +320,7 @@ void EleMETAnalyzer::defineHistos_ElectronPhi(TFileDirectory & dir)
 
 }
 
-void EleMETAnalyzer::defineHistos_TMass(TFileDirectory & dir)
+void EleMETAnalyzer::defineHistos_TMass(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_elmet_cuts; ++cut)
     {
@@ -501,7 +502,7 @@ bool EleMETAnalyzer::kinematicCuts(bool * goodQual, const heep::Ele &,
 				  edm::EventBase const & event)
 {
   float ratio = el4D.Et()/met.et();
-  float delta_phi = Wcand.CalcDPhi();
+  float delta_phi = Wcand.calcDPhi();
   
   if(ratio < 0.4 || ratio > 1.5 || TMath::Abs(delta_phi) < 2.5)
     *goodQual = false;
@@ -509,3 +510,5 @@ bool EleMETAnalyzer::kinematicCuts(bool * goodQual, const heep::Ele &,
   return true;
 }
 
+void EleMETAnalyzer::fillHistos(const int& index, const float& weight){
+}

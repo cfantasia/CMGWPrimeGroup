@@ -5,10 +5,8 @@ using namespace std;
 HadronicVWAnalyzer::HadronicVWAnalyzer(){}
 HadronicVWAnalyzer::HadronicVWAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil) :
   AnalyzerBase(cfg, wprimeUtil){
-  FillCutFns();
+  setupCutOrder();
   if(debugme) printf("Using %i cuts\n",NCuts_);
-
-  vertexLabel_ = cfg.getParameter<edm::InputTag>("vertexTag");
 
   effectiveElecArea_ = cfg.getParameter<vector<double> >("effectiveElecArea");
   effectiveMuonArea_ = cfg.getParameter<vector<double> >("effectiveMuonArea");
@@ -21,24 +19,23 @@ HadronicVWAnalyzer::HadronicVWAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil
 }
 
 HadronicVWAnalyzer::~HadronicVWAnalyzer(){
-  outCandEvt_.close();
 }
 
-void HadronicVWAnalyzer::FillCutFns(){
-  mFnPtrs_["NoCuts"] = &HadronicVWAnalyzer::PassNoCut;
-  mFnPtrs_["HLT"] = &HadronicVWAnalyzer::PassTriggersCut;
-  mFnPtrs_["MinNLeptons"] = &HadronicVWAnalyzer::PassMinNLeptonsCut;
-  mFnPtrs_["MaxNLeptons"] = &HadronicVWAnalyzer::PassMaxNLeptonsCut;
-  mFnPtrs_["MinNJets"] = &HadronicVWAnalyzer::PassMinNJetsCut;
-  mFnPtrs_["ValidW"] = &HadronicVWAnalyzer::PassValidWCut;
-  mFnPtrs_["ValidV"] = &HadronicVWAnalyzer::PassValidVCut;
-  mFnPtrs_["ValidVWCand"] = &HadronicVWAnalyzer::PassValidVWCut;
-  mFnPtrs_["VMass"] = &HadronicVWAnalyzer::PassVMassCut;
-  mFnPtrs_["WTransMass"] = &HadronicVWAnalyzer::PassWtransMassCut;
-  mFnPtrs_["MET"] = &HadronicVWAnalyzer::PassMinMETCut;
-  mFnPtrs_["Vpt"] = &HadronicVWAnalyzer::PassVptCut;
-  mFnPtrs_["Wpt"] = &HadronicVWAnalyzer::PassWptCut;
-  mFnPtrs_["AllCuts"] = &HadronicVWAnalyzer::PassNoCut;
+void HadronicVWAnalyzer::setupCutOrder(){
+  mFnPtrs_["NoCuts"] = &HadronicVWAnalyzer::passNoCut;
+  mFnPtrs_["HLT"] = &HadronicVWAnalyzer::passTriggersCut;
+  mFnPtrs_["MinNLeptons"] = &HadronicVWAnalyzer::passMinNLeptonsCut;
+  mFnPtrs_["MaxNLeptons"] = &HadronicVWAnalyzer::passMaxNLeptonsCut;
+  mFnPtrs_["MinNJets"] = &HadronicVWAnalyzer::passMinNJetsCut;
+  mFnPtrs_["ValidW"] = &HadronicVWAnalyzer::passValidWCut;
+  mFnPtrs_["ValidV"] = &HadronicVWAnalyzer::passValidVCut;
+  mFnPtrs_["ValidVWCand"] = &HadronicVWAnalyzer::passValidVWCut;
+  mFnPtrs_["VMass"] = &HadronicVWAnalyzer::passVMassCut;
+  mFnPtrs_["WTransMass"] = &HadronicVWAnalyzer::passWtransMassCut;
+  mFnPtrs_["MET"] = &HadronicVWAnalyzer::passMinMETCut;
+  mFnPtrs_["Vpt"] = &HadronicVWAnalyzer::passVptCut;
+  mFnPtrs_["Wpt"] = &HadronicVWAnalyzer::passWptCut;
+  mFnPtrs_["AllCuts"] = &HadronicVWAnalyzer::passNoCut;
 
   CutFns_.resize(NCuts_);
   for(int i=0; i<NCuts_; ++i){
@@ -52,152 +49,152 @@ void HadronicVWAnalyzer::FillCutFns(){
 }
 
 //--------------------------------------------------------------
-void HadronicVWAnalyzer::Declare_Histos(const TFileDirectory & dir)
-{
+void HadronicVWAnalyzer::defineHistos(const TFileDirectory & dir){
   if(debugme) printf("Declare histos\n");
+  AnalyzerBase::defineHistos(dir);
 
-  DeclareHistoSet("hVWMass", "Reconstructed VW Invariant Mass",
+  defineHistoset("hVWMass", "Reconstructed VW Invariant Mass",
                   "M_{VW} (GeV)", 1200, 0, 1200, "GeV", hVWMass,dir);
-  DeclareHistoSet("hVW3e0muMass", "Reconstructed VW(3e0#mu) Invariant Mass",
+  defineHistoset("hVW3e0muMass", "Reconstructed VW(3e0#mu) Invariant Mass",
                   "M_{VW}^{3e0#mu} (GeV)", 1200, 0, 1200, "GeV", hVW3e0muMass,dir);
-  DeclareHistoSet("hVW2e1muMass", "Reconstructed VW(2e1#mu) Invariant Mass",
+  defineHistoset("hVW2e1muMass", "Reconstructed VW(2e1#mu) Invariant Mass",
                   "M_{VW}^{2e1#mu} (GeV)", 1200, 0, 1200, "GeV", hVW2e1muMass,dir);
-  DeclareHistoSet("hVW1e2muMass", "Reconstructed VW(1e2#mu) Invariant Mass",
+  defineHistoset("hVW1e2muMass", "Reconstructed VW(1e2#mu) Invariant Mass",
                   "M_{VW}^{1e2#mu} (GeV)", 1200, 0, 1200, "GeV", hVW1e2muMass,dir);
-  DeclareHistoSet("hVW0e3muMass", "Reconstructed VW(0e3#mu) Invariant Mass",
+  defineHistoset("hVW0e3muMass", "Reconstructed VW(0e3#mu) Invariant Mass",
                   "M_{VW}^{0e3#mu} (GeV)", 1200, 0, 1200, "GeV", hVW0e3muMass,dir);
 
 //Q=M_{VW} - M_W - M_V
-  DeclareHistoSet("hQ", "Q=M_{VW} - M_{W} - M_{V}",
+  defineHistoset("hQ", "Q=M_{VW} - M_{W} - M_{V}",
                   "Q (GeV)", 50, 0, 500, "GeV", hQ,dir);
-  DeclareHistoSet("hVWTransMass", "Reconstructed VW Transverse Mass",
+  defineHistoset("hVWTransMass", "Reconstructed VW Transverse Mass",
                   "M_{VW}^{T} (GeV)", 100, 0, 1000, "GeV", hVWTransMass,dir);
 //VWpt Histos
-  DeclareHistoSet("hVWpt", "Reconstructed VW Transverse Momentum",
+  defineHistoset("hVWpt", "Reconstructed VW Transverse Momentum",
                   "p_{VW}^{T} (GeV)", 50, 0, 500, "GeV", hVWpt,dir);
 
-  DeclareHistoSet("hEvtType", "Event Type",
+  defineHistoset("hEvtType", "Event Type",
                   "N_{#mu}", 4, 0, 4, "NONE", hEvtType,dir);
-  DeclareHistoSet("hEvtTypeP", "Event Type for Q=+1",
+  defineHistoset("hEvtTypeP", "Event Type for Q=+1",
                   "N_{#mu},W^{+}", 4, 0, 4, "NONE", hEvtTypeP,dir);
-  DeclareHistoSet("hEvtTypeM", "Event Type for Q=-1",
+  defineHistoset("hEvtTypeM", "Event Type for Q=-1",
                   "N_{#mu},W^{-}", 4, 0, 4, "NONE", hEvtTypeM,dir);
 
 ///////////////////////////
 //V Mass Histos
-  DeclareHistoSet("hVMass" , "Reconstructed Mass of V",
+  defineHistoset("hVMass" , "Reconstructed Mass of V",
                   "M_{V} (GeV)", 30, 60, 120, "GeV", hVMass,dir);
-  DeclareHistoSet("hVeeMass","Reconstructed Mass of Vee",
+  defineHistoset("hVeeMass","Reconstructed Mass of Vee",
                   "M_{V}^{ee} (GeV)", 30, 60, 120, "GeV", hVeeMass,dir);
-  DeclareHistoSet("hVmmMass","Reconstructed Mass of V#mu#mu",
+  defineHistoset("hVmmMass","Reconstructed Mass of V#mu#mu",
                   "M_{V}^{#mu#mu} (GeV)", 30, 60, 120, "GeV", hVmmMass,dir);
-  DeclareHistoSet("hV3e0muMass" , "Reconstructed Mass of V(3e0#mu)",
+  defineHistoset("hV3e0muMass" , "Reconstructed Mass of V(3e0#mu)",
                   "M_{V}^{3e0#mu} (GeV)", 30, 60, 120, "GeV", hV3e0muMass,dir);
-  DeclareHistoSet("hV2e1muMass" , "Reconstructed Mass of V(2e1#mu)",
+  defineHistoset("hV2e1muMass" , "Reconstructed Mass of V(2e1#mu)",
                   "M_{V}^{2e1#mu} (GeV)", 30, 60, 120, "GeV", hV2e1muMass,dir);
-  DeclareHistoSet("hV1e2muMass" , "Reconstructed Mass of V(1e2#mu)",
+  defineHistoset("hV1e2muMass" , "Reconstructed Mass of V(1e2#mu)",
                   "M_{V}^{1e2#mu} (GeV)", 30, 60, 120, "GeV", hV1e2muMass,dir);
-  DeclareHistoSet("hV0e3muMass" , "Reconstructed Mass of V(0e3#mu)",
+  defineHistoset("hV0e3muMass" , "Reconstructed Mass of V(0e3#mu)",
                   "M_{V}^{0e3#mu} (GeV)", 30, 60, 120, "GeV", hV0e3muMass,dir);
 
 //Vpt Histos
-  DeclareHistoSet("hVpt", "p_{T}^{V}", 
+  defineHistoset("hVpt", "p_{T}^{V}", 
                   "p_{T}^{V} (GeV)", 40, 0, 400, "GeV", hVpt,dir);
-  DeclareHistoSet("hVeept", "p_{T}^{V#rightarrowee}", 
+  defineHistoset("hVeept", "p_{T}^{V#rightarrowee}", 
                   "p_{T}^{V#rightarrowee} (GeV)", 40, 0, 400, "GeV", hVeept,dir);
-  DeclareHistoSet("hVmmpt", "p_{T}^{V#rightarrow#mu#mu}", 
+  defineHistoset("hVmmpt", "p_{T}^{V#rightarrow#mu#mu}", 
                   "p_{T}^{V#rightarrow#mu#mu} (GeV)", 40, 0, 400, "GeV", hVmmpt,dir);
 //MET Histos
-  DeclareHistoSet("hMET", "MET",
+  defineHistoset("hMET", "MET",
                   "#slash{E}_{T} (GeV)", 30, 0, 300, "GeV", hMET,dir);
-  DeclareHistoSet("hMETee", "MET",
+  defineHistoset("hMETee", "MET",
                   "#slash{E}_{T}^{ee} (GeV)", 30, 0, 300, "GeV", hMETee,dir);
-  DeclareHistoSet("hMETmm", "MET",
+  defineHistoset("hMETmm", "MET",
                   "#slash{E}_{T}^{#mu#mu} (GeV)", 30, 0, 300, "GeV", hMETmm,dir);
-  DeclareHistoSet("hMET3e0mu", "MET",
+  defineHistoset("hMET3e0mu", "MET",
                   "#slash{E}_{T}^{3e0#mu} (GeV)", 30, 0, 300, "GeV", hMET3e0mu,dir);
-  DeclareHistoSet("hMET2e1mu", "MET",
+  defineHistoset("hMET2e1mu", "MET",
                   "#slash{E}_{T}^{2e1#mu} (GeV)", 30, 0, 300, "GeV", hMET2e1mu,dir);
-  DeclareHistoSet("hMET1e2mu", "MET",
+  defineHistoset("hMET1e2mu", "MET",
                   "#slash{E}_{T}^{1e2#mu} (GeV)", 30, 0, 300, "GeV", hMET1e2mu,dir);
-  DeclareHistoSet("hMET0e3mu", "MET",
+  defineHistoset("hMET0e3mu", "MET",
                   "#slash{E}_{T}^{0e3#mu} (GeV)", 30, 0, 300, "GeV", hMET0e3mu,dir);
 
 //W Trans Mass Histos
-  DeclareHistoSet("hWTransMass", "Reconstructed Transverse Mass of W",
+  defineHistoset("hWTransMass", "Reconstructed Transverse Mass of W",
                   "M_{T} (GeV)", 20, 0, 100, "GeV", hWTransMass,dir);
-  DeclareHistoSet("hWenuTransMass", "Reconstructed Transverse Mass of We\\nu",
+  defineHistoset("hWenuTransMass", "Reconstructed Transverse Mass of We\\nu",
                   "M_{T}^{e#nu} (GeV)", 20, 0, 100, "GeV", hWenuTransMass,dir);
-  DeclareHistoSet("hWmnuTransMass", "Reconstructed TransverseMass of W#mu\\nu",
+  defineHistoset("hWmnuTransMass", "Reconstructed TransverseMass of W#mu\\nu",
                   "M_{T}^{#mu#nu} (GeV)", 20, 0, 100, "GeV", hWmnuTransMass,dir);
-  DeclareHistoSet("hW3e0muTransMass", "Reconstructed Transverse Mass of W(3e0#mu)",
+  defineHistoset("hW3e0muTransMass", "Reconstructed Transverse Mass of W(3e0#mu)",
                   "M_{T}^{3e0#mu} (GeV)", 20, 0, 100, "GeV", hW3e0muTransMass,dir);
-  DeclareHistoSet("hW2e1muTransMass", "Reconstructed Transverse Mass of W(2e1#mu)",
+  defineHistoset("hW2e1muTransMass", "Reconstructed Transverse Mass of W(2e1#mu)",
                   "M_{T}^{2e1#mu} (GeV)", 20, 0, 100, "GeV", hW2e1muTransMass,dir);
-  DeclareHistoSet("hW1e2muTransMass", "Reconstructed Transverse Mass of W(1e2#mu)",
+  defineHistoset("hW1e2muTransMass", "Reconstructed Transverse Mass of W(1e2#mu)",
                   "M_{T}^{1e2#mu} (GeV)", 20, 0, 100, "GeV", hW1e2muTransMass,dir);
-  DeclareHistoSet("hW0e3muTransMass", "Reconstructed Transverse Mass of W(0e3#mu)",
+  defineHistoset("hW0e3muTransMass", "Reconstructed Transverse Mass of W(0e3#mu)",
                   "M_{T}^{0e3#mu} (GeV)", 20, 0, 100, "GeV", hW0e3muTransMass,dir);
 
 //Wpt Histos
-  DeclareHistoSet("hWpt", "p_{T}^{W}", 
+  defineHistoset("hWpt", "p_{T}^{W}", 
                   "p_{T}^{W} (GeV)", 40, 0, 400, "GeV", hWpt,dir);
-  DeclareHistoSet("hWptVee", "p_{T}^{W,V#rightarrowee}", 
+  defineHistoset("hWptVee", "p_{T}^{W,V#rightarrowee}", 
                   "p_{T}^{W,V#rightarrowee} (GeV)", 40, 0, 400, "GeV", hWptVee,dir);
-  DeclareHistoSet("hWptVmm", "p_{T}^{W,V#rightarrow#mu#mu}", 
+  defineHistoset("hWptVmm", "p_{T}^{W,V#rightarrow#mu#mu}", 
                   "p_{T}^{W,V#rightarrow#mu#mu} (GeV)", 40, 0, 400, "GeV", hWptVmm,dir);
 
 //W Charge Histos
-  DeclareHistoSet("hWQ", "Reconstructed Charge of W",
+  defineHistoset("hWQ", "Reconstructed Charge of W",
                   "q_{W}", 3, -1, 1, "", hWQ,dir);
-  DeclareHistoSet("hWenuQ", "Reconstructed Charge of We\\nu",
+  defineHistoset("hWenuQ", "Reconstructed Charge of We\\nu",
                   "q_{W}^{e#nu}", 3, -1.5, 1.5, "", hWenuQ,dir);
-  DeclareHistoSet("hWmnuQ", "Reconstructed TransverseMass of W#mu\\nu",
+  defineHistoset("hWmnuQ", "Reconstructed TransverseMass of W#mu\\nu",
                   "q_{W}^{#mu#nu}", 3, -1.5, 1.5, "", hWmnuQ,dir);
-  DeclareHistoSet("hW3e0muQ", "Reconstructed Charge of W(3e0#mu)",
+  defineHistoset("hW3e0muQ", "Reconstructed Charge of W(3e0#mu)",
                   "q_{W}^{3e0#mu}", 3, -1.5, 1.5, "", hW3e0muQ,dir);
-  DeclareHistoSet("hW2e1muQ", "Reconstructed Charge of W(2e1#mu)",
+  defineHistoset("hW2e1muQ", "Reconstructed Charge of W(2e1#mu)",
                   "q_{W}^{2e1#mu}", 3, -1.5, 1.5, "", hW2e1muQ,dir);
-  DeclareHistoSet("hW1e2muQ", "Reconstructed Charge of W(1e2#mu)",
+  defineHistoset("hW1e2muQ", "Reconstructed Charge of W(1e2#mu)",
                   "q_{W}^{1e2#mu}", 3, -1.5, 1.5, "", hW1e2muQ,dir);
-  DeclareHistoSet("hW0e3muQ", "Reconstructed Charge of W(0e3#mu)",
+  defineHistoset("hW0e3muQ", "Reconstructed Charge of W(0e3#mu)",
                   "q_{W}^{0e3#mu}", 3, -1.5, 1.5, "", hW0e3muQ,dir);
 
-  DeclareHistoSet("hNLElec", "Number of Loose Electrons in Event",
+  defineHistoset("hNLElec", "Number of Loose Electrons in Event",
                   "N_{e}^{Loose}", 10, 0, 10, "NONE", hNLElec,dir);
-  DeclareHistoSet("hNLMuon", "Number of Loose Muons in Event",
+  defineHistoset("hNLMuon", "Number of Loose Muons in Event",
                   "N_{#mu}^{Loose}", 10, 0, 10, "NONE", hNLMuon,dir);
-  DeclareHistoSet("hNLLeps", "Number of Loose Leptons in Event",
+  defineHistoset("hNLLeps", "Number of Loose Leptons in Event",
                   "N_{l}^{Loose}", 10, 0, 10, "NONE", hNLLeps,dir);
-  DeclareHistoSet("hNLLepsVee", "Number of Loose Leptons in Event, V#rightarrowee",
+  defineHistoset("hNLLepsVee", "Number of Loose Leptons in Event, V#rightarrowee",
                   "N_{l}^{Loose,V#rightarrowee}", 10, 0, 10, "NONE", hNLLepsVee,dir);
-  DeclareHistoSet("hNLLepsVmm", "Number of Loose Leptons in Event",
+  defineHistoset("hNLLepsVmm", "Number of Loose Leptons in Event",
                   "N_{l}^{Loose,V#rightarrow#mu#mu}", 10, 0, 10, "NONE", hNLLepsVmm,dir);
 
-  DeclareHistoSet("hNTElec", "Number of Tight Electrons in Event",
+  defineHistoset("hNTElec", "Number of Tight Electrons in Event",
                   "N_{e}", 10, 0, 10, "NONE", hNTElec,dir);
-  DeclareHistoSet("hNTMuon", "Number of Tight Muons in Event",
+  defineHistoset("hNTMuon", "Number of Tight Muons in Event",
                   "N_{#mu}", 10, 0, 10, "NONE", hNTMuon,dir);
-  DeclareHistoSet("hNTLeps", "Number of Tight Leptons in Event",
+  defineHistoset("hNTLeps", "Number of Tight Leptons in Event",
                   "N_{l}", 10, 0, 10, "NONE", hNTLeps,dir);
 
-  DeclareHistoSet("hNJets", "Number of Jets in Event",
+  defineHistoset("hNJets", "Number of Jets in Event",
                   "N_{Jets}", 10, 0, 10, "NONE", hNJets,dir);
-  DeclareHistoSet("hNJetsVee", "Number of Jets in Event, V#rightarrowee",
+  defineHistoset("hNJetsVee", "Number of Jets in Event, V#rightarrowee",
                   "N_{Jets}^{V#rightarrowee}", 10, 0, 10, "NONE", hNJetsVee,dir);
-  DeclareHistoSet("hNJetsVmm", "Number of Jets in Event, V#rightarrow#mu#mu",
+  defineHistoset("hNJetsVmm", "Number of Jets in Event, V#rightarrow#mu#mu",
                   "N_{Jets}^{V#rightarrow#mu#mu}", 10, 0, 10, "NONE", hNJetsVmm,dir);
 
-  DeclareHistoSet("hNVtxs", "Number of Vertexs in Event",
+  defineHistoset("hNVtxs", "Number of Vertexs in Event",
                   "N_{Vtx}", 50, 0, 50, "NONE", hNVtxs,dir);
-  DeclareHistoSet("hNVtxsVee", "Number of Vertexs in Event, V#rightarrowee",
+  defineHistoset("hNVtxsVee", "Number of Vertexs in Event, V#rightarrowee",
                   "N_{Vtx}^{V#rightarrowee}", 50, 0, 50, "NONE", hNVtxsVee,dir);
-  DeclareHistoSet("hNVtxsVmm", "Number of Vertexs in Event, V#rightarrow#mu#mu",
+  defineHistoset("hNVtxsVmm", "Number of Vertexs in Event, V#rightarrow#mu#mu",
                   "N_{Vtx}^{V#rightarrow#mu#mu}", 50, 0, 50, "NONE", hNVtxsVmm,dir);
 
-  DeclareHistoSet("hWenuCombRelIso", "Comb Rel Iso of W Electron",
+  defineHistoset("hWenuCombRelIso", "Comb Rel Iso of W Electron",
                   "Electron Combined Relative Isolation", 20, 0, 0.2, "NONE", hWenuCombRelIso,dir);
-  DeclareHistoSet("hWmnuCombRelIso", "Comb Rel Iso of W Muon",
+  defineHistoset("hWmnuCombRelIso", "Comb Rel Iso of W Muon",
                   "Muon Combined Relative Isolation", 20, 0, 0.2, "NONE", hWmnuCombRelIso,dir);
   
 
@@ -208,20 +205,11 @@ void HadronicVWAnalyzer::Declare_Histos(const TFileDirectory & dir)
   tVWCand->Branch("Wpt", &Wpt_);
   tVWCand->Branch("weight", &weight_);
 
-///Eff Plots///////
-  string title = Form("Expected # of Events / %.0f pb^{-1}",  wprimeUtil_->getLumi_ipb());
-  title = title + ";;" + title;
-  hNumEvts = NULL; hNumEvts = dir.make<TH1F>("hNumEvts",title.c_str(),NCuts_,0,NCuts_);
-  for(int i=0; i<NCuts_; ++i) hNumEvts->GetXaxis()->SetBinLabel(i+1,Cuts_[i].c_str());
+}//defineHistos
 
-}//Declare_Histos
-
-//Fill Histograms
-//-----------------------------------------------------------
-void HadronicVWAnalyzer::Fill_Histos(const int& index, const float& weight)
-{
-//-----------------------------------------------------------
-  if(debugme) printf("Filling Histos\n");
+//fill Histograms
+void HadronicVWAnalyzer::fillHistos(const int& index, const float& weight){
+  if(debugme) printf("filling Histos\n");
   if(wCand_ && vCand_){
     hVWMass[index]->Fill(vwCand_.mass("minPz"), weight);
     if     (evtType_ == 0) hVW3e0muMass[index]->Fill(vwCand_.mass("minPz"), weight);
@@ -280,7 +268,7 @@ void HadronicVWAnalyzer::Fill_Histos(const int& index, const float& weight)
       hWenuTransMass[index]->Fill(wCand_.mt(), weight);
       hWenuQ[index]->Fill(wCand_.charge(), weight);
       const heep::Ele& e = *wCand_.elec();
-      hWenuCombRelIso[index]->Fill(CalcCombRelIso(e.patEle(), ElecPU(e)), weight);
+      hWenuCombRelIso[index]->Fill(calcCombRelIso(e.patEle(), ElecPU(e)), weight);
     }else if (wCand_.flavor() == PDGMUON){
       hWmnuTransMass[index]->Fill(wCand_.mt(), weight);
       hWmnuQ[index]->Fill(wCand_.charge(), weight);
@@ -310,76 +298,73 @@ void HadronicVWAnalyzer::Fill_Histos(const int& index, const float& weight)
   hNJets[index]->Fill(looseJets_.size(), weight);
   hNVtxs[index]->Fill(vertices_.size(), weight);
 
-}//Fill_Histos
+}//fillHistos
 
 inline void
-HadronicVWAnalyzer::CalcVVariables(){
-  if (debugme) cout<<"In Calc V Variables\n";
+HadronicVWAnalyzer::calcVVariables(){
+  if (debugme) cout<<"In calc V Variables\n";
   vCand_ = getWCand(looseJets_);
   Vpt_ = vCand_.pt();
   if(debugme) printf("    Contains: %i tight V candidate(s)\n", (bool)vCand_);
   if(debugme){
-    PrintEventLeptons(); 
-    PrintEventDetails();
+    printEventLeptons(); 
+    printEventDetails();
   }
 }
 
 inline void
-HadronicVWAnalyzer::CalcWVariables(){
-  if (debugme) cout<<"In Calc W Variables\n";
+HadronicVWAnalyzer::calcWVariables(){
+  if (debugme) cout<<"In calc W Variables\n";
   wCand_ = getWCand(tightElectrons_, tightMuons_, met_);
   Wpt_ = wCand_.pt();
   if(debugme) printf("    Contains: %i tight W candidate(s)\n", (bool)wCand_);
   if(debugme){
-    PrintEventLeptons(); 
-    PrintEventDetails();
+    printEventLeptons(); 
+    printEventDetails();
   }
 }
 
 inline void
-HadronicVWAnalyzer::CalcWElecVariables(){
-  if (debugme) cout<<"In Calc W Elec Variables\n";
+HadronicVWAnalyzer::calcWElecVariables(){
+  if (debugme) cout<<"In calc W Elec Variables\n";
   wCand_ = getWCand(tightElectrons_, met_);
   if(debugme) printf("    Contains: %i tight W candidate(s)\n", (bool)wCand_);
 }
 
 inline void
-HadronicVWAnalyzer::CalcWMuonVariables(){
-  if (debugme) cout<<"In Calc W Muon Variables\n";
+HadronicVWAnalyzer::calcWMuonVariables(){
+  if (debugme) cout<<"In calc W Muon Variables\n";
   wCand_ = getWCand(tightMuons_, met_);
   if(debugme) printf("    Contains: %i tight W candidate(s)\n", (bool)wCand_);
 }
 
 inline void
-HadronicVWAnalyzer::CalcVWVariables(){
-  if (debugme) cout<<"In Calc VW Variables\n";
-  vwCand_ = (vCand_ && wCand_) ? DiBosonWLeptonic(vCand_, wCand_) : DiBosonWLeptonic();
+HadronicVWAnalyzer::calcVWVariables(){
+  if (debugme) cout<<"In calc VW Variables\n";
+  vwCand_ = (vCand_ && wCand_) ? XWLeptonic(vCand_, wCand_) : XWLeptonic();
   VWMass_ = vwCand_.mass("minPz");
-  Q_ = (vCand_ && wCand_) ? Calc_Q() : -999.;
-  if(debugme) PrintEventDetails();
+  Q_ = (vCand_ && wCand_) ? calcQ() : -999.;
+  if(debugme) printEventDetails();
 }
 
 void
-HadronicVWAnalyzer::CalcEventVariables(){
-  if (debugme) cout<<"In Calc Event Variables\n";
-  evtType_ = (vCand_ && wCand_) ? Calc_EvtType() : -999;
+HadronicVWAnalyzer::calcEventVariables(){
+  if (debugme) cout<<"In calc Event Variables\n";
+  evtType_ = (vCand_ && wCand_) ? calcEvtType() : -999;
   if(debugme) printf("evt Type: %i, V Flav: %i, W Flav: %i\n", evtType_, (int)vCand_.flavor(), (int)wCand_.flavor());
 }
 
 void 
 HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
-  ClearEvtVariables();
-  if(debugme) WPrimeUtil::PrintEvent(event);
+  clearEvtVariables();
+  if(debugme) WPrimeUtil::printEvent(event);
 
   // Preselection - skip events that don't look promising
   if (doPreselect_){
     if(debugme) cout<<"Testing Preselection...\n";
   }
-//  // Get information about flavorHistory
-//  const uint flavorType = getProduct<uint>(event, "flavorHistoryFilter", 0);
-//  if(debugme) printf("    FlavorType: %i", flavorType);
 
-  //Get Jets
+  //get Jets
   event.getByLabel(jetsLabel_,patJetsH_);
   if(debugme) printf("    Contains: %i pat jets(s)\n",
                      (int)patJetsH_->size());
@@ -391,7 +376,7 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
   if(looseJets_.size() == 0) return;
 
 
-  // Get leptons
+  // get leptons
   ////////Cory:Not using electrons yet
   //event.getByLabel(electronsLabel_,patElectronsH_);
   event.getByLabel(muonsLabel_,patMuonsH_);
@@ -435,7 +420,7 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
   if(looseElectrons_.size() + looseMuons_.size() == 0) return;
 
   if(debugme){
-    PrintLeptons();
+    printLeptons();
     printf("    Contains: %i loose electron(s), %i loose muon(s), %i loose jet(s)\n",
            (int)looseElectrons_.size(), (int)looseMuons_.size(), (int)looseJets_.size());
     printf("    Contains: %i tight electron(s), %i tightmuon(s)\n",
@@ -448,10 +433,10 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
   ///////////////////
 
 
-  //Get Trigger 
+  //get Trigger 
   triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
 
-  //Get Vertex
+  //get Vertex
   vertices_ = getProduct<vector<reco::Vertex> >(event,vertexLabel_);
 
   if(!wprimeUtil_->runningOnData()){//Don't do this for data
@@ -474,29 +459,29 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
 
   if(wprimeUtil_->DebugEvent(event)){
     cout<<"This is a debug event\n";
-    PrintPassingEvent(event);
-    PrintDebugEvent();
+    printPassingEvent(event);
+    printDebugEvent();
   }
 
   weight_ = wprimeUtil_->getWeight();
-  if(!PassCuts(weight_)) return;
+  if(!passCuts(weight_)) return;
   if(wprimeUtil_->runningOnData()){
     cout<<" The following data events passed All Cuts!!!\n";
-    PrintPassingEvent(event);
-    if(debugme) PrintEventLeptons();
+    printPassingEvent(event);
+    if(debugme) printEventLeptons();
     cout<<" ------------------\n";
   }
-  if(debugme) PrintEventLeptons();
+  if(debugme) printEventLeptons();
 }
 
-void HadronicVWAnalyzer::PrintDebugEvent() const{
-  WPrimeUtil::PrintPassingTriggers(triggerEvent_,triggersToUse_);
-  PrintEventDetails();
-  PrintEventLeptons();
-  PrintLeptons();
+void HadronicVWAnalyzer::printDebugEvent() const{
+  WPrimeUtil::printPassingTriggers(triggerEvent_,triggersToUse_);
+  printEventDetails();
+  printEventLeptons();
+  printLeptons();
 }
 
-void HadronicVWAnalyzer::PrintEventDetails() const{
+void HadronicVWAnalyzer::printEventDetails() const{
   if(vCand_){
     cout<<" V Flavor: "<<vCand_.flavor()
         <<" V Mass: "<<vCand_.mass()
@@ -523,25 +508,25 @@ void HadronicVWAnalyzer::PrintEventDetails() const{
 }
 
 void
-HadronicVWAnalyzer::PrintEventLeptons() const{
+HadronicVWAnalyzer::printEventLeptons() const{
   if     (vCand_.flavor() == PDGELEC){
-//    PrintElectron(*vCand_.elec1(), PDGZ);
-//    PrintElectron(*vCand_.elec2(), PDGZ);
-    PrintElectron(WPrimeUtil::Find(*vCand_.daughter(0), allElectrons_));
-    PrintElectron(WPrimeUtil::Find(*vCand_.daughter(1), allElectrons_));
+//    printElectron(*vCand_.elec1(), PDGZ);
+//    printElectron(*vCand_.elec2(), PDGZ);
+    printElectron(WPrimeUtil::Find(*vCand_.daughter(0), allElectrons_));
+    printElectron(WPrimeUtil::Find(*vCand_.daughter(1), allElectrons_));
   }else if(vCand_.flavor() == PDGMUON){
-    PrintMuon(WPrimeUtil::Find(*vCand_.daughter(0), allMuons_));
-    PrintMuon(WPrimeUtil::Find(*vCand_.daughter(1), allMuons_));
-//    PrintMuon(*vCand_.muon1(), PDGZ);
-//    PrintMuon(*vCand_.muon2(), PDGZ);
+    printMuon(WPrimeUtil::Find(*vCand_.daughter(0), allMuons_));
+    printMuon(WPrimeUtil::Find(*vCand_.daughter(1), allMuons_));
+//    printMuon(*vCand_.muon1(), PDGZ);
+//    printMuon(*vCand_.muon2(), PDGZ);
   }
 
   if     (wCand_.flavor() == PDGELEC){   
-    PrintElectron(WPrimeUtil::Find(*wCand_.daughter(0), allElectrons_));
-//    PrintElectron(*wCand_.elec(), PDGW);
+    printElectron(WPrimeUtil::Find(*wCand_.daughter(0), allElectrons_));
+//    printElectron(*wCand_.elec(), PDGW);
   }else if(wCand_.flavor() == PDGMUON){
-    PrintMuon(WPrimeUtil::Find(*wCand_.daughter(0), allMuons_));
-//    PrintMuon    (*wCand_.muon(), PDGW);
+    printMuon(WPrimeUtil::Find(*wCand_.daughter(0), allMuons_));
+//    printMuon    (*wCand_.muon(), PDGW);
   }
 }
 
@@ -551,48 +536,48 @@ HadronicVWAnalyzer::PrintEventLeptons() const{
 
 /////////////////Cuts///////////////////////
 bool
-HadronicVWAnalyzer::PassCuts(const float& weight){
-  if (debugme) cout<<"In Pass Cuts\n";
+HadronicVWAnalyzer::passCuts(const float& weight){
+  if (debugme) cout<<"In pass Cuts\n";
   
   for(int i=0; i<NCuts_; ++i){
     if(Cuts_[i] == "ValidV"){
-      CalcVVariables();
+      calcVVariables();
     }else if(Cuts_[i] == "ValidW"){
-      CalcWVariables();
-      CalcEventVariables();
+      calcWVariables();
+      calcEventVariables();
     }else if(Cuts_[i] == "ValidVWCand"){
-      CalcVWVariables();
+      calcVWVariables();
     }
 
     if(!(this->*CutFns_[i])()) return false;
-    Tabulate_Me(i,weight); 
+    tabulateEvent(i,weight); 
   }
   return true;
 }
 
 //Trigger requirements
 //-----------------------------------------------------------
-bool HadronicVWAnalyzer::PassTriggersCut() const{
+bool HadronicVWAnalyzer::passTriggersCut() const{
   if(debugme) cout<<"Trigger requirements"<<endl;
   //Apply the trigger if running on data or MC 
   //If MC, apply if no V or if V exists, zCand == PDGMuon)
   if(wprimeUtil_->runningOnData() || !vCand_ || vCand_.flavor() == PDGMUON){
-    return WPrimeUtil::PassTriggersCut(triggerEvent_,triggersToUse_);
+    return WPrimeUtil::passTriggersCut(triggerEvent_,triggersToUse_);
   }else{
     return true;//Cory: This is not good, but will pass HLT in the meantime.
   }
   return false;
-}//--- PassTriggersCut()
+}//--- passTriggersCut()
 
 
-inline bool HadronicVWAnalyzer::PassValidVWCut() const{
+inline bool HadronicVWAnalyzer::passValidVWCut() const{
   return vwCand_ && vwCand_.mass("minPz")>0.;
 }
 
 ////////////////////////////////
 /////////Check Electron Properties/////
 ////////////////////////////////
-bool HadronicVWAnalyzer::PassTriggerEmulation(const heep::Ele& elec, const float minPt) const{
+bool HadronicVWAnalyzer::passTriggerEmulation(const heep::Ele& elec, const float minPt) const{
   if(!elec.patEle().ecalDrivenSeed()) return false;
   if(elec.patEle().pt() < minPt) return false;
   float e = elec.patEle().energy() * 
@@ -613,11 +598,11 @@ bool HadronicVWAnalyzer::PassTriggerEmulation(const heep::Ele& elec, const float
 
 ///////////////////////////////////
 
-inline float HadronicVWAnalyzer::Calc_Q() const{
+inline float HadronicVWAnalyzer::calcQ() const{
   return vwCand_.mass("minPz") - vCand_.mass() - WMASS;
 }
 
-inline int HadronicVWAnalyzer::Calc_EvtType() const{
+inline int HadronicVWAnalyzer::calcEvtType() const{
   return (vCand_ && wCand_) ?  2 * (vCand_.flavor() != 11) + (wCand_.flavor() != 11) : -999;
 }
 
@@ -629,10 +614,10 @@ inline bool HadronicVWAnalyzer::inEE(const TeVMuon& mu) const{
 //--------------------------------------------------------------
 
 inline void
-HadronicVWAnalyzer::ClearEvtVariables(){
-  AnalyzerBase::ClearEvtVariables();
+HadronicVWAnalyzer::clearEvtVariables(){
+  AnalyzerBase::clearEvtVariables();
   met_ = pat::MET();
-  vwCand_ = DiBosonWLeptonic();
+  vwCand_ = XWLeptonic();
   evtType_ = -999;
   VWMass_ = -999;
   Vpt_ = -999;

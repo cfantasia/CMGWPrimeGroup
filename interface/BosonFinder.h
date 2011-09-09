@@ -112,14 +112,14 @@ class WCandidate : public BosonCandidate {
     genLepton_ = lepton.patEle().genLepton();
     addDaughters(lepton.patEle(), met);
     leptonic_ = true;
-    mt_ = CalcMT();
+    mt_ = calcMT();
   }
   WCandidate(const TeVMuon & lepton, const reco::Candidate & met) :
     elec_(NULL), muon_(&lepton)  {
     genLepton_ = lepton.genLepton();
     addDaughters(lepton, met);
     leptonic_ = true;
-    mt_ = CalcMT();
+    mt_ = calcMT();
   }
   WCandidate(const pat::Jet & jet) :
     elec_(NULL), muon_(NULL){
@@ -139,34 +139,50 @@ class WCandidate : public BosonCandidate {
 
   int genMotherId() const {return findGenMotherId(genLepton_);}
   double mt() const { return mt_;}
-  double CalcDPhi(){return reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi());}
+  double calcDPhi(){return reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi());}
  private:
   const reco::Candidate * genLepton_;
-  double CalcMT(){return sqrt(2 * daughter(0)->et() * daughter(1)->et() * OneMinusCosine());}
-  double OneMinusCosine(){return 1 - cos(CalcDPhi());}
+  double calcMT(){return sqrt(2 * daughter(0)->et() * daughter(1)->et() * OneMinusCosine());}
+  double OneMinusCosine(){return 1 - cos(calcDPhi());}
   double mt_;
   const heep::Ele * elec_;
   const TeVMuon * muon_;
 };
 
-class DiBosonWLeptonic {
+class XWLeptonic {
 public:
-  DiBosonWLeptonic(){initialize_();}
+  XWLeptonic(){initialize_();}
   template<class T>
-  DiBosonWLeptonic(const T& V, const WCandidate & W) {
+  XWLeptonic(const T& X, const WCandidate & W) {
     initialize_();
-    if(!V || !W) return;
-    setTransMass(V.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
-    setPt(V.p4(), W.p4());
-    setMassSolns(V.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
+    if(!X || !W) return;
+    metp4_ = W.daughter(1)->p4();
+    setTransMass(X.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
+    setPt(X.p4(), W.p4());//ToDo: Should take 2D Vectors for clarity
+    setMassSolns(X.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
   }
 
+  template<class T>
+  XWLeptonic(const T& X, const XWLeptonic & XW) {
+    initialize_();
+    if(!X || !XW) return;
+    LorentzVector tmp = XW.p4() - XW.metp4();
+    setTransMass(X.p4(), tmp, XW.metp4());
+    setPt(X.p4(), XW.p4());
+    setMassSolns(X.p4(), tmp, XW.metp4());
+  }
+  
   double transMass() const {return transMass_;}
   double mt() const {return transMass_;}
   double pt() const {return pt_;}
+  LorentzVector metp4() const {return metp4_;}
 
-  double neutrinoPz(const std::string& type) const{
+  double neutrinoPz(const std::string& type="minPz") const{
     return neutrinoPz_[index_(type)];
+  }
+
+  LorentzVector p4(const std::string& type="minPz") const{
+    return p4_[index_(type)];
   }
 
   double mass(const std::string& type="minPz") const{
@@ -181,13 +197,17 @@ protected:
 
   double transMass_;
   double pt_;
+  LorentzVector metp4_;
   std::vector<double> neutrinoPz_;
+  std::vector<LorentzVector> p4_;
   std::vector<double> invariantMass_;
 
   void initialize_() {
     transMass_ = 0.;
     pt_ = 0;
+    metp4_ = LorentzVector();
     neutrinoPz_ = std::vector<double>(4, 0.);
+    p4_ = std::vector<LorentzVector>(4, LorentzVector());
     invariantMass_ = std::vector<double>(4, 0.);
   }
 
@@ -200,15 +220,15 @@ protected:
     return 9;
   }
 
-  void setTransMass(const LorentzVector & V, const LorentzVector & wLep, const LorentzVector & met){
-    LorentzVector VplusLep = V + wLep;
-    double term1 = sqrt(VplusLep.M2() + VplusLep.Perp2()) + met.pt();
-    double term2 = (VplusLep + met).pt();
+  void setTransMass(const LorentzVector & X, const LorentzVector & wLep, const LorentzVector & met){
+    LorentzVector XplusLep = X + wLep;
+    double term1 = sqrt(XplusLep.M2() + XplusLep.Perp2()) + met.pt();
+    double term2 = (XplusLep + met).pt();
     transMass_ = sqrt(pow(term1, 2) - pow(term2, 2));
   }
 
-  void setPt(const LorentzVector & A, const LorentzVector & B){
-    pt_ = (A+B).pt();
+  void setPt(const LorentzVector & X, const LorentzVector & W){
+    pt_ = (X+W).pt();
   }
 
   bool setNuSolns(const LorentzVector & wLep, const LorentzVector & met){
@@ -242,44 +262,27 @@ protected:
     return false;
   }
 
-  bool setMassSolns(const LorentzVector & V, const LorentzVector & wLep, const LorentzVector & met){
+  bool setP4Solns(const LorentzVector & X, const LorentzVector & wLep, const LorentzVector & met){
     if( !setNuSolns(wLep, met) ) return false;
     for (size_t i = 0; i < neutrinoPz_.size(); i++) {
       double        px = met.px();
       double        py = met.py();
       double        pz = neutrinoPz_[i];
       double        E  = sqrt(pow(px,2) + pow(py,2) + pow(pz,2));
-      LorentzVector p4 = LorentzVector(px, py, pz, E);
-      invariantMass_[i] = (V + wLep + p4).M();
+      LorentzVector neu(px, py, pz, E);
+      p4_[i] = X + wLep + neu; 
+    }
+    return true;
+  }
+
+  bool setMassSolns(const LorentzVector & X, const LorentzVector & wLep, const LorentzVector & met){
+    if( !setP4Solns(X, wLep, met) ) return false;
+    for (size_t i = 0; i < neutrinoPz_.size(); i++) {
+      invariantMass_[i] = p4_[i].M();
     }
     return true;
   }
   
-};
-
-class WVCandidate : public DiBosonWLeptonic {
-public:
-  WVCandidate(){initialize_();}
-  WVCandidate(const WCandidate & V, const WCandidate & W) {
-    initialize_();
-    if(!V || !W) return;
-    setTransMass(V.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
-    setPt(V.p4(), W.p4());
-    setMassSolns(V.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
-  }
-};
-
-
-class WZCandidate : public DiBosonWLeptonic {
- public:
-  WZCandidate(){initialize_();}
-  WZCandidate(const ZCandidate & Z, const WCandidate & W) {
-    initialize_();
-    if(!Z || !W) return;
-    setTransMass(Z.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
-    setPt(Z.p4(), W.p4());
-    setMassSolns(Z.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
-  }
 };
 
 class VZCandidate : public reco::CompositeCandidate{
@@ -300,7 +303,6 @@ private:
 
 typedef std::vector<ZCandidate > ZCandV;
 typedef std::vector<WCandidate > WCandV;
-typedef std::vector<WZCandidate> WZCandV;
 
 void removeWorstCands(ZCandV & zCands, const float & maxMassDiff);
 void removeWorstCands(ZCandV & zCands, const float& min, const float& max);
@@ -312,7 +314,7 @@ ZCandV ZCands(const std::vector<L> & leptons){
   ZCandV zCands;
   for (size_t i = 0; i < leptons.size(); i++)
     for (size_t j = i + 1; j < leptons.size(); j++)
-      if (leptons[i].charge() != leptons[j].charge())  // Get opposite-charge pairs of leptons
+      if (leptons[i].charge() != leptons[j].charge())  // get opposite-charge pairs of leptons
         zCands.push_back(ZCandidate(leptons[i], leptons[j]));
   return zCands;
 }

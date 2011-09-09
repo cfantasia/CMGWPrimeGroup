@@ -11,37 +11,37 @@ public:
   ~WZAnalyzer();
 
   //methods for stuff to be once per job
-  void FillCutFns();
+  void setupCutOrder();
 
   //methods for stuff to be done for each sample
-  void Declare_Histos(const TFileDirectory& dir);
+  void defineHistos(const TFileDirectory& dir);
 
   //methods for stuff to be done for each event
   void eventLoop(edm::EventBase const & event);
-  bool PassCuts(const float& weight=1.);
-  void ClearEvtVariables();
-  void Fill_Histos(const int& index, const float& weight=1.);
+  bool passCuts(const float& weight=1.);
+  void clearEvtVariables();
+  void fillHistos(const int& index, const float& weight=1.);
 
   //methods for printers
-  void PrintDebugEvent() const;
-  void PrintEventDetails() const;
-  void PrintEventLeptons() const;
+  void printDebugEvent() const;
+  void printEventDetails() const;
+  void printEventLeptons() const;
   
 //methods for utilities
-  int CountZCands(ZCandV & Zs) const;
-  void CalcZVariables();
-  void CalcWVariables();
-  void CalcWElecVariables();
-  void CalcWMuonVariables();
-  void CalcWZVariables();
-  void CalcEventVariables();
+  int countZCands(ZCandV & Zs) const;
+  void calcZVariables();
+  void calcWVariables();
+  void calcWElecVariables();
+  void calcWMuonVariables();
+  void calcWZVariables();
+  void calcEventVariables();
 
-  int   Calc_EvtType() const;
-  float CalcLeadPt(int type=0) const;
-  float Calc_Q() const;
-  float Calc_Ht() const;
-  float CalcTriLepMass() const;
-  float Calc_GenWZInvMass() const;
+  int   calcEvtType() const;
+  float calcLeadPt(int type=0) const;
+  float calcQ() const;
+  float calcHt() const;
+  float calcTriLepMass() const;
+  float calcGenWZInvMass() const;
   bool inEE(const TeVMuon& mu) const;
 
   float WLepPt() const;
@@ -53,34 +53,34 @@ public:
 //methods for modifiers
 
 //methods for the cuts
-  bool PassTriggersCut() const;
-  bool PassValidWElecCut() const;
-  bool PassValidWMuonCut() const;
-  bool PassLeadingLeptonPtCut() const;
-  bool PassNumberOfZsCut() const;
-  bool PassValidWZCut() const;
-  bool PassHtCut() const;
+  bool passTriggersCut() const;
+  bool passValidWElecCut() const;
+  bool passValidWMuonCut() const;
+  bool passLeadingLeptonPtCut() const;
+  bool passNumberOfZsCut() const;
+  bool passValidWZCut() const;
+  bool passHtCut() const;
 
-  bool PassZLepPtCut() const;
-  bool PassZLepTriggerMatchCut() const;
-  bool PassZeePtCut() const;
-  bool PassZmumuPtCut() const;
+  bool passZLepPtCut() const;
+  bool passZLepTriggerMatchCut() const;
+  bool passZeePtCut() const;
+  bool passZmumuPtCut() const;
 
-  bool PassWLepPtCut() const;
-  bool PassWLepIsoCut() const;
+  bool passWLepPtCut() const;
+  bool passWLepIsoCut() const;
 
-  bool PassWLepTightCut() const;
-  bool PassWFlavorElecCut() const;
-  bool PassWFlavorMuonCut() const;
-  bool PassFakeEvtCut() const;
-  bool PassFakeLeptonTagCut() const;
-  bool PassFakeLeptonProbeTightCut() const;
+  bool passWLepTightCut() const;
+  bool passWFlavorElecCut() const;
+  bool passWFlavorMuonCut() const;
+  bool passFakeEvtCut() const;
+  bool passFakeLeptonTagCut() const;
+  bool passFakeLeptonProbeTightCut() const;
 
-  bool PassTriggerMatch(const heep::Ele& e1, const heep::Ele& e2) const;
-  bool PassTriggerMatch(const TeVMuon& m1, const TeVMuon& m2) const;
-  bool PassTriggerMatch(const pat::Electron& p, const float cut, const vstring& triggers) const;
-  bool PassTriggerMatch(const TeVMuon& p, const float cut, const vstring& triggers) const;
-  bool PassTriggerEmulation(const heep::Ele& elec, const float minPt=0.) const;
+  bool passTriggerMatch(const heep::Ele& e1, const heep::Ele& e2) const;
+  bool passTriggerMatch(const TeVMuon& m1, const TeVMuon& m2) const;
+  bool passTriggerMatch(const pat::Electron& p, const float cut, const vstring& triggers) const;
+  bool passTriggerMatch(const TeVMuon& p, const float cut, const vstring& triggers) const;
+  bool passTriggerEmulation(const heep::Ele& elec, const float minPt=0.) const;
 
 //////////////////
 /////Variables////
@@ -94,7 +94,6 @@ public:
   float WZMass_;
   float Zpt_;
   float Wpt_;
-  float weight_;
   float Ht_;
   float TriLepMass_;
   float Q_;
@@ -130,11 +129,8 @@ public:
   METVH metH_;
   PFCandidateVH pfCandidatesH_;
 
-  edm::InputTag vertexLabel_;
-
 //////Chosen Candidates
-  DiBosonWLeptonic wzCand_;
-  std::vector<reco::Vertex>  vertices_;
+  XWLeptonic wzCand_;
 
 // +++++++++++++++++++ Histogram Definitions
   std::vector<TH1F*> hWZMass;
@@ -179,12 +175,10 @@ public:
 
   TTree* tWZCand;
 
-//Cuts 
+  //Cuts 
   typedef bool (WZAnalyzer::*CutFnPtr)() const; 
-#ifndef __CINT__
   std::map<std::string,CutFnPtr> mFnPtrs_;
   std::vector<CutFnPtr> CutFns_;
-#endif
 
 };
 

@@ -33,33 +33,31 @@ public:
 //methods for modifiers
 
   //methods for histograms 
-  void Declare_Histos(const TFileDirectory& dir);
-  void Fill_Histos(const int& index, const float& weight=1.);
-  void FillJetMultiplicityHists();
-  void FillLooseMuonHists();
-  void FillTightMuonHists();
-  void FillGoodZHistos();
-  void FillGoodHadVHistos();
-  void FillValidVZHistos();
-  void FillGoodVZHistos();
-  void FillJetMergingHistos();
+  void defineHistos(const TFileDirectory& dir);
+  void fillHistos(const int& index, const float& weight=1.);
+  void fillJetMultiplicityHists();
+  void fillLooseMuonHists();
+  void fillTightMuonHists();
+  void fillGoodZHistos();
+  void fillGoodHadVHistos();
+  void fillValidVZHistos();
+  void fillGoodVZHistos();
+  void fillJetMergingHistos();
 
 
   //clean stuff
-  void ClearEvtVariables();
+  void clearEvtVariables();
 
-  //Printers
-  void PrintEventDetails() const;
+  //printers
+  void printEventDetails() const;
 
   //methods for the cuts
-  bool PassValidVZCandCut();
+  bool passValidVZCandCut();
 
 
 
 // +++++++++++++++++++useful constants
 
-  float weight_;
-  
 // +++++++++++++++++++location of data files and samples info
 
 //////Chosen Vector Boson Candidates 
@@ -67,6 +65,12 @@ public:
 
 // +++++++++++++++++++ Histogram Definitions - loose
   TH1F* h_HadVZMass;
+  TH1F* h_Zelec1_pt;	
+  TH1F* h_Zelec1_eta;
+  TH1F* h_Zelec1_phi;
+  TH1F* h_Zelec2_pt;
+  TH1F* h_Zelec2_eta;
+  TH1F* h_Zelec2_phi;
   TH1F* h_Zmuon1_pt;	
   TH1F* h_Zmuon1_eta;
   TH1F* h_Zmuon1_phi;
@@ -81,6 +85,9 @@ public:
   TH1F* h_jet2_phi;
   TH1F* h_jet1_mass;
   TH1F* h_jet2_mass;
+  TH1F* h_deltaR_elec1elec2;
+  TH1F* h_deltaR_HadVelec1;
+  TH1F* h_deltaR_HadVelec2;
   TH1F* h_deltaR_muon1muon2;
   TH1F* h_deltaR_HadVmuon1;
   TH1F* h_deltaR_HadVmuon2;
@@ -100,6 +107,12 @@ public:
   TH1F* h_jet_HadV_pt;
   TH1F* h_jet_HadV_eta;
   TH1F* h_jet_HadV_phi;
+  TH1F* h_Zelec1_VZCut_pt;
+  TH1F* h_Zelec1_VZCut_eta;
+  TH1F* h_Zelec1_VZCut_phi;
+  TH1F* h_Zelec2_VZCut_pt;
+  TH1F* h_Zelec2_VZCut_eta;
+  TH1F* h_Zelec2_VZCut_phi;
   TH1F* h_Zmuon1_VZCut_pt;
   TH1F* h_Zmuon1_VZCut_eta;
   TH1F* h_Zmuon1_VZCut_phi;

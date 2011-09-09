@@ -60,7 +60,7 @@ void WPrimeUtil::setRecoilProjections()
 
   for(int bin_no = 1; bin_no <= N; ++bin_no)
     {
-      // Get projection in the W pt bin
+      // get projection in the W pt bin
       histRecoilParal[bin_no-1] = new TH1D(*(hRecoilParalvsVBPt->ProjectionY("_pbinWpt_paral", bin_no, bin_no)));
 
       if(histRecoilParal[bin_no-1]->Integral()==0) {
@@ -109,7 +109,7 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
   }
 }
 
-void WPrimeUtil::SetLumiWeights(const string & MCFile, const string & DataFile,
+void WPrimeUtil::setLumiWeights(const string & MCFile, const string & DataFile,
                                 const string & MCHist, const string & DataHist){
   LumiWeights_ = edm::LumiReWeighting(MCFile, DataFile, MCHist, DataHist);
 }
@@ -157,7 +157,7 @@ void WPrimeUtil::CheckStream(const ofstream& stream, const std::string & s){
   } 
 }
 
-// Calculate efficiencies
+// calculate efficiencies
 //------------------------------------------------------------------------
 void WPrimeUtil::getEff(float & eff, float & deff,float Num,float Denom)
 {
@@ -280,9 +280,9 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
 }
 
 //////////////////
-//Print Functions/
+//print Functions/
 //////////////////
-void WPrimeUtil::PrintEvent(const edm::EventBase & event){
+void WPrimeUtil::printEvent(const edm::EventBase & event){
   cout<<"run #: "<<event.id().run()
       <<" lumi: "<<event.id().luminosityBlock()
       <<" eventID: "<<event.id().event()<<endl;
@@ -291,40 +291,40 @@ void WPrimeUtil::PrintEvent(const edm::EventBase & event){
 //////////////////
 //Trigger Fns/////
 //////////////////
-bool WPrimeUtil::PassTriggersCut(const edm::EventBase & event, std::string label, const std::vector<std::string>& triggerNames){
+bool WPrimeUtil::passTriggersCut(const edm::EventBase & event, std::string label, const std::vector<std::string>& triggerNames){
   pat::TriggerEvent triggerEvent = getProduct<pat::TriggerEvent>(event, label);
-  return PassTriggersCut(triggerEvent,triggerNames);
+  return passTriggersCut(triggerEvent,triggerNames);
 }
 
-bool WPrimeUtil::PassTriggersCut(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames){
+bool WPrimeUtil::passTriggersCut(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames){
   const pat::TriggerPathRefVector acceptedPaths = triggerEvent.acceptedPaths();
   //cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
   for (size_t i = 0; i < acceptedPaths.size(); i++){
-    if(FoundAndPassed(triggerEvent, acceptedPaths[i], triggerNames)) return true;
+    if(FoundAndpassed(triggerEvent, acceptedPaths[i], triggerNames)) return true;
   }//acceptedPaths loop
   return false;
 }
 
 void
-WPrimeUtil::PrintPassingTriggers(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames){
+WPrimeUtil::printPassingTriggers(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames){
   const pat::TriggerPathRefVector acceptedPaths = triggerEvent.acceptedPaths();
 //  const pat::TriggerAlgorithmRefVector algoBits = triggerEvent.physAlgorithms();
 //  for (size_t i = 0; i < algoBits.size(); i++){
 //    cout<<" L1 algo: "<<algoBits[i]->name()<<" with prescale "<<algoBits[i]->prescale()<<endl;
 //  }
   for (size_t i = 0; i < acceptedPaths.size(); i++){
-    if(FoundAndPassed(triggerEvent, acceptedPaths[i], triggerNames))
-      cout<<"Passed path: "<<acceptedPaths[i]->name()<<endl;
+    if(FoundAndpassed(triggerEvent, acceptedPaths[i], triggerNames))
+      cout<<"passed path: "<<acceptedPaths[i]->name()<<endl;
   }
 }
 
 inline bool
-WPrimeUtil::FoundAndPassed(const pat::TriggerEvent & triggerEvent,const pat::TriggerPathRef path,const std::vector<std::string>& triggerNames){
-  return FindTrigger(path, triggerNames) && Passed(triggerEvent,path);
+WPrimeUtil::FoundAndpassed(const pat::TriggerEvent & triggerEvent,const pat::TriggerPathRef path,const std::vector<std::string>& triggerNames){
+  return FindTrigger(path, triggerNames) && passed(triggerEvent,path);
 }
 
 inline bool
-WPrimeUtil::Passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path){
+WPrimeUtil::passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path){
   return (path->wasAccept() && path->prescale() == 1 && (1 || MaxL1Prescale(triggerEvent,path)==1) );
 }
 
@@ -367,7 +367,7 @@ WPrimeUtil::FindTrigger(const pat::TriggerPathRef path, const std::vector<std::s
 ////////////////////
 /*
 bool 
-HadronicVWAnalyzer::PassTriggerMatch(const pat::Electron & p, const float cut, const vstring& triggers) const{
+HadronicVWAnalyzer::passTriggerMatch(const pat::Electron & p, const float cut, const vstring& triggers) const{
   for (size_t i=0; i < triggers.size(); ++i){
     if (p.triggerObjectMatchesByPath(triggers[i], true, false).size() > 0){
       const pat::TriggerObjectStandAlone * trigRef = p.triggerObjectMatchByPath(triggers[i], true, false);
@@ -378,7 +378,7 @@ HadronicVWAnalyzer::PassTriggerMatch(const pat::Electron & p, const float cut, c
 }
 
 bool 
-HadronicVWAnalyzer::PassTriggerMatch(const TeVMuon & p, const float cut, const vstring& triggers) const{
+HadronicVWAnalyzer::passTriggerMatch(const TeVMuon & p, const float cut, const vstring& triggers) const{
   for(uint i=0; i<p.triggerObjectMatches().size(); ++i){
     vector<string> names = p.triggerObjectMatches()[i].pathNames(true, false);
     for(uint j=0; j<names.size(); ++j){
@@ -444,15 +444,9 @@ TVector2 WPrimeUtil::getHadronicMET(const edm::EventBase & event)
     sinW*dataSampledMETParal + cosW*dataSampledMETPerp;
   
   hadronicMETcached.Set(dataSampledMEx, dataSampledMEy);
-  setHadronicMETCalculated(true);
+  setHadronicMETcalculated(true);
   return hadronicMETcached;    
 
-}
-
-// true if current file under processing contains "data" in name/description
-void WPrimeUtil::setRunningOnData()
-{
-  runningOnData_ = (getSampleName().find("data") != string::npos);
 }
 
 //Check if Run/Evt is in Debug list
@@ -611,43 +605,6 @@ void WPrimeUtil::getLeptonsMET(const PatElectronVH & patElectronsH, ElectronV & 
     AdjustMET(muons, *pfCandidatesH.product(), met);
   }
 }
-
-////////////////////////
-///Tabulating Functions
-////////////////////////
-
-//Writing results to a txt file
-//--------------------------------------------------------------------------
-void WPrimeUtil::tabulateSummary(wprime::EffV& results){
-  for(uint i = 0; i < results.size(); ++i){
-    //calculate efficiencies
-    int idx = std::max((int)i-1,0);
-    float num =   results[i].Nsurv_evt_cut_w;
-    float denom = results[idx].Nsurv_evt_cut_w;
-    WPrimeUtil::getEff(results[i].eff, results[i].deff, num, denom);
-    WPrimeUtil::getEff(results[i].eff_abs, results[i].deff_abs, num, results[0].Nsurv_evt_cut_w);
-  } // loop over different cuts
-}//tabulateSummary
-
-void WPrimeUtil::printSummary(const string& dir, const string& description, const vstring & Cuts, const wprime::EffV& results, ofstream& out){ 
-  out << setiosflags(std::ios::fixed) << std::setprecision(2);
-  out<<"$$$$$$$$$$$$$$$$$$$$$$$ Type of sample: "<<dir<<" ( "<<description<<" )"<<endl;
-//  out << " xsec*lumi expected events = " << Nthe_evt << endl;
-//  out << " # of evt passing preselection = " << Nexp_evt << " per "<<Form("%.0f", wprimeUtil_->getLumi_ipb())<<" inv pb"<<endl;
-  
-  for(uint i = 0; i < Cuts.size(); ++i){
-    out<<std::right<<"Cut " << std::setw(2) << i << "("
-       <<std::left<< std::setw(15) << Cuts[i]
-       <<std::right << "): " <<"Evts = " << std::setw(10) << results[i].Nsurv_evt_cut_w
-       <<" (" << std::right << std::setw(7) << results[i].Nsurv_evt_cut << ")";
-    
-    out << std::setw(9) <<"\tRel eff: "<<std::setw(6)<<results[i].eff*100
-        << " +/- " << std::setw(6)<<results[i].deff*100 << "%"
-        << std::setw(9) <<"\tAbs eff: "<<std::setw(6)<<results[i].eff_abs *100
-        << " +/- " << std::setw(6)<<results[i].deff_abs*100 << "%"
-        << endl;
-  } // loop over different cuts
-}//printSummary
 
 bool WPrimeUtil::Match(const heep::Ele & p1, const heep::Ele & p2){
   return Match(p1.patEle(), p2.patEle());

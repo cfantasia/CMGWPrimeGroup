@@ -64,8 +64,9 @@ WgammaAnalyzer::~WgammaAnalyzer()
 {
 }
 
-void WgammaAnalyzer::defineHistos(TFileDirectory & dir)
+void WgammaAnalyzer::defineHistos(const TFileDirectory & dir)
 {
+  AnalyzerBase::defineHistos(dir);
   for(int i = 0; i != Num_mumet_cuts; ++i)
       hPT[i] = hETA[i] = hPHI[i] = hMUMETDPHI[i] = hWTM[i] = 0;
  
@@ -86,7 +87,7 @@ void WgammaAnalyzer::defineHistos(TFileDirectory & dir)
 
 }
 
-// Get the hardest muon (based on tracker-pt) in event
+// get the hardest muon (based on tracker-pt) in event
 // (returns index in pat::MuonCollection)
 int WgammaAnalyzer::getTheHardestMuon()
 {
@@ -310,8 +311,6 @@ void WgammaAnalyzer::tabulatePho(int pho_cut_index, bool accountMe[],
   hMWG[pho_cut_index]->Fill(InvMass, weight);
 }
 
-
-
 // operations to be done when changing input file (e.g. create new histograms)
 void WgammaAnalyzer::beginFile(std::vector<wprime::InputFile>::const_iterator fi)
 {
@@ -328,7 +327,7 @@ void WgammaAnalyzer::beginFile(std::vector<wprime::InputFile>::const_iterator fi
 // operations to be done when closing input file 
 // (e.g. print summary)
 void WgammaAnalyzer::endFile(std::vector<wprime::InputFile>::const_iterator fi,
-			    ofstream & out)
+                             ofstream & out)
 {
   printFileSummary(fi, out);
 }
@@ -345,10 +344,10 @@ void WgammaAnalyzer::printFileSummary(std::vector<wprime::InputFile>::const_iter
   float eff, deff;
   out << "\n Sample: " << sample << endl;
   out << " Total # of produced events for " << wprimeUtil_->getLumi_ipb() 
-       << " ipb = " << fi->Nprod_evt*weight << endl;
+      << " ipb = " << fi->Nprod_evt*weight << endl;
   out << " Total # of events after pre-selection for " 
-       << wprimeUtil_->getLumi_ipb() << " ipb = " << fi->Nact_evt*weight 
-       << endl;
+      << wprimeUtil_->getLumi_ipb() << " ipb = " << fi->Nact_evt*weight 
+      << endl;
 
   WPrimeUtil::getEff(eff, deff, fi->Nact_evt, fi->Nprod_evt);
   out << " Preselection efficiency = " << eff << " +- " << deff << endl;
@@ -359,27 +358,27 @@ void WgammaAnalyzer::printFileSummary(std::vector<wprime::InputFile>::const_iter
       (it->second)[cut_index].Nsurv_evt_cut*weight;
     
     out << " Cut # " << cut_index << ": " << mumet_cuts_desc_long[cut_index] 
-	 <<", expected # of evts = " 
-	 << (it->second)[cut_index].Nsurv_evt_cut_w;
+        <<", expected # of evts = " 
+        << (it->second)[cut_index].Nsurv_evt_cut_w;
     
     //calculate efficiencies
     if(cut_index == 0)
       WPrimeUtil::getEff(eff, deff, (it->second)[cut_index].Nsurv_evt_cut,
-	     fi->Nact_evt);
+                         fi->Nact_evt);
     else
       WPrimeUtil::getEff(eff, deff, (it->second)[cut_index].Nsurv_evt_cut,
-	     (it->second)[cut_index-1].Nsurv_evt_cut);
+                         (it->second)[cut_index-1].Nsurv_evt_cut);
     out << ", Relative eff = "<<eff << " +- " << deff;
     WPrimeUtil::getEff(eff, deff, (it->second)[cut_index].Nsurv_evt_cut, 
-	   fi->Nprod_evt);
+                       fi->Nprod_evt);
     out << ", Absolute eff = "<< eff << " +- " << deff
-	 << endl;
+        << endl;
     
     (it->second)[cut_index].eff = eff;
     (it->second)[cut_index].deff = deff;
     
   } // loop over different cuts
-	
+
 }
 
 // e.g. print summmary of expected events for all samples
@@ -419,7 +418,7 @@ WgammaAnalyzer::MetStruct::MetStruct (pat::MET* p) : ParticleStruct() {
 }
 
 
-void WgammaAnalyzer::defineHistos_MuonPt(TFileDirectory & dir)
+void WgammaAnalyzer::defineHistos_MuonPt(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
@@ -433,7 +432,7 @@ void WgammaAnalyzer::defineHistos_MuonPt(TFileDirectory & dir)
     }
 }
 
-void WgammaAnalyzer::defineHistos_MuonEta(TFileDirectory & dir)
+void WgammaAnalyzer::defineHistos_MuonEta(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
@@ -447,7 +446,7 @@ void WgammaAnalyzer::defineHistos_MuonEta(TFileDirectory & dir)
 
 }
 
-void WgammaAnalyzer::defineHistos_MuonPhi(TFileDirectory & dir)
+void WgammaAnalyzer::defineHistos_MuonPhi(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
@@ -461,7 +460,7 @@ void WgammaAnalyzer::defineHistos_MuonPhi(TFileDirectory & dir)
 
 }
 
-void WgammaAnalyzer::defineHistos_MuonMETDPhi(TFileDirectory & dir)
+void WgammaAnalyzer::defineHistos_MuonMETDPhi(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
@@ -475,7 +474,7 @@ void WgammaAnalyzer::defineHistos_MuonMETDPhi(TFileDirectory & dir)
 
 }
 
-void WgammaAnalyzer::defineHistos_MuonIso(TFileDirectory & dir)
+void WgammaAnalyzer::defineHistos_MuonIso(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
@@ -489,7 +488,7 @@ void WgammaAnalyzer::defineHistos_MuonIso(TFileDirectory & dir)
 
 }
 
-void WgammaAnalyzer::defineHistos_WTMass(TFileDirectory & dir)
+void WgammaAnalyzer::defineHistos_WTMass(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
@@ -502,7 +501,7 @@ void WgammaAnalyzer::defineHistos_WTMass(TFileDirectory & dir)
     } 
 }
 
-void WgammaAnalyzer::defineHistos_PhotonPt(TFileDirectory & dir)
+void WgammaAnalyzer::defineHistos_PhotonPt(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_photon_cuts; ++cut)
     {
@@ -513,7 +512,7 @@ void WgammaAnalyzer::defineHistos_PhotonPt(TFileDirectory & dir)
     } 
 }
 
-void WgammaAnalyzer::defineHistos_PhotonEta(TFileDirectory & dir)
+void WgammaAnalyzer::defineHistos_PhotonEta(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_photon_cuts; ++cut)
     {
@@ -524,7 +523,7 @@ void WgammaAnalyzer::defineHistos_PhotonEta(TFileDirectory & dir)
     } 
 }
 
-void WgammaAnalyzer::defineHistos_PhotonPhi(TFileDirectory & dir)
+void WgammaAnalyzer::defineHistos_PhotonPhi(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_photon_cuts; ++cut)
     {
@@ -535,7 +534,7 @@ void WgammaAnalyzer::defineHistos_PhotonPhi(TFileDirectory & dir)
     } 
 }
 
-void WgammaAnalyzer::defineHistos_MWgamma(TFileDirectory & dir)
+void WgammaAnalyzer::defineHistos_MWgamma(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_photon_cuts; ++cut)
     {
@@ -846,10 +845,14 @@ bool WgammaAnalyzer::kinematicCuts(bool * goodQual, int theMu,
 {
   TeVMuon muon((*muons)[theMu], muReconstructor_);
   float ratio = muon.pt()/met.et();
-  float delta_phi = Wcand.CalcDPhi();
+  float delta_phi = Wcand.calcDPhi();
 
   if(ratio < 0.4 || ratio > 1.5 || TMath::Abs(delta_phi) < 2.5)
     *goodQual = false;
 
   return true;
 }
+
+void WgammaAnalyzer::fillHistos(const int& index, const float& weight){
+}
+

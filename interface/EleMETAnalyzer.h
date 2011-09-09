@@ -4,6 +4,8 @@
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
 
+#include "UserCode/CMGWPrimeGroup/interface/AnalyzerBase.h"
+
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/elmet_histo_constants.h"
 
@@ -36,7 +38,7 @@ typedef bool (EleMETAnalyzer::*funcPtrEl)(bool *, const heep::Ele &, edm::EventB
 // key: cuts_desc_short[i], value: function pointer corresponding to selection cut
 typedef std::map<std::string, funcPtrEl> selection_map_elmet;
 
-class EleMETAnalyzer
+class EleMETAnalyzer : public AnalyzerBase 
 {
  public:
   explicit EleMETAnalyzer(const edm::ParameterSet& cfg, 
@@ -83,17 +85,17 @@ class EleMETAnalyzer
   bool dumpHighEtElectrons_; // whether to dump high-pt electrons for data
   float dumpHighEtElectronThreshold_;
 
-  void defineHistos(TFileDirectory & dir);
-  void defineTrees(TFileDirectory & dir);
-  void defineHistos_ElectronEt(TFileDirectory & dir);
-  void defineHistos_ElectronEta(TFileDirectory & dir);
-  void defineHistos_ElectronPhi(TFileDirectory & dir);
-  void defineHistos_TMass(TFileDirectory & dir);
+  void defineHistos(const TFileDirectory & dir);
+  void defineTrees(const TFileDirectory & dir);
+  void defineHistos_ElectronEt(const TFileDirectory & dir);
+  void defineHistos_ElectronEta(const TFileDirectory & dir);
+  void defineHistos_ElectronPhi(const TFileDirectory & dir);
+  void defineHistos_TMass(const TFileDirectory & dir);
 
   void setupCutOrder();
   selection_map_elmet cuts;
 
-  // Get the hardest electron (based on HEEP Et) in event
+  // get the hardest electron (based on HEEP Et) in event
   // (returns index in pat::ElectronCollection)
   int getTheHardestElectron();
 
@@ -145,6 +147,9 @@ class EleMETAnalyzer
   void printFileSummary(std::vector<wprime::InputFile>::const_iterator,
 			ofstream & out);
   
+  ///These are required functions when inheriting from AnalyzerBase
+  void fillHistos(const int& index, const float& weight=1.);
+
   WCandidate Wcand;
 
   float electronPtThreshold_;

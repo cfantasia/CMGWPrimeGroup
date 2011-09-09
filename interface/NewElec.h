@@ -3,24 +3,24 @@
 
 #include "DataFormats/PatCandidates/interface/Electron.h"
 
-float CalcTrkIso(const pat::Electron& elec);
+float calcTrkIso(const pat::Electron& elec);
 
-float CalcECalIso(const pat::Electron& elec);
-float CalcHCalIso(const pat::Electron& elec);
-float CalcHCalIsoCor(const pat::Electron& elec);
-float CalcAdjHCalIso(const pat::Electron& elec);
-float CalcCombRelIso(const pat::Electron& elec, const float pu);
-bool PassEtCut(const pat::Electron& elec, const float cut);
-bool PassPtCut(const pat::Electron& elec, const float cut);
-bool PassWPCut(const pat::Electron& elec, const std::string type, const int mask);
-bool PassEtaCut(const pat::Electron& elec);
-bool PassNMissingHitsCut(const pat::Electron& elec, const float cut);
-bool PassDistDCotCut(const pat::Electron& elec, const float cut);
-bool PassDistCut(const pat::Electron& elec, const float cut);
-bool PassDeltaCotThetaCut(const pat::Electron& elec, const float cut);
-bool PassSigmaIEtaIEtaCut(const pat::Electron& elec, const float cut);
-bool PassDeltaPhiCut(const pat::Electron& elec, const float cut);
-bool PassDeltaEtaCut(const pat::Electron& elec, const float cut);
-bool PassHOverECut(const pat::Electron& elec, const float cut);
-bool PassCombRelIsoCut(const pat::Electron& elec, const float cut, const float pu);
+float calcECalIso(const pat::Electron& elec);
+float calcHCalIso(const pat::Electron& elec);
+float calcHCalIsoCor(const pat::Electron& elec);
+float calcAdjHCalIso(const pat::Electron& elec);
+float calcCombRelIso(const pat::Electron& elec, const float pu);
+bool passEtCut(const pat::Electron& elec, const float cut);
+bool passPtCut(const pat::Electron& elec, const float cut);
+bool passWPCut(const pat::Electron& elec, const std::string type, const int mask);
+bool passEtaCut(const pat::Electron& elec);
+bool passNMissingHitsCut(const pat::Electron& elec, const float cut);
+bool passDistDCotCut(const pat::Electron& elec, const float cut);
+bool passDistCut(const pat::Electron& elec, const float cut);
+bool passDeltaCotThetaCut(const pat::Electron& elec, const float cut);
+bool passSigmaIEtaIEtaCut(const pat::Electron& elec, const float cut);
+bool passDeltaPhiCut(const pat::Electron& elec, const float cut);
+bool passDeltaEtaCut(const pat::Electron& elec, const float cut);
+bool passHOverECut(const pat::Electron& elec, const float cut);
+bool passCombRelIsoCut(const pat::Electron& elec, const float cut, const float pu);
 #endif // #define _NewElec_h_

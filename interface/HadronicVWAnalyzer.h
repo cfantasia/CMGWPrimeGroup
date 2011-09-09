@@ -11,34 +11,34 @@ public:
   ~HadronicVWAnalyzer();
 
   //methods for stuff to be once per job
-  void FillCutFns();
+  void setupCutOrder();
 
   //methods for stuff to be done for each sample
-  void Declare_Histos(const TFileDirectory& dir);
+  void defineHistos(const TFileDirectory& dir);
 
   //methods for stuff to be done for each event
   void eventLoop(edm::EventBase const & event);
-  bool PassCuts(const float& weight=1.);
-  void ClearEvtVariables();
-  void Fill_Histos(const int& index, const float& weight=1.);
+  bool passCuts(const float& weight=1.);
+  void clearEvtVariables();
+  void fillHistos(const int& index, const float& weight=1.);
 
   //methods for printers
-  void PrintDebugEvent() const;
-  void PrintEventDetails() const;
-  void PrintEventLeptons() const;
+  void printDebugEvent() const;
+  void printEventDetails() const;
+  void printEventLeptons() const;
   
 //methods for utilities
-  int CountZCands(ZCandV & Zs) const;
-  void CalcVVariables();
-  void CalcWVariables();
-  void CalcWElecVariables();
-  void CalcWMuonVariables();
-  void CalcVWVariables();
-  void CalcEventVariables();
+  int countZCands(ZCandV & Zs) const;
+  void calcVVariables();
+  void calcWVariables();
+  void calcWElecVariables();
+  void calcWMuonVariables();
+  void calcVWVariables();
+  void calcEventVariables();
 
-  int   Calc_EvtType() const;
-  float Calc_Q() const;
-  float Calc_GenVWInvMass() const;
+  int   calcEvtType() const;
+  float calcQ() const;
+  float calcGenVWInvMass() const;
   bool inEE(const TeVMuon& mu) const;
 
   float WLepPt() const;
@@ -50,14 +50,14 @@ public:
 //methods for modifiers
 
 //methods for the cuts
-  bool PassTriggersCut() const;
-  bool PassValidVWCut() const;
+  bool passTriggersCut() const;
+  bool passValidVWCut() const;
 
-  bool PassTriggerMatch(const heep::Ele& e1, const heep::Ele& e2) const;
-  bool PassTriggerMatch(const TeVMuon& m1, const TeVMuon& m2) const;
-  bool PassTriggerMatch(const pat::Electron& p, const float cut, const vstring& triggers) const;
-  bool PassTriggerMatch(const TeVMuon& p, const float cut, const vstring& triggers) const;
-  bool PassTriggerEmulation(const heep::Ele& elec, const float minPt=0.) const;
+  bool passTriggerMatch(const heep::Ele& e1, const heep::Ele& e2) const;
+  bool passTriggerMatch(const TeVMuon& m1, const TeVMuon& m2) const;
+  bool passTriggerMatch(const pat::Electron& p, const float cut, const vstring& triggers) const;
+  bool passTriggerMatch(const TeVMuon& p, const float cut, const vstring& triggers) const;
+  bool passTriggerEmulation(const heep::Ele& elec, const float minPt=0.) const;
 
 //////////////////
 /////Variables////
@@ -68,7 +68,6 @@ public:
   std::vector<double> effectiveMuonArea_;
 
 ///My calculated qualities//////////////////
-  float weight_;
   float VWMass_;
   float Vpt_;
   float Wpt_;
@@ -88,11 +87,8 @@ public:
   METVH metH_;
   PFCandidateVH pfCandidatesH_;
 
-  edm::InputTag vertexLabel_;
-
 //////Chosen Candidates
-  DiBosonWLeptonic vwCand_;
-  std::vector<reco::Vertex>  vertices_;
+  XWLeptonic vwCand_;
 
 // +++++++++++++++++++ Histogram Definitions
   std::vector<TH1F*> hVWMass;
@@ -131,12 +127,10 @@ public:
 
   TTree* tVWCand;
 
-//Cuts
+  //Cuts
   typedef bool (HadronicVWAnalyzer::*CutFnPtr)() const; 
-#ifndef __CINT__
   std::map<std::string,CutFnPtr> mFnPtrs_;
   std::vector<CutFnPtr> CutFns_;
-#endif
 
 };
 

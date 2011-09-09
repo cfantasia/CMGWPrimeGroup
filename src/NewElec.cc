@@ -1,88 +1,88 @@
 #include "UserCode/CMGWPrimeGroup/interface/NewElec.h"
 
 float
-CalcTrkIso(const pat::Electron& elec){
+calcTrkIso(const pat::Electron& elec){
   return elec.dr03TkSumPt();
 }
 
 float
-CalcECalIso(const pat::Electron& elec){
+calcECalIso(const pat::Electron& elec){
   return elec.isEB() ? 
     std::max(0., elec.dr03EcalRecHitSumEt() - 1.)
     : elec.dr03EcalRecHitSumEt();
 }
 
 float
-CalcHCalIso(const pat::Electron& elec){
+calcHCalIso(const pat::Electron& elec){
   return  elec.dr03HcalTowerSumEt();
 }
 
 float
-CalcHCalIsoCor(const pat::Electron& elec){
+calcHCalIsoCor(const pat::Electron& elec){
   return elec.hadronicOverEm() * elec.energy() * fabs(sin(elec.superCluster()->position().theta()));
 }
 
 float
-CalcAdjHCalIso(const pat::Electron& elec){
-  return CalcHCalIso(elec) + CalcHCalIsoCor(elec);
+calcAdjHCalIso(const pat::Electron& elec){
+  return calcHCalIso(elec) + calcHCalIsoCor(elec);
 }
 
 float
-CalcCombRelIso(const pat::Electron& elec, const float pu){
-  return (CalcTrkIso(elec) + CalcECalIso(elec) + CalcAdjHCalIso(elec) - pu) /
+calcCombRelIso(const pat::Electron& elec, const float pu){
+  return (calcTrkIso(elec) + calcECalIso(elec) + calcAdjHCalIso(elec) - pu) /
     elec.p4().Pt();
 }
 
-inline bool PassEtCut(const pat::Electron& elec, const float cut){
+inline bool passEtCut(const pat::Electron& elec, const float cut){
   return elec.et() > cut;
-}//--- PassEtCut
+}//--- passEtCut
 
-inline bool PassPtCut(const pat::Electron& elec, const float cut){
+inline bool passPtCut(const pat::Electron& elec, const float cut){
   return elec.pt() > cut;
-}//--- PassPtCut
+}//--- passPtCut
 
-inline bool PassWPCut(const pat::Electron& elec, const std::string type, const int mask){
+inline bool passWPCut(const pat::Electron& elec, const std::string type, const int mask){
   return ((int)elec.electronID(type) & mask) == mask;
-}//--- PassLooseWPCut
+}//--- passLooseWPCut
 
-inline bool PassEtaCut(const pat::Electron& elec){
+inline bool passEtaCut(const pat::Electron& elec){
   return elec.isEB() || elec.isEE();
-}//--- PassEtaCut
+}//--- passEtaCut
 
-inline bool PassNMissingHitsCut(const pat::Electron& elec, const float cut){
+inline bool passNMissingHitsCut(const pat::Electron& elec, const float cut){
   return elec.gsfTrack().get()->trackerExpectedHitsInner().numberOfHits() <= cut;
 }
 
-inline bool PassDistDCotCut(const pat::Electron& elec, const float cut){
-  return PassDistCut(elec, cut) || PassDeltaCotThetaCut(elec, cut);
+inline bool passDistDCotCut(const pat::Electron& elec, const float cut){
+  return passDistCut(elec, cut) || passDeltaCotThetaCut(elec, cut);
 }
 
-inline bool PassDistCut(const pat::Electron& elec, const float cut){
+inline bool passDistCut(const pat::Electron& elec, const float cut){
   return fabs(elec.convDist()) >= cut;
 }
 
-inline bool PassDeltaCotThetaCut(const pat::Electron& elec, const float cut){
+inline bool passDeltaCotThetaCut(const pat::Electron& elec, const float cut){
   return fabs(elec.convDcot()) >= cut;
 }
 
-inline bool PassSigmaIEtaIEtaCut(const pat::Electron& elec, const float cut){
+inline bool passSigmaIEtaIEtaCut(const pat::Electron& elec, const float cut){
   return elec.sigmaIetaIeta() < cut;
-}//--- PassSigmaEtaEtaCut
+}//--- passSigmaEtaEtaCut
 
-inline bool PassDeltaPhiCut(const pat::Electron& elec, const float cut){
+inline bool passDeltaPhiCut(const pat::Electron& elec, const float cut){
   return fabs(elec.deltaPhiSuperClusterTrackAtVtx()) < cut;
-}//--- PassDeltaPhiCut
+}//--- passDeltaPhiCut
 
-inline bool PassDeltaEtaCut(const pat::Electron& elec, const float cut){
+inline bool passDeltaEtaCut(const pat::Electron& elec, const float cut){
   return fabs(elec.deltaEtaSuperClusterTrackAtVtx()) < cut;
-}//--- PassDeltaEtaCut
+}//--- passDeltaEtaCut
 
-inline bool PassHOverECut(const pat::Electron& elec, const float cut){
+inline bool passHOverECut(const pat::Electron& elec, const float cut){
   return elec.hadronicOverEm() < cut;
-}//--- PassHOverECut
+}//--- passHOverECut
 
-inline bool PassCombRelIsoCut(const pat::Electron& elec, const float cut, const float pu){
-  return CalcCombRelIso(elec, pu) < cut;
-}//--- PassTrkRelIsoCut
+inline bool passCombRelIsoCut(const pat::Electron& elec, const float cut, const float pu){
+  return calcCombRelIso(elec, pu) < cut;
+}//--- passTrkRelIsoCut
 
 

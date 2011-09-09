@@ -52,18 +52,18 @@ class TeVMuon : public pat::Muon{
 //////////////////////////////
 
   bool goodQualityMuon(float chi2Cut, float muonEtaCut) const;
-  bool PassEtaCut(const float cut);
-  bool PassPtCut(const float cut);
-  bool PassIsGlobalCut();
-  bool PassIsTrackerCut();
-  bool PassDxyCut(const float cut);
-  bool PassNPixHitCut(const float cut);
-  bool PassNTrkHitCut(const float cut);
-  bool PassNormChi2Cut(const float cut);
-  bool PassHitsUsedCut(const float cut);
-  bool PassStationsCut(const float cut);
-  bool PassCombRelIsoCut(const float cut);
-  bool PassCombRelIso03Cut(const float cut, const float puOffset=0.);
+  bool passEtaCut(const float cut);
+  bool passPtCut(const float cut);
+  bool passIsGlobalCut();
+  bool passIsTrackerCut();
+  bool passDxyCut(const float cut);
+  bool passNPixHitCut(const float cut);
+  bool passNTrkHitCut(const float cut);
+  bool passNormChi2Cut(const float cut);
+  bool passHitsUsedCut(const float cut);
+  bool passStationsCut(const float cut);
+  bool passCombRelIsoCut(const float cut);
+  bool passCombRelIso03Cut(const float cut, const float puOffset=0.);
   
  private:
   unsigned muReconstructor_;
@@ -148,49 +148,49 @@ inline float TeVMuon::combRelIsolation03(const float offset) const{
 ///TeV Cut Functions//////////
 //////////////////////////////
 
-inline bool TeVMuon::PassIsGlobalCut(){
+inline bool TeVMuon::passIsGlobalCut(){
   return isGlobalMuon(); 
-}//--- PassIsGlobalCut
+}//--- passIsGlobalCut
 
-inline bool TeVMuon::PassIsTrackerCut(){
+inline bool TeVMuon::passIsTrackerCut(){
   return isTrackerMuon(); 
-}//--- PassIsTrackerCut
+}//--- passIsTrackerCut
 
-inline bool TeVMuon::PassPtCut(const float cut){
+inline bool TeVMuon::passPtCut(const float cut){
   return pt() > cut;
 }
 
-inline bool TeVMuon::PassEtaCut(const float cut){
+inline bool TeVMuon::passEtaCut(const float cut){
   return fabs(eta()) < cut;
-}//--- PassEta Cut
+}//--- passEta Cut
 
-inline bool TeVMuon::PassDxyCut(const float cut){
+inline bool TeVMuon::passDxyCut(const float cut){
   return (fabs(dB()) < cut);
-}//--- PassDxyCut
+}//--- passDxyCut
 
-inline bool TeVMuon::PassNPixHitCut(const float cut){
+inline bool TeVMuon::passNPixHitCut(const float cut){
   return (globalTrack()->hitPattern().numberOfValidPixelHits() > cut);
-}//--- PassNpixhitCut
+}//--- passNpixhitCut
 
-inline bool TeVMuon::PassNTrkHitCut(const float cut){
+inline bool TeVMuon::passNTrkHitCut(const float cut){
   return (globalTrack()->hitPattern().numberOfValidTrackerHits() > cut);
-}//--- PassNtrkhitCut
+}//--- passNtrkhitCut
 
-inline bool TeVMuon::PassNormChi2Cut(const float cut){
+inline bool TeVMuon::passNormChi2Cut(const float cut){
   return (globalTrack()->normalizedChi2() < cut);
-}//--- PassChi2Cut
+}//--- passChi2Cut
 
-inline bool TeVMuon::PassHitsUsedCut(const float cut){
+inline bool TeVMuon::passHitsUsedCut(const float cut){
   return (globalTrack()->hitPattern().numberOfValidMuonHits() > cut);
-}//--- PassHits Used Cut
+}//--- passHits Used Cut
 
-inline bool TeVMuon::PassStationsCut(const float cut){
+inline bool TeVMuon::passStationsCut(const float cut){
   return numberOfMatches() > cut;
-}//--- PassStationsCut
+}//--- passStationsCut
 
-inline bool TeVMuon::PassCombRelIso03Cut(const float cut, const float puOffset){
+inline bool TeVMuon::passCombRelIso03Cut(const float cut, const float puOffset){
   return combRelIsolation03(puOffset) < cut;
-}//--- PassCombRelIsoCut
+}//--- passCombRelIsoCut
 
 //////////////////////////////
 ///TeV Modifier Functions/////

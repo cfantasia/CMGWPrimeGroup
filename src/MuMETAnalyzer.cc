@@ -38,8 +38,9 @@ MuMETAnalyzer::~MuMETAnalyzer()
 {
 }
 
-void MuMETAnalyzer::defineHistos(TFileDirectory & dir)
+void MuMETAnalyzer::defineHistos(const TFileDirectory & dir)
 {
+  AnalyzerBase::defineHistos(dir);
   for(int i = 0; i != Num_mumet_cuts; ++i)
     hPT[i] = hETA[i] = hPHI[i] = /*hMJDPHI[i] =*/ hTM[i] = 0;
 
@@ -51,7 +52,7 @@ void MuMETAnalyzer::defineHistos(TFileDirectory & dir)
   defineHistos_TMass(dir);
 }
 
-// Get the hardest muon (based on tracker-pt) in event
+// get the hardest muon (based on tracker-pt) in event
 // (returns index in pat::MuonCollection)
 int MuMETAnalyzer::getTheHardestMuon()
 {
@@ -257,7 +258,7 @@ void MuMETAnalyzer::endAnalysis(ofstream & out)
 }
 
 
-void MuMETAnalyzer::defineHistos_MuonPt(TFileDirectory & dir)
+void MuMETAnalyzer::defineHistos_MuonPt(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
@@ -271,7 +272,7 @@ void MuMETAnalyzer::defineHistos_MuonPt(TFileDirectory & dir)
     }
 }
 
-void MuMETAnalyzer::defineHistos_MuonEta(TFileDirectory & dir)
+void MuMETAnalyzer::defineHistos_MuonEta(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
@@ -285,7 +286,7 @@ void MuMETAnalyzer::defineHistos_MuonEta(TFileDirectory & dir)
 
 }
 
-void MuMETAnalyzer::defineHistos_MuonPhi(TFileDirectory & dir)
+void MuMETAnalyzer::defineHistos_MuonPhi(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
@@ -300,7 +301,7 @@ void MuMETAnalyzer::defineHistos_MuonPhi(TFileDirectory & dir)
 }
 
 #if 0
-void MuMETAnalyzer::defineHistos_MuonJetDPhi(TFileDirectory & dir)
+void MuMETAnalyzer::defineHistos_MuonJetDPhi(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
@@ -315,7 +316,7 @@ void MuMETAnalyzer::defineHistos_MuonJetDPhi(TFileDirectory & dir)
 }
 #endif
 
-void MuMETAnalyzer::defineHistos_MuonIso(TFileDirectory & dir)
+void MuMETAnalyzer::defineHistos_MuonIso(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
@@ -329,7 +330,7 @@ void MuMETAnalyzer::defineHistos_MuonIso(TFileDirectory & dir)
 
 }
 
-void MuMETAnalyzer::defineHistos_TMass(TFileDirectory & dir)
+void MuMETAnalyzer::defineHistos_TMass(const TFileDirectory & dir)
 {
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
@@ -467,10 +468,13 @@ bool MuMETAnalyzer::kinematicCuts(bool * goodQual, const TeVMuon * muon,
 				  edm::EventBase const & event)
 {
   float ratio = muon->pt()/met.et();
-  float delta_phi = Wcand.CalcDPhi();
+  float delta_phi = Wcand.calcDPhi();
 
   if(ratio < 0.4 || ratio > 1.5 || TMath::Abs(delta_phi) < 2.5)
     *goodQual = false;
 
   return true;
+}
+
+void MuMETAnalyzer::fillHistos(const int& index, const float& weight){
 }

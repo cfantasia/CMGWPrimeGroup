@@ -5,6 +5,8 @@
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/PatCandidates/interface/Photon.h"
 
+#include "UserCode/CMGWPrimeGroup/interface/AnalyzerBase.h"
+
 #include "UserCode/CMGWPrimeGroup/interface/MuMETAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/wgamma_histo_constants.h"
@@ -31,7 +33,7 @@ typedef bool (WgammaAnalyzer::*funcPtrPho)(bool *, int, edm::EventBase const &);
 // key: cuts_desc_short[i], value: function pointer corresponding to selection cut
 typedef std::map<std::string, funcPtrPho> selection_map_wgamma;
 
-class WgammaAnalyzer
+class WgammaAnalyzer : public AnalyzerBase 
 {
  public:
   explicit WgammaAnalyzer(const edm::ParameterSet& cfg, 
@@ -114,17 +116,17 @@ class WgammaAnalyzer
   bool applyTrackVeto_;
 
 
-  void defineHistos(TFileDirectory & dir);
-  void defineHistos_MuonPt(TFileDirectory & dir);
-  void defineHistos_MuonEta(TFileDirectory & dir);
-  void defineHistos_MuonPhi(TFileDirectory & dir);
-  void defineHistos_MuonMETDPhi(TFileDirectory & dir);
-  void defineHistos_MuonIso(TFileDirectory & dir);
-  void defineHistos_WTMass(TFileDirectory & dir);
-  void defineHistos_PhotonPt(TFileDirectory & dir);
-  void defineHistos_PhotonEta(TFileDirectory & dir);
-  void defineHistos_PhotonPhi(TFileDirectory & dir);
-  void defineHistos_MWgamma(TFileDirectory & dir);
+  void defineHistos(const TFileDirectory & dir);
+  void defineHistos_MuonPt(const TFileDirectory & dir);
+  void defineHistos_MuonEta(const TFileDirectory & dir);
+  void defineHistos_MuonPhi(const TFileDirectory & dir);
+  void defineHistos_MuonMETDPhi(const TFileDirectory & dir);
+  void defineHistos_MuonIso(const TFileDirectory & dir);
+  void defineHistos_WTMass(const TFileDirectory & dir);
+  void defineHistos_PhotonPt(const TFileDirectory & dir);
+  void defineHistos_PhotonEta(const TFileDirectory & dir);
+  void defineHistos_PhotonPhi(const TFileDirectory & dir);
+  void defineHistos_MWgamma(const TFileDirectory & dir);
 
   void setupCutOrderMuons();
   void setupCutOrderPhotons();
@@ -132,7 +134,7 @@ class WgammaAnalyzer
   selection_map_wgamma cuts_mu;
   selection_map_wgamma cuts_pho;
 
-  // Get the hardest muon (based on tracker-pt) in event
+  // get the hardest muon (based on tracker-pt) in event
   // (returns index in pat::MuonCollection)
   int getTheHardestMuon();
   int getTheHardestPhoton();
@@ -207,6 +209,9 @@ class WgammaAnalyzer
   void printFileSummary(std::vector<wprime::InputFile>::const_iterator,
 			ofstream & out);
   
+  ///These are required functions when inheriting from AnalyzerBase
+  void fillHistos(const int& index, const float& weight=1.);
+
   WCandidate Wcand;
 
   float muonPtThreshold_;
