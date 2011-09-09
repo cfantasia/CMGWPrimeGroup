@@ -108,7 +108,7 @@ electronSelectors.WZTight.endcap.minPt = cms.untracked.double(20.)
 #####  Jets  #######
 ####################
 jetSelectors = cms.PSet(
-    Base = cms.PSet(#are these >= or >
+    Base = cms.PSet(
        minPt = cms.untracked.double(30.),
        maxEta = cms.untracked.double(2.4),
        maxNHF = cms.untracked.double(0.99),
@@ -119,3 +119,20 @@ jetSelectors = cms.PSet(
        minCMult = cms.untracked.int32(0),
        ),
     )
+
+####################
+#### Photons #######
+####################
+photonSelectors = cms.PSet(
+    Base = cms.PSet(#Made up values
+       minPt = cms.untracked.double(10.),
+       maxEta = cms.untracked.double(5),
+       maxECalIso = cms.untracked.double(0.1),
+       maxHCalIso = cms.untracked.double(0.1),
+       maxTrkIso = cms.untracked.double(0.1),
+       maxHoE = cms.untracked.double(0.05),
+       maxSigmaee = cms.untracked.double(9e9),
+       minHasSeed = cms.untracked.bool(True),       
+       ),
+    )
+
