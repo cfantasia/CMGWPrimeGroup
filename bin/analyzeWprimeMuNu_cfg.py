@@ -25,6 +25,7 @@ process.WprimeAnalyzer.muonEtaCut        = cms.double(2.1)
 process.WprimeAnalyzer.relIsoCut        = cms.double(0.10)
 process.WprimeAnalyzer.highestPtMuonOnly = cms.bool(False)
 process.WprimeAnalyzer.dumpHighPtMuons   = cms.bool(True)
-process.WprimeAnalyzer.dumpHighPtMuonThreshold = cms.double(200)
+process.WprimeAnalyzer.dumpHighPtMuonThreshold = cms.double(300)
 process.WprimeAnalyzer.useAdjustedMET = cms.bool(True)
 
+process.inputs.lumisToProcess.extend(MuonPhysJSONList)
