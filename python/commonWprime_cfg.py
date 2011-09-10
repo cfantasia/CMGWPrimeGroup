@@ -7,13 +7,15 @@ from SHarper.HEEPAnalyzer.WP80SelectionCuts_cfi import wp80BarrelCuts, wp80Endca
 
 process = cms.Process("WPrimeAnalysis")
 # get JSON file correctly parsed
-JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-173692_7TeV_PromptReco_Collisions11_JSON.txt'
-myList = LumiList.LumiList (filename = JSONfile).getCMSSWString().split(',')
+goldenJSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-173692_7TeV_PromptReco_Collisions11_JSON.txt'
+MuonPhysJSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-173692_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt'
+goldenJSONList = LumiList.LumiList (filename = goldenJSONfile).getCMSSWString().split(',')
+MuonPhysJSONList = LumiList.LumiList (filename = MuonPhysJSONfile).getCMSSWString().split(',')
 
 process.inputs = cms.PSet (
     lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
     )
-process.inputs.lumisToProcess.extend(myList)
+process.inputs.lumisToProcess.extend(goldenJSONList)
 
 
 process.source = cms.Source("PoolSource",
