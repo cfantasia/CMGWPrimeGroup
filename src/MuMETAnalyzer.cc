@@ -40,7 +40,7 @@ MuMETAnalyzer::~MuMETAnalyzer()
 
 void MuMETAnalyzer::defineHistos(const TFileDirectory & dir)
 {
-  AnalyzerBase::defineHistos(dir);
+  //  AnalyzerBase::defineHistos(dir);
   for(int i = 0; i != Num_mumet_cuts; ++i)
     hPT[i] = hETA[i] = hPHI[i] = /*hMJDPHI[i] =*/ hTM[i] = 0;
 
