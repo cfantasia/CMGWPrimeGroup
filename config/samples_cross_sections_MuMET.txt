@@ -1,32 +1,32 @@
-Top Level Dir = /tmp/cleonido/
-integrated lumi = 1019.3 pb^-1
+Top Level Dir = dcache:///pnfs/cms/WAX/11/store/user/christos/wprime/V310
+integrated lumi = 2190.7 pb^-1
 
 samplename = data
-description = Muon pt > 25 GeV skim, May10th ReReco v1 (221.43 ipb)
+description = Muon pt > 100 GeV skim, May10th ReReco v1 (224.1 ipb DCS-only)
 x-section = 1
-subdir = May10ReRecoV1
-pathname = filelists_MuNu/listOfInputFiles_mu_May10ReReco_160431-163869.txt
+subdir = SingleMuon_May10v1_LPC
+pathname = filelists_MuNu/SingleMuon_May10v1_V311.txt
 Nprod_evt = 1
 
 samplename = data2
-description = Muon pt > 25 GeV skim, PRv4 165071-166763 (435.71 ipb)
+description = Muon pt > 100 GeV skim, PromptReco v4 (933.1 ipb DCS-only)
 x-section = 1
-subdir = PromptRecoV4_SingleMuon/165071_166763
-pathname = filelists_MuNu/listOfInputFiles_mu_PRv4_165071-166763.txt
+subdir = SingleMuon_PRv4_LPC
+pathname = filelists_MuNu/SingleMuon_PRv4_V311.txt
 Nprod_evt = 1
 
 samplename = data3
-description = Muon pt > 25 GeV skim, PRv4 166764-167043 (168.59 ipb)
+description = Muon pt > 100 GeV skim, 05Aug v1 (502.5 ipb DCS-only)
 x-section = 1
-subdir = PromptRecoV4_SingleMuon/166764_167043
-pathname = filelists_MuNu/listOfInputFiles_mu_PRv4_166764-167043.txt
+subdir = SingleMuon_05Augv1_LPC
+pathname = filelists_MuNu/SingleMuon_05Augv1_V311.txt
 Nprod_evt = 1
 
 samplename = data4
-description = Muon pt > 25 GeV skim, PRv4 167044-167969 (193.57 ipb)
+description = Muon pt > 100 GeV skim, PromptReco v6 (677.1 ipb DCS-only)
 x-section = 1
-subdir = PromptRecoV4_SingleMuon/167044_167969
-pathname = filelists_MuNu/listOfInputFiles_mu_PRv4_167044-167969.txt
+subdir = SingleMuon_PRv6_LPC
+pathname = filelists_MuNu/SingleMuon_PRv6_V311.txt
 Nprod_evt = 1
 
 DONE
