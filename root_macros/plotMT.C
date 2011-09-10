@@ -36,21 +36,23 @@ float Lumi_ipb = -1;
 
 // 1 -> Mu+MET
 // 2 -> El+MET
-const unsigned analysis_channel = 2;
+const unsigned analysis_channel = 1;
 
 // electron channel: if want colored histogram set "wClr" to true. 
 bool wClr = true;
 
 // availability of data + MC samples indicated in these arrays
-const unsigned NbgdSamplesMuMET = 19;
-const string bgdNamesMuMET[NbgdSamplesMuMET] = {
+//const unsigned NbgdSamplesMuMET = 19;
+const unsigned NbgdSamplesMuMET = 0;
+const string bgdNamesMuMET[NbgdSamplesMuMET] = {};
+#if 0
   "DYmumu_lowPt", "DYmumu_highPt", "DYtautau_lowPt", "DYtautau_highPt",
   "QCD_lowPt", "WMinusMu_lowPt", "WMinusMu_highPt", "WPlusMu_lowPt",
   "WPlusMu_highPt", "WPlusTau_lowPt", "WPlusTau_highPt", 
   "ttbar_lowPt", "ttbar_highPt","WW_lowPt",
   "WW_highPt", "WZ_lowPt", "WZ_highPt", "ZZ_lowPt", "ZZ_highPt"};
-
-TH1F * bgdMuMET[NbgdSamplesMuMET] = {0};
+#endif
+TH1F * bgdMuMET[NbgdSamplesMuMET]; // = {0};
 
 const unsigned NdataSamplesMuMET = 4;
 const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4"};
@@ -255,7 +257,7 @@ void doPlots(int option)
 	desc0 = "e";
       desc = desc0 + "&ME_{T} transverse mass: 2011 data (" 
 	+ string(lumi_value2) + ")";
-      xmin = 50; xmax = 1000; xmax_cumu = 1200; xmax_ratio = 740;
+      xmin = 50; xmax = 1500; xmax_cumu = 1500; xmax_ratio = 1000;
       title = "M_{T} (GeV/c^{2})";
       var_plotted = "TM";
     }

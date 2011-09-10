@@ -34,8 +34,8 @@ const unsigned nBinIsoMu = 25;
 const float minIsoMu = 0;
 const float maxIsoMu = 0.5;
 // +++++++++++++++++++++++++++++++tmass histogram parameters
-const unsigned nBinTmMu = 340;
-const float minTmMu = 0;
+const unsigned nBinTmMu = 300;
+const float minTmMu = 200;
 const float maxTmMu = 1700;
 
 
