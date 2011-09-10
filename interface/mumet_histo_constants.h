@@ -34,9 +34,9 @@ const unsigned nBinIsoMu = 25;
 const float minIsoMu = 0;
 const float maxIsoMu = 0.5;
 // +++++++++++++++++++++++++++++++tmass histogram parameters
-const unsigned nBinTmMu = 300;
+const unsigned nBinTmMu = 400;
 const float minTmMu = 200;
-const float maxTmMu = 1700;
+const float maxTmMu = 2200;
 
 
 #endif // #ifndef _mumet_histo_constants_h__
