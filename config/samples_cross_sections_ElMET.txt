@@ -1,19 +1,35 @@
-Top Level Dir = /tmp/cleonido/
-integrated lumi = 1136 pb^-1
+Top Level Dir = dcache:///pnfs/cms/WAX/11/store/user/christos/wprime/V310
+integrated lumi = 2046.5 pb^-1
 
 samplename = data
-description = Electron pt > 25 GeV skim, May10th ReReco v1 (204 ipb)
+description = Electron pt > 100 GeV skim, May10th ReReco v1 (234.3 ipb DCS-only)
 x-section = 1
-subdir = May10ReRecoV1
-pathname = filelists_ElNu/listOfInputFiles_el_May10ReReco_160431-163869.txt
+subdir = SingleElectron_May10v1_LPC
+pathname = filelists_ElNu/SingleElectron_May10v1_V311.txt
 Nprod_evt = 1
 
 samplename = data2
-description = Electron pt > 25 GeV skim, PR v4, PR v4, 165071-167913 (932 ipb)
+description = Electron pt > 100 GeV skim, PromptReco v4 (933.1 ipb DCS-only)
 x-section = 1
-subdir = PromptRecoV4_SingleElectron/165071_167913
-pathname = filelists_ElNu/listOfInputFiles_el_PRv4_165071-167913.txt
+subdir = SingleElectron_PRv4_LPC
+pathname = filelists_ElNu/SingleElectron_PRv4_V311.txt
 Nprod_evt = 1
+
+samplename = data3
+description = Electron pt > 100 GeV skim, 05Aug v1 (502.5 ipb DCS-only)
+x-section = 1
+subdir = SingleElectron_05Augv1_LPC
+pathname = filelists_ElNu/SingleElectron_05Augv1_V311.txt
+Nprod_evt = 1
+
+samplename = data4
+description = Electron pt > 100 GeV skim, PromptReco v6 (677.1 ipb DCS-only)
+x-section = 1
+subdir = SingleElectron_PRv6_LPC
+pathname = filelists_ElNu/SingleElectron_PRv6_V311.txt
+Nprod_evt = 1
+
+DONE
 
 samplename = WprimeToENu_M1000_highPt
 description = WprimeToENu_M1000 , PYTHIA6 Tune Z2
