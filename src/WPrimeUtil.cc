@@ -323,9 +323,10 @@ WPrimeUtil::FoundAndpassed(const pat::TriggerEvent & triggerEvent,const pat::Tri
   return FindTrigger(path, triggerNames) && passed(triggerEvent,path);
 }
 
+const bool ignoreL1prescale = true;
 inline bool
 WPrimeUtil::passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path){
-  return (path->wasAccept() && path->prescale() == 1 && (1 || MaxL1Prescale(triggerEvent,path)==1) );
+  return (path->wasAccept() && path->prescale() == 1 && (ignoreL1prescale || MaxL1Prescale(triggerEvent,path)==1) );
 }
 
 inline unsigned
