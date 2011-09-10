@@ -257,7 +257,7 @@ void doPlots(int option)
 	desc0 = "e";
       desc = desc0 + "&ME_{T} transverse mass: 2011 data (" 
 	+ string(lumi_value2) + ")";
-      xmin = 200; xmax = 1500; xmax_cumu = 1500; xmax_ratio = 1000;
+      xmin = 200; xmax = 2500; xmax_cumu = 1500; xmax_ratio = 1000;
       title = "M_{T} (GeV/c^{2})";
       var_plotted = "TM";
     }
@@ -420,8 +420,8 @@ void doPlots(int option)
 
   c1->SaveAs(file_ratio.c_str());
 
-  float lower_limit = 400;
-  float upper_limit = 800;
+  float lower_limit = 600;
+  float upper_limit = 2000;
   int bin_min = data->FindBin(lower_limit);
   int bin_max = data->FindBin(upper_limit);
   for(int bin = bin_min; bin <= bin_max; ++bin)
