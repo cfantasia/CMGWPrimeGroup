@@ -7,7 +7,7 @@ from SHarper.HEEPAnalyzer.WP80SelectionCuts_cfi import wp80BarrelCuts, wp80Endca
 
 process = cms.Process("WPrimeAnalysis")
 # get JSON file correctly parsed
-JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-167913_7TeV_PromptReco_Collisions11_JSON.txt'
+JSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-173692_7TeV_PromptReco_Collisions11_JSON.txt'
 myList = LumiList.LumiList (filename = JSONfile).getCMSSWString().split(',')
 
 process.inputs = cms.PSet (
