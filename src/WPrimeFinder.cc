@@ -179,7 +179,7 @@ void WPrimeFinder::run()
       // simple event counter
       if(reportAfter_!=0 ? (ievt>0 && ievt%reportAfter_==0) : false) 
         cout << " Processing event: " << ievt << " or " 
-             << 100.*ievt/it->Nact_evt << "% of input file"
+             << 100.*ievt/it->Nact_evt << "% of input file #" << i_sample
              << " (Total events processed: " << ievt_all 
              << ", non-certified/skipped: " << ievt_skipped << ") " << endl;
       
