@@ -21,7 +21,8 @@ process.WprimeAnalyzer.electronPtThreshold   = cms.double(25) ## in GeV
 process.WprimeAnalyzer.oneEleEtCut   = cms.double(25) ## in GeV
 process.WprimeAnalyzer.highestEtElectronOnly = cms.bool(False)
 process.WprimeAnalyzer.dumpHighEtElectrons   = cms.bool(True)
-process.WprimeAnalyzer.dumpHighEtElectronThreshold = cms.double(200)
+process.WprimeAnalyzer.dumpHighEtElectronThreshold = cms.double(300)
+process.WprimeAnalyzer.dumpHighMtElectronThreshold = cms.double(800)
 
 #HEEP Selection
 #process.WprimeAnalyzer.barrelCuts = heepBarrelCuts

@@ -18,7 +18,7 @@ process.WprimeAnalyzer.genParticles = cms.InputTag('prunedGenParticles')
 #
 process.WprimeAnalyzer.muonReconstructor = cms.int32(3) ## see TeVMuon_tracking.h
 # do not consider muons below this pt-threshold
-process.WprimeAnalyzer.muonPtThreshold   = cms.double(25) ## in GeV
+process.WprimeAnalyzer.muonPtThreshold   = cms.double(90) ## in GeV
 process.WprimeAnalyzer.oneMuPtTrackCut   = cms.double(25) ## in GeV
 process.WprimeAnalyzer.chi2Cut           = cms.double(10)
 process.WprimeAnalyzer.muonEtaCut        = cms.double(2.1)
@@ -26,6 +26,7 @@ process.WprimeAnalyzer.relIsoCut        = cms.double(0.10)
 process.WprimeAnalyzer.highestPtMuonOnly = cms.bool(False)
 process.WprimeAnalyzer.dumpHighPtMuons   = cms.bool(True)
 process.WprimeAnalyzer.dumpHighPtMuonThreshold = cms.double(300)
+process.WprimeAnalyzer.dumpHighMtMuonThreshold = cms.double(800)
 process.WprimeAnalyzer.useAdjustedMET = cms.bool(True)
 
 process.inputs.lumisToProcess.extend(MuonPhysJSONList)
