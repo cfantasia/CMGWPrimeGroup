@@ -19,6 +19,7 @@ EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeU
   highestEtElectronOnly_ = cfg.getParameter<bool>("highestEtElectronOnly");
   dumpHighEtElectrons_   = cfg.getParameter<bool>("dumpHighEtElectrons");
   dumpHighEtElectronThreshold_ = cfg.getParameter<double>("dumpHighEtElectronThreshold");
+  dumpHighMtElectronThreshold_ = cfg.getParameter<double>("dumpHighMtElectronThreshold");
   
   triggerResults_ = cfg.getParameter<edm::InputTag>("triggerResults");
   HLTPathsByName_= cfg.getParameter<std::vector<std::string > >("hltPaths");
@@ -125,7 +126,8 @@ void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
 	if(dumpHighEtElectrons_ && fill_entry 
 	   && cut_index == Num_elmet_cuts-1
 	   && wprimeUtil_->getSampleName().find("data") != string::npos
-	   && el.et() > dumpHighEtElectronThreshold_)
+	   && ((el.et() > dumpHighEtElectronThreshold_) ||
+	       Wcand.mt() > dumpHighMtElectronThreshold_))
 	  printHighEtElectron(event);
       
       } // loop over selection cuts

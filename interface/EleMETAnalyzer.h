@@ -25,7 +25,6 @@
 class TH1F;
 
 #define debugmeElMet 0
-#define dumpHighPtElectrons 0
 
 class EleMETAnalyzer;
 // function signature: flag indicating whether particular electron satisfies the 
@@ -84,6 +83,7 @@ class EleMETAnalyzer : public AnalyzerBase
   bool highestEtElectronOnly_; // whether to only consider highest-pt electron in event
   bool dumpHighEtElectrons_; // whether to dump high-pt electrons for data
   float dumpHighEtElectronThreshold_;
+  float dumpHighMtElectronThreshold_;
 
   void defineHistos(const TFileDirectory & dir);
   void defineTrees(const TFileDirectory & dir);

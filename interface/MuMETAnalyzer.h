@@ -17,7 +17,6 @@ class TH1F;
 class TeVMuon;
 
 #define debugmeMuMet 0
-#define dumpHighPtMuons 0
 
 class MuMETAnalyzer;
 // function signature: flag indicating whether particular muon satisfies the 
@@ -74,6 +73,7 @@ class MuMETAnalyzer : public AnalyzerBase
   bool highestPtMuonOnly_; // whether to only consider highest-pt muon in event
   bool dumpHighPtMuons_; // whether to dump high-pt muons for data
   float dumpHighPtMuonThreshold_;
+  float dumpHighMtMuonThreshold_;
 
   void defineHistos(const TFileDirectory & dir);
   void defineHistos_MuonPt(const TFileDirectory & dir);
