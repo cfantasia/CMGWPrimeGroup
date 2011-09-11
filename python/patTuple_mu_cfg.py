@@ -13,6 +13,8 @@ def mu_config(process) :
     # NB: highPtMuons is only used for filtering when invoked
     process.highPtMuons = process.selectedPatMuons.clone()
     process.highPtMuons.cut = "pt > 100. & abs(eta) < 2.4"
+    # comment (CL): we should probably add a isGlobal criterion here
+    # in a high-pt skim, about 80% do not have a valid global muon track...
     
     process.highPtMuonFilter = cms.EDFilter("CandViewCountFilter",
                                             src = cms.InputTag("highPtMuons"),
