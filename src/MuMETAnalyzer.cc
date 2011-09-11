@@ -21,6 +21,7 @@ MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUti
   highestPtMuonOnly_ = cfg.getParameter<bool>("highestPtMuonOnly");
   dumpHighPtMuons_   = cfg.getParameter<bool>("dumpHighPtMuons");
   dumpHighPtMuonThreshold_ = cfg.getParameter<double>("dumpHighPtMuonThreshold");
+  dumpHighMtMuonThreshold_ = cfg.getParameter<double>("dumpHighMtMuonThreshold");
   useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
   
   assert(muReconstructor_ < Num_MuTeVtrkAlgos);
@@ -123,7 +124,8 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 	if(dumpHighPtMuons_ && fill_entry 
 	   && cut_index == Num_mumet_cuts-1
 	   && wprimeUtil_->runningOnData() && 
-	   muon.innerTrack()->pt() > dumpHighPtMuonThreshold_)
+	   ((muon.innerTrack()->pt() > dumpHighPtMuonThreshold_) ||
+	    Wcand.mt() > dumpHighMtMuonThreshold_))
 	  printHighPtMuon(event, (*muons)[theMu]);
       
       } // loop over selection cuts
