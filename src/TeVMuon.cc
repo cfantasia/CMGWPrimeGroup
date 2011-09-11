@@ -27,6 +27,8 @@ TeVMuon::getTrack(const unsigned muReconstructor) const{
     return defaultTeVMuon();
   case kDYT:
     return dytMuon();
+  case kSTANDALONE:
+    return standAloneMuon();
   }
   std::cout<<"Failed to find a track requested\n";
   return defaultTeVMuon();
