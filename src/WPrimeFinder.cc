@@ -99,7 +99,7 @@ void WPrimeFinder::getConfiguration(char * cfg_file, int fileToRun)
 }
 
 // operations to be done when changing input file (e.g. create new histograms)
-void WPrimeFinder::beginFile(vector<wprime::InputFile>::const_iterator it)
+void WPrimeFinder::beginFile(vector<wprime::InputFile>::iterator it)
 {
   bool shouldCorrectMt = 
     ((it->samplename=="W" || it->samplename=="Wlowpt") 
@@ -110,6 +110,15 @@ void WPrimeFinder::beginFile(vector<wprime::InputFile>::const_iterator it)
   wprimeUtil->setSampleWeight(it->weight);
   wprimeUtil->setRunningOnData();
   wprimeUtil->resetWarnings();
+
+  if(wprimeUtil->runningOnData())
+    // Nprod_evt presumably contains the # of events before any filtering
+    // that results in Nact_evt (< Nprod_evt) events contained in the file.
+    // For data, we tend not to know how many events we started with,
+    // so just assume pre-selection efficiency = 100%;
+    // this affects only the efficiency calculations printed
+    // at the end of the job - nothing else!
+    it->Nprod_evt = it->Nact_evt;
 
   // call beginFile for each finder here
   wprimeAnalyzer->beginFile(it);
@@ -146,15 +155,6 @@ void WPrimeFinder::run()
     it->Nact_evt = ev.size();
     cout<<" Done. \n";
   
-    if(wprimeUtil->runningOnData())
-      // Nprod_evt presumably contains the # of events before any filtering
-      // that results in Nact_evt (< Nprod_evt) events contained in the file.
-      // For data, we tend not to know how many events we started with,
-      // so just assume pre-selection efficiency = 100%;
-      // this affects only the efficiency calculations printed
-      // at the end of the job - nothing else!
-      it->Nprod_evt = it->Nact_evt;
-    
     cout << " Opened sample " << it->samplename << " with " << it->Nact_evt
          << " events (Input file #" << i_sample << " out of " << inputFiles.size()
          << " samples) " << endl << endl;
