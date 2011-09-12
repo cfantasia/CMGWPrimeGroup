@@ -38,7 +38,7 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUti
   jetResult_ = looseJet_.getBitTemplate();
   if(debugme) cout<<"Using "<<looseJetType_<<" for jets\n";
 
-  setCandEvtFile(cfg.getUntrackedParameter<string>("candEvtFile", "candEvt.txt"));
+  setCandEvtFile(cfg.getParameter<string>("candEvtFile"));
 
   doPreselect_ = cfg.getParameter<bool>("preselect");
 
