@@ -51,9 +51,6 @@ class WgammaAnalyzer : public AnalyzerBase
   void endAnalysis(ofstream & out);
 
  private:
-  WPrimeUtil * wprimeUtil_;
-  edm::InputTag muonsLabel_;
-  edm::InputTag metLabel_;
   edm::InputTag photonsLabel_;
 
 
@@ -158,7 +155,7 @@ class WgammaAnalyzer : public AnalyzerBase
   void printHighPtPhoton(edm::EventBase const & event, int thePho);
 
   TLorentzVector mu4D;
-  // set muon 4-d momentum according to muonReconstructor_ value (sets mu4D)
+  // set muon 4-d momentum according to muReconstructor_ value (sets mu4D)
   void setMuonMomentum(int theMu);
   TLorentzVector PhotonP4;
   void setPhotonMomentum(int thePhoton);
