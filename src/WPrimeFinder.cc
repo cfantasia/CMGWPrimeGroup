@@ -150,7 +150,7 @@ void WPrimeFinder::run()
   for(it = inputFiles.begin(); it != inputFiles.end(); ++it, ++i_sample){
     int ievt=0;  
     cout << "\n Opening sample " << it->samplename 
-         << "( " << it->description << " ) ... ";
+         << " (" << it->description << ")... ";
     fwlite::ChainEvent ev(it->pathnames);
     it->Nact_evt = ev.size();
     cout<<" Done. \n";
