@@ -225,12 +225,12 @@ void doPlots(int option)
   double xmax_ratio = -1; double xmax_cumu = -1;
   string title = "INVALID";
   string var_plotted = "INVALID2";
-  char data_ipb[1024]; sprintf(data_ipb, " data (%4.2f pb^{-1})", Lumi_ipb);
-  char lumi_value[1024]; sprintf(lumi_value, "%4.2fipb", Lumi_ipb);
-  char lumi_value2[1024]; sprintf(lumi_value2, "%4.2f pb^{-1}", Lumi_ipb);
+  char data_ipb[1024]; sprintf(data_ipb, " data (%4.1f pb^{-1})", Lumi_ipb);
+  char lumi_value[1024]; sprintf(lumi_value, "%4.1fipb", Lumi_ipb);
+  char lumi_value2[1024]; sprintf(lumi_value2, "%4.1f pb^{-1}", Lumi_ipb);
   string cms_prelim = "CMS Preliminary 2011"; 
   char lumi_sqrts_[1024]; 
-  sprintf(lumi_sqrts_, "L_{int} = %4.2f pb^{-1}, #sqrt{s} = 7 TeV", Lumi_ipb);
+  sprintf(lumi_sqrts_, "L_{int} = %4.1f pb^{-1}, #sqrt{s} = 7 TeV", Lumi_ipb);
   string lumi_sqrts = lumi_sqrts_;
   float x_offset = 0;
 
@@ -257,7 +257,7 @@ void doPlots(int option)
 	desc0 = "e";
       desc = desc0 + "&ME_{T} transverse mass: 2011 data (" 
 	+ string(lumi_value2) + ")";
-      xmin = 200; xmax = 3000; xmax_cumu = 1500; xmax_ratio = 1000;
+      xmin = 200; xmax = 2000; xmax_cumu = 1500; xmax_ratio = 1000;
       title = "M_{T} (GeV/c^{2})";
       var_plotted = "TM";
     }
@@ -364,7 +364,7 @@ void doPlots(int option)
   lg->SetTextSize(0.03);
   lg->SetBorderSize(0);
   lg->SetFillColor(0);
-  lg->AddEntry(bgd, "Total bgd", "F");
+  //  lg->AddEntry(bgd, "Total bgd", "F");
 #if 0
   lg->AddEntry(wp10, "W ' (1.0 TeV)", "F");
   lg->AddEntry(wp15, "W ' (1.5 TeV)", "F");

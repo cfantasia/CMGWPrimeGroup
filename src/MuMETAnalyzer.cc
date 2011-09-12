@@ -405,7 +405,7 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const pat::Muo
 	   << mu.getTrack(*it)->pt() << " +- " 
 	   << mu.getTrack(*it)->ptError()
 	   << " GeV, charge = " << mu.getTrack(*it)->charge() 
-	   << " MET = " << myMet.et()
+	   << ", MET = " << myMet.et()
 	   << " GeV, TM = " << w.mt() << " GeV " << endl;
     }
       
