@@ -12,15 +12,11 @@ typedef math::XYZTLorentzVector LorentzVector;
 
 using std::string; using std::cout; using std::endl;
 
-WgammaAnalyzer::WgammaAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUtil)
+WgammaAnalyzer::WgammaAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUtil) : 
+  AnalyzerBase(cfg, wprimeUtil)
 {
-  wprimeUtil_ = wprimeUtil;
-  assert(wprimeUtil_);
 
-  muonsLabel_       = cfg.getParameter<edm::InputTag>("muons"  );
-  metLabel_       = cfg.getParameter<edm::InputTag>("mets"  );
   photonsLabel_ = cfg.getParameter<edm::InputTag>("photons" );
-  muReconstructor_   = cfg.getParameter<int>("muonReconstructor");
   muonPtThreshold_   = cfg.getParameter<double>("muonPtThreshold");
   chi2Cut_           = cfg.getParameter<double>("chi2Cut");
   muonEtaCut_        = cfg.getParameter<double>("muonEtaCut");

@@ -383,13 +383,13 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
   //Cory: Didn't save pfMET
   //event.getByLabel(metLabel_, metH_);
   if(useAdjustedMET_) event.getByLabel(pfCandsLabel_, pfCandidatesH_);
-  WPrimeUtil::getMuonsMET(patMuonsH_, muonAlgo_, allMuons_,
+  WPrimeUtil::getMuonsMET(patMuonsH_, muReconstructor_, allMuons_,
                           metH_, useAdjustedMET_, met_,
                           pfCandidatesH_);
   
 /*
   WPrimeUtil::getLeptonsMET(patElectronsH_, allElectrons_,
-                            patMuonsH_, muonAlgo_, allMuons_,
+                            patMuonsH_, muReconstructor_, allMuons_,
                             metH_, useAdjustedMET_, met_,
                             pfCandidatesH_);
   if(debugme) printf("    Contains: %i electron(s), %i muon(s)\n",

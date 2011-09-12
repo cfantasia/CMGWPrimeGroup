@@ -112,7 +112,7 @@ protected:
   WPrimeUtil * wprimeUtil_;
   ofstream outCandEvt_;
 
-  uint muonAlgo_;
+  uint muReconstructor_;
   bool useAdjustedMET_;
 
   TH1F * hNumEvts;

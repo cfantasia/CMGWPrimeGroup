@@ -5,14 +5,9 @@
 
 using std::string; using std::cout; using std::endl;
 
-MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUtil)
-{
-  wprimeUtil_ = wprimeUtil;
-  assert(wprimeUtil_);
+MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUtil) :
+  AnalyzerBase(cfg, wprimeUtil){
 
-  muonsLabel_       = cfg.getParameter<edm::InputTag>("muons"  );
-  metLabel_       = cfg.getParameter<edm::InputTag>("met"  );
-  muReconstructor_   = cfg.getParameter<int>("muonReconstructor");
   muonPtThreshold_   = cfg.getParameter<double>("muonPtThreshold");
   chi2Cut_           = cfg.getParameter<double>("chi2Cut");
   muonEtaCut_        = cfg.getParameter<double>("muonEtaCut");
@@ -22,7 +17,6 @@ MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUti
   dumpHighPtMuons_   = cfg.getParameter<bool>("dumpHighPtMuons");
   dumpHighPtMuonThreshold_ = cfg.getParameter<double>("dumpHighPtMuonThreshold");
   dumpHighMtMuonThreshold_ = cfg.getParameter<double>("dumpHighMtMuonThreshold");
-  useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
   
   assert(muReconstructor_ < Num_MuTeVtrkAlgos);
 

@@ -629,7 +629,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   // Loop over muons, and see if they pass the TeVMuon criteria  
   for (size_t i = 0; i < patMuonsH_->size(); i++) {
-    allMuons_.push_back(TeVMuon((*patMuonsH_)[i],muonAlgo_));   
+    allMuons_.push_back(TeVMuon((*patMuonsH_)[i],muReconstructor_));   
     
     if (looseMuon_(allMuons_[i], muonResult_) )
       looseMuons_.push_back(allMuons_[i]);

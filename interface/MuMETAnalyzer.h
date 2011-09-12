@@ -47,11 +47,6 @@ class MuMETAnalyzer : public AnalyzerBase
   void endAnalysis(ofstream & out);
 
  private:
-  WPrimeUtil * wprimeUtil_;
-
-  edm::InputTag muonsLabel_;
-  edm::InputTag metLabel_;
-  edm::InputTag pfLabel_;
   // Handle to the muon collection
   edm::Handle<pat::MuonCollection > muons;
   // Handle to the (pf)MET collection
@@ -62,14 +57,11 @@ class MuMETAnalyzer : public AnalyzerBase
 
   MuonV vmuons;
 
-  bool useAdjustedMET_;
-
   // true if TrackRef for chosen high-pt muon reconstructor is null;
   // to be reset at beginning of loop-over-muons
   bool isInvalidMuon_;
 
   // identifies muon reconstructor (see TeVMuon.h)
-  unsigned muReconstructor_; 
   bool highestPtMuonOnly_; // whether to only consider highest-pt muon in event
   bool dumpHighPtMuons_; // whether to dump high-pt muons for data
   float dumpHighPtMuonThreshold_;

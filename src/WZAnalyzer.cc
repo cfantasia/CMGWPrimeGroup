@@ -542,7 +542,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   event.getByLabel(metLabel_, metH_);
   if(useAdjustedMET_) event.getByLabel(pfCandsLabel_, pfCandidatesH_);
   WPrimeUtil::getLeptonsMET(patElectronsH_, allElectrons_,
-                            patMuonsH_, muonAlgo_, allMuons_,
+                            patMuonsH_, muReconstructor_, allMuons_,
                             metH_, useAdjustedMET_, met_,
                             pfCandidatesH_);
   if(debugme) printf("    Contains: %i electron(s), %i muon(s)\n",

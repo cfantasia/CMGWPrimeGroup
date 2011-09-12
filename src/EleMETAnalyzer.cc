@@ -7,13 +7,8 @@
 using std::string; using std::cout; using std::endl;
 
 EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUtil) :
-  cuts_(cfg)
+  AnalyzerBase(cfg, wprimeUtil), cuts_(cfg)
 {
-  wprimeUtil_ = wprimeUtil;
-  assert(wprimeUtil_);
-
-  electronsLabel_       = cfg.getParameter<edm::InputTag>("electrons"  );
-  metLabel_       = cfg.getParameter<edm::InputTag>("met"  );
   electronPtThreshold_   = cfg.getParameter<double>("electronPtThreshold");
   oneEleEtCut_   = cfg.getParameter<double>("oneEleEtCut");
   highestEtElectronOnly_ = cfg.getParameter<bool>("highestEtElectronOnly");
@@ -25,9 +20,6 @@ EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeU
   HLTPathsByName_= cfg.getParameter<std::vector<std::string > >("hltPaths");
   HLTPathsByIndex_.resize(HLTPathsByName_.size());
   
-  pileupLabel_ = cfg.getParameter<edm::InputTag>("pileupTag");
-  
-
   setupCutOrder();
   
   analysis = "eleMET";

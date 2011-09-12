@@ -4,7 +4,7 @@ using namespace std;
 
 AnalyzerBase::AnalyzerBase(){}
 AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil){
-  //Cory: Put here everything you want EVERY CONSTRUCTOR TO DO
+  //Put here everything you want EVERY CONSTRUCTOR TO DO
 
   wprimeUtil_ = wprimeUtil;
   assert(wprimeUtil_);
@@ -38,7 +38,7 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUti
   jetResult_ = looseJet_.getBitTemplate();
   if(debugme) cout<<"Using "<<looseJetType_<<" for jets\n";
 
-  setCandEvtFile(cfg.getParameter<string>("candEvtFile"));
+  setCandEvtFile(cfg.getUntrackedParameter<string>("candEvtFile", "candEvt.txt"));
 
   doPreselect_ = cfg.getParameter<bool>("preselect");
 
@@ -49,8 +49,8 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUti
   pfCandsLabel_ = cfg.getParameter<edm::InputTag>("particleFlow");
   vertexLabel_ = cfg.getParameter<edm::InputTag>("vertexTag");
 
-  muonAlgo_ = cfg.getParameter<int>("muonReconstructor");
-  if(debugme) cout<<"Using muon algo "<<algo_desc_long[muonAlgo_]<<endl;
+  muReconstructor_ = cfg.getParameter<int>("muonReconstructor");
+  if(debugme) cout<<"Using muon algo "<<algo_desc_long[muReconstructor_]<<endl;
   useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
   
   hltEventLabel_ = cfg.getParameter<edm::InputTag>("hltEventTag");
@@ -59,7 +59,7 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUti
 
   ////////////////////Default Cuts/////////////////
   minNLeptons_ = cfg.getUntrackedParameter<uint>("minNLeptons", 0);
-  maxNLeptons_ = cfg.getUntrackedParameter<uint>("maxNLeptons", 999);
+  maxNLeptons_ = cfg.getUntrackedParameter<uint>("maxNLeptons", 99999);
   minNTightLeptons_ = cfg.getUntrackedParameter<uint>("minNTightLeptons", 0);
   minNJets_ = cfg.getUntrackedParameter<uint>("minNJets", 0);
   

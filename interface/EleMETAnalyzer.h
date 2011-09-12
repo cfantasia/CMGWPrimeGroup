@@ -55,12 +55,8 @@ class EleMETAnalyzer : public AnalyzerBase
   void endAnalysis(ofstream & out);
 
  private:
-  WPrimeUtil * wprimeUtil_;
-
   heep::EleSelector cuts_; //allows us to apply the heep selection
 
-  edm::InputTag electronsLabel_;
-  edm::InputTag metLabel_;
   // Handle to the electron collection
   edm::Handle<pat::ElectronCollection > electrons;
   // Handle to the (pf)MET collection
@@ -75,10 +71,6 @@ class EleMETAnalyzer : public AnalyzerBase
   std::vector<unsigned int> HLTPathsByIndex_;
 
   bool SameTrigger(std::string & A, std::string & B);
-
-  // PileUp
-  edm::InputTag pileupLabel_;
-  // std::vector< PileupSummaryInfo > PupInfo_; 
 
   bool highestEtElectronOnly_; // whether to only consider highest-pt electron in event
   bool dumpHighEtElectrons_; // whether to dump high-pt electrons for data
