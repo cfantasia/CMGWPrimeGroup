@@ -100,6 +100,7 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
                   "p_{WZ}^{T} (GeV)", 50, 0, 500, "GeV", hWZpt,dir);
   defineHistoset("hWZTheta", "Theta of WZ",
                   "#theta_{WZ}", 50, 0, PI, "NONE", hWZTheta,dir);
+
 //Ht Histos
   defineHistoset("hHt", "H_{T}", 
                   "Lepton Pt Sum: H_{T} (GeV)", 80, 0, 800, "GeV", hHt,dir);
@@ -517,6 +518,16 @@ WZAnalyzer::calcEventVariables(){
 void 
 WZAnalyzer::eventLoop(edm::EventBase const & event){
   clearEvtVariables();
+/*
+  if(!wprimeUtil_->runningOnData()){//Don't do this for data
+    GenParticleV genParticles = getProduct<GenParticleV>(event, "genParticles");
+    for (size_t i = 0; i < genParticles.size(); i++){
+      if (abs(genParticles[i].pdgId()) == PDGTAU){
+        return;
+      }
+    }
+  }
+*/  
   if(debugme) WPrimeUtil::printEvent(event);
 
   // Preselection - skip events that don't look promising
@@ -595,10 +606,10 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
       const reco::Candidate * genZ = 0;
       const reco::Candidate * genW = 0;
       for (size_t i = 0; i < genParticles.size(); i++){
-        if (abs(genParticles[i].pdgId()) == 23){
+        if (abs(genParticles[i].pdgId()) == PDGZ){
           genZ = & genParticles[i];
           cout<<"Mass of gen Z is "<<genZ->mass()<<endl;
-        }else if (abs(genParticles[i].pdgId()) == 24){ 
+        }else if (abs(genParticles[i].pdgId()) == PDGW){ 
           genW = & genParticles[i];
         cout<<"Mass of gen W is "<<genW->mass()<<endl;
         }
@@ -622,7 +633,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   }
   if(debugme) printEventLeptons();
 
-  if(!wprimeUtil_->runningOnData()){//Don't do this for data
+  if(0 && !wprimeUtil_->runningOnData()){//Don't do this for data
     GenParticleV genParticles = getProduct<GenParticleV>(event, "genParticles");
     const reco::Candidate * genE = 0;
     for (size_t i = 0; i < genParticles.size(); i++){
@@ -733,8 +744,17 @@ WZAnalyzer::calcLeadPt(int type) const{
 bool
 WZAnalyzer::passCuts(const float& weight){
   if (debugme) cout<<"In pass Cuts\n";
+
   
   for(int i=0; i<NCuts_; ++i){
+    if(Cuts_[i] == "ValidZ") calcZVariables();  
+    else if(Cuts_[i] == "ValidW"){  
+      calcWVariables();  
+      calcEventVariables();  
+    }else if(Cuts_[i] == "ValidWZCand") calcWZVariables();  
+    else if(Cuts_[i] == "ValidWElec") calcWElecVariables();  
+    else if(Cuts_[i] == "ValidWMuon") calcWMuonVariables();
+
     if(!(this->*CutFns_[i])()) return false;
     tabulateEvent(i,weight); 
   }
