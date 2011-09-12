@@ -1,14 +1,14 @@
 from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
-#process.WprimeAnalyzer.maxEvents   = cms.int32(500)
-#process.WprimeAnalyzer.debugme = cms.bool(True)
+#process.WprimeAnalyzer.maxEvents   = 500
+#process.WprimeAnalyzer.debugme = True
 
-process.WprimeAnalyzer.debugme = cms.bool(False)
+process.WprimeAnalyzer.debugme = False
 process.WprimeAnalyzer.reportAfter = 25000
 process.WprimeAnalyzer.runWZAnalysis    = True
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_WZ.txt"
 
-process.WprimeAnalyzer.doRecoilCorrectionForW = cms.bool(False)
+process.WprimeAnalyzer.doRecoilCorrectionForW = False
 process.WprimeAnalyzer.useAdjustedMET = False
 process.WprimeAnalyzer.muonReconstructor = 7
 
@@ -29,7 +29,7 @@ process.WprimeAnalyzer.particleFlow = 'selectedPatPFParticles'
 process.WprimeAnalyzer.genParticles = 'prunedGenParticles'
 process.WprimeAnalyzer.hltEventTag = 'patTriggerEvent'
 
-process.WprimeAnalyzer.preselect = cms.bool(False)
+process.WprimeAnalyzer.preselect = False
 
 process.WprimeAnalyzer.minDeltaR = cms.double(0.)
 process.WprimeAnalyzer.maxZMassDiff = cms.double(999999.)

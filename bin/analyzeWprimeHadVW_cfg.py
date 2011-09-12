@@ -1,18 +1,18 @@
 from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
-process.WprimeAnalyzer.outputFile  = 'HadVW_analysis.root'
+process.WprimeAnalyzer.outputFile  = "HadVW_analysis.root"
 process.WprimeAnalyzer.logFile     = "HadVW_event_counts.txt"
-process.WprimeAnalyzer.candEvtFile = cms.string("HadVW_CandEvts.txt")
+process.WprimeAnalyzer.candEvtFile = "HadVW_CandEvts.txt"
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_HadVW.txt"
 process.WprimeAnalyzer.maxEvents   = 100
 process.WprimeAnalyzer.reportAfter = 1000
 process.WprimeAnalyzer.useJSON = False
-process.WprimeAnalyzer.debugme = cms.bool(True)
-process.WprimeAnalyzer.preselect = cms.bool(False)
+process.WprimeAnalyzer.debugme = True
+process.WprimeAnalyzer.preselect = False
 
 ## enable analysis in individual channels
 process.WprimeAnalyzer.runHadVWAnalysis = True
-process.WprimeAnalyzer.triggersToUse = cms.vstring()
+process.WprimeAnalyzer.triggersToUse = ''
 
 ## input specific for this analyzer
 process.WprimeAnalyzer.useAdjustedMET = False

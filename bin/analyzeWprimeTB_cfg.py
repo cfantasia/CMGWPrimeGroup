@@ -2,14 +2,14 @@ from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
 process.WprimeAnalyzer.outputFile  = "TB.root"
 process.WprimeAnalyzer.logFile     = "TB.log"
-process.WprimeAnalyzer.candEvtFile = cms.string("TB.lst")
+process.WprimeAnalyzer.candEvtFile = "TB.lst"
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_TB.txt"
 
 process.WprimeAnalyzer.maxEvents   = -1
 process.WprimeAnalyzer.reportAfter = 10000
 process.WprimeAnalyzer.useJSON = False
-process.WprimeAnalyzer.debugme = cms.bool(False)
-process.WprimeAnalyzer.preselect = cms.bool(False)
+process.WprimeAnalyzer.debugme = False
+process.WprimeAnalyzer.preselect = False
 
 ## enable analysis in individual channels
 process.WprimeAnalyzer.runTBAnalysis = True

@@ -2,18 +2,18 @@ from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
 process.WprimeAnalyzer.outputFile  = "HadVZAnalyzer.root"
 process.WprimeAnalyzer.logFile     = "HadVZAnalyzer.log"
-process.WprimeAnalyzer.candEvtFile = cms.string("HadVZAnalyzer.lst")
+process.WprimeAnalyzer.candEvtFile = "HadVZAnalyzer.lst"
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_HadVZ.txt"
 
 process.WprimeAnalyzer.maxEvents   = -1
 process.WprimeAnalyzer.reportAfter = 10000
 process.WprimeAnalyzer.useJSON = False
-process.WprimeAnalyzer.debugme = cms.bool(False)
-process.WprimeAnalyzer.preselect = cms.bool(False)
+process.WprimeAnalyzer.debugme = False
+process.WprimeAnalyzer.preselect = False
 
 ## enable analysis in individual channels
 process.WprimeAnalyzer.runHadVZAnalysis = True
-process.WprimeAnalyzer.triggersToUse = cms.vstring()
+process.WprimeAnalyzer.triggersToUse = ''
 
 ## input specific for this analyzer
 process.WprimeAnalyzer.electrons = 'selectedPatElectrons'
