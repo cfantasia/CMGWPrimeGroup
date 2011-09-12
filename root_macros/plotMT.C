@@ -339,6 +339,7 @@ void doPlots(int option)
   c1->SetLogy();
 
   if(data->GetMinimum() < 0.00001)data->SetMinimum(0.00001);
+  data->SetMinimum(0.1);
   
   data->Draw("e");
   if(wClr)hsbgd->Draw("hist same");
