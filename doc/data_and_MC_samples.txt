@@ -5,6 +5,50 @@ subdirectories:
 
 
 ========================================================================
+Pat-tuples made with V00-03-11:
+
+
+(1) Mu+MET analysis
+Location: rfio:///castor/cern.ch/user/c/cleonido/wprime/V310 (castor) and 
+dcache:///pnfs/cms/WAX/11/store/user/christos/wprime/V310/ (LPC)
+
+(a) Data 
+
+(a1) Muon pt > 100 GeV skim, May10th ReReco v1 (224.1 ipb DCS-only)
+subdir = SingleMuon_May10v1_LPC
+
+(a2) Muon pt > 100 GeV skim, PromptReco v4 (933.1 ipb DCS-only)
+subdir = SingleMuon_PRv4_LPC
+
+(a3) Muon pt > 100 GeV skim, 05Aug v1 (502.5 ipb DCS-only)
+subdir = SingleMuon_05Augv1_LPC
+
+(a4) Muon pt > 100 GeV skim, PromptReco v6 (677.1 ipb DCS-only)
+subdir = SingleMuon_PRv6_LPC
+
+
+(2) El+MET analysis:
+Location: rfio:///castor/cern.ch/user/c/cleonido/wprime/V310 (castor) and 
+dcache:///pnfs/cms/WAX/11/store/user/christos/wprime/V310/ (LPC)
+
+(a) Data
+
+(a1) Electron pt > 100 GeV skim, May10th ReReco v1 (234.3 ipb DCS-only)
+subdir = SingleElectron_May10v1_LPC
+
+(a2) Electron pt > 100 GeV skim, PromptReco v4 (933.1 ipb DCS-only)
+subdir = SingleElectron_PRv4_LPC
+
+(a3) Electron pt > 100 GeV skim, 05Aug v1 (502.5 ipb DCS-only)
+subdir = SingleElectron_05Augv1_LPC
+
+(a4) Electron pt > 100 GeV skim, PromptReco v6 (677.1 ipb DCS-only)
+subdir = SingleElectron_PRv6_LPC
+
+
+========================================================================
+Pat-tuples made with V00-02-70:
+
 (1) Mu+MET analysis
 
 (a) Data:
