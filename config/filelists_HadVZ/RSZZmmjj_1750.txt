@@ -1,2 +1,2 @@
-/pnfs/sprace.org.br/data/cms/store/user/fladias/Summer11_RSZZmmjj_1750/patTuple_1_1_gCg.root
-/pnfs/sprace.org.br/data/cms/store/user/fladias/Summer11_RSZZmmjj_1750/patTuple_2_1_Ce4.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/Elec_Summer11_RSZZmmjj_1750/patTuple_1_1_uHi.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/Elec_Summer11_RSZZmmjj_1750/patTuple_2_1_pNk.root
