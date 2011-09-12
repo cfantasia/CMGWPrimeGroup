@@ -67,7 +67,13 @@ process.WprimeAnalyzer = cms.PSet(
     electronSelectors = electronSelectors,
     muonSelectors = muonSelectors,
     jetSelectors = jetSelectors,
+    photonSelectors = photonSelectors,
 
+    Cuts = cms.vstring(),
+    debugme = cms.bool(False),
+    preselect = cms.bool(False),
+    triggersToUse = cms.vstring(),
+    
     inputs = process.inputs,
 
     #PileUp Inputs
