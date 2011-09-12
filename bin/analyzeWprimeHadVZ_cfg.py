@@ -13,7 +13,7 @@ process.WprimeAnalyzer.preselect = False
 
 ## enable analysis in individual channels
 process.WprimeAnalyzer.runHadVZAnalysis = True
-process.WprimeAnalyzer.triggersToUse = ''
+process.WprimeAnalyzer.triggersToUse = cms.vstring()
 
 ## input specific for this analyzer
 process.WprimeAnalyzer.electrons = 'selectedPatElectrons'
