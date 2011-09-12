@@ -29,8 +29,9 @@ process.WprimeAnalyzer = cms.PSet(
     fileNames   = cms.vstring(),  ## keep empty!
 
     sample_cross_sections = cms.string("samples_cross_sections.txt"),
-    outputFile  = cms.string('Wprime_analysis.root'),
+    outputFile  = cms.string("Wprime_analysis.root"),
     logFile = cms.string("Wprime_event_counts.txt"),
+    candEvtFile = cms.string("Wprime_candEvts.txt"),
 
     maxEvents   = cms.int32(-1),                     
     reportAfter = cms.uint32(5000),                  
