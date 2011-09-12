@@ -1,3 +1,23 @@
+12-SEP-11 (Christos, Cory, Flavia, Sunghyun), V00-03-20
+=======================================================
+General improvements:
+o First skeleton for top+bottom analyzer
+o All analyzers now inherit from common base class 
+o TeV muon class: added standalone muon tracking
+
+
+Mu/El+MET, had-V + Z analyzers:
+o Input samples updated to full dataset recorded before technical stop
+
+
+Misc:
+o Fixed typo in global tag for MC pat-tuple generation
+o Added photon selector
+o Updated JSON files, removed obsolete ones
+o Bugfix in denominator of efficiency calculations for data samples
+(affects only summary printed at end of job)
+
+
 09-SEP-11 (Christos), V00-03-11
 ===============================
 

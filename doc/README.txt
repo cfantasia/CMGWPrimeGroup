@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V311, release:
+o Setup a new working area (Default name: V320, release:
 CMSSW_4_2_5)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-03-11)
+V00-03-20)
 
 o Check out the default versions of DataFormats/PatCandidates and
 PhysicsTools/PatAlgos, V08-03-03 PhysicsTools/Utilities and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
@@ -86,7 +86,7 @@ To run:
 Options:
 - enable/disable analyzers for Mu+MET (available), W(mu)+gamma (available),
 El+MET (available), WZ (available), hadV+Z (available), hadV + Z
-(available), tb (missing)
+(available), tb (available)
 - specify input collections 
 - specify parameters for Mu+MET/El+MET/WZ/W+gamma analysis
 
@@ -132,8 +132,8 @@ creates kinematic distributions)
 
 
 Location of top-level directory with input files to be specified in text
-file  top_directory.txt (located in UserCode/CMGWPrimeGroup/config/). The
-parameters for all input MC files (description, cross-section, # of events
-produced etc), can be found in text file samples_cross_sections_*.txt (in 
-the same directory). 
+file samples_cross_sections_*txt (located in
+UserCode/CMGWPrimeGroup/config/). The parameters for all input MC files
+(description, cross-section, # of events produced etc), can be found in the
+same file. 
 
