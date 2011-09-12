@@ -1,4 +1,4 @@
-Top Level Dir = dcache:///pnfs/cms/WAX/11/store/user/christos/wprime/V310/
+Top Level Dir = rfio:///castor/cern.ch/user/c/cleonido/wprime/V310/
 integrated lumi = 2046.5 pb^-1
 
 samplename = data
