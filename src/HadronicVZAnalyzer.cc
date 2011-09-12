@@ -202,12 +202,6 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   defineHistoset("hNLJets", "Number of Loose Jets in Event",
                   "N_{Jets}^{Loose}", 10, 0, 10, "NONE", hNLJets,dir);
 
-
-  string title = Form("Expected # of Events / %.0f pb^{-1}",  wprimeUtil_->getLumi_ipb());
-  title = title + ";;" + title;
-  hNumEvts = NULL; hNumEvts = dir.make<TH1F>("hNumEvts",title.c_str(),NCuts_,0, NCuts_);
-  for(int i=0; i<NCuts_; ++i) hNumEvts->GetXaxis()->SetBinLabel(i+1,Cuts_[i].c_str());
-
   cout << "Histos declared" << endl;
 
 }//defineHistos
