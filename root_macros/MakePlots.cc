@@ -1,3 +1,10 @@
+/* 
+   Usage: root -b -q 'MakePlots.cc+("input.root", "output.pdf, "options")'
+   Options include:
+   ""    = every plot after every cut, note some may be blank
+   "final" = show me all plots but only after the last cut
+   "show" = show me only the main plots(eg for weekly update), only after the last cut
+*/
 #include <stdio.h>
 #include <math.h>
 #include <string>
