@@ -1,3 +1,11 @@
+/* 
+   Usage: root -b -q 'MakeSelection.cc+("input.root", "options")'
+   Options include:
+   "debug" = show debuging statements
+   "hist" = use histograms instead of default trees to make cuts
+   
+ */
+
 #include <stdio.h>
 #include <math.h>
 #include <string>
@@ -41,20 +49,21 @@ vector<string> SigSample;
 vector<string> BkgSamples;
 vector<Cut> Cuts;
 
-float lumiUsed_;
-
-bool debug_;
+float lumiUsed_ = 0.;
+bool debug_ = false;
+bool useHists_ = false;
 
 void
 MakeSelection(string inName, string opt){
   gErrorIgnoreLevel = kWarning;
   CMSstyle();
 
+  if(opt.find("debug") != string::npos) debug_ = true;
+  if(opt.find("hist") != string::npos) useHists_ = true;
+
   TFile *fin = TFile::Open(inName.c_str(), "read");
   lumiUsed_ = GetLumiUsed(fin);
   cout<<"Lumi Used is "<<lumiUsed_<<" inv pb\n";
-
-  if(opt.find("debug") != string::npos) debug_ = true;
 
   vector<string> SigSamples;
   
@@ -97,7 +106,8 @@ MakeSelection(string inName, string opt){
     BkgSamples.push_back("Summer11_WW");
     BkgSamples.push_back("Summer11_WZ");
     BkgSamples.push_back("Summer11_TTJets");
-    BkgSamples.push_back("Summer11_DYJetsToLL");
+    //BkgSamples.push_back("Summer11_DYJetsToLL");
+    BkgSamples.push_back("DiLeptonJet-V301-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola");
 
     SigSamples.push_back("Summer11_RSZZmmjj_750");
     SigSamples.push_back("Summer11_RSZZmmjj_1000");
@@ -109,6 +119,10 @@ MakeSelection(string inName, string opt){
     Cuts.push_back(Cut("Zpt", true));
     Cuts.push_back(Cut("Vpt", true));
   }
+
+  if(debug_) cout<<"Using "<<SigSamples.size()<<" signal samples\n"
+                 <<"Using "<<BkgSamples.size()<<" background samples\n"
+                 <<"Using "<<Cuts.size()<<" cuts\n"<<endl;
 
   for(uint i=0; i<SigSamples.size(); ++i){
     //Reset cuts for a new signal sample
@@ -137,7 +151,7 @@ MakeSelection(string inName, string opt){
 
 void
 DrawSelection(TFile* fin, Cut& thisCut){
-  //printf("  Draw Selection\n");
+  if(debug_) printf("  Draw Selection\n");
   assert(SigSample.size() == 1);
 
   vector<TCut> cuts(Cuts.size());
@@ -156,8 +170,21 @@ DrawSelection(TFile* fin, Cut& thisCut){
 
   TH1F hSig("hSig","hSig",90,0,900);
   TH1F hBkg("hBkg","hBkg",90,0,900);
-  get_sum_of_hists(fin, SigSample, "tWZCand", thisCut.name, cutString.GetTitle(), hSig);
-  get_sum_of_hists(fin, BkgSamples, "tWZCand", thisCut.name, cutString.GetTitle(), hBkg);
+  if(!useHists_){
+    get_sum_of_hists(fin, SigSample, "tWZCand", thisCut.name, cutString.GetTitle(), hSig);
+    get_sum_of_hists(fin, BkgSamples, "tWZCand", thisCut.name, cutString.GetTitle(), hBkg);
+  }else{
+    string histName;
+    if(thisCut.name == "Zpt") histName = "hZpt_ZMass";
+    if(thisCut.name == "Vpt") histName = "hVpt_VMass";
+    if(debug_) cout<<"Using histName: "<<histName<<endl;
+    TH1F* pSig = get_sum_of_hists(fin, SigSample, histName);
+    TH1F* pBkg = get_sum_of_hists(fin, BkgSamples, histName);
+    hSig = *pSig;
+    hBkg = *pBkg;
+  }
+  
+
 
   int first = 0;//Include under flow
   int last  = hSig.GetNbinsX() + 1;//Include over flow
@@ -166,8 +193,8 @@ DrawSelection(TFile* fin, Cut& thisCut){
   const float Nsig_tot  = hSig.Integral(first, last);
   const float Nbkg_tot  = hBkg.Integral(first, last);
 
-  //printf("Tot sig:%f   Tot Bkg:%f\n", Nsig_tot, Nbkg_tot);
-  //printf("first:%i, last:%i, nbins:%i or %i\n", first, last, nbins, hists[0]->GetNbinsX());
+  if(debug_) printf("Tot sig:%f   Tot Bkg:%f\n", Nsig_tot, Nbkg_tot);
+  //if(debug_) printf("first:%i, last:%i, nbins:%i or %i\n", first, last, nbins, hists[0]->GetNbinsX());
 
   double* Nsig = new double[nbins];
   double* Nbkg = new double[nbins];
@@ -177,7 +204,7 @@ DrawSelection(TFile* fin, Cut& thisCut){
   double* cut = new double[nbins];
   double* Signif = new double[nbins];
 
-  for(int bin=first; bin<=last; ++bin){//for min cut
+  for(int bin=first; bin<=last; ++bin){
     //printf("bin:%i low:%f\n",bin, hists[0]->GetBinCenter(bin));
     Nsig[bin] = 0;
     Nbkg[bin] = 0;
@@ -277,9 +304,6 @@ DrawSelection(TFile* fin, Cut& thisCut){
 
 
   thisCut.cutVal = hSig.GetBinLowEdge(cutbin);
-  //if (thisCut.name == "Ht")  minHt_  = hSig.GetBinLowEdge(cutbin);
-  //if (thisCut.name == "Zpt") minZpt_ = hSig.GetBinLowEdge(cutbin);
-  //if (thisCut.name == "Wpt") minWpt_ = hSig.GetBinLowEdge(cutbin);
 
 }
 
