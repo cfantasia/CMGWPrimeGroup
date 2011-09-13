@@ -4,6 +4,7 @@
    ""    = every plot after every cut, note some may be blank
    "final" = show me all plots but only after the last cut
    "show" = show me only the main plots(eg for weekly update), only after the last cut
+   "debug" = show debuging statements
 */
 #include <stdio.h>
 #include <math.h>
@@ -57,8 +58,7 @@ std::vector<Sample> Bkg;
 std::vector<Sample> Sig;
 std::map<std::string, std::string> SampleNames;
 
-const bool debug = false;
-//const bool debug = true;
+bool debug_ = false;
 float lumiUsed_ = 0.;
 
 int main(int argc, char ** argv);
@@ -75,6 +75,8 @@ void
 MakePlots(string inName, string outName, string opt){  
   gErrorIgnoreLevel = kWarning;
   CMSstyle();
+
+  if(opt.find("debug") != string::npos) debug_ = true;
   
   TFile *fin = TFile::Open(inName.c_str(), "read");
   lumiUsed_ = GetLumiUsed(fin);
@@ -197,7 +199,7 @@ MakePlots(string inName, string outName, string opt){
   samples_.push_back(&Data);
   samples_.push_back(&Sig);
   samples_.push_back(&Bkg);
-  if(debug) cout<<"Size of samples: "<<samples_.size()
+  if(debug_) cout<<"Size of samples: "<<samples_.size()
                 <<" Size of Data: "<<Data.size()
                 <<" Size of Sig: "<<Sig.size()
                 <<" Size of Bkg: "<<Bkg.size()<<endl;
@@ -376,7 +378,7 @@ DrawandSave(TFile* fin, string pdfName, string title, string bookmark, bool logy
 
 void
 GetHistograms(TFile* fin, string title, bool eff, bool cum){
-  if(debug) printf("  GetHisto %s\n", title.c_str());
+  if(debug_) printf("  GetHisto %s\n", title.c_str());
   string hist_name;
   
   int rebin = (title.find("WZMass") != string::npos || 
@@ -388,7 +390,7 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
 
   for(unsigned int i=0; i<samples_.size(); ++i){
     for(unsigned int j=0; j<samples_[i]->size(); ++j){
-      if(debug) cout<<"i: "<<i<<" j:"<<j<<endl;
+      if(debug_) cout<<"i: "<<i<<" j:"<<j<<endl;
       samples_[i]->at(j).hist = get_sum_of_hists(fin, samples_[i]->at(j).names, title, rebin);
       samples_[i]->at(j).hist->SetLineStyle(samples_[i]->at(j).style);
       samples_[i]->at(j).hist->SetLineColor(samples_[i]->at(j).line); 
@@ -404,7 +406,7 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
 
 void
 Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLine* line){
-  if(debug) printf("  Draw %s\n", filename.c_str());
+  if(debug_) printf("  Draw %s\n", filename.c_str());
 
   TCanvas c1;
   if(logy) c1.SetLogy();
@@ -486,7 +488,7 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
     hs->GetXaxis()->SetTitleSize(0.06);
     hs->GetYaxis()->SetTitleSize(0.06);
   }
-  if(debug) cout<<"Title: "<<title<<endl;
+  if(debug_) cout<<"Title: "<<title<<endl;
 
   TLatex latexLabel;
   latexLabel.SetNDC();
@@ -495,7 +497,7 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
   latexLabel.DrawLatex(0.5, 0.955, "#font[132]{#sqrt{s} = 7 TeV}");
   latexLabel.DrawLatex(0.73, 0.87, Form("#font[132]{#intL dt = %.2f fb^{-1}}",lumiUsed_/1000.));
 
-  if(debug) cout<<"Creating Legend\n";
+  if(debug_) cout<<"Creating Legend\n";
   TLegend *legend = new TLegend(0.62,0.69,0.92,0.85,"");
   
   if(Data.size()) legend->AddEntry(hData, "Data", "PLE");
@@ -523,10 +525,10 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
 
 void
 CheckSamples(TFile* fin, vector<Sample> & sample){
-  if(debug) cout<<"Checking sample "<<endl;
+  if(debug_) cout<<"Checking sample "<<endl;
   for(size_t i=0; i<sample.size(); ++i){
     for(size_t j=0; j<sample[i].names.size(); ++j){
-      if(debug) cout<<"Checking key "<<sample[i].names[j]<<endl;
+      if(debug_) cout<<"Checking key "<<sample[i].names[j]<<endl;
       if(!fin->GetKey((sample[i].names[j]).c_str() )){
         cout<<"Didn't find "<<sample[i].names[j]<<". Removing."<<endl;
         sample.erase(sample.begin()+i);
