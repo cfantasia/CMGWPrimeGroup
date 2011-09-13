@@ -15,12 +15,12 @@ TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
   for (unsigned j=0; j != samples.size(); ++j) {
     std::string histname = samples[j] + "/" + objName;
     TH1F* h = (TH1F*)f->Get(histname.c_str());
-    TH1F* hist = (TH1F*)h->Clone("hist");
-
-    if(hist == NULL){
+    if(h == NULL){
       std::cout<<"Failed Getting "<<histname<<std::endl;
       abort();
     }
+    TH1F* hist = (TH1F*)h->Clone("hist");
+
 
     if(!hist->GetSumw2N()) hist->Sumw2();
     if (rebinme){
@@ -82,9 +82,11 @@ void get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
 float
 GetLumiUsed(TFile* f){
   TH1F* hLumi = (TH1F*) f->Get("lumi_ipb");
-  TH1F* hNFiles = (TH1F*) f->Get("hFileCounter");
+  TH1F* hNFiles = (TH1F*) f->Get("hFilecounter");
   bool valid = hLumi && hNFiles;
-  return valid ? hLumi->GetBinContent(1) / hNFiles->GetBinContent(1) : 0;
+  if(!hLumi) cout<<" Failed getting hLumi"<<endl;
+  if(!hNFiles) cout<<" Failed getting hNFiles"<<endl;
+  return valid ? hLumi->GetBinContent(1) / hNFiles->GetBinContent(1) : -1;
 }
 
 #endif//#define _common_h_
