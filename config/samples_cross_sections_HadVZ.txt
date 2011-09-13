@@ -79,98 +79,98 @@ x-section = 56.54
 pathname = filelists_HadVZ/Elec_Summer11_VGamma.txt
 Nprod_evt = 1067879
 
-samplename = DiLeptonJet-V301-DoubleElectron-Run2011A-05Aug2011-v1
-description = DiLeptonJet-V301-DoubleElectron-Run2011A-05Aug2011-v1
+samplename = data_DiLeptonJet-V301-DoubleElectron-Run2011A-05Aug2011-v1
+description = data_DiLeptonJet-V301-DoubleElectron-Run2011A-05Aug2011-v1
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-DoubleElectron-Run2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-DoubleElectron-Run2011A-May10ReReco-v1
-description = DiLeptonJet-V301-DoubleElectron-Run2011A-May10ReReco-v1
+samplename = data_DiLeptonJet-V301-DoubleElectron-Run2011A-May10ReReco-v1
+description = data_DiLeptonJet-V301-DoubleElectron-Run2011A-May10ReReco-v1
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-DoubleElectron-Run2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-DoubleElectron-Run2011A-PromptReco-v4
-description = DiLeptonJet-V301-DoubleElectron-Run2011A-PromptReco-v4
+samplename = data_DiLeptonJet-V301-DoubleElectron-Run2011A-PromptReco-v4
+description = data_DiLeptonJet-V301-DoubleElectron-Run2011A-PromptReco-v4
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-DoubleElectron-Run2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-DoubleElectron-Run2011A-PromptReco-v6
-description = DiLeptonJet-V301-DoubleElectron-Run2011A-PromptReco-v6
+samplename = data_DiLeptonJet-V301-DoubleElectron-Run2011A-PromptReco-v6
+description = data_DiLeptonJet-V301-DoubleElectron-Run2011A-PromptReco-v6
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-DoubleElectron-Run2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-DoubleMu-Run2011A-05Aug2011-v1
-description = DiLeptonJet-V301-DoubleMu-Run2011A-05Aug2011-v1
+samplename = data_DiLeptonJet-V301-DoubleMu-Run2011A-05Aug2011-v1
+description = data_DiLeptonJet-V301-DoubleMu-Run2011A-05Aug2011-v1
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-DoubleMu-Run2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-DoubleMu-Run2011A-May10ReReco-v1
-description = DiLeptonJet-V301-DoubleMu-Run2011A-May10ReReco-v1
+samplename = data_DiLeptonJet-V301-DoubleMu-Run2011A-May10ReReco-v1
+description = data_DiLeptonJet-V301-DoubleMu-Run2011A-May10ReReco-v1
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-DoubleMu-Run2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-DoubleMu-Run2011A-PromptReco-v4
-description = DiLeptonJet-V301-DoubleMu-Run2011A-PromptReco-v4
+samplename = data_DiLeptonJet-V301-DoubleMu-Run2011A-PromptReco-v4
+description = data_DiLeptonJet-V301-DoubleMu-Run2011A-PromptReco-v4
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-DoubleMu-Run2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-DoubleMu-Run2011A-PromptReco-v6
-description = DiLeptonJet-V301-DoubleMu-Run2011A-PromptReco-v6
+samplename = data_DiLeptonJet-V301-DoubleMu-Run2011A-PromptReco-v6
+description = data_DiLeptonJet-V301-DoubleMu-Run2011A-PromptReco-v6
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-DoubleMu-Run2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-SingleElectron-Run2011A-05Aug2011-v1
-description = DiLeptonJet-V301-SingleElectron-Run2011A-05Aug2011-v1
+samplename = data_DiLeptonJet-V301-SingleElectron-Run2011A-05Aug2011-v1
+description = data_DiLeptonJet-V301-SingleElectron-Run2011A-05Aug2011-v1
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-SingleElectron-Run2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-SingleElectron-Run2011A-May10ReReco-v1
-description = DiLeptonJet-V301-SingleElectron-Run2011A-May10ReReco-v1
+samplename = data_DiLeptonJet-V301-SingleElectron-Run2011A-May10ReReco-v1
+description = data_DiLeptonJet-V301-SingleElectron-Run2011A-May10ReReco-v1
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-SingleElectron-Run2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-SingleElectron-Run2011A-PromptReco-v4
-description = DiLeptonJet-V301-SingleElectron-Run2011A-PromptReco-v4
+samplename = data_DiLeptonJet-V301-SingleElectron-Run2011A-PromptReco-v4
+description = data_DiLeptonJet-V301-SingleElectron-Run2011A-PromptReco-v4
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-SingleElectron-Run2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-SingleElectron-Run2011A-PromptReco-v6
-description = DiLeptonJet-V301-SingleElectron-Run2011A-PromptReco-v6
+samplename = data_DiLeptonJet-V301-SingleElectron-Run2011A-PromptReco-v6
+description = data_DiLeptonJet-V301-SingleElectron-Run2011A-PromptReco-v6
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-SingleElectron-Run2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-SingleMu-Run2011A-05Aug2011-v1
-description = DiLeptonJet-V301-SingleMu-Run2011A-05Aug2011-v1
+samplename = data_DiLeptonJet-V301-SingleMu-Run2011A-05Aug2011-v1
+description = data_DiLeptonJet-V301-SingleMu-Run2011A-05Aug2011-v1
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-SingleMu-Run2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-SingleMu-Run2011A-May10ReReco-v1
-description = DiLeptonJet-V301-SingleMu-Run2011A-May10ReReco-v1
+samplename = data_DiLeptonJet-V301-SingleMu-Run2011A-May10ReReco-v1
+description = data_DiLeptonJet-V301-SingleMu-Run2011A-May10ReReco-v1
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-SingleMu-Run2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-SingleMu-Run2011A-PromptReco-v4
-description = DiLeptonJet-V301-SingleMu-Run2011A-PromptReco-v4
+samplename = data_DiLeptonJet-V301-SingleMu-Run2011A-PromptReco-v4
+description = data_DiLeptonJet-V301-SingleMu-Run2011A-PromptReco-v4
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-SingleMu-Run2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
-samplename = DiLeptonJet-V301-SingleMu-Run2011A-PromptReco-v6
-description = DiLeptonJet-V301-SingleMu-Run2011A-PromptReco-v6
+samplename = data_DiLeptonJet-V301-SingleMu-Run2011A-PromptReco-v6
+description = data_DiLeptonJet-V301-SingleMu-Run2011A-PromptReco-v6
 x-section = 1
 pathname = filelists_HadVZ/DiLeptonJet-V301-SingleMu-Run2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
