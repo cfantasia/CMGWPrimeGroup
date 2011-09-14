@@ -36,7 +36,7 @@ float Lumi_ipb = -1;
 
 // 1 -> Mu+MET
 // 2 -> El+MET
-const unsigned analysis_channel = 1;
+const unsigned analysis_channel = 2;
 
 // electron channel: if want colored histogram set "wClr" to true. 
 bool wClr = true;
@@ -59,7 +59,8 @@ const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "dat
 
 TH1F * dataMuMET[NdataSamplesMuMET] = {0};
 
-const unsigned NbgdSamplesElMET = 27;
+const unsigned NbgdSamplesElMET = 0;
+//const unsigned NbgdSamplesElMET = 27;
 // color distributions for MC background
 //  1      -> Wenu    : kAzure+1
 //  2-4,   -> QCD     : kGray+2
@@ -68,6 +69,8 @@ const unsigned NbgdSamplesElMET = 27;
 // 11-12,  -> Diboson : kGreen
 // 13-15,  -> Wlepton : kTeal
 // 16-     -> Gamma   : kRed
+const string bgdNamesElMET[NbgdSamplesElMET];
+#if 0
 const string bgdNamesElMET[NbgdSamplesElMET] = {
   "WtoEnu_highPt",     
   "QCD_20to30_highPt", "QCD_30to80_highPt",  "QCD_80to170_highPt",
@@ -81,13 +84,14 @@ const string bgdNamesElMET[NbgdSamplesElMET] = {
   "G_470to800_highPt",
   "G_800to1400_highPt","G_1400to1800_highPt","G_1800_highPt"
 };
+#endif
 const Color_t bgdColorElMET[7] = {kAzure+1,kGray+2,kMagenta,kOrange,kGreen,kTeal,kRed};
 Color_t bgdClr;
 
-TH1F * bgdElMET[NbgdSamplesElMET] = {0};
+TH1F * bgdElMET[NbgdSamplesElMET];// = {0};
 
-const unsigned NdataSamplesElMET = 2;
-const string dataNamesElMET[NdataSamplesElMET] = {"data", "data2"};
+const unsigned NdataSamplesElMET = 4;
+const string dataNamesElMET[NdataSamplesElMET] = {"data", "data2", "data3", "data4"};
 
 TH1F * dataElMET[NdataSamplesElMET] = {0};
 
