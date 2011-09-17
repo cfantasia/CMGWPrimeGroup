@@ -1,4 +1,4 @@
-Top Level Dir = rfio:///castor/cern.ch/user/c/cleonido/wprime/V310/
+Top Level Dir = rfio:/castor/cern.ch/user/c/cleonido/wprime/V310/
 integrated lumi = 2190.7 pb^-1
 
 samplename = data
@@ -28,6 +28,13 @@ x-section = 1
 subdir = SingleMuon_PRv6_LPC
 pathname = filelists_MuNu/SingleMuon_PRv6_V311.txt
 Nprod_evt = 1
+
+samplename = WMuNu_highPt
+description = PYTHIA Z2 W ->munu (NNLO cross-section), pT_min > 100 GeV
+x-section = 1.569
+subdir = MC_MuMET/WToMuNu_ptmin-100_TuneZ2_7TeV-pythia6
+pathname = filelists_MuNu/Wmunu_PYTHIAZ2_highPt.txt
+Nprod_evt = 1073655
 
 DONE
 
