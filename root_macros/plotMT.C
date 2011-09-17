@@ -36,15 +36,16 @@ float Lumi_ipb = -1;
 
 // 1 -> Mu+MET
 // 2 -> El+MET
-const unsigned analysis_channel = 2;
+const unsigned analysis_channel = 1;
 
 // electron channel: if want colored histogram set "wClr" to true. 
 bool wClr = true;
 
 // availability of data + MC samples indicated in these arrays
 //const unsigned NbgdSamplesMuMET = 19;
-const unsigned NbgdSamplesMuMET = 0;
-const string bgdNamesMuMET[NbgdSamplesMuMET] = {};
+const unsigned NbgdSamplesMuMET = 1;
+const string bgdNamesMuMET[NbgdSamplesMuMET] = {
+  "WMuNu_highPt"};
 #if 0
   "DYmumu_lowPt", "DYmumu_highPt", "DYtautau_lowPt", "DYtautau_highPt",
   "QCD_lowPt", "WMinusMu_lowPt", "WMinusMu_highPt", "WPlusMu_lowPt",
@@ -52,7 +53,7 @@ const string bgdNamesMuMET[NbgdSamplesMuMET] = {};
   "ttbar_lowPt", "ttbar_highPt","WW_lowPt",
   "WW_highPt", "WZ_lowPt", "WZ_highPt", "ZZ_lowPt", "ZZ_highPt"};
 #endif
-TH1F * bgdMuMET[NbgdSamplesMuMET]; // = {0};
+TH1F * bgdMuMET[NbgdSamplesMuMET] = {0};
 
 const unsigned NdataSamplesMuMET = 4;
 const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4"};
@@ -126,7 +127,7 @@ void plotMT()
   else if(analysis_channel == 2)
     algo = "";
 
-  //doPlots(1); // lepton-pt
+  //  doPlots(1); // lepton-pt
   doPlots(2); // lepton + MET transverse mass
 }
 
@@ -245,7 +246,7 @@ void doPlots(int option)
       hname += "_mupt";
       hname_ratio += "_mupt";
       desc = " p_{T} distribution";
-      xmin = 25; xmax = 600; xmax_cumu = xmax_ratio = 600;
+      xmin = 150; xmax = 1200; xmax_cumu = xmax_ratio = 1200;
       title = "Muon p_{T} (GeV/c)";
       var_plotted = "MuPt";
       x_offset = -100;
@@ -261,7 +262,7 @@ void doPlots(int option)
 	desc0 = "e";
       desc = desc0 + "&ME_{T} transverse mass: 2011 data (" 
 	+ string(lumi_value2) + ")";
-      xmin = 200; xmax = 2000; xmax_cumu = 1500; xmax_ratio = 1000;
+      xmin = 320; xmax = 2000; xmax_cumu = 1800; xmax_ratio = 1000;
       title = "M_{T} (GeV/c^{2})";
       var_plotted = "TM";
     }
@@ -278,8 +279,8 @@ void doPlots(int option)
 			data->GetXaxis()->GetXmax());
 
   THStack *hsbgd =new THStack(hname.c_str(),desc.c_str());//+++++++++
-  //  for(unsigned i = 0; i != NbgdSamples; ++i){
-  for(int i = NbgdSamples - 1; i != -1; i--){
+  for(unsigned i = 0; i != NbgdSamples; ++i){
+    //for(int i = NbgdSamples - 1; i != -1; i--){
     if(analysis_channel == 2){
       //  1, 2-4, 5-7, 8-10,11-12,13-15,16-
       if(i<1){bgdClr=bgdColorElMET[0];}
@@ -295,7 +296,6 @@ void doPlots(int option)
     }
     bgd->Add(bgdSamples[i]);
   }
-
   
   data->SetTitle(desc.c_str());
   data->SetMarkerStyle(8);
@@ -342,11 +342,10 @@ void doPlots(int option)
   TCanvas * c1 = new TCanvas();
   c1->SetLogy();
 
-  if(data->GetMinimum() < 0.00001)data->SetMinimum(0.00001);
   data->SetMinimum(0.1);
   
   data->Draw("e");
-  if(wClr)hsbgd->Draw("hist same");
+  if(wClr && analysis_channel == 2)hsbgd->Draw("hist same");
   else bgd->Draw("hist same");
 
 #if 0
@@ -369,7 +368,7 @@ void doPlots(int option)
   lg->SetTextSize(0.03);
   lg->SetBorderSize(0);
   lg->SetFillColor(0);
-  //  lg->AddEntry(bgd, "Total bgd", "F");
+  lg->AddEntry(bgd, "Total bgd", "F");
 #if 0
   lg->AddEntry(wp10, "W ' (1.0 TeV)", "F");
   lg->AddEntry(wp15, "W ' (1.5 TeV)", "F");
