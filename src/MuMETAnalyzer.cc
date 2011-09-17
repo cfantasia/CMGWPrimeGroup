@@ -2,6 +2,9 @@
 #include "DataFormats/PatCandidates/interface/PFParticle.h"
 
 #include <TH1F.h>
+#include <TH2F.h>
+
+#include <stdio.h>
 
 using std::string; using std::cout; using std::endl;
 
@@ -43,9 +46,9 @@ void MuMETAnalyzer::defineHistos(const TFileDirectory & dir)
   defineHistos_MuonPt(dir);
   defineHistos_MuonEta(dir);
   defineHistos_MuonPhi(dir);
-  //  defineHistos_MuonJetDPhi(dir);
   defineHistos_MuonIso(dir);
   defineHistos_TMass(dir);
+  defineHistos_TMvPT(dir);
 }
 
 // get the hardest muon (based on tracker-pt) in event
@@ -101,7 +104,7 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
     TeVMuon muon((*muons)[theMu], muReconstructor_);
     if(!muon.isValid())continue;
     if(muon.pt() < muonPtThreshold_) continue;
-    
+        
     Wcand = wprimeUtil_->getNewMETandW(event, muon, met, metLabel_);
 
     for(int cut_index = 0; cut_index != Num_mumet_cuts; ++cut_index)
@@ -148,11 +151,31 @@ void MuMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
     }
   float weight = wprimeUtil_->getWeight();
   // fill the histograms
+  double genpt = -999;
+  for(unsigned int i = 0 ; i != muon->genParticleRefs().size() ; ++i ){
+    
+    switch( muon->genParticle(i)->status() ){
+    case 1:
+      //		  histContainer_["DR_status1Match"]->Fill( ROOT::Math::VectorUtil::DeltaR(muon->p4() , muon->genParticle(i)->p4() ) ); 
+      genpt = muon->genParticle(i)->pt();
+      break;
+    case 3:
+      //		  histContainer_["DR_status3Match"]->Fill( ROOT::Math::VectorUtil::DeltaR(muon->p4() , muon->genParticle(i)->p4() ) ); 
+      break;
+    default:
+      //		  histContainer_["DR_defaultMatch"]->Fill( ROOT::Math::VectorUtil::DeltaR(muon->p4() , muon->genParticle(i)->p4() ) ); 
+      break;
+    }
+  }
+
+  if(genpt > 0)
+    hPTgen[cut_index]->Fill(genpt, weight);
   hPT[cut_index]->Fill(muon->pt(), weight);
   hETA[cut_index]->Fill(muon->eta(), weight);
   hPHI[cut_index]->Fill(muon->phi(), weight);
   hTM[cut_index]->Fill(Wcand.mt(), weight);
   hISO[cut_index]->Fill(muon->trkRelIsolation(),weight);
+  hTMvPT[cut_index]->Fill(muon->pt(), Wcand.mt(), weight);
 }
 
 // operations to be done when changing input file (e.g. create new histograms)
@@ -257,6 +280,7 @@ void MuMETAnalyzer::endAnalysis(ofstream & out)
 
 void MuMETAnalyzer::defineHistos_MuonPt(const TFileDirectory & dir)
 {
+
   for(int cut = 0; cut != Num_mumet_cuts; ++cut)
     {
       string name = "hPT" + algo_desc_short[muReconstructor_] + "_" + 
@@ -265,6 +289,16 @@ void MuMETAnalyzer::defineHistos_MuonPt(const TFileDirectory & dir)
 	mumet_cuts_desc_long[cut];
       
       hPT[cut] = dir.make<TH1F>(name.c_str(), title.c_str(), nBinPtMu,
+			    minPtMu, maxPtMu);
+    }
+  for(int cut = 0; cut != Num_mumet_cuts; ++cut)
+    {
+      string name = "hPTgen" + algo_desc_short[muReconstructor_] + "_" + 
+	mumet_cuts_desc_short[cut];
+      string title = algo_desc_long[muReconstructor_]+ " muon p_{T} with " + 
+	mumet_cuts_desc_long[cut];
+      
+      hPTgen[cut] = dir.make<TH1F>(name.c_str(), title.c_str(), nBinPtMu,
 			    minPtMu, maxPtMu);
     }
 }
@@ -341,6 +375,21 @@ void MuMETAnalyzer::defineHistos_TMass(const TFileDirectory & dir)
   
 }
 
+void MuMETAnalyzer::defineHistos_TMvPT(const TFileDirectory & dir)
+{
+  for(int cut = 0; cut != Num_mumet_cuts; ++cut)
+    {
+      string name = "hTMvPT" + algo_desc_short[muReconstructor_] + "_" 
+	+ mumet_cuts_desc_short[cut];
+      string title = algo_desc_long[muReconstructor_]+ 
+	" Transv. Mass vs p_{T} with " + mumet_cuts_desc_long[cut];
+      hTMvPT[cut] = dir.make<TH2F>(name.c_str(), title.c_str(), 
+				   nBinPtMu,minPtMu, maxPtMu,
+				   nBinTmMu, minTmMu, maxTmMu);
+    }
+  
+}
+
 void MuMETAnalyzer::setupCutOrder()
 {
   cuts.clear();
@@ -374,7 +423,20 @@ void MuMETAnalyzer::setupCutOrder()
 
 }
 
-// dump on screen info about high-pt muon
+/*
+	   << "\n ptError/pt " << rpt
+	   << ", ptError/pt^2 " << rpt2
+	   << ", trk_hits " << muon.innerTrack()->hitPattern().numberOfValidHits()
+	   << ", trk_layers " << muon.innerTrack()->hitPattern().trackerLayersWithMeasurement()
+	   << ", trk_validFraction " << muon.innerTrack()->validFraction()
+	   << ", charge = " << muon.GetTrack(rec_i)->charge() 
+	   << ", TM = " << WPrimeUtil::TMass(p4, newMET) << " GeV " << endl;
+    }
+      
+
+}
+*/
+
 void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const pat::Muon & muon) 
 {
   cout << "\n Run # = " << event.id().run() << " Event # = " 
@@ -395,16 +457,28 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const pat::Muo
       pat::MET myMet;    
       WCandidate w = wprimeUtil_->getNewMETandW(event, mu, myMet, metLabel_);
 
+      float rpt = 0;
+      float rpt2 = 0;
+      if(mu.getTrack(*it)->ptError()!=0) {
+	rpt = mu.getTrack(*it)->ptError()/mu.getTrack(*it)->pt();
+	rpt2 = 1000*rpt/mu.getTrack(*it)->pt();
+      }
       cout << " " << algo_desc_long[*it] << " pt = "
 	   << mu.getTrack(*it)->pt() << " +- " 
 	   << mu.getTrack(*it)->ptError()
 	   << " GeV, charge = " << mu.getTrack(*it)->charge() 
 	   << ", MET = " << myMet.et()
-	   << " GeV, TM = " << w.mt() << " GeV " << endl;
+	   << " GeV, TM = " << w.mt() << " GeV "
+	   << "\n ptError/pt = " << rpt
+	   << ", ptError/pt^2 = " << rpt2 << endl;
     }
-      
-
+  cout << " trk_hits = " << muon.innerTrack()->hitPattern().numberOfValidHits()
+       << ", trk_layers = " << muon.innerTrack()->hitPattern().trackerLayersWithMeasurement()
+       << ", trk_validFraction = " << muon.innerTrack()->validFraction()
+       << endl;
+  
 }
+
 
 // whether HLT accepted the event
 bool MuMETAnalyzer::passedHLT(bool *, const TeVMuon *, edm::EventBase const &)
