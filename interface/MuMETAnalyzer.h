@@ -14,6 +14,7 @@
 #include "TLorentzVector.h"
 
 class TH1F;
+class TH2F;
 class TeVMuon;
 
 #define debugmeMuMet 0
@@ -74,6 +75,7 @@ class MuMETAnalyzer : public AnalyzerBase
   //  void defineHistos_MuonJetDPhi(const TFileDirectory & dir);
   void defineHistos_MuonIso(const TFileDirectory & dir);
   void defineHistos_TMass(const TFileDirectory & dir);
+  void defineHistos_TMvPT(const TFileDirectory & dir);
 
   void setupCutOrder();
   selection_map_mumet cuts;
@@ -129,12 +131,14 @@ class MuMETAnalyzer : public AnalyzerBase
   float oneMuPtTrackCut_;
   float relIsoCut_;
 
+  TH1F * hPTgen[Num_mumet_cuts];
   TH1F * hPT[Num_mumet_cuts];
   TH1F * hETA[Num_mumet_cuts];
   TH1F * hPHI[Num_mumet_cuts];
   //  TH1F * hMJDPHI[Num_mumet_cuts];
   TH1F * hISO[Num_mumet_cuts];
   TH1F * hTM[Num_mumet_cuts];
+  TH2F * hTMvPT[Num_mumet_cuts];
 
   std::vector<unsigned> reconstructors;
 
