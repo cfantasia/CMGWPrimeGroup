@@ -99,8 +99,8 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
              << " sample = " << new_file->weight << endl << endl;
         // all info should now be logged in; check!
         new_file->checkFile();
-      // if we made it here, everything looks good: 
-      // add to vector of input files
+	// if we made it here, everything looks good: 
+	// add to vector of input files
         inputFiles.push_back(*new_file);
         // release memory
         delete new_file;
