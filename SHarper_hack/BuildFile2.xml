@@ -1,5 +1,0 @@
-<export>
-</export>
-<library name="SHarperHEEPAnalyzer_plugins" file="*.cc">
-  <use name="SHarper/HEEPAnalyzer"/>
-</library>
