@@ -127,7 +127,7 @@ void plotMT()
   else if(analysis_channel == 2)
     algo = "";
 
-  //  doPlots(1); // lepton-pt
+  // doPlots(1); // lepton-pt
   doPlots(2); // lepton + MET transverse mass
 }
 
@@ -388,9 +388,9 @@ void doPlots(int option)
 
   data_cumu->Draw("e");
   bgd_cumu->Draw("same");
-  TLatex * l1c = new TLatex(600 + x_offset, 300, cms_prelim.c_str());
+  TLatex * l1c = new TLatex(600 + x_offset, 60, cms_prelim.c_str());
   l1c->SetTextSize(0.04); 
-  TLatex * l2c = new TLatex(570 + x_offset, 100, lumi_sqrts.c_str());
+  TLatex * l2c = new TLatex(570 + x_offset, 20, lumi_sqrts.c_str());
   l2c->SetTextSize(0.04); 
   l1c->Draw(); l2c->Draw();
 

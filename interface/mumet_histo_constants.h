@@ -16,7 +16,7 @@ const std::string mumet_cuts_desc_long[Num_mumet_cuts]= {"Single-muon HLT", "Qua
 // +++++++++++++++++++++++++++++++muon-pt histogram parameters
 const unsigned  nBinPtMu = 140;//45; // 400; // 45; // 18; 200; 380; 
 const float minPtMu = 0;
-const float  maxPtMu = 800; // 800; 2000;
+const float  maxPtMu = 2000; // 800; 2000;
 // +++++++++++++++++++++++++++++++muon-eta histogram parameters
 const unsigned nBinEtaMu = 28;
 const float minEtaMu = -2.4;
