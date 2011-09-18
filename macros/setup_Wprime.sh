@@ -41,8 +41,6 @@ cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"
 echo -e  " Hack PAT Muon content to include high-pt reconstructors..."
-echo -e  " Fix BuildFiles (ie. make 41x-compatible) for HEEP code..."
-echo -e  " Add WP80 selection to HEEP code...."
 echo -e  "************************************************************"
 mv DataFormats/PatCandidates/interface/Muon.h DataFormats/PatCandidates/interface/Muon.h_original
 cp UserCode/CMGWPrimeGroup/PAT_hack/Muon.h DataFormats/PatCandidates/interface/
