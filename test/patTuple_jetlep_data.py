@@ -10,15 +10,15 @@ jetlep_config(process, 1000, 100)
 
 
 #addHLTFilter(process, 'HLT', "singlemu")
-addHLTFilter(process, 'HLT', "singleelectron")
+#addHLTFilter(process, 'HLT', "singleelectron")
 addHLTFilter(process, 'HLT', "doublemu")
-addHLTFilter(process, 'HLT', "doubleelectron")
+#addHLTFilter(process, 'HLT', "doubleelectron")
 
 process.p.replace(process.patTrigger, process.patTrigger+process.hltFilter)
 
 process.source.fileNames = [
-#    '/store/data/Run2011A/DoubleMu/AOD/PromptReco-v6/000/173/659/E2C7E831-B8CD-E011-9CA2-BCAEC5329725.root'
-    '/store/data/Run2011A/DoubleElectron/AOD/PromptReco-v6/000/173/659/4645CC17-B8CD-E011-8BA0-001D09F2906A.root'
+    '/store/data/Run2011A/DoubleMu/AOD/PromptReco-v6/000/173/659/E2C7E831-B8CD-E011-9CA2-BCAEC5329725.root'
+#    '/store/data/Run2011A/DoubleElectron/AOD/PromptReco-v6/000/173/659/4645CC17-B8CD-E011-8BA0-001D09F2906A.root'
 #    'file:/data/fladias/425_data_test.root' 
 #    'file:/afs/cern.ch/user/t/tomei/tmp/V260/CMSSW_4_1_4/src/PYTHIA6_EXOTICA_RSGravZZ_kMpl005_M1000_7TeV_mumujj_cff_py_GEN_FASTSIM_HLT.root',
     ] 
