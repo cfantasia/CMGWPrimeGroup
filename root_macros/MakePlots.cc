@@ -127,11 +127,26 @@ MakePlots(string inName, string outName, string opt){
   Data.push_back(Sample("data"));
   }else if(inName.find("HadVZ") != string::npos){
     vector<string> vData;
-    
-    vData.push_back("data_SingleMu_May10ReReco");
-    vData.push_back("data_SingleMu_PromptReco_v4");
-    vData.push_back("data_SingleMu_Aug05ReReco");
-    vData.push_back("data_SingleMu_PromptReco_v6");
+
+    vData.push_back("data_DoubleMu-Run2011A-May10ReReco-v1");
+    vData.push_back("data_SingleMu-Run2011A-May10ReReco-v1");
+    vData.push_back("data_DoubleElectron-Run2011A-May10ReReco-v1");
+    vData.push_back("data_SingleElectron-Run2011A-May10ReReco-v1");
+
+    vData.push_back("data_DoubleMu-Run2011A-PromptReco-v4");
+    vData.push_back("data_SingleMu-Run2011A-PromptReco-v4");
+    vData.push_back("data_DoubleElectron-Run2011A-PromptReco-v4");
+    vData.push_back("data_SingleElectron-Run2011A-PromptReco-v4");
+
+    vData.push_back("data_DoubleMu-Run2011A-05Aug2011-v1");
+    vData.push_back("data_SingleMu-Run2011A-05Aug2011-v1");
+    vData.push_back("data_DoubleElectron-Run2011A-05Aug2011-v1");
+    vData.push_back("data_SingleElectron-Run2011A-05Aug2011-v1");
+
+    vData.push_back("data_DoubleMu-Run2011A-PromptReco-v6");
+    vData.push_back("data_SingleMu-Run2011A-PromptReco-v6");
+    vData.push_back("data_DoubleElectron-Run2011A-PromptReco-v6");
+    vData.push_back("data_SingleElectron-Run2011A-PromptReco-v6");
     Data.push_back(Sample("data", vData, 1, 0, 0));
   }
   CheckSamples(fin,Data);
@@ -226,6 +241,8 @@ MakePlots(string inName, string outName, string opt){
       variable.push_back("hMET");
   }else if(inName.find("HadVZ") != string::npos){
     variable.push_back("hVZMass");
+    variable.push_back("hVZeeMass");
+    variable.push_back("hVZmmMass");
   }
 
   //These variables are cross checks but not critical to be shown
@@ -361,6 +378,18 @@ MakePlots(string inName, string outName, string opt){
     if(opt.find("show") == string::npos) {
       DrawandSave(fin,outName,"h_bestmass","Title: Best Mass",1,0,0);
       DrawandSave(fin,outName,"hVMass_ValidV","Title: Leading Jet Mass",1,0,0);
+
+      DrawandSave(fin,outName,"h_deltaR_elec1elec2","Title: ",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_muon1muon2","Title: ",1,0,0);
+
+      DrawandSave(fin,outName,"h_deltaR_HadVelec1","Title: ",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_HadVelec2","Title: ",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_HadVmuon1","Title: ",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_HadVmuon2","Title: ",1,0,0);
+
+      DrawandSave(fin,outName,"h_deltaR_jet1Z_R1","Title: ",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_jet1Z_R2","Title: ",1,0,0);
+      
     }
     
   }
