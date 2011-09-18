@@ -10,7 +10,7 @@ fi
 
 # Definitions
 RELEASE_VERSION=CMSSW_4_2_5
-WORKING_AREA=V320
+WORKING_AREA=V330
 # end definitions
 
 export RELEASE_VERSION WORKING_AREA
@@ -34,10 +34,10 @@ echo -e  "**************************"
 #cvs -Q co -r $RELEASE_VERSION PhysicsTools/PatAlgos
 cvs -Q co -r V06-04-19-01 DataFormats/PatCandidates
 cvs -Q co -r V08-06-41 PhysicsTools/PatAlgos
-cvs -Q co -r V00-05-00 -d SHarper/HEEPAnalyzer UserCode/SHarper/HEEPAnalyzer 
+cvs -Q co -r V00-06-01 -d SHarper/HEEPAnalyzer UserCode/SHarper/HEEPAnalyzer 
 cvs -Q co -r V08-03-09 PhysicsTools/Utilities
-cvs -Q co -r V00-03-20 UserCode/CMGWPrimeGroup
-#cvs -Q co UserCode/CMGWPrimeGroup
+#cvs -Q co -r V00-03-30 UserCode/CMGWPrimeGroup
+cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"
 echo -e  " Hack PAT Muon content to include high-pt reconstructors..."
@@ -54,21 +54,7 @@ mv PhysicsTools/PatAlgos/plugins/PATMuonProducer.cc PhysicsTools/PatAlgos/plugin
 cp UserCode/CMGWPrimeGroup/PAT_hack/PATMuonProducer.cc PhysicsTools/PatAlgos/plugins/
 mv PhysicsTools/PatAlgos/python/producersLayer1/muonProducer_cfi.py PhysicsTools/PatAlgos/python/producersLayer1/muonProducer_cfi.py_original
 cp UserCode/CMGWPrimeGroup/PAT_hack/muonProducer_cfi.py PhysicsTools/PatAlgos/python/producersLayer1/
-cp UserCode/CMGWPrimeGroup/SHarper_hack/BuildFile1.xml SHarper/HEEPAnalyzer/BuildFile.xml
-cp UserCode/CMGWPrimeGroup/SHarper_hack/BuildFile2.xml SHarper/HEEPAnalyzer/plugins/BuildFile.xml
-cp UserCode/CMGWPrimeGroup/SHarper_hack/WP80SelectionCuts_cfi.py SHarper/HEEPAnalyzer/python/
-mv SHarper/HEEPAnalyzer/src/HEEPEleSelector.cc SHarper/HEEPAnalyzer/src/HEEPEleSelector.cc_original
-cp UserCode/CMGWPrimeGroup/SHarper_hack/HEEPEleSelector.cc SHarper/HEEPAnalyzer/src/
-mv SHarper/HEEPAnalyzer/interface/HEEPEle.h SHarper/HEEPAnalyzer/interface/HEEPEle.h_original
-cp UserCode/CMGWPrimeGroup/SHarper_hack/HEEPEle.h SHarper/HEEPAnalyzer/interface/ 
-mv SHarper/HEEPAnalyzer/interface/HEEPCutValues.h  SHarper/HEEPAnalyzer/interface/HEEPCutValues.h_original
-cp UserCode/CMGWPrimeGroup/SHarper_hack/HEEPCutValues.h SHarper/HEEPAnalyzer/interface/
-mv SHarper/HEEPAnalyzer/src/HEEPCutValues.cc  SHarper/HEEPAnalyzer/src/HEEPCutValues.cc_original
-cp UserCode/CMGWPrimeGroup/SHarper_hack/HEEPCutValues.cc  SHarper/HEEPAnalyzer/src/
-mv SHarper/HEEPAnalyzer/interface/HEEPCutCodes.h SHarper/HEEPAnalyzer/interface/HEEPCutCodes.h_original
-cp UserCode/CMGWPrimeGroup/SHarper_hack/HEEPCutCodes.h SHarper/HEEPAnalyzer/interface/
-mv SHarper/HEEPAnalyzer/src/HEEPCutCodes.cc SHarper/HEEPAnalyzer/src/HEEPCutCodes.cc_original
-cp UserCode/CMGWPrimeGroup/SHarper_hack/HEEPCutCodes.cc SHarper/HEEPAnalyzer/src/
+
 echo -e "\n************************"
 echo -e " Done. Now will compile"
 echo -e "************************"
