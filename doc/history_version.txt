@@ -1,3 +1,24 @@
+18-SEP-11 (Chad, Christos, Cory, Flavia, Sunghyun), V00-03-30
+=============================================================
+General improvements:
+o Upgraded HEEP-code tag (V00-06-01) in sync with Z'->ee group. Removed
+custom hacking from installation script
+o Updated JSON files
+
+Muon+MET analysis:
+o Added high-pt W->mu sample
+o Added plots with GEN-level info 
+o Improved printout for high-pt events
+
+had-V + Z analysis:
+o Updated list of triggers and samples
+
+Misc:
+o Script for optimizing selection cuts
+o More work towards common plot-making macro
+o Updated skimming crab configurations
+
+
 12-SEP-11 (Christos, Cory, Flavia, Sunghyun), V00-03-20
 =======================================================
 General improvements:

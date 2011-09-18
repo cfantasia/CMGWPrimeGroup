@@ -13,17 +13,13 @@ o Setup a new working area (Default name: V320, release:
 CMSSW_4_2_5)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-03-20)
+V00-03-30)
 
 o Check out the default versions of DataFormats/PatCandidates and
-PhysicsTools/PatAlgos, V08-03-03 PhysicsTools/Utilities and V00-05-00 UserCode/SHarper/HEEPAnalyzer 
+PhysicsTools/PatAlgos, V08-03-03 PhysicsTools/Utilities and V00-06-01 UserCode/SHarper/HEEPAnalyzer 
 
 o Hack the content of PAT Muon collections in order to include the 
 dedicated high-pt reconstructors (DYT, cocktail, etc)
-
-o Hack the BuildFiles of the HEEP code to make it 42x-compatible
-
-o Hack the electron selection in order to implement the WP80 cuts
 
 o Compile the code
 
