@@ -6,7 +6,7 @@ process.WprimeAnalyzer.candEvtFile = "HadVZAnalyzer.lst"
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_HadVZ.txt"
 
 process.WprimeAnalyzer.maxEvents   = -1
-process.WprimeAnalyzer.reportAfter = 10000
+process.WprimeAnalyzer.reportAfter = 100000
 process.WprimeAnalyzer.useJSON = False
 process.WprimeAnalyzer.debugme = False
 process.WprimeAnalyzer.preselect = False
@@ -26,10 +26,10 @@ process.WprimeAnalyzer.minNJets = cms.untracked.uint32(1) # Larger than
 process.WprimeAnalyzer.maxNJets = cms.uint32(99999) # Smaller than
 process.WprimeAnalyzer.maxAngleBetweenJets = cms.double(9999.9)
 #
-process.WprimeAnalyzer.minZpt = cms.untracked.double(50.0) # All units in GeV
+process.WprimeAnalyzer.minZpt = cms.untracked.double(100.0) # All units in GeV
 process.WprimeAnalyzer.minZmass = cms.untracked.double(70.0)
 process.WprimeAnalyzer.maxZmass = cms.untracked.double(110.0)
-process.WprimeAnalyzer.minVPt = cms.untracked.double(50.0)
+process.WprimeAnalyzer.minVPt = cms.untracked.double(100.0)
 process.WprimeAnalyzer.minVmass = cms.untracked.double(60.0)
 process.WprimeAnalyzer.maxVmass = cms.untracked.double(110.0)
 
