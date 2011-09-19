@@ -1,0 +1,1 @@
+/store/user/jklukas/MC-W05-08-09F/MCPatOmnilepton-W05-08-09F-WprimeToWZTo3LNu_M-700_7TeV-pythia6/patTuple_cfg-FC276CF8-7B91-E011-9F97-E41F13181710.root

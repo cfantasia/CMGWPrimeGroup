@@ -1,0 +1,4 @@
+/store/user/jklukas/MCPatTrilepton-W05-08-04H-pythia_TC_WZ_400_413_GEN_SIMv1/patTuple_1_1_tZW.root
+/store/user/jklukas/MCPatTrilepton-W05-08-04H-pythia_TC_WZ_400_413_GEN_SIMv1/patTuple_2_1_n0d.root
+/store/user/jklukas/MCPatTrilepton-W05-08-04H-pythia_TC_WZ_400_413_GEN_SIMv1/patTuple_3_1_Xzt.root
+/store/user/jklukas/MCPatTrilepton-W05-08-04H-pythia_TC_WZ_400_413_GEN_SIMv1/patTuple_4_1_YC8.root
