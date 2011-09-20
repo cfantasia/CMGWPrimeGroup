@@ -73,10 +73,12 @@ class WPrimeUtil
   inline float getLumi_ipb(){return lumi_ipb;}
 
   static inline bool SameTrigger(const std::string & versionedName, const std::string & wildcardedName){
-    return (wildcardedName.find("*") == std::string::npos) ? 
+    size_t k = wildcardedName.find("*");
+    return (k == std::string::npos) ? 
       !versionedName.compare(wildcardedName) : //No '*', early triggers
-      !versionedName.compare(0, versionedName.size()-1, wildcardedName, 0, wildcardedName.size()-1);//This assumes v is under 10, need to fix
+      !versionedName.compare(0, k, wildcardedName, 0, k);
   }
+
   static void printEvent(edm::EventBase const & event);
 
   static bool passTriggersCut(edm::EventBase const & event, std::string label,const std::vector<std::string>& triggerNames);
