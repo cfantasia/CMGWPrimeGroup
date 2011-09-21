@@ -34,7 +34,7 @@ process.WprimeAnalyzer.endcapCuts = wp80EndcapCuts
 
 #for trigger
 process.WprimeAnalyzer.triggerResults = cms.InputTag("TriggerResults::HLT")
-process.WprimeAnalyzer.hltPaths = cms.vstring(
+process.WprimeAnalyzer.hltPaths = cms.vstring('HLT_Ele22_SW_TighterEleId_L1R_v1','HLT_Ele22_SW_TighterEleId_L1R_v2','HLT_Ele22_SW_TighterEleId_L1R_v3',
     'HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v1','HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2','HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v3',
     'HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v1','HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2','HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v3',
     'HLT_Ele45_CaloIdVT_TrkIdT_v1','HLT_Ele45_CaloIdVT_TrkIdT_v2','HLT_Ele45_CaloIdVT_TrkIdT_v3',
