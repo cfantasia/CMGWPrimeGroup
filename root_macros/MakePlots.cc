@@ -147,6 +147,11 @@ MakePlots(string inName, string outName, string opt){
     vData.push_back("data_SingleMu-Run2011A-PromptReco-v6");
     vData.push_back("data_DoubleElectron-Run2011A-PromptReco-v6");
     vData.push_back("data_SingleElectron-Run2011A-PromptReco-v6");
+
+    vData.push_back("data_DoubleMu-Run2011B-PromptReco-v1");
+    vData.push_back("data_SingleMu-Run2011B-PromptReco-v1");
+    vData.push_back("data_DoubleElectron-Run2011B-PromptReco-v1");
+    vData.push_back("data_SingleElectron-Run2011B-PromptReco-v1");
     Data.push_back(Sample("data", vData, 1, 0, 0));
   }
   CheckSamples(fin,Data);
@@ -157,8 +162,8 @@ MakePlots(string inName, string outName, string opt){
     Bkg.push_back(Sample("WJetsToLNu", kOrange+3, 1, kOrange+10));
     vector<string> VV;
     VV.push_back("ZZ");
-    VV.push_back("VGamma");
-    VV.push_back("WW");
+    VV.push_back("GVJets");
+    VV.push_back("WWTo2L2Nu");
     Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
     
     Bkg.push_back(Sample("TTJets"  , kRed+4, 1, kRed+2));
