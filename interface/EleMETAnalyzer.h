@@ -77,6 +77,8 @@ class EleMETAnalyzer : public AnalyzerBase
   float dumpHighEtElectronThreshold_;
   float dumpHighMtElectronThreshold_;
 
+  bool mkTuple_;
+
   void defineHistos(const TFileDirectory & dir);
   void defineTrees(const TFileDirectory & dir);
   void defineHistos_ElectronEt(const TFileDirectory & dir);
@@ -142,6 +144,8 @@ class EleMETAnalyzer : public AnalyzerBase
   ///These are required functions when inheriting from AnalyzerBase
   void fillHistos(const int& index, const float& weight=1.);
 
+  void FillNtuple(int & theEvent, int & iEleMin, edm::EventBase const & event, WCandidate & WCand);
+
   WCandidate Wcand;
 
   float electronPtThreshold_;
@@ -155,6 +159,7 @@ class EleMETAnalyzer : public AnalyzerBase
   std::string analysis;
   WprimeVariables vars;
   TTree * cloneTrees[Num_elmet_cuts];
+  TTree * NTuple;
 
 };
 

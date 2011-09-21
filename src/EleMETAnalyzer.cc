@@ -20,6 +20,8 @@ EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeU
   HLTPathsByName_= cfg.getParameter<std::vector<std::string > >("hltPaths");
   HLTPathsByIndex_.resize(HLTPathsByName_.size());
   
+  mkTuple_ = cfg.getParameter<bool>("mkTuple");
+
   setupCutOrder();
   
   analysis = "eleMET";
@@ -38,7 +40,7 @@ void EleMETAnalyzer::defineHistos(const TFileDirectory & dir)
       cloneTrees[i] = 0;
     }
   
-  defineTrees(dir);
+  if(mkTuple_) { NTuple = 0; defineTrees(dir);}
   defineHistos_ElectronEt(dir);
   defineHistos_ElectronEta(dir);
   defineHistos_ElectronPhi(dir);
@@ -68,7 +70,7 @@ int EleMETAnalyzer::getTheHardestElectron()
 
 void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
 {
-  ClearWprimeVariables(vars, analysis);
+  if(mkTuple_)  ClearWprimeVariables(vars, analysis);
 
   event.getByLabel(electronsLabel_, electrons);
   event.getByLabel(metLabel_, defMet);
@@ -104,6 +106,8 @@ void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
 
     Wcand = wprimeUtil_->getNewMETandW(event, el, met, metLabel_);
 
+    if(mkTuple_) FillNtuple(theEle,iEleMin,event,Wcand);
+
     for(int cut_index = 0; cut_index != Num_elmet_cuts; ++cut_index)
       { // loop over selection cuts
 	string arg = elmet_cuts_desc_short[cut_index];
@@ -127,6 +131,24 @@ void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
 
   } // loop over electrons
 
+}
+//Fill Ntuple
+void EleMETAnalyzer::FillNtuple(int & theEvent, int & iEleMin, edm::EventBase const & event, WCandidate & WCand){
+
+  const reco::Candidate *WpMet =  WCand.met();
+
+  if( theEvent==iEleMin ){
+    vars.runId   = event.id().run();
+    vars.lumiId = event.id().luminosityBlock();
+
+    TLorentzVector v(WpMet->pt(),WpMet->eta(),WpMet->phi(),WpMet->energy() );
+    vars.met = v;
+    vars.p_met = &vars.met;
+  }  
+  vars.ele = el4D;
+  vars.p_ele = &vars.ele;
+    
+  NTuple->Fill();
 }
 
 // set electron 4-d momentum (sets el4D)
@@ -160,11 +182,11 @@ void EleMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
   hTM[cut_index]->Fill(Wcand.mt(), weight);
  
   //fill the TTrees
-  vars.ele = el4D;
-  vars.p_ele = &vars.ele;
-  
- 
-  cloneTrees[cut_index] -> Fill();
+  if(mkTuple_){
+    vars.ele = el4D;
+    vars.p_ele = &vars.ele; 
+    cloneTrees[cut_index] -> Fill();
+  }
 }
 
 // operations to be done when changing input file (e.g. create new histograms)
@@ -282,6 +304,11 @@ void EleMETAnalyzer::defineHistos_ElectronEt(const TFileDirectory & dir)
 
 void EleMETAnalyzer::defineTrees(const TFileDirectory & dir)
 {
+
+  string name = "ntuple";// + elmet_cuts_desc_short[cut];
+  NTuple = dir.make<TTree>(name.c_str(), name.c_str());
+  InitializeTree(vars, NTuple, analysis);
+
   for(int cut = 0; cut != Num_elmet_cuts; ++cut)
     {
       string name = "ntu_" + elmet_cuts_desc_short[cut];

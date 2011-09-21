@@ -1,6 +1,6 @@
 from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
-process.WprimeAnalyzer.outputFile  = cms.string('Wprime_analysis_ElMET.root')## mandatory
+process.WprimeAnalyzer.outputFile  = cms.string('Wprime_analysis_ElMET_ntupleTest.root')## mandatory
 process.WprimeAnalyzer.reportAfter = cms.uint32(15000)                     ## optional
 process.WprimeAnalyzer.useJSON = True
 process.WprimeAnalyzer.doRecoilCorrectionForW = cms.bool(False)
@@ -23,6 +23,9 @@ process.WprimeAnalyzer.highestEtElectronOnly = cms.bool(False)
 process.WprimeAnalyzer.dumpHighEtElectrons   = cms.bool(True)
 process.WprimeAnalyzer.dumpHighEtElectronThreshold = cms.double(300)
 process.WprimeAnalyzer.dumpHighMtElectronThreshold = cms.double(800)
+
+# do or not make Ntuple
+process.WprimeAnalyzer.mkTuple = cms.bool(False)
 
 #HEEP Selection
 #process.WprimeAnalyzer.barrelCuts = heepBarrelCuts
