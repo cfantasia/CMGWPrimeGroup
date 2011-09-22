@@ -39,6 +39,7 @@ struct WprimeVariables
   float ele_hadIso_d1;
   float ele_hadIso_d2;
   int ele_isEB;
+  int ele_isEE;
   int ele_isEcalDriven;
   float ele_sigmaIetaIeta;
   float ele_DphiIn;

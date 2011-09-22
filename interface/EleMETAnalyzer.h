@@ -144,7 +144,7 @@ class EleMETAnalyzer : public AnalyzerBase
   ///These are required functions when inheriting from AnalyzerBase
   void fillHistos(const int& index, const float& weight=1.);
 
-  void FillNtuple(int & theEvent, int & iEleMin, edm::EventBase const & event, WCandidate & WCand);
+  void FillNtuple(int & theEvent, int & iEleMin, edm::EventBase const & event);
 
   WCandidate Wcand;
 

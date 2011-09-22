@@ -39,8 +39,8 @@ void EleMETAnalyzer::defineHistos(const TFileDirectory & dir)
       hPT[i] = hETA[i] = hPHI[i] = /*hMJDPHI[i] =*/ hTM[i] = 0;
       cloneTrees[i] = 0;
     }
-  
-  if(mkTuple_) { NTuple = 0; defineTrees(dir);}
+   
+  if(mkTuple_) { NTuple = 0; defineTrees(dir); }
   defineHistos_ElectronEt(dir);
   defineHistos_ElectronEta(dir);
   defineHistos_ElectronPhi(dir);
@@ -102,11 +102,13 @@ void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
     heep::Ele el((*electrons)[theEle]);
     cutCode = -1; // this means HEEP cuts have not been run for this electron
     setElectronMomentum(el); // this is needed for the ntuple-making
-    if(el.p4().pt() < electronPtThreshold_) continue;
 
     Wcand = wprimeUtil_->getNewMETandW(event, el, met, metLabel_);
 
-    if(mkTuple_) FillNtuple(theEle,iEleMin,event,Wcand);
+    if(mkTuple_) {FillNtuple(theEle,iEleMin,event);  NTuple->Fill();}
+
+    if(el.p4().pt() < electronPtThreshold_) continue;
+
 
     for(int cut_index = 0; cut_index != Num_elmet_cuts; ++cut_index)
       { // loop over selection cuts
@@ -133,22 +135,41 @@ void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
 
 }
 //Fill Ntuple
-void EleMETAnalyzer::FillNtuple(int & theEvent, int & iEleMin, edm::EventBase const & event, WCandidate & WCand){
+void EleMETAnalyzer::FillNtuple(int & theEle, int & iEleMin, edm::EventBase const & event){
 
-  const reco::Candidate *WpMet =  WCand.met();
+  const reco::Candidate *WpMet =  Wcand.met();
 
-  if( theEvent==iEleMin ){
+  if( theEle==iEleMin ){
     vars.runId   = event.id().run();
-    vars.lumiId = event.id().luminosityBlock();
-
+    vars.lumiId  = event.id().luminosityBlock();
+    vars.eventId = event.id().event();
     TLorentzVector v(WpMet->pt(),WpMet->eta(),WpMet->phi(),WpMet->energy() );
     vars.met = v;
     vars.p_met = &vars.met;
   }  
+
   vars.ele = el4D;
   vars.p_ele = &vars.ele;
-    
-  NTuple->Fill();
+  const heep::Ele *ele = Wcand.elec();
+
+  vars.ele_charge        = ele->charge();
+  vars.ele_e1x5          = ele->e1x5();
+  vars.ele_e2x5          = ele->e2x5Max();
+  vars.ele_e5x5          = ele->e5x5();
+  vars.ele_tkIso         = ele->isolPtTrks();
+  vars.ele_emIso         = ele->isolEm();
+  vars.ele_hadIso        = ele->isolHad();
+  vars.ele_hadIso_d1     = ele->isolHadDepth1();
+  vars.ele_hadIso_d2     = ele->isolHadDepth2();
+  vars.ele_isEB          = ele->isEB();
+  vars.ele_isEE          = ele->isEE();
+  vars.ele_isEcalDriven  = ele->isEcalDriven();
+  vars.ele_sigmaIetaIeta = ele->sigmaIEtaIEta();
+  vars.ele_DphiIn        = ele->dPhiIn();
+  vars.ele_DetaIn        = ele->dEtaIn();
+  vars.ele_HOverE        = ele->hOverE();
+  vars.ele_fbrem         = ele->fbrem();
+  vars.ele_EOverP        = ele->invEOverInvP();
 }
 
 // set electron 4-d momentum (sets el4D)
@@ -183,8 +204,8 @@ void EleMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
  
   //fill the TTrees
   if(mkTuple_){
-    vars.ele = el4D;
-    vars.p_ele = &vars.ele; 
+    int iEleMin =0;
+    FillNtuple(theEle,iEleMin,event);
     cloneTrees[cut_index] -> Fill();
   }
 }
@@ -199,6 +220,7 @@ void EleMETAnalyzer::beginFile(std::vector<wprime::InputFile>::const_iterator fi
   // add channel/analysis name here?
   TFileDirectory dir= wprimeUtil_->getFileService()->mkdir(fi->samplename); 
   defineHistos(dir); // one set of histograms per input file
+
 
 }
 
@@ -216,6 +238,13 @@ void EleMETAnalyzer::printFileSummary(std::vector<wprime::InputFile>::const_iter
 {
   string sample = fi->samplename;
   float weight = fi->weight;
+
+  if(mkTuple_) { 
+    vars.totEvents = fi->Nprod_evt;
+    vars.crossSection = fi->x_sect;
+    NTuple->Fill();
+  }
+
   wprime::SampleStat::iterator it;
   it = stats.find(sample);
   if(it == stats.end())abort();  
@@ -289,19 +318,6 @@ void EleMETAnalyzer::endAnalysis(ofstream & out)
   
 }
 
-
-void EleMETAnalyzer::defineHistos_ElectronEt(const TFileDirectory & dir)
-{
-  for(int cut = 0; cut != Num_elmet_cuts; ++cut)
-    {
-      string name = "hET_" + elmet_cuts_desc_short[cut];
-      string title = " Electron E_{T} with " + elmet_cuts_desc_long[cut];
-      
-      hPT[cut] = dir.make<TH1F>(name.c_str(), title.c_str(), nBinEtEle,
-			    minEtEle, maxEtEle);
-    }
-}
-
 void EleMETAnalyzer::defineTrees(const TFileDirectory & dir)
 {
 
@@ -316,6 +332,20 @@ void EleMETAnalyzer::defineTrees(const TFileDirectory & dir)
       InitializeTree(vars, cloneTrees[cut], analysis);
     }
 }
+
+
+void EleMETAnalyzer::defineHistos_ElectronEt(const TFileDirectory & dir)
+{
+  for(int cut = 0; cut != Num_elmet_cuts; ++cut)
+    {
+      string name = "hET_" + elmet_cuts_desc_short[cut];
+      string title = " Electron E_{T} with " + elmet_cuts_desc_long[cut];
+      
+      hPT[cut] = dir.make<TH1F>(name.c_str(), title.c_str(), nBinEtEle,
+			    minEtEle, maxEtEle);
+    }
+}
+
 
 void EleMETAnalyzer::defineHistos_ElectronEta(const TFileDirectory & dir)
 {

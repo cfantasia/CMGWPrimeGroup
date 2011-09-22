@@ -39,6 +39,7 @@ void InitializeTree(WprimeVariables& vars, TTree* tree, std::string& analysis)
       vars.m_reducedTree -> Branch("ele_hadIso_d1",  &vars.ele_hadIso_d1,   "ele_hadIso_d1/F");
       vars.m_reducedTree -> Branch("ele_hadIso_d2",  &vars.ele_hadIso_d2,   "ele_hadIso_d2/F");
       vars.m_reducedTree -> Branch("ele_isEB",          &vars.ele_isEB,                   "ele_isEB/I");
+      vars.m_reducedTree -> Branch("ele_isEE",          &vars.ele_isEE,                   "ele_isEE/I");
       vars.m_reducedTree -> Branch("ele_isEcalDriven",          &vars.ele_isEcalDriven,       "ele_isEcalDriven/I");
       vars.m_reducedTree -> Branch("ele_sigmaIetaIeta", &vars.ele_sigmaIetaIeta, "ele_sigmaIetaIeta/F");
       vars.m_reducedTree -> Branch("ele_DphiIn",        &vars.ele_DphiIn,               "ele_DphiIn/F");
@@ -79,6 +80,7 @@ void SetBranchAddresses(WprimeVariables& vars, TTree* tree)
   tree -> SetBranchAddress("ele_hadIso_d1",  &vars.ele_hadIso_d1);
   tree -> SetBranchAddress("ele_hadIso_d2",  &vars.ele_hadIso_d2);
   tree -> SetBranchAddress("ele_isEB",          &vars.ele_isEB);
+  tree -> SetBranchAddress("ele_isEE",          &vars.ele_isEE);
   tree -> SetBranchAddress("ele_isEcalDriven",  &vars.ele_isEcalDriven);
   tree -> SetBranchAddress("ele_sigmaIetaIeta", &vars.ele_sigmaIetaIeta);
   tree -> SetBranchAddress("ele_DphiIn",        &vars.ele_DphiIn);
