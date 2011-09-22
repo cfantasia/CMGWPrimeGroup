@@ -379,6 +379,11 @@ AnalyzerBase::passMinMETCut() const{
   return met_.et() > minMET_;
 }
 
+inline bool
+AnalyzerBase::passMinPtCut(const reco::Candidate& cand, const float& cut) const{
+  return cand.pt() > cut;
+}
+
 ////////////////////////////////
 /////////Check Z Properties/////
 ////////////////////////////////

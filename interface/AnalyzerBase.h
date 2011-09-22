@@ -63,6 +63,7 @@ public:
   virtual bool passMinNJetsCut() const;
 
   virtual bool passMinMETCut() const;
+  virtual bool passMinPtCut(const reco::Candidate& cand, const float& cut) const;
 
 /////////Check Z Properties/////
   virtual bool passValidZCut() const;
