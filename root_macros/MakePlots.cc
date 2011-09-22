@@ -420,7 +420,9 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
                title.find("WZ2e1muMass") != string::npos ||
                title.find("WZ1e2muMass") != string::npos ||
                title.find("WZ0e3muMass") != string::npos) ? 10 : 0;
-  if(title.find("VZMass") != string::npos) rebin = 1;
+  if(title.find("VZMass") != string::npos ||
+     title.find("VZeeMass") != string::npos ||
+     title.find("VZmmMass") != string::npos) rebin = 2;
 
   for(unsigned int i=0; i<samples_.size(); ++i){
     for(unsigned int j=0; j<samples_[i]->size(); ++j){
