@@ -129,6 +129,14 @@ class WCandidate : public BosonCandidate {
     leptonic_ = false;
     mt_ = -999.9;
  }
+    WCandidate(const pat::Jet & jet1, const pat::Jet & jet2) :
+    elec_(NULL), muon_(NULL){
+    addDaughters(jet1,jet2);
+    AddFourMomenta addP4;
+    addP4.set(* this);
+    leptonic_ = false;
+    mt_ = -999.9;
+ }
   const reco::Candidate * lepton() const {return daughter(0);}
   const reco::Candidate * met() const {return daughter(1);}
   const reco::Candidate * genLepton() const {return genLepton_;}
@@ -366,5 +374,6 @@ WCandidate getWCand(const ElectronV & electrons,
                     const ZCandidate & zCand,
                     double minDeltaR = 0.);
 WCandidate getWCand(const JetV & jets);
+WCandidate getWCand2(const JetV & jets);
 
 #endif

@@ -98,6 +98,31 @@ WCandidate getWCand(const JetV & jets)
   return w;
 }
 
+WCandidate getWCand2(const JetV & jets)
+{
+  // Order by pt - do it the dumb way because we only have a const&
+  double maxPt = -1.0;
+  size_t maxPtPosition1 = 0;
+  size_t maxPtPosition2 = 1;
+  for (size_t i=0; i!= jets.size(); ++i) {
+    if(jets[i].pt() > maxPt) {
+      maxPt = jets[i].pt();
+      maxPtPosition1 = i;
+    }
+  }
+  maxPt = -1.0;
+  for (size_t i=0; i!= jets.size(); ++i) {
+    if(i == maxPtPosition1) continue;
+    if(jets[i].pt() > maxPt) {
+      maxPt = jets[i].pt();
+      maxPtPosition2 = i;
+    }
+  }
+
+  WCandidate w(jets[maxPtPosition1], jets[maxPtPosition2]);
+  return w;
+}
+
 /// Return a WCandidate using the highest-pT non-Z lepton
 WCandidate getWCand(const ElectronV & electrons,
                     const MuonV & muons, 
