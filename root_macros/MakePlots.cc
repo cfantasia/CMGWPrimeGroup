@@ -180,13 +180,13 @@ MakePlots(string inName, string outName, string opt){
     VV.push_back("Summer11_VGamma");
     VV.push_back("Summer11_WW");
     VV.push_back("Summer11_WZ");
-    Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kGreen));
+    Bkg.push_back(Sample("VV", VV, kGreen, 1, kGreen));
     
-    Bkg.push_back(Sample("Summer11_TTJets"  , kRed+4, 1, kBlue));
+    Bkg.push_back(Sample("Summer11_TTJets"  , kBlue, 1, kBlue));
     
     vector<string> ZJets; 
     ZJets.push_back("Summer11_DYJetsToLL");
-    Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kRed));
+    Bkg.push_back(Sample("ZJets", ZJets, kRed, 1, kRed));
     
   }
   CheckSamples(fin,Bkg);
@@ -384,16 +384,16 @@ MakePlots(string inName, string outName, string opt){
       DrawandSave(fin,outName,"h_bestmass","Title: Best Mass",1,0,0);
       DrawandSave(fin,outName,"hVMass_ValidV","Title: Leading Jet Mass",1,0,0);
 
-      DrawandSave(fin,outName,"h_deltaR_elec1elec2","Title: ",1,0,0);
-      DrawandSave(fin,outName,"h_deltaR_muon1muon2","Title: ",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_elec1elec2","Title: DeltaR ee",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_muon1muon2","Title: DeltaR mm",1,0,0);
 
-      DrawandSave(fin,outName,"h_deltaR_HadVelec1","Title: ",1,0,0);
-      DrawandSave(fin,outName,"h_deltaR_HadVelec2","Title: ",1,0,0);
-      DrawandSave(fin,outName,"h_deltaR_HadVmuon1","Title: ",1,0,0);
-      DrawandSave(fin,outName,"h_deltaR_HadVmuon2","Title: ",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_HadVelec1","Title: DeltaR Ve1",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_HadVelec2","Title: DeltaR Ve2",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_HadVmuon1","Title: DeltaR Vm1",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_HadVmuon2","Title: DeltaR Vm2",1,0,0);
 
-      DrawandSave(fin,outName,"h_deltaR_jet1Z_R1","Title: ",1,0,0);
-      DrawandSave(fin,outName,"h_deltaR_jet1Z_R2","Title: ",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_jet1Z_R1","Title: DeltaR Zj1",1,0,0);
+      DrawandSave(fin,outName,"h_deltaR_jet1Z_R2","Title: DeltaR Zj2",1,0,0);
       
     }
     
