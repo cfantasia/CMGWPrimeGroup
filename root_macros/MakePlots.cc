@@ -65,7 +65,7 @@ int main(int argc, char ** argv);
 void MakePlots(string inName, string outName, string opt="");
 void DrawandSave(TFile* fin, std::string pdfName, std::string title, std::string bookmark, bool logy, bool eff, bool cum, TLine* line=NULL);
 TH1F* FillCum(TH1F* h);
-void GetHistograms(TFile* fin, std::string title, bool eff, bool cum);
+bool GetHistograms(TFile* fin, std::string title, bool eff, bool cum);
 void Draw(std::string filename, std::string pdfName, std::string bookmark, bool logy, bool eff, TLine* line);
 void CheckSamples(TFile* fin, std::vector<Sample> & sample);
 TH1F* GetValidHist(TFile* f);
@@ -414,12 +414,12 @@ MakePlots(string inName, string outName, string opt){
 
 void
 DrawandSave(TFile* fin, string pdfName, string title, string bookmark, bool logy, bool eff, bool cum, TLine* line){
-  GetHistograms(fin, title, eff, cum);
+  if(!GetHistograms(fin, title, eff, cum)) return;
   string filename = logy ? "plots/" + title + ".pdf" : "plots/" + title + "_Linear.pdf";
   Draw(filename, pdfName, bookmark, logy, eff, line);
 }
 
-void
+bool
 GetHistograms(TFile* fin, string title, bool eff, bool cum){
   if(debug_) printf("  GetHisto %s\n", title.c_str());
   string hist_name;
@@ -433,10 +433,13 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
      title.find("VZeeMass") != string::npos ||
      title.find("VZmmMass") != string::npos) rebin = 2;
 
+  bool validHist = false;
   for(unsigned int i=0; i<samples_.size(); ++i){
     for(unsigned int j=0; j<samples_[i]->size(); ++j){
       if(debug_) cout<<"i: "<<i<<" j:"<<j<<endl;
       samples_[i]->at(j).hist = get_sum_of_hists(fin, samples_[i]->at(j).names, title, rebin);
+      if(!validHist && samples_[i]->at(j).hist->GetEntries() > 0)
+        validHist = true;
       samples_[i]->at(j).hist->SetLineStyle(samples_[i]->at(j).style);
       samples_[i]->at(j).hist->SetLineColor(samples_[i]->at(j).line); 
       if(!eff){
@@ -447,6 +450,7 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
       }
     }
   }
+  return validHist;
 }
 
 void
