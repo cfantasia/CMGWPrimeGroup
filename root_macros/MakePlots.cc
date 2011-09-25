@@ -78,7 +78,7 @@ MakePlots(string inName, string outName, string opt){
 
   if(opt.find("debug") != string::npos) debug_ = true;
   
-  TFile *fin = TFile::Open(inName.c_str(), "read");
+  TFile *fin = TFile::Open(inName.c_str(), "read"); assert(fin);
   lumiUsed_ = GetLumiUsed(fin);
   cout<<"Lumi Used is "<<lumiUsed_<<" inv pb\n";
 
@@ -120,10 +120,12 @@ MakePlots(string inName, string outName, string opt){
   SampleNames["Summer11_RSZZmmjj_1500"]="RS 1500";
   SampleNames["Summer11_RSZZmmjj_1750"]="RS 1750";
   SampleNames["Summer11_RSZZmmjj_2000"]="RS 2000";
+  SampleNames["Summer11_WprimeToWZTo2Q2L_M-500"]="W' 500";
+  SampleNames["Summer11_WprimeToWZTo2Q2L_M-1000"]="W' 1000";
 
   /////Data Samples
   
-  if(inName.find("Wprime") != string::npos || inName.find("EWKWZ") != string::npos){
+  if(inName.find("WprimeWZ") != string::npos || inName.find("EWKWZ") != string::npos){
   Data.push_back(Sample("data"));
   }else if(inName.find("HadVZ") != string::npos){
     vector<string> vData;
@@ -147,18 +149,19 @@ MakePlots(string inName, string outName, string opt){
     vData.push_back("data_SingleMu-Run2011A-PromptReco-v6");
     vData.push_back("data_DoubleElectron-Run2011A-PromptReco-v6");
     vData.push_back("data_SingleElectron-Run2011A-PromptReco-v6");
-
+    
     vData.push_back("data_DoubleMu-Run2011B-PromptReco-v1");
     vData.push_back("data_SingleMu-Run2011B-PromptReco-v1");
     vData.push_back("data_DoubleElectron-Run2011B-PromptReco-v1");
     vData.push_back("data_SingleElectron-Run2011B-PromptReco-v1");
+    
     Data.push_back(Sample("data", vData, 1, 0, 0));
   }
   CheckSamples(fin,Data);
   
   /////Background Samples
 
-  if(inName.find("Wprime") != string::npos || inName.find("EWKWZ") != string::npos){
+  if(inName.find("WprimeWZ") != string::npos || inName.find("EWKWZ") != string::npos){
     Bkg.push_back(Sample("WJetsToLNu", kOrange+3, 1, kOrange+10));
     vector<string> VV;
     VV.push_back("ZZ");
@@ -193,11 +196,11 @@ MakePlots(string inName, string outName, string opt){
 
   /////Signal Samples
 
-  if(inName.find("Wprime") != string::npos){
+  if(inName.find("WprimeWZ") != string::npos){
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-300", 1, 1, kGreen));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-400", 1, 1, 10));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-500", 1, 1, 10));
-    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-600", 1, 1, 10));
+    Sig.push_back(Sample("WprimeToWZTo3LNu_M-600", 1, 1, 10));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-700", 1, 1, 10));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-800", 1, 1, 10));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-900", 1, 1, 10));
@@ -208,11 +211,13 @@ MakePlots(string inName, string outName, string opt){
     //Sig.push_back(Sample("TC_WZ_500",     1, 1, kRed));
   }else if(inName.find("HadVZ") != string::npos){
     Sig.push_back(Sample("Summer11_RSZZmmjj_750",     kMagenta, 1, 0));
-    //Sig.push_back(Sample("Summer11_RSZZmmjj_1000",     1, 1, kBlue));
+    //Sig.push_back(Sample("Summer11_RSZZmmjj_1000",     kMagenta, 2, 0));
     //Sig.push_back(Sample("Summer11_RSZZmmjj_1250",     1, 1, 10));
     //Sig.push_back(Sample("Summer11_RSZZmmjj_1500",     1, 1, 10));
     //Sig.push_back(Sample("Summer11_RSZZmmjj_1750",     1, 1, 10));
     //Sig.push_back(Sample("Summer11_RSZZmmjj_2000",     1, 1, 10));
+    //Sig.push_back(Sample("Summer11_WprimeToWZTo2Q2L_M-500", kGray, 1, 0));
+    //Sig.push_back(Sample("Summer11_WprimeToWZTo2Q2L_M-1000", kGray, 2, 0));
   }
   CheckSamples(fin,Sig);
 
@@ -232,7 +237,7 @@ MakePlots(string inName, string outName, string opt){
   vector<string> variable; 
 
   //These variables will be plotted
-  if(inName.find("Wprime") != string::npos){
+  if(inName.find("WprimeWZ") != string::npos){
     variable.push_back("hWZMass");
     variable.push_back("hHt");
     variable.push_back("hMET");
@@ -252,7 +257,7 @@ MakePlots(string inName, string outName, string opt){
 
   //These variables are cross checks but not critical to be shown
   if(opt.find("show") == string::npos){
-    if(inName.find("Wprime") != string::npos){
+    if(inName.find("WprimeWZ") != string::npos){
       variable.push_back("hWZ3e0muMass");
       variable.push_back("hWZ2e1muMass");
       variable.push_back("hWZ1e2muMass");
@@ -377,7 +382,7 @@ MakePlots(string inName, string outName, string opt){
   }
 
   //Make plots for a single cut
-  if(inName.find("Wprime") != string::npos){
+  if(inName.find("WprimeWZ") != string::npos){
   }else if(inName.find("EWKWZ") != string::npos){
   }else if(inName.find("HadVZ") != string::npos){
     if(opt.find("show") == string::npos) {
@@ -486,6 +491,8 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
     for(unsigned int i=0; i<Sig.size(); i++){
       max = TMath::Max(max, sSigs[i]->GetMaximum());
       sSigs[i]->Draw("HIST SAME");
+    }
+    for(unsigned int i=0; i<Sig.size(); i++){
       //This is if you want to see the shape of a low xsec signal
       Sig[i].hist->Draw("HIST SAME");
     }
