@@ -1,0 +1,15 @@
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_10_1_ah6.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_1_1_j0B.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_14_1_RK1.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_2_1_HVD.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_4_1_V7o.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_15_1_K71.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_9_1_oBh.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_3_1_Zro.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_12_1_3Me.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_11_1_mRc.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_5_1_RFj.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_6_1_a7H.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_7_1_04w.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_13_1_Mji.root
+/store/user/fantasia/42X/DiLeptonJet-V301B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_8_1_RDP.root
