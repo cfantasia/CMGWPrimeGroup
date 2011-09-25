@@ -218,6 +218,10 @@ MakePlots(string inName, string outName, string opt){
     //Sig.push_back(Sample("Summer11_RSZZmmjj_2000",     1, 1, 10));
     //Sig.push_back(Sample("Summer11_WprimeToWZTo2Q2L_M-500", kGray, 1, 0));
     //Sig.push_back(Sample("Summer11_WprimeToWZTo2Q2L_M-1000", kGray, 2, 0));
+  }else{
+    cerr<<" Don't know what you're trying to plot with input file. "
+        <<inName<<endl;
+    abort();
   }
   CheckSamples(fin,Sig);
 
