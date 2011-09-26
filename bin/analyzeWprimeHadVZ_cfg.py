@@ -85,5 +85,3 @@ process.WprimeAnalyzer.LooseMuonType = cms.untracked.string("HadVZLoose")
 process.WprimeAnalyzer.TightMuonType = cms.untracked.string("HadVZTight")
 
 process.WprimeAnalyzer.LooseJetType = cms.untracked.string("Base")
-
-process.WprimeAnalyzer.jetSelectors.Base.minPt = 120
