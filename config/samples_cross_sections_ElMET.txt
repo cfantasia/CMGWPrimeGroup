@@ -32,7 +32,7 @@ Nprod_evt = 1
 samplename = data5
 description = Electron pt > 100 GeV skim, 2011B PR v1 (344.9 ipb DCS-only)
 x-section = 1
-subdir = SingleElectron2011B_PRV1/175832_176309/
+subdir = SingleElectron_2011B_PRV1/175832_176309/
 pathname = filelists_ElNu/SingleElectron_2011B_PRV1_175832_176298.txt
 Nprod_evt = 1
 
