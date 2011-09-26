@@ -30,7 +30,7 @@ pathname = filelists_MuNu/SingleMuon_PRv6_V311.txt
 Nprod_evt = 1
 
 samplename = data5
-description = Muon pt > 100 GeV skim, 2011B PR v1 (xxx.x ipb DCS-only)
+description = Muon pt > 100 GeV skim, 2011B PR v1 (356.7 ipb DCS-only)
 x-section = 1
 subdir = SingleMuon2011B_PRV1/175832_176309/
 pathname = filelists_MuNu/SingleMuon_2011B_PRV1_175832_176298.txt
