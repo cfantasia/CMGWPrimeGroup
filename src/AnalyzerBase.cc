@@ -100,29 +100,53 @@ void AnalyzerBase::tabulateEvent(const int& cut_index, const float& weight){
 }//tabulateEvent
 
 //Writing results to a txt file
-void AnalyzerBase::tabulateFile(wprime::EffV& results){
+void AnalyzerBase::tabulateFile(std::vector<wprime::InputFile>::const_iterator fi, wprime::EffV& results){
+  float nProd = fi->Nprod_evt*fi->weight;
   for(uint i = 0; i < results.size(); ++i){
     //calculate efficiencies
-    int idx = std::max((int)i-1,0);
-    float num =   results[i].Nsurv_evt_cut_w;
-    float denom = results[idx].Nsurv_evt_cut_w;
-    WPrimeUtil::getEff(results[i].eff, results[i].deff, num, denom);
-    WPrimeUtil::getEff(results[i].eff_abs, results[i].deff_abs, num, results[0].Nsurv_evt_cut_w);
+    float rel_denom = i==0 ? fi->Nact_evt*fi->weight : results[i-1].Nsurv_evt_cut_w;
+    //Calc Relative Eff
+    WPrimeUtil::getEff(results[i].eff, results[i].deff, 
+                       results[i].Nsurv_evt_cut_w, rel_denom);
+    //Calc Absolute Eff
+    WPrimeUtil::getEff(results[i].eff_abs, results[i].deff_abs, 
+                       results[i].Nsurv_evt_cut_w, nProd);
   } // loop over different cuts
 }//tabulateFile
 
 void AnalyzerBase::printFileSummary(std::vector<wprime::InputFile>::const_iterator fi, ofstream& out){ 
+  out<<"$$$$$$$$$$$$$$$$ Sample: "<<fi->samplename<<" ( "<<fi->description<<" )"
+     <<". Int. Lumi = "<<wprimeUtil_->getLumi_ipb()<< ". Weight = "<<fi->weight<<endl;
   out << setiosflags(std::ios::fixed) << std::setprecision(2);
-  out<<"$$$$$$$$$$$$$$$$$$$$$$$ Sample: "<<fi->samplename<<" ( "<<fi->description<<" )"<<endl;
+/*
   out << " Total # of produced events for " << wprimeUtil_->getLumi_ipb() 
-      << " ipb = " << fi->Nprod_evt*fi->weight << endl;
+      << " ipb = " << fi->Nprod_evt*fi->weight << "(" << fi->Nprod_evt << ")" << endl;
   out << " Total # of events after pre-selection for " 
       << wprimeUtil_->getLumi_ipb() << " ipb = " << fi->Nact_evt*fi->weight 
-      << endl;
+      << "(" << fi->Nact_evt << ")" << endl;
   float eff, deff;
   WPrimeUtil::getEff(eff, deff, fi->Nact_evt, fi->Nprod_evt);
   out << " Preselection efficiency = " << eff*100 << " % +- " << deff*100 << " %\n";
-  
+*/
+  float eff, deff;
+  out<<"      (Produced       ): " <<"Evts = " << std::setw(10) << fi->Nprod_evt*fi->weight
+     <<" (" << std::right << std::setw(7) << fi->Nprod_evt << ")";
+  WPrimeUtil::getEff(eff, deff, fi->Nprod_evt, fi->Nprod_evt);
+  out << std::setw(9) <<"\tRel eff: "<<std::setw(6)<<eff*100
+      << " +/- " << std::setw(6)<<deff*100 << "%";
+  out << std::setw(9) <<"\tAbs eff: "<<std::setw(6)<<eff*100
+      << " +/- " << std::setw(6)<<deff*100 << "%"
+      << endl;
+
+  out<<"      (Pat Skim       ): " <<"Evts = " << std::setw(10) << fi->Nact_evt*fi->weight
+     <<" (" << std::right << std::setw(7) << fi->Nact_evt << ")";
+  WPrimeUtil::getEff(eff, deff, fi->Nact_evt, fi->Nprod_evt);
+  out << std::setw(9) <<"\tRel eff: "<<std::setw(6)<<eff*100
+      << " +/- " << std::setw(6)<<deff*100 << "%";
+  out << std::setw(9) <<"\tAbs eff: "<<std::setw(6)<<eff*100
+      << " +/- " << std::setw(6)<<deff*100 << "%"
+      << endl;
+
   for(uint i = 0; i < Cuts_.size(); ++i){
     out<<std::right<<"Cut " << std::setw(2) << i << "("
        <<std::left<< std::setw(15) << Cuts_[i]
@@ -503,7 +527,7 @@ AnalyzerBase::eventLoop(edm::EventBase const & event){
 // (e.g. print summary)
 void AnalyzerBase::endFile(std::vector<wprime::InputFile>::const_iterator fi,
                                  ofstream & out){
-  tabulateFile(results_);
+  tabulateFile(fi, results_);
   printFileSummary(fi, out);  
 }
 

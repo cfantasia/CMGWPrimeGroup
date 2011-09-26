@@ -17,7 +17,7 @@ public:
 
 //Tabulate results after the cut has been passed
   virtual void tabulateEvent(const int& cut_index, const float& weight);
-  virtual void tabulateFile(wprime::EffV& results);
+  virtual void tabulateFile(std::vector<wprime::InputFile>::const_iterator fi, wprime::EffV& results);
   virtual void printFileSummary(std::vector<wprime::InputFile>::const_iterator fi, ofstream& out);
  
   virtual void fillHistos(const int& index, const float& weight=1.) = 0;//Pure Virtual
