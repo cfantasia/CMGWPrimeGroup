@@ -625,7 +625,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
   weight_ = wprimeUtil_->getWeight();
   if(!passCuts(weight_)) return;
-  if(1 || wprimeUtil_->runningOnData()){
+  if(wprimeUtil_->runningOnData()){
     cout<<" The following data event passed All Cuts!!!\n";
     printPassingEvent(event);
     if(1 || debugme) printEventLeptons();
