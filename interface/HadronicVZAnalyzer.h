@@ -36,8 +36,8 @@ public:
   void defineHistos(const TFileDirectory& dir);
   void fillHistos(const int& index, const float& weight=1.);
   void fillJetMultiplicityHists();
-  void fillLooseMuonHists();
-  void fillTightMuonHists();
+  //void fillLooseMuonHists();
+  //void fillTightMuonHists();
   void fillGoodZHistos();
   void fillGoodHadVHistos();
   void fillValidVZHistos();
@@ -53,8 +53,6 @@ public:
 
   //methods for the cuts
   bool passValidVZCandCut();
-
-
 
 // +++++++++++++++++++useful constants
 
@@ -107,47 +105,20 @@ public:
   TH1F* h_jet_HadV_pt;
   TH1F* h_jet_HadV_eta;
   TH1F* h_jet_HadV_phi;
-  TH1F* h_Zelec1_VZCut_pt;
-  TH1F* h_Zelec1_VZCut_eta;
-  TH1F* h_Zelec1_VZCut_phi;
-  TH1F* h_Zelec2_VZCut_pt;
-  TH1F* h_Zelec2_VZCut_eta;
-  TH1F* h_Zelec2_VZCut_phi;
-  TH1F* h_Zmuon1_VZCut_pt;
-  TH1F* h_Zmuon1_VZCut_eta;
-  TH1F* h_Zmuon1_VZCut_phi;
-  TH1F* h_Zmuon2_VZCut_pt;
-  TH1F* h_Zmuon2_VZCut_eta;
-  TH1F* h_Zmuon2_VZCut_phi;
-  TH1F* h_jet_VZCut_pt;
-  TH1F* h_jet_VZCut_eta;
-  TH1F* h_jet_VZCut_phi;
   TH1F* h_jet_mult;
   TH1F* h_jet_mult_inc;
   TH1F* h_jet1jet2_mass;
 
-
-
-// +++++++++++++++++++ Histogram Definitions 
-  TH1F* h_tight_muons_pt;
-  TH1F* h_tight_muons_eta;
-  TH1F* h_tight_muons_phi;
-
   //Jet merging histos
-
-
   TH2F* h_jet1mass_jet2mass;
   TH1F* h_HadVZmass_Cory;
   TH1F* h_jet1jet2_mass_Restricted;
   TH1F* h_HadVZmass_Flavia;
   TH1F* h_HadV_mass_Cory;
   TH1F* h_HadV_mass_Flavia;
-
   TH2F* h_m1_vs_m12;
   TH1F* h_bestmass;
-
   TH1F* h_deltaR_jet1jet2;
-
   TH1F* h_deltaR_jet1jet2_R1_cut40;
   TH1F* h_deltaR_jet1jet2_R1_cut50;
   TH1F* h_deltaR_jet1jet2_R1_cut60;
@@ -155,7 +126,6 @@ public:
   TH1F* h_deltaR_jet1jet2_R1_cut70;
   TH1F* h_deltaR_jet1jet2_R1_cut80;
   TH1F* h_deltaR_jet1jet2_R1_cut90;
-
   TH1F* h_deltaR_jet1jet2_R2_cut40;
   TH1F* h_deltaR_jet1jet2_R2_cut50;
   TH1F* h_deltaR_jet1jet2_R2_cut60;
@@ -163,50 +133,12 @@ public:
   TH1F* h_deltaR_jet1jet2_R2_cut70;
   TH1F* h_deltaR_jet1jet2_R2_cut80;
   TH1F* h_deltaR_jet1jet2_R2_cut90;
-
   TH1F* h_deltaR_jet1Z_R1;
   TH1F* h_deltaR_jet2Z_R1;
   TH1F* h_deltaR_jet3Z_R1;
-
   TH1F* h_deltaR_jet1Z_R2;
   TH1F* h_deltaR_jet2Z_R2;
   TH1F* h_deltaR_jet3Z_R2;
-
-
-
-
-  //Muon work histos
-  TH1F* h_dptpt2; 
-  TH2F* h_dptpt_vs_pt;
-  TH2F* h_dptpt2_vs_pt;
-  TH2F* h_dptpt_vs_invpt;
-  TH2F* h_dptpt2_vs_invpt;
-  TH2F* h_dptpt_vs_eta;
-  TH2F* h_dptpt2_vs_eta;
-  TH2F* h_dptpt_vs_pt_meta09;
-  TH2F* h_dptpt2_vs_pt_meta09;
-  TH2F* h_dptpt_vs_invpt_meta09;
-  TH2F* h_dptpt2_vs_invpt_meta09;
-  TH2F* h_dptpt_vs_pt_meta0912;
-  TH2F* h_dptpt2_vs_pt_meta0912;
-  TH2F* h_dptpt_vs_invpt_meta0912;
-  TH2F* h_dptpt2_vs_invpt_meta0912;
-  TH2F* h_dptpt_vs_pt_meta1225;
-  TH2F* h_dptpt2_vs_pt_meta1225;
-  TH2F* h_dptpt_vs_invpt_meta1225;
-  TH2F* h_dptpt2_vs_invpt_meta1225;
-  TH2F* h_dptpt_vs_pt_teta09;
-  TH2F* h_dptpt2_vs_pt_teta09;
-  TH2F* h_dptpt_vs_invpt_teta09;
-  TH2F* h_dptpt2_vs_invpt_teta09;
-  TH2F* h_dptpt_vs_pt_teta0915;
-  TH2F* h_dptpt2_vs_pt_teta0915;
-  TH2F* h_dptpt_vs_invpt_teta0915;
-  TH2F* h_dptpt2_vs_invpt_teta0915;
-  TH2F* h_dptpt_vs_pt_teta1524;
-  TH2F* h_dptpt2_vs_pt_teta1524;
-  TH2F* h_dptpt_vs_invpt_teta1524;
-  TH2F* h_dptpt2_vs_invpt_teta1524;
 
   /////////////////////
   std::vector<TH1F*> hVZMass, hVZeeMass, hVZmmMass;
@@ -231,11 +163,15 @@ public:
 
 struct highestMuonPt {                                                                                                                                     
   bool operator() (const TeVMuon & a, const TeVMuon & b){                                                                                  
-                                                                                                                                                             
     return a.pt() > b.pt();                                                                                                                                
   }                                                                                                                                                        
 };
 
+struct highestElectronPt{                                                                                                                                   
+  bool operator() (const heep::Ele & a, const heep::Ele & b){                                                                                              
+    return a.patEle().pt() > b.patEle().pt();                                                                                                           
+  }                                                                                                                                                        
+};
 
 struct highestJetPt {
   bool operator() (const pat::Jet & a, const pat::Jet & b){
