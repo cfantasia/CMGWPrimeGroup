@@ -86,15 +86,29 @@ WCandidate getWCand(const ElectronV & electrons,
 WCandidate getWCand(const JetV & jets)
 {
   // Order by pt - do it the dumb way because we only have a const&
-  double maxPt = -1.0;
+  /*  double maxPt = -1.0;
   size_t maxPtPosition = 0;
   for (size_t i=0; i!= jets.size(); ++i) {
     if(jets[i].pt() > maxPt) {
       maxPt = jets[i].pt();
       maxPtPosition = i;
     }
+    }*/
+  //  WCandidate w(jets[maxPtPosition]);                                                                                                                     
+
+  //order by closest to 85GeV (Vmass)
+  double minMassDiff = -999.0;
+  double Vmass = 85.0;
+  size_t minMassPosition = 0;
+  for (size_t i=0; i!=jets.size(); ++i) {
+    if(fabs(jets[i].mass()-Vmass) < minMassDiff ) {
+      minMassDiff = fabs(jets[i].mass()-Vmass);
+      minMassPosition = i;
+    }
   }
-  WCandidate w(jets[maxPtPosition]);
+
+  WCandidate w(jets[minMassPosition]);
+
   return w;
 }
 
