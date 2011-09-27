@@ -2,6 +2,7 @@ from UserCode.CMGWPrimeGroup.patTuple_common_cfg import *
 from UserCode.CMGWPrimeGroup.patTuple_el_cfg import *
 from UserCode.CMGWPrimeGroup.patTuple_mu_cfg import *
 from UserCode.CMGWPrimeGroup.patTuple_jet_cfg import *
+from UserCode.CMGWPrimeGroup.patTuple_met_cfg import *
 
 def jetlep_config(process, reportEveryNum=100, maxEvents=-1) :
     process.load("UserCode.CMGWPrimeGroup.patTuple_jet_cfg")
@@ -9,18 +10,19 @@ def jetlep_config(process, reportEveryNum=100, maxEvents=-1) :
     jet_config(process)
     el_config(process)
     mu_config(process)
+    met_config(process)
 
     # redefine selectedPatMuons (isGlobalMuon not included in std definition)
-    process.selectedPatMuons.cut = "pt > 10. & abs(eta) < 2.4 & isGlobalMuon"
+    process.selectedPatMuons.cut = "pt > 20. & abs(eta) < 2.4 & isGlobalMuon"
     
-    # keep all events with 2 leptons above 10 GeV
+    # keep all events with 2 leptons above 20 GeV
     process.countPatLeptons.electronSource = "selectedPatElectrons"
     process.countPatLeptons.muonSource     = "selectedPatMuons"
     process.countPatLeptons.minNumber = 2
     
     process.countPatJets.minNumber = 1
     process.countPatJets.src = "selectedPatJets"
-    
+
     ## let it run
     process.p = cms.Path(
         process.patMuons *
@@ -36,7 +38,9 @@ def jetlep_config(process, reportEveryNum=100, maxEvents=-1) :
          process.selectedPatJets +
          process.countPatJets
          )*
-        process.patTrigger
+        process.patTrigger *
+        process.patMETsPF
+        
         )
     
     process.out.SelectEvents = cms.untracked.PSet(
@@ -58,3 +62,5 @@ def jetlep_config(process, reportEveryNum=100, maxEvents=-1) :
         getattr(process,"pfNoElectron"),
         getattr(process,"pfNoElectron")*process.kt6PFJetsPFlow )
     
+
+#    print process.patDefaultSequence
