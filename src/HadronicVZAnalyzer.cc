@@ -313,6 +313,12 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
            (int)looseJets_.size());
   }
 
+  //get Trigger 
+  //triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
+
+  //get Vertex
+  //vertices_ = getProduct<vector<reco::Vertex> >(event,vertexLabel_);
+
   //////////////////////////////////////////////
   /// Start Applying Cuts///////////////////////
   //////////////////////////////////////////////
@@ -387,6 +393,9 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   tabulateEvent(iCut, weight_); ++iCut;
 
   fillValidVZHistos();
+
+  //passTriggersCut();
+  tabulateEvent(iCut, weight_); ++iCut;
 
   //AllCuts
   tabulateEvent(iCut, weight_); ++iCut;

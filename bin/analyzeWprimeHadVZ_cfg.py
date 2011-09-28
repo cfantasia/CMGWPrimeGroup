@@ -37,7 +37,7 @@ process.WprimeAnalyzer.triggersToUse = cms.vstring(
     'HLT_Ele42_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*' #2e33(?) unprescaled
     'HLT_DoubleEle17_SW_L1R_v*',
     'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
-    'HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v*'
+    'HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*',
     )
 
 ## input specific for this analyzer
@@ -75,7 +75,7 @@ process.WprimeAnalyzer.Cuts = cms.vstring(
 
         "ValidVZ",
               
-        #    "HLT",
+        "HLT",
         "AllCuts")
 
 process.WprimeAnalyzer.LooseElectronType = cms.untracked.string("WZLoose")
