@@ -39,8 +39,8 @@ def jetlep_config(process, reportEveryNum=100, maxEvents=-1) :
          process.countPatJets
          )*
         process.patTrigger *
+        process.patTriggerEvent *
         process.patMETsPF
-        
         )
     
     process.out.SelectEvents = cms.untracked.PSet(
