@@ -55,8 +55,8 @@ const string bgdNamesMuMET[NbgdSamplesMuMET] = {
 #endif
 TH1F * bgdMuMET[NbgdSamplesMuMET] = {0};
 
-const unsigned NdataSamplesMuMET = 4;
-const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4"};
+const unsigned NdataSamplesMuMET = 5;
+const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4", "data5"};
 
 TH1F * dataMuMET[NdataSamplesMuMET] = {0};
 
@@ -91,8 +91,8 @@ Color_t bgdClr;
 
 TH1F * bgdElMET[NbgdSamplesElMET];// = {0};
 
-const unsigned NdataSamplesElMET = 4;
-const string dataNamesElMET[NdataSamplesElMET] = {"data", "data2", "data3", "data4"};
+const unsigned NdataSamplesElMET = 5;
+const string dataNamesElMET[NdataSamplesElMET] = {"data", "data2", "data3", "data4", "data5"};
 
 TH1F * dataElMET[NdataSamplesElMET] = {0};
 
