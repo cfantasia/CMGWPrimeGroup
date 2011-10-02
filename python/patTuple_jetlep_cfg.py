@@ -55,8 +55,7 @@ def jetlep_config(process, reportEveryNum=100, maxEvents=-1) :
         doRhoFastjet = cms.bool(True)
         )
     process.patJetCorrFactors.rho = cms.InputTag("kt6PFJetsPFlow", "rho")
-    
-    
+    process.out.outputCommands.append('keep *_kt6PFJetsPFlow_*_PAT')
     
     getattr(process,"PF2PATmod").replace(
         getattr(process,"pfNoElectron"),
