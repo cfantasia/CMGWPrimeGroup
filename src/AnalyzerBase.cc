@@ -51,6 +51,8 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUti
 
   muReconstructor_ = cfg.getParameter<int>("muonReconstructor");
   if(debugme) cout<<"Using muon algo "<<algo_desc_long[muReconstructor_]<<endl;
+  assert(muReconstructor_ < Num_MuTeVtrkAlgos);
+
   useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
   
   hltEventLabel_ = cfg.getParameter<edm::InputTag>("hltEventTag");

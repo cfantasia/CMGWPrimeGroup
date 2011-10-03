@@ -21,8 +21,6 @@ MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUti
   dumpHighPtMuonThreshold_ = cfg.getParameter<double>("dumpHighPtMuonThreshold");
   dumpHighMtMuonThreshold_ = cfg.getParameter<double>("dumpHighMtMuonThreshold");
   
-  assert(muReconstructor_ < Num_MuTeVtrkAlgos);
-
   setupCutOrder();
 
   reconstructors.push_back(kGLOBAL);
