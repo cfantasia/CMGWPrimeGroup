@@ -1,5 +1,5 @@
 Top Level Dir = 
-integrated lumi = 2510 pb^-1
+integrated lumi = 2915 pb^-1
 
 samplename = Summer11_RSZZmmjj_750
 description = Summer11_RSZZmmjj_750
@@ -208,28 +208,28 @@ samplename = data_DoubleMu-Run2011B-PromptReco-v1
 description = data_DoubleMu-Run2011B-PromptReco-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-DoubleMu-Run2011B-PromptReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V330B-DoubleMu-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu-Run2011B-PromptReco-v1
 description = data_SingleMu-Run2011B-PromptReco-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-SingleMu-Run2011B-PromptReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V330B-SingleMu-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleElectron-Run2011B-PromptReco-v1
 description = data_DoubleElectron-Run2011B-PromptReco-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-DoubleElectron-Run2011B-PromptReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V330B-DoubleElectron-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleElectron-Run2011B-PromptReco-v1
 description = data_SingleElectron-Run2011B-PromptReco-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-SingleElectron-Run2011B-PromptReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V330B-SingleElectron-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = Summer11_WprimeToWZTo2Q2L_M-500
