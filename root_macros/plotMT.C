@@ -91,8 +91,8 @@ Color_t bgdClr;
 
 TH1F * bgdElMET[NbgdSamplesElMET];// = {0};
 
-const unsigned NdataSamplesElMET = 5;
-const string dataNamesElMET[NdataSamplesElMET] = {"data", "data2", "data3", "data4", "data5"};
+const unsigned NdataSamplesElMET = 6;
+const string dataNamesElMET[NdataSamplesElMET] = {"data", "data2", "data3", "data4", "data5", "data6"};
 
 TH1F * dataElMET[NdataSamplesElMET] = {0};
 
