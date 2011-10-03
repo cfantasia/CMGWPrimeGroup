@@ -1,0 +1,2 @@
+/pnfs/sprace.org.br/data/cms/store/user/fladias/V330-Elec_Summer11_RSZZmmjj_1500/patTuple_1_1_QSA.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/V330-Elec_Summer11_RSZZmmjj_1500/patTuple_2_1_fwV.root
