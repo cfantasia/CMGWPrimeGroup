@@ -1,15 +1,6 @@
 Top Level Dir = rfio:///castor/cern.ch/user/c/cleonido/wprime/V310/
 integrated lumi = 2391.4 pb^-1
 
-samplename = data6
-description = Electron pt > 100 GeV skim, 2011B PR v1 (552.2 ipb DCS-only)
-x-section = 1
-subdir = SingleElectron_2011B_PRV1/176697_177718/
-pathname = filelists_ElNu/SingleElectron_2011B_PRV1_176697_177718.txt
-Nprod_evt = 1
-
-DONE
-
 samplename = data
 description = Electron pt > 100 GeV skim, May10th ReReco v1 (234.3 ipb DCS-only)
 x-section = 1
