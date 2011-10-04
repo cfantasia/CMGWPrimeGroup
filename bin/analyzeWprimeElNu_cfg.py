@@ -27,6 +27,10 @@ process.WprimeAnalyzer.dumpHighMtElectronThreshold = cms.double(800)
 # do or not make Ntuple
 process.WprimeAnalyzer.mkTuple = cms.bool(False)
 
+# do or not E/p
+process.WprimeAnalyzer.doEoP = cms.bool(False)
+process.WprimeAnalyzer.electronEoverPthreshold = cms.double(30)
+
 #HEEP Selection
 #process.WprimeAnalyzer.barrelCuts = heepBarrelCuts
 #process.WprimeAnalyzer.endcapCuts = heepEndcapCuts
