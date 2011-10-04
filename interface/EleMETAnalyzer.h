@@ -79,6 +79,9 @@ class EleMETAnalyzer : public AnalyzerBase
 
   bool mkTuple_;
 
+  bool doEoP_;
+  float electronEoverPthreshold_;
+
   void defineHistos(const TFileDirectory & dir);
   void defineTrees(const TFileDirectory & dir);
   void defineHistos_ElectronEt(const TFileDirectory & dir);

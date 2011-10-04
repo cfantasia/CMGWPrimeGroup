@@ -22,6 +22,9 @@ EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeU
   
   mkTuple_ = cfg.getParameter<bool>("mkTuple");
 
+  doEoP_ = cfg.getParameter<bool>("doEoP");
+  electronEoverPthreshold_  = cfg.getParameter<double>("electronEoverPthreshold");
+
   setupCutOrder();
   
   analysis = "eleMET";
@@ -108,7 +111,7 @@ void EleMETAnalyzer::eventLoop(edm::EventBase const & event)
     if(mkTuple_) {FillNtuple(theEle,iEleMin,event);  NTuple->Fill();}
 
     if(el.p4().pt() < electronPtThreshold_) continue;
-
+    if(doEoP_ && Wcand.elec()->epIn() > electronEoverPthreshold_ ) continue;
 
     for(int cut_index = 0; cut_index != Num_elmet_cuts; ++cut_index)
       { // loop over selection cuts
@@ -169,7 +172,7 @@ void EleMETAnalyzer::FillNtuple(int & theEle, int & iEleMin, edm::EventBase cons
   vars.ele_DetaIn        = ele->dEtaIn();
   vars.ele_HOverE        = ele->hOverE();
   vars.ele_fbrem         = ele->fbrem();
-  vars.ele_EOverP        = ele->invEOverInvP();
+  vars.ele_EOverP        = ele->epIn();
 }
 
 // set electron 4-d momentum (sets el4D)
