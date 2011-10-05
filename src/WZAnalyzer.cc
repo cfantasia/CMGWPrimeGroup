@@ -80,21 +80,21 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
   AnalyzerBase::defineHistos(dir);
 
   defineHistoset("hWZMass", "Reconstructed WZ Invariant Mass",
-                  "M_{WZ} (GeV)", 1200, 0, 1200, "GeV", hWZMass,dir);
+                  "M_{WZ} (GeV)", 250, 0, 2500, "GeV", hWZMass,dir);
   defineHistoset("hWZ3e0muMass", "Reconstructed WZ(3e0#mu) Invariant Mass",
-                  "M_{WZ}^{3e0#mu} (GeV)", 1200, 0, 1200, "GeV", hWZ3e0muMass,dir);
+                  "M_{WZ}^{3e0#mu} (GeV)", 250, 0, 2500, "GeV", hWZ3e0muMass,dir);
   defineHistoset("hWZ2e1muMass", "Reconstructed WZ(2e1#mu) Invariant Mass",
-                  "M_{WZ}^{2e1#mu} (GeV)", 1200, 0, 1200, "GeV", hWZ2e1muMass,dir);
+                  "M_{WZ}^{2e1#mu} (GeV)", 250, 0, 2500, "GeV", hWZ2e1muMass,dir);
   defineHistoset("hWZ1e2muMass", "Reconstructed WZ(1e2#mu) Invariant Mass",
-                  "M_{WZ}^{1e2#mu} (GeV)", 1200, 0, 1200, "GeV", hWZ1e2muMass,dir);
+                  "M_{WZ}^{1e2#mu} (GeV)", 250, 0, 2500, "GeV", hWZ1e2muMass,dir);
   defineHistoset("hWZ0e3muMass", "Reconstructed WZ(0e3#mu) Invariant Mass",
-                  "M_{WZ}^{0e3#mu} (GeV)", 1200, 0, 1200, "GeV", hWZ0e3muMass,dir);
+                  "M_{WZ}^{0e3#mu} (GeV)", 250, 0, 2500, "GeV", hWZ0e3muMass,dir);
 
 //Q=M_{WZ} - M_W - M_Z
   defineHistoset("hQ", "Q=M_{WZ} - M_{W} - M_{Z}",
                   "Q (GeV)", 50, 0, 500, "GeV", hQ,dir);
   defineHistoset("hWZTransMass", "Reconstructed WZ Transverse Mass",
-                  "M_{WZ}^{T} (GeV)", 100, 0, 1000, "GeV", hWZTransMass,dir);
+                  "M_{WZ}^{T} (GeV)", 250, 0, 2500, "GeV", hWZTransMass,dir);
 //WZpt Histos
   defineHistoset("hWZpt", "Reconstructed WZ Transverse Momentum",
                   "p_{WZ}^{T} (GeV)", 50, 0, 500, "GeV", hWZpt,dir);
@@ -114,15 +114,15 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
                   "N_{#mu},W^{-}", 4, 0, 4, "NONE", hEvtTypeM,dir);
 //Lead Lepton Pt
   defineHistoset("hLeadPt", "Leading Lepton Pt",
-                  "p_{T}^{Max}", 40, 0, 400., "GeV", hLeadPt,dir);
+                  "p_{T}^{Max}", 50, 0, 1000., "GeV", hLeadPt,dir);
   defineHistoset("hLeadPtZee", "Leading Lepton Pt Zee",
-                  "p_{T}^{Max, ee}", 40, 0, 400., "GeV", hLeadPtZee,dir);
+                  "p_{T}^{Max, ee}", 50, 0, 1000., "GeV", hLeadPtZee,dir);
   defineHistoset("hLeadPtZmm", "Leading Lepton Pt Zmm",
-                  "p_{T}^{Max #mu#mu}", 40, 0, 400., "GeV", hLeadPtZmm,dir);
+                  "p_{T}^{Max #mu#mu}", 50, 0, 1000., "GeV", hLeadPtZmm,dir);
   defineHistoset("hLeadElecPt", "Leading Electron Pt",
-                  "p_{T}^{Max e}", 40, 0, 400., "GeV", hLeadElecPt,dir);
+                  "p_{T}^{Max e}", 50, 0, 1000., "GeV", hLeadElecPt,dir);
   defineHistoset("hLeadMuonPt", "Leading Muon Pt",
-                  "p_{T}^{Max #mu}", 40, 0, 400., "GeV", hLeadMuonPt,dir);
+                  "p_{T}^{Max #mu}", 50, 0, 1000., "GeV", hLeadMuonPt,dir);
 
 ///////////////////////////
 //Z Mass Histos
@@ -151,26 +151,26 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
 
 //Zpt Histos
   defineHistoset("hZpt", "p_{T}^{Z}", 
-                  "p_{T}^{Z} (GeV)", 40, 0, 400, "GeV", hZpt,dir);
+                  "p_{T}^{Z} (GeV)", 50, 0, 1000, "GeV", hZpt,dir);
   defineHistoset("hZeept", "p_{T}^{Z#rightarrowee}", 
-                  "p_{T}^{Z#rightarrowee} (GeV)", 40, 0, 400, "GeV", hZeept,dir);
+                  "p_{T}^{Z#rightarrowee} (GeV)", 50, 0, 1000, "GeV", hZeept,dir);
   defineHistoset("hZmmpt", "p_{T}^{Z#rightarrow#mu#mu}", 
-                  "p_{T}^{Z#rightarrow#mu#mu} (GeV)", 40, 0, 400, "GeV", hZmmpt,dir);
+                  "p_{T}^{Z#rightarrow#mu#mu} (GeV)", 50, 0, 1000, "GeV", hZmmpt,dir);
 //MET Histos
   defineHistoset("hMET", "MET",
-                  "#slash{E}_{T} (GeV)", 30, 0, 300, "GeV", hMET,dir);
+                  "#slash{E}_{T} (GeV)", 50, 0, 500, "GeV", hMET,dir);
   defineHistoset("hMETee", "MET",
-                  "#slash{E}_{T}^{ee} (GeV)", 30, 0, 300, "GeV", hMETee,dir);
+                  "#slash{E}_{T}^{ee} (GeV)", 50, 0, 500, "GeV", hMETee,dir);
   defineHistoset("hMETmm", "MET",
-                  "#slash{E}_{T}^{#mu#mu} (GeV)", 30, 0, 300, "GeV", hMETmm,dir);
+                  "#slash{E}_{T}^{#mu#mu} (GeV)", 50, 0, 500, "GeV", hMETmm,dir);
   defineHistoset("hMET3e0mu", "MET",
-                  "#slash{E}_{T}^{3e0#mu} (GeV)", 30, 0, 300, "GeV", hMET3e0mu,dir);
+                  "#slash{E}_{T}^{3e0#mu} (GeV)", 50, 0, 500, "GeV", hMET3e0mu,dir);
   defineHistoset("hMET2e1mu", "MET",
-                  "#slash{E}_{T}^{2e1#mu} (GeV)", 30, 0, 300, "GeV", hMET2e1mu,dir);
+                  "#slash{E}_{T}^{2e1#mu} (GeV)", 50, 0, 500, "GeV", hMET2e1mu,dir);
   defineHistoset("hMET1e2mu", "MET",
-                  "#slash{E}_{T}^{1e2#mu} (GeV)", 30, 0, 300, "GeV", hMET1e2mu,dir);
+                  "#slash{E}_{T}^{1e2#mu} (GeV)", 50, 0, 500, "GeV", hMET1e2mu,dir);
   defineHistoset("hMET0e3mu", "MET",
-                  "#slash{E}_{T}^{0e3#mu} (GeV)", 30, 0, 300, "GeV", hMET0e3mu,dir);
+                  "#slash{E}_{T}^{0e3#mu} (GeV)", 50, 0, 500, "GeV", hMET0e3mu,dir);
 
 //W Trans Mass Histos
   defineHistoset("hWTransMass", "Reconstructed Transverse Mass of W",
@@ -190,11 +190,11 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
 
 //Wpt Histos
   defineHistoset("hWpt", "p_{T}^{W}", 
-                  "p_{T}^{W} (GeV)", 40, 0, 400, "GeV", hWpt,dir);
+                  "p_{T}^{W} (GeV)", 50, 0, 1000, "GeV", hWpt,dir);
   defineHistoset("hWptZee", "p_{T}^{W,Z#rightarrowee}", 
-                  "p_{T}^{W,Z#rightarrowee} (GeV)", 40, 0, 400, "GeV", hWptZee,dir);
+                  "p_{T}^{W,Z#rightarrowee} (GeV)", 50, 0, 1000, "GeV", hWptZee,dir);
   defineHistoset("hWptZmm", "p_{T}^{W,Z#rightarrow#mu#mu}", 
-                  "p_{T}^{W,Z#rightarrow#mu#mu} (GeV)", 40, 0, 400, "GeV", hWptZmm,dir);
+                  "p_{T}^{W,Z#rightarrow#mu#mu} (GeV)", 50, 0, 1000, "GeV", hWptZmm,dir);
 
 //W Charge Histos
   defineHistoset("hWQ", "Reconstructed Charge of W",
@@ -219,25 +219,25 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
   defineHistoset("hNLMuon", "Number of Loose Muons in Event",
                   "N_{#mu}^{Loose}", 10, 0, 10, "NONE", hNLMuon,dir);
   defineHistoset("hNLLeps", "Number of Loose Leptons in Event",
-                  "N_{l}^{Loose}", 10, 0, 10, "NONE", hNLLeps,dir);
+                  "N_{Lep}^{Loose}", 10, 0, 10, "NONE", hNLLeps,dir);
   defineHistoset("hNLLepsZee", "Number of Loose Leptons in Event, Z#rightarrowee",
-                  "N_{l}^{Loose,Z#rightarrowee}", 10, 0, 10, "NONE", hNLLepsZee,dir);
+                  "N_{Lep}^{Loose,Z#rightarrowee}", 10, 0, 10, "NONE", hNLLepsZee,dir);
   defineHistoset("hNLLepsZmm", "Number of Loose Leptons in Event",
-                  "N_{l}^{Loose,Z#rightarrow#mu#mu}", 10, 0, 10, "NONE", hNLLepsZmm,dir);
+                  "N_{Lep}^{Loose,Z#rightarrow#mu#mu}", 10, 0, 10, "NONE", hNLLepsZmm,dir);
 
   defineHistoset("hNTElec", "Number of Tight Electrons in Event",
-                  "N_{e}", 10, 0, 10, "NONE", hNTElec,dir);
+                  "N_{e}^{Tight}", 10, 0, 10, "NONE", hNTElec,dir);
   defineHistoset("hNTMuon", "Number of Tight Muons in Event",
-                  "N_{#mu}", 10, 0, 10, "NONE", hNTMuon,dir);
+                  "N_{#mu}^{Tight}", 10, 0, 10, "NONE", hNTMuon,dir);
   defineHistoset("hNTLeps", "Number of Tight Leptons in Event",
-                  "N_{l}", 10, 0, 10, "NONE", hNTLeps,dir);
+                  "N_{Lep}^{Tight}", 10, 0, 10, "NONE", hNTLeps,dir);
 
   defineHistoset("hNJets", "Number of Jets in Event",
-                  "N_{Jets}", 10, 0, 10, "NONE", hNJets,dir);
+                  "N_{Jets}", 15, 0, 15, "NONE", hNJets,dir);
   defineHistoset("hNJetsZee", "Number of Jets in Event, Z#rightarrowee",
-                  "N_{Jets}^{Z#rightarrowee}", 10, 0, 10, "NONE", hNJetsZee,dir);
+                  "N_{Jets}^{Z#rightarrowee}", 15, 0, 15, "NONE", hNJetsZee,dir);
   defineHistoset("hNJetsZmm", "Number of Jets in Event, Z#rightarrow#mu#mu",
-                  "N_{Jets}^{Z#rightarrow#mu#mu}", 10, 0, 10, "NONE", hNJetsZmm,dir);
+                  "N_{Jets}^{Z#rightarrow#mu#mu}", 15, 0, 15, "NONE", hNJetsZmm,dir);
 
   defineHistoset("hNVtxs", "Number of Vertexs in Event",
                   "N_{Vtx}", 50, 0, 50, "NONE", hNVtxs,dir);
