@@ -147,6 +147,16 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
 
   cout << "Histos declared" << endl;
 
+  tVZCand = dir.make<TTree>("tVZCand", "Analysis Variables after VZCand");//Only 1 for now;
+  tVZCand->Branch("VZMass", &VZMass_);
+  tVZCand->Branch("EvtType", &evtType_);
+  tVZCand->Branch("ZMass", &ZMass_);
+  tVZCand->Branch("VMass", &VMass_);
+  tVZCand->Branch("Zpt", &Zpt_);
+  tVZCand->Branch("Vpt", &Vpt_);
+  tVZCand->Branch("weight", &weight_);
+
+
 }//defineHistos
 
 
@@ -161,9 +171,6 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     // We could setup some preselection here. To be implemented.
   }
 
-  //if(wprimeUtil_->runningOnData())                                                                                                            
-  // passTriggersCut();
-  
   //////////////////////
   //Deal With Leptons///
   //////////////////////
@@ -313,9 +320,6 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
            (int)looseJets_.size());
   }
 
-  //get Trigger 
-  //triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
-
   //get Vertex
   //vertices_ = getProduct<vector<reco::Vertex> >(event,vertexLabel_);
 
@@ -394,6 +398,9 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   fillValidVZHistos();
 
+  //get Trigger 
+  //triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
+
   //passTriggersCut();
   tabulateEvent(iCut, weight_); ++iCut;
 
@@ -468,6 +475,13 @@ void
 HadronicVZAnalyzer::clearEvtVariables(){
   AnalyzerBase::clearEvtVariables();
   hadVZ_ = VZCandidate();
+  VZMass_ = -999;
+  evtType_ = -999;
+  ZMass_ = -999;
+  Zpt_ = -999;
+  VMass_=-999;
+  Vpt_ = -999;
+  weight_ = 0;
 }
 
 //fill Histograms
@@ -494,6 +508,21 @@ void HadronicVZAnalyzer::fillHistos(const int& index, const float& weight){
   hNLLeps[index]->Fill(looseElectrons_.size()+looseMuons_.size(), weight);
   hNLJets[index]->Fill(looseJets_.size(), weight);
 
+  if(Cuts_[index] == "ValidVZ"){
+    if(hadVZ_) VZMass_ = hadVZ_.mass();
+    if(zCand_){
+      evtType_ = 2*(zCand_.flavor() == PDGMUON);
+      ZMass_ = zCand_.mass();
+      Zpt_ = zCand_.pt();
+    }
+    if(vCand_){
+      VMass_ = vCand_.mass();
+      Vpt_ = vCand_.pt();
+      weight_ = weight;
+    }
+    tVZCand->Fill();
+  }
+  
 }//fillHistos
 
 void HadronicVZAnalyzer::fillJetMultiplicityHists(){

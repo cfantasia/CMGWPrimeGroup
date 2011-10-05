@@ -3,6 +3,7 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/AnalyzerBase.h"
 #include "TH2F.h"
+#include "TTree.h"
 
 /// The class HadronicVZAnalyzer will analyze X -> VZ -> (heavy) jet + dilepton.
 /// For now, we do only simple cuts and simple histograms - fancy things come later.
@@ -54,9 +55,13 @@ public:
   //methods for the cuts
   bool passValidVZCandCut();
 
-// +++++++++++++++++++useful constants
-
-// +++++++++++++++++++location of data files and samples info
+///My calculated qualities//////////////////
+  float VZMass_;
+  float Zpt_;
+  float ZMass_;
+  float Vpt_;
+  float VMass_;
+  uint evtType_;
 
 //////Chosen Vector Boson Candidates 
   VZCandidate hadVZ_;
@@ -154,6 +159,7 @@ public:
   std::vector<TH1F*> hNLLeps;
   std::vector<TH1F*> hNLJets;
 
+  TTree* tVZCand;
   ////////////////////
 
   // http://www.parashift.com/c++-faq-lite/pointers-to-members.html#faq-33.5
