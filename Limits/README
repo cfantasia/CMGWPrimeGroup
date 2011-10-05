@@ -1,0 +1,23 @@
+Prereq:
+root version 5.30 or above
+StatisticalTools/RooStatsRoutines version V00-00-06 or above
+
+1)Run Expected Events 
+   root -b -q ExpectedEvts.C(infile, windowsize, options)
+   Writes to nEvents.txt
+
+The SignalCodes are 
+3=W'300  
+4=W'400  
+103=TC300
+etc
+
+2a) Run CalcLimit
+  root -b -q CalcLimit.C
+  Reads from nEvents.txt
+  Writes to nLimit.txt
+
+3a) Run PlotLimit
+  root -b -q 'PlotLimit.C++(type)'
+  Reads from nLimit.txt
+
