@@ -34,6 +34,33 @@ TeVMuon::getTrack(const unsigned muReconstructor) const{
   return defaultTeVMuon();
 }
 
+void TeVMuon::printTrackerInfo() const
+{
+  std::cout << " trk_hits = " << innerTrack()->hitPattern().numberOfValidHits()
+       << ", trk_layers = " << innerTrack()->hitPattern().trackerLayersWithMeasurement()
+	 << ", trk_validFraction = " << innerTrack()->validFraction()
+	    << std::endl;
+    
+}
+
+void TeVMuon::printPtInfo(unsigned reconstructor) const
+{
+  if(!isValid(reconstructor))return;
+
+  float rpt = 0;
+  float rpt2 = 0;
+  if(getTrack(reconstructor)->ptError()!=0) {
+    rpt = getTrack(reconstructor)->ptError()/getTrack(reconstructor)->pt();
+    rpt2 = 1000*rpt/getTrack(reconstructor)->pt();
+  }
+  std::cout << "\n " << algo_desc_long[reconstructor] << " pt = "
+	    << getTrack(reconstructor)->pt() << " +- " 
+	    << getTrack(reconstructor)->ptError()
+	    << " GeV, charge = " << getTrack(reconstructor)->charge() 
+	    << "\n ptError/pt = " << rpt
+	    << ", ptError/pt^2 = " << rpt2 << std::endl;  
+}
+
 const TLorentzVector TeVMuon::getTrkLorentzVector(const reco::TrackRef trk) const
 {
   const float dummy = -9999;
