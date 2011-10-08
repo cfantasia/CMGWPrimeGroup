@@ -12,223 +12,24 @@ Pat-tuples made with V00-03-11:
 Location: rfio:///castor/cern.ch/user/c/cleonido/wprime/V310 (castor) and 
 dcache:///pnfs/cms/WAX/11/store/user/christos/wprime/V310/ (LPC)
 
-(a) Data 
-
-(a1) Muon pt > 100 GeV skim, May10th ReReco v1 (224.1 ipb DCS-only)
-subdir = SingleMuon_May10v1_LPC
-
-(a2) Muon pt > 100 GeV skim, PromptReco v4 (933.1 ipb DCS-only)
-subdir = SingleMuon_PRv4_LPC
-
-(a3) Muon pt > 100 GeV skim, 05Aug v1 (502.5 ipb DCS-only)
-subdir = SingleMuon_05Augv1_LPC
-
-(a4) Muon pt > 100 GeV skim, PromptReco v6 (677.1 ipb DCS-only)
-subdir = SingleMuon_PRv6_LPC
+See config/samples_cross_sections_MuMET.txt
 
 
 (2) El+MET analysis:
 Location: rfio:///castor/cern.ch/user/c/cleonido/wprime/V310 (castor) and 
 dcache:///pnfs/cms/WAX/11/store/user/christos/wprime/V310/ (LPC)
 
-(a) Data
-
-(a1) Electron pt > 100 GeV skim, May10th ReReco v1 (234.3 ipb DCS-only)
-subdir = SingleElectron_May10v1_LPC
-
-(a2) Electron pt > 100 GeV skim, PromptReco v4 (933.1 ipb DCS-only)
-subdir = SingleElectron_PRv4_LPC
-
-(a3) Electron pt > 100 GeV skim, 05Aug v1 (502.5 ipb DCS-only)
-subdir = SingleElectron_05Augv1_LPC
-
-(a4) Electron pt > 100 GeV skim, PromptReco v6 (677.1 ipb DCS-only)
-subdir = SingleElectron_PRv6_LPC
+See config/samples_cross_sections_ElMET.txt
 
 
-========================================================================
-Pat-tuples made with V00-02-70:
+(3) WZ->3 ell analysis
 
-(1) Mu+MET analysis
-
-(a) Data:
-
-(a1) Muon pt > 25 GeV skim, May10th ReReco v1 (221.43 ipb)
-Files located at: /castor/cern.ch/user/c/cleonido/wprime/V270/Data/May10ReRecoV1
-Subdirectory name: May10ReRecoV1
-(Created from /SingleMu/Run2011A-May10ReReco-v1/AOD)
-
-(a2) Muon pt > 25 GeV skim, PRv4 165071-166763 (435.71 ipb)
-Files located at:
-/castor/cern.ch/user/c/cleonido/wprime/V270/Data/PromptRecoV4_SingleMuon/165071_166763
-Subdirectory name: PromptRecoV4_SingleMuon/165071_166763
-(Created from /SingleMu/Run2011A-PromptReco-v4/AOD)
-
-(a3) Muon pt > 25 GeV skim, PRv4 166764-167043 (168.59 ipb)
-Files located at:
-/castor/cern.ch/user/c/cleonido/wprime/V270/Data/PromptRecoV4_SingleMuon/166764_167043
-Subdirectory name: PromptRecoV4_SingleMuon/166764_167043
-(Created from /SingleMu/Run2011A-PromptReco-v4/AOD)
-
-(a4) Muon pt > 25 GeV skim, PRv4 167044-167969 (193.57 ipb)
-Files located at:
-/castor/cern.ch/user/c/cleonido/wprime/V270/Data/PromptRecoV4_SingleMuon/167044_167969
-Subdirectory name: PromptRecoV4_SingleMuon/167044_167969
-(Created from /SingleMu/Run2011A-PromptReco-v4/AOD)
+See config/samples_cross_sections_WZ.txt
 
 
-========================================================================
+(4) hadV+Z analysis
 
-(2) El+MET analysis
+See config/samples_cross_sections_HadVZ.txt
 
-(a) Data: 
-
-(a1) Electron pt > 25 GeV skim, May10th ReReco v1 (204 ipb)
-Files located at: /castor/cern.ch/user/c/cleonido/wprime/V270/Data/May10ReRecoV1
-Subdirectory name: May10ReRecoV1
-(Created from /SingleElectron/Run2011A-May10ReReco-v1/AOD
-
-(a2) Electron pt > 25 GeV skim, PR v4, PR v4, 165071-167913 (932 ipb)
-Files located at:
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/DATA/2011/SingleElectron_Run2011A-PromptReco-v4_AOD_DCS160404-167913_v0/
-Subdirectory name: PromptRecoV4_SingleElectron/165071_167913
-(Created from /SingleElectron/Run2011A-PromptReco-v4/AOD)
-
-(b) MC:
-
-(b1) WprimeToENu_M1000 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-1000
-Subdirectory name: WprimeToENue_M-1000
-
-(b2) WprimeToENu_M1200 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-1200
-Subdirectory name: WprimeToENue_M-1200
-
-(b3) WprimeToENu_M1300 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-1300
-Subdirectory name: WprimeToENue_M-1300
-
-(b4) WprimeToENu_M1400 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-1400
-Subdirectory name: WprimeToENue_M-1400
-
-(b5) WprimeToENu_M1500 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-1500
-Subdirectory name: WprimeToENue_M-1500
-
-(b6) WprimeToENu_M1600 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-1600
-Subdirectory name: WprimeToENue_M-1600
-
-(b7) WprimeToENu_M1700 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-1700
-Subdirectory name: WprimeToENue_M-1700
-
-(b8) WprimeToENu_M1800 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-1800
-Subdirectory name: WprimeToENue_M-1800
-
-(b9) WprimeToENu_M1900 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-1900
-Subdirectory name: WprimeToENue_M-1900
-
-(b10) WprimeToENu_M2000 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-2000
-Subdirectory name: WprimeToENue_M-2000
-
-(b11) WprimeToENu_M2100 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-2100
-Subdirectory name: WprimeToENue_M-2100
-
-(b12) WprimeToENu_M2200 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-2200
-Subdirectory name: WprimeToENue_M-2200
-
-(b13) WprimeToENu_M2300 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-2300
-Subdirectory name: WprimeToENue_M-2300
-
-(b14) WprimeToENu_M2400 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-2400
-Subdirectory name: WprimeToENue_M-2400
-
-(b15) WprimeToENu_M2500 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-2500
-Subdirectory name: WprimeToENue_M-2500
-
-(b16) WprimeToENu_M2700 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-2700
-Subdirectory name: WprimeToENue_M-2700
-
-(b17) WprimeToENu_M3000 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-3000
-Subdirectory name: WprimeToENue_M-3000
-
-(b18) WprimeToENu_M3500 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-3500
-Subdirectory name: WprimeToENue_M-3500
-
-(b19) WprimeToENu_M4000 , PYTHIA6 Tune Z2
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WprimeToENue_M-4000
-Subdirectory name: WprimeToENue_M-4000
-
-(b20) WtoEnu_highPt
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WToENu_TuneZ2 
-Subdirectory name: WToENu_TuneZ2
-
-(b21) WtoEnu_ptmin100
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WToENu_tail_TuneZ2
-Subdirectory name: WToENu_tail_TuneZ2
-
-(b22) WtoMunu_highPt
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WToMuNu_TuneZ2  
-Subdirectory name: WToMuNu_TuneZ2
-
-(b23) WtoTaunu_highPt
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/WToTauNu_TuneZ2  
-Subdirectory name: WToTauNu_TuneZ2
-
-(b24) DYtoEE_highPt
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/DYToEE_M-20_TuneZ2
-Subdirectory name: DYToEE_M-20_TuneZ2
-
-(b25) DYtoMuMu_highPt
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/DYToMuMu_M-20_TuneZ2
-Subdirectory name: DYToMuMu_M-20_TuneZ2
-
-(b26) DYtoTauTau_highPt
-Files located at
-/castor/cern.ch/user/s/shchang/Wprime/CRAB/MC/2011/Summer11/DYToTauTau_M-20_TuneZ2
-Subdirectory name: DYToTauTau_M-20_TuneZ2
-
-
-========================================================================
-
-(3) WZ analysis
 
 
