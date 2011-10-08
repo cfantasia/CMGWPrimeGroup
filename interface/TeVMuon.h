@@ -24,7 +24,7 @@ class TeVMuon : public pat::Muon{
   //////////////////////////////
   const unsigned getmuReconstructor() const;
   const bool isValid() const;
-  const bool isValid(const unsigned muReconstructor);
+  const bool isValid(const unsigned muReconstructor) const;
   const TLorentzVector getPatP4() const;
   const reco::TrackRef getTrack(const unsigned muReconstructor) const;
   const TLorentzVector getTrkLorentzVector(const reco::TrackRef trk) const;
@@ -65,6 +65,9 @@ class TeVMuon : public pat::Muon{
   bool passCombRelIsoCut(const float cut);
   bool passCombRelIso03Cut(const float cut, const float puOffset=0.);
   
+  void printTrackerInfo() const;
+  void printPtInfo(unsigned reconstructor) const;
+
  private:
   unsigned muReconstructor_;
   bool isValid_;
@@ -92,7 +95,7 @@ inline const bool TeVMuon::isValid() const {
 }
 
 inline const bool
-TeVMuon::isValid(const unsigned muReconstructor){
+TeVMuon::isValid(const unsigned muReconstructor) const{
   return !(getTrack(muReconstructor).isNull());
 }
 
