@@ -172,6 +172,8 @@ protected:
   float minWpt_;
   float minVpt_;
 
+  std::vector<unsigned> muon_reconstructors;
+
 };
 
 #endif//#define _AnalyzerBase_h_
