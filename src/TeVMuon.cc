@@ -66,8 +66,17 @@ bool TeVMuon::goodQualityMuon(float chi2Cut, float muonEtaCut) const
   reco::TrackRef glb = globalTrack();
   if(glb.isNull())
     return false;
-  
-  bool muon_hits = glb->hitPattern().numberOfValidTrackerHits() > 10
+
+  TVector3 p3(glb->px(), glb->py(), glb->pz());
+  int num_layers_needed = -1;
+  float eta = TMath::Abs(p3.Eta());
+  if(eta > 0.9 && eta < 1.5)
+     num_layers_needed = 8;
+   else
+     num_layers_needed = 9;
+ 
+  bool muon_hits = glb->hitPattern().trackerLayersWithMeasurement() > num_layers_needed
+    // glb->hitPattern().numberOfValidTrackerHits() > 10
     && glb->hitPattern().numberOfValidMuonHits() > 0
     && glb->hitPattern().numberOfValidPixelHits() > 0
     && numberOfMatches() > 1;
@@ -75,8 +84,6 @@ bool TeVMuon::goodQualityMuon(float chi2Cut, float muonEtaCut) const
   if(!muon_hits)
     return false;
 
-  TVector3 p3(glb->px(), glb->py(), glb->pz());
-  
   bool checkqual = (glb->chi2()/glb->ndof() / chi2Cut)
     && TMath::Abs(p3.Eta()) < muonEtaCut
     // is this d0 wrt to the beamspot???
