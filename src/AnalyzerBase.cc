@@ -78,6 +78,14 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUti
   minWtransMass_ = cfg.getUntrackedParameter<double>("minWtransMass", 0.);
   minWpt_ = cfg.getUntrackedParameter<double>("minWpt", 0.);
 
+  muon_reconstructors.push_back(kGLOBAL);
+  muon_reconstructors.push_back(kINNER);
+  muon_reconstructors.push_back(kSTANDALONE);
+  muon_reconstructors.push_back(kCOCKTAIL);
+  muon_reconstructors.push_back(kDYT);
+  muon_reconstructors.push_back(kTPFMS);
+  muon_reconstructors.push_back(kPICKY);
+  //  muon_reconstructors.push_back(kPAT); <- this fails for non-Cory's pat-tuples
 }
 
 AnalyzerBase::~AnalyzerBase(){
@@ -311,29 +319,17 @@ AnalyzerBase::printElectron(const pat::Electron& elec) const{
       <<" Elec EoverP: "<<elec.eSuperClusterOverP()<<endl;// E/P
 }
 
-
-void
-AnalyzerBase::printMuon(const TeVMuon& mu) const{
+void AnalyzerBase::printMuon(const TeVMuon& mu) const{
   cout << setiosflags(ios::fixed) << setprecision(2);
-  reco::TrackRef gm = mu.globalTrack();
-  cout<<" Muon Pt: "  <<mu.pt()<<endl
-      <<" Muon Global Pt: "  <<mu.pt(kGLOBAL)<<endl
-      <<" Muon Inner  Pt: "  <<mu.pt(kINNER)<<endl
-      <<" Muon TPFMS  Pt: "  <<mu.pt(kTPFMS)<<endl
-      <<" Muon COCKTA Pt: "  <<mu.pt(kCOCKTAIL)<<endl
-      <<" Muon Picky  Pt: "  <<mu.pt(kPICKY)<<endl
-      <<" Muon TeV    Pt: "  <<mu.pt(kTEV)<<endl
-      <<" Muon DYT    Pt: "  <<mu.pt(kDYT)<<endl
-      <<" Muon Pat    Pt: "  <<mu.pt(kPAT)<<endl
-      <<" Muon Charge: "<<mu.charge()<<endl
-      <<" Muon Eta: " <<mu.eta()<<endl
-      <<" Muon Phi: " <<mu.phi()<<endl
-      <<" Muon Dxy: " <<mu.userFloat("d0")<<endl //Dxy
-      <<" Muon NormX2: "<<gm->normalizedChi2()<<endl //NormX2
-      <<" Muon NPix: "  <<gm->hitPattern().numberOfValidPixelHits()<<endl //Npixhit
-      <<" Muon NTrk: "  <<gm->hitPattern().numberOfValidTrackerHits()<<endl //Ntrk hit
-      <<" Muon NMatches: "<<mu.numberOfMatches()<<endl //MuonStations
-      <<" Muon Hits: "  <<gm->hitPattern().numberOfValidMuonHits()<<endl; //Muon Hits
+  
+  cout << " Muon eta = " << mu.eta() << "  phi = " << mu.phi() << endl;
+
+  typedef std::vector<unsigned>::const_iterator It;
+  for(It it = muon_reconstructors.begin(); it != muon_reconstructors.end(); ++it)
+    mu.printPtInfo(*it);
+  
+  mu.printTrackerInfo();
+
 }
 
 void

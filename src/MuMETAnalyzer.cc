@@ -421,60 +421,33 @@ void MuMETAnalyzer::setupCutOrder()
 
 }
 
-/*
-	   << "\n ptError/pt " << rpt
-	   << ", ptError/pt^2 " << rpt2
-	   << ", trk_hits " << muon.innerTrack()->hitPattern().numberOfValidHits()
-	   << ", trk_layers " << muon.innerTrack()->hitPattern().trackerLayersWithMeasurement()
-	   << ", trk_validFraction " << muon.innerTrack()->validFraction()
-	   << ", charge = " << muon.GetTrack(rec_i)->charge() 
-	   << ", TM = " << WPrimeUtil::TMass(p4, newMET) << " GeV " << endl;
-    }
-      
-
-}
-*/
-
 void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const pat::Muon & muon) 
 {
   cout << "\n Run # = " << event.id().run() << " Event # = " 
        << event.id().event() << " LS = " << event.id().luminosityBlock() 
        << endl;
+  
   cout << " Muon eta = " << muon.eta() << "  phi = " << muon.phi() << endl;
   pat::METCollection::const_iterator oldMET = defMet->begin();
   TVector2 oldMETv(oldMET->px(), oldMET->py());
   cout << " default pfMET = " << oldMET->pt() << " GeV " << endl;
 
   typedef std::vector<unsigned>::iterator It;
-
-  for(It it = reconstructors.begin(); it != reconstructors.end(); ++it)
+  for(It it = muon_reconstructors.begin(); it != muon_reconstructors.end(); ++it)
     {
       TeVMuon mu(muon, *it);
       if(!mu.isValid())continue;
 
       pat::MET myMet;    
       WCandidate w = wprimeUtil_->getNewMETandW(event, mu, myMet, metLabel_);
-
-      float rpt = 0;
-      float rpt2 = 0;
-      if(mu.getTrack(*it)->ptError()!=0) {
-	rpt = mu.getTrack(*it)->ptError()/mu.getTrack(*it)->pt();
-	rpt2 = 1000*rpt/mu.getTrack(*it)->pt();
-      }
-      cout << " " << algo_desc_long[*it] << " pt = "
-	   << mu.getTrack(*it)->pt() << " +- " 
-	   << mu.getTrack(*it)->ptError()
-	   << " GeV, charge = " << mu.getTrack(*it)->charge() 
-	   << ", MET = " << myMet.et()
-	   << " GeV, TM = " << w.mt() << " GeV "
-	   << "\n ptError/pt = " << rpt
-	   << ", ptError/pt^2 = " << rpt2 << endl;
+ 
+      mu.printPtInfo(*it);
+      cout << " MET = " << myMet.et() << " GeV, TM = " << w.mt() << " GeV " << endl;
+    
+      if(*it == muon_reconstructors.size()-1)
+	mu.printTrackerInfo();
     }
-  cout << " trk_hits = " << muon.innerTrack()->hitPattern().numberOfValidHits()
-       << ", trk_layers = " << muon.innerTrack()->hitPattern().trackerLayersWithMeasurement()
-       << ", trk_validFraction = " << muon.innerTrack()->validFraction()
-       << endl;
-  
+
 }
 
 
