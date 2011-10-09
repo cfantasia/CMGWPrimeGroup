@@ -111,7 +111,14 @@ bool TeVMuon::goodQualityMuon(float chi2Cut, float muonEtaCut) const
   if(!muon_hits)
     return false;
 
-  bool checkqual = (glb->chi2()/glb->ndof() / chi2Cut)
+  bool chi2_qual = true;
+  if (muReconstructor_ == kGLOBAL ||
+      muReconstructor_ == kINNER ||
+      muReconstructor_ == kPAT ||
+      muReconstructor_ == kSTANDALONE)
+    chi2_qual = (glb->chi2()/glb->ndof() < chi2Cut);
+  
+  bool checkqual = chi2_qual
     && TMath::Abs(p3.Eta()) < muonEtaCut
     // is this d0 wrt to the beamspot???
     && TMath::Abs(dB()) < 0.02;
