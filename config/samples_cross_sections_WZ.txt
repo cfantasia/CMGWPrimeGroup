@@ -1,5 +1,5 @@
 Top Level Dir = 
-integrated lumi = 2915 pb^-1
+integrated lumi = 3193 pb^-1
 
 samplename = DYJetsToLL
 description = DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola
@@ -215,14 +215,14 @@ samplename = data
 description = Run 2011B Double Mu Prompt V1
 subdir = dcache:/pnfs/cms/WAX/11
 x-section = 1
-pathname = filelists_WZ/DataPatTrilepton-B05-08-10C-DoubleMu-Run2011B-PromptReco-v1.txt
+pathname = filelists_WZ/DataPatTrilepton-B05-08-10D-DoubleMu-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data
 description = Run 2011B Double E Prompt V1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_WZ/DataPatTrilepton-B05-08-10C-DoubleElectron-Run2011B-PromptReco-v1.txt
+pathname = filelists_WZ/DataPatTrilepton-B05-08-10D-DoubleElectron-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
 DONE
