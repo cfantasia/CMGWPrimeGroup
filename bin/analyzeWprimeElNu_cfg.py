@@ -32,12 +32,12 @@ process.WprimeAnalyzer.doEoP = cms.bool(False)
 process.WprimeAnalyzer.electronEoverPthreshold = cms.double(30)
 
 #HEEP Selection
-process.WprimeAnalyzer.barrelCuts = heepBarrelCuts
-process.WprimeAnalyzer.endcapCuts = heepEndcapCuts
+#process.WprimeAnalyzer.barrelCuts = heepBarrelCuts
+#process.WprimeAnalyzer.endcapCuts = heepEndcapCuts
 
 #WP80 Selection
-#process.WprimeAnalyzer.barrelCuts = wp80BarrelCuts
-#process.WprimeAnalyzer.endcapCuts = wp80EndcapCuts
+process.WprimeAnalyzer.barrelCuts = wp80BarrelCuts
+process.WprimeAnalyzer.endcapCuts = wp80EndcapCuts
 
 #for trigger
 process.WprimeAnalyzer.triggerResults = cms.InputTag("TriggerResults::HLT")
