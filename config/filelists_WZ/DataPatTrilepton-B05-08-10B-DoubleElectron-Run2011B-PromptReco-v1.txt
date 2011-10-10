@@ -1,0 +1,15 @@
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_3_1_3Kg.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_11_1_1wA.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_15_1_vfI.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_2_1_6yB.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_13_1_TLy.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_10_1_BOt.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_1_1_ePY.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_9_1_3cf.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_7_1_n3X.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_4_1_Hke.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_6_1_iTk.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_14_1_1L3.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_12_1_O3Q.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_5_1_MhM.root
+/store/user/fantasia/42X/DataPatTrilepton-B05-08-10B-DoubleElectron-Run2011B-PromptReco-v1/patTuple_8_1_uT4.root
