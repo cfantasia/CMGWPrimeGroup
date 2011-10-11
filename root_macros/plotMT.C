@@ -388,9 +388,9 @@ void doPlots(int option)
 
   data_cumu->Draw("e");
   bgd_cumu->Draw("same");
-  TLatex * l1c = new TLatex(600 + x_offset, 60, cms_prelim.c_str());
+  TLatex * l1c = new TLatex(1000 + x_offset, 60, cms_prelim.c_str());
   l1c->SetTextSize(0.04); 
-  TLatex * l2c = new TLatex(570 + x_offset, 20, lumi_sqrts.c_str());
+  TLatex * l2c = new TLatex(970 + x_offset, 20, lumi_sqrts.c_str());
   l2c->SetTextSize(0.04); 
   l1c->Draw(); l2c->Draw();
 
@@ -413,9 +413,9 @@ void doPlots(int option)
   ratio->SetMarkerSize(1.3);
   ratio->Draw();
 
-  TLatex * l1 = new TLatex(330 + x_offset, -1.9, cms_prelim.c_str());
+  TLatex * l1 = new TLatex(430 + x_offset, -1.9, cms_prelim.c_str());
   l1->SetTextSize(0.04); 
-  TLatex * l2 = new TLatex(300 + x_offset, -3.0, lumi_sqrts.c_str());
+  TLatex * l2 = new TLatex(400 + x_offset, -3.0, lumi_sqrts.c_str());
   l2->SetTextSize(0.04); 
   l1->Draw(); l2->Draw();
 
