@@ -1,5 +1,5 @@
-Top Level Dir = rfio:/castor/cern.ch/user/c/cleonido/wprime/V310/
-integrated lumi = 2981.6 pb^-1
+Top Level Dir = dcache:///pnfs/cms/WAX/11/store/user/christos/wprime/V310/
+integrated lumi = 3446 pb^-1
 
 samplename = data
 description = Muon pt > 100 GeV skim, May10th ReReco v1 (224.1 ipb DCS-only)
