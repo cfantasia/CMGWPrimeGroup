@@ -1,3 +1,46 @@
+12-OCT-11 (Christos, Cory, Flavia, Phil, Sunghyun), V00-03-40
+=============================================================
+General improvements:
+o Added option for making W candidates from two jets
+o Utilities for limit calculations added
+o Muons: dropped "# of tracker hits" in favor of "# of tracker layers" cut
+o Muons: dropped chi2 cut for all TeV muon reconstructors
+o Updated JSON files, added latest 2011B runs
+
+
+El+MET analysis:
+o Default electron-ID switched back to HEEP
+o Updated list of triggers
+o Added option for ntuple-making
+o Added E/p (optional) cut; default value at 30
+
+
+WZ->3 ell analysis:
+o Updated samples
+o Updated list of triggers
+o Updated plots
+
+
+hadV+Z analysis:
+o Now using best monojet mass (used to be: leading-jet)
+o Updated boson pt and V-mass cuts
+o Added W' and high-pt DY samples
+o Cleanup of code, reduced number of plots made
+o Enabled trigger checks
+o Added tree
+
+
+Misc:
+o cleanup jet content, added GEN-level info
+o now saving pat trigger event content
+o updated lumi-calculation script for Run2011B
+o can now deal with trigger path versioning > v9 (woo hoo)
+o jet+lepton signatures: saving MET, all leptons above 20 GeV, keep
+jet PU corrections
+o moved printing of muon kinematic info to TeVMuon and AnalyzerBase classes
+
+
+
 18-SEP-11 (Chad, Christos, Cory, Flavia, Sunghyun), V00-03-30
 =============================================================
 General improvements:
