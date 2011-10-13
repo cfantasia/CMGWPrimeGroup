@@ -413,6 +413,11 @@ class ElectronSelector {
     else if(p.isEE()) return endcapSelector_(p, ret, pu);
     return false;
   }
+  bool operator()(const heep::Ele & p, pat::strbitset & ret, const float pu=0.) {
+    if     (p.isEB()) return barrelSelector_(p, ret, pu);
+    else if(p.isEE()) return endcapSelector_(p, ret, pu);
+    return false;
+  }
   pat::strbitset getBitTemplate() { return barrelSelector_.getBitTemplate(); }
  private:
   ElectronSelectorBase barrelSelector_;
@@ -431,37 +436,42 @@ public:
     loadFromPset<double>(params, "minPt", true);
     loadFromPset<double>(params, "maxEta", true);
     loadFromPset<double>(params, "maxDxy", true);
-    loadFromPset<double>(params, "maxNormalizedChi2", true);
     loadFromPset<double>(params, "maxIso", true);
     loadFromPset<double>(params, "maxIso03", true);
     loadFromPset<int>(params, "minIsGlobal", true);
     loadFromPset<int>(params, "minIsTracker", true);
+    loadFromPset<int>(params, "minNMatches", true);
+    loadFromPset<double>(params, "maxNormalizedChi2", true);
     loadFromPset<int>(params, "minNTrackerHits", true);
     loadFromPset<int>(params, "minNPixelHits", true);
     loadFromPset<int>(params, "minNMuonHits", true);
-    loadFromPset<int>(params, "minNMatches", true);
-
+    loadFromPset<int>(params, "minNTrackerLayers", true);
+    loadFromPset<double>(params, "minTrackerValidFrac", true);
   }
   virtual bool operator()(const TeVMuon & p, pat::strbitset & ret) {
     return (*this)(p,ret,0.);
   }
   bool operator()(const TeVMuon & p, pat::strbitset & ret, const float pu) {
     ret.set(false);
+    setpassCut("minPt", p.pt(), ret);
+    setpassCut("maxEta", fabs(p.eta()), ret);
+    setpassCut("maxDxy", fabs(p.dB()), ret);
+    setpassCut("maxIso", p.combRelIsolation(), ret);
+    setpassCut("maxIso03", p.combRelIsolation03(pu), ret);
+    setpassCut("minIsGlobal", p.isGlobalMuon(), ret);
+    setpassCut("minIsTracker", p.isTrackerMuon(), ret);
+    setpassCut("minNMatches", p.numberOfMatches(), ret);
+    
     reco::TrackRef global = p.globalTrack();
     if(!global.isNull()){
-      const reco::HitPattern& hp = global->hitPattern();
-      setpassCut("minPt", p.pt(), ret);
-      setpassCut("maxEta", fabs(p.eta()), ret);
-      setpassCut("maxDxy", fabs(p.dB()), ret);
+      const reco::HitPattern& gtHP = global->hitPattern();
       setpassCut("maxNormalizedChi2", global->normalizedChi2(), ret);
-      setpassCut("maxIso", p.combRelIsolation(), ret);
-      setpassCut("maxIso03", p.combRelIsolation03(pu), ret);
-      setpassCut("minIsGlobal", p.isGlobalMuon(), ret);
-      setpassCut("minIsTracker", p.isTrackerMuon(), ret);
-      setpassCut("minNTrackerHits", hp.numberOfValidTrackerHits(), ret);
-      setpassCut("minNPixelHits", hp.numberOfValidPixelHits(), ret);
-      setpassCut("minNMuonHits", hp.numberOfValidMuonHits(), ret);
-      setpassCut("minNMatches", p.numberOfMatches(), ret);
+      setpassCut("minNTrackerHits", gtHP.numberOfValidTrackerHits(), ret);
+      setpassCut("minNPixelHits", gtHP.numberOfValidPixelHits(), ret);
+      setpassCut("minNMuonHits", gtHP.numberOfValidMuonHits(), ret);
+      if(ignoreCut("minNTrackerLayers") || gtHP.trackerLayersWithMeasurement() >= (cut("minNTrackerLayers", int()) + (p.eta() < 0.9 || p.eta() > 1.5)))
+         passCut(ret, "minNTrackerLayers");
+      setpassCut("minTrackerValidFrac", global->validFraction(), ret);
     }
     setIgnored(ret);
     return (bool) ret;
