@@ -10,7 +10,7 @@ for windFracTenths in -1
 #  root -b -q 'ExpectedEvts.C+("../../../WprimeWZ.root",'${windFracTenths}')' > ExpectedEvts.log 
   root -b -q 'ExpectedEvts.C+("../../../HadVZAnalyzer.root",'${windFracTenths}', "useHists")' > ExpectedEvts.log 
 
-  /afs/hep/cern/.root/root_v5.30.00.Linux-slc5_amd64-gcc4.3/bin/root -b -q CalcLimit.C > CalcLimit.log
+  /afs/hep.wisc.edu/cern/.root/root_v5.30.00.Linux-slc5_amd64-gcc4.3/bin/root -b -q -n CalcLimit.C > CalcLimit.log
 
 #  root -b -q 'PlotLimit.C+("WprimeWZ")' #For W'
 #  root -b -q 'PlotLimit.C+("TCWZ")' #For TC

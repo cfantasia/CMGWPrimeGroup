@@ -7,7 +7,7 @@ void
 CalcLimit(){
   gErrorIgnoreLevel = kWarning;
 //  gSystem->SetIncludePath( "-I$ROOFITSYS/include" );
-  gSystem->SetIncludePath( "-I/afs/hep/cern/.root/root_v5.30.00.Linux-slc5_amd64-gcc4.3/include/RooStats" );
+  gSystem->SetIncludePath( "-I/afs/hep.wisc.edu/cern/.root/root_v5.30.00.Linux-slc5_amd64-gcc4.3/include/RooStats" );
   gROOT->ProcessLine(".L ../../../StatisticalTools/RooStatsRoutines/root/roostats_cl95.C+");
   
   string outfile("nLimit.txt");
@@ -56,7 +56,9 @@ CalcLimit(){
         
     float sLumi = sLumiFrac*lumi;
     
+    //LimitResult limit = roostats_limit(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "bayesian", "", 12345);
     LimitResult limit  = roostats_clm (lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts);
+    //Double_t obs_limit = limit.GetObservedLimit();
     Double_t exp_limit = limit.GetExpectedLimit();
     Double_t exp_up    = limit.GetOneSigmaHighRange();
     Double_t exp_down  = limit.GetOneSigmaLowRange();
@@ -67,7 +69,7 @@ CalcLimit(){
     //Double_t obs_limit = roostats_cl95(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "mcmc", "");//For xCheck
     
     
-    out<<setprecision(1)
+    out<<setprecision(0)
        <<SignalCode<<"\t"
        <<mass<<"\t"
        <<lumi<<"\t"
@@ -75,7 +77,9 @@ CalcLimit(){
        <<setprecision(4)
        <<Eff<<"\t"
        <<sEff<<"\t"
+       <<setprecision(0)
        <<DataEvts<<"\t"
+       <<setprecision(4)
        <<BkgEvts<<"\t"
        <<sBkgEvts<<"\t"
        <<obs_limit<<"\t"
