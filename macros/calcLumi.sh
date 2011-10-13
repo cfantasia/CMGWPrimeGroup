@@ -26,7 +26,7 @@ MAX_Run2011A_Prompt6=173692
 ./jsonrunsel.py $MIN_Run2011A_Prompt6 $MAX_Run2011A_Prompt6 $JSON_Run2011A_Prompt6 Run2011A_Prompt6.json
 
 JSON_Run2011B_Prompt1=$JSON_Run2011A_Prompt4
-MIN_Run2011B_Prompt1=175860
+MIN_Run2011B_Prompt1=175832
 MAX_Run2011B_Prompt1=999999
 ./jsonrunsel.py $MIN_Run2011B_Prompt1 $MAX_Run2011B_Prompt1 $JSON_Run2011B_Prompt1 Run2011B_Prompt1.json
 
@@ -41,4 +41,4 @@ cp finalD.json final.json
 
 rm finalA.json finalB.json finalC.json finalD.json
 
-lumiCalc2.py -i final.json overview
+lumiCalc2.py -i final.json -norm pp7TeV overview
