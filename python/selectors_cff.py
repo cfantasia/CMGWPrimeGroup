@@ -23,26 +23,39 @@ muonSelectors = cms.PSet(
     HadVZLoose = cms.PSet(),
     HadVZTight = cms.PSet(),
     exotica = cms.PSet(
+       maxEta = cms.untracked.double(2.4),
+       minIsGlobal = cms.untracked.int32(1),
+       minIsTracker = cms.untracked.int32(1),
+       maxDxy = cms.untracked.double(0.2),
+       maxNormalizedChi2 = cms.untracked.double(10.),
+       minNTrackerHits = cms.untracked.int32(11),
+       minNPixelHits = cms.untracked.int32(1),
+       minNMuonHits = cms.untracked.int32(1),
+       minNMatches = cms.untracked.int32(2),
+       minNTrackerLayers = cms.untracked.int32(7),
+#       minTrackerValidFrac = cms.untracked.double(),
     ),
     )
-muonSelectors.WZLoose = muonSelectors.VBTF.clone()
-muonSelectors.WZLoose.minPt = 10.
-muonSelectors.WZLoose.maxIso03 = cms.untracked.double(0.15)
-
-muonSelectors.WZRelaxed = muonSelectors.VBTF.clone()
-muonSelectors.WZRelaxed.minPt = 20.
-
-muonSelectors.WZTight = muonSelectors.VBTF.clone()
-muonSelectors.WZTight.minPt = 20.
-muonSelectors.WZTight.maxIso03 = cms.untracked.double(0.1)
-
-muonSelectors.HadVZLoose = muonSelectors.VBTF.clone()
-muonSelectors.HadVZLoose.minPt = 15.
-muonSelectors.HadVZLoose.maxNormalizedChi2 = 9999999
-
-muonSelectors.HadVZTight = muonSelectors.VBTF.clone()
-muonSelectors.HadVZTight.minPt = 35.
-muonSelectors.HadVZTight.maxNormalizedChi2 = 9999999
+muonSelectors.WZLoose = muonSelectors.VBTF.clone(
+    minPt = 10.,
+    maxIso03 = cms.untracked.double(0.15)
+    )
+muonSelectors.WZRelaxed = muonSelectors.VBTF.clone(
+    minPt = 20.
+    )
+muonSelectors.WZTight = muonSelectors.VBTF.clone(
+    minPt = 20.,
+    maxIso03 = cms.untracked.double(0.1)
+    )
+muonSelectors.HadVZLoose = muonSelectors.VBTF.clone(
+    minPt = 15.,
+    maxNormalizedChi2 = 9999999
+    )
+muonSelectors.HadVZTight = muonSelectors.VBTF.clone(
+    minPt = 35.,
+    maxNormalizedChi2 = 9999999
+    )
+#muonSelectors.HadVZTight.remove(maxNormalizedChi2)
 
 #####################
 ####  Electrons  ####
@@ -93,16 +106,19 @@ for i, s in enumerate(["wp95", "wp90", "wp85", "wp80", "wp70", "wp60"]):
 electronSelectors.WZLoose = electronSelectors.wp95.clone()
 electronSelectors.WZLoose.barrel.minPt = cms.untracked.double(10.)
 electronSelectors.WZLoose.endcap.minPt = cms.untracked.double(10.)
-    
+
 electronSelectors.WZRelaxed = electronSelectors.wp80.clone()
 electronSelectors.WZRelaxed.barrel.minPt = cms.untracked.double(20.)
 electronSelectors.WZRelaxed.endcap.minPt = cms.untracked.double(20.)
 electronSelectors.WZRelaxed.barrel.maxCombRelIso = cms.untracked.double(999999999.)
 electronSelectors.WZRelaxed.endcap.maxCombRelIso = cms.untracked.double(999999999.)
+#electronSelectors.WZRelaxed.barrel.remove(maxCombRelIso)
+#electronSelectors.WZRelaxed.endcap.remove(maxCombRelIso)
 
 electronSelectors.WZTight = electronSelectors.wp80.clone()
 electronSelectors.WZTight.barrel.minPt = cms.untracked.double(20.)
 electronSelectors.WZTight.endcap.minPt = cms.untracked.double(20.)
+
 
 ####################
 #####  Jets  #######
