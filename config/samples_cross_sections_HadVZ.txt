@@ -5,43 +5,45 @@ samplename = Summer11_RSZZmmjj_750
 description = Summer11_RSZZmmjj_750
 x-section = 0.00835
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V340-Elec_Summer11_RSZZmmjj_750.txt
+pathname = filelists_HadVZ/V340-Summer11_RSZZmmjj_750.txt
 Nprod_evt = 56754
 
 samplename = Summer11_RSZZmmjj_1000
 description = Summer11_RSZZmmjj_1000
 x-section = 0.00152
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V340-Elec_Summer11_RSZZmmjj_1000.txt
+pathname = filelists_HadVZ/V340-Summer11_RSZZmmjj_1000.txt
 Nprod_evt = 44030
 
 samplename = Summer11_RSZZmmjj_1250
 description = Summer11_RSZZmmjj_1250
 x-section = 0.000347
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V340-Elec_Summer11_RSZZmmjj_1250.txt
+pathname = filelists_HadVZ/V340-Summer11_RSZZmmjj_1250.txt
 Nprod_evt = 7363
 
 samplename = Summer11_RSZZmmjj_1500
 description = Summer11_RSZZmmjj_1500
 x-section = 0.0000883
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V340-Elec_Summer11_RSZZmmjj_1500.txt
+pathname = filelists_HadVZ/V340-Summer11_RSZZmmjj_1500.txt
 Nprod_evt = 57176
 
 samplename = Summer11_RSZZmmjj_1750
 description = Summer11_RSZZmmjj_1750
 x-section = 0.0000243
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V340-Elec_Summer11_RSZZmmjj_1750.txt
+pathname = filelists_HadVZ/V340-Summer11_RSZZmmjj_1750.txt
 Nprod_evt = 47484
 
 samplename = Summer11_RSZZmmjj_2000
 description = Summer11_RSZZmmjj_2000
 x-section = 0.00000705
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V340-Elec_Summer11_RSZZmmjj_2000.txt
+pathname = filelists_HadVZ/V340-Summer11_RSZZmmjj_2000.txt
 Nprod_evt = 56140
+
+DONE
 
 samplename = Summer11_DYJetsToLL_PtZ100
 description = Summer11_DYJetsToLL_PtZ100
