@@ -6,6 +6,7 @@
 #include <TLine.h>
 #include <TLatex.h>
 #include <THStack.h>
+#include <TF1.h>
 
 #include <string>
 #include <iostream>
@@ -43,15 +44,18 @@ bool wClr = true;
 
 // availability of data + MC samples indicated in these arrays
 //const unsigned NbgdSamplesMuMET = 19;
-const unsigned NbgdSamplesMuMET = 1;
+const unsigned NbgdSamplesMuMET = 10;
 const string bgdNamesMuMET[NbgdSamplesMuMET] = {
-  "WMuNu_highPt"};
+  "WMuNu_highPt", "DYmumu_highPt", "DYtautau_highPt", "QCD_highPt", "ttbar_highPt",
+  "WW_highPt", "WZ_highPt", "ZZ_highPt",
+  "WPlusTau_highPt", "WMinusTau_highPt"};
 #if 0
-  "DYmumu_lowPt", "DYmumu_highPt", "DYtautau_lowPt", "DYtautau_highPt",
-  "QCD_lowPt", "WMinusMu_lowPt", "WMinusMu_highPt", "WPlusMu_lowPt",
-  "WPlusMu_highPt", "WPlusTau_lowPt", "WPlusTau_highPt", 
-  "ttbar_lowPt", "ttbar_highPt","WW_lowPt",
-  "WW_highPt", "WZ_lowPt", "WZ_highPt", "ZZ_lowPt", "ZZ_highPt"};
+  "WMinusMu_highPt", "WPlusMu_highPt",
+  "DYmumu_lowPt", "DYtautau_lowPt",
+  "WMinusMu_lowPt", "WPlusMu_lowPt",
+  "WPlusTau_lowPt", "WMinusTau_lowPt",
+  "ttbar_lowPt", "WW_lowPt",
+  "WZ_lowPt", "ZZ_lowPt"};
 #endif
 TH1F * bgdMuMET[NbgdSamplesMuMET] = {0};
 
@@ -339,12 +343,32 @@ void doPlots(int option)
   bgd_cumu->SetFillStyle(fill_style_bgd);
 
   // =============== PLOT DISTRIBUTIONS HERE ========================
+
+  TF1 *fit1, *fit2, *fit3;
+  if(analysis_channel == 1){
+    fit1 = new TF1("fit1","[0]/(x+[1])**[2]",xmin,xmax);
+    //fit1->SetParameters(3.1e12,-80.,3.);
+    fit1->SetParameters(1e15,160,7.5); fit1->SetParNames("a","b","c");
+    fit1->SetLineColor(2); //fit1->SetLineWidth(1.0);
+    fit2 = new TF1("fit2","[0]/(x**2+[1]*x+[2])**[3]",xmin,xmax);
+    fit2->SetParameters(1.e10,-350.,4.5e4,1.5);
+    fit2->SetParameters(1.e12,-350.,4.5e4,2); fit2->SetParNames("a","b","c","d");
+    fit2->SetLineColor(3); //fit2->SetLineWidth(1.0);
+    fit3 = new TF1("fit3","[0]*(1+x)**[1]/(x**([2]+[3]*log(x)))",xmin,xmax);
+    fit3->SetParameters(-1e10,1,-1e-5,0.5); fit3->SetParNames("a","b","c","d");
+    fit3->SetLineColor(6); //fit3->SetLineWidth(1.0);
+    data->Fit(fit1,"n","",xmin,xmin+500);
+    data->Fit(fit2,"n+","",xmin,xmin+500);
+    data->Fit(fit3,"n+","",xmin,xmin+500);
+  }
+
   TCanvas * c1 = new TCanvas();
   c1->SetLogy();
 
-  data->SetMinimum(0.1);
+  data->SetMinimum(0.001);
   
   data->Draw("e");
+  if(analysis_channel == 1) {fit1->Draw("same"); fit2->Draw("same"); fit3->Draw("same");}
   if(wClr && analysis_channel == 2)hsbgd->Draw("hist same");
   else bgd->Draw("hist same");
 

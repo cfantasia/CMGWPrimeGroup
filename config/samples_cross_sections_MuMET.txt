@@ -102,7 +102,7 @@ Nprod_evt = 4187885
 samplename = DYmumu_highPt
 description = POWHEG Z/DY->mumu with M_mumu > 20 GeV (NNLO cross-section), high-pt
 x-section = 1666
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/DYmumu_highPt
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/crab_DYmumu_highPt
 pathname = filelists_MuNu/DYmumu_highPt_V330.txt
 Nprod_evt = 29743564
 
