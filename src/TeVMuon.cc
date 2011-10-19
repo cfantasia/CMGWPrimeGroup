@@ -95,13 +95,9 @@ bool TeVMuon::goodQualityMuon(float chi2Cut, float muonEtaCut) const
     return false;
 
   TVector3 p3(glb->px(), glb->py(), glb->pz());
-  int num_layers_needed = -1;
-  float eta = TMath::Abs(p3.Eta());
-  if(eta > 0.9 && eta < 1.5)
-     num_layers_needed = 8;
-   else
-     num_layers_needed = 9;
- 
+
+  // this should really be a config parameter, but this is only temporary
+  const int num_layers_needed = 8;
   bool muon_hits = glb->hitPattern().trackerLayersWithMeasurement() > num_layers_needed
     // glb->hitPattern().numberOfValidTrackerHits() > 10
     && glb->hitPattern().numberOfValidMuonHits() > 0
