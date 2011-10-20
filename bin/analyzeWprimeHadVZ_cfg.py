@@ -54,7 +54,7 @@ process.WprimeAnalyzer.maxAngleBetweenJets = cms.double(9999.9)
 process.WprimeAnalyzer.minZpt = cms.untracked.double(150.0) # All units in GeV
 process.WprimeAnalyzer.minZmass = cms.untracked.double(70.0)
 process.WprimeAnalyzer.maxZmass = cms.untracked.double(110.0)
-process.WprimeAnalyzer.minVPt = cms.untracked.double(100.0)
+process.WprimeAnalyzer.minVpt = cms.untracked.double(290.0)
 process.WprimeAnalyzer.minVmass = cms.untracked.double(70.0)
 process.WprimeAnalyzer.maxVmass = cms.untracked.double(120.0)
 #
