@@ -59,8 +59,8 @@ const string bgdNamesMuMET[NbgdSamplesMuMET] = {
 #endif
 TH1F * bgdMuMET[NbgdSamplesMuMET] = {0};
 
-const unsigned NdataSamplesMuMET = 8;
-const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4", "data5", "data6", "data7", "data8"};
+const unsigned NdataSamplesMuMET = 7;
+const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4", "data5", "data6", "data7"};
 
 TH1F * dataMuMET[NdataSamplesMuMET] = {0};
 

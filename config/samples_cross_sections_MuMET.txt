@@ -44,17 +44,10 @@ pathname = filelists_MuNu/SingleMuon_2011B_PRV1_176697_177718.txt
 Nprod_evt = 1
 
 samplename = data7
-description = Muon pt > 100 GeV skim, 2011B PR v1 (490.1 ipb DCS-only)
+description = Muon pt > 100 GeV skim, 2011B PR v1 (834.6 ipb DCS-only)
 x-section = 1
-subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleMuon_2011B_PRV1/177718_178421/
-pathname = filelists_MuNu/SingleMuon_2011B_PRV1_177718_178421.txt
-Nprod_evt = 1
-
-samplename = data8
-description = Muon pt > 100 GeV skim, 2011B PR v1 (174.8 ipb DCS-only)
-x-section = 1
-subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleMuon_2011B_PRV1/178421_178985/
-pathname = filelists_MuNu/SingleMuon_2011B_PRV1_178421_178985.txt
+subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleMuon_2011B_PRV1/177718_178985/
+pathname = filelists_MuNu/SingleMuon_2011B_PRV1_177718_178985.txt
 Nprod_evt = 1
 
 samplename = WMuNu_highPt
