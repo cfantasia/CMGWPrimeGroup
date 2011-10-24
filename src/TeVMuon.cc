@@ -102,7 +102,7 @@ bool TeVMuon::goodQualityMuon(float chi2Cut, float muonEtaCut) const
     // glb->hitPattern().numberOfValidTrackerHits() > 10
     && glb->hitPattern().numberOfValidMuonHits() > 0
     && glb->hitPattern().numberOfValidPixelHits() > 0
-    && numberOfMatches() > 1;
+    && numberOfMatchedStations() > 1;
   
   if(!muon_hits)
     return false;
