@@ -246,6 +246,48 @@ subdir = dcap://osg-se.sprace.org.br/
 pathname = /pnfs/sprace.org.br/data/cms/store/user/fladias/WPrime_FastSim_1000/patTuple_WPrime_1000.root
 Nprod_evt = 25000
 
+samplename = Summer11_RSZZeejjRSZZeejj_750
+description = Summer11_RSZZeejj_750
+x-section = 0.00835
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V340-Summer11_RSZZeejj_750.txt
+Nprod_evt = 53648
+
+samplename = Summer11_RSZZeejj_1000
+description = Summer11_RSZZeejj_1000
+x-section = 0.00152
+subdir = /home/fladias/RECOVERED_FILES_21OCT2011/V340-Summer11_RSZZeejj_1000
+pathname = filelists_HadVZ/ListRS1000.txt
+Nprod_evt = 53232
+
+samplename = Summer11_RSZZeejj_1250
+description = Summer11_RSZZeejj_1250
+x-section = 0.000347
+subdir = /home/fladias/RECOVERED_FILES_21OCT2011/V340-Summer11_RSZZeejj_1250
+pathname = filelists_HadVZ/ListRS1250.txt
+Nprod_evt = 55998
+
+samplename = Summer11_RSZZeejj_1500
+description = Summer11_RSZZeejj_1500
+x-section = 0.0000883
+subdir = /home/fladias/RECOVERED_FILES_21OCT2011/V340-Summer11_RSZZeejj_1500
+pathname = filelists_HadVZ/ListRS1500.txt
+Nprod_evt = 53282
+
+samplename = Summer11_RSZZeejj_1750
+description = Summer11_RSZZeejj_1750
+x-section = 0.0000243
+subdir = /home/fladias/RECOVERED_FILES_21OCT2011/V340-Summer11_RSZZeejj_1750
+pathname = filelists_HadVZ/ListRS1750.txt
+Nprod_evt = 50496
+
+samplename = Summer11_RSZZeejj_2000
+description = Summer11_RSZZeejj_2000
+x-section = 0.00000705
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V340-Summer11_RSZZeejj_2000.txt
+Nprod_evt = 50935
+
 DONE
 
 In order to use xrootd:
