@@ -159,8 +159,8 @@ process.WprimeAnalyzer.cutElecWPTightType = cms.string("simpleEleId80relIso")
 # +++++++++++++++++++Z Cuts
 process.WprimeAnalyzer.minZeePt1 =  cms.double(20.)
 process.WprimeAnalyzer.minZeePt2 =  cms.double(10.)
-process.WprimeAnalyzer.minZmmPt1 =  cms.double(15.)
-process.WprimeAnalyzer.minZmmPt2 =  cms.double(15.)
+process.WprimeAnalyzer.minZmmPt1 =  cms.double(20.)
+process.WprimeAnalyzer.minZmmPt2 =  cms.double(10.)
 
 process.WprimeAnalyzer.minZmass =  cms.untracked.double(60.)
 process.WprimeAnalyzer.maxZmass =  cms.untracked.double(120.)
