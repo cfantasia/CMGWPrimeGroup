@@ -91,12 +91,16 @@ public:
   std::vector<double> effectiveMuonArea_;
 
 ///My calculated qualities//////////////////
+  int runNumber_;
+  int lumiNumber_;
+  int evtNumber_;
   float WZMass_;
   float Zpt_;
   float Wpt_;
   float Ht_;
   float TriLepMass_;
   float Q_;
+  float MET_;
   uint evtType_;
   uint numZs_;
   float LeadPt_;
@@ -150,7 +154,7 @@ public:
   std::vector<TH1F*> hZeeMassTT, hZeeMassTF, hZmmMassTT, hZmmMassTF;
   std::vector<TH1F*> hZpt,hZeept,hZmmpt;
 
-  std::vector<TH1F*> hMET, hMETee, hMETmm;
+  std::vector<TH1F*> hMET, hMETee, hMETmm, hMETSig;
   std::vector<TH1F*> hMET3e0mu, hMET2e1mu, hMET1e2mu, hMET0e3mu;
 
   std::vector<TH1F*> hWTransMass, hWenuTransMass, hWmnuTransMass;

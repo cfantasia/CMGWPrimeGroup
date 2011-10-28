@@ -171,6 +171,8 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
                   "#slash{E}_{T}^{1e2#mu} (GeV)", 50, 0, 500, "GeV", hMET1e2mu,dir);
   defineHistoset("hMET0e3mu", "MET",
                   "#slash{E}_{T}^{0e3#mu} (GeV)", 50, 0, 500, "GeV", hMET0e3mu,dir);
+  defineHistoset("hMETSig", "MET Significance",
+                  "#slash{E}_{T}^{Signif}", 50, 0, 500, "NONE", hMETSig,dir);
 
 //W Trans Mass Histos
   defineHistoset("hWTransMass", "Reconstructed Transverse Mass of W",
@@ -253,11 +255,17 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
   
 
   tWZCand = dir.make<TTree>("tWZCand", "Analysis Variables after WZCand");//Only 1 for now;
+  tWZCand->Branch("Run", &runNumber_);
+  tWZCand->Branch("Lumi", &lumiNumber_);
+  tWZCand->Branch("Event", &evtNumber_);
   tWZCand->Branch("WZMass", &WZMass_);
   tWZCand->Branch("EvtType", &evtType_);
   tWZCand->Branch("Ht", &Ht_);
   tWZCand->Branch("Zpt", &Zpt_);
   tWZCand->Branch("Wpt", &Wpt_);
+  tWZCand->Branch("MET", &MET_);
+  tWZCand->Branch("Q", &Q_);
+  tWZCand->Branch("TriLepMass", &TriLepMass_);
   tWZCand->Branch("weight", &weight_);
 
 }//defineHistos
@@ -354,6 +362,7 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
     if(evtType_ == 3) hW0e3muQ[index]->Fill(wCand_.charge(), weight);
   }  
   hMET[index]->Fill(met_.et(), weight);
+  hMETSig[index]->Fill(met_.significance(), weight);
 
   hNLElec[index]->Fill(looseElectrons_.size(), weight);
   hNLMuon[index]->Fill(looseMuons_    .size(), weight);
@@ -513,11 +522,15 @@ WZAnalyzer::calcEventVariables(){
   LeadMuonPt_ = calcLeadPt(PDGMUON);
   Ht_ = (zCand_ && wCand_) ? calcHt() : -999.;
   TriLepMass_ = (zCand_ && wCand_) ? calcTriLepMass() : -999.;
+  MET_ = met_.et();
 }
 
 void 
 WZAnalyzer::eventLoop(edm::EventBase const & event){
   clearEvtVariables();
+  runNumber_ = event.id().run();
+  lumiNumber_ = event.id().luminosityBlock();
+  evtNumber_ = event.id().event();
 /*
   if(!wprimeUtil_->runningOnData()){//Don't do this for data
     GenParticleV genParticles = getProduct<GenParticleV>(event, "genParticles");
@@ -551,6 +564,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   event.getByLabel(muonsLabel_,patMuonsH_);
   //const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
   event.getByLabel(metLabel_, metH_);
+
   if(useAdjustedMET_) event.getByLabel(pfCandsLabel_, pfCandidatesH_);
   WPrimeUtil::getLeptonsMET(patElectronsH_, allElectrons_,
                             patMuonsH_, muReconstructor_, allMuons_,
@@ -616,7 +630,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
   }//MC Only If
 
-  if(wprimeUtil_->DebugEvent(event)){
+  if(debugme && wprimeUtil_->DebugEvent(event)){
     cout<<"This is a debug event\n";
     printPassingEvent(event);
     printDebugEvent();
@@ -1009,6 +1023,10 @@ WZAnalyzer::clearEvtVariables(){
   Wpt_ = -999;
   Q_ = -999;
   TT = TF = false;
+  runNumber_ = 0;
+  lumiNumber_ = 0;
+  evtNumber_ = 0;
+  MET_ = 0;
   weight_ = 0;
 }
 
