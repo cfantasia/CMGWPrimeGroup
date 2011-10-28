@@ -10,23 +10,26 @@ do
   LUMI=${LUMI##*:}
 #  echo Run:Lumi  ${RUN}:${LUMI}
 
-  for DATASET in \
-      /DoubleMu/Run2011A-May10ReReco-v1/AOD \
-      /DoubleElectron/Run2011A-May10ReReco-v1/AOD \
-      /DoubleMu/Run2011A-PromptReco-v4/AOD \
-      /DoubleElectron/Run2011A-PromptReco-v4/AOD \
-      /DoubleMu/Run2011A-05Aug2011-v1/AOD \
-      /DoubleElectron/Run2011A-05Aug2011-v1/AOD \
-      /DoubleMu/Run2011A-PromptReco-v6/AOD \
-      /DoubleElectron/Run2011A-PromptReco-v6/AOD
+  for ERA in \
+      Run2011A-May10ReReco-v1 \
+      Run2011A-PromptReco-v4 \
+      Run2011A-05Aug2011-v1 \
+      Run2011A-PromptReco-v6 \
+      Run2011B-PromptReco-v1 
     do
-    
-    LIST=`dbs search --query="find file where run=${RUN} and lumi=${LUMI} and dataset=${DATASET}" | grep .root`
-    NFILE=`echo $LIST | wc -w`
-    if [ "$NFILE" -ge "1" ]; then
+    for PD in \
+        DoubleMu DoubleElectron SingleMu SingleElectron
+      do
+      
+      DATASET=/${PD}/${ERA}/AOD
+      
+      LIST=`dbs search --query="find file where run=${RUN} and lumi=${LUMI} and dataset=${DATASET}" | grep .root`
+      NFILE=`echo $LIST | wc -w`
+      if [ "$NFILE" -ge "1" ]; then
 #        echo File num $NFILE
-        echo $LIST >> fileList.txt
-    fi
+          echo $LIST >> fileList.txt
+      fi
+    done
   done
 done < candEvts.txt
 
