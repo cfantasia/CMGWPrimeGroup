@@ -469,8 +469,7 @@ public:
       setpassCut("minNTrackerHits", gtHP.numberOfValidTrackerHits(), ret);
       setpassCut("minNPixelHits", gtHP.numberOfValidPixelHits(), ret);
       setpassCut("minNMuonHits", gtHP.numberOfValidMuonHits(), ret);
-      if(ignoreCut("minNTrackerLayers") || gtHP.trackerLayersWithMeasurement() >= (cut("minNTrackerLayers", int()) + (p.eta() < 0.9 || p.eta() > 1.5)))
-         passCut(ret, "minNTrackerLayers");
+      setpassCut("minNTrackerLayers", gtHP.trackerLayersWithMeasurement(), ret);
       setpassCut("minTrackerValidFrac", global->validFraction(), ret);
     }
     setIgnored(ret);
