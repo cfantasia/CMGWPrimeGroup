@@ -64,6 +64,45 @@
   TH1D hPoissonIntDist("PoissonIntDist", "PoissonIntDist", 25, -0.5, 24.5);
   for(int i=0; i<25; ++i) hPoissonIntDist.Fill(i, PoissonIntDist[i]);
   
+  // Summer11 PU_S4, distribution obtained by only looking at the in-time crossing.  This is the "spike+smear" distribution, RECOMMENDED FOR REWEIGHTING.
+  Double_t PoissonOneXDist[35] = {
+    1.45346E-01,
+    6.42802E-02,
+    6.95255E-02,
+    6.96747E-02,
+    6.92955E-02,
+    6.84997E-02,
+    6.69528E-02,
+    6.45515E-02,
+    6.09865E-02,
+    5.63323E-02,
+    5.07322E-02,
+    4.44681E-02,
+    3.79205E-02,
+    3.15131E-02,
+    2.54220E-02,
+    2.00184E-02,
+    1.53776E-02,
+    1.15387E-02,
+    8.47608E-03,
+    6.08715E-03,
+    4.28255E-03,
+    2.97185E-03,
+    2.01918E-03,
+    1.34490E-03,
+    8.81587E-04,
+    5.69954E-04,
+    3.61493E-04,
+    2.28692E-04,
+    1.40791E-04,
+    8.44606E-05,
+    5.10204E-05,
+    3.07802E-05,
+    1.81401E-05,
+    1.00201E-05,
+    5.80004E-06
+  };
+/*
   //Only in-time pileup
   Double_t PoissonOneXDist[25] = {
     0.14551,
@@ -92,8 +131,9 @@
     0.00133045,
     0.000893794
   };
-  TH1F hPoissonOneXDist("PoissonOneXDist", "PoissonOneXDist", 25, -0.5, 24.5);
-  for(int i=0; i<25; ++i) hPoissonOneXDist.Fill(i, PoissonOneXDist[i]);
+*/
+  TH1F hPoissonOneXDist("PoissonOneXDist", "PoissonOneXDist", 36, -0.5, 35.5);
+  for(int i=0; i<36; ++i) hPoissonOneXDist.Fill(i, PoissonOneXDist[i]);
 
   MCFile.Write();
   MCFile.Close();
