@@ -178,7 +178,6 @@ MakePlots(string inName, string outName, string opt){
     Bkg.push_back(Sample("WZJetsTo3LNu"       , kOrange+3, 1, kOrange-2));
   }else if(inName.find("HadVZ") != string::npos){
     vector<string> VV;
-    VV.push_back("Summer11_ZZ");
     VV.push_back("Summer11_ZZJets_2l2q");
     VV.push_back("Summer11_VGamma");
     VV.push_back("Summer11_WW");
@@ -188,7 +187,7 @@ MakePlots(string inName, string outName, string opt){
     Bkg.push_back(Sample("Summer11_TTJets"  , kBlue, 1, kBlue));
     
     vector<string> ZJets; 
-    ZJets.push_back("Summer11_DYJetsToLL");
+    ZJets.push_back("Summer11_DYJetsToLL_PtZ100");
     Bkg.push_back(Sample("ZJets", ZJets, kRed, 1, kRed));
     
   }
@@ -198,24 +197,24 @@ MakePlots(string inName, string outName, string opt){
 
   if(inName.find("WprimeWZ") != string::npos){
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-300", 1, 1, kGreen));
-    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-400", 1, 1, 10));
-    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-500", 1, 1, 10));
-    Sig.push_back(Sample("WprimeToWZTo3LNu_M-600", 1, 1, 10));
-    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-700", 1, 1, 10));
-    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-800", 1, 1, 10));
-    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-900", 1, 1, 10));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-400", 1, 1, 0));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-500", 1, 1, 0));
+    Sig.push_back(Sample("WprimeToWZTo3LNu_M-600", 1, 1, 0));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-700", 1, 1, 0));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-800", 1, 1, 0));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-900", 1, 1, 0));
 
-    //Sig.push_back(Sample("TC225",     2, 1, 10));
+    //Sig.push_back(Sample("TC225",     2, 1, 0));
     //Sig.push_back(Sample("TC_WZ_300",     1, 1, kBlue));
     //Sig.push_back(Sample("TC_WZ_400",     1, 1, kBlue));
     //Sig.push_back(Sample("TC_WZ_500",     1, 1, kRed));
   }else if(inName.find("HadVZ") != string::npos){
     Sig.push_back(Sample("Summer11_RSZZmmjj_750",     kMagenta, 1, 0));
     //Sig.push_back(Sample("Summer11_RSZZmmjj_1000",     kMagenta, 2, 0));
-    //Sig.push_back(Sample("Summer11_RSZZmmjj_1250",     1, 1, 10));
-    //Sig.push_back(Sample("Summer11_RSZZmmjj_1500",     1, 1, 10));
-    //Sig.push_back(Sample("Summer11_RSZZmmjj_1750",     1, 1, 10));
-    //Sig.push_back(Sample("Summer11_RSZZmmjj_2000",     1, 1, 10));
+    //Sig.push_back(Sample("Summer11_RSZZmmjj_1250",     1, 1, 0));
+    //Sig.push_back(Sample("Summer11_RSZZmmjj_1500",     1, 1, 0));
+    //Sig.push_back(Sample("Summer11_RSZZmmjj_1750",     1, 1, 0));
+    //Sig.push_back(Sample("Summer11_RSZZmmjj_2000",     1, 1, 0));
     //Sig.push_back(Sample("Summer11_WprimeToWZTo2Q2L_M-500", kGray, 1, 0));
     //Sig.push_back(Sample("Summer11_WprimeToWZTo2Q2L_M-1000", kGray, 2, 0));
   }else{
@@ -243,12 +242,6 @@ MakePlots(string inName, string outName, string opt){
   //These variables will be plotted
   if(inName.find("WprimeWZ") != string::npos){
     variable.push_back("hWZMass");
-    variable.push_back("hHt");
-    variable.push_back("hMET");
-    variable.push_back("hWTransMass");
-    variable.push_back("hWpt");
-    variable.push_back("hZMass");
-    variable.push_back("hZpt");
   }else if(inName.find("EWKWZ") != string::npos){
       variable.push_back("hZMass");
       variable.push_back("hWTransMass");
@@ -262,6 +255,13 @@ MakePlots(string inName, string outName, string opt){
   //These variables are cross checks but not critical to be shown
   if(opt.find("show") == string::npos){
     if(inName.find("WprimeWZ") != string::npos){
+      variable.push_back("hHt");
+      variable.push_back("hMET");
+      variable.push_back("hWTransMass");
+      variable.push_back("hWpt");
+      variable.push_back("hZMass");
+      variable.push_back("hZpt");
+      
       variable.push_back("hWZ3e0muMass");
       variable.push_back("hWZ2e1muMass");
       variable.push_back("hWZ1e2muMass");
@@ -295,6 +295,7 @@ MakePlots(string inName, string outName, string opt){
       variable.push_back("hW0e3muTransMass");
 
       variable.push_back("hMET");
+      variable.push_back("hMETSig");
       variable.push_back("hMETee");
       variable.push_back("hMETmm");
 
@@ -387,6 +388,18 @@ MakePlots(string inName, string outName, string opt){
 
   //Make plots for a single cut
   if(inName.find("WprimeWZ") != string::npos){
+    DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht",1,0,0);
+    DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht Cumlative",1,0,1);
+    DrawandSave(fin,outName,"hMET_ValidW","Title: MET",1,0,0);
+    DrawandSave(fin,outName,"hMET_ValidW","Title: MET Cumlative",1,0,1);
+    DrawandSave(fin,outName,"hMET_ValidW","Title: MET",0,0,0);
+    DrawandSave(fin,outName,"hMET_ValidW","Title: MET",0,0,1);
+    DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,0);
+    DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut (Cumlative)",1,0,1);
+    DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",0,0,0);
+    DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut (Cumlative)",0,0,1);
+    DrawandSave(fin,outName,"hMETSig_ValidW","Title: Met Sig before met cut",1,0,0);
+    DrawandSave(fin,outName,"hMETSig_ValidW","Title: Met Sig before met cut",1,0,1);
   }else if(inName.find("EWKWZ") != string::npos){
   }else if(inName.find("HadVZ") != string::npos){
     if(opt.find("show") == string::npos) {
@@ -428,11 +441,13 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
                title.find("WZ3e0muMass") != string::npos ||
                title.find("WZ2e1muMass") != string::npos ||
                title.find("WZ1e2muMass") != string::npos ||
-               title.find("WZ0e3muMass") != string::npos) ? 10 : 0;
+               title.find("WZ0e3muMass") != string::npos) ? 5 : 0;
   if(title.find("VZMass") != string::npos ||
      title.find("VZeeMass") != string::npos ||
      title.find("VZmmMass") != string::npos) rebin = 2;
-
+  if(title.find("hMET_") != string::npos) rebin = 5;
+  if(title.find("hHt_") != string::npos) rebin = 5;
+  
   bool validHist = false;
   for(unsigned int i=0; i<samples_.size(); ++i){
     for(unsigned int j=0; j<samples_[i]->size(); ++j){
@@ -446,6 +461,9 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
         samples_[i]->at(j).hist->SetFillColor(samples_[i]->at(j).fill);
         if(cum){
           samples_[i]->at(j).hist = FillCum(samples_[i]->at(j).hist);
+          string newtitle = "Cumlative ";
+          newtitle += samples_[i]->at(j).hist->GetYaxis()->GetTitle();
+          samples_[i]->at(j).hist->SetYTitle(newtitle.c_str());
         }
       }
     }
@@ -502,7 +520,7 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
     }
     for(unsigned int i=0; i<Sig.size(); i++){
       //This is if you want to see the shape of a low xsec signal
-      Sig[i].hist->Draw("HIST SAME");
+      //////Cory: Sig[i].hist->Draw("HIST SAME");
     }
     if(hData){
       max = TMath::Max(max, hData->GetMaximum());
@@ -510,7 +528,7 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
     }
     if(logy){
       sBkg->SetMaximum(50*max);
-      sBkg->SetMinimum(0.01);
+      sBkg->SetMinimum(0.1);
     }else{
       sBkg->SetMaximum(1.5*max);
       sBkg->SetMinimum(0.);
