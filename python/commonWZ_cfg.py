@@ -165,7 +165,3 @@ process.WprimeAnalyzer.minZmmPt2 =  cms.double(10.)
 process.WprimeAnalyzer.minZmass =  cms.untracked.double(60.)
 process.WprimeAnalyzer.maxZmass =  cms.untracked.double(120.)
 
-# +++++++++++++++++++Analysis Cuts
-process.WprimeAnalyzer.minHt = cms.double(250.)
-process.WprimeAnalyzer.minZpt =  cms.untracked.double(0.)#90 for TC300) 110 for W'400
-process.WprimeAnalyzer.minWpt = cms.untracked.double(0.)#90 for TC300) 110 for W'400
