@@ -63,7 +63,7 @@ void get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
 
 void get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
                       const std::string& objName, const std::string& variable,
-                      const std::string& cuts, TH2F & hist){
+                      const std::string& cuts, TH2 & hist){
   for(unsigned j=0; j<samples.size(); ++j){
     std::string fullName = samples[j] + "/" + objName; 
     TTree* tree = (TTree*) f->Get(fullName.c_str()); assert(tree != NULL);
