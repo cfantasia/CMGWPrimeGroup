@@ -12,6 +12,8 @@ singleMuonPaths = [
     'HLT_IsoMu24_v*',
     'HLT_IsoMu30_v*',
     'HLT_IsoMu40_v*',
+    'HLT_Mu40_eta2p1_v*',
+    'HLT_Mu50_eta2p1_v*',
     ]
 
 doubleMuonPaths = [
@@ -20,6 +22,7 @@ doubleMuonPaths = [
     'HLT_TripleMu5_v*',
     'HLT_Mu13_Mu8_v*', #1e33 unprescaled
     'HLT_Mu17_Mu8_v*' #3e33 unprescaled
+    'HLT_Mu17_TkMu8_v*',
     ]
 
 singleElectronPaths = [
