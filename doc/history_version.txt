@@ -1,3 +1,41 @@
+31-OCT-11 (Christos, Cory, Flavia, Phil), V00-03-50
+====================================================
+General improvements:
+o Macro for calculating (bayesian) exclusion limits
+o TeV Muon quality: made trk-layer cut eta-independent: # of trk layers > 8
+o TeV Muon quality: replaced numberOfMatches by numberOfMatchedStations
+o Added genParticles to jet+lepton configurations
+
+
+El+MET analysis:
+o Updated data samples
+
+
+Mu+MET analysis:
+o Updated MC and data samples
+o Added background (sideband) fits in plotting macro
+
+
+hadV+Z analysis:
+o Updated MC and data samples (including RS samples with electrons)
+o Fixed (typo on) Vpt cut
+
+
+WZ->3l analysis:
+o Updated data samples
+o Updated lepton cuts to match increased trigger thresholds
+o Added MET signficance to custom tree
+
+
+Misc:
+o Added TeV muon selection cuts
+o Updated JSON files
+o Updated lumi-calculation script
+o Updated latest PU distributions (default: in-time only as recommended)
+o Updated trigger list to 5E33 menu
+o Plot-making macro: added new distributions
+
+
 12-OCT-11 (Christos, Cory, Flavia, Phil, Sunghyun), V00-03-40
 =============================================================
 General improvements:
