@@ -370,7 +370,7 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
                      (int)patJetsH_->size());
   for (size_t i = 0; i < patJetsH_->size(); i++) {
     const pat::Jet & jet = (*patJetsH_.product())[i];
-    if (looseJet_(jet, jetResult_))
+    if (looseJet_(jet, jetLooseResult_))
       looseJets_.push_back(jet);
   }
   if(looseJets_.size() == 0) return;
@@ -402,19 +402,19 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
   for (size_t i = 0; i < allElectrons_.size(); i++) {
     if(Overlap(allElectrons_[i].patEle(), allMuons_)) continue;
     const float pu = ElecPU(allElectrons_[i]);
-    if (looseElectron_(allElectrons_[i].patEle(), electronResult_, pu))
+    if (looseElectron_(allElectrons_[i].patEle(), electronLooseResult_, pu))
       looseAllElectrons_.push_back(allElectrons_[i]);
 
-    if (tightElectron_(allElectrons_[i].patEle(), electronResult_, pu))
+    if (tightElectron_(allElectrons_[i].patEle(), electronTightResult_, pu))
       tightElectrons_.push_back(allElectrons_[i]);
   }
 */
   for (size_t i = 0; i < allMuons_.size(); i++) {
     const float pu = MuonPU(allMuons_[i]);
-    if (looseMuon_(allMuons_[i], muonResult_,pu))
+    if (looseMuon_(allMuons_[i], muonLooseResult_,pu))
       looseMuons_.push_back(allMuons_[i]);
 
-    if (tightMuon_(allMuons_[i], muonResult_,pu))
+    if (tightMuon_(allMuons_[i], muonTightResult_,pu))
       tightMuons_.push_back(allMuons_[i]);
   }
   if(looseElectrons_.size() + looseMuons_.size() == 0) return;

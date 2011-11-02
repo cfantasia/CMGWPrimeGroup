@@ -96,13 +96,17 @@ public:
   int evtNumber_;
   float WZMass_;
   float Zpt_;
+  float ZMass_;
   float Wpt_;
+  float WTransMass_;
   float Ht_;
   float TriLepMass_;
   float Q_;
   float MET_;
+  float METSig_;
   uint evtType_;
-  uint numZs_;
+  uint numZs_; 
+  uint NVtxs_;
   float LeadPt_;
   float LeadElecPt_;
   float LeadMuonPt_;

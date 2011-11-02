@@ -220,10 +220,10 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     
     if(Overlap(allElectrons_[i].patEle(), *patMuonsH_.product(), 0.01)) continue;
     
-    if (looseElectron_(allElectrons_[i].patEle(), electronResult_))
+    if (looseElectron_(allElectrons_[i].patEle(), electronLooseResult_))
       looseElectrons_.push_back(allElectrons_[i]);
 
-    if (tightElectron_(allElectrons_[i].patEle(), electronResult_))
+    if (tightElectron_(allElectrons_[i].patEle(), electronTightResult_))
       tightElectrons_.push_back(allElectrons_[i]);
   }
 
@@ -231,10 +231,10 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   for (size_t i = 0; i < patMuonsH_->size(); i++) {
     allMuons_.push_back(TeVMuon((*patMuonsH_)[i],muReconstructor_));   
     
-    if (looseMuon_(allMuons_[i], muonResult_) )
+    if (looseMuon_(allMuons_[i], muonLooseResult_) )
       looseMuons_.push_back(allMuons_[i]);
     
-    if (tightMuon_(allMuons_[i], muonResult_) )
+    if (tightMuon_(allMuons_[i], muonTightResult_) )
       tightMuons_.push_back(allMuons_[i]);
   }
 
@@ -298,7 +298,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   // Loop over jets, and see if they pass the jet criteria
   for (size_t i = 0; i < allJets_.size(); ++i) {
-    if (looseJet_(allJets_[i], jetResult_) && !Overlap(allJets_[i], looseMuons_, 1.0, 2) && !Overlap(allJets_[i], looseElectrons_, 1.0, 2))
+    if (looseJet_(allJets_[i], jetLooseResult_) && !Overlap(allJets_[i], looseMuons_, 1.0, 2) && !Overlap(allJets_[i], looseElectrons_, 1.0, 2))
       looseJets_.push_back(allJets_[i]);
   }
   

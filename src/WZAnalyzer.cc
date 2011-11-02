@@ -262,10 +262,14 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
   tWZCand->Branch("EvtType", &evtType_);
   tWZCand->Branch("Ht", &Ht_);
   tWZCand->Branch("Zpt", &Zpt_);
+  tWZCand->Branch("ZMass", &ZMass_);
   tWZCand->Branch("Wpt", &Wpt_);
+  tWZCand->Branch("WTransMass", &WTransMass_);
   tWZCand->Branch("MET", &MET_);
+  tWZCand->Branch("METSig", &METSig_);
   tWZCand->Branch("Q", &Q_);
   tWZCand->Branch("TriLepMass", &TriLepMass_);
+  tWZCand->Branch("NVtxs", &NVtxs_);
   tWZCand->Branch("weight", &weight_);
 
 }//defineHistos
@@ -522,7 +526,11 @@ WZAnalyzer::calcEventVariables(){
   LeadMuonPt_ = calcLeadPt(PDGMUON);
   Ht_ = (zCand_ && wCand_) ? calcHt() : -999.;
   TriLepMass_ = (zCand_ && wCand_) ? calcTriLepMass() : -999.;
+  ZMass_ = zCand_.mass();
+  WTransMass_ = wCand_.mt();
   MET_ = met_.et();
+  METSig_ = met_.significance();
+  NVtxs_ = vertices_.size();
 }
 
 void 
@@ -579,19 +587,19 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   for (size_t i = 0; i < allElectrons_.size(); i++) {
     if(Overlap(allElectrons_[i].patEle(), *patMuonsH_.product(), 0.01)) continue;
     const float pu = ElecPU(allElectrons_[i]);
-    if (looseElectron_(allElectrons_[i].patEle(), electronResult_, pu))
+    if (looseElectron_(allElectrons_[i].patEle(), electronLooseResult_, pu))
       looseElectrons_.push_back(allElectrons_[i]);
 
-    if (tightElectron_(allElectrons_[i].patEle(), electronResult_, pu))
+    if (tightElectron_(allElectrons_[i].patEle(), electronTightResult_, pu))
       tightElectrons_.push_back(allElectrons_[i]);
   }
 
   for (size_t i = 0; i < allMuons_.size(); i++) {
     const float pu = MuonPU(allMuons_[i]);
-    if (looseMuon_(allMuons_[i], muonResult_,pu))
+    if (looseMuon_(allMuons_[i], muonLooseResult_,pu))
       looseMuons_.push_back(allMuons_[i]);
 
-    if (tightMuon_(allMuons_[i], muonResult_,pu))
+    if (tightMuon_(allMuons_[i], muonTightResult_,pu))
       tightMuons_.push_back(allMuons_[i]);
   }
   if(looseElectrons_.size() + looseMuons_.size() == 0) return;
@@ -1020,13 +1028,17 @@ WZAnalyzer::clearEvtVariables(){
   Ht_= -999;
   TriLepMass_ = -999;
   Zpt_ = -999;
+  ZMass_ = -999;
   Wpt_ = -999;
+  WTransMass_ = -999;
   Q_ = -999;
   TT = TF = false;
   runNumber_ = 0;
   lumiNumber_ = 0;
   evtNumber_ = 0;
   MET_ = 0;
+  METSig_ = 0;
+  NVtxs_ = 0;
   weight_ = 0;
 }
 

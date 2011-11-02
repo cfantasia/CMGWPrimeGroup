@@ -126,17 +126,19 @@ protected:
   Pset eSelectorPset_;
   ElectronSelector looseElectron_;
   ElectronSelector tightElectron_;
-  pat::strbitset electronResult_;
+  pat::strbitset electronLooseResult_;
+  pat::strbitset electronTightResult_;
 
   Pset mSelectorPset_;
   MuonSelector looseMuon_;
   MuonSelector tightMuon_;
-  pat::strbitset muonResult_;
+  pat::strbitset muonLooseResult_;
+  pat::strbitset muonTightResult_;
 
   Pset jSelectorPset_;
   JetSelector looseJet_;
   JetSelector tightJet_;
-  pat::strbitset jetResult_;
+  pat::strbitset jetLooseResult_;
 
   PatElectronVH patElectronsH_;
   PatMuonVH patMuonsH_;

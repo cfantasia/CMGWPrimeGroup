@@ -19,7 +19,8 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUti
   tightElectronType_ = cfg.getUntrackedParameter<string>("TightElectronType", "wp95");
   looseElectron_ = ElectronSelector(eSelectorPset_, looseElectronType_);
   tightElectron_ = ElectronSelector(eSelectorPset_, tightElectronType_);
-  electronResult_ = looseElectron_.getBitTemplate();
+  electronLooseResult_ = looseElectron_.getBitTemplate();
+  electronTightResult_ = tightElectron_.getBitTemplate();
   if(debugme) cout<<"Using "<<looseElectronType_<<" for loose electrons and "
                   <<tightElectronType_<<" for tight electrons\n";
 
@@ -28,14 +29,15 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUti
   tightMuonType_ = cfg.getUntrackedParameter<string>("TightMuonType", "VBTF");
   looseMuon_ = MuonSelector(mSelectorPset_, looseMuonType_);
   tightMuon_ = MuonSelector(mSelectorPset_, tightMuonType_);
-  muonResult_ = looseMuon_.getBitTemplate();
+  muonLooseResult_ = looseMuon_.getBitTemplate();
+  muonTightResult_ = tightMuon_.getBitTemplate();
   if(debugme) cout<<"Using "<<looseMuonType_<<" for loose muons and "
                   <<tightMuonType_<<" for tight muons\n";
 
   jSelectorPset_ = cfg.getParameter<Pset>("jetSelectors");
   looseJetType_ = cfg.getUntrackedParameter<string>("LooseJetType", "Base");
   looseJet_ = JetSelector(jSelectorPset_, looseJetType_);
-  jetResult_ = looseJet_.getBitTemplate();
+  jetLooseResult_ = looseJet_.getBitTemplate();
   if(debugme) cout<<"Using "<<looseJetType_<<" for jets\n";
 
   setCandEvtFile(cfg.getParameter<string>("candEvtFile"));
