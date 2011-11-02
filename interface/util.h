@@ -441,6 +441,7 @@ public:
     loadFromPset<int>(params, "minIsGlobal", true);
     loadFromPset<int>(params, "minIsTracker", true);
     loadFromPset<int>(params, "minNMatches", true);
+    loadFromPset<int>(params, "minNMatchedStations", true);
     loadFromPset<double>(params, "maxNormalizedChi2", true);
     loadFromPset<int>(params, "minNTrackerHits", true);
     loadFromPset<int>(params, "minNPixelHits", true);
@@ -461,6 +462,7 @@ public:
     setpassCut("minIsGlobal", p.isGlobalMuon(), ret);
     setpassCut("minIsTracker", p.isTrackerMuon(), ret);
     setpassCut("minNMatches", p.numberOfMatches(), ret);
+    setpassCut("minNMatchedStations", p.numberOfMatchedStations(), ret);
     
     reco::TrackRef global = p.globalTrack();
     if(!global.isNull()){
