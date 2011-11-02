@@ -21,6 +21,9 @@ HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil
 
 // +++++++++++++++++++Hadronic Boson Cuts
 
+
+  genLabel_ = cfg.getParameter<edm::InputTag>("genParticles" );
+
 }
 
 HadronicVZAnalyzer::~HadronicVZAnalyzer(){
@@ -33,12 +36,18 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   AnalyzerBase::defineHistos(dir);
  
   //Loose histos
+  //Dealing with MET
+  h_HadVWMass = dir.make<TH1F>("h_HadVWMass", "h_HadVWMass", 100, 0.0, 2500.0);
+  h_MET_AllCuts = dir.make<TH1F>("h_MET_AllCuts", "h_MET_AllCuts", 100, 0.0, 1000.0);
+  h_WMass = dir.make<TH1F>("h_WMass", "h_WMass", 100, 0.0, 300.0);
+  h_genWMass = dir.make<TH1F>("h_genWMass", "h_genWMass", 100, 0.0, 300.0);
+
   //HadVZ Properties
   h_HadVZMass = dir.make<TH1F>("h_HadVZMass","h_HadVZMass",100,0.0,2500.0);
-  h_HadVZpt = dir.make<TH1F>("h_HadVZpt", "h_HadVZpt", 30, 0.0, 300.0);
+  h_HadVZpt = dir.make<TH1F>("h_HadVZpt", "h_HadVZpt", 60, 0.0, 300.0);
   h_HadVZeta = dir.make<TH1F>("h_HadVZeta", "h_HadVZeta", 40, -5.0, 5.0);
   h_HadVZphi = dir.make<TH1F>("h_HadVZphi", "h_HadVZphi", 20, -4.0, 4.0);
-
+  h_HadVZ_res = dir.make<TH1F>("h_HadVZ_res", "h_hadVZ_res", 400, -200.0, 200.0); 
   //ZLeptons Properties
   h_Zelec1_pt = dir.make<TH1F>("h_Zelec1_pt", "h_Zelec1_pt", 100, 0.0, 1000.0);
   h_Zelec1_eta = dir.make<TH1F>("h_Zelec1_eta", "h_Zelec1_eta", 40, -5.0, 5.0);
@@ -171,6 +180,10 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     // We could setup some preselection here. To be implemented.
   }
 
+  // if(wprimeUtil_->runningOnData())                                                                                                            
+  //  passTriggersCut();
+  
+
   //////////////////////
   //Deal With Leptons///
   //////////////////////
@@ -180,7 +193,24 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     cout << "Not enough leptons. Bad bad event, returning now..." << endl;
     return;
   }
+  
+  gravMass_ = -999.0;
 
+  if(!wprimeUtil_->runningOnData())
+    {
+      event.getByLabel(genLabel_, genParticles);
+      for(size_t i = 0; i != genParticles->size(); ++i) {
+	const reco::GenParticle & genP = (*genParticles)[i];
+	if (genP.pdgId() == 5000039 && genP.status() == 3)
+	  {
+	    gravMass_ = genP.mass();
+	    // cout << "Found my graviton! Mass is " << genP.mass() << endl;
+	  }
+	if (genP.pdgId() == PDGW && genP.status() == 3)
+	  h_genWMass->Fill(genP.mass(), weight_); 
+      } // loop over genParticles
+    }
+  
   weight_ = wprimeUtil_->getWeight();
 
   // Make vectors of leptons passing various criteria
@@ -217,6 +247,17 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     printf("    Contains: %i tight electron(s), %i tightmuon(s)\n",
            (int)tightElectrons_.size(), (int)tightMuons_.size());
   }
+
+
+  // if(useAdjustedMET_) event.getByLabel(pfCandsLabel_, pfCandidatesH_);
+  //Deal with MET
+  event.getByLabel(metLabel_, metH_);
+  WPrimeUtil::getLeptonsMET(patElectronsH_, allElectrons_,
+                            patMuonsH_, muReconstructor_, allMuons_,
+                            metH_, useAdjustedMET_, met_,
+                            pfCandidatesH_);
+
+  // h_MET_AllCuts->Fill(met_.et(), weight_);
 
   if (looseMuons_.size() > 0){
     sort(looseMuons_.begin(), looseMuons_.end(), highestMuonPt());
@@ -327,6 +368,33 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   /// Start Applying Cuts///////////////////////
   //////////////////////////////////////////////
 
+  //Make a WCand out of looseLeptons
+  //WCandidate wCands = getWCand
+  wCand_ = getWCand(looseElectrons_, looseMuons_, met_);
+  h_WMass->Fill(wCand_.mt(), weight_);
+  int goodW = 0;
+  if (wCand_.mt() > 70 && wCand_.mt() < 110 && wCand_.pt() > 150)
+    {
+      goodW = 1;
+    }
+  
+  if (looseJets_.size()>0)
+    {
+      vCand_ = getWCand(looseJets_);
+      if (goodW==1 && vCand_.mass() > 70 && vCand_.mass() < 120 && vCand_.pt() > 100)
+      // if (wCand_.mt() > 70 && wCand_.mt() < 110 && wCand_.pt() > 150 && vCand_.mass() > 70 && vCand_.mass() < 120 && vCand_.pt() > 100)
+	{
+	  wzCand_ = (vCand_ && wCand_) ? XWLeptonic(vCand_, wCand_) : XWLeptonic();
+	  double WZMass = wzCand_.mass("minPz");
+	  if (WZMass > 0)
+	    h_HadVWMass->Fill(WZMass, weight_);
+	  h_MET_AllCuts->Fill(met_.et(), weight_);
+	}
+    }
+
+  vCand_ = WCandidate();
+  wCand_ = WCandidate();
+  hadVZ_ = VZCandidate();
   int iCut=0;
   if( !passNoCut() ) return;
   tabulateEvent(iCut, weight_); ++iCut;
@@ -395,6 +463,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   if( !passValidVZCandCut() ) return;
   tabulateEvent(iCut, weight_); ++iCut;
+  h_MET_AllCuts->Fill(met_.et(), weight_);
 
   fillValidVZHistos();
 
@@ -574,6 +643,8 @@ void HadronicVZAnalyzer::fillValidVZHistos(){
   h_HadVZpt->Fill(hadVZ_.pt(), weight_);
   h_HadVZeta->Fill(hadVZ_.eta(), weight_);
   h_HadVZphi->Fill(hadVZ_.phi(), weight_);
+  if (gravMass_>0)
+    h_HadVZ_res->Fill((hadVZ_.mass()-gravMass_), weight_);
   if (debugme)
     cout << "filled my histos from HadVZ" << endl;
   if     (zCand_.flavor() == PDGELEC){
