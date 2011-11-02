@@ -11,6 +11,10 @@
 
 class HadronicVZAnalyzer : public AnalyzerBase {
 
+  edm::InputTag genLabel_;
+  edm::Handle<reco::GenParticleCollection> genParticles;
+
+
 public:
   HadronicVZAnalyzer();                         // constructor; initialize the list to be empty
   HadronicVZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil);
@@ -30,6 +34,10 @@ public:
   void eventLoop(edm::EventBase const & event);
 
 //methods for utilities
+
+  METVH metH_;
+  XWLeptonic wzCand_;
+
 
 //methods for modifiers
 
@@ -66,7 +74,17 @@ public:
 //////Chosen Vector Boson Candidates 
   VZCandidate hadVZ_;
 
+  double gravMass_;
+
 // +++++++++++++++++++ Histogram Definitions - loose
+  TH1F* h_genWMass;
+
+  TH1F* h_HadVWMass;
+  TH1F* h_MET_AllCuts;
+  TH1F* h_WMass;
+
+  TH1F* h_HadVZ_res;
+
   TH1F* h_HadVZMass;
   TH1F* h_Zelec1_pt;	
   TH1F* h_Zelec1_eta;
