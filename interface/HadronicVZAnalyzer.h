@@ -45,7 +45,7 @@ public:
   void defineHistos(const TFileDirectory& dir);
   void fillHistos(const int& index, const float& weight=1.);
   void fillJetMultiplicityHists();
-  //void fillLooseMuonHists();
+  void fillPOGMuonHists();
   //void fillTightMuonHists();
   void fillGoodZHistos();
   void fillGoodHadVHistos();
@@ -70,6 +70,25 @@ public:
   float Vpt_;
   float VMass_;
   uint evtType_;
+
+
+//POG hists
+
+  TH1F* h_dptpt2; 
+  TH2F* h_dptpt_vs_pt;
+  TH2F* h_dptpt2_vs_pt;
+  TH2F* h_dptpt_vs_invpt;
+  TH2F* h_dptpt2_vs_invpt;
+
+  TH2F* h_dptpt_vs_genpt;
+  TH2F* h_dptpt2_vs_genpt;
+  TH2F* h_dptpt_vs_invgenpt;
+  TH2F* h_dptpt2_vs_invgenpt;
+
+
+
+  std::vector<reco::GenParticle> genMuons;
+
 
 //////Chosen Vector Boson Candidates 
   VZCandidate hadVZ_;
@@ -106,6 +125,7 @@ public:
   TH1F* h_jet2_phi;
   TH1F* h_jet1_mass;
   TH1F* h_jet2_mass;
+  // TH1F* h_jet1_Vwindow;
   TH1F* h_deltaR_elec1elec2;
   TH1F* h_deltaR_HadVelec1;
   TH1F* h_deltaR_HadVelec2;

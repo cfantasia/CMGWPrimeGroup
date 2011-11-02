@@ -34,7 +34,22 @@ HadronicVZAnalyzer::~HadronicVZAnalyzer(){
 void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   printf("Declare histos\n");
   AnalyzerBase::defineHistos(dir);
+
+  //POG histos
+  h_dptpt2 = dir.make<TH1F>("h_dptpt2", "h_dptpt2", 500, 0., 0.05);
+  h_dptpt_vs_pt = dir.make<TH2F>("h_dptpt_vs_pt", "h_dptpt_vs_pt", 50, 0., 0.5, 50, 0.0, 500.);
+  h_dptpt2_vs_pt = dir.make<TH2F>("h_dptpt2_vs_pt", "h_dptpt2_vs_pt", 500, 0., 0.05, 150, 0.0, 500.);
+  h_dptpt_vs_invpt = dir.make<TH2F>("h_dptpt_vs_invpt","h_dptpt_vs_invpt", 50, 0., 0.5, 50, 0., 0.1);
+  h_dptpt2_vs_invpt = dir.make<TH2F>("h_dptpt2_vs_invpt","h_dptpt2_vs_invpt", 500, 0., 0.05, 150, 0., 0.1);
  
+  h_dptpt_vs_genpt = dir.make<TH2F>("h_dptpt_vs_genpt", "h_dptpt_vs_genpt", 50, 0., 0.5, 50, 0.0, 500.);
+  h_dptpt2_vs_genpt = dir.make<TH2F>("h_dptpt2_vs_genpt", "h_dptpt2_vs_genpt", 500, 0., 0.05, 150, 0.0, 500.);
+  h_dptpt_vs_invgenpt = dir.make<TH2F>("h_dptpt_vs_invgenpt","h_dptpt_vs_invgenpt", 50, 0., 0.5, 50, 0., 0.1);
+  h_dptpt2_vs_invgenpt = dir.make<TH2F>("h_dptpt2_vs_invgenpt","h_dptpt2_vs_invgenpt", 500, 0., 0.05, 150, 0., 0.1);
+
+
+
+
   //Loose histos
   //Dealing with MET
   h_HadVWMass = dir.make<TH1F>("h_HadVWMass", "h_HadVWMass", 100, 0.0, 2500.0);
@@ -79,6 +94,7 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   h_jet2_phi = dir.make<TH1F>("h_jet2_phi", "h_jet2_phi", 20, -4.0, 4.0);
   h_jet1_mass = dir.make<TH1F>("h_jet1_mass", "h_jet1_mass", 100, 0.0, 500.);
   h_jet2_mass = dir.make<TH1F>("h_jet2_mass", "h_jet2_mass", 100, 0.0, 500.);
+  // h_jet1_Vwindow = dir.make<TH1F>("h_jet1_Vwindow", "h_jet1_Vwindow", 100, 0., 500.);
   h_deltaR_jet1muon1 = dir.make<TH1F>("h_deltaR_jet1muon1", "h_deltaR_jet1muon1", 50, 0., 5.);
   h_deltaR_jet1muon2 = dir.make<TH1F>("h_deltaR_jet1muon2", "h_deltaR_jet1muon2", 50, 0., 5.);
   h_deltaR_jet2muon1 = dir.make<TH1F>("h_deltaR_jet2muon1", "h_deltaR_jet2muon1", 50, 0., 5.);
@@ -196,6 +212,8 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   
   gravMass_ = -999.0;
 
+  // std::vector<reco::GenParticle> genMuons;
+
   if(!wprimeUtil_->runningOnData())
     {
       event.getByLabel(genLabel_, genParticles);
@@ -206,11 +224,15 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 	    gravMass_ = genP.mass();
 	    // cout << "Found my graviton! Mass is " << genP.mass() << endl;
 	  }
-	if (genP.pdgId() == PDGW && genP.status() == 3)
+	if (fabs(genP.pdgId()) == 13 && genP.status() == 3)
+	  genMuons.push_back((*genParticles)[i]);
+	if (fabs(genP.pdgId()) == PDGW && genP.status() == 3)
 	  h_genWMass->Fill(genP.mass(), weight_); 
       } // loop over genParticles
     }
   
+  // for (size_t i=0; i<genMuons.size(); i++)
+  //  cout << "My muon " << i << " pt is " << genMuons[i].pt() << endl;
   weight_ = wprimeUtil_->getWeight();
 
   // Make vectors of leptons passing various criteria
@@ -267,6 +289,8 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 	    }
     }
   }
+
+
   if (tightMuons_.size() > 0){
     sort(tightMuons_.begin(), tightMuons_.end(), highestMuonPt());
   }
@@ -282,6 +306,8 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   if (tightElectrons_.size() > 0){
     sort(tightElectrons_.begin(), tightElectrons_.end(), highestElectronPt());
   }
+
+  fillPOGMuonHists();
 
   //////////////////////
   ////Deal With Jets////
@@ -322,7 +348,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     h_jet1_phi->Fill(looseJets_.at(0).phi(), weight_);
     h_jet1_mass->Fill(looseJets_.at(0).mass(), weight_);
     
-    /*    if (looseJets_.at(0).mass() > 60 && looseJets_.at(0).mass() < 110){
+    /* if (looseJets_.at(0).mass() > 60 && looseJets_.at(0).mass() < 110){
       h_jet1_Vwindow->Fill(looseJets_.at(0).mass(), weight_);
       }*/
 
@@ -363,6 +389,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   //get Vertex
   //vertices_ = getProduct<vector<reco::Vertex> >(event,vertexLabel_);
+
 
   //////////////////////////////////////////////
   /// Start Applying Cuts///////////////////////
@@ -473,6 +500,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   //passTriggersCut();
   tabulateEvent(iCut, weight_); ++iCut;
 
+
   //AllCuts
   tabulateEvent(iCut, weight_); ++iCut;
 
@@ -551,6 +579,8 @@ HadronicVZAnalyzer::clearEvtVariables(){
   VMass_=-999;
   Vpt_ = -999;
   weight_ = 0;
+  genMuons.clear();
+
 }
 
 //fill Histograms
@@ -849,4 +879,51 @@ void HadronicVZAnalyzer::fillJetMergingHistos(){
 	h_HadVZmass_Flavia->Fill(hadronicVZF.mass(),weight_);
       }
 
+}
+
+
+
+void HadronicVZAnalyzer::fillPOGMuonHists(){
+  for (size_t nM=0; nM<looseMuons_.size(); nM++)
+    {
+      //Muon POG work
+      double trackpT = looseMuons_.at(nM).track()->pt();
+      double trackpT2 = trackpT*trackpT;
+      double invpt = 1/trackpT;
+      double trackpTError = looseMuons_.at(nM).track()->ptError();
+      double dptpt = trackpTError/trackpT;
+      double dptpt2 =trackpTError/trackpT2;
+
+      for (size_t i=0; i<looseMuons_.size(); i++)
+	{
+	  for (size_t j=0; j<genMuons.size(); j++)
+	    {
+	      if (deltaR(looseMuons_.at(i),genMuons.at(j)) < 0.01)
+		{
+
+		  double genpt = genMuons.at(j).pt();
+		  double invgenpt = 1/invgenpt;
+		  h_dptpt_vs_genpt->Fill(dptpt, genpt);
+		  h_dptpt2_vs_genpt->Fill(dptpt2, genpt);
+
+		  h_dptpt_vs_invgenpt->Fill(dptpt, invgenpt);
+		  h_dptpt2_vs_invgenpt->Fill(dptpt2, invgenpt);
+
+		}
+	    }
+	}
+
+      double slope = 0.0115695;
+      //Slope correction
+      dptpt2 = dptpt2-(slope*invpt);
+
+      h_dptpt2->Fill(dptpt2);
+      h_dptpt_vs_pt->Fill(dptpt, trackpT);
+      h_dptpt2_vs_pt->Fill(dptpt2, trackpT);
+
+      h_dptpt_vs_invpt->Fill(dptpt, invpt);
+      h_dptpt2_vs_invpt->Fill(dptpt2, invpt);
+
+
+    }
 }
