@@ -132,8 +132,9 @@ void WPrimeFinder::eventLoop(edm::EventBase const & event)
     wprimeUtil->setWeight(wprimeUtil->getSampleWeight());
   }else{
     event.getByLabel(pileupLabel_, PupH_);
-    float PU_Weight = wprimeUtil->getPUWeight1BX(*PupH_);
-    //float PU_Weight = wprimeUtil->getPUWeight3BX(*PupH_);
+    float PU_Weight = wprimeUtil->getPUWeight1BX(*PupH_);//In time only
+    //float PU_Weight = wprimeUtil->getPUWeight3BX(*PupH_);//Average, in time and of of time
+    //float PU_Weight = wprimeUtil->getPUWeight3D(*PupH_);//3D Matrix
     wprimeUtil->setWeight(wprimeUtil->getSampleWeight() * PU_Weight);
   }
 

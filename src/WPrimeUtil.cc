@@ -112,6 +112,7 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
 void WPrimeUtil::setLumiWeights(const string & MCFile, const string & DataFile,
                                 const string & MCHist, const string & DataHist){
   LumiWeights_ = edm::LumiReWeighting(MCFile, DataFile, MCHist, DataHist);
+  //LumiWeights_.weight3D_init("UserCode/CMGWPrimeGroup/root_macros/Weight3D.root");
 }
 
 int WPrimeUtil::getPU1BX(const std::vector< PileupSummaryInfo > & PupInfo){
@@ -149,6 +150,21 @@ float WPrimeUtil::getPU3BX(const std::vector< PileupSummaryInfo > & PupInfo){
 float WPrimeUtil::getPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo){
   return LumiWeights_.weight3BX( getPU3BX(PupInfo) );
 }
+
+////////////
+float WPrimeUtil::getPUWeight3D(const std::vector< PileupSummaryInfo > & PupInfo){
+  std::vector<PileupSummaryInfo>::const_iterator PVI;
+  int nm1 = -1; int n0 = -1; int np1 = -1;
+  for(PVI = PupInfo.begin(); PVI != PupInfo.end(); ++PVI) {
+    int BX = PVI->getBunchCrossing();
+    
+    if     (BX == -1) nm1 = PVI->getPU_NumInteractions();
+    else if(BX ==  0)  n0 = PVI->getPU_NumInteractions();
+    else if(BX ==  1) np1 = PVI->getPU_NumInteractions();
+  }
+  return LumiWeights_.weight3D( nm1,n0,np1);
+}
+////////////
 
 void WPrimeUtil::CheckStream(const ofstream& stream, const std::string & s){
   if(!stream) { 

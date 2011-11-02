@@ -59,6 +59,7 @@ class WPrimeUtil
   float getPUWeight3BX(edm::EventBase const & event, const std::string& label);
   float getPU3BX(const std::vector< PileupSummaryInfo > & PupInfo);
   float getPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo);
+  float getPUWeight3D(const std::vector< PileupSummaryInfo > & PupInfo);
 
   static void getEff(float & eff, float & deff,float Num,float Denom);
 
