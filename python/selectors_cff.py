@@ -27,12 +27,12 @@ muonSelectors = cms.PSet(
        minIsGlobal = cms.untracked.int32(1),
        minIsTracker = cms.untracked.int32(1),
        maxDxy = cms.untracked.double(0.2),
-       maxNormalizedChi2 = cms.untracked.double(10.),
-       minNTrackerHits = cms.untracked.int32(11),
+#       maxNormalizedChi2 = cms.untracked.double(10.), not needed for TeV muons
+#       minNTrackerHits = cms.untracked.int32(11), deprecated
        minNPixelHits = cms.untracked.int32(1),
        minNMuonHits = cms.untracked.int32(1),
        minNMatches = cms.untracked.int32(2),
-       minNTrackerLayers = cms.untracked.int32(7),
+       minNTrackerLayers = cms.untracked.int32(9),
 #       minTrackerValidFrac = cms.untracked.double(),
     ),
     )
