@@ -6,14 +6,17 @@
 #include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
 
-class AnalyzerBase {
+class AnalyzerBase{
 public:
 
   AnalyzerBase();
-  AnalyzerBase(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil);
+  AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun);
   virtual ~AnalyzerBase();
 
 ///////////////Utilities//////////////////
+
+//Fill Vector of Cuts based on map
+  void fillCuts();
 
 //Tabulate results after the cut has been passed
   virtual void tabulateEvent(const int& cut_index, const float& weight);
@@ -25,7 +28,7 @@ public:
   virtual void defineHistoset(const std::string& n, const std::string& t, const std::string& xtitle,
                                const int& nbins, const float& min, const float& max, const std::string& units,
                                std::vector<TH1F*>& h, const TFileDirectory& d);
-  virtual void resetcounters();
+  virtual void resetCounters();
   virtual void clearEvtVariables();
 
   //methods for printers
@@ -48,7 +51,6 @@ public:
 ////////////////////////////
 //////////setters///////////
 ////////////////////////////
-  void setCandEvtFile(const std::string & s);
 
 ////////////////////
 //////Cuts//////////
@@ -84,15 +86,28 @@ public:
 //file stuff//////
 //////////////////
   
-  virtual void beginFile(std::vector<wprime::InputFile>::const_iterator fi);
+  void run();
+  virtual void beginFile(std::vector<wprime::InputFile>::iterator fi);
   virtual void eventLoop(edm::EventBase const & event);
+  
+  void setEventWeight(edm::EventBase const & event);
+
 
 // operations to be done when closing input file 
-  virtual void endFile(std::vector<wprime::InputFile>::const_iterator fi,
+  virtual void endFile(std::vector<wprime::InputFile>::iterator fi,
                        ofstream & out);
   virtual void endAnalysis(ofstream & out);
 
 protected:
+
+  // print out event # 
+  unsigned int reportAfter_;
+  // maximum # of events to process (set to <0 for processing all events)
+  int maxEvents_;
+  // Should we use the json file
+  bool useJSON_;
+  // Should we count the number of gen evts in patTuple?
+  bool countGenEvts_;
 
   bool debugme;//print stuff if active
   bool doPreselect_;
@@ -110,8 +125,47 @@ protected:
   edm::InputTag hltEventLabel_;
   vstring triggersToUse_;
 
-  WPrimeUtil * wprimeUtil_;
-  ofstream outCandEvt_;
+  ofstream outLogFile_;
+  ofstream outCandEvtFile_;
+  std::vector<wprime::InputFile> inputFiles_; 
+
+  std::string outputFile_;
+  std::string logFile_;
+  std::string candEvtFile_;
+
+  //Variables for counting # of gen events
+  std::vector<uint> nEvents_;
+  std::vector<std::string> ctrNames_;
+
+  edm::InputTag genLabel_;
+  edm::InputTag pfLabel_;
+  edm::InputTag pileupLabel_;
+
+  edm::Handle<std::vector< PileupSummaryInfo > > PupH_;
+
+  float lumi_ipb; // in pb^-1, to be retrieved from samples_cross_sections.txt
+
+  int fileToRun;
+  fwlite::TFileService * fs;
+  // directory containing all input samples
+  std::string top_level_dir; 
+
+  // file with samples & cross-sections
+  std::string sample_cross_sections;
+
+  std::vector< edm::LuminosityBlockRange > jsonVector;
+
+  bool jsonContainsEvent (const std::vector<edm::LuminosityBlockRange>&jsonVec,
+                          const edm::EventBase &event);
+
+  std::string MCPUDistFile_;
+  std::string MCPUDistHist_;
+  std::string DataPUDistFile_;
+  std::string DataPUDistHist_;
+
+  WPrimeUtil* wprimeUtil_;
+
+  bool doRecoilCorrectionForW_;
 
   uint muReconstructor_;
   bool useAdjustedMET_;
@@ -121,7 +175,11 @@ protected:
   float weight_;
 
   int NCuts_;
-  std::vector<std::string> Cuts_;
+  std::vector<std::string> CutNames_;
+  std::vector<std::string> CutDescs_;
+  typedef boost::function<bool()> fnCut;
+  std::map<std::string,fnCut > mFnPtrs_;
+  std::vector<fnCut > CutFns_;
 
   Pset eSelectorPset_;
   ElectronSelector looseElectron_;
@@ -155,7 +213,6 @@ protected:
   WCandidate wCand_, vCand_;
 
   pat::TriggerEvent triggerEvent_; 
-  wprime::EffV results_;
 
   float minNLeptons_;
   float maxNLeptons_;

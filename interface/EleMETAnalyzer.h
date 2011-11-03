@@ -41,18 +41,10 @@ class EleMETAnalyzer : public AnalyzerBase
 {
  public:
   explicit EleMETAnalyzer(const edm::ParameterSet& cfg, 
-			 WPrimeUtil * wprimeUtil);
+			 int fileToRun);
   ~EleMETAnalyzer();
 
   void eventLoop(edm::EventBase const & event);
-  // operations to be done when changing input file (e.g. create new histograms)
-  void beginFile(std::vector<wprime::InputFile>::const_iterator file);
-  // operations to be done when closing input file 
-  // (e.g. print summary)
-  void endFile(std::vector<wprime::InputFile>::const_iterator it,
-	       ofstream & out);
-  // e.g. print summmary of expected events for all samples
-  void endAnalysis(ofstream & out);
 
  private:
   heep::EleSelector cuts_; //allows us to apply the heep selection
@@ -62,8 +54,6 @@ class EleMETAnalyzer : public AnalyzerBase
   // Handle to the (pf)MET collection
   edm::Handle<pat::METCollection > defMet;
   pat::MET met;
-   // keeps track of selection efficiencies for all input samples & cuts
-  wprime::SampleStat stats;
 
   // Trigger
   edm::InputTag triggerResults_;

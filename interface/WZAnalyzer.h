@@ -3,11 +3,12 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/AnalyzerBase.h"
 #include "TTree.h"
+#include <boost/signals.hpp>
 
-class WZAnalyzer : public AnalyzerBase {
+class WZAnalyzer : public AnalyzerBase, public boost::signals::trackable {
 public:
   WZAnalyzer();                         // constructor; initialize the list to be empty
-  WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil);
+  WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun);
   ~WZAnalyzer();
 
   //methods for stuff to be once per job
@@ -182,11 +183,6 @@ public:
   std::vector<TH1F*> hWenuCombRelIso, hWmnuCombRelIso;
 
   TTree* tWZCand;
-
-  //Cuts 
-  typedef bool (WZAnalyzer::*CutFnPtr)() const; 
-  std::map<std::string,CutFnPtr> mFnPtrs_;
-  std::vector<CutFnPtr> CutFns_;
 
 };
 

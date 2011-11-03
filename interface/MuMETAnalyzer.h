@@ -34,18 +34,11 @@ class MuMETAnalyzer : public AnalyzerBase
 {
  public:
   explicit MuMETAnalyzer(const edm::ParameterSet& cfg, 
-			 WPrimeUtil * wprimeUtil);
+			 int fileToRun);
   ~MuMETAnalyzer();
 
   void eventLoop(edm::EventBase const & event);
   // operations to be done when changing input file (e.g. create new histograms)
-  void beginFile(std::vector<wprime::InputFile>::const_iterator file);
-  // operations to be done when closing input file 
-  // (e.g. print summary)
-  void endFile(std::vector<wprime::InputFile>::const_iterator it,
-	       ofstream & out);
-  // e.g. print summmary of expected events for all samples
-  void endAnalysis(ofstream & out);
 
  private:
   // Handle to the muon collection
@@ -54,7 +47,6 @@ class MuMETAnalyzer : public AnalyzerBase
   edm::Handle<pat::METCollection > defMet;
   pat::MET met;
    // keeps track of selection efficiencies for all input samples & cuts
-  wprime::SampleStat stats;
 
   MuonV vmuons;
 
@@ -69,12 +61,6 @@ class MuMETAnalyzer : public AnalyzerBase
   float dumpHighMtMuonThreshold_;
 
   void defineHistos(const TFileDirectory & dir);
-  void defineHistos_MuonPt(const TFileDirectory & dir);
-  void defineHistos_MuonEta(const TFileDirectory & dir);
-  void defineHistos_MuonPhi(const TFileDirectory & dir);
-  //  void defineHistos_MuonJetDPhi(const TFileDirectory & dir);
-  void defineHistos_MuonIso(const TFileDirectory & dir);
-  void defineHistos_TMass(const TFileDirectory & dir);
   void defineHistos_TMvPT(const TFileDirectory & dir);
 
   void setupCutOrder();
@@ -116,10 +102,6 @@ class MuMETAnalyzer : public AnalyzerBase
   // always returns true
   bool kinematicCuts(bool * goodQual, const TeVMuon * muon, edm::EventBase const & event);
 
-  // print summary of efficiencies
-  void printFileSummary(std::vector<wprime::InputFile>::const_iterator,
-			ofstream & out);
-
   ///These are required functions when inheriting from AnalyzerBase
   void fillHistos(const int& index, const float& weight=1.);
 
@@ -131,13 +113,13 @@ class MuMETAnalyzer : public AnalyzerBase
   float oneMuPtTrackCut_;
   float relIsoCut_;
 
-  TH1F * hPTgen[Num_mumet_cuts];
-  TH1F * hPT[Num_mumet_cuts];
-  TH1F * hETA[Num_mumet_cuts];
-  TH1F * hPHI[Num_mumet_cuts];
-  //  TH1F * hMJDPHI[Num_mumet_cuts];
-  TH1F * hISO[Num_mumet_cuts];
-  TH1F * hTM[Num_mumet_cuts];
+  std::vector<TH1F*> hPTgen;
+  std::vector<TH1F*> hPT;
+  std::vector<TH1F*> hETA;
+  std::vector<TH1F*> hPHI;
+  //  std::vector<TH1F*> hMJDPHI;
+  std::vector<TH1F*> hISO;
+  std::vector<TH1F*> hTM;
   TH2F * hTMvPT[Num_mumet_cuts];
 
   std::vector<unsigned> reconstructors;

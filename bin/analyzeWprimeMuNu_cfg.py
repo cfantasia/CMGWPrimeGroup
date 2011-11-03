@@ -30,3 +30,5 @@ process.WprimeAnalyzer.dumpHighMtMuonThreshold = cms.double(800)
 process.WprimeAnalyzer.useAdjustedMET = cms.bool(True)
 
 process.inputs.lumisToProcess.extend(MuonPhysJSONList)
+
+process.WprimeAnalyzer.Cuts = cms.vstring("hlt","qual","1mu","iso", "met")

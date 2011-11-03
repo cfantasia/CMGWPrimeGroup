@@ -17,7 +17,7 @@ class HadronicVZAnalyzer : public AnalyzerBase {
 
 public:
   HadronicVZAnalyzer();                         // constructor; initialize the list to be empty
-  HadronicVZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil);
+  HadronicVZAnalyzer(const edm::ParameterSet & cfg, int fileToRun);
   ~HadronicVZAnalyzer();
 
   // +++++++++++++++++++Event Characteristics

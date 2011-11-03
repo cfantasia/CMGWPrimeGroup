@@ -3,8 +3,8 @@
 using namespace std;
 
 TBAnalyzer::TBAnalyzer(){}
-TBAnalyzer::TBAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil) :
-  AnalyzerBase(cfg, wprimeUtil){
+TBAnalyzer::TBAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
+  AnalyzerBase(cfg, fileToRun){
   setupCutOrder();
   if(debugme) printf("Using %i cuts\n",NCuts_);
 
@@ -17,28 +17,20 @@ TBAnalyzer::~TBAnalyzer(){
 }
 
 void TBAnalyzer::setupCutOrder(){
-  mFnPtrs_["NoCuts"] = &TBAnalyzer::passNoCut;
-  mFnPtrs_["HLT"] = &TBAnalyzer::passTriggersCut;
-  mFnPtrs_["MinNLeptons"] = &TBAnalyzer::passMinNLeptonsCut;
-  mFnPtrs_["MinNJets"] = &TBAnalyzer::passMinNJetsCut;
-  mFnPtrs_["ValidW"] = &TBAnalyzer::passValidWCut;
-  mFnPtrs_["ValidB"] = &TBAnalyzer::passValidBCut;
-  mFnPtrs_["ValidT"] = &TBAnalyzer::passValidTCut;
-  mFnPtrs_["ValidTBCand"] = &TBAnalyzer::passValidTBCut;
-  mFnPtrs_["WTransMass"] = &TBAnalyzer::passWtransMassCut;
-  mFnPtrs_["MET"] = &TBAnalyzer::passMinMETCut;
-  mFnPtrs_["Wpt"] = &TBAnalyzer::passWptCut;
-  mFnPtrs_["AllCuts"] = &TBAnalyzer::passNoCut;
+  mFnPtrs_["NoCuts"] = boost::bind(&TBAnalyzer::passNoCut, this);
+  mFnPtrs_["HLT"] = boost::bind(&TBAnalyzer::passTriggersCut, this);
+  mFnPtrs_["MinNLeptons"] = boost::bind(&TBAnalyzer::passMinNLeptonsCut, this);
+  mFnPtrs_["MinNJets"] = boost::bind(&TBAnalyzer::passMinNJetsCut, this);
+  mFnPtrs_["ValidW"] = boost::bind(&TBAnalyzer::passValidWCut, this);
+  mFnPtrs_["ValidB"] = boost::bind(&TBAnalyzer::passValidBCut, this);
+  mFnPtrs_["ValidT"] = boost::bind(&TBAnalyzer::passValidTCut, this);
+  mFnPtrs_["ValidTBCand"] = boost::bind(&TBAnalyzer::passValidTBCut, this);
+  mFnPtrs_["WTransMass"] = boost::bind(&TBAnalyzer::passWtransMassCut, this);
+  mFnPtrs_["MET"] = boost::bind(&TBAnalyzer::passMinMETCut, this);
+  mFnPtrs_["Wpt"] = boost::bind(&TBAnalyzer::passWptCut, this);
+  mFnPtrs_["AllCuts"] = boost::bind(&TBAnalyzer::passNoCut, this);
 
-  CutFns_.resize(NCuts_);
-  for(int i=0; i<NCuts_; ++i){
-    if(mFnPtrs_.find(Cuts_[i]) == mFnPtrs_.end()){
-      cout<<"Didn't find Cut named "<<Cuts_[i]<<endl;
-      abort();
-    }
-    CutFns_[i] = mFnPtrs_.find(Cuts_[i])->second;
-  }
-  
+  fillCuts(); 
 }
 
 void TBAnalyzer::defineHistos(const TFileDirectory & dir){
@@ -210,7 +202,7 @@ TBAnalyzer::clearEvtVariables(){
 bool
 TBAnalyzer::passCuts(const float& weight){
   for(int i=0; i<NCuts_; ++i){
-    if(!(this->*CutFns_[i])()) return false;
+    if(!CutFns_[i]()) return false;
     tabulateEvent(i,weight); 
   }
   return true;

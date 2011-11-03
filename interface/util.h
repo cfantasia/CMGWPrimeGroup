@@ -82,39 +82,6 @@ typedef edm::Handle<METV > METVH;
 //////
 
 namespace wprime{
-  static std::string INVALID = "INVALID";
-
-  struct InputFile
-  {
-    float x_sect; // cross-section in pb
-    int Nprod_evt;// unweighted # of events produced (should correspond to x_sect!)
-    int Nact_evt; // unweighted # of events surviving pre-selection/skimming and
-    // actually contained in input file
-    float weight; // cross-section * integrated luminosity / (# of events produced)
-    // Nact_evt * weight = Nexp_evt for given integrated luminosity
-    std::string samplename;
-    std::string subdir;
-    std::vector<std::string> pathnames; // directory + subdir + filenames
-    std::string description; // sample description
-    //
-    InputFile()
-    {
-      x_sect = -1; Nprod_evt = Nact_evt = -1; weight = 0;
-      samplename = description = INVALID;
-      subdir = "";
-    }
-    void checkFile()
-    {
-      assert(x_sect > 0); assert(Nprod_evt > 0); //assert(Nact_evt > 0);
-      assert(weight > 0);
-      assert(pathnames.size()); assert(description != INVALID); 
-      assert(samplename != INVALID);
-    }
-
-  };
-
-
-
   struct FilterEff{
     // # of (unweighted!) events surviving after each selection cut
     int Nsurv_evt_cut;
@@ -135,6 +102,40 @@ namespace wprime{
   // key: samplename, value: vector<FilterEff> (ie. statistics for selection steps)
   typedef std::vector<FilterEff> EffV;
   typedef std::map<std::string, EffV > SampleStat;
+
+  static std::string INVALID = "INVALID";
+
+  struct InputFile
+  {
+    float x_sect; // cross-section in pb
+    int Nprod_evt;// unweighted # of events produced (should correspond to x_sect!)
+    int Nact_evt; // unweighted # of events surviving pre-selection/skimming and
+    // actually contained in input file
+    float weight; // cross-section * integrated luminosity / (# of events produced)
+    // Nact_evt * weight = Nexp_evt for given integrated luminosity
+    std::string samplename;
+    std::string subdir;
+    std::vector<std::string> pathnames; // directory + subdir + filenames
+    std::string description; // sample description
+    EffV results;
+    //
+    InputFile()
+    {
+      x_sect = -1; Nprod_evt = Nact_evt = -1; weight = 0;
+      samplename = description = INVALID;
+      subdir = "";
+    }
+    void checkFile()
+    {
+      assert(x_sect > 0); assert(Nprod_evt > 0); //assert(Nact_evt > 0);
+      assert(weight > 0);
+      assert(pathnames.size()); assert(description != INVALID); 
+      assert(samplename != INVALID);
+    }
+
+  };
+
+
 
   const float MUON_MASS = 0.105658366;      // GeV
   const float ELECTRON_MASS = 0.000511;     // GeV

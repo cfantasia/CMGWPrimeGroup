@@ -3,8 +3,8 @@
 using namespace std;
 
 WZAnalyzer::WZAnalyzer(){}
-WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil) :
-  AnalyzerBase(cfg, wprimeUtil){
+WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
+  AnalyzerBase(cfg, fileToRun){
   setupCutOrder();
   if(debugme) printf("Using %i cuts\n",NCuts_);
 
@@ -35,43 +35,30 @@ WZAnalyzer::~WZAnalyzer(){
 }
 
 void WZAnalyzer::setupCutOrder(){
-  mFnPtrs_["NoCuts"] = &WZAnalyzer::passNoCut;
-  mFnPtrs_["HLT"] = &WZAnalyzer::passTriggersCut;
-  mFnPtrs_["MinNLeptons"] = &WZAnalyzer::passMinNLeptonsCut;
-  mFnPtrs_["MaxNLeptons"] = &WZAnalyzer::passMaxNLeptonsCut;
-  mFnPtrs_["ValidW"] = &WZAnalyzer::passValidWCut;
-  mFnPtrs_["ValidWElec"] = &WZAnalyzer::passValidWElecCut;
-  mFnPtrs_["ValidWMuon"] = &WZAnalyzer::passValidWMuonCut;
-  mFnPtrs_["ValidZ"] = &WZAnalyzer::passValidZCut;
-  mFnPtrs_["ValidWZCand"] = &WZAnalyzer::passValidWZCut;
-  mFnPtrs_["LeadLepPt"] = &WZAnalyzer::passLeadingLeptonPtCut;
-  mFnPtrs_["NumZs"] = &WZAnalyzer::passNumberOfZsCut;
-  mFnPtrs_["ZMass"] = &WZAnalyzer::passZMassCut;
-  mFnPtrs_["WTransMass"] = &WZAnalyzer::passWtransMassCut;
-  mFnPtrs_["MET"] = &WZAnalyzer::passMinMETCut;
-  mFnPtrs_["Ht"] = &WZAnalyzer::passHtCut;
-  mFnPtrs_["Zpt"] = &WZAnalyzer::passZptCut;
-  mFnPtrs_["Wpt"] = &WZAnalyzer::passWptCut;
-  mFnPtrs_["ZLepPt"] = &WZAnalyzer::passZLepPtCut;
-  mFnPtrs_["WLepPt"] = &WZAnalyzer::passWLepPtCut;
-  mFnPtrs_["ZLepTrigMatch"] = &WZAnalyzer::passZLepTriggerMatchCut;
-  mFnPtrs_["AllCuts"] = &WZAnalyzer::passNoCut;
+  mFnPtrs_["NoCuts"] = boost::bind(&WZAnalyzer::passNoCut, this);
+  mFnPtrs_["HLT"] = boost::bind(&WZAnalyzer::passTriggersCut, this);
+  mFnPtrs_["MinNLeptons"] = boost::bind(&WZAnalyzer::passMinNLeptonsCut, this);
+  mFnPtrs_["ValidW"] = boost::bind(&WZAnalyzer::passValidWCut, this);
+  mFnPtrs_["ValidZ"] = boost::bind(&WZAnalyzer::passValidZCut, this);
+  mFnPtrs_["ValidWZCand"] = boost::bind(&WZAnalyzer::passValidWZCut, this);
+  mFnPtrs_["LeadLepPt"] = boost::bind(&WZAnalyzer::passLeadingLeptonPtCut, this);
+  mFnPtrs_["NumZs"] = boost::bind(&WZAnalyzer::passNumberOfZsCut, this);
+  mFnPtrs_["ZMass"] = boost::bind(&WZAnalyzer::passZMassCut, this);
+  mFnPtrs_["WTransMass"] = boost::bind(&WZAnalyzer::passWtransMassCut, this);
+  mFnPtrs_["MET"] = boost::bind(&WZAnalyzer::passMinMETCut, this);
+  mFnPtrs_["Ht"] = boost::bind(&WZAnalyzer::passHtCut, this);
+  mFnPtrs_["Zpt"] = boost::bind(&WZAnalyzer::passZptCut, this);
+  mFnPtrs_["Wpt"] = boost::bind(&WZAnalyzer::passWptCut, this);
+  mFnPtrs_["AllCuts"] = boost::bind(&WZAnalyzer::passNoCut, this);
 
-  mFnPtrs_["WLepTight"] = &WZAnalyzer::passWLepTightCut;
-  mFnPtrs_["WFlavorElec"] = &WZAnalyzer::passWFlavorElecCut;
-  mFnPtrs_["WFlavorMuon"] = &WZAnalyzer::passWFlavorMuonCut;
-  mFnPtrs_["FakeEvt"] = &WZAnalyzer::passFakeEvtCut;
-  mFnPtrs_["FakeLepTag"] = &WZAnalyzer::passFakeLeptonTagCut;
-  mFnPtrs_["FakeLepProbeTight"] = &WZAnalyzer::passFakeLeptonProbeTightCut;
+  mFnPtrs_["WLepTight"] = boost::bind(&WZAnalyzer::passWLepTightCut, this);
+  mFnPtrs_["WFlavorElec"] = boost::bind(&WZAnalyzer::passWFlavorElecCut, this);
+  mFnPtrs_["WFlavorMuon"] = boost::bind(&WZAnalyzer::passWFlavorMuonCut, this);
+  mFnPtrs_["FakeEvt"] = boost::bind(&WZAnalyzer::passFakeEvtCut, this);
+  mFnPtrs_["FakeLepTag"] = boost::bind(&WZAnalyzer::passFakeLeptonTagCut, this);
+  mFnPtrs_["FakeLepProbeTight"] = boost::bind(&WZAnalyzer::passFakeLeptonProbeTightCut, this);
 
-  CutFns_.resize(NCuts_);
-  for(int i=0; i<NCuts_; ++i){
-    if(mFnPtrs_.find(Cuts_[i]) == mFnPtrs_.end()){
-      cout<<"Didn't find Cut named "<<Cuts_[i]<<endl;
-      abort();
-    }
-    CutFns_[i] = mFnPtrs_.find(Cuts_[i])->second;
-  } 
+  fillCuts();
 
 }
 
@@ -308,7 +295,7 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
       hNJetsZmm[index]->Fill(allJets_.size(), weight);
       hNVtxsZmm[index]->Fill(vertices_.size(), weight);
     }
-    if(Cuts_[index] == "ValidWZCand"){//All, Wpt, Zpt, Ht + 1 for starting @ 0
+    if(CutNames_[index] == "ValidWZCand"){//All, Wpt, Zpt, Ht + 1 for starting @ 0
       tWZCand->Fill();
     }
   }
@@ -768,15 +755,15 @@ WZAnalyzer::passCuts(const float& weight){
 
   
   for(int i=0; i<NCuts_; ++i){
-    if(Cuts_[i] == "ValidZ") calcZVariables();  
-    else if(Cuts_[i] == "ValidW"){  
+    if(CutNames_[i] == "ValidZ") calcZVariables();  
+    else if(CutNames_[i] == "ValidW"){  
       calcWVariables();  
       calcEventVariables();  
-    }else if(Cuts_[i] == "ValidWZCand") calcWZVariables();  
-    else if(Cuts_[i] == "ValidWElec") calcWElecVariables();  
-    else if(Cuts_[i] == "ValidWMuon") calcWMuonVariables();
+    }else if(CutNames_[i] == "ValidWZCand") calcWZVariables();  
+    else if(CutNames_[i] == "ValidWElec") calcWElecVariables();  
+    else if(CutNames_[i] == "ValidWMuon") calcWMuonVariables();
 
-    if(!(this->*CutFns_[i])()) return false;
+    if(!CutFns_[i]()) return false;
     tabulateEvent(i,weight); 
   }
   return true;

@@ -12,8 +12,8 @@ typedef math::XYZTLorentzVector LorentzVector;
 
 using std::string; using std::cout; using std::endl;
 
-WgammaAnalyzer::WgammaAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUtil) : 
-  AnalyzerBase(cfg, wprimeUtil)
+WgammaAnalyzer::WgammaAnalyzer(const edm::ParameterSet& cfg,int fileToRun) : 
+  AnalyzerBase(cfg, fileToRun)
 {
 
   photonsLabel_ = cfg.getParameter<edm::InputTag>("photons" );
@@ -315,7 +315,7 @@ void WgammaAnalyzer::beginFile(std::vector<wprime::InputFile>::const_iterator fi
     stats[fi->samplename].push_back(tmp);
 
   // add channel/analysis name here?
-  TFileDirectory dir= wprimeUtil_->getFileService()->mkdir(fi->samplename); 
+  TFileDirectory dir= fs->mkdir(fi->samplename); 
   defineHistos(dir); // one set of histograms per input file
 
 }

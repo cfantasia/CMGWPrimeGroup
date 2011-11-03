@@ -3,8 +3,8 @@
 using namespace std;
 
 HadronicVWAnalyzer::HadronicVWAnalyzer(){}
-HadronicVWAnalyzer::HadronicVWAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil) :
-  AnalyzerBase(cfg, wprimeUtil){
+HadronicVWAnalyzer::HadronicVWAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
+  AnalyzerBase(cfg, fileToRun){
   setupCutOrder();
   if(debugme) printf("Using %i cuts\n",NCuts_);
 
@@ -22,30 +22,22 @@ HadronicVWAnalyzer::~HadronicVWAnalyzer(){
 }
 
 void HadronicVWAnalyzer::setupCutOrder(){
-  mFnPtrs_["NoCuts"] = &HadronicVWAnalyzer::passNoCut;
-  mFnPtrs_["HLT"] = &HadronicVWAnalyzer::passTriggersCut;
-  mFnPtrs_["MinNLeptons"] = &HadronicVWAnalyzer::passMinNLeptonsCut;
-  mFnPtrs_["MaxNLeptons"] = &HadronicVWAnalyzer::passMaxNLeptonsCut;
-  mFnPtrs_["MinNJets"] = &HadronicVWAnalyzer::passMinNJetsCut;
-  mFnPtrs_["ValidW"] = &HadronicVWAnalyzer::passValidWCut;
-  mFnPtrs_["ValidV"] = &HadronicVWAnalyzer::passValidVCut;
-  mFnPtrs_["ValidVWCand"] = &HadronicVWAnalyzer::passValidVWCut;
-  mFnPtrs_["VMass"] = &HadronicVWAnalyzer::passVMassCut;
-  mFnPtrs_["WTransMass"] = &HadronicVWAnalyzer::passWtransMassCut;
-  mFnPtrs_["MET"] = &HadronicVWAnalyzer::passMinMETCut;
-  mFnPtrs_["Vpt"] = &HadronicVWAnalyzer::passVptCut;
-  mFnPtrs_["Wpt"] = &HadronicVWAnalyzer::passWptCut;
-  mFnPtrs_["AllCuts"] = &HadronicVWAnalyzer::passNoCut;
+  mFnPtrs_["NoCuts"] = boost::bind(&HadronicVWAnalyzer::passNoCut, this);
+  mFnPtrs_["HLT"] = boost::bind(&HadronicVWAnalyzer::passTriggersCut, this);
+  mFnPtrs_["MinNLeptons"] = boost::bind(&HadronicVWAnalyzer::passMinNLeptonsCut, this);
+  mFnPtrs_["MaxNLeptons"] = boost::bind(&HadronicVWAnalyzer::passMaxNLeptonsCut, this);
+  mFnPtrs_["MinNJets"] = boost::bind(&HadronicVWAnalyzer::passMinNJetsCut, this);
+  mFnPtrs_["ValidW"] = boost::bind(&HadronicVWAnalyzer::passValidWCut, this);
+  mFnPtrs_["ValidV"] = boost::bind(&HadronicVWAnalyzer::passValidVCut, this);
+  mFnPtrs_["ValidVWCand"] = boost::bind(&HadronicVWAnalyzer::passValidVWCut, this);
+  mFnPtrs_["VMass"] = boost::bind(&HadronicVWAnalyzer::passVMassCut, this);
+  mFnPtrs_["WTransMass"] = boost::bind(&HadronicVWAnalyzer::passWtransMassCut, this);
+  mFnPtrs_["MET"] = boost::bind(&HadronicVWAnalyzer::passMinMETCut, this);
+  mFnPtrs_["Vpt"] = boost::bind(&HadronicVWAnalyzer::passVptCut, this);
+  mFnPtrs_["Wpt"] = boost::bind(&HadronicVWAnalyzer::passWptCut, this);
+  mFnPtrs_["AllCuts"] = boost::bind(&HadronicVWAnalyzer::passNoCut, this);
 
-  CutFns_.resize(NCuts_);
-  for(int i=0; i<NCuts_; ++i){
-    if(mFnPtrs_.find(Cuts_[i]) == mFnPtrs_.end()){
-      cout<<"Didn't find Cut named "<<Cuts_[i]<<endl;
-      abort();
-    }
-    CutFns_[i] = mFnPtrs_.find(Cuts_[i])->second;
-  }
-  
+  fillCuts();
 }
 
 //--------------------------------------------------------------
@@ -233,7 +225,7 @@ void HadronicVWAnalyzer::fillHistos(const int& index, const float& weight){
       hNJetsVmm[index]->Fill(looseJets_.size(), weight);
       hNVtxsVmm[index]->Fill(vertices_.size(), weight);
     }
-    if(Cuts_[index] == "ValidVWCand"){
+    if(CutNames_[index] == "ValidVWCand"){
       tVWCand->Fill();
     }
   }
@@ -540,16 +532,16 @@ HadronicVWAnalyzer::passCuts(const float& weight){
   if (debugme) cout<<"In pass Cuts\n";
   
   for(int i=0; i<NCuts_; ++i){
-    if(Cuts_[i] == "ValidV"){
+    if(CutNames_[i] == "ValidV"){
       calcVVariables();
-    }else if(Cuts_[i] == "ValidW"){
+    }else if(CutNames_[i] == "ValidW"){
       calcWVariables();
       calcEventVariables();
-    }else if(Cuts_[i] == "ValidVWCand"){
+    }else if(CutNames_[i] == "ValidVWCand"){
       calcVWVariables();
     }
 
-    if(!(this->*CutFns_[i])()) return false;
+    if(!CutFns_[i]()) return false;
     tabulateEvent(i,weight); 
   }
   return true;

@@ -7,7 +7,7 @@
 class HadronicVWAnalyzer : public AnalyzerBase {
 public:
   HadronicVWAnalyzer();                         // constructor; initialize the list to be empty
-  HadronicVWAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil);
+  HadronicVWAnalyzer(const edm::ParameterSet & cfg, int fileToRun);
   ~HadronicVWAnalyzer();
 
   //methods for stuff to be once per job
@@ -126,12 +126,6 @@ public:
   std::vector<TH1F*> hWenuCombRelIso, hWmnuCombRelIso;
 
   TTree* tVWCand;
-
-  //Cuts
-  typedef bool (HadronicVWAnalyzer::*CutFnPtr)() const; 
-  std::map<std::string,CutFnPtr> mFnPtrs_;
-  std::vector<CutFnPtr> CutFns_;
-
 };
 
 #endif//#define _HadronicVWAnalyzer_h_

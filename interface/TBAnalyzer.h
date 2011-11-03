@@ -6,7 +6,7 @@
 class TBAnalyzer : public AnalyzerBase {
 public:
   TBAnalyzer();                         // constructor; initialize the list to be empty
-  TBAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil);
+  TBAnalyzer(const edm::ParameterSet & cfg, int fileToRun);
   ~TBAnalyzer();
 
   //methods for stuff to be once per job
@@ -34,11 +34,6 @@ public:
   XWLeptonic tbCand_;
 
 // +++++++++++++++++++ Histogram Definitions
-
-  //Cuts 
-  typedef bool (TBAnalyzer::*CutFnPtr)() const; 
-  std::map<std::string,CutFnPtr> mFnPtrs_;
-  std::vector<CutFnPtr> CutFns_;
 
 };
 

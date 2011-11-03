@@ -50,3 +50,5 @@ process.WprimeAnalyzer.hltPaths = cms.vstring('HLT_Ele22_SW_TighterEleId_L1R_v1'
     'HLT_Ele25_WP80_PFMT40_v1',
     'HLT_Ele27_WP80_PFMT50_v1'
     )
+
+process.WprimeAnalyzer.Cuts = cms.vstring("hlt","qual","1el","iso", "met")

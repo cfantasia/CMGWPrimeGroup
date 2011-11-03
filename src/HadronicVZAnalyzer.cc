@@ -6,8 +6,8 @@
 
 using namespace std;
 HadronicVZAnalyzer::HadronicVZAnalyzer(){}
-HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, WPrimeUtil * wprimeUtil) :
-  AnalyzerBase(cfg, wprimeUtil){
+HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
+  AnalyzerBase(cfg, fileToRun){
   //setupCutOrder();
   if(debugme) printf("Using %i cuts\n",NCuts_);
 
@@ -607,7 +607,7 @@ void HadronicVZAnalyzer::fillHistos(const int& index, const float& weight){
   hNLLeps[index]->Fill(looseElectrons_.size()+looseMuons_.size(), weight);
   hNLJets[index]->Fill(looseJets_.size(), weight);
 
-  if(Cuts_[index] == "ValidVZ"){
+  if(CutNames_[index] == "ValidVZ"){
     if(hadVZ_) VZMass_ = hadVZ_.mass();
     if(zCand_){
       evtType_ = 2*(zCand_.flavor() == PDGMUON);

@@ -33,7 +33,7 @@ class WPrimeUtil
 
   ~WPrimeUtil();
 
-  fwlite::TFileService * getFileService(){return fs;}
+///////cory  fwlite::TFileService * getFileService(){return fs;}
 
   // get input files (to be retrieved from samples_cross_sections.txt)
   void getInputFiles(std::vector<wprime::InputFile> & inputFiles);
@@ -46,6 +46,7 @@ class WPrimeUtil
   inline void resetWarnings(){warningShown_ = false;}
   inline void setSampleName(std::string samplename){samplename_ = samplename;}
   inline void setSampleWeight(float weight){sampleweight_ = weight;}
+  inline void setCurrentSample(std::vector<wprime::InputFile>::iterator sample){ currentSample_ = sample;}
   inline void setWeight(float weight){weight_ = weight;}
   inline void setEventsToDebug(const std::vector<edm::EventID>& vEvents){vEventsToDebug_ = vEvents;}
 
@@ -62,6 +63,8 @@ class WPrimeUtil
   float getPUWeight3D(const std::vector< PileupSummaryInfo > & PupInfo);
 
   static void getEff(float & eff, float & deff,float Num,float Denom);
+
+  inline std::vector<wprime::InputFile>::iterator getCurrentSample(){ return currentSample_;}
 
   // true if current file under processing contains "data" in name
   inline bool runningOnData() const{return runningOnData_;};
@@ -307,9 +310,8 @@ static bool Contains(const T1 & p, const std::vector<T2>& vec){
   return false;
 }
 
-
 private:
-  fwlite::TFileService * fs;
+
   // directory containing all input samples
   std::string top_level_dir; 
 
@@ -325,6 +327,7 @@ private:
 
   // keep track of input file name and weight (e.g. for scaling MC histograms);
   // values set at beginFile
+  std::vector<wprime::InputFile>::iterator currentSample_;
   std::string samplename_;
   float sampleweight_;
   float weight_;

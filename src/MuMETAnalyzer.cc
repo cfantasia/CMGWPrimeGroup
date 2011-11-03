@@ -8,8 +8,8 @@
 
 using std::string; using std::cout; using std::endl;
 
-MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,WPrimeUtil * wprimeUtil) :
-  AnalyzerBase(cfg, wprimeUtil){
+MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,int fileToRun) :
+  AnalyzerBase(cfg, fileToRun){
 
   muonPtThreshold_   = cfg.getParameter<double>("muonPtThreshold");
   chi2Cut_           = cfg.getParameter<double>("chi2Cut");
@@ -37,15 +37,25 @@ MuMETAnalyzer::~MuMETAnalyzer()
 
 void MuMETAnalyzer::defineHistos(const TFileDirectory & dir)
 {
-  //  AnalyzerBase::defineHistos(dir);
-  for(int i = 0; i != Num_mumet_cuts; ++i)
-    hPT[i] = hETA[i] = hPHI[i] = /*hMJDPHI[i] =*/ hTM[i] = 0;
-
-  defineHistos_MuonPt(dir);
-  defineHistos_MuonEta(dir);
-  defineHistos_MuonPhi(dir);
-  defineHistos_MuonIso(dir);
-  defineHistos_TMass(dir);
+  AnalyzerBase::defineHistos(dir);
+  defineHistoset("hPT"+algo_desc_short[muReconstructor_], 
+                 algo_desc_long[muReconstructor_]+ " muon p_{T} with ",
+                 "p_{T} (GeV)", nBinPtMu, minPtMu, maxPtMu, "GeV", hPT,dir);
+  defineHistoset("hPTgen"+algo_desc_short[muReconstructor_], 
+                 algo_desc_long[muReconstructor_]+ " muon p_{T} with ",
+                 "p_{T} (GeV)", nBinPtMu, minPtMu, maxPtMu, "GeV", hPTgen,dir);
+  defineHistoset("hETA"+algo_desc_short[muReconstructor_], 
+                 algo_desc_long[muReconstructor_]+ " muon #eta with ",
+                 "#eta", nBinEtaMu, minEtaMu, maxEtaMu, "NONE", hETA,dir);
+  defineHistoset("hPHI"+algo_desc_short[muReconstructor_], 
+                 algo_desc_long[muReconstructor_]+ " muon #phi with ",
+                 "#phi", nBinPhiMu, minPhiMu, maxPhiMu, "NONE", hPHI,dir);
+  defineHistoset("hISO"+algo_desc_short[muReconstructor_], 
+                 algo_desc_long[muReconstructor_]+ " muon isol with ",
+                 "Iso", nBinIsoMu, minIsoMu, maxIsoMu, "NONE", hISO,dir);
+  defineHistoset("hTM"+algo_desc_short[muReconstructor_], 
+                 algo_desc_long[muReconstructor_]+ " Transv. Mass with ",
+                 "m_{T} (GeV)", nBinTmMu, minTmMu, maxTmMu, "GeV", hTM,dir);
   defineHistos_TMvPT(dir);
 }
 
@@ -80,8 +90,8 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
   // this will ensure that we increase Num_surv_cut maximum once per evet
   // whereas we nevertheless fill the histograms 
   // for every muon surviving the i-th cut
-  bool accountMe[Num_mumet_cuts];
-  for(int cut = 0; cut != Num_mumet_cuts; ++cut)
+  bool* accountMe = new bool[NCuts_];
+  for(int cut = 0; cut != NCuts_; ++cut)
     accountMe[cut] = true;
 
   unsigned iMuMin = 0; unsigned iMuMax = muons->size();
@@ -105,10 +115,10 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
         
     Wcand = wprimeUtil_->getNewMETandW(event, muon, met, metLabel_);
 
-    for(int cut_index = 0; cut_index != Num_mumet_cuts; ++cut_index)
+    for(int cut_index = 0; cut_index != NCuts_; ++cut_index)
       { // loop over selection cuts
 	
-	string arg = mumet_cuts_desc_short[cut_index];
+	string arg = CutNames_[cut_index];
 	// call to function [as implemented in setupCutOder]
 	// don't get me started about the syntax!
 	bool survived_cut=(this->*cuts[arg])(&fill_entry, &muon, event);
@@ -118,7 +128,7 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 	  tabulateMe(cut_index, accountMe, event, &muon);
 	
 	if(dumpHighPtMuons_ && fill_entry 
-	   && cut_index == Num_mumet_cuts-1
+	   && cut_index == NCuts_-1
 	   && wprimeUtil_->runningOnData() && 
 	   ((muon.innerTrack()->pt() > dumpHighPtMuonThreshold_) ||
 	    Wcand.mt() > dumpHighMtMuonThreshold_))
@@ -128,7 +138,7 @@ void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 
 
   } // loop over muons
-
+  delete[] accountMe;
 }
 
 
@@ -139,15 +149,14 @@ void MuMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
 {
   // if the accountMe switch is on, increase the number of events passing the cuts
   // and turn the switch off so we don't count more than once per event
+  float weight = wprimeUtil_->getWeight();
   if(accountMe[cut_index])
     {
-      wprime::SampleStat::iterator it;
-      it = stats.find(wprimeUtil_->getSampleName());
-      if(it == stats.end())abort();
-      ++((it->second)[cut_index].Nsurv_evt_cut);
+      std::vector<wprime::InputFile>::iterator file = wprimeUtil_->getCurrentSample();
+      file->results[cut_index].Nsurv_evt_cut_w += weight;
+      file->results[cut_index].Nsurv_evt_cut++;
       accountMe[cut_index] = false;
     }
-  float weight = wprimeUtil_->getWeight();
   // fill the histograms
   double genpt = -999;
   for(unsigned int i = 0 ; i != muon->genParticleRefs().size() ; ++i ){
@@ -176,211 +185,14 @@ void MuMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
   hTMvPT[cut_index]->Fill(muon->pt(), Wcand.mt(), weight);
 }
 
-// operations to be done when changing input file (e.g. create new histograms)
-void MuMETAnalyzer::beginFile(std::vector<wprime::InputFile>::const_iterator fi)
-{
-  wprime::FilterEff tmp; 
-  for(int cut = 0; cut != Num_mumet_cuts; ++cut)
-    stats[fi->samplename].push_back(tmp);
-
-  // add channel/analysis name here?
-  TFileDirectory dir= wprimeUtil_->getFileService()->mkdir(fi->samplename); 
-  defineHistos(dir); // one set of histograms per input file
-
-}
-
-// operations to be done when closing input file 
-// (e.g. print summary)
-void MuMETAnalyzer::endFile(std::vector<wprime::InputFile>::const_iterator fi,
-			    ofstream & out)
-{
-  printFileSummary(fi, out);
-}
-
-// print summary of efficiencies
-void MuMETAnalyzer::printFileSummary(std::vector<wprime::InputFile>::const_iterator fi, ofstream & out)
-{
-  string sample = fi->samplename;
-  float weight = fi->weight;
-  wprime::SampleStat::iterator it;
-  it = stats.find(sample);
-  if(it == stats.end())abort();  
-
-  float eff, deff;
-  out << "\n Sample: " << sample << endl;
-  out << " Total # of produced events for " << wprimeUtil_->getLumi_ipb() 
-       << " ipb = " << fi->Nprod_evt*weight << endl;
-  out << " Total # of events after pre-selection for " 
-       << wprimeUtil_->getLumi_ipb() << " ipb = " << fi->Nact_evt*weight 
-       << endl;
-
-  WPrimeUtil::getEff(eff, deff, fi->Nact_evt, fi->Nprod_evt);
-  out << " Preselection efficiency = " << eff << " +- " << deff << endl;
-
-  for(int cut_index = 0; cut_index != Num_mumet_cuts; ++cut_index){
-    
-    (it->second)[cut_index].Nsurv_evt_cut_w = 
-      (it->second)[cut_index].Nsurv_evt_cut*weight;
-    
-    out << " Cut # " << cut_index << ": " << mumet_cuts_desc_long[cut_index] 
-	 <<", expected # of evts = " 
-	 << (it->second)[cut_index].Nsurv_evt_cut_w;
-    
-    //calculate efficiencies
-    if(cut_index == 0)
-      WPrimeUtil::getEff(eff, deff, (it->second)[cut_index].Nsurv_evt_cut,
-	     fi->Nact_evt);
-    else
-      WPrimeUtil::getEff(eff, deff, (it->second)[cut_index].Nsurv_evt_cut,
-	     (it->second)[cut_index-1].Nsurv_evt_cut);
-    out << ", Relative eff = "<<eff << " +- " << deff;
-    WPrimeUtil::getEff(eff, deff, (it->second)[cut_index].Nsurv_evt_cut, 
-	   fi->Nprod_evt);
-    out << ", Absolute eff = "<< eff << " +- " << deff
-	 << endl;
-    
-    (it->second)[cut_index].eff = eff;
-    (it->second)[cut_index].deff = deff;
-    
-  } // loop over different cuts
-	
-}
-
-// e.g. print summmary of expected events for all samples
-void MuMETAnalyzer::endAnalysis(ofstream & out)
-{
-  float N_SM = 0; 
-  std::map<std::string, std::vector<wprime::FilterEff> >::const_iterator it;
-
-  int index = Num_mumet_cuts-1; // get # of events after last cut
-
-  out << endl;
-  for(it = stats.begin(); it != stats.end(); ++it)
-    { // loop over samples
-      string sample = it->first;
-      float N_evt = (it->second)[index].Nsurv_evt_cut_w;
-      out<< " "<< sample << ": " << N_evt
-	 << " evts (eff = " << 100.*(it->second)[index].eff
-	 << " +- " << 100.*(it->second)[index].deff
-	 << " %) " << endl;
-      
-      if(!wprimeUtil_->runningOnData() &&
-	 sample.find("wprime") == string::npos)
-	N_SM += N_evt;
-      
-    } // loop over samples
-
-  out << " Total # of SM events: " 
-      << N_SM << endl;
-  
-}
-
-
-void MuMETAnalyzer::defineHistos_MuonPt(const TFileDirectory & dir)
-{
-
-  for(int cut = 0; cut != Num_mumet_cuts; ++cut)
-    {
-      string name = "hPT" + algo_desc_short[muReconstructor_] + "_" + 
-	mumet_cuts_desc_short[cut];
-      string title = algo_desc_long[muReconstructor_]+ " muon p_{T} with " + 
-	mumet_cuts_desc_long[cut];
-      
-      hPT[cut] = dir.make<TH1F>(name.c_str(), title.c_str(), nBinPtMu,
-			    minPtMu, maxPtMu);
-    }
-  for(int cut = 0; cut != Num_mumet_cuts; ++cut)
-    {
-      string name = "hPTgen" + algo_desc_short[muReconstructor_] + "_" + 
-	mumet_cuts_desc_short[cut];
-      string title = algo_desc_long[muReconstructor_]+ " muon p_{T} with " + 
-	mumet_cuts_desc_long[cut];
-      
-      hPTgen[cut] = dir.make<TH1F>(name.c_str(), title.c_str(), nBinPtMu,
-			    minPtMu, maxPtMu);
-    }
-}
-
-void MuMETAnalyzer::defineHistos_MuonEta(const TFileDirectory & dir)
-{
-  for(int cut = 0; cut != Num_mumet_cuts; ++cut)
-    {
-      string name = "hETA" + algo_desc_short[muReconstructor_] + "_" 
-	+ mumet_cuts_desc_short[cut];
-      string title = algo_desc_long[muReconstructor_] + " muon #eta with " 
-	+ mumet_cuts_desc_long[cut];
-      hETA[cut] = dir.make<TH1F>(name.c_str(), title.c_str(), nBinEtaMu,
-			   minEtaMu,maxEtaMu);
-    }
-
-}
-
-void MuMETAnalyzer::defineHistos_MuonPhi(const TFileDirectory & dir)
-{
-  for(int cut = 0; cut != Num_mumet_cuts; ++cut)
-    {
-      string name = "hPHI" + algo_desc_short[muReconstructor_] + "_" + 
-	mumet_cuts_desc_short[cut];
-      string title = algo_desc_long[muReconstructor_] + " muon #phi with " + 
-	mumet_cuts_desc_long[cut];
-      hPHI[cut] = dir.make<TH1F>(name.c_str(), title.c_str(), nBinPhiMu,
-				 minPhiMu,maxPhiMu);
-    }
-
-}
-
-#if 0
-void MuMETAnalyzer::defineHistos_MuonJetDPhi(const TFileDirectory & dir)
-{
-  for(int cut = 0; cut != Num_mumet_cuts; ++cut)
-    {
-      string name = "hMJDPHI" + algo_desc_short[muReconstructor_] + "_" + 
-	mumet_cuts_desc_short[cut];
-      string title = algo_desc_long[muReconstructor_] + " muon-jet #Delta#phi with " + 
-	mumet_cuts_desc_long[cut];
-      hMJDPHI[cut] = dir.make<TH1F>(name.c_str(), title.c_str(), 
-			      nBinDPhiMu,minDPhiMu,maxDPhiMu);
-    }
-
-}
-#endif
-
-void MuMETAnalyzer::defineHistos_MuonIso(const TFileDirectory & dir)
-{
-  for(int cut = 0; cut != Num_mumet_cuts; ++cut)
-    {
-      string name = "hISO" + algo_desc_short[muReconstructor_] + "_" + 
-	mumet_cuts_desc_short[cut];
-      string title = algo_desc_long[muReconstructor_] + " muon isol with " + 
-	mumet_cuts_desc_long[cut];
-      hISO[cut] = dir.make<TH1F>(name.c_str(), title.c_str(), nBinIsoMu,
-			   minIsoMu,maxIsoMu);
-    }
-
-}
-
-void MuMETAnalyzer::defineHistos_TMass(const TFileDirectory & dir)
-{
-  for(int cut = 0; cut != Num_mumet_cuts; ++cut)
-    {
-      string name = "hTM" + algo_desc_short[muReconstructor_] + "_" 
-	+ mumet_cuts_desc_short[cut];
-      string title = algo_desc_long[muReconstructor_]+ " Transv. Mass with " 
-	+ mumet_cuts_desc_long[cut];
-      hTM[cut] = dir.make<TH1F>(name.c_str(), title.c_str(), nBinTmMu,
-			  minTmMu,maxTmMu);
-    }
-  
-}
-
 void MuMETAnalyzer::defineHistos_TMvPT(const TFileDirectory & dir)
 {
-  for(int cut = 0; cut != Num_mumet_cuts; ++cut)
+  for(int cut = 0; cut != NCuts_; ++cut)
     {
       string name = "hTMvPT" + algo_desc_short[muReconstructor_] + "_" 
-	+ mumet_cuts_desc_short[cut];
+	+ CutNames_[cut];
       string title = algo_desc_long[muReconstructor_]+ 
-	" Transv. Mass vs p_{T} with " + mumet_cuts_desc_long[cut];
+	" Transv. Mass vs p_{T} with " + CutDescs_[cut];
       hTMvPT[cut] = dir.make<TH2F>(name.c_str(), title.c_str(), 
 				   nBinPtMu,minPtMu, maxPtMu,
 				   nBinTmMu, minTmMu, maxTmMu);
@@ -390,16 +202,24 @@ void MuMETAnalyzer::defineHistos_TMvPT(const TFileDirectory & dir)
 
 void MuMETAnalyzer::setupCutOrder()
 {
+  CutDescs_.resize(NCuts_);
   cuts.clear();
 #if debugmeMuMet
   cout << "\n Mu+MET cuts will be applied in this order: " << endl;
 #endif
 
-  for(int cut_i = 0; cut_i != Num_mumet_cuts; ++cut_i)
+  for(int cut_i = 0; cut_i != NCuts_; ++cut_i)
     { // loop over selection cuts
-      string arg = mumet_cuts_desc_short[cut_i];
+      string arg = CutNames_[cut_i];
+      
+      if(arg == "hlt")CutDescs_[cut_i] = "Single-muon HLT"; 
+      else if(arg == "qual")CutDescs_[cut_i] = "Quality";
+      else if(arg == "1mu")CutDescs_[cut_i] = "1 muon only";
+      else if(arg == "iso")CutDescs_[cut_i] = "Isolation"; 
+      else if(arg == "met")CutDescs_[cut_i] = "MET kinematic cuts";
+
 #if debugmeMuMet
-      cout << " Cut #" << (cut_i+1) << ": " << mumet_cuts_desc_long[cut_i]
+      cout << " Cut #" << (cut_i+1) << ": " << CutDescs_[cut_i]
 	   << " (" << arg << ") " << endl;
 #endif
       if(arg == "hlt")cuts[arg] = &MuMETAnalyzer::passedHLT;

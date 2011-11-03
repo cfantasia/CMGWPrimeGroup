@@ -11,7 +11,6 @@ using std::string; using std::vector;
 WPrimeUtil::WPrimeUtil(const char * out_filename, edm::InputTag genLabel, 
 		       edm::InputTag pfLabel, string cross_sections)
 {
-  fs = new fwlite::TFileService(out_filename);
 
   hRecoilPerp = 0;
   hRecoilParalvsVBPt = 0;
@@ -25,7 +24,7 @@ WPrimeUtil::WPrimeUtil(const char * out_filename, edm::InputTag genLabel,
 }
 WPrimeUtil::~WPrimeUtil()
 {
-  delete fs; delete [] histRecoilParal;
+  delete [] histRecoilParal;
 }
 
 void WPrimeUtil::setupZMETcorrection()

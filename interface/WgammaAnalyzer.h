@@ -7,6 +7,7 @@
 
 #include "UserCode/CMGWPrimeGroup/interface/AnalyzerBase.h"
 
+#include "UserCode/CMGWPrimeGroup/interface/WgammaAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/MuMETAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/wgamma_histo_constants.h"
@@ -37,7 +38,7 @@ class WgammaAnalyzer : public AnalyzerBase
 {
  public:
   explicit WgammaAnalyzer(const edm::ParameterSet& cfg, 
-			 WPrimeUtil * wprimeUtil);
+			 int fileToRun);
   ~WgammaAnalyzer();
 
   void eventLoop(edm::EventBase const & event);
