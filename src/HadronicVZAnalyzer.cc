@@ -426,10 +426,10 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   if( !passNoCut() ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
-  if( !passMinNLeptonsCut() ) return;
+  if( !passMinNLeptonsCut(looseElectrons_, looseMuons_, minNLeptons_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
-  if( !passMinNJetsCut() ) return;
+  if( !passMinNJetsCut(looseJets_, minNJets_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
   //////////////////////////////
@@ -441,13 +441,13 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   zCand_ = zCands.size() ? zCands[0] : ZCandidate();
   if (debugme) cout << "Made zCand" << endl;
 
-  if( !passValidZCut() ) return;
+  if( !passValidZCut(zCand_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
-  if( !passZMassCut() ) return;
+  if( !passZMassCut(zCand_, minZmass_, maxZmass_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
-  if( !passZptCut  () ) return;
+  if( !passZptCut  (zCand_, minZpt_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
   fillGoodZHistos();
@@ -461,7 +461,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   vCand_ = getWCand(looseJets_);
   if (debugme) cout << "Made vCand" << endl;
 
-  if( !passValidVCut() ) return;
+  if( !passValidWCut(vCand_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
   LorentzVector j1j2 = looseJets_.at(0).p4();
@@ -471,10 +471,10 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   h_bestmass->Fill(bestMass, weight_);
   //if(bestMass < 60) cout<<" nJets: "<<looseJets_.size()<<" best: "<<bestMass<<" m1: "<<looseJets_.at(0).mass()<<" m12: "<<j1j2.mass()<<endl;
 
-  if( !passVMassCut() ) return;
+  if( !passVMassCut(vCand_, minVmass_, maxVmass_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
-  if( !passVptCut() ) return;
+  if( !passWptCut(vCand_, minVpt_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
   if (debugme) cout << "Good V from jet" << endl;

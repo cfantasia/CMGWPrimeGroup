@@ -445,28 +445,23 @@ inline bool AnalyzerBase::passTriggersCut() const{
 }//--- passTriggersCut
 
 inline bool
-AnalyzerBase::passMinNLeptonsCut() const{
-  return (looseElectrons_.size() + looseMuons_.size()) >= minNLeptons_;
+AnalyzerBase::passMinNLeptonsCut(const ElectronV& electrons, const MuonV& muons, const float & cut) const{
+  return (electrons.size() + muons.size()) >= cut;
 }
 
 inline bool
-AnalyzerBase::passMinNTightLeptonsCut() const{
-  return (tightElectrons_.size() + tightMuons_.size()) >= minNTightLeptons_;
+AnalyzerBase::passMaxNLeptonsCut(const ElectronV& electrons, const MuonV& muons, const float & cut) const{
+  return (electrons.size() + muons.size()) <= cut;
 }
 
 inline bool
-AnalyzerBase::passMaxNLeptonsCut() const{
-  return (looseElectrons_.size() + looseMuons_.size()) <= maxNLeptons_;
+AnalyzerBase::passMinNJetsCut(const JetV& jets, const float & cut) const{
+  return jets.size() >= cut;
 }
 
 inline bool
-AnalyzerBase::passMinNJetsCut() const{
-  return looseJets_.size() >= minNJets_;
-}
-
-inline bool
-AnalyzerBase::passMinMETCut() const{
-  return met_.et() > minMET_;
+AnalyzerBase::passMinMETCut(const pat::MET & met, const float& cut) const{
+  return met.et() > cut;
 }
 
 inline bool
@@ -478,51 +473,39 @@ AnalyzerBase::passMinPtCut(const reco::Candidate& cand, const float& cut) const{
 /////////Check Z Properties/////
 ////////////////////////////////
 inline bool
-AnalyzerBase::passValidZCut() const{
-  return zCand_ && zCand_.mass()>0.;
+AnalyzerBase::passValidZCut(const ZCandidate& z) const{
+  return z && z.mass()>0.;
 }
 
 inline bool
-AnalyzerBase::passZMassCut() const{
-  return (zCand_.mass() > minZmass_) && (zCand_.mass() < maxZmass_);  
+AnalyzerBase::passZMassCut(const ZCandidate& z, const float& mincut, const float& maxcut) const{
+  return (z.mass() > mincut) && (z.mass() < maxcut);  
 }
 
 inline bool
-AnalyzerBase::passZptCut() const{
-  return zCand_.pt() > minZpt_;
-}
-
-////////////////////////////////
-///////Check Had. V Properties//
-////////////////////////////////
-inline bool
-AnalyzerBase::passValidVCut() const{
-  return vCand_ && vCand_.mass()>0.;
-}
-
-inline bool AnalyzerBase::passVMassCut() const{
-  return (vCand_.mass() > minVmass_) && (vCand_.mass() < maxVmass_);
-}
-
-inline bool
-AnalyzerBase::passVptCut() const{
-  return vCand_.pt() > minVpt_;
+AnalyzerBase::passZptCut(const ZCandidate& z, const float& cut) const{
+  return z.pt() > cut;
 }
 
 /////////Check W Properties/////
 inline bool
-AnalyzerBase::passValidWCut() const{
-  return wCand_ && wCand_.mass()>0.;
+AnalyzerBase::passValidWCut(const WCandidate& w) const{
+  return w && w.mass()>0.;
 }
 
 inline bool
-AnalyzerBase::passWtransMassCut() const{
-  return wCand_.mt() > minWtransMass_;
+AnalyzerBase::passWtransMassCut(const WCandidate& w, const float& cut) const{
+  return w.mt() > cut;
+}
+
+inline bool//For HadV which I dumbly made a W, to be removed
+AnalyzerBase::passVMassCut(const WCandidate& w, const float& mincut, const float& maxcut) const{
+  return (w.mass() > mincut) && (w.mass() < maxcut);  
 }
 
 inline bool
-AnalyzerBase::passWptCut() const{
-  return wCand_.pt() > minWpt_;
+AnalyzerBase::passWptCut(const WCandidate& w, const float& cut) const{
+  return w.pt() > cut;
 }
 
 //////////////////

@@ -19,15 +19,15 @@ TBAnalyzer::~TBAnalyzer(){
 void TBAnalyzer::setupCutOrder(){
   mFnPtrs_["NoCuts"] = boost::bind(&TBAnalyzer::passNoCut, this);
   mFnPtrs_["HLT"] = boost::bind(&TBAnalyzer::passTriggersCut, this);
-  mFnPtrs_["MinNLeptons"] = boost::bind(&TBAnalyzer::passMinNLeptonsCut, this);
-  mFnPtrs_["MinNJets"] = boost::bind(&TBAnalyzer::passMinNJetsCut, this);
-  mFnPtrs_["ValidW"] = boost::bind(&TBAnalyzer::passValidWCut, this);
+  mFnPtrs_["MinNLeptons"] = boost::bind(&TBAnalyzer::passMinNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
+  mFnPtrs_["MinNJets"] = boost::bind(&TBAnalyzer::passMinNJetsCut, this, boost::cref(looseJets_), boost::cref(minNJets_));
+  mFnPtrs_["ValidW"] = boost::bind(&TBAnalyzer::passValidWCut, this, boost::cref(wCand_));
   mFnPtrs_["ValidB"] = boost::bind(&TBAnalyzer::passValidBCut, this);
   mFnPtrs_["ValidT"] = boost::bind(&TBAnalyzer::passValidTCut, this);
   mFnPtrs_["ValidTBCand"] = boost::bind(&TBAnalyzer::passValidTBCut, this);
-  mFnPtrs_["WTransMass"] = boost::bind(&TBAnalyzer::passWtransMassCut, this);
-  mFnPtrs_["MET"] = boost::bind(&TBAnalyzer::passMinMETCut, this);
-  mFnPtrs_["Wpt"] = boost::bind(&TBAnalyzer::passWptCut, this);
+  mFnPtrs_["WTransMass"] = boost::bind(&TBAnalyzer::passWtransMassCut, this, boost::cref(wCand_), boost::cref(minWtransMass_));
+  mFnPtrs_["MET"] = boost::bind(&TBAnalyzer::passMinMETCut, this, boost::cref(met_), boost::cref(minMET_));
+  mFnPtrs_["Wpt"] = boost::bind(&TBAnalyzer::passWptCut, this, boost::cref(wCand_), boost::cref(minWpt_));
   mFnPtrs_["AllCuts"] = boost::bind(&TBAnalyzer::passNoCut, this);
 
   fillCuts(); 
@@ -114,10 +114,10 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
   if( !passNoCut() ) return;
   tabulateEvent(iCut++, weight_);
 
-  if( !passMinNLeptonsCut() ) return;
+  if( !passMinNLeptonsCut(looseElectrons_, looseMuons_, minNLeptons_) ) return;
   tabulateEvent(iCut++, weight_);
 
-  if( !passMinNJetsCut() ) return;
+  if( !passMinNJetsCut(looseJets_, minNJets_) ) return;
   tabulateEvent(iCut++, weight_);
 
   //////////////////////////////
@@ -136,7 +136,7 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
   //TODO: Implement here
   wCand_ = getWCand(tightElectrons_, tightMuons_, met_);
 
-  if( !passValidWCut() ) return;
+  if( !passValidWCut(wCand_) ) return;
   tabulateEvent(iCut++, weight_);
 
   //if( !passValidWPtCut() ) return;

@@ -37,18 +37,18 @@ WZAnalyzer::~WZAnalyzer(){
 void WZAnalyzer::setupCutOrder(){
   mFnPtrs_["NoCuts"] = boost::bind(&WZAnalyzer::passNoCut, this);
   mFnPtrs_["HLT"] = boost::bind(&WZAnalyzer::passTriggersCut, this);
-  mFnPtrs_["MinNLeptons"] = boost::bind(&WZAnalyzer::passMinNLeptonsCut, this);
-  mFnPtrs_["ValidW"] = boost::bind(&WZAnalyzer::passValidWCut, this);
-  mFnPtrs_["ValidZ"] = boost::bind(&WZAnalyzer::passValidZCut, this);
+  mFnPtrs_["MinNLeptons"] = boost::bind(&WZAnalyzer::passMinNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
+  mFnPtrs_["ValidW"] = boost::bind(&WZAnalyzer::passValidWCut, this, boost::cref(wCand_));
+  mFnPtrs_["ValidZ"] = boost::bind(&WZAnalyzer::passValidZCut, this, boost::cref(zCand_));
   mFnPtrs_["ValidWZCand"] = boost::bind(&WZAnalyzer::passValidWZCut, this);
   mFnPtrs_["LeadLepPt"] = boost::bind(&WZAnalyzer::passLeadingLeptonPtCut, this);
   mFnPtrs_["NumZs"] = boost::bind(&WZAnalyzer::passNumberOfZsCut, this);
-  mFnPtrs_["ZMass"] = boost::bind(&WZAnalyzer::passZMassCut, this);
-  mFnPtrs_["WTransMass"] = boost::bind(&WZAnalyzer::passWtransMassCut, this);
-  mFnPtrs_["MET"] = boost::bind(&WZAnalyzer::passMinMETCut, this);
+  mFnPtrs_["ZMass"] = boost::bind(&WZAnalyzer::passZMassCut, this, boost::cref(zCand_), boost::cref(minZmass_), boost::cref(maxZmass_));
+  mFnPtrs_["WTransMass"] = boost::bind(&WZAnalyzer::passWtransMassCut, this, boost::cref(wCand_), boost::cref(minWtransMass_));
+  mFnPtrs_["MET"] = boost::bind(&WZAnalyzer::passMinMETCut, this, boost::cref(met_), boost::cref(minMET_));
   mFnPtrs_["Ht"] = boost::bind(&WZAnalyzer::passHtCut, this);
-  mFnPtrs_["Zpt"] = boost::bind(&WZAnalyzer::passZptCut, this);
-  mFnPtrs_["Wpt"] = boost::bind(&WZAnalyzer::passWptCut, this);
+  mFnPtrs_["Zpt"] = boost::bind(&WZAnalyzer::passZptCut, this, boost::cref(zCand_), boost::cref(minZpt_));
+  mFnPtrs_["Wpt"] = boost::bind(&WZAnalyzer::passWptCut, this, boost::cref(wCand_), boost::cref(minWpt_));
   mFnPtrs_["AllCuts"] = boost::bind(&WZAnalyzer::passNoCut, this);
 
   mFnPtrs_["WLepTight"] = boost::bind(&WZAnalyzer::passWLepTightCut, this);

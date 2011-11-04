@@ -59,28 +59,23 @@ public:
 
   virtual bool passNoCut() const;
   virtual bool passTriggersCut() const;
-  virtual bool passMinNLeptonsCut() const;
-  virtual bool passMinNTightLeptonsCut() const;
-  virtual bool passMaxNLeptonsCut() const;
-  virtual bool passMinNJetsCut() const;
+  virtual bool passMinNLeptonsCut(const ElectronV& electrons, const MuonV& muons, const float & cut) const;
+  virtual bool passMaxNLeptonsCut(const ElectronV& electrons, const MuonV& muons, const float & cut) const;
+  virtual bool passMinNJetsCut(const JetV& jets, const float & cut) const;
 
-  virtual bool passMinMETCut() const;
+  virtual bool passMinMETCut(const pat::MET & met, const float& cut) const;
   virtual bool passMinPtCut(const reco::Candidate& cand, const float& cut) const;
 
 /////////Check Z Properties/////
-  virtual bool passValidZCut() const;
-  virtual bool passZMassCut() const;
-  virtual bool passZptCut() const;
+  virtual bool passValidZCut(const ZCandidate& z) const;
+  virtual bool passZMassCut(const ZCandidate& z, const float& mincut, const float& maxcut) const;
+  virtual bool passZptCut(const ZCandidate& z, const float& cut) const;
 
 /////////Check W Properties/////
-  virtual bool passValidWCut() const;
-  virtual bool passWtransMassCut() const;
-  virtual bool passWptCut() const;
-
-///////Check Had. V Properties//
-  virtual bool passValidVCut() const;
-  virtual bool passVMassCut() const;
-  virtual bool passVptCut() const;
+  virtual bool passValidWCut(const WCandidate& w) const;
+  virtual bool passWtransMassCut(const WCandidate& w, const float& cut) const;
+  virtual bool passVMassCut(const WCandidate& w, const float& mincut, const float& maxcut) const;
+  virtual bool passWptCut(const WCandidate& w, const float& cut) const;
 
 //////////////////
 //file stuff//////

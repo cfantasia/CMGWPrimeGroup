@@ -24,17 +24,17 @@ HadronicVWAnalyzer::~HadronicVWAnalyzer(){
 void HadronicVWAnalyzer::setupCutOrder(){
   mFnPtrs_["NoCuts"] = boost::bind(&HadronicVWAnalyzer::passNoCut, this);
   mFnPtrs_["HLT"] = boost::bind(&HadronicVWAnalyzer::passTriggersCut, this);
-  mFnPtrs_["MinNLeptons"] = boost::bind(&HadronicVWAnalyzer::passMinNLeptonsCut, this);
-  mFnPtrs_["MaxNLeptons"] = boost::bind(&HadronicVWAnalyzer::passMaxNLeptonsCut, this);
-  mFnPtrs_["MinNJets"] = boost::bind(&HadronicVWAnalyzer::passMinNJetsCut, this);
-  mFnPtrs_["ValidW"] = boost::bind(&HadronicVWAnalyzer::passValidWCut, this);
-  mFnPtrs_["ValidV"] = boost::bind(&HadronicVWAnalyzer::passValidVCut, this);
+  mFnPtrs_["MinNLeptons"] = boost::bind(&HadronicVWAnalyzer::passMinNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
+  mFnPtrs_["MaxNLeptons"] = boost::bind(&HadronicVWAnalyzer::passMaxNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
+  mFnPtrs_["MinNJets"] = boost::bind(&HadronicVWAnalyzer::passMinNJetsCut, this, boost::cref(looseJets_), boost::cref(minNJets_));
+  mFnPtrs_["ValidW"] = boost::bind(&HadronicVWAnalyzer::passValidWCut, this, boost::cref(wCand_));
+  mFnPtrs_["ValidV"] = boost::bind(&HadronicVWAnalyzer::passValidWCut, this, boost::cref(vCand_));
   mFnPtrs_["ValidVWCand"] = boost::bind(&HadronicVWAnalyzer::passValidVWCut, this);
-  mFnPtrs_["VMass"] = boost::bind(&HadronicVWAnalyzer::passVMassCut, this);
-  mFnPtrs_["WTransMass"] = boost::bind(&HadronicVWAnalyzer::passWtransMassCut, this);
-  mFnPtrs_["MET"] = boost::bind(&HadronicVWAnalyzer::passMinMETCut, this);
-  mFnPtrs_["Vpt"] = boost::bind(&HadronicVWAnalyzer::passVptCut, this);
-  mFnPtrs_["Wpt"] = boost::bind(&HadronicVWAnalyzer::passWptCut, this);
+  mFnPtrs_["VMass"] = boost::bind(&HadronicVWAnalyzer::passVMassCut, this, boost::cref(vCand_), boost::cref(minVmass_), boost::cref(maxVmass_));
+  mFnPtrs_["WTransMass"] = boost::bind(&HadronicVWAnalyzer::passWtransMassCut, this, boost::cref(wCand_), boost::cref(minWtransMass_));
+  mFnPtrs_["MET"] = boost::bind(&HadronicVWAnalyzer::passMinMETCut, this, boost::cref(met_), boost::cref(minMET_));
+  mFnPtrs_["Vpt"] = boost::bind(&HadronicVWAnalyzer::passWptCut, this, boost::cref(vCand_), boost::cref(minVpt_));
+  mFnPtrs_["Wpt"] = boost::bind(&HadronicVWAnalyzer::passWptCut, this, boost::cref(wCand_), boost::cref(minWpt_));
   mFnPtrs_["AllCuts"] = boost::bind(&HadronicVWAnalyzer::passNoCut, this);
 
   fillCuts();
