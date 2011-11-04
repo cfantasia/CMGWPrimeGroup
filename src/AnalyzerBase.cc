@@ -54,8 +54,9 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
 
   //////////////////////
 
-   CutNames_          = cfg.getParameter<vstring>("Cuts");
-  NCuts_          = CutNames_.size();
+   CutNames_ = cfg.getParameter<vstring>("Cuts");
+   CutDescs_ = CutNames_;
+  NCuts_     = CutNames_.size();
 
   debugme = cfg.getParameter<bool>("debugme");
 
@@ -163,7 +164,6 @@ AnalyzerBase::~AnalyzerBase(){
 //Fill Vector of Cuts based on map
 void AnalyzerBase::fillCuts(){
   CutFns_.resize(NCuts_);
-  if(CutDescs_.size() != CutNames_.size()) CutDescs_ = CutNames_;
   for(int i=0; i<NCuts_; ++i){
     if(mFnPtrs_.find(CutNames_[i]) == mFnPtrs_.end()){
       cout<<"Didn't find cut named "<<CutNames_[i]<<endl;
