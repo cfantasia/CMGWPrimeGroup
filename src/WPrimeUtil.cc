@@ -111,7 +111,7 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
 void WPrimeUtil::setLumiWeights(const string & MCFile, const string & DataFile,
                                 const string & MCHist, const string & DataHist){
   LumiWeights_ = edm::LumiReWeighting(MCFile, DataFile, MCHist, DataHist);
-  //LumiWeights_.weight3D_init("UserCode/CMGWPrimeGroup/root_macros/Weight3D.root");
+  LumiWeights_.weight3D_init("UserCode/CMGWPrimeGroup/root_macros/Weight3D.root");
 }
 
 int WPrimeUtil::getPU1BX(const std::vector< PileupSummaryInfo > & PupInfo){
