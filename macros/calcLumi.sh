@@ -10,13 +10,15 @@
 #Up to run 177515: 3.193 inv fb
 #Up to run 178078: 3.537 inv fb
 #Up to run 178677: 3.965 inv fb
+#Up to run 179431: 4.264 inv fb
+#Up to run 180252: 4.632 inv fb
 
 JSON_Run2011A_May10=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions11/7TeV/Reprocessing/Cert_160404-163869_7TeV_May10ReReco_Collisions11_JSON_v3.txt
 MIN_Run2011A_May10=160404
 MAX_Run2011A_May10=163869
 ./jsonrunsel.py $MIN_Run2011A_May10   $MAX_Run2011A_May10   $JSON_Run2011A_May10   Run2011A_May10.json
 
-JSON_Run2011A_Prompt4=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions11/7TeV/Prompt/Cert_160404-178677_7TeV_PromptReco_Collisions11_JSON.txt
+JSON_Run2011A_Prompt4=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions11/7TeV/Prompt/Cert_160404-180252_7TeV_PromptReco_Collisions11_JSON.txt
 MIN_Run2011A_Prompt4=165088
 MAX_Run2011A_Prompt4=167913
 ./jsonrunsel.py $MIN_Run2011A_Prompt4 $MAX_Run2011A_Prompt4 $JSON_Run2011A_Prompt4 Run2011A_Prompt4.json
