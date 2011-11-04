@@ -580,7 +580,6 @@ AnalyzerBase::defineHistoset(const string& n, const string& t, const string& xti
     title += xtitle + ";Events";
     if(units.compare("NONE"))
       title += Form(" / %.0f ",binWidth) + units;
-    //title += Form(" / %.0f pb^{-1}", wprimeUtil_->getLumi_ipb());
     h[i] = d.make<TH1F>(name.c_str(),title.c_str(),nbins,min,max);
   }
 }
@@ -639,7 +638,10 @@ void AnalyzerBase::endAnalysis(ofstream & out){
       
       if     (wprimeUtil_->runningOnData()) 
         N_DATA += N_evt;
-      else if(sample.find("wprime") == string::npos)
+      else if(sample.find("wprime") == string::npos &&
+              sample.find("Wprime") == string::npos &&
+              sample.find("TC_WZ") == string::npos &&
+              sample.find("RSZZ") == string::npos )
         N_SM += N_evt;
       
     } // loop over samples
