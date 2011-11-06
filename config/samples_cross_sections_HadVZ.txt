@@ -1,21 +1,5 @@
 Top Level Dir = 
-integrated lumi = 3965 pb^-1
-
-samplename = Summer11_WprimeToWZTo2Q2L_M-500
-description = WprimeToWZTo2Q2L_M-500 (FastSim)
-x-section = 0.1107
-subdir = dcap://osg-se.sprace.org.br/
-pathname = /pnfs/sprace.org.br/data/cms/store/user/fladias/WPrime_FastSim_500/patTuple_WPrime_500.root
-Nprod_evt = 25000
-
-samplename = Summer11_WprimeToWZTo2Q2L_M-1000
-description = WprimeToWZTo2Q2L_M-1000 (FastSim)
-x-section = 0.004596
-subdir = dcap://osg-se.sprace.org.br/
-pathname = /pnfs/sprace.org.br/data/cms/store/user/fladias/WPrime_FastSim_1000/patTuple_WPrime_1000.root
-Nprod_evt = 25000
-
-DONE
+integrated lumi = 4632 pb^-1
 
 samplename = Summer11_RSZZmmjj_750
 description = Summer11_RSZZmmjj_750
@@ -224,7 +208,7 @@ samplename = data_DoubleMu-Run2011B-PromptReco-v1
 description = data_DoubleMu-Run2011B-PromptReco-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330E-DoubleMu-Run2011B-PromptReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V330G-DoubleMu-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu-Run2011B-PromptReco-v1
@@ -238,7 +222,7 @@ samplename = data_DoubleElectron-Run2011B-PromptReco-v1
 description = data_DoubleElectron-Run2011B-PromptReco-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330E-DoubleElectron-Run2011B-PromptReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V330G-DoubleElectron-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleElectron-Run2011B-PromptReco-v1
@@ -303,6 +287,20 @@ x-section = 0.00000705
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V340-Summer11_RSZZeejj_2000.txt
 Nprod_evt = 50935
+
+samplename = Summer11_WprimeToWZTo2Q2L_M-500
+description = WprimeToWZTo2Q2L_M-500 (FastSim)
+x-section = 0.1107
+subdir = dcap://osg-se.sprace.org.br/
+pathname = /pnfs/sprace.org.br/data/cms/store/user/fladias/WPrime_FastSim_500/patTuple_WPrime_500.root
+Nprod_evt = 25000
+
+samplename = Summer11_WprimeToWZTo2Q2L_M-1000
+description = WprimeToWZTo2Q2L_M-1000 (FastSim)
+x-section = 0.004596
+subdir = dcap://osg-se.sprace.org.br/
+pathname = /pnfs/sprace.org.br/data/cms/store/user/fladias/WPrime_FastSim_1000/patTuple_WPrime_1000.root
+Nprod_evt = 25000
 
 DONE
 

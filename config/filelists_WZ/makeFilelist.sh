@@ -1,5 +1,5 @@
 #!/bin/bash
-Ver="B05-08-10F"
+Ver="B05-08-10H"
 #Dir=/hdfs/store/user/jklukas
 Dir=/pnfs/cms/WAX/11/store/user/fantasia/42X
 #Dir=~/nobackup/42X/filelists
@@ -11,4 +11,5 @@ for Directory in `ls ${Dir} | grep ${Ver} | grep Pat`
   fi
 done
 
+/usr/bin/perl -p -i -e "s/\/pnfs\/cms\/WAX\/11//g" *${Ver}*.txt
 #./mergeFilelists.sh
