@@ -120,9 +120,11 @@ DoubleTriggers = cms.vstring(
     'HLT_DoubleMu5_v*', #For MC
     'HLT_DoubleMu7_v*',
     'HLT_Mu13_Mu8_v*', #1e33 unprescaled
+    'HLT_Mu17_Mu8_v*', #3e33 unprescaled
 
     'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
-    'HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*'
+    'HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v*'#MC
+    'HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*'#Data
     
     )
 SingleElecTriggers = cms.vstring('HLT_Ele15_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
