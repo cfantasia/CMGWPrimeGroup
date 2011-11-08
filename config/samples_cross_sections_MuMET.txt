@@ -1,5 +1,5 @@
 Top Level Dir = 
-integrated lumi = 2981.6 pb^-1
+integrated lumi = 4943 pb^-1
 
 samplename = data
 description = Muon pt > 100 GeV skim, May10th ReReco v1 (224.1 ipb DCS-only)

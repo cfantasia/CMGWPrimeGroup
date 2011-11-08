@@ -1,53 +1,60 @@
-Top Level Dir = rfio:///castor/cern.ch/user/c/cleonido/wprime/V310/
-integrated lumi = 3172 pb^-1
+Top Level Dir = 
+integrated lumi = 4653 pb^-1
 
 samplename = data
 description = Electron pt > 100 GeV skim, May10th ReReco v1 (234.3 ipb DCS-only)
 x-section = 1
-subdir = SingleElectron_May10v1_LPC
+subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleElectron_May10v1_LPC
 pathname = filelists_ElNu/SingleElectron_May10v1_V311.txt
 Nprod_evt = 1
 
 samplename = data2
 description = Electron pt > 100 GeV skim, PromptReco v4 (933.1 ipb DCS-only)
 x-section = 1
-subdir = SingleElectron_PRv4_LPC
+subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleElectron_PRv4_LPC
 pathname = filelists_ElNu/SingleElectron_PRv4_V311.txt
 Nprod_evt = 1
 
 samplename = data3
 description = Electron pt > 100 GeV skim, 05Aug v1 (502.5 ipb DCS-only)
 x-section = 1
-subdir = SingleElectron_05Augv1_LPC
+subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleElectron_05Augv1_LPC
 pathname = filelists_ElNu/SingleElectron_05Augv1_V311.txt
 Nprod_evt = 1
 
 samplename = data4
 description = Electron pt > 100 GeV skim, PromptReco v6 (677.1 ipb DCS-only)
 x-section = 1
-subdir = SingleElectron_PRv6_LPC
+subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleElectron_PRv6_LPC
 pathname = filelists_ElNu/SingleElectron_PRv6_V311.txt
 Nprod_evt = 1
 
 samplename = data5
 description = Electron pt > 100 GeV skim, 2011B PR v1 (344.9 ipb DCS-only)
 x-section = 1
-subdir = SingleElectron_2011B_PRV1/175832_176309/
+subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleElectron_2011B_PRV1/175832_176309/
 pathname = filelists_ElNu/SingleElectron_2011B_PRV1_175832_176298.txt
 Nprod_evt = 1
 
 samplename = data6
 description = Electron pt > 100 GeV skim, 2011B PR v1 (552.2 ipb DCS-only)
 x-section = 1
-subdir = SingleElectron_2011B_PRV1/176697_177718/
+subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleElectron_2011B_PRV1/176697_177718/
 pathname = filelists_ElNu/SingleElectron_2011B_PRV1_176697_177718.txt
 Nprod_evt = 1
 
 samplename = data7
 description = Electron pt > 100 GeV skim, 2011B PR v1 (186.6 ipb DCS-only)
 x-section = 1
-subdir = SingleElectron_2011B_PRV1/177718_178078/
+subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleElectron_2011B_PRV1/177718_178078/
 pathname = filelists_ElNu/SingleElectron_2011B_PRV1_177718_178078.txt
+Nprod_evt = 1
+
+samplename = data8
+description = Electron pt > 100 GeV skim, 2011B PR v1 (319.2 ipb DCS-only)
+x-section = 1
+subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleElectron_2011B_PRV1/179315_180252/
+pathname = filelists_ElNu/SingleElectron_2011B_PRV1_179315_180252.txt
 Nprod_evt = 1
 
 DONE
