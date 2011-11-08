@@ -429,10 +429,10 @@ bool
 AnalyzerBase::passCuts(const float& weight){
   if (debugme) cout<<"In pass Cuts\n";
   
-  int iCut=0;
-  if(passNoCut()) return false;
-  tabulateEvent(iCut++,weight);
-  
+  for(int i=0; i<NCuts_; ++i){
+    if(!CutFns_[i]()) return false;
+    tabulateEvent(i,weight); 
+  }
   return true;
 }
 
@@ -490,7 +490,7 @@ AnalyzerBase::passZptCut(const ZCandidate& z, const float& cut) const{
 /////////Check W Properties/////
 inline bool
 AnalyzerBase::passValidWCut(const WCandidate& w) const{
-  return w && w.mass()>0.;
+  return w && w.mt()>0.;
 }
 
 inline bool
