@@ -59,133 +59,133 @@ Nprod_evt = 1
 
 DONE
 
-samplename = WprimeToENu_M1000_highPt
+samplename = wprime1.0
 description = WprimeToENu_M1000 , PYTHIA6 Tune Z2
 x-section =  0.8856
 subdir = WprimeToENue_M-1000
 pathname = filelists_ElNu/WprimeToENu_M1000.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M1200_highPt
+samplename = wprime1.2
 description = WprimeToENu_M1200 , PYTHIA6 Tune Z2
 x-section =  0.3461
 subdir = WprimeToENue_M-1200
 pathname = filelists_ElNu/WprimeToENu_M1200.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M1300_highPt
+samplename = wprime1.3
 description = WprimeToENu_M1300 , PYTHIA6 Tune Z2
 x-section =  0.2221
 subdir = WprimeToENue_M-1300
 pathname = filelists_ElNu/WprimeToENu_M1300.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M1400_highPt
+samplename = wprime1.4
 description = WprimeToENu_M1400 , PYTHIA6 Tune Z2
 x-section =  0.1440
 subdir = WprimeToENue_M-1400
 pathname = filelists_ElNu/WprimeToENu_M1400.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M1500_highPt
+samplename = wprime1.5
 description = WprimeToENu_M1500 , PYTHIA6 Tune Z2
 x-section =  0.0949
 subdir = WprimeToENue_M-1500
 pathname = filelists_ElNu/WprimeToENu_M1500.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M1600_highPt
+samplename = wprime1.6
 description = WprimeToENu_M1600 , PYTHIA6 Tune Z2
 x-section =  0.0633
 subdir = WprimeToENue_M-1600
 pathname = filelists_ElNu/WprimeToENu_M1600.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M1700_highPt
+samplename = wprime1.7
 description = WprimeToENu_M1700 , PYTHIA6 Tune Z2
 x-section =  0.0424
 subdir = WprimeToENue_M-1700
 pathname = filelists_ElNu/WprimeToENu_M1700.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M1800_highPt
+samplename = wprime1.8
 description = WprimeToENu_M1800 , PYTHIA6 Tune Z2
 x-section =  0.0285
 subdir = WprimeToENue_M-1800
 pathname = filelists_ElNu/WprimeToENu_M1800.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M1900_highPt
+samplename = wprime1.9
 description = WprimeToENu_M1900 , PYTHIA6 Tune Z2
 x-section =  0.0194
 subdir = WprimeToENue_M-1900
 pathname = filelists_ElNu/WprimeToENu_M1900.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M2000_highPt
+samplename = wprime2.0
 description = WprimeToENu_M2000 , PYTHIA6 Tune Z2
 x-section =  0.0135
 subdir = WprimeToENue_M-2000
 pathname = filelists_ElNu/WprimeToENu_M2000.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M2100_highPt
+samplename = wprime2.1
 description = WprimeToENu_M2100 , PYTHIA6 Tune Z2
 x-section =  0.009373
 subdir = WprimeToENue_M-2100
 pathname = filelists_ElNu/WprimeToENu_M2100.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M2200_highPt
+samplename = wprime2.2
 description = WprimeToENu_M2200 , PYTHIA6 Tune Z2
 x-section =  0.006605
 subdir = WprimeToENue_M-2200
 pathname = filelists_ElNu/WprimeToENu_M2200.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M2300_highPt
+samplename = wprime2.3
 description = WprimeToENu_M2300 , PYTHIA6 Tune Z2
 x-section =  0.00472
 subdir = WprimeToENue_M-2300
 pathname = filelists_ElNu/WprimeToENu_M2300.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M2400_highPt
+samplename = wprime2.4
 description = WprimeToENu_M2400 , PYTHIA6 Tune Z2
 x-section =  0.003398
 subdir = WprimeToENue_M-2400
 pathname = filelists_ElNu/WprimeToENu_M2400.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M2500_highPt
+samplename = wprime2.5
 description = WprimeToENu_M2500 , PYTHIA6 Tune Z2
 x-section =  0.002483
 subdir = WprimeToENue_M-2500
 pathname = filelists_ElNu/WprimeToENu_M2500.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M2700_highPt (check cross-section!)
+samplename = wprime2.7 (check cross-section!)
 description = WprimeToENu_M2700 , PYTHIA6 Tune Z2
 x-section =  0.00143
 subdir = WprimeToENue_M-2700
 pathname = filelists_ElNu/WprimeToENu_M2700.txt
 Nprod_evt = 12420
 
-samplename = WprimeToENu_M3000_highPt
+samplename = wprime3.0
 description = WprimeToENu_M3000 , PYTHIA6 Tune Z2
 x-section =  0.0007068
 subdir = WprimeToENue_M-3000
 pathname = filelists_ElNu/WprimeToENu_M3000.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M3500_highPt
+samplename = wprime3.5
 description = WprimeToENu_M3500 , PYTHIA6 Tune Z2
 x-section =  0.0002951
 subdir = WprimeToENue_M-3500
 pathname = filelists_ElNu/WprimeToENu_M3500.txt
 Nprod_evt = 16500
 
-samplename = WprimeToENu_M4000_highPt (check cross-section!)
+samplename = wprime4.0 (check cross-section!)
 description = WprimeToENu_M4000 , PYTHIA6 Tune Z2
 x-section =  0.000181
 subdir = WprimeToENue_M-4000
