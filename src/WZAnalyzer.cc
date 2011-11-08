@@ -763,13 +763,13 @@ inline bool WZAnalyzer::passWLepTightCut() const{
 inline bool
 WZAnalyzer::passValidWElecCut(){
   calcWElecVariables();
-  return AnalyzerBase::ValidWCut(wCand_);
+  return AnalyzerBase::passValidWCut(wCand_);
 }
 
 inline bool
 WZAnalyzer::passValidWMuonCut(){
   calcWMuonVariables();
-  return AnalyzerBase::ValidWCut(wCand_);
+  return AnalyzerBase::passValidWCut(wCand_);
 }
 
 inline bool
