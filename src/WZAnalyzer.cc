@@ -38,8 +38,8 @@ void WZAnalyzer::setupCutOrder(){
   mFnPtrs_["NoCuts"] = boost::bind(&WZAnalyzer::passNoCut, this);
   mFnPtrs_["HLT"] = boost::bind(&WZAnalyzer::passTriggersCut, this);
   mFnPtrs_["MinNLeptons"] = boost::bind(&WZAnalyzer::passMinNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
-  mFnPtrs_["ValidW"] = boost::bind(&WZAnalyzer::passValidWCut, this, boost::cref(wCand_));
-  mFnPtrs_["ValidZ"] = boost::bind(&WZAnalyzer::passValidZCut, this, boost::cref(zCand_));
+  mFnPtrs_["ValidW"] = boost::bind(&WZAnalyzer::passValidWCut, this, boost::ref(wCand_));
+  mFnPtrs_["ValidZ"] = boost::bind(&WZAnalyzer::passValidZCut, this, boost::ref(zCand_));
   mFnPtrs_["ValidWZCand"] = boost::bind(&WZAnalyzer::passValidWZCut, this);
   mFnPtrs_["LeadLepPt"] = boost::bind(&WZAnalyzer::passLeadingLeptonPtCut, this);
   mFnPtrs_["NumZs"] = boost::bind(&WZAnalyzer::passNumberOfZsCut, this);
@@ -387,12 +387,12 @@ WZAnalyzer::calcZVariables(){
   matchptcut = 10.;
   ElectronV zElectrons;
   for (size_t i=0; i < looseElectrons_.size(); i++)
-    if(passTriggerEmulation(looseElectrons_[i], matchptcut))
+    if(passTriggerMatch(looseElectrons_[i], matchptcut, triggersToUse_))
       zElectrons.push_back(looseElectrons_[i]);
   matchptcut = 20.;
   minHighPt = false;
   for (size_t i=0; i < zElectrons.size(); i++){
-    if(passTriggerEmulation(looseElectrons_[i], matchptcut)){
+    if(passTriggerMatch(looseElectrons_[i], matchptcut, triggersToUse_)){
       minHighPt= true; 
       break;  
     }
@@ -749,26 +749,6 @@ WZAnalyzer::calcLeadPt(int type) const{
 /////////////////Modifiers///////////////////////
 
 /////////////////Cuts///////////////////////
-bool
-WZAnalyzer::passCuts(const float& weight){
-  if (debugme) cout<<"In pass Cuts\n";
-
-  
-  for(int i=0; i<NCuts_; ++i){
-    if(CutNames_[i] == "ValidZ") calcZVariables();  
-    else if(CutNames_[i] == "ValidW"){  
-      calcWVariables();  
-      calcEventVariables();  
-    }else if(CutNames_[i] == "ValidWZCand") calcWZVariables();  
-    else if(CutNames_[i] == "ValidWElec") calcWElecVariables();  
-    else if(CutNames_[i] == "ValidWMuon") calcWMuonVariables();
-
-    if(!CutFns_[i]()) return false;
-    tabulateEvent(i,weight); 
-  }
-  return true;
-}
-
 inline bool WZAnalyzer::passWLepTightCut() const{
   if(wCand_.flavor() == PDGELEC){
     const heep::Ele & e = *wCand_.elec();
@@ -780,28 +760,16 @@ inline bool WZAnalyzer::passWLepTightCut() const{
   return false;
 }
 
-//Trigger requirements
-//-----------------------------------------------------------
-bool WZAnalyzer::passTriggersCut() const{
-  if(debugme) cout<<"Trigger requirements"<<endl;
-  //Apply the trigger if running on data or MC 
-  //If MC, apply if no Z or if Z exists, zCand == PDGMuon)
-  if(wprimeUtil_->runningOnData() || !zCand_ || zCand_.flavor() == PDGMUON){
-    return WPrimeUtil::passTriggersCut(triggerEvent_,triggersToUse_);
-  }else{
-    return true;//Cory: This is not good, but will pass HLT in the meantime.
-  }
-  return false;
-}//--- passTriggersCut()
-
 inline bool
-WZAnalyzer::passValidWElecCut() const{
-  return wCand_ && wCand_.mt()>0.;
+WZAnalyzer::passValidWElecCut(){
+  calcWElecVariables();
+  return AnalyzerBase::ValidWCut(wCand_);
 }
 
 inline bool
-WZAnalyzer::passValidWMuonCut() const{
-  return wCand_ && wCand_.mt()>0.;
+WZAnalyzer::passValidWMuonCut(){
+  calcWMuonVariables();
+  return AnalyzerBase::ValidWCut(wCand_);
 }
 
 inline bool
@@ -830,27 +798,19 @@ WZAnalyzer::passZLepPtCut() const{
   return false;
 }
 
-bool
-WZAnalyzer::passZLepTriggerMatchCut() const{
-  if     (zCand_.flavor() == PDGELEC){ 
-    const heep::Ele& e1 = *zCand_.elec1();
-    const heep::Ele& e2 = *zCand_.elec2();
-    return (passTriggerEmulation(e1) && passTriggerEmulation(e2));
-  }else if(zCand_.flavor() == PDGMUON){
-    return true;//Trigger matching now before making zs
-    //TeVMuon& m1 = WPrimeUtil::Find(*zCand_.daughter(0));
-    //TeVMuon& m2 = WPrimeUtil::Find(*zCand_.daughter(1));
-    //return passTriggerMatch(m1, m2); 
-  }
-  return false;
-}
-
 bool 
-WZAnalyzer::passTriggerMatch(const pat::Electron & p, const float cut, const vstring& triggers) const{
-  for (size_t i=0; i < triggers.size(); ++i){
-    if (p.triggerObjectMatchesByPath(triggers[i], true, false).size() > 0){
-      const pat::TriggerObjectStandAlone * trigRef = p.triggerObjectMatchByPath(triggers[i], true, false);
-      if(trigRef->et() > cut) return true;
+WZAnalyzer::passTriggerMatch(const heep::Ele& e, const float cut, const vstring& triggers) const{
+  const pat::Electron& p = e.patEle();
+  for(uint i=0; i<p.triggerObjectMatches().size(); ++i){
+    vector<string> names = p.triggerObjectMatches()[i].pathNames(true, false);
+    for(uint j=0; j<names.size(); ++j){
+      for (size_t k=0; k < triggers.size(); ++k){
+        if(WPrimeUtil::SameTrigger(names[j], triggers[k])){
+          if (p.triggerObjectMatchesByPath(names[j], true, false).size() > 0){
+            if(p.triggerObjectMatchByPath(names[j], true, false)->pt() > cut) return true;
+          }
+        }
+      }
     }
   }
   return false;
@@ -874,26 +834,15 @@ WZAnalyzer::passTriggerMatch(const TeVMuon & p, const float cut, const vstring& 
 }
 
 
-inline bool
-WZAnalyzer::passTriggerMatch(const heep::Ele& e1, const heep::Ele& e2) const{
-  return (e1.patEle().triggerObjectMatches().size() > 0 &&
-          e2.patEle().triggerObjectMatches().size() > 0 &&
-          max(e1.patEle().triggerObjectMatches()[0].et(), e2.patEle().triggerObjectMatches()[0].et()) > 17. &&
-          min(e1.patEle().triggerObjectMatches()[0].et(), e2.patEle().triggerObjectMatches()[0].et()) > 8.);
-}
-
-inline bool
-WZAnalyzer::passTriggerMatch(const TeVMuon& m1, const TeVMuon& m2) const{
-  return (m1.triggerObjectMatches().size() > 0 &&
-          m2.triggerObjectMatches().size() > 0 &&
-          max(m1.triggerObjectMatches()[0].pt(), m2.triggerObjectMatches()[0].pt()) > 13. &&
-          min(m1.triggerObjectMatches()[0].pt(), m2.triggerObjectMatches()[0].pt()) > 8.);
-}
-
-
 ////////////////////////////////
 /////////Check W Properties/////
 ////////////////////////////////
+inline bool
+WZAnalyzer::passValidWCut(WCandidate& w){
+  calcWVariables();//Cory: These should take args
+  calcEventVariables();  
+  return AnalyzerBase::passValidWCut(w);
+}
 
 //Check W Transverse Mass
 inline bool
@@ -901,8 +850,20 @@ WZAnalyzer::passWLepPtCut() const{
   return WLepPt() > minWlepPt_;
 }
 
+////////////////////////////////
+/////////Check Z Properties/////
+////////////////////////////////
+
+inline bool
+WZAnalyzer::passValidZCut(ZCandidate& z){
+  calcZVariables();//Cory: These should take args
+  return AnalyzerBase::passValidZCut(z);
+}
+
 /////////Check WZ Properties/////
-inline bool WZAnalyzer::passValidWZCut() const{
+inline bool 
+WZAnalyzer::passValidWZCut(){
+  calcWZVariables();
   return wzCand_ && wzCand_.mass("minPz")>0.;
 }
 

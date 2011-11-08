@@ -19,7 +19,6 @@ public:
 
   //methods for stuff to be done for each event
   void eventLoop(edm::EventBase const & event);
-  bool passCuts(const float& weight=1.);
   void clearEvtVariables();
   void fillHistos(const int& index, const float& weight=1.);
 
@@ -54,16 +53,16 @@ public:
 //methods for modifiers
 
 //methods for the cuts
-  bool passTriggersCut() const;
-  bool passValidWElecCut() const;
-  bool passValidWMuonCut() const;
+  bool passValidWElecCut();
+  bool passValidWMuonCut();
   bool passLeadingLeptonPtCut() const;
   bool passNumberOfZsCut() const;
-  bool passValidWZCut() const;
+  bool passValidWCut(WCandidate& w);
+  bool passValidZCut(ZCandidate& z);
+  bool passValidWZCut();
   bool passHtCut() const;
 
   bool passZLepPtCut() const;
-  bool passZLepTriggerMatchCut() const;
   bool passZeePtCut() const;
   bool passZmumuPtCut() const;
 
@@ -77,9 +76,7 @@ public:
   bool passFakeLeptonTagCut() const;
   bool passFakeLeptonProbeTightCut() const;
 
-  bool passTriggerMatch(const heep::Ele& e1, const heep::Ele& e2) const;
-  bool passTriggerMatch(const TeVMuon& m1, const TeVMuon& m2) const;
-  bool passTriggerMatch(const pat::Electron& p, const float cut, const vstring& triggers) const;
+  bool passTriggerMatch(const heep::Ele& e, const float cut, const vstring& triggers) const;
   bool passTriggerMatch(const TeVMuon& p, const float cut, const vstring& triggers) const;
   bool passTriggerEmulation(const heep::Ele& elec, const float minPt=0.) const;
 
