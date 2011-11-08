@@ -149,105 +149,14 @@ subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/QCD_highPt
 pathname = filelists_MuNu/QCD_highPt_V330.txt
 Nprod_evt = 25064715
 
-samplename = wprime1.5
-description = Wprime->munu, Tune Z2, Mass = 1.5 TeV (NNLO cross-section)
-x-section = 0.077
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_1.5TeV.root
-Nprod_evt = 16500
-
-samplename = wprime1.6
-description = Wprime->munu, Tune Z2, Mass = 1.6 TeV (NNLO cross-section)
-x-section = 0.0497
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_1.6TeV.root
-Nprod_evt = 16500
-
-samplename = wprime1.7
-description = Wprime->munu, Tune Z2, Mass = 1.7 TeV (NNLO cross-section)
-x-section = 0.0343
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_1.7TeV.root
-Nprod_evt = 16500
-
-samplename = wprime1.8
-description = Wprime->munu, Tune Z2, Mass = 1.8 TeV (NNLO cross-section)
-x-section = 0.0235
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_1.8TeV.root
-Nprod_evt = 16500
-
-samplename = wprime1.9
-description = Wprime->munu, Tune Z2, Mass = 1.9 TeV (NNLO cross-section)
-x-section = 0.0165
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_1.9TeV.root
-Nprod_evt = 16500
-
-samplename = wprime2.0
-description = Wprime->munu, Tune Z2, Mass = 2.0 TeV (NNLO cross-section)
-x-section = 0.0115
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_2.0TeV.root
-Nprod_evt = 16500
-
-samplename = wprime2.1
-description = Wprime->munu, Tune Z2, Mass = 2.1 TeV (NNLO cross-section)
-x-section = 0.00821
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_2.1TeV.root
-Nprod_evt = 16500
-
-samplename = wprime2.2
-description = Wprime->munu, Tune Z2, Mass = 2.2 TeV (NNLO cross-section)
-x-section = 0.00596
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_2.2TeV.root
-Nprod_evt = 16500
-
-samplename = wprime2.3
-description = Wprime->munu, Tune Z2, Mass = 2.3 TeV (NNLO cross-section)
-x-section = 0.00431
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_2.3TeV.root
-Nprod_evt = 16500
-
-samplename = wprime2.4
-description = Wprime->munu, Tune Z2, Mass = 2.4 TeV (NNLO cross-section)
-x-section = 0.00323
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_2.4TeV.root
-Nprod_evt = 16500
-
-samplename = wprime2.5
-description = Wprime->munu, Tune Z2, Mass = 2.5 TeV (NNLO cross-section)
-x-section = 0.00244
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_2.5TeV.root
-Nprod_evt = 16500
-
-samplename = wprime2.7
-description = Wprime->munu, Tune Z2, Mass = 2.7 TeV (NNLO cross-section)
-x-section = 0.00143
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_2.7TeV.root
-Nprod_evt = 15960
-
-samplename = wprime3.0
-description = Wprime->munu, Tune Z2, Mass = 3.0 TeV (NNLO cross-section)
-x-section = 0.000742
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
-pathname = wprime_3.0TeV.root
-Nprod_evt = 16500
-
 samplename = wprime0.5
 description = Wprime->munu, Tune Z2, Mass = 0.5 TeV (NNLO cross-section)
-x-section = 12.91
+x-section = 17.726
 subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
 pathname = wprime_0.5TeV.root
 Nprod_evt = 10000
 
-samplename = wprime0.75
+samplename = wprime0.75 (cross-section is wrong! should be ~3.5pb)
 description = Wprime->munu, Tune Z2, Mass = 0.75 TeV (NNLO cross-section)
 x-section = 2.400
 subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
@@ -256,10 +165,101 @@ Nprod_evt = 10000
 
 samplename = wprime1.0
 description = Wprime->munu, Tune Z2, Mass = 1.0 TeV (NNLO cross-section)
-x-section = 0.6431
+x-section = 0.8856
 subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
 pathname = wprime_1.0TeV.root
 Nprod_evt = 10000
+
+samplename = wprime1.5
+description = Wprime->munu, Tune Z2, Mass = 1.5 TeV (NNLO cross-section)
+x-section = 0.0949
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_1.5TeV.root
+Nprod_evt = 16500
+
+samplename = wprime1.6
+description = Wprime->munu, Tune Z2, Mass = 1.6 TeV (NNLO cross-section)
+x-section = 0.0633
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_1.6TeV.root
+Nprod_evt = 16500
+
+samplename = wprime1.7
+description = Wprime->munu, Tune Z2, Mass = 1.7 TeV (NNLO cross-section)
+x-section = 0.0424
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_1.7TeV.root
+Nprod_evt = 16500
+
+samplename = wprime1.8
+description = Wprime->munu, Tune Z2, Mass = 1.8 TeV (NNLO cross-section)
+x-section = 0.0285
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_1.8TeV.root
+Nprod_evt = 16500
+
+samplename = wprime1.9
+description = Wprime->munu, Tune Z2, Mass = 1.9 TeV (NNLO cross-section)
+x-section = 0.0194
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_1.9TeV.root
+Nprod_evt = 16500
+
+samplename = wprime2.0
+description = Wprime->munu, Tune Z2, Mass = 2.0 TeV (NNLO cross-section)
+x-section = 0.0135
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_2.0TeV.root
+Nprod_evt = 16500
+
+samplename = wprime2.1
+description = Wprime->munu, Tune Z2, Mass = 2.1 TeV (NNLO cross-section)
+x-section = 0.009373
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_2.1TeV.root
+Nprod_evt = 16500
+
+samplename = wprime2.2
+description = Wprime->munu, Tune Z2, Mass = 2.2 TeV (NNLO cross-section)
+x-section = 0.006605
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_2.2TeV.root
+Nprod_evt = 16500
+
+samplename = wprime2.3
+description = Wprime->munu, Tune Z2, Mass = 2.3 TeV (NNLO cross-section)
+x-section = 0.00472
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_2.3TeV.root
+Nprod_evt = 16500
+
+samplename = wprime2.4
+description = Wprime->munu, Tune Z2, Mass = 2.4 TeV (NNLO cross-section)
+x-section = 0.003398
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_2.4TeV.root
+Nprod_evt = 16500
+
+samplename = wprime2.5
+description = Wprime->munu, Tune Z2, Mass = 2.5 TeV (NNLO cross-section)
+x-section = 0.002483
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_2.5TeV.root
+Nprod_evt = 16500
+
+samplename = wprime2.7 (check cross-section!)
+description = Wprime->munu, Tune Z2, Mass = 2.7 TeV (NNLO cross-section)
+x-section = 0.00143
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_2.7TeV.root
+Nprod_evt = 15960
+
+samplename = wprime3.0
+description = Wprime->munu, Tune Z2, Mass = 3.0 TeV (NNLO cross-section)
+x-section = 0.0007068
+subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
+pathname = wprime_3.0TeV.root
+Nprod_evt = 16500
 
 DONE
 
