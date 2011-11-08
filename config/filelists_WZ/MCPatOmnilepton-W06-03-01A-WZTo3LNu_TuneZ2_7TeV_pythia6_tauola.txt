@@ -1,0 +1,14 @@
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-06E4F2A8-9A9D-E011-BBCD-001A92971AD0.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-304ADAC0-979D-E011-A272-003048679296.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-3AF236E1-A49D-E011-A2E1-00261894388B.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-485E2549-CA9D-E011-B95C-001A92810AE2.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-56E25FBD-4C9E-E011-9DCA-00261894398D.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-7C080F32-A19D-E011-BEE5-003048679296.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-82C2D94A-A89D-E011-8A29-00261894386D.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-90E0B319-889D-E011-B784-0026189438AD.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-BE039889-B09D-E011-891B-001BFCDBD160.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-D63DAB0D-B39D-E011-9DB7-0018F3D096BA.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-D69407EB-8B9D-E011-96FF-001A92810A98.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-EA9EDAA5-CB9D-E011-901D-003048679076.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-F09BBFF3-449E-E011-88BD-0026189438C0.root
+/store/user/jklukas/MC-W06-03-01A/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-FA03D682-8D9D-E011-BCCD-0026189438C1.root
