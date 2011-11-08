@@ -64,11 +64,15 @@ public:
   bool passValidVZCandCut();
 
 ///My calculated qualities//////////////////
+  int runNumber_;
+  int lumiNumber_;
+  int evtNumber_;
   float VZMass_;
   float Zpt_;
   float ZMass_;
   float Vpt_;
   float VMass_;
+  float Q_;
   uint evtType_;
 
 
@@ -185,7 +189,7 @@ public:
 
   /////////////////////
   std::vector<TH1F*> hVZMass, hVZeeMass, hVZmmMass;
-  std::vector<TH1F*> hVZpt;
+  std::vector<TH1F*> hVZpt, hQ;
 
   std::vector<TH1F*> hZMass, hZeeMass, hZmmMass;
   std::vector<TH1F*> hZpt;

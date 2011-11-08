@@ -149,6 +149,9 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   defineHistoset("hVZpt", "Reconstructed VZ Transverse Momentum",
                   "p_{VZ}^{T} (GeV)", 100, 0, 1000, "GeV", hVZpt,dir);
 
+  defineHistoset("hQ", "Q=M_{VZ} - M_{V} - M_{Z}",
+                  "Q (GeV)", 50, 0, 2500, "GeV", hQ,dir);
+
   defineHistoset("hZMass" , "Reconstructed Mass of Z",
                   "M_{Z} (GeV)", 30, 60, 120, "GeV", hZMass,dir);
   defineHistoset("hZeeMass" , "Reconstructed Mass of Zee",
@@ -173,12 +176,16 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   cout << "Histos declared" << endl;
 
   tVZCand = dir.make<TTree>("tVZCand", "Analysis Variables after VZCand");//Only 1 for now;
+  tVZCand->Branch("Run", &runNumber_);
+  tVZCand->Branch("Lumi", &lumiNumber_);
+  tVZCand->Branch("Event", &evtNumber_);
   tVZCand->Branch("VZMass", &VZMass_);
   tVZCand->Branch("EvtType", &evtType_);
   tVZCand->Branch("ZMass", &ZMass_);
   tVZCand->Branch("VMass", &VMass_);
   tVZCand->Branch("Zpt", &Zpt_);
   tVZCand->Branch("Vpt", &Vpt_);
+  tVZCand->Branch("Q", &Q_);
   tVZCand->Branch("weight", &weight_);
 
 
@@ -188,6 +195,9 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
 void 
 HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   clearEvtVariables();
+  runNumber_ = event.id().run();
+  lumiNumber_ = event.id().luminosityBlock();
+  evtNumber_ = event.id().event();
   if(debugme) WPrimeUtil::printEvent(event);
   
   // Preselection - skip events that don't look promising
@@ -492,6 +502,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   tabulateEvent(iCut, weight_); ++iCut;
   h_MET_AllCuts->Fill(met_.et(), weight_);
 
+  Q_ = hadVZ_.mass() - zCand_.mass() - vCand_.mass();
   fillValidVZHistos();
 
   //get Trigger 
@@ -578,6 +589,7 @@ HadronicVZAnalyzer::clearEvtVariables(){
   Zpt_ = -999;
   VMass_=-999;
   Vpt_ = -999;
+  Q_ = -999;
   weight_ = 0;
   genMuons.clear();
 
