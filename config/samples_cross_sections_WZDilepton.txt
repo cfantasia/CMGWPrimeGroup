@@ -1,169 +1,250 @@
-Top Level Dir = root://cmsxrootd.hep.wisc.edu/
-integrated lumi = 1092 pb^-1
+Top Level Dir = 
+integrated lumi = 4699 pb^-1
 
 samplename = DYJetsToLL
 description = DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 3048
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02B-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola.txt
-Nprod_evt = 35673968
-
-DONE
-
-samplename = data
-description = Double E+Mu
-x-section = 1
-pathname = filelists_WZ/DileptonPatTuple-W05-08-02-DoubleLepton-Run2011A.txt
-Nprod_evt = 9999999
-
-samplename = DYJetsToLL
-description = DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola
-x-section = 3048
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02B-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola.txt
-Nprod_evt = 35673968
+pathname = filelists_WZ/MCPatDilepton-W06-03-01A-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola.txt
+Nprod_evt = 36277961
 
 samplename = GVJets
 description = GVJets_7TeV-madgraph
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 173
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-GVJets_7TeV-madgraph.txt
+pathname = filelists_WZ/MCPatDilepton-W06-03-01A-GVJets_7TeV-madgraph.txt
 Nprod_evt = 1067879
 
 samplename = TTJets
 description = TTJets_TuneZ2_7TeV-madgraph-tauola
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 157.5
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-TTJets_TuneZ2_7TeV-madgraph-tauola.txt
+pathname = filelists_WZ/MCPatDilepton-W06-03-01A-TTJets_TuneZ2_7TeV-madgraph-tauola.txt
 Nprod_evt = 3701947
 
 samplename = WJetsToLNu
 description = WJetsToLNu_TuneZ2_7TeV-madgraph-tauola
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 31314
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-WJetsToLNu_TuneZ2_7TeV-madgraph-tauola.txt
-Nprod_evt = 42865843
+pathname = filelists_WZ/MCPatDilepton-W06-03-01A-WJetsToLNu_TuneZ2_7TeV-madgraph-tauola.txt
+Nprod_evt = 81352581
 
 samplename = WWTo2L2Nu
-description = WWTo2L2Nu_TuneZ2_7TeV-pythia6
+description = WWTo2L2Nu_TuneZ2_7TeV-pythia6_tauola
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 4.65
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola.txt
+pathname = filelists_WZ/MCPatDilepton-W06-03-01A-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola.txt
 Nprod_evt = 210667
 
-samplename = WZTo3LNu
-description = WZTo3LNu_7TeV-pythia6
+samplename = WZJetsTo3LNu
+description = WZJetsTo3LNu_TuneZ2_7TeV-madgraph-tauola.txt
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.594
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola.txt
-Nprod_evt = 204725
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WZJetsTo3LNu_TuneZ2_7TeV-madgraph-tauola.txt
+Nprod_evt = 1221134
+
+samplename = ZZ
+description = ZZTo2e2mu_7TeV-powheg-pythia6
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.03078
+pathname = filelists_WZ/MCPatDilepton-W06-03-01A-ZZTo2e2mu_7TeV-powheg-pythia6.txt
+Nprod_evt = 499917
+
+samplename = ZZ
+description = ZZTo4e_7TeV-powheg-pythia6
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.0154
+pathname = filelists_WZ/MCPatDilepton-W06-03-01A-ZZTo4e_7TeV-powheg-pythia6.txt
+Nprod_evt = 499929
+
+samplename = ZZ
+description = ZZTo4mu_7TeV-powheg-pythia6
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.0154
+pathname = filelists_WZ/MCPatDilepton-W06-03-01A-ZZTo4mu_7TeV-powheg-pythia6.txt
+Nprod_evt = 499918
 
 samplename = WprimeToWZTo3LNu_M-300
 description = WprimeToWZTo3LNu_M-300
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.3783
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-WprimeToWZTo3LNu_M-300_7TeV-pythia6.txt
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-300_7TeV-pythia6.txt
 Nprod_evt = 11000
 
 samplename = WprimeToWZTo3LNu_M-400
 description = WprimeToWZTo3LNu_M-400
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.1213
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-WprimeToWZTo3LNu_M-400_7TeV-pythia6.txt
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-400_7TeV-pythia6.txt
 Nprod_evt = 11000
 
 samplename = WprimeToWZTo3LNu_M-500
 description = WprimeToWZTo3LNu_M-500
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.04770
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-WprimeToWZTo3LNu_M-500_7TeV-pythia6.txt
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-500_7TeV-pythia6.txt
 Nprod_evt = 11000
 
 samplename = WprimeToWZTo3LNu_M-600
 description = WprimeToWZTo3LNu_M-600
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.02149
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-WprimeToWZTo3LNu_M-600_7TeV-pythia6.txt
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-600_7TeV-pythia6.txt
 Nprod_evt = 11000
 
 samplename = WprimeToWZTo3LNu_M-700
 description = WprimeToWZTo3LNu_M-700
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.01091
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-WprimeToWZTo3LNu_M-700_7TeV-pythia6.txt
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-700_7TeV-pythia6.txt
 Nprod_evt = 11000
 
 samplename = WprimeToWZTo3LNu_M-800
 description = WprimeToWZTo3LNu_M-800
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.005816
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-WprimeToWZTo3LNu_M-800_7TeV-pythia6.txt
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-800_7TeV-pythia6.txt
 Nprod_evt = 11000
 
 samplename = WprimeToWZTo3LNu_M-900
 description = WprimeToWZTo3LNu_M-900
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.003316
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-WprimeToWZTo3LNu_M-900_7TeV-pythia6.txt
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-900_7TeV-pythia6.txt
 Nprod_evt = 11000
+
+samplename = WprimeToWZTo3LNu_M-1000
+description = WprimeToWZTo3LNu_M-1000
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.001973
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-1000_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = WprimeToWZTo3LNu_M-1100
+description = WprimeToWZTo3LNu_M-1100
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.001190
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-1100_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = WprimeToWZTo3LNu_M-1200
+description = WprimeToWZTo3LNu_M-1200
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.0007482
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-1200_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = WprimeToWZTo3LNu_M-1300
+description = WprimeToWZTo3LNu_M-1300
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.0004758
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-1300_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = WprimeToWZTo3LNu_M-1400
+description = WprimeToWZTo3LNu_M-1400
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.0003071
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-1400_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = WprimeToWZTo3LNu_M-1500
+description = WprimeToWZTo3LNu_M-1500
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.0002020
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WprimeToWZTo3LNu_M-1500_7TeV-pythia6.txt
+Nprod_evt = 11000
+
+samplename = data
+description = Double Mu May 10
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 1
+pathname = filelists_WZ/DataPatDilepton-W06-04-01A-DoubleMu-Run2011A-May10ReReco-v1.txt
+Nprod_evt = 9999999
+
+samplename = data
+description = Double E May 10
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 1
+pathname = filelists_WZ/DataPatDilepton-W06-04-01A-DoubleElectron-Run2011A-May10ReReco-v1.txt
+Nprod_evt = 9999999
+
+samplename = data
+description = Double Mu Prompt V4
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 1
+pathname = filelists_WZ/DataPatDilepton-W06-04-01A-DoubleMu-Run2011A-PromptReco-v4.txt
+Nprod_evt = 9999999
+
+samplename = data
+description = Double E Prompt V4
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 1
+pathname = filelists_WZ/DataPatDilepton-W06-04-01A-DoubleElectron-Run2011A-PromptReco-v4.txt
+Nprod_evt = 9999999
+
+samplename = data
+description = Double Mu Aug 05
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 1
+pathname = filelists_WZ/DataPatDilepton-W06-04-01A-DoubleMu-Run2011A-05Aug2011-v1.txt
+Nprod_evt = 9999999
+
+samplename = data
+description = Double E Aug 05
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 1
+pathname = filelists_WZ/DataPatDilepton-W06-04-01A-DoubleElectron-Run2011A-05Aug2011-v1.txt
+Nprod_evt = 9999999
+
+samplename = data
+description = Double Mu Prompt V6
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 1
+pathname = filelists_WZ/DataPatDilepton-W06-04-01A-DoubleMu-Run2011A-PromptReco-v6.txt
+Nprod_evt = 9999999
+
+samplename = data
+description = Double E Prompt V6
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 1
+pathname = filelists_WZ/DataPatDilepton-W06-04-01A-DoubleElectron-Run2011A-PromptReco-v6.txt
+Nprod_evt = 9999999
+
+samplename = data
+description = Run 2011B Double Mu Prompt V1
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 1
+pathname = filelists_WZ/DataPatDilepton-W06-04-01A-DoubleMu-Run2011B-PromptReco-v1.txt
+Nprod_evt = 9999999
+
+samplename = data
+description = Run 2011B Double E Prompt V1
+x-section = 1
+subdir = root://cmsxrootd.hep.wisc.edu/
+pathname = filelists_WZ/DataPatDilepton-W06-04-01A-DoubleElectron-Run2011B-PromptReco-v1.txt
+Nprod_evt = 9999999
+
+DONE
 
 samplename = TC_WZ_300
 description = pythia_TC_WZ_300_413_GEN_SIMv1
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.05822
-pathname = filelists_WZ/MCPatDilepton-W05-08-04D-pythia_TC_WZ_300_413_GEN_SIMv1.txt
+pathname = filelists_WZ/MCPatDilepton-W05-08-04H-pythia_TC_WZ_300_413_GEN_SIMv1.txt
 Nprod_evt = 10000
 
 samplename = TC_WZ_400
 description = pythia_TC_WZ_400_413_GEN_SIMv1
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.01751
-pathname = filelists_WZ/MCPatDilepton-W05-08-04D-pythia_TC_WZ_400_413_GEN_SIMv1.txt
+pathname = filelists_WZ/MCPatDilepton-W05-08-04H-pythia_TC_WZ_400_413_GEN_SIMv1.txt
 Nprod_evt = 10000
 
 samplename = TC_WZ_500
 description = pythia_TC_WZ_500_413_GEN_SIMv1
+subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.007056
 pathname = filelists_WZ/MCPatDilepton-W05-08-04H-pythia_TC_WZ_500_413_GEN_SIMv1.txt
 Nprod_evt = 10000
-
-DONE
-
-samplename = ZBB0JetsToLNu
-description = ZBB0JetsToLNu_TuneZ2_7TeV-alpgen-tauola
-x-section = 2.9
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-ZBB0JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
-Nprod_evt = 347393
-
-samplename = ZBB1JetsToLNu
-description = ZBB1JetsToLNu_TuneZ2_7TeV-alpgen-tauola
-x-section = 1.645
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-ZBB1JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
-Nprod_evt = 202581
-
-samplename = ZBB2JetsToLNu
-description = ZBB2JetsToLNu_TuneZ2_7TeV-alpgen-tauola
-x-section = 0.622
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-ZBB2JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
-Nprod_evt = 10842
-
-samplename = ZBB3JetsToLNu
-description = ZBB3JetsToLNu_TuneZ2_7TeV-alpgen-tauola
-x-section = 0.273
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-ZBB3JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
-Nprod_evt = 10898
-
-samplename = ZCC0JetsToLNu
-description = ZCC0JetsToLNu_TuneZ2_7TeV-alpgen-tauola
-x-section = 2.92
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-ZCC0JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
-Nprod_evt = 438067
-
-samplename = ZCC1JetsToLNu
-description = ZCC1JetsToLNu_TuneZ2_7TeV-alpgen-tauola
-x-section = 1.629
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-ZCC1JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
-Nprod_evt = 184365
-
-samplename = ZCC2JetsToLNu
-description = ZCC2JetsToLNu_TuneZ2_7TeV-alpgen-tauola
-x-section = 0.626
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-ZCC2JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
-Nprod_evt = 10735
-
-samplename = ZCC3JetsToLNu
-description = ZCC3JetsToLNu_TuneZ2_7TeV-alpgen-tauola
-x-section = 0.28
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-ZCC3JetsToLNu_TuneZ2_7TeV-alpgen-tauola.txt
-Nprod_evt = 10177 
-
-samplename = ZZTo4L_TuneZ2
-description = ZZTo4L_TuneZ2_7TeV-pythia6-tauola
-x-section = 0.082
-pathname = filelists_WZ/DileptonMCPatTuple-W05-08-02-ZZTo4L_TuneZ2_7TeV-pythia6-tauola.txt
-Nprod_evt = 159600
 
