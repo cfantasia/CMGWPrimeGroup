@@ -7,7 +7,7 @@ bool debug_ = false;
 bool useHists_ = false;
 
 void
-ExpectedEvts(string inName, int windFracTenths=-1, string opt=""){
+ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt=""){
   if(opt.find("debug") != string::npos) debug_ = true;
   if(opt.find("useHists") != string::npos) useHists_ = true;
 
@@ -52,6 +52,8 @@ ExpectedEvts(string inName, int windFracTenths=-1, string opt=""){
     BkgSamples.push_back("WJetsToLNu");
     BkgSamples.push_back("GVJets");  
     BkgSamples.push_back("ZZ"); 
+    BkgSamples.push_back("TTJets"); 
+    BkgSamples.push_back("DYJetsToLL"); 
     BkgSamples.push_back("WZJetsTo3LNu");
 
     dataSamples.push_back("data");
@@ -61,13 +63,12 @@ ExpectedEvts(string inName, int windFracTenths=-1, string opt=""){
     histName = "hWZMass_AllCuts";
     varName = "WZMass";
   }else if(inName.find("HadVZ") != string::npos){
-    BkgSamples.push_back("Summer11_ZZ");
     BkgSamples.push_back("Summer11_ZZJets_2l2q");
     BkgSamples.push_back("Summer11_VGamma");
     BkgSamples.push_back("Summer11_WW");
     BkgSamples.push_back("Summer11_WZ");
     BkgSamples.push_back("Summer11_TTJets");
-    BkgSamples.push_back("Summer11_DYJetsToLL");
+    BkgSamples.push_back("Summer11_DYJetsToLL_PtZ100");
 
     dataSamples.push_back("data_DoubleMu-Run2011A-May10ReReco-v1");
     dataSamples.push_back("data_SingleMu-Run2011A-May10ReReco-v1");
@@ -104,7 +105,7 @@ ExpectedEvts(string inName, int windFracTenths=-1, string opt=""){
   }
   
   TTree* tEvts = new TTree("tEvts", "Cut Values per sample");
-  tEvts->ReadFile("cutValues.dat");
+  tEvts->ReadFile(config.c_str());
   
   double lumi = GetLumiUsed(f);
        
@@ -202,8 +203,9 @@ ExpectedEvts(string inName, int windFracTenths=-1, string opt=""){
       const double ZJets = tEvts->GetVal(7)[isample];
       const double sZJets = tEvts->GetVal(8)[isample];
 
-      AddDataDriven(nMCEvts, statMCEvts, ZJets, sZJets);
-      AddDataDriven(nBkgEvts, statBkgEvts, ZJets, sZJets);
+      //Not using anymore
+      //AddDataDriven(nMCEvts, statMCEvts, ZJets, sZJets);
+      //AddDataDriven(nBkgEvts, statBkgEvts, ZJets, sZJets);
     }
     if(debug_){
       cout<<"# of All Evts in Mass Window is "<<nMCEvts<<" +/- "<<statMCEvts<<" per "<<lumi<<" inv pb "<<endl;
