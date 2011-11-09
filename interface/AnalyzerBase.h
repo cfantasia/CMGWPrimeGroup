@@ -28,12 +28,18 @@ public:
   virtual void defineResolutionHistos(const TFileDirectory & dir, float Mass){}
   virtual void defineHistoset(const std::string& n, const std::string& t, 
 			      const std::string& xtitle, int nbins, 
-			      float min, float max, 
+			      float xmin, float xmax, 
 			      const std::string& units,
                                std::vector<TH1F*>& h, const TFileDirectory& d);
   void defineOneHisto(const std::string & name, const std::string & title, 
-		      const std::string & xtitle, int nbins, float min, float max,
+		      const std::string & xtitle, int nbins, float xmin, float xmax,
 		      const std::string & units,TH1F* & h,const TFileDirectory & d);
+
+  // mass format expected in <x>.<y> TeV, e.g. "1.2", corresponding to 1.2 TeV
+  // channel could be "e", "mu", "ee", "mumu", etc
+  void createResolutionHist(const TFileDirectory & d, float Mass,
+			    const std::string & channel, TH1F* & put_here);
+
   virtual void resetCounters();
   virtual void clearEvtVariables();
 
@@ -234,6 +240,15 @@ protected:
 
   std::vector<unsigned> muon_reconstructors;
 
+  // returns TH1F pointer that corresponds to (mass resolution of) 
+  // current signal sample;
+  TH1F * & getMassResHist();
+
+ private:
+  int massRes_index;
+  std::vector<TH1F*> massRes; // one histogram for each signal sample
+  int NumSigSamples;
+  void setNumSignalSamples();
 };
 
 #endif//#define _AnalyzerBase_h_
