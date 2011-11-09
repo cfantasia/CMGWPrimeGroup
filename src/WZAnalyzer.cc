@@ -19,7 +19,7 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   minLeadPt_ = cfg.getParameter<double>("minLeadPt");
 
 // +++++++++++++++++++Ht Cuts
-  minHt_ = cfg.getParameter<double>("minHt");
+  minHt_ = cfg.getUntrackedParameter<double>("minHt", -1);
 
 // +++++++++++++++++++W Cuts
   minWlepPt_ = cfg.getParameter<double>("minWlepPt");
