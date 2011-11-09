@@ -14,9 +14,9 @@ const std::string elmet_cuts_desc_long[Num_elmet_cuts]= {"Single-electron HLT", 
 
 
 // +++++++++++++++++++++++++++++++electron-pt histogram parameters
-const unsigned  nBinEtEle = 140;//45; // 400; // 45; // 18; 200; 380; 
+const unsigned  nBinEtEle = 750;//45; // 400; // 45; // 18; 200; 380; 
 const float minEtEle = 0;
-const float  maxEtEle = 800; // 800; 2000;
+const float  maxEtEle = 1500; // 800; 2000;
 // +++++++++++++++++++++++++++++++electron-eta histogram parameters
 const unsigned nBinEtaEle = 28;
 const float minEtaEle = -2.5;
@@ -34,9 +34,9 @@ const unsigned nBinIsoEle = 25;
 const float minIsoEle = 0;
 const float maxIsoEle = 0.5;
 // +++++++++++++++++++++++++++++++tmass histogram parameters
-const unsigned nBinTmEle = 340;
+const unsigned nBinTmEle = 1250;
 const float minTmEle = 0;
-const float maxTmEle = 1700;
+const float maxTmEle = 2500;
 
 
 #endif // #ifndef _elmet_histo_constants_h__
