@@ -25,6 +25,7 @@ EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,int fileToRun) :
   doEoP_ = cfg.getParameter<bool>("doEoP");
   electronEoverPthreshold_  = cfg.getParameter<double>("electronEoverPthreshold");
 
+  elMetRes.assign(NumSigSamples, NULL);
   setupCutOrder();
   
   analysis = "eleMET";
@@ -33,6 +34,13 @@ EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,int fileToRun) :
 EleMETAnalyzer::~EleMETAnalyzer()
 {
 }
+
+void EleMETAnalyzer::defineResolutionHistos(const TFileDirectory & dir, float Mass)
+{
+  int index = getSignalSampleIndex();
+  createResolutionHist(dir, Mass, "el", elMetRes[index]);
+}
+
 
 void EleMETAnalyzer::defineHistos(const TFileDirectory & dir)
 {

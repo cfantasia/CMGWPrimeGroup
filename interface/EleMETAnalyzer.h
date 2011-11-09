@@ -78,6 +78,7 @@ class EleMETAnalyzer : public AnalyzerBase
   void defineHistos_ElectronEta(const TFileDirectory & dir);
   void defineHistos_ElectronPhi(const TFileDirectory & dir);
   void defineHistos_TMass(const TFileDirectory & dir);
+  void defineResolutionHistos(const TFileDirectory & dir, float Mass);
 
   void setupCutOrder();
   selection_map_elmet cuts;
@@ -148,6 +149,10 @@ class EleMETAnalyzer : public AnalyzerBase
   TH1F * hETA[Num_elmet_cuts];
   TH1F * hPHI[Num_elmet_cuts];
   TH1F * hTM[Num_elmet_cuts];
+
+  // one El+MET resolution histogram for each signal sample
+  std::vector<TH1F*> elMetRes; 
+
 
   std::string analysis;
   WprimeVariables vars;
