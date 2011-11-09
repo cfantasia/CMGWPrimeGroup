@@ -84,15 +84,6 @@ SampleName(int code){
 
 float
 nGenerated(string sample){
-  //new
-  //if(!sample.find("WprimeToWZTo3LNu_M-1100")) return 19425;
-  //if(!sample.find("WprimeToWZTo3LNu_M-1300")) return 18425;
-  //if(!sample.find("WprimeToWZTo3LNu_M-1500")) return 16025;
-  //orig
-  if(!sample.find("WprimeToWZTo3LNu_M-1100")) return 18700;
-  if(!sample.find("WprimeToWZTo3LNu_M-1300")) return 18750;
-  if(!sample.find("WprimeToWZTo3LNu_M-1500")) return 19750;
-
   if(!sample.find("WprimeToWZTo3LNu_M-")) return 11000;
   if(!sample.find("TC_WZ_"))  return 10000;
   if(sample.find("RSZZmmjj_750") != string::npos)  return 46754;
@@ -121,6 +112,7 @@ SysErr(string sample){
   if(!sample.find("TC_WZ_300"))  return 0.0447;
   if(!sample.find("TC_WZ_400"))  return 0.0469;
   if(!sample.find("TC_WZ_500"))  return 0.0495;
+  if(!sample.find("WprimeToWZTo3LNu_M-")) return 0.0635;//Assume >900 is same as 900
   return 0;
 }
 
@@ -136,6 +128,7 @@ BkgSysErrBySignal(string signal){
     if(!signal.find("TC_WZ_300")) return 0.223473;
     if(!signal.find("TC_WZ_400")) return 0.0404969;
     if(!signal.find("TC_WZ_500")) return 0.155048;
+    if(!signal.find("WprimeToWZTo3LNu_M-")) return 0.063561;//Assume >900 is same as 900
     
     return 0;
 }
@@ -159,6 +152,7 @@ XSecTCWZ(float rho, float pi){
   tXsec->Draw("Xsec", Form("Rho==%f && Pi==%f", 
                            rho, pi), "goff");
   
+  //std::cout<<Form("Rho==%f && Pi==%f", rho, pi)<<std::endl;
   assert(tXsec->GetSelectedRows() == 1);
   float retval = tXsec->GetV1()[0];
   delete tXsec;
@@ -258,4 +252,19 @@ KFactor(string sample){
     cout<<"Didn't find the sample "<<sample
         <<" Not weighted!!!!!\n\n\n";
   return 1.;
+}
+
+float Slope(const float x1, const float y1,
+            const float x2, const float y2){
+  return (y2-y1)/(x2-x1);
+}
+float Intercept(const float x1, const float y1,
+                const float x2, const float y2){
+  return y1 - x1*(y2-y1)/(x2-x1);
+}
+
+float
+IntersectionX(const float s1, const float i1,
+              const float s2, const float i2){
+  return (i2-i1)/(s1-s2);
 }
