@@ -8,36 +8,44 @@
 
 int GetEndPoints(int & start, int& end, Double_t* y, float line);
 float FindLimit(const TGraph* xsec, const TGraph* limit);
-float Slope(const float x1, const float y1,
-            const float x2, const float y2);
-float Intercept(const float x1, const float y1,
-                const float x2, const float y2);
-float IntersectionX(const float s1, const float i1,
-                    const float s2, const float i2);
+
+struct SignalSample{
+  string name;
+  string sigXsec;
+  string massString;
+  string cutString;
+  string legendString;
+  TTree* tXsec;
+  int lineColor;
+  TGraph* gXsec;
+
+  SignalSample(){}
+  SignalSample(string n, string xsec, string mass, string cut, string leg, int lc=kBlack){
+    name = n;
+    sigXsec = xsec;
+    massString = mass;
+    cutString = cut;
+    legendString = leg;
+    tXsec = NULL;
+    lineColor = lc;
+    gXsec = NULL;
+  }
+};
+
 void
 PlotLimit(string inName){
   gErrorIgnoreLevel = kWarning;
   CMSstyle();
 
-  string sigXsec, legendString, massString, cutString, outFile;
+  string outFile;
+  vector<SignalSample> sigs;
   if(inName.find("WprimeWZ") != string::npos){
-    sigXsec = "xSec_WZ.dat";
-    legendString = "\\sigma_{W'}";
-    massString = "Mass:Xsec";
+    sigs.push_back(SignalSample("W'","xSec_WZ.dat",  "Mass:Xsec",  "", "\\sigma_{W'}"));
+    sigs.push_back(SignalSample("TC","xSec_TCWZ.dat",  "Rho:Xsec",  "Rho>=300 && Pi==Rho*3/4 - 25",  "\\sigma_{TC}", kRed));
     outFile = "limitVsMass_WZ.pdf";
-  }else if(inName.find("TCWZ") != string::npos){
-    sigXsec = "xSec_TCWZ.dat";
-    legendString = "\\sigma_{TC}";
-    massString = "Rho:Xsec";
-    cutString = "Rho>=300 && Pi==Rho*3/4 - 25";
-    outFile = "limitVsMass_TCWZ.pdf";
   }else if(inName.find("HadVZ") != string::npos){
-    cout<<"Using HadVZ\n";
-    sigXsec = "xSec_WprimeVZ.dat";
-    legendString = "\\sigma_{W'}";
-//    sigXsec = "xSec_RSZZ.dat";
-//    legendString = "\\sigma_{RS}";
-    massString = "Mass:Xsec";
+    sigs.push_back(SignalSample("W'","xSec_WprimeVZ.dat", "Mass:Xsec", "", "\\sigma_{W'}"));
+    sigs.push_back(SignalSample("RS","xSec_RSZZ.dat", "Mass:Xsec", "", "\\sigma_{RS}", kRed));
     outFile = "limitVsMass_VZ.pdf";
   }
 
@@ -45,9 +53,10 @@ PlotLimit(string inName){
   TTree* tLimit = new TTree("tLimit", "Limits");
   tLimit->ReadFile("nLimit.txt");
 
-  TTree* tXsec = new TTree("tXsec", "Signal Cross Sections");
-  tXsec->ReadFile(sigXsec.c_str());
-
+  for(unsigned iSig=0; iSig<sigs.size(); ++iSig){
+    sigs[iSig].tXsec = new TTree("tXsec", "Signal Cross Sections");
+    sigs[iSig].tXsec->ReadFile(sigs[iSig].sigXsec.c_str());
+  }
   TLatex latexLabel;
   latexLabel.SetNDC();
   latexLabel.SetTextSize(0.045);
@@ -67,7 +76,8 @@ PlotLimit(string inName){
   TGraph* gData;
 
   //cout<<"Drawing Limit Curve\n";
-  tLimit->Draw("SignalCode:Mass:Lumi:ObsLimit:ExpLimit:ExpLimitP1:ExpLimitM1:ExpLimitP2:ExpLimitM2", cutString.c_str(), "para goff");
+  ///////////tLimit->Draw("SignalCode:Mass:Lumi:ObsLimit:ExpLimit:ExpLimitP1:ExpLimitM1:ExpLimitP2:ExpLimitM2", cutString.c_str(), "para goff");
+  tLimit->Draw("SignalCode:Mass:Lumi:ObsLimit:ExpLimit:ExpLimitP1:ExpLimitM1:ExpLimitP2:ExpLimitM2", "", "para goff");
   n = tLimit->GetSelectedRows(); assert(n); 
   
   const Double_t* mass = tLimit->GetVal(1);
@@ -96,43 +106,46 @@ PlotLimit(string inName){
   g1Sigma->SetFillColor(kYellow);
   mg->Add(g1Sigma, "F");
   
+  glumi->SetLineColor(kBlack);
+  glumi->SetLineStyle(2);//dashed
+  mg->Add(glumi, "L");
+  legend->AddEntry(glumi,"Exp. Limit", "L");
+  legend->AddEntry(g1Sigma,"Exp. \\pm 1\\sigma", "F");
+  legend->AddEntry(g2Sigma,"Exp. \\pm 2\\sigma", "F");
+
   gData = new TGraph(n, mass, ObsLimit);
   gData->SetMarkerStyle(20);
   mg->Add(gData, "P");
   legend->AddEntry(gData,"Obs. Limit", "P");
-  
-  
-  glumi->SetLineColor(kBlack);   
-  mg->Add(glumi, "L");
-  legend->AddEntry(glumi,"Exp. Limit", "L");
-  legend->AddEntry(g1Sigma,"\\pm 1\\sigma", "F");
-  legend->AddEntry(g2Sigma,"\\pm 2\\sigma", "F");
-  
-  
-  float limit(-1);
-  
-  tXsec->Draw(massString.c_str(), cutString.c_str(), "goff");
-  n = tXsec->GetSelectedRows(); assert(n);
-  x = new float[n]; y = new float[n];
-  for(int i=0; i<n; ++i){
-    x[i] = tXsec->GetV1()[i];
-    y[i] = tXsec->GetV2()[i];
-  }
-  TGraph* gxsec = new TGraph(n, x, y);
-  mg->Add(gxsec,"l");
-  legend->AddEntry(gxsec,legendString.c_str(), "L");
-  delete x; delete y;
-
-  limit = FindLimit(gxsec, gData); cout<<"Limit is "<<limit<<endl;
    
+  //////
+  
+  for(unsigned iSig=0; iSig<sigs.size(); ++iSig){
+    sigs[iSig].tXsec->Draw( sigs[iSig].massString.c_str(), sigs[iSig].cutString.c_str(), "goff");
+    n = sigs[iSig].tXsec->GetSelectedRows(); assert(n);
+    x = new float[n]; y = new float[n];
+    for(int i=0; i<n; ++i){
+      x[i] = sigs[iSig].tXsec->GetV1()[i];
+      y[i] = sigs[iSig].tXsec->GetV2()[i];
+    }
+    sigs[iSig].gXsec = new TGraph(n, x, y);
+    sigs[iSig].gXsec->SetLineColor(sigs[iSig].lineColor);
+    mg->Add(sigs[iSig].gXsec,"l");
+    legend->AddEntry(sigs[iSig].gXsec,sigs[iSig].legendString.c_str(), "L");
+    delete x; delete y;
+  }
 
-  //cout<<"Drawing multigraph"<<endl;
-  mg->SetMinimum(0.001);
+  cout<<"Drawing multigraph"<<endl;
+  mg->SetMinimum(0.0001);
   mg->Draw("a");
 
-  if(limit > 0.) 
-    latexLabel.DrawLatex(0.69, 0.75, Form("#font[132]{Limit = %.0f GeV}",limit));
-  
+  for(unsigned iSig=0; iSig<sigs.size(); ++iSig){
+    float limit(-1);
+    limit = FindLimit(sigs[iSig].gXsec, gData); 
+    cout<<sigs[iSig].name<<" Limit is "<<limit<<endl;
+    if(limit > 0.) 
+      latexLabel.DrawLatex(0.69, 0.75-iSig*0.05, Form("#font[132]{Limit_{%s} = %.0f GeV}",sigs[iSig].name.c_str(),limit));
+  }  
   latexLabel.DrawLatex(0.18, 0.96, "#font[132]{CMS Preliminary 2011}");
   latexLabel.DrawLatex(0.5, 0.955, "#font[132]{#sqrt{s} = 7 TeV}");
   latexLabel.DrawLatex(0.73, 0.87, Form("#font[132]{#intL dt = %.2f fb^{-1}}",lumi[0]/1000.));
@@ -144,6 +157,7 @@ PlotLimit(string inName){
   //legend->SetNColumns(2);
   legend->Draw();
 
+  cout<<"Saving as "<<outFile<<endl;
   c1->SaveAs(outFile.c_str());
 
   return;
@@ -161,50 +175,14 @@ GetEndPoints(int & start, int& end, Double_t* y, float line){
 
 float 
 FindLimit(const TGraph* xsec, const TGraph* limit){
-  int Nxsec = xsec->GetN();
-  Double_t* Xxsec = xsec->GetX(); 
-  Double_t* Yxsec = xsec->GetY(); 
-
-  int Nlimit = limit->GetN();
-  Double_t* Xlimit = limit->GetX(); 
-  Double_t* Ylimit = limit->GetY(); 
-  //assert(Nxsec == Nlimit);
-
-  int idx1(-1), idx2(-1);
-  int Npoints = min(Nxsec,Nlimit);
-  for(int i=0; i<Npoints; ++i){
-    if(Ylimit[i] > Yxsec[i]){
-      idx2=i; 
-      break;
-    }
+  float lower = min(xsec->GetX()[0], limit->GetX()[0]);
+  float upper = max(xsec->GetX()[xsec->GetN()-1], limit->GetX()[limit->GetN()-1]);
+  const float INC = 1;
+  for(float mass=lower; mass<upper; mass+=INC){
+    if(xsec->Eval(mass) < limit->Eval(mass)) return mass;
   }
-  if(idx2 < 1) return -1;
-  idx1 = max(0, idx2 -1);
-  
-  float s1(0.), i1(0.), s2(0.), i2(0.);
-  s1 = Slope(Xxsec[idx1], Yxsec[idx1],
-             Xxsec[idx2], Yxsec[idx2]);
-  i1 = Intercept(Xxsec[idx1], Yxsec[idx1],
-                 Xxsec[idx2], Yxsec[idx2]);
-  s2 = Slope(Xlimit[idx1], Ylimit[idx1],
-             Xlimit[idx2], Ylimit[idx2]);
-  i2 = Intercept(Xlimit[idx1], Ylimit[idx1],
-                 Xlimit[idx2], Ylimit[idx2]);
-  return IntersectionX(s1, i1, s2, i2);
+
+  return -1;
 }
 
-float Slope(const float x1, const float y1,
-            const float x2, const float y2){
-  return (y2-y1)/(x2-x1);
-}
-float Intercept(const float x1, const float y1,
-                const float x2, const float y2){
-  return y1 - x1*(y2-y1)/(x2-x1);
-}
-
-float
-IntersectionX(const float s1, const float i1,
-              const float s2, const float i2){
-  return (i2-i1)/(s1-s2);
-}
              
