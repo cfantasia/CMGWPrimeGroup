@@ -62,6 +62,7 @@ class MuMETAnalyzer : public AnalyzerBase
 
   void defineHistos(const TFileDirectory & dir);
   void defineHistos_TMvPT(const TFileDirectory & dir);
+  void defineResolutionHistos(const TFileDirectory & dir, float Mass);
 
   void setupCutOrder();
   selection_map_mumet cuts;
