@@ -42,13 +42,16 @@ const unsigned analysis_channel = 1;
 // electron channel: if want colored histogram set "wClr" to true. 
 bool wClr = true;
 
+// muon channel: if mumet_fits is true, sideband fits are done.
+bool mumet_fits = false;
+
 // availability of data + MC samples indicated in these arrays
 //const unsigned NbgdSamplesMuMET = 19;
-const unsigned NbgdSamplesMuMET = 10;
+const unsigned NbgdSamplesMuMET = 11;
 const string bgdNamesMuMET[NbgdSamplesMuMET] = {
   "WMuNu_highPt", "DYmumu_highPt", "DYtautau_highPt", "QCD_highPt", "ttbar_highPt",
   "WW_highPt", "WZ_highPt", "ZZ_highPt",
-  "WPlusTau_highPt", "WMinusTau_highPt"};
+  "WPlusTau_highPt", "WMinusTau_highPt", "WToMuNu_highPt_fullskim"};
 #if 0
   "WMinusMu_highPt", "WPlusMu_highPt",
   "DYmumu_lowPt", "DYtautau_lowPt",
@@ -59,8 +62,8 @@ const string bgdNamesMuMET[NbgdSamplesMuMET] = {
 #endif
 TH1F * bgdMuMET[NbgdSamplesMuMET] = {0};
 
-const unsigned NdataSamplesMuMET = 7;
-const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4", "data5", "data6", "data7"};
+const unsigned NdataSamplesMuMET = 8;
+const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4", "data5", "data6", "data7", "data8"};
 
 TH1F * dataMuMET[NdataSamplesMuMET] = {0};
 
@@ -345,7 +348,7 @@ void doPlots(int option)
   // =============== PLOT DISTRIBUTIONS HERE ========================
 
   TF1 *fit1, *fit2, *fit3;
-  if(analysis_channel == 1){
+  if(mumet_fits){
     fit1 = new TF1("fit1","[0]/(x+[1])**[2]",xmin,xmax);
     //fit1->SetParameters(3.1e12,-80.,3.);
     fit1->SetParameters(1e15,160,7.5); fit1->SetParNames("a","b","c");
@@ -368,7 +371,7 @@ void doPlots(int option)
   data->SetMinimum(0.001);
   
   data->Draw("e");
-  if(analysis_channel == 1) {fit1->Draw("same"); fit2->Draw("same"); fit3->Draw("same");}
+  if(mumet_fits) {fit1->Draw("same"); fit2->Draw("same"); fit3->Draw("same");}
   if(wClr && analysis_channel == 2)hsbgd->Draw("hist same");
   else bgd->Draw("hist same");
 
