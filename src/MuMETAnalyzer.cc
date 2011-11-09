@@ -21,6 +21,7 @@ MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,int fileToRun) :
   dumpHighPtMuonThreshold_ = cfg.getParameter<double>("dumpHighPtMuonThreshold");
   dumpHighMtMuonThreshold_ = cfg.getParameter<double>("dumpHighMtMuonThreshold");
   
+  muMetRes.assign(NumSigSamples, NULL);
   setupCutOrder();
 
 }
@@ -31,7 +32,8 @@ MuMETAnalyzer::~MuMETAnalyzer()
 
 void MuMETAnalyzer::defineResolutionHistos(const TFileDirectory & dir, float Mass)
 {
-  createResolutionHist(dir, Mass, "mu", getMassResHist());
+  int index = getSignalSampleIndex();
+  createResolutionHist(dir, Mass, "mu", muMetRes[index]);
 }
 
 

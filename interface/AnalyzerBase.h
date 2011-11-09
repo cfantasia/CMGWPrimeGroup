@@ -240,14 +240,13 @@ protected:
 
   std::vector<unsigned> muon_reconstructors;
 
-  // returns TH1F pointer that corresponds to (mass resolution of) 
-  // current signal sample;
-  TH1F * & getMassResHist();
+  int NumSigSamples;
+  
+  // return index of current signal sample (-1 if this is not a signal sample)
+  int getSignalSampleIndex();
 
  private:
-  int massRes_index;
-  std::vector<TH1F*> massRes; // one histogram for each signal sample
-  int NumSigSamples;
+  int signalSample_index;
   void setNumSignalSamples();
 };
 
