@@ -95,7 +95,11 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
         else
           new_file->weight = 1;
         cout << " Weight to be applied on " << new_file->samplename
-             << " sample = " << new_file->weight << endl << endl;
+             << " sample = " << new_file->weight << endl;
+	if(new_file->isSignal())
+	  cout << " This is a signal sample with mass = " 
+	       << new_file->signalMass << " TeV " << endl;
+	cout << endl;
         // all info should now be logged in; check!
         new_file->checkFile();
 	// if we made it here, everything looks good: 
@@ -284,6 +288,14 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
       in_file->x_sect = atof(new_line.substr(12, new_line.length() - 12).c_str());
       return;
     }
+
+  i = new_line.find("signalMass = ");
+  if(i != string::npos)
+    {
+      in_file->signalMass = atof(new_line.substr(13, new_line.length() - 13).c_str());
+      return;
+    }
+
 
   i = new_line.find("Nprod_evt = ");
   if(i != string::npos)
