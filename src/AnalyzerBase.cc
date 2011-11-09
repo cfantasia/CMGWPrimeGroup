@@ -52,6 +52,8 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
     }
   }
 
+  setNumSignalSamples();
+
   //////////////////////
 
    CutNames_ = cfg.getParameter<vstring>("Cuts");
@@ -150,6 +152,7 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   muon_reconstructors.push_back(kTPFMS);
   muon_reconstructors.push_back(kPICKY);
   //  muon_reconstructors.push_back(kPAT); <- this fails for non-Cory's pat-tuples
+
 }
 
 AnalyzerBase::~AnalyzerBase(){
@@ -538,9 +541,19 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
   TFileDirectory dir = fs->mkdir(fi->samplename); 
   defineHistos(dir);
   if(wprimeUtil_->isSignalSample())
-    defineResolutionHistos(dir, fi->signalMass);
+    {
+      ++massRes_index;
+      defineResolutionHistos(dir, fi->signalMass);
+    }
   resetCounters();
   fi->results.assign(NCuts_,wprime::FilterEff());
+}
+
+TH1F* & AnalyzerBase::getMassResHist()
+{
+  if(!wprimeUtil_->isSignalSample())
+    abort();
+  return massRes[massRes_index];
 }
 
 void AnalyzerBase::defineHistos(const TFileDirectory & dir){
@@ -555,7 +568,7 @@ void AnalyzerBase::defineHistos(const TFileDirectory & dir){
 void
 AnalyzerBase::defineHistoset(const string& n, const string& t, 
 			     const string& xtitle,
-			     int nbins, float min, float max, 
+			     int nbins, float xmin, float xmax, 
 			     const string& units,
 			     vector<TH1F*>& h, const TFileDirectory& d){
   h.assign(NCuts_,NULL);
@@ -563,21 +576,36 @@ AnalyzerBase::defineHistoset(const string& n, const string& t,
     {
       string name = n + "_" + CutNames_[i];
       string title = t + " (After " + CutDescs_[i] + " Cut)"; 
-      defineOneHisto(name, title, xtitle, nbins, min, max, units, h[i], d);
+      defineOneHisto(name, title, xtitle, nbins, xmin, xmax, units, h[i], d);
     }
+}
+
+// mass format expected in <x>.<y> TeV, e.g. "1.2", corresponding to 1.2 TeV
+// channel could be "e", "mu", "ee", "mumu", etc
+void AnalyzerBase::createResolutionHist(const TFileDirectory & d, float Mass,
+					const string & channel, 
+					TH1F* & put_here)
+{
+  string name = Form("g%.0f_", 10*Mass) + channel;
+  string title = string("Resolution function for M = ") + Form("%.1f", Mass) + 
+    string(" TeV (channel = ") + channel + string(")");
+  string xtitle = "GeV/c^{2}";
+  int nbins = 100;
+  float xmin = -300; float xmax = 300;
+  defineOneHisto(name, title, xtitle, nbins, xmin, xmax, "GeV", put_here, d);
 }
 
 void AnalyzerBase::defineOneHisto(const string & name, const string & title,
 				  const string & xtitle, int nbins,
-				  float min, float max,
+				  float xmin, float xmax,
 				  const string & units, TH1F* & h, 
 				  const TFileDirectory & d)
 {
-  float binWidth = (max-min)/nbins;
+  float binWidth = (xmax-xmin)/nbins;
   string title2 = title + ";" + xtitle + ";Events";
   if(units.compare("NONE"))
     title2 += Form(" / %.0f ",binWidth) + units;
-  h = d.make<TH1F>(name.c_str(),title2.c_str(),nbins,min,max);
+  h = d.make<TH1F>(name.c_str(),title2.c_str(),nbins,xmin,xmax);
 }
 
 void 
@@ -667,6 +695,19 @@ bool AnalyzerBase::jsonContainsEvent (const vector<edm::LuminosityBlockRange>&js
   return jsonVec.end() != iter;
 }
 
+void AnalyzerBase::setNumSignalSamples()
+{
+  NumSigSamples = 0;
+
+  vector<wprime::InputFile>::const_iterator it;
+  for(it = inputFiles_.begin(); it != inputFiles_.end(); ++it)
+      if(it->isSignal())
+	++NumSigSamples;
+	
+  // initialize vector of mass-resolution histograms
+  massRes.assign(NumSigSamples, NULL);
+  massRes_index = -1;
+}
 
 void AnalyzerBase::run()
 {
