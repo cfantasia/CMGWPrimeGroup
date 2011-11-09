@@ -48,7 +48,7 @@ void get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
                       const std::string& objName, const std::string& variable,
                       const std::string& cuts, TH1F & hist){
   for(unsigned j=0; j<samples.size(); ++j){
-    std::string fullName = samples[j] + "/" + objName; 
+    std::string fullName = samples[j] + "/" + objName; //std::cout<<"tree name is "<<fullName<<std::endl;
     TTree* tree = (TTree*) f->Get(fullName.c_str()); assert(tree != NULL);
     tree->Draw(Form("weight:%s",variable.c_str()), cuts.c_str(), "goff");
     int n = tree->GetSelectedRows();
@@ -82,11 +82,9 @@ void get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
 float
 GetLumiUsed(TFile* f){
   TH1F* hLumi = (TH1F*) f->Get("lumi_ipb");
-  TH1F* hNFiles = (TH1F*) f->Get("hFilecounter");
-  bool valid = hLumi && hNFiles;
+  bool valid = hLumi;
   if(!hLumi) cout<<" Failed getting hLumi"<<endl;
-  if(!hNFiles) cout<<" Failed getting hNFiles"<<endl;
-  return valid ? hLumi->GetBinContent(1) / hNFiles->GetBinContent(1) : -1;
+  return valid ? hLumi->GetBinContent(1) / hLumi->GetBinContent(2) : -1;
 }
 
 #endif//#define _common_h_
