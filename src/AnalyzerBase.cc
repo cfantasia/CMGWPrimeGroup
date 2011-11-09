@@ -537,6 +537,9 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
 
   TFileDirectory dir = fs->mkdir(fi->samplename); 
   defineHistos(dir);
+  if(wprimeUtil_->isSignalSample())
+    defineResolutionHistos(dir, fi->signalMass);
+
   resetCounters();
   fi->results.assign(NCuts_,wprime::FilterEff());
 }
