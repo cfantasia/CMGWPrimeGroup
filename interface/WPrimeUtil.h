@@ -69,6 +69,9 @@ class WPrimeUtil
   // true if current file under processing contains "data" in name
   inline bool runningOnData() const{return runningOnData_;};
   inline void setRunningOnData(){ runningOnData_ = (getSampleName().find("data") != std::string::npos);};
+  // true if current file under processing is signal sample
+  inline bool isSignalSample() const {return isSignalSample_;}
+  inline void setIsSignalSample(bool flag){isSignalSample_ = flag;}
 
   //Check if Run/Evt is in Debug list
   bool DebugEvent(edm::EventBase const& event) const;
@@ -332,6 +335,7 @@ private:
   float sampleweight_;
   float weight_;
   bool runningOnData_;
+  bool isSignalSample_;
   static bool warningShown_;
   std::vector<edm::EventID> vEventsToDebug_;
 
