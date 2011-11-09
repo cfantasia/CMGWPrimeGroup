@@ -537,9 +537,7 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
 
   TFileDirectory dir = fs->mkdir(fi->samplename); 
   defineHistos(dir);
-  if(wprimeUtil_->isSignalSample())
-    defineResolutionHistos(dir, fi->signalMass);
-
+  defineResolutionHistos(dir, fi->signalMass);
   resetCounters();
   fi->results.assign(NCuts_,wprime::FilterEff());
 }
@@ -554,21 +552,31 @@ void AnalyzerBase::defineHistos(const TFileDirectory & dir){
 }//defineHistos
 
 void
-AnalyzerBase::defineHistoset(const string& n, const string& t, const string& xtitle,
-                              const int& nbins, const float& min, const float& max, const string& units,
-                              vector<TH1F*>& h, const TFileDirectory& d){
+AnalyzerBase::defineHistoset(const string& n, const string& t, 
+			     const string& xtitle,
+			     int nbins, float min, float max, 
+			     const string& units,
+			     vector<TH1F*>& h, const TFileDirectory& d){
   h.assign(NCuts_,NULL);
-  
+  for(int i=0; i<NCuts_; ++i)
+    {
+      string name = n + "_" + CutNames_[i];
+      string title = t + " (After " + CutDescs_[i] + " Cut);"; 
+      defineOneHisto(name, title, xtitle, nbins, min, max, units, h[i], d);
+    }
+}
+
+void AnalyzerBase::defineOneHisto(const string & name, const string & title,
+				  const string & xtitle, int nbins,
+				  float min, float max,
+				  const string & units, TH1F* & h, 
+				  const TFileDirectory & d)
+{
   float binWidth = (max-min)/nbins;
-  for(int i=0; i<NCuts_; ++i){
-    
-    string name = n + "_" + CutNames_[i];
-    string title = t + " (After " + CutDescs_[i] + " Cut);"; 
-    title += xtitle + ";Events";
-    if(units.compare("NONE"))
-      title += Form(" / %.0f ",binWidth) + units;
-    h[i] = d.make<TH1F>(name.c_str(),title.c_str(),nbins,min,max);
-  }
+  string title2 = title + xtitle + ";Events";
+  if(units.compare("NONE"))
+    title2 += Form(" / %.0f ",binWidth) + units;
+  h = d.make<TH1F>(name.c_str(),title2.c_str(),nbins,min,max);
 }
 
 void 

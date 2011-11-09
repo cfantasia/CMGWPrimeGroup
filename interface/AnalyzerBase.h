@@ -26,9 +26,14 @@ public:
   virtual void fillHistos(const int& index, const float& weight=1.) = 0;//Pure Virtual
   virtual void defineHistos(const TFileDirectory & dir);
   virtual void defineResolutionHistos(const TFileDirectory & dir, float Mass){}
-  virtual void defineHistoset(const std::string& n, const std::string& t, const std::string& xtitle,
-                               const int& nbins, const float& min, const float& max, const std::string& units,
+  virtual void defineHistoset(const std::string& n, const std::string& t, 
+			      const std::string& xtitle, int nbins, 
+			      float min, float max, 
+			      const std::string& units,
                                std::vector<TH1F*>& h, const TFileDirectory& d);
+  void defineOneHisto(const std::string & name, const std::string & title, 
+		      const std::string & xtitle, int nbins, float min, float max,
+		      const std::string & units,TH1F* & h,const TFileDirectory & d);
   virtual void resetCounters();
   virtual void clearEvtVariables();
 
