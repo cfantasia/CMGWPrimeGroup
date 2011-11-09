@@ -562,7 +562,7 @@ AnalyzerBase::defineHistoset(const string& n, const string& t,
   for(int i=0; i<NCuts_; ++i)
     {
       string name = n + "_" + CutNames_[i];
-      string title = t + " (After " + CutDescs_[i] + " Cut);"; 
+      string title = t + " (After " + CutDescs_[i] + " Cut)"; 
       defineOneHisto(name, title, xtitle, nbins, min, max, units, h[i], d);
     }
 }
@@ -574,7 +574,7 @@ void AnalyzerBase::defineOneHisto(const string & name, const string & title,
 				  const TFileDirectory & d)
 {
   float binWidth = (max-min)/nbins;
-  string title2 = title + xtitle + ";Events";
+  string title2 = title + ";" + xtitle + ";Events";
   if(units.compare("NONE"))
     title2 += Form(" / %.0f ",binWidth) + units;
   h = d.make<TH1F>(name.c_str(),title2.c_str(),nbins,min,max);
