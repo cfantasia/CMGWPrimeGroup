@@ -40,15 +40,19 @@ process.WprimeAnalyzer.endcapCuts = heepEndcapCuts
 #process.WprimeAnalyzer.endcapCuts = wp80EndcapCuts
 
 #for trigger
+# Summer11 MC :
+# "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2","HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v1","HLT_Ele45_CaloIdVT_TrkIdT_v2"
+# 
 process.WprimeAnalyzer.triggerResults = cms.InputTag("TriggerResults::HLT")
-process.WprimeAnalyzer.hltPaths = cms.vstring('HLT_Ele22_SW_TighterEleId_L1R_v1','HLT_Ele22_SW_TighterEleId_L1R_v2','HLT_Ele22_SW_TighterEleId_L1R_v3',
+process.WprimeAnalyzer.hltPaths = cms.vstring(
     'HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v1','HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2','HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v3',
     'HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v1','HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2','HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v3',
     'HLT_Ele45_CaloIdVT_TrkIdT_v1','HLT_Ele45_CaloIdVT_TrkIdT_v2','HLT_Ele45_CaloIdVT_TrkIdT_v3',
     'HLT_Ele52_CaloIdVT_TrkIdT_v1','HLT_Ele52_CaloIdVT_TrkIdT_v2','HLT_Ele52_CaloIdVT_TrkIdT_v3',
     'HLT_Ele65_CaloIdVT_TrkIdT_v1','HLT_Ele65_CaloIdVT_TrkIdT_v2','HLT_Ele65_CaloIdVT_TrkIdT_v3','HLT_Ele65_CaloIdVT_TrkIdT_v4',
     'HLT_Ele25_WP80_PFMT40_v1',
-    'HLT_Ele27_WP80_PFMT50_v1'
+    'HLT_Ele27_WP80_PFMT50_v1',
+    'HLT_Ele80_CaloIdVT_TrkIdT_v3'
     )
 
 process.WprimeAnalyzer.Cuts = cms.vstring("hlt","qual","1el","iso", "met")
