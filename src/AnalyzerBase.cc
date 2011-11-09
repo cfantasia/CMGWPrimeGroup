@@ -542,18 +542,11 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
   defineHistos(dir);
   if(wprimeUtil_->isSignalSample())
     {
-      ++massRes_index;
+      ++signalSample_index;
       defineResolutionHistos(dir, fi->signalMass);
     }
   resetCounters();
   fi->results.assign(NCuts_,wprime::FilterEff());
-}
-
-TH1F* & AnalyzerBase::getMassResHist()
-{
-  if(!wprimeUtil_->isSignalSample())
-    abort();
-  return massRes[massRes_index];
 }
 
 void AnalyzerBase::defineHistos(const TFileDirectory & dir){
@@ -695,6 +688,15 @@ bool AnalyzerBase::jsonContainsEvent (const vector<edm::LuminosityBlockRange>&js
   return jsonVec.end() != iter;
 }
 
+// return index of current signal sample (-1 if this is not a signal sample)
+int AnalyzerBase::getSignalSampleIndex()
+{
+  if(!wprimeUtil_->isSignalSample())
+    return -1;
+  
+  return signalSample_index;
+}
+
 void AnalyzerBase::setNumSignalSamples()
 {
   NumSigSamples = 0;
@@ -704,9 +706,9 @@ void AnalyzerBase::setNumSignalSamples()
       if(it->isSignal())
 	++NumSigSamples;
 	
-  // initialize vector of mass-resolution histograms
-  massRes.assign(NumSigSamples, NULL);
-  massRes_index = -1;
+  // initialize index pointing to signal samples
+  signalSample_index = -1;
+
 }
 
 void AnalyzerBase::run()
