@@ -522,6 +522,7 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
   wprimeUtil_->setSampleName(fi->samplename);
   wprimeUtil_->setSampleWeight(fi->weight);
   wprimeUtil_->setRunningOnData();
+  wprimeUtil_->setIsSignalSample(fi->isSignal());
   wprimeUtil_->setCurrentSample(fi);
   wprimeUtil_->resetWarnings();
 
