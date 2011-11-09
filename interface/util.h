@@ -117,7 +117,7 @@ namespace wprime{
     std::string subdir;
     std::vector<std::string> pathnames; // directory + subdir + filenames
     std::string description; // sample description
-    float signalMass; // in TeV for signal samples, -1 otherwise (default)
+    float signalMass; // in <x>.<y> TeV for signal samples (e.g. 1.2), -1 otherwise (default)
     bool isSignal() const {return signalMass > 0;}
     EffV results;
     //
