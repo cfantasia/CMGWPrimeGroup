@@ -1,5 +1,5 @@
 Top Level Dir = 
-integrated lumi = 4653 pb^-1
+integrated lumi = 4638 pb^-1
 
 samplename = data
 description = Electron pt > 100 GeV skim, May10th ReReco v1 (234.3 ipb DCS-only)
