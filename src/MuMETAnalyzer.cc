@@ -23,12 +23,6 @@ MuMETAnalyzer::MuMETAnalyzer(const edm::ParameterSet& cfg,int fileToRun) :
   
   setupCutOrder();
 
-  reconstructors.push_back(kGLOBAL);
-  reconstructors.push_back(kINNER);
-  reconstructors.push_back(kSTANDALONE);
-  reconstructors.push_back(kCOCKTAIL);
-  reconstructors.push_back(kDYT);
- 
 }
 
 MuMETAnalyzer::~MuMETAnalyzer()

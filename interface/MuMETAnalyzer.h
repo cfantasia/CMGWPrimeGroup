@@ -123,9 +123,6 @@ class MuMETAnalyzer : public AnalyzerBase
   std::vector<TH1F*> hTM;
   TH2F * hTMvPT[Num_mumet_cuts];
 
-  std::vector<unsigned> reconstructors;
-
-
 };
 
 
