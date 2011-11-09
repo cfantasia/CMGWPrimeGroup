@@ -35,6 +35,12 @@ MuMETAnalyzer::~MuMETAnalyzer()
 {
 }
 
+void MuMETAnalyzer::defineResolutionHistos(const TFileDirectory & dir, float Mass)
+{
+  createResolutionHist(dir, Mass, "mu", getMassResHist());
+}
+
+
 void MuMETAnalyzer::defineHistos(const TFileDirectory & dir)
 {
   AnalyzerBase::defineHistos(dir);
