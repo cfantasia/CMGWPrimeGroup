@@ -1,0 +1,10 @@
+patTuple_4_1_pGA.root
+patTuple_3_1_1Yr.root
+patTuple_5_1_rBZ.root
+patTuple_8_1_vME.root
+patTuple_6_1_KLd.root
+patTuple_2_1_H4x.root
+patTuple_9_1_NZN.root
+patTuple_1_1_aCh.root
+patTuple_7_1_ICI.root
+patTuple_10_1_bYj.root

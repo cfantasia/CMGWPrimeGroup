@@ -1,0 +1,10 @@
+patTuple_2_1_2S5.root
+patTuple_3_1_J5K.root
+patTuple_10_1_927.root
+patTuple_6_1_xJM.root
+patTuple_7_1_1fn.root
+patTuple_9_1_Dsx.root
+patTuple_5_1_Xpo.root
+patTuple_1_1_SQO.root
+patTuple_4_1_1hz.root
+patTuple_8_1_wlE.root

@@ -1,0 +1,13 @@
+patTuple_7_2_gaZ.root
+patTuple_1_2_QIX.root
+patTuple_4_3_uQW.root
+patTuple_6_1_izG.root
+patTuple_8_2_1UK.root
+patTuple_5_2_uh8.root
+patTuple_9_2_Ode.root
+patTuple_11_2_Sty.root
+patTuple_10_2_D71.root
+patTuple_2_3_Ppz.root
+patTuple_6_3_qK0.root
+patTuple_3_3_vkH.root
+patTuple_12_2_MSx.root

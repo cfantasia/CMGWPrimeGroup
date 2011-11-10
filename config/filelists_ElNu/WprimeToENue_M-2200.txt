@@ -1,0 +1,10 @@
+patTuple_10_1_KjU.root
+patTuple_7_1_elN.root
+patTuple_2_1_fF7.root
+patTuple_5_1_0ib.root
+patTuple_9_1_hgm.root
+patTuple_4_1_SPD.root
+patTuple_3_1_qtm.root
+patTuple_8_1_IFk.root
+patTuple_6_1_5jm.root
+patTuple_1_1_Srf.root

@@ -1,0 +1,10 @@
+patTuple_5_1_ruK.root
+patTuple_10_1_c13.root
+patTuple_8_1_ukU.root
+patTuple_7_1_GLy.root
+patTuple_1_1_Ght.root
+patTuple_4_1_Apg.root
+patTuple_6_1_mgB.root
+patTuple_3_1_ZLp.root
+patTuple_2_1_6IT.root
+patTuple_9_1_D3r.root
