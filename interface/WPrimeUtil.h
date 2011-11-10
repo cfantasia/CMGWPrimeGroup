@@ -86,6 +86,9 @@ class WPrimeUtil
       !versionedName.compare(0, k, wildcardedName, 0, k);
   }
 
+  // return pointer to gen-particle with pdgId and mother pdgId_mother
+  const reco::Candidate * getGenParticle(edm::EventBase const & event, int pdgId_particle, int pdgId_mother); 
+
   static void printEvent(edm::EventBase const & event);
 
   static bool passTriggersCut(edm::EventBase const & event, std::string label,const std::vector<std::string>& triggerNames);

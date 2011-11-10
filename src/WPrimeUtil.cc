@@ -423,6 +423,23 @@ HadronicVWAnalyzer::passTriggerMatch(const TeVMuon & p, const float cut, const v
 }
 */
 
+// return pointer to gen-particle with pdgId and mother pdgId_mother
+const reco::Candidate * WPrimeUtil::getGenParticle(edm::EventBase const & event,int pdgId, int pdgId_mother)
+{
+  event.getByLabel(genLabel_, genParticles);
+  for(size_t i = 0; i != genParticles->size(); ++i) {
+    const reco::GenParticle & p = (*genParticles)[i];
+    if(p.pdgId() != pdgId)continue;
+    if(p.status() != 3)continue;
+    const reco::Candidate * mother  = findMother(&p);
+    if(!mother)continue;
+    if(mother->pdgId() != pdgId_mother)continue;
+    return &p;
+  } // loop over genParticles
+  return (const reco::Candidate *) 0;
+}
+
+
 
 // get hadronic MET component (that needs to be corrected 
 // if applyMETCorrection=true)from Z data; this will be done according to hadronic 
