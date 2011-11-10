@@ -136,7 +136,14 @@ class WCandidate : public BosonCandidate {
     addP4.set(* this);
     leptonic_ = false;
     mt_ = -999.9;
- }
+    }
+
+    WCandidate(const reco::Candidate & GenLepton, const reco::Candidate & GenNeutrino) :
+      elec_(NULL), muon_(NULL) {
+      addDaughters(GenLepton, GenNeutrino);
+      leptonic_ = true;
+      mt_ = calcMT();
+    }
   const reco::Candidate * lepton() const {return daughter(0);}
   const reco::Candidate * met() const {return daughter(1);}
   const reco::Candidate * genLepton() const {return genLepton_;}
