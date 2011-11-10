@@ -429,11 +429,11 @@ const reco::Candidate * WPrimeUtil::getGenParticle(edm::EventBase const & event,
   event.getByLabel(genLabel_, genParticles);
   for(size_t i = 0; i != genParticles->size(); ++i) {
     const reco::GenParticle & p = (*genParticles)[i];
-    if(p.pdgId() != pdgId)continue;
+    if(TMath::Abs(p.pdgId()) != pdgId)continue;
     if(p.status() != 3)continue;
     const reco::Candidate * mother  = findMother(&p);
     if(!mother)continue;
-    if(mother->pdgId() != pdgId_mother)continue;
+    if(TMath::Abs(mother->pdgId()) != pdgId_mother)continue;
     return &p;
   } // loop over genParticles
   return (const reco::Candidate *) 0;
@@ -654,3 +654,34 @@ void WPrimeUtil::getLeptonsMET(const PatElectronVH & patElectronsH, ElectronV & 
 bool WPrimeUtil::Match(const heep::Ele & p1, const heep::Ele & p2){
   return Match(p1.patEle(), p2.patEle());
 }
+
+// get GEN-level transverse mass for lepton + neutrino;
+// using delta-R matching requirement between RECO-lepton and GEN-lepton
+float WPrimeUtil::getGenWprimeMt(edm::EventBase const& event, int pdgId_lepton,
+				 int pdgId_neutrino, const reco::Candidate * lepton)
+{
+  float ret = -9999;
+  const reco::Candidate * genLepton = 0;
+  const reco::Candidate * genNeutrino = 0;
+  genLepton = getGenParticle(event, pdgId_lepton, PDG_ID_WPRIME);
+  if(!genLepton)
+    {
+      cerr << " *** Oops! No lepton with pdgId = " << pdgId_lepton << endl;
+      abort();
+    }
+  genNeutrino = getGenParticle(event, pdgId_neutrino, PDG_ID_WPRIME);
+  if(!genNeutrino)
+    {
+      cerr << " *** Oops! No neutrino with pdgId = " << pdgId_neutrino << endl;
+      abort();
+    }
+  float dR = reco::deltaR(*genLepton, *lepton);
+  // do we really need a delta-R match?
+  if(dR < 0.1)
+    {    
+      WCandidate gen(*genLepton, *genNeutrino);
+      ret = gen.mt();
+    }
+  return ret;
+}
+

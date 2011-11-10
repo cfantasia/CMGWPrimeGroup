@@ -316,6 +316,11 @@ static bool Contains(const T1 & p, const std::vector<T2>& vec){
   return false;
 }
 
+// get GEN-level transverse mass for lepton + neutrino;
+// using delta-R matching requirement between RECO-lepton and GEN-lepton
+ float getGenWprimeMt(edm::EventBase const& event, int pdgId_lepton,
+		      int pdgId_neutrino, const reco::Candidate * lepton);
+ 
 private:
 
   // directory containing all input samples
