@@ -152,7 +152,7 @@ const float VMASS = (ZMASS+WMASS)/2.;
 const int PDG_ID_ELEC = 11;
 const int PDG_ID_ELECNEU = 12;
 const int PDG_ID_MUON = 13;
-const int PDG_ID_MUONNEU = 13;
+const int PDG_ID_MUONNEU = 14;
 
 const int PDG_ID_W = 24;
 const int PDG_ID_Z = 23;
