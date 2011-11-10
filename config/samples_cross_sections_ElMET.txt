@@ -59,274 +59,418 @@ Nprod_evt = 1
 
 DONE
 
+#Top Level Dir = /castor/cern.ch/user/s/shchang/Wprime/V3XY/patTuple/100GeV/MC
+#integrated lumi = 4638 pb^-1
+
 samplename = wprime1.0
 description = WprimeToENu_M1000 , PYTHIA6 Tune Z2
 x-section =  0.8856
 signalMass = 1.0
-subdir = WprimeToENue_M-1000
-pathname = filelists_ElNu/WprimeToENu_M1000.txt
+subdir = Summer11/WprimeToENue_M-1000
+pathname = filelists_ElNu/WprimeToENu_M-1000.txt
 Nprod_evt = 16500
 
 samplename = wprime1.2
 description = WprimeToENu_M1200 , PYTHIA6 Tune Z2
 x-section =  0.3461
 signalMass = 1.2
-subdir = WprimeToENue_M-1200
-pathname = filelists_ElNu/WprimeToENu_M1200.txt
+subdir = Summer11/WprimeToENue_M-1200
+pathname = filelists_ElNu/WprimeToENu_M-1200.txt
 Nprod_evt = 16500
 
 samplename = wprime1.3
 description = WprimeToENu_M1300 , PYTHIA6 Tune Z2
 x-section =  0.2221
 signalMass = 1.3
-subdir = WprimeToENue_M-1300
-pathname = filelists_ElNu/WprimeToENu_M1300.txt
+subdir = Summer11/WprimeToENue_M-1300
+pathname = filelists_ElNu/WprimeToENu_M-1300.txt
 Nprod_evt = 16500
 
 samplename = wprime1.4
 description = WprimeToENu_M1400 , PYTHIA6 Tune Z2
 x-section =  0.1440
 signalMass = 1.4
-subdir = WprimeToENue_M-1400
-pathname = filelists_ElNu/WprimeToENu_M1400.txt
+subdir = Summer11/WprimeToENue_M-1400
+pathname = filelists_ElNu/WprimeToENu_M-1400.txt
 Nprod_evt = 16500
 
 samplename = wprime1.5
 description = WprimeToENu_M1500 , PYTHIA6 Tune Z2
 x-section =  0.0949
 signalMass = 1.5
-subdir = WprimeToENue_M-1500
-pathname = filelists_ElNu/WprimeToENu_M1500.txt
+subdir = Summer11/WprimeToENue_M-1500
+pathname = filelists_ElNu/WprimeToENu_M-1500.txt
 Nprod_evt = 16500
 
 samplename = wprime1.6
 description = WprimeToENu_M1600 , PYTHIA6 Tune Z2
 x-section =  0.0633
 signalMass = 1.6
-subdir = WprimeToENue_M-1600
-pathname = filelists_ElNu/WprimeToENu_M1600.txt
+subdir = Summer11/WprimeToENue_M-1600
+pathname = filelists_ElNu/WprimeToENu_M-1600.txt
 Nprod_evt = 16500
 
 samplename = wprime1.7
 description = WprimeToENu_M1700 , PYTHIA6 Tune Z2
 x-section =  0.0424
 signalMass = 1.7
-subdir = WprimeToENue_M-1700
-pathname = filelists_ElNu/WprimeToENu_M1700.txt
+subdir = Summer11/WprimeToENue_M-1700
+pathname = filelists_ElNu/WprimeToENu_M-1700.txt
 Nprod_evt = 16500
 
 samplename = wprime1.8
 description = WprimeToENu_M1800 , PYTHIA6 Tune Z2
 x-section =  0.0285
 signalMass = 1.8
-subdir = WprimeToENue_M-1800
-pathname = filelists_ElNu/WprimeToENu_M1800.txt
+subdir = Summer11/WprimeToENue_M-1800
+pathname = filelists_ElNu/WprimeToENu_M-1800.txt
 Nprod_evt = 16500
 
 samplename = wprime1.9
 description = WprimeToENu_M1900 , PYTHIA6 Tune Z2
 x-section =  0.0194
 signalMass = 1.9
-subdir = WprimeToENue_M-1900
-pathname = filelists_ElNu/WprimeToENu_M1900.txt
+subdir = Summer11/WprimeToENue_M-1900
+pathname = filelists_ElNu/WprimeToENu_M-1900.txt
 Nprod_evt = 16500
 
 samplename = wprime2.0
 description = WprimeToENu_M2000 , PYTHIA6 Tune Z2
 x-section =  0.0135
 signalMass = 2.0
-subdir = WprimeToENue_M-2000
-pathname = filelists_ElNu/WprimeToENu_M2000.txt
+subdir = Summer11/WprimeToENue_M-2000
+pathname = filelists_ElNu/WprimeToENu_M-2000.txt
 Nprod_evt = 16500
 
 samplename = wprime2.1
 description = WprimeToENu_M2100 , PYTHIA6 Tune Z2
 x-section =  0.009373
 signalMass = 2.1
-subdir = WprimeToENue_M-2100
-pathname = filelists_ElNu/WprimeToENu_M2100.txt
+subdir = Summer11/WprimeToENue_M-2100
+pathname = filelists_ElNu/WprimeToENu_M-2100.txt
 Nprod_evt = 16500
 
 samplename = wprime2.2
 description = WprimeToENu_M2200 , PYTHIA6 Tune Z2
 x-section =  0.006605
 signalMass = 2.2
-subdir = WprimeToENue_M-2200
-pathname = filelists_ElNu/WprimeToENu_M2200.txt
+subdir = Summer11/WprimeToENue_M-2200
+pathname = filelists_ElNu/WprimeToENu_M-2200.txt
 Nprod_evt = 16500
 
 samplename = wprime2.3
 description = WprimeToENu_M2300 , PYTHIA6 Tune Z2
 x-section =  0.00472
 signalMass = 2.3
-subdir = WprimeToENue_M-2300
-pathname = filelists_ElNu/WprimeToENu_M2300.txt
+subdir = Summer11/WprimeToENue_M-2300
+pathname = filelists_ElNu/WprimeToENu_M-2300.txt
 Nprod_evt = 16500
 
 samplename = wprime2.4
 description = WprimeToENu_M2400 , PYTHIA6 Tune Z2
 x-section =  0.003398
 signalMass = 2.4
-subdir = WprimeToENue_M-2400
-pathname = filelists_ElNu/WprimeToENu_M2400.txt
+subdir = Summer11/WprimeToENue_M-2400
+pathname = filelists_ElNu/WprimeToENu_M-2400.txt
 Nprod_evt = 16500
 
 samplename = wprime2.5
 description = WprimeToENu_M2500 , PYTHIA6 Tune Z2
 x-section =  0.002483
 signalMass = 2.5
-subdir = WprimeToENue_M-2500
-pathname = filelists_ElNu/WprimeToENu_M2500.txt
+subdir = Summer11/WprimeToENue_M-2500
+pathname = filelists_ElNu/WprimeToENu_M-2500.txt
 Nprod_evt = 16500
 
 samplename = wprime2.7 (check cross-section!)
 description = WprimeToENu_M2700 , PYTHIA6 Tune Z2
 x-section =  0.00143
 signalMass = 2.7
-subdir = WprimeToENue_M-2700
-pathname = filelists_ElNu/WprimeToENu_M2700.txt
+subdir = Summer11/WprimeToENue_M-2700
+pathname = filelists_ElNu/WprimeToENu_M-2700.txt
 Nprod_evt = 12420
 
 samplename = wprime3.0
 description = WprimeToENu_M3000 , PYTHIA6 Tune Z2
 x-section =  0.0007068
 signalMass = 3.0
-subdir = WprimeToENue_M-3000
-pathname = filelists_ElNu/WprimeToENu_M3000.txt
+subdir = Summer11/WprimeToENue_M-3000
+pathname = filelists_ElNu/WprimeToENu_M-3000.txt
 Nprod_evt = 16500
 
 samplename = wprime3.5
 description = WprimeToENu_M3500 , PYTHIA6 Tune Z2
 x-section =  0.0002951
 signalMass = 3.5
-subdir = WprimeToENue_M-3500
-pathname = filelists_ElNu/WprimeToENu_M3500.txt
+subdir = Summer11/WprimeToENue_M-3500
+pathname = filelists_ElNu/WprimeToENu_M-3500.txt
 Nprod_evt = 16500
 
 samplename = wprime4.0 (check cross-section!)
 description = WprimeToENu_M4000 , PYTHIA6 Tune Z2
 x-section =  0.000181
 signalMass = 4.0
-subdir = WprimeToENue_M-4000
-pathname = filelists_ElNu/WprimeToENu_M4000.txt
+subdir = Summer11/WprimeToENue_M-4000
+pathname = filelists_ElNu/WprimeToENu_M-4000.txt
 Nprod_evt = 15960
+
+DONE
 
 samplename = WtoEnu_highPt
 description = PYTHIS6 W ->enu , PYTHIA6 Tune Z2
 x-section = 10438
-subdir = WToENu_TuneZ2
+subdir = Summer11/WToENu_TuneZ2
 pathname = filelists_ElNu/WToENu_TuneZ2.txt
 Nprod_evt = 5334220
 
 samplename = WtoEnu_ptmin100
 description = W ->enu  High pt Tail, PYTHIA6 Tune Z2
 x-section = 1.187
-subdir = WToENu_tail_TuneZ2
+subdir = Summer11/WToENu_tail_TuneZ2
 pathname = filelists_ElNu/WToENu_tail_TuneZ2.txt
 Nprod_evt = 1074060
 
 samplename = WtoMunu_highPt
 description = W ->Munu  ,PYTHIA6 Tune Z2
 x-section = 10438
-subdir = WToMuNu_TuneZ2
+subdir = Summer11/WToMuNu_TuneZ2
 pathname = filelists_ElNu/WToMuNu_TuneZ2.txt
 Nprod_evt = 5413258
 
 samplename = WtoTaunu_highPt
 description = W ->Taunu ,PYTHIA6 Tune Z2
 x-section = 10438
-subdir = WToTauuNu_TuneZ2
+subdir = Summer11/WToTauuNu_TuneZ2
 pathname = filelists_ElNu/WToTauNu_TuneZ2.txt
 Nprod_evt = 5500000
 
 samplename = DYtoEE_highPt
 description = DY->ee ,PYTHIA6 Tune Z2
 x-section = 1666
-subdir = DYToEE_M-20_TuneZ2
+subdir = Summer11/DYToEE_M-20_TuneZ2
 pathname = filelists_ElNu/DYToEE_M-20_TuneZ2.txt
 Nprod_evt = 2262653
 
 samplename = DYtoMuMu_highPt
 description = DY->tautau ,PYTHIA6 Tune Z2
 x-section = 1666
-subdir = DYToMuMu_M-20_TuneZ2
+subdir = Summer11/DYToMuMu_M-20_TuneZ2
 pathname = filelists_ElNu/DYToMuMu_M-20_TuneZ2.txt
 Nprod_evt = 2148325
 
 samplename = DYtoTauTau_highPt
 description = DY->tautau ,PYTHIA6 Tune Z2
 x-section = 1666
-subdir = DYToTauTau_M-20_TuneZ2
+subdir = Summer11/DYToTauTau_M-20_TuneZ2
 pathname = filelists_ElNu/DYToTauTau_M-20_TuneZ2.txt
 Nprod_evt = 2032536
 
-DONE
+samplename = ZZ_highPt
+description = ZZ Inclusive PYTHIA6, high-pt
+x-section = 5.9
+subdir = Summer11/ZZ_TuneZ2
+pathname = filelists_ElNu/ZZ_TuneZ2.txt
+Nprod_evt = 4187885
 
-samplename = G_0to15_highPt
-description = G pt 0to15, PYTHIA6 Tune Z2
-x-section = 84200000.0
-pathname = filelists_ElNu/G_Pt_0to15_TuneZ2.txt
-Nprod_evt = 2080768
+samplename = WW_highPt
+description = WW Inclusive PYTHIA6, high-pt
+x-section = 43
+subdir = Summer11/WW_TuneZ2
+pathname = filelists_ElNu/WW_TuneZ2.txt
+Nprod_evt = 4225916
+
+samplename = WZ_highPt
+description = WZ Inclusive PYTHIA6, high-pt
+x-section = 18
+subdir = Summer11/WZ_TuneZ2
+pathname = filelists_ElNu/WZ_TuneZ2.txt
+Nprod_evt = 4265243
+
+samplename = QCD_20to30_highPt
+description = QCD_Pt-20to30_EMEnriched_TuneZ2_7TeV-pythia6  
+x-section = 2454400
+subdir = Summer11/QCD_Pt_20to30_TuneZ2
+pathname = filelists_ElNu/QCD_Pt_20to30_TuneZ2.txt
+Nprod_evt = 35729669
+
+samplename = QCD_30to80_highPt
+description = QCD_Pt-30to80_EMEnriched_TuneZ2_7TeV-pythia6
+x-section =  3671200
+subdir = Summer11/QCD_Pt_30to80_TuneZ2
+pathname = filelists_ElNu/QCD_Pt_30to80_TuneZ2.txt
+Nprod_evt = 69931991
+
+samplename = QCD_80to170_highPt
+description = QCD_Pt-80to170_EMEnriched_TuneZ2_7TeV-pythia6
+x-section = 139500 
+subdir = Summer11/QCD_Pt_80to170_TuneZ2
+pathname = filelists_ElNu/QCD_Pt_80to170_TuneZ2.txt
+Nprod_evt = 8150672
+
+DONE
 
 samplename = G_15to30_highPt
 description = G pt 15to30, PYTHIA6 Tune Z2
 x-section = 171700.0
+subdir = Summer11/G_Pt_15to30_TuneZ2
 pathname = filelists_ElNu/G_Pt_15to30_TuneZ2.txt
 Nprod_evt = 2046119
 
 samplename = G_30to50_highPt
 description = G pt 30to50, PYTHIA6 Tune Z2
 x-section = 16690.0
+subdir = Summer11/G_Pt_30to50_TuneZ2
 pathname = filelists_ElNu/G_Pt_30to50_TuneZ2.txt
 Nprod_evt = 2187260
 
 samplename = G_50to80_highPt
 description = G pt 50to80, PYTHIA6 Tune Z2
 x-section = 2722.0
+subdir = Summer11/G_Pt_50to80_TuneZ2
 pathname = filelists_ElNu/G_Pt_50to80_TuneZ2.txt
 Nprod_evt = 2036704
 
 samplename = G_80to120_highPt
 description = G pt 80to120, PYTHIA6 Tune Z2
 x-section = 447.2
+subdir = Summer11/G_Pt_80to120_TuneZ2
 pathname = filelists_ElNu/G_Pt_80to120_TuneZ2.txt
 Nprod_evt = 2046637
 
 samplename = G_120to170_highPt
 description = G pt 120to170, PYTHIA6 Tune Z2
 x-section = 84.17
+subdir = Summer11/G_Pt_120to170_TuneZ2
 pathname = filelists_ElNu/G_Pt_120to170_TuneZ2.txt
 Nprod_evt = 2088216
 
 samplename = G_170to300_highPt
 description = G pt 170to300, PYTHIA6 Tune Z2
 x-section = 22.64
+subdir = Summer11/G_Pt_170to300_TuneZ2
 pathname = filelists_ElNu/G_Pt_170to300_TuneZ2.txt
-Nprod_evt = 2069161
+Nprod_evt = 1862245
 
 samplename = G_300to470_highPt
 description = G pt 300to470, PYTHIA6 Tune Z2
 x-section = 1.493
+subdir = Summer11/G_Pt_300to470_TuneZ2
 pathname = filelists_ElNu/G_Pt_300to470_TuneZ2.txt
-Nprod_evt = 2076880  
+Nprod_evt = 2076880
 
 samplename = G_470to800_highPt
 description = G pt 470to800, PYTHIA6 Tune Z2
 x-section = 0.13230
+subdir = Summer11/G_Pt_470to800_TuneZ2
 pathname = filelists_ElNu/G_Pt_470to800_TuneZ2.txt
 Nprod_evt = 2087212
 
+samplename = G_800to1400_highPt
+description = G pt 800to1400, PYTHIA6 Tune Z2
+x-section = 0.003481
+subdir = Summer11/G_Pt_800to1400_TuneZ2
+pathname = filelists_ElNu/G_Pt_800to1400_TuneZ2.txt
+Nprod_evt = 2131800
+
 samplename = G_1400to1800_highPt
 description = G pt 1400to1800, PYTHIA6 Tune Z2
-x-section = 0.000013
+x-section = 0.0000127
+subdir = Summer11/G_Pt_1400to1800_TuneZ2
 pathname = filelists_ElNu/G_Pt_1400to1800_TuneZ2.txt
 Nprod_evt = 2198160
 
 samplename = G_1800_highPt
 description = G pt 1800, PYTHIA6 Tune Z2
-x-section = 2.936e-07 
+x-section = 0.000000293 
+subdir = Summer11/G_Pt_1800_TuneZ2
 pathname = filelists_ElNu/G_Pt_1800_TuneZ2.txt
 Nprod_evt = 2188301
 
 DONE
+
+samplename = TTJet_highPt
+description = Madgraph inclusive t-tbar Jet (NLO cross-section), high-pt
+x-section = 157.5
+subdir = Summer11/TTJets_TuneZ2
+pathname = filelists_ElNu/TTJets_TuneZ2.txt
+Nprod_evt = 3609402
+
+samplename = T_blnu_s_highPt
+description = powheg tauola single T (NLO cross-section), high-pt
+x-section = 3.19
+subdir = Summer11/T_s-channel_TuneZ2
+pathname = filelists_ElNu/T_s-channel_TuneZ2.txt
+Nprod_evt = 259971
+
+samplename = Tbar_blnu_s_highPt
+description = powheg tauola single T (NLO cross-section), high-pt
+x-section = 1.44
+subdir = Summer11/Tbat_s-channel_TuneZ2
+pathname = filelists_ElNu/Tbat_s-channel_TuneZ2.txt
+Nprod_evt = 137980
+
+samplename = T_blnu_t_highPt
+description = powheg tauola single T t (NLO cross-section), high-pt
+x-section = 41.92
+subdir = Summer11/T_t-channel_TuneZ2
+pathname = filelists_ElNu/T_t-channel_TuneZ2.txt
+Nprod_evt = 3900171
+
+samplename = Tbar_blnu_t_highPt
+description = powheg tauola single Tbar t (NLO cross-section), high-pt
+x-section = 22.65
+subdir = Summer11/Tbar_t-channel_TuneZ2
+pathname = filelists_ElNu/Tbar_t-channel_TuneZ2.txt
+Nprod_evt = 1944826
+
+samplename = TtoBLNu_tw_DR_highPt
+description = powheg tauola single T DR tW (NLO cross-section), high-pt
+x-section = 7.87
+subdir = Summer11/T_tW_DR
+pathname = filelists_ElNu/T_tW_DR.txt
+Nprod_evt = 814390
+
+samplename = TbartoBLNu_tw_DR_highPt
+description = powheg tauola single Tbar DR tW (NLO cross-section), high-pt
+x-section = 7.87
+subdir = Summer11/Tbar_tW_DR
+pathname = filelists_ElNu/Tbar_tW_DR.txt
+Nprod_evt = 809984
+
+samplename = TtoBLNu_tW_DS_highPt
+description = powheg tauola single Tbar DS tW (NLO cross-section), high-pt
+x-section = 7.87
+subdir = Summer11/T_tW_DS
+pathname = filelists_ElNu/T_tW_DS.txt
+Nprod_evt = 795379
+
+samplename = TbartoBLNu_tW_DS_highPt
+description = powheg tauola single Tbar DS tW (NLO cross-section), high-pt
+x-section = 7.87
+subdir = Summer11/Tbar_tW_DS
+pathname = filelists_ElNu/Tbar_tW_DS.txt
+Nprod_evt = 787629
+
+DONE
+
+samplename = Wprime_1p5TeV_ele_noint
+description = Wprime_1p5TeV_ele_noint,MadGraph
+x-section = 0.09485
+subdir = MadGraph/Wprime_1p5TeV_ele_noint_madgraph
+pathname = filelists_ElNu/Wprime_1p5TeV_ele_noint_madgraph.txt
+Nprod_evt = 38058
+
+samplename = Wprime_1p5TeV_ele_oppsign
+description = Wprime_1p5TeV_ele_oppsign, MadGraph
+x-section = 0.09485
+subdir = MadGraph/Wprime_1p5TeV_ele_oppsign_madgraph
+pathname = filelists_ElNu/Wprime_1p5TeV_ele_oppsign_madgraph.txt
+Nprod_evt = 36699
+
+samplename = Wprime_1p5TeV_ele_samesign
+description = Wprime_1p5TeV_ele_samesign, MadGraph
+x-section = 0.09485
+subdir = MadGraph/Wprime_1p5TeV_ele_samesign_madgraph
+pathname = filelists_ElNu/Wprime_1p5TeV_ele_samesign_madgraph.txt
+Nprod_evt = 35433
 
