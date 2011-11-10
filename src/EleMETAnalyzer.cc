@@ -212,6 +212,14 @@ void EleMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
   hETA[cut_index]->Fill(el4D.Eta(), weight);
   hPHI[cut_index]->Fill(el4D.Phi(), weight);
   hTM[cut_index]->Fill(Wcand.mt(), weight);
+
+  if(wprimeUtil_->isSignalSample() && cut_index == NCuts_-1){
+    float genMt = wprimeUtil_->getGenWprimeMt(event, PDG_ID_ELEC, PDG_ID_ELECNEU, 
+					      &(*electrons)[theEle]);
+    int index = getSignalSampleIndex();
+    elMetRes[index]->Fill(Wcand.mt() - genMt);
+  }
+
  
   //fill the TTrees
   if(mkTuple_){

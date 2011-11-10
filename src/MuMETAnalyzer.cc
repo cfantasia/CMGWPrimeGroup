@@ -185,6 +185,14 @@ void MuMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
   hTM[cut_index]->Fill(Wcand.mt(), weight);
   hISO[cut_index]->Fill(muon->trkRelIsolation(),weight);
   hTMvPT[cut_index]->Fill(muon->pt(), Wcand.mt(), weight);
+
+  if(wprimeUtil_->isSignalSample() && cut_index == NCuts_-1){
+    float genMt = wprimeUtil_->getGenWprimeMt(event, PDG_ID_MUON, PDG_ID_MUONNEU, 
+					      muon);
+    int index = getSignalSampleIndex();
+    muMetRes[index]->Fill(Wcand.mt() - genMt);
+  }
+
 }
 
 void MuMETAnalyzer::defineHistos_TMvPT(const TFileDirectory & dir)
