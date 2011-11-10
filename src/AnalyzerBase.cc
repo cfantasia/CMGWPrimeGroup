@@ -584,7 +584,7 @@ void AnalyzerBase::createResolutionHist(const TFileDirectory & d, float Mass,
     string(" TeV (channel = ") + channel + string(")");
   string xtitle = "GeV/c^{2}";
   int nbins = 100;
-  float xmin = -300; float xmax = 300;
+  float xmin = -800; float xmax = 800;
   defineOneHisto(name, title, xtitle, nbins, xmin, xmax, "GeV", put_here, d);
 }
 
