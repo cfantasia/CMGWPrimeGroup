@@ -149,11 +149,14 @@ const float ZMASS = 91.188;
 const float WMASS = 80.398;
 const float VMASS = (ZMASS+WMASS)/2.;
 
-const int PDGMUON = 13;
-const int PDGELEC = 11;
-const int PDGW = 24;
-const int PDGZ = 23;
-const int PDGWPRIME = 34;
+const int PDG_ID_ELEC = 11;
+const int PDG_ID_ELECNEU = 12;
+const int PDG_ID_MUON = 13;
+const int PDG_ID_MUONNEU = 13;
+
+const int PDG_ID_W = 24;
+const int PDG_ID_Z = 23;
+const int PDG_ID_WPRIME = 34;
 
 const float PI    = 2.0 * TMath::ACos(0.);
 //const float TWOPI = 2.0 * PI;

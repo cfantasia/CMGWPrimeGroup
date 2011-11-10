@@ -214,12 +214,12 @@ void HadronicVWAnalyzer::fillHistos(const int& index, const float& weight){
     hEvtType[index]->Fill(evtType_, weight);
     if     (wCand_.charge() > 0) hEvtTypeP[index]->Fill(evtType_, weight);
     else if(wCand_.charge() < 0) hEvtTypeM[index]->Fill(evtType_, weight);
-    if     (vCand_.flavor() == PDGELEC){
+    if     (vCand_.flavor() == PDG_ID_ELEC){
       hWptVee[index]->Fill(wCand_.pt(), weight);
       hNLLepsVee[index]->Fill(looseElectrons_.size()+looseMuons_.size(), weight);
       hNJetsVee[index]->Fill(looseJets_.size(), weight);
       hNVtxsVee[index]->Fill(vertices_.size(), weight);
-    }else if(vCand_.flavor() == PDGMUON){ 
+    }else if(vCand_.flavor() == PDG_ID_MUON){ 
       hWptVmm[index]->Fill(wCand_.pt(), weight);
       hNLLepsVmm[index]->Fill(looseElectrons_.size()+looseMuons_.size(), weight);
       hNJetsVmm[index]->Fill(looseJets_.size(), weight);
@@ -232,11 +232,11 @@ void HadronicVWAnalyzer::fillHistos(const int& index, const float& weight){
   if(vCand_){
     hVMass[index]->Fill(vCand_.mass(), weight);
     hVpt[index]->Fill(vCand_.pt(), weight);
-    if      (vCand_.flavor() == PDGELEC){
+    if      (vCand_.flavor() == PDG_ID_ELEC){
       hVeeMass[index]->Fill(vCand_.mass(), weight);
       hVeept[index]->Fill(vCand_.pt(), weight);
       hMETee[index]->Fill(met_.et(), weight);
-    }else if (vCand_.flavor() == PDGMUON){
+    }else if (vCand_.flavor() == PDG_ID_MUON){
       hVmmMass[index]->Fill(vCand_.mass(), weight);
       hMETmm[index]->Fill(met_.et(), weight);
       hVmmpt[index]->Fill(vCand_.pt(), weight);
@@ -256,12 +256,12 @@ void HadronicVWAnalyzer::fillHistos(const int& index, const float& weight){
     hWTransMass[index]->Fill(wCand_.mt(), weight);
     hWpt[index]->Fill(wCand_.pt(), weight);
     hWQ[index]->Fill(wCand_.charge(), weight);
-    if      (wCand_.flavor() == PDGELEC){
+    if      (wCand_.flavor() == PDG_ID_ELEC){
       hWenuTransMass[index]->Fill(wCand_.mt(), weight);
       hWenuQ[index]->Fill(wCand_.charge(), weight);
       const heep::Ele& e = *wCand_.elec();
       hWenuCombRelIso[index]->Fill(calcCombRelIso(e.patEle(), ElecPU(e)), weight);
-    }else if (wCand_.flavor() == PDGMUON){
+    }else if (wCand_.flavor() == PDG_ID_MUON){
       hWmnuTransMass[index]->Fill(wCand_.mt(), weight);
       hWmnuQ[index]->Fill(wCand_.charge(), weight);
       const TeVMuon& m = *wCand_.muon();
@@ -501,22 +501,22 @@ void HadronicVWAnalyzer::printEventDetails() const{
 
 void
 HadronicVWAnalyzer::printEventLeptons() const{
-  if     (vCand_.flavor() == PDGELEC){
+  if     (vCand_.flavor() == PDG_ID_ELEC){
 //    printElectron(*vCand_.elec1(), PDGZ);
 //    printElectron(*vCand_.elec2(), PDGZ);
     printElectron(WPrimeUtil::Find(*vCand_.daughter(0), allElectrons_));
     printElectron(WPrimeUtil::Find(*vCand_.daughter(1), allElectrons_));
-  }else if(vCand_.flavor() == PDGMUON){
+  }else if(vCand_.flavor() == PDG_ID_MUON){
     printMuon(WPrimeUtil::Find(*vCand_.daughter(0), allMuons_));
     printMuon(WPrimeUtil::Find(*vCand_.daughter(1), allMuons_));
 //    printMuon(*vCand_.muon1(), PDGZ);
 //    printMuon(*vCand_.muon2(), PDGZ);
   }
 
-  if     (wCand_.flavor() == PDGELEC){   
+  if     (wCand_.flavor() == PDG_ID_ELEC){   
     printElectron(WPrimeUtil::Find(*wCand_.daughter(0), allElectrons_));
 //    printElectron(*wCand_.elec(), PDGW);
-  }else if(wCand_.flavor() == PDGMUON){
+  }else if(wCand_.flavor() == PDG_ID_MUON){
     printMuon(WPrimeUtil::Find(*wCand_.daughter(0), allMuons_));
 //    printMuon    (*wCand_.muon(), PDGW);
   }
@@ -553,7 +553,7 @@ bool HadronicVWAnalyzer::passTriggersCut() const{
   if(debugme) cout<<"Trigger requirements"<<endl;
   //Apply the trigger if running on data or MC 
   //If MC, apply if no V or if V exists, zCand == PDGMuon)
-  if(wprimeUtil_->runningOnData() || !vCand_ || vCand_.flavor() == PDGMUON){
+  if(wprimeUtil_->runningOnData() || !vCand_ || vCand_.flavor() == PDG_ID_MUON){
     return WPrimeUtil::passTriggersCut(triggerEvent_,triggersToUse_);
   }else{
     return true;//Cory: This is not good, but will pass HLT in the meantime.
@@ -621,9 +621,9 @@ HadronicVWAnalyzer::clearEvtVariables(){
 
 float
 HadronicVWAnalyzer::WLepPt() const{
-  if(wCand_.flavor() == PDGELEC){
+  if(wCand_.flavor() == PDG_ID_ELEC){
     return WPrimeUtil::Find(*wCand_.daughter(0), allElectrons_).patEle().pt();
-  }else if(wCand_.flavor() == PDGMUON){
+  }else if(wCand_.flavor() == PDG_ID_MUON){
     return WPrimeUtil::Find(*wCand_.daughter(0), allMuons_).pt();
   }
   return -999.;

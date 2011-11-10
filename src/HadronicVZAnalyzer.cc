@@ -236,7 +236,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 	  }
 	if (fabs(genP.pdgId()) == 13 && genP.status() == 3)
 	  genMuons.push_back((*genParticles)[i]);
-	if (fabs(genP.pdgId()) == PDGW && genP.status() == 3)
+	if (fabs(genP.pdgId()) == PDG_ID_W && genP.status() == 3)
 	  h_genWMass->Fill(genP.mass(), weight_); 
       } // loop over genParticles
     }
@@ -601,16 +601,16 @@ void HadronicVZAnalyzer::fillHistos(const int& index, const float& weight){
 
   if(hadVZ_){
     hVZMass[index]->Fill(hadVZ_.mass(), weight);
-    if      (zCand_.flavor() == PDGELEC) hVZeeMass[index]->Fill(hadVZ_.mass(), weight);
-    else if (zCand_.flavor() == PDGMUON) hVZmmMass[index]->Fill(hadVZ_.mass(), weight);
+    if      (zCand_.flavor() == PDG_ID_ELEC) hVZeeMass[index]->Fill(hadVZ_.mass(), weight);
+    else if (zCand_.flavor() == PDG_ID_MUON) hVZmmMass[index]->Fill(hadVZ_.mass(), weight);
     hVZpt[index]->Fill(hadVZ_.pt(), weight);
   }
   if(zCand_){
     hZMass[index]->Fill(zCand_.mass(), weight);
-    if      (zCand_.flavor() == PDGELEC) hZeeMass[index]->Fill(zCand_.mass(), weight);
-    else if (zCand_.flavor() == PDGMUON) hZmmMass[index]->Fill(zCand_.mass(), weight);
+    if      (zCand_.flavor() == PDG_ID_ELEC) hZeeMass[index]->Fill(zCand_.mass(), weight);
+    else if (zCand_.flavor() == PDG_ID_MUON) hZmmMass[index]->Fill(zCand_.mass(), weight);
     hZpt[index]->Fill(zCand_.pt(), weight);
-    hEvtType[index]->Fill(2*(zCand_.flavor() == PDGMUON), weight);
+    hEvtType[index]->Fill(2*(zCand_.flavor() == PDG_ID_MUON), weight);
   }
   if(vCand_){
     hVMass[index]->Fill(vCand_.mass(), weight);
@@ -622,7 +622,7 @@ void HadronicVZAnalyzer::fillHistos(const int& index, const float& weight){
   if(CutNames_[index] == "ValidVZ"){
     if(hadVZ_) VZMass_ = hadVZ_.mass();
     if(zCand_){
-      evtType_ = 2*(zCand_.flavor() == PDGMUON);
+      evtType_ = 2*(zCand_.flavor() == PDG_ID_MUON);
       ZMass_ = zCand_.mass();
       Zpt_ = zCand_.pt();
     }
@@ -645,7 +645,7 @@ void HadronicVZAnalyzer::fillJetMultiplicityHists(){
 
 
 void HadronicVZAnalyzer::fillGoodZHistos(){
-  if     (zCand_.flavor() == PDGELEC){
+  if     (zCand_.flavor() == PDG_ID_ELEC){
     const heep::Ele & e1 = WPrimeUtil::Find(*zCand_.daughter(0), allElectrons_);
     const heep::Ele & e2 = WPrimeUtil::Find(*zCand_.daughter(1), allElectrons_);
     if (debugme)
@@ -657,7 +657,7 @@ void HadronicVZAnalyzer::fillGoodZHistos(){
     h_Zelec2_eta->Fill(e2.eta(), weight_);
     h_Zelec2_phi->Fill(e2.phi(), weight_);	  
     h_deltaR_elec1elec2->Fill(reco::deltaR(e1, e2), weight_);
-  }else if(zCand_.flavor() == PDGMUON){
+  }else if(zCand_.flavor() == PDG_ID_MUON){
     const TeVMuon & m1 = WPrimeUtil::Find(*zCand_.daughter(0), allMuons_);
     const TeVMuon & m2 = WPrimeUtil::Find(*zCand_.daughter(1), allMuons_);
     if (debugme)
@@ -689,13 +689,13 @@ void HadronicVZAnalyzer::fillValidVZHistos(){
     h_HadVZ_res->Fill((hadVZ_.mass()-gravMass_), weight_);
   if (debugme)
     cout << "filled my histos from HadVZ" << endl;
-  if     (zCand_.flavor() == PDGELEC){
+  if     (zCand_.flavor() == PDG_ID_ELEC){
     const heep::Ele & VZe1 = WPrimeUtil::Find(*zCand_.daughter(0), allElectrons_);
     const heep::Ele & VZe2 = WPrimeUtil::Find(*zCand_.daughter(1), allElectrons_);
     //cout << "Electron from loose zCand" << endl;
     h_deltaR_HadVelec1->Fill(reco::deltaR(vCand_, VZe1), weight_);
     h_deltaR_HadVelec2->Fill(reco::deltaR(vCand_, VZe2), weight_);
-  }else if(zCand_.flavor() == PDGMUON){
+  }else if(zCand_.flavor() == PDG_ID_MUON){
     const TeVMuon & VZm1 = WPrimeUtil::Find(*zCand_.daughter(0), allMuons_);
     const TeVMuon & VZm2 = WPrimeUtil::Find(*zCand_.daughter(1), allMuons_);
     //cout << "Muon from loose zCand" << endl;
