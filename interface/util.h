@@ -216,8 +216,6 @@ inline bool areOverlapping(const C & p1, const D & p2)
   return false;
 }
 
-
-
 inline const reco::Candidate * findMother(const reco::Candidate * p)
 {
   const reco::Candidate * mother = p ? p->mother(0) : 0;

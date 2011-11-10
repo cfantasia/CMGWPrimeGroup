@@ -87,7 +87,7 @@ class WPrimeUtil
   }
 
   // return pointer to gen-particle with pdgId and mother pdgId_mother
-  const reco::Candidate * getGenParticle(edm::EventBase const & event, int pdgId_particle, int pdgId_mother); 
+  const reco::Candidate * getGenParticle(edm::EventBase const & event, int pdgId, int pdgId_mother); 
 
   static void printEvent(edm::EventBase const & event);
 
