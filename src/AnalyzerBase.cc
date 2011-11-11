@@ -579,11 +579,12 @@ void AnalyzerBase::createResolutionHist(const TFileDirectory & d, float Mass,
 					const string & channel, 
 					TH1F* & put_here)
 {
-  string name = Form("g%.0f_", 10*Mass) + channel;
+  string name = string("Res_") + channel;
   string title = string("Resolution function for M = ") + Form("%.1f", Mass) + 
     string(" TeV (channel = ") + channel + string(")");
   string xtitle = "GeV/c^{2}";
   int nbins = 100;
+  // need a smart way to adjust the resolution histogram range based on Mass
   float xmin = -800; float xmax = 800;
   defineOneHisto(name, title, xtitle, nbins, xmin, xmax, "GeV", put_here, d);
 }
