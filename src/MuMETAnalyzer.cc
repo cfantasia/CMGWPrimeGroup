@@ -41,22 +41,22 @@ void MuMETAnalyzer::defineHistos(const TFileDirectory & dir)
 {
   AnalyzerBase::defineHistos(dir);
   defineHistoset("hPT"+algo_desc_short[muReconstructor_], 
-                 algo_desc_long[muReconstructor_]+ " muon p_{T} with ",
+                 algo_desc_long[muReconstructor_]+ " muon p_{T} ",
                  "p_{T} (GeV)", nBinPtMu, minPtMu, maxPtMu, "GeV", hPT,dir);
   defineHistoset("hPTgen"+algo_desc_short[muReconstructor_], 
-                 algo_desc_long[muReconstructor_]+ " muon p_{T} with ",
+                 algo_desc_long[muReconstructor_]+ " muon p_{T} ",
                  "p_{T} (GeV)", nBinPtMu, minPtMu, maxPtMu, "GeV", hPTgen,dir);
   defineHistoset("hETA"+algo_desc_short[muReconstructor_], 
-                 algo_desc_long[muReconstructor_]+ " muon #eta with ",
+                 algo_desc_long[muReconstructor_]+ " muon #eta ",
                  "#eta", nBinEtaMu, minEtaMu, maxEtaMu, "NONE", hETA,dir);
   defineHistoset("hPHI"+algo_desc_short[muReconstructor_], 
-                 algo_desc_long[muReconstructor_]+ " muon #phi with ",
+                 algo_desc_long[muReconstructor_]+ " muon #phi ",
                  "#phi", nBinPhiMu, minPhiMu, maxPhiMu, "NONE", hPHI,dir);
   defineHistoset("hISO"+algo_desc_short[muReconstructor_], 
-                 algo_desc_long[muReconstructor_]+ " muon isol with ",
+                 algo_desc_long[muReconstructor_]+ " muon isol ",
                  "Iso", nBinIsoMu, minIsoMu, maxIsoMu, "NONE", hISO,dir);
   defineHistoset("hTM"+algo_desc_short[muReconstructor_], 
-                 algo_desc_long[muReconstructor_]+ " Transv. Mass with ",
+                 algo_desc_long[muReconstructor_]+ " Transv. Mass ",
                  "m_{T} (GeV)", nBinTmMu, minTmMu, maxTmMu, "GeV", hTM,dir);
   defineHistos_TMvPT(dir);
 }
@@ -202,7 +202,7 @@ void MuMETAnalyzer::defineHistos_TMvPT(const TFileDirectory & dir)
       string name = "hTMvPT" + algo_desc_short[muReconstructor_] + "_" 
 	+ CutNames_[cut];
       string title = algo_desc_long[muReconstructor_]+ 
-	" Transv. Mass vs p_{T} with " + CutDescs_[cut];
+	" Transv. Mass vs p_{T} " + CutDescs_[cut];
       hTMvPT[cut] = dir.make<TH2F>(name.c_str(), title.c_str(), 
 				   nBinPtMu,minPtMu, maxPtMu,
 				   nBinTmMu, minTmMu, maxTmMu);
