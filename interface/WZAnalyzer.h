@@ -31,8 +31,6 @@ public:
   int countZCands(ZCandV & Zs) const;
   void calcZVariables();
   void calcWVariables();
-  void calcWElecVariables();
-  void calcWMuonVariables();
   void calcWZVariables();
   void calcEventVariables();
 
@@ -53,8 +51,6 @@ public:
 //methods for modifiers
 
 //methods for the cuts
-  bool passValidWElecCut();
-  bool passValidWMuonCut();
   bool passLeadingLeptonPtCut() const;
   bool passNumberOfZsCut() const;
   bool passValidWCut(WCandidate& w);
@@ -73,8 +69,7 @@ public:
   bool passWFlavorElecCut() const;
   bool passWFlavorMuonCut() const;
   bool passFakeEvtCut() const;
-  bool passFakeLeptonTagCut() const;
-  bool passFakeLeptonProbeTightCut() const;
+  bool passFakeLeptonProbeCut() const;
 
   bool passTriggerMatch(const heep::Ele& e, const float cut, const vstring& triggers) const;
   bool passTriggerMatch(const TeVMuon& p, const float cut, const vstring& triggers) const;
@@ -144,7 +139,7 @@ public:
 
   std::vector<TH1F*> hQ;
   std::vector<TH1F*> hWZTransMass;
-  std::vector<TH1F*> hWZpt, hWZTheta;
+  std::vector<TH1F*> hWZpt;
   std::vector<TH1F*> hHt;
   std::vector<TH1F*> hTriLepMass;
   std::vector<TH1F*> hEvtType, hEvtTypeP, hEvtTypeM;
@@ -152,33 +147,27 @@ public:
   std::vector<TH1F*> hLeadElecPt, hLeadMuonPt;
 
   std::vector<TH1F*> hZMass, hZeeMass, hZmmMass ;
-  std::vector<TH1F*> hZ3e0muMass, hZ2e1muMass, hZ1e2muMass, hZ0e3muMass;
   std::vector<TH1F*> hZeeMassTT, hZeeMassTF, hZmmMassTT, hZmmMassTF;
   std::vector<TH1F*> hZpt,hZeept,hZmmpt;
 
   std::vector<TH1F*> hMET, hMETee, hMETmm, hMETSig;
-  std::vector<TH1F*> hMET3e0mu, hMET2e1mu, hMET1e2mu, hMET0e3mu;
 
   std::vector<TH1F*> hWTransMass, hWenuTransMass, hWmnuTransMass;
-  std::vector<TH1F*> hW3e0muTransMass, hW2e1muTransMass, hW1e2muTransMass, hW0e3muTransMass;
-  std::vector<TH1F*> hWpt,hWptZee,hWptZmm;
-  std::vector<TH1F*> hWQ, hWenuQ, hWmnuQ;
-  std::vector<TH1F*> hW3e0muQ, hW2e1muQ, hW1e2muQ, hW0e3muQ;
+  std::vector<TH1F*> hWpt;
+  std::vector<TH1F*> hWQ;
   std::vector<TH1F*> hWTheta;
 
-  std::vector<TH1F*> hNLElec;
-  std::vector<TH1F*> hNLMuon;
-  std::vector<TH1F*> hNLLeps, hNLLepsZee, hNLLepsZmm;
+  std::vector<TH1F*> hNLElec, hNLMuon, hNLLeps;
 
-  std::vector<TH1F*> hNTElec;
-  std::vector<TH1F*> hNTMuon;
-  std::vector<TH1F*> hNTLeps;
+  std::vector<TH1F*> hNTElec, hNTMuon, hNTLeps;
 
-  std::vector<TH1F*> hNJets,hNJetsZee,hNJetsZmm;
-  std::vector<TH1F*> hNVtxs, hNVtxsZee, hNVtxsZmm;
+  std::vector<TH1F*> hNJets;
+  std::vector<TH1F*> hNVtxs;
 
   std::vector<TH1F*> hWenuCombRelIso, hWmnuCombRelIso;
 
+  TH1F* hVtxMatch;
+  
   TTree* tWZCand;
 
 };
