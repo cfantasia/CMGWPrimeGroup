@@ -110,28 +110,16 @@ public:
   virtual void beginFile(std::vector<wprime::InputFile>::iterator fi);
   virtual void eventLoop(edm::EventBase const & event);
   
-  void setEventWeight(edm::EventBase const & event);
-
-
 // operations to be done when closing input file 
   virtual void endFile(std::vector<wprime::InputFile>::iterator fi,
                        ofstream & out);
   virtual void endAnalysis(ofstream & out);
 
-protected:
-
-  // print out event # 
-  unsigned int reportAfter_;
-  // maximum # of events to process (set to <0 for processing all events)
-  int maxEvents_;
-  // Should we use the json file
-  bool useJSON_;
-  // Should we count the number of gen evts in patTuple?
-  bool countGenEvts_;
-
+protected:  //These are available to derived classes
   bool debugme;//print stuff if active
   bool doPreselect_;
 
+  //Input Tags
   edm::InputTag electronsLabel_;
   edm::InputTag muonsLabel_;
   edm::InputTag jetsLabel_;
@@ -139,44 +127,20 @@ protected:
   edm::InputTag pfCandsLabel_;
   edm::InputTag vertexLabel_;
   edm::InputTag hltEventLabel_;
+  edm::InputTag genLabel_;
+  edm::InputTag pileupLabel_;
+
   vstring triggersToUse_;
 
   ofstream outLogFile_;
   ofstream outCandEvtFile_;
   std::vector<wprime::InputFile> inputFiles_; 
 
-  std::string outputFile_;
-  std::string logFile_;
-  std::string candEvtFile_;
-
-  //Variables for counting # of gen events
-  std::vector<uint> nEvents_;
-  std::vector<std::string> ctrNames_;
-
-  edm::InputTag genLabel_;
-  edm::InputTag pfLabel_;
-  edm::InputTag pileupLabel_;
-
   edm::Handle<std::vector< PileupSummaryInfo > > PupH_;
 
   float lumi_ipb; // in pb^-1, to be retrieved from samples_cross_sections.txt
 
   fwlite::TFileService * fs;
-  // directory containing all input samples
-  std::string top_level_dir; 
-
-  // file with samples & cross-sections
-  std::string sample_cross_sections;
-
-  std::vector< edm::LuminosityBlockRange > jsonVector;
-
-  bool jsonContainsEvent (const std::vector<edm::LuminosityBlockRange>&jsonVec,
-                          const edm::EventBase &event);
-
-  std::string MCPUDistFile_;
-  std::string MCPUDistHist_;
-  std::string DataPUDistFile_;
-  std::string DataPUDistHist_;
 
   WPrimeUtil* wprimeUtil_;
 
@@ -184,8 +148,6 @@ protected:
 
   uint muReconstructor_;
   bool useAdjustedMET_;
-
-  TH1F * hNumEvts;
 
   float weight_;
 
@@ -196,6 +158,7 @@ protected:
   typedef boost::function<bool()> fnCut;
   std::map<std::string,fnCut > mFnPtrs_;
   std::vector<fnCut > CutFns_;
+  TH1F * hNumEvts;
 
   //These may be combined into a struct
   //These should be done by the each analysis though
@@ -254,9 +217,26 @@ protected:
   // return index of current signal sample (-1 if this is not a signal sample)
   int getSignalSampleIndex();
 
- private:
+ private:  //These are not directly available to derived classes
+
+  // print out event # 
+  unsigned int reportAfter_;
+  // maximum # of events to process (set to <0 for processing all events)
+  int maxEvents_;
+  // Should we use the json file
+  bool useJSON_;
+  // Should we count the number of gen evts in patTuple?
+  bool countGenEvts_;
+
   int signalSample_index;
   void setNumSignalSamples();
+
+  std::vector< edm::LuminosityBlockRange > jsonVector;
+
+  bool jsonContainsEvent (const std::vector<edm::LuminosityBlockRange>&jsonVec,
+                          const edm::EventBase &event);
+
+  void setEventWeight(edm::EventBase const & event);
 };
 
 #endif//#define _AnalyzerBase_h_

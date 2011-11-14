@@ -9,12 +9,12 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   reportAfter_ = cfg.getParameter<unsigned int>("reportAfter");
   maxEvents_   = cfg.getParameter<int>("maxEvents");
   useJSON_   = cfg.getParameter<bool>("useJSON") ;
-  countGenEvts_ = cfg.getParameter<bool>("countGenEvts");
   genLabel_ = cfg.getParameter<edm::InputTag>("genParticles" );
-  pfLabel_ = cfg.getParameter<edm::InputTag>("particleFlow" );
+  pfCandsLabel_ = cfg.getParameter<edm::InputTag>("particleFlow");
   pileupLabel_ = cfg.getParameter<edm::InputTag>("pileupTag" );
   doRecoilCorrectionForW_ = cfg.getParameter<bool>("doRecoilCorrectionForW");
 
+  // file with samples & cross-sections
   string sample_cross_sections = cfg.getParameter<string>("sample_cross_sections");
   edm::ParameterSet const& inputs = cfg.getParameter<edm::ParameterSet>("inputs");
   if ( inputs.exists("lumisToProcess") ) 
@@ -25,17 +25,32 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
       copy( lumisTemp.begin(), lumisTemp.end(), jsonVector.begin() );
     }
 
-  ctrNames_ = (cfg.getParameter<vstring>("eventCounters"));
+  //////Output Files
+  string outputFile  = cfg.getParameter<string  >("outputFile" );
+  string logFile  = cfg.getParameter<string  >("logFile" );
+  string candEvtFile = cfg.getParameter<string>("candEvtFile");
 
-  MCPUDistFile_   = cfg.getParameter<string>("MCPUDistFile" );
-  MCPUDistHist_   = cfg.getParameter<string>("MCPUDistHist" );
-  DataPUDistFile_ = cfg.getParameter<string>("DataPUDistFile" );
-  DataPUDistHist_ = cfg.getParameter<string>("DataPUDistHist" );
+  if(fileToRun != -1){
+    outputFile = Form("Sample%i_%s",fileToRun,outputFile.c_str()); 
+    logFile = Form("Sample%i_%s",fileToRun,logFile.c_str()); 
+    candEvtFile = Form("Sample%i_%s",fileToRun,candEvtFile.c_str()); 
+  }
+
+  fs = new fwlite::TFileService(outputFile);
+  outLogFile_.open(logFile.c_str());
+  WPrimeUtil::CheckStream(outLogFile_, logFile);
+  outCandEvtFile_.open(candEvtFile.c_str());
+  WPrimeUtil::CheckStream(outCandEvtFile_, candEvtFile);
+
+  string MCPUDistFile   = cfg.getParameter<string>("MCPUDistFile" );
+  string MCPUDistHist   = cfg.getParameter<string>("MCPUDistHist" );
+  string DataPUDistFile = cfg.getParameter<string>("DataPUDistFile" );
+  string DataPUDistHist = cfg.getParameter<string>("DataPUDistHist" );
   
   std::vector<edm::EventID> vEventsToDebug = cfg.getParameter<std::vector<edm::EventID> >("vEventsToDebug");
   
-  wprimeUtil_ = new WPrimeUtil(outputFile_.c_str(), genLabel_, pfLabel_, sample_cross_sections);
-  wprimeUtil_->setLumiWeights(MCPUDistFile_, DataPUDistFile_, MCPUDistHist_, DataPUDistHist_);
+  wprimeUtil_ = new WPrimeUtil(genLabel_, pfCandsLabel_, sample_cross_sections);
+  wprimeUtil_->setLumiWeights(MCPUDistFile, DataPUDistFile, MCPUDistHist, DataPUDistHist);
   wprimeUtil_->setEventsToDebug(vEventsToDebug);
   assert(wprimeUtil_);
 
@@ -88,23 +103,6 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   jetLooseResult_ = looseJet_.getBitTemplate();
   if(debugme) cout<<"Using "<<looseJetType<<" for jets\n";
 
-  //////Output Files
-  outputFile_  = cfg.getParameter<string  >("outputFile" );
-  logFile_  = cfg.getParameter<string  >("logFile" );
-  candEvtFile_ = cfg.getParameter<string>("candEvtFile");
-
-  if(fileToRun != -1){
-    outputFile_ = Form("Sample%i_%s",fileToRun,outputFile_.c_str()); 
-    logFile_ = Form("Sample%i_%s",fileToRun,logFile_.c_str()); 
-    candEvtFile_ = Form("Sample%i_%s",fileToRun,candEvtFile_.c_str()); 
-  }
-
-  fs = new fwlite::TFileService(outputFile_);
-  outLogFile_.open(logFile_.c_str());
-  WPrimeUtil::CheckStream(outLogFile_, logFile_);
-  outCandEvtFile_.open(candEvtFile_.c_str());
-  WPrimeUtil::CheckStream(outCandEvtFile_, candEvtFile_);
-
   //////////////
   doPreselect_ = cfg.getParameter<bool>("preselect");
 
@@ -112,7 +110,6 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   muonsLabel_ = cfg.getParameter<edm::InputTag>("muons");
   jetsLabel_ = cfg.getParameter<edm::InputTag>("jets");
   metLabel_ = cfg.getParameter<edm::InputTag>("met");
-  pfCandsLabel_ = cfg.getParameter<edm::InputTag>("particleFlow");
   vertexLabel_ = cfg.getParameter<edm::InputTag>("vertexTag");
 
   muReconstructor_ = cfg.getParameter<int>("muonReconstructor");
@@ -819,17 +816,9 @@ void AnalyzerBase::run()
     cout << std::fixed << std::setprecision(2);
     beginFile(it);
 
-    unsigned runNumber = 0;
-    unsigned lumiID = 0;
-    nEvents_.assign(ctrNames_.size(), 0);
     for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){// loop over events
       edm::EventBase const & event = ev;
 
-      if(countGenEvts_)
-        updateEventcounts(ev, nEvents_, 
-                          runNumber, lumiID, 
-                          ctrNames_, false);
-      
       // skip event if maximal number of events per input file is reached 
       if(maxEvents_>0 &&  ievt > maxEvents_) continue;
       
@@ -852,8 +841,6 @@ void AnalyzerBase::run()
       setEventWeight(event);
       eventLoop(event);
     } // loop over events
-    if(countGenEvts_ && (int)nEvents_[0] != it->Nprod_evt) 
-      cout<<"Weight Wrong: Found "<<nEvents_[0]<<" generated events and sample file lists "<<it->Nprod_evt<<endl;
     endFile(it, outLogFile_);
     
   } // loop over input files

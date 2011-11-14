@@ -8,7 +8,7 @@ using std::cout; using std::cerr; using std::endl;
 using std::string; using std::vector;
 
 
-WPrimeUtil::WPrimeUtil(const char * out_filename, edm::InputTag genLabel, 
+WPrimeUtil::WPrimeUtil(edm::InputTag genLabel, 
 		       edm::InputTag pfLabel, string cross_sections)
 {
 

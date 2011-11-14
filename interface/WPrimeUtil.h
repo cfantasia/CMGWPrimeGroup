@@ -2,7 +2,6 @@
 #define _wprime_util_h_
 
 #include "FWCore/PythonParameterSet/interface/PythonProcessDesc.h"
-#include "PhysicsTools/FWLite/interface/TFileService.h"
 
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/FWLite/interface/Event.h"
@@ -21,7 +20,7 @@
 #include <iostream>
 #include <string>
 
-class TFileService;
+//class TFileService;
 class TH1D;
 class TH2D;
 
@@ -29,7 +28,7 @@ class TH2D;
 class WPrimeUtil
 {
  public:
-  WPrimeUtil(const char * out_filename, edm::InputTag genLabel, edm::InputTag pfLabel, std::string cross_sections);
+  WPrimeUtil(edm::InputTag genLabel, edm::InputTag pfLabel, std::string cross_sections);
 
   ~WPrimeUtil();
 
