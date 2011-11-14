@@ -40,6 +40,12 @@ public:
   void createResolutionHist(const TFileDirectory & d, float Mass,
 			    const std::string & channel, TH1F* & put_here);
 
+  // mass format expected in <x>.<y> TeV, e.g. "1.2", corresponding to 1.2 TeV
+  // channel could be "e", "mu", "ee", "mumu", etc
+  void createGenMtHist(const TFileDirectory & d, float Mass,
+		       const std::string & channel, TH1F* & put_here);
+
+
   virtual void resetCounters();
   virtual void clearEvtVariables();
 

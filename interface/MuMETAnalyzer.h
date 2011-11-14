@@ -123,8 +123,9 @@ class MuMETAnalyzer : public AnalyzerBase
   std::vector<TH1F*> hTM;
   TH2F * hTMvPT[Num_mumet_cuts];
 
-  // one Mu+MET resolution histogram for each signal sample
+  // one Mu+MET resolution + one Mt histograms for each signal sample
   std::vector<TH1F*> muMetRes; 
+  std::vector<TH1F*> muMetGenMt;
 };
 
 

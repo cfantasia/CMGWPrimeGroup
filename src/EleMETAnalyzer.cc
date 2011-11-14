@@ -26,6 +26,7 @@ EleMETAnalyzer::EleMETAnalyzer(const edm::ParameterSet& cfg,int fileToRun) :
   electronEoverPthreshold_  = cfg.getParameter<double>("electronEoverPthreshold");
 
   elMetRes.assign(NumSigSamples, NULL);
+  elMetGenMt.assign(NumSigSamples, NULL);
   setupCutOrder();
   
   analysis = "eleMET";
@@ -39,6 +40,7 @@ void EleMETAnalyzer::defineResolutionHistos(const TFileDirectory & dir, float Ma
 {
   int index = getSignalSampleIndex();
   createResolutionHist(dir, Mass, "el", elMetRes[index]);
+  createGenMtHist(dir, Mass, "el", elMetGenMt[index]);
 }
 
 
@@ -218,6 +220,7 @@ void EleMETAnalyzer::tabulateMe(int cut_index, bool accountMe[],
 					      &(*electrons)[theEle]);
     int index = getSignalSampleIndex();
     elMetRes[index]->Fill(Wcand.mt() - genMt);
+    elMetGenMt[index]->Fill(genMt);
   }
 
  

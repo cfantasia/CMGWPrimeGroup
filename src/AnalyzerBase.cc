@@ -589,6 +589,22 @@ void AnalyzerBase::createResolutionHist(const TFileDirectory & d, float Mass,
   defineOneHisto(name, title, xtitle, nbins, xmin, xmax, "GeV", put_here, d);
 }
 
+// mass format expected in <x>.<y> TeV, e.g. "1.2", corresponding to 1.2 TeV
+// channel could be "e", "mu", "ee", "mumu", etc
+void AnalyzerBase::createGenMtHist(const TFileDirectory & d, float Mass,
+					const string & channel, 
+					TH1F* & put_here)
+{
+  string name = string("GenMt_") + channel;
+  string title = string("GEN Mt function for M = ") + Form("%.1f", Mass) + 
+    string(" TeV (channel = ") + channel + string(")");
+  string xtitle = "GeV/c^{2}";
+  int nbins = 100;
+  // need a smart way to adjust the resolution histogram range based on Mass
+  float xmin = Mass*1000 - 1000; float xmax = Mass*1000 + 300;
+  defineOneHisto(name, title, xtitle, nbins, xmin, xmax, "GeV", put_here, d);
+}
+
 void AnalyzerBase::defineOneHisto(const string & name, const string & title,
 				  const string & xtitle, int nbins,
 				  float xmin, float xmax,

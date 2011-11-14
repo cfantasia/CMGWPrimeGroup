@@ -150,8 +150,9 @@ class EleMETAnalyzer : public AnalyzerBase
   TH1F * hPHI[Num_elmet_cuts];
   TH1F * hTM[Num_elmet_cuts];
 
-  // one El+MET resolution histogram for each signal sample
+  // one El+MET resolution + one Mt histograms for each signal sample
   std::vector<TH1F*> elMetRes; 
+  std::vector<TH1F*> elMetGenMt;
 
 
   std::string analysis;
