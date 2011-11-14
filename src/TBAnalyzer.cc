@@ -17,20 +17,22 @@ TBAnalyzer::~TBAnalyzer(){
 }
 
 void TBAnalyzer::setupCutOrder(){
-  mFnPtrs_["NoCuts"] = boost::bind(&TBAnalyzer::passNoCut, this);
-  mFnPtrs_["HLT"] = boost::bind(&TBAnalyzer::passTriggersCut, this);
-  mFnPtrs_["MinNLeptons"] = boost::bind(&TBAnalyzer::passMinNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
-  mFnPtrs_["MinNJets"] = boost::bind(&TBAnalyzer::passMinNJetsCut, this, boost::cref(looseJets_), boost::cref(minNJets_));
-  mFnPtrs_["ValidW"] = boost::bind(&TBAnalyzer::passValidWCut, this, boost::cref(wCand_));
-  mFnPtrs_["ValidB"] = boost::bind(&TBAnalyzer::passValidBCut, this, boost::cref(bCand1_));
-  mFnPtrs_["ValidT"] = boost::bind(&TBAnalyzer::passValidTCut, this, boost::ref(tCand_));
-  mFnPtrs_["ValidTBCand"] = boost::bind(&TBAnalyzer::passValidTBCut, this, boost::ref(tbCand_));
-  mFnPtrs_["WTransMass"] = boost::bind(&TBAnalyzer::passWtransMassCut, this, boost::cref(wCand_), boost::cref(minWtransMass_));
-  mFnPtrs_["MET"] = boost::bind(&TBAnalyzer::passMinMETCut, this, boost::cref(met_), boost::cref(minMET_));
-  mFnPtrs_["Wpt"] = boost::bind(&TBAnalyzer::passWptCut, this, boost::cref(wCand_), boost::cref(minWpt_));
-  mFnPtrs_["AllCuts"] = boost::bind(&TBAnalyzer::passNoCut, this);
+  map<string,fnCut > mFnPtrs;
 
-  fillCuts(); 
+  mFnPtrs["NoCuts"] = boost::bind(&TBAnalyzer::passNoCut, this);
+  mFnPtrs["HLT"] = boost::bind(&TBAnalyzer::passTriggersCut, this);
+  mFnPtrs["MinNLeptons"] = boost::bind(&TBAnalyzer::passMinNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
+  mFnPtrs["MinNJets"] = boost::bind(&TBAnalyzer::passMinNJetsCut, this, boost::cref(looseJets_), boost::cref(minNJets_));
+  mFnPtrs["ValidW"] = boost::bind(&TBAnalyzer::passValidWCut, this, boost::cref(wCand_));
+  mFnPtrs["ValidB"] = boost::bind(&TBAnalyzer::passValidBCut, this, boost::cref(bCand1_));
+  mFnPtrs["ValidT"] = boost::bind(&TBAnalyzer::passValidTCut, this, boost::ref(tCand_));
+  mFnPtrs["ValidTBCand"] = boost::bind(&TBAnalyzer::passValidTBCut, this, boost::ref(tbCand_));
+  mFnPtrs["WTransMass"] = boost::bind(&TBAnalyzer::passWtransMassCut, this, boost::cref(wCand_), boost::cref(minWtransMass_));
+  mFnPtrs["MET"] = boost::bind(&TBAnalyzer::passMinMETCut, this, boost::cref(met_), boost::cref(minMET_));
+  mFnPtrs["Wpt"] = boost::bind(&TBAnalyzer::passWptCut, this, boost::cref(wCand_), boost::cref(minWpt_));
+  mFnPtrs["AllCuts"] = boost::bind(&TBAnalyzer::passNoCut, this);
+
+  fillCuts(mFnPtrs); 
 }
 
 void TBAnalyzer::defineHistos(const TFileDirectory & dir){
@@ -59,10 +61,10 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
   for (size_t i = 0; i < patElectronsH_->size(); i++) {
     allElectrons_.push_back(heep::Ele((*patElectronsH_)[i]));   
     if(Overlap(allElectrons_[i].patEle(), *patMuonsH_.product(), 0.01)) continue;
-    if (looseElectron_(allElectrons_[i].patEle(), electronLooseResult_))
+    if (looseElectron_(allElectrons_[i].patEle()))
       looseElectrons_.push_back(allElectrons_[i]);
 
-    if (tightElectron_(allElectrons_[i].patEle(), electronTightResult_))
+    if (tightElectron_(allElectrons_[i].patEle()))
       tightElectrons_.push_back(allElectrons_[i]);
   }
 
@@ -70,10 +72,10 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
   for (size_t i = 0; i < patMuonsH_->size(); i++) {
     allMuons_.push_back(TeVMuon((*patMuonsH_)[i],muReconstructor_));   
     
-    if (looseMuon_(allMuons_[i], muonLooseResult_) )
+    if (looseMuon_(allMuons_[i]) )
       looseMuons_.push_back(allMuons_[i]);
     
-    if (tightMuon_(allMuons_[i], muonTightResult_) )
+    if (tightMuon_(allMuons_[i]) )
       tightMuons_.push_back(allMuons_[i]);
   }
   if(debugme){
@@ -98,7 +100,7 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
 
   // Loop over jets, and see if they pass the jet criteria
   for (size_t i = 0; i < allJets_.size(); ++i) {
-    if (looseJet_(allJets_[i], jetLooseResult_) && !Overlap(allJets_[i], looseMuons_, 0.5, 2))
+    if (looseJet_(allJets_[i]) && !Overlap(allJets_[i], looseMuons_, 0.5, 2))
       looseJets_.push_back(allJets_[i]);
   }
   if(debugme)

@@ -9,9 +9,13 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   reportAfter_ = cfg.getParameter<unsigned int>("reportAfter");
   maxEvents_   = cfg.getParameter<int>("maxEvents");
   useJSON_   = cfg.getParameter<bool>("useJSON") ;
+  doPreselect_ = cfg.getParameter<bool>("preselect");
+  debugme = cfg.getParameter<bool>("debugme");
+
   genLabel_ = cfg.getParameter<edm::InputTag>("genParticles" );
   pfCandsLabel_ = cfg.getParameter<edm::InputTag>("particleFlow");
   pileupLabel_ = cfg.getParameter<edm::InputTag>("pileupTag" );
+  hltEventLabel_ = cfg.getParameter<edm::InputTag>("hltEventTag");
   doRecoilCorrectionForW_ = cfg.getParameter<bool>("doRecoilCorrectionForW");
 
   // file with samples & cross-sections
@@ -75,15 +79,11 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
    CutDescs_ = CutNames_;
   NCuts_     = CutNames_.size();
 
-  debugme = cfg.getParameter<bool>("debugme");
-
   Pset eSelectorPset = cfg.getParameter<Pset>("electronSelectors");
   string looseElectronType = cfg.getUntrackedParameter<string>("LooseElectronType", "wp95");
   string tightElectronType = cfg.getUntrackedParameter<string>("TightElectronType", "wp95");
   looseElectron_ = ElectronSelector(eSelectorPset, looseElectronType);
   tightElectron_ = ElectronSelector(eSelectorPset, tightElectronType);
-  electronLooseResult_ = looseElectron_.getBitTemplate();
-  electronTightResult_ = tightElectron_.getBitTemplate();
   if(debugme) cout<<"Using "<<looseElectronType<<" for loose electrons and "
                   <<tightElectronType<<" for tight electrons\n";
 
@@ -92,19 +92,15 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   string tightMuonType = cfg.getUntrackedParameter<string>("TightMuonType", "VBTF");
   looseMuon_ = MuonSelector(mSelectorPset, looseMuonType);
   tightMuon_ = MuonSelector(mSelectorPset, tightMuonType);
-  muonLooseResult_ = looseMuon_.getBitTemplate();
-  muonTightResult_ = tightMuon_.getBitTemplate();
   if(debugme) cout<<"Using "<<looseMuonType<<" for loose muons and "
                   <<tightMuonType<<" for tight muons\n";
 
   Pset jSelectorPset = cfg.getParameter<Pset>("jetSelectors");
   string looseJetType = cfg.getUntrackedParameter<string>("LooseJetType", "Base");
   looseJet_ = JetSelector(jSelectorPset, looseJetType);
-  jetLooseResult_ = looseJet_.getBitTemplate();
   if(debugme) cout<<"Using "<<looseJetType<<" for jets\n";
 
   //////////////
-  doPreselect_ = cfg.getParameter<bool>("preselect");
 
   electronsLabel_ = cfg.getParameter<edm::InputTag>("electrons");
   muonsLabel_ = cfg.getParameter<edm::InputTag>("muons");
@@ -118,8 +114,6 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
 
   useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
   
-  hltEventLabel_ = cfg.getParameter<edm::InputTag>("hltEventTag");
-
   triggersToUse_ = cfg.getParameter<vstring>("triggersToUse");
 
   ////////////////////Default Cuts/////////////////
@@ -162,14 +156,14 @@ AnalyzerBase::~AnalyzerBase(){
 ///////////////Utilities//////////////////
 
 //Fill Vector of Cuts based on map
-void AnalyzerBase::fillCuts(){
+void AnalyzerBase::fillCuts(const map<string,fnCut >& mFnPtrs){
   CutFns_.resize(NCuts_);
   for(int i=0; i<NCuts_; ++i){
-    if(mFnPtrs_.find(CutNames_[i]) == mFnPtrs_.end()){
+    if(mFnPtrs.find(CutNames_[i]) == mFnPtrs.end()){
       cout<<"Didn't find cut named "<<CutNames_[i]<<endl;
       abort();
     }
-    CutFns_[i] = mFnPtrs_.find(CutNames_[i])->second;
+    CutFns_[i] = mFnPtrs.find(CutNames_[i])->second;
   } 
 }
 

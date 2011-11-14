@@ -353,6 +353,8 @@ class MinMaxSelector : public Selector<T> {
         (!useMin && value <= this->cut(param, C())) )
       this->passCut(ret, param);
   }
+
+  pat::strbitset bitmask;
 };
 
 /// Selector for electrons (either barrel or endcap) based on params
@@ -368,43 +370,49 @@ public:
     loadFromPset<double>(params, "maxDeltaPhi", true);
     loadFromPset<double>(params, "maxCombRelIso", true);
     loadFromPset<int>(params, "maxMissingHits", true);
+
+    bitmask = getBitTemplate();
   }
   virtual bool operator()(const pat::Electron & p, pat::strbitset & ret) {
-    return (*this)(p,ret,0.);
+    bool val = (*this)(p,0.);
+    ret = bitmask;
+    return val;
   }
-  virtual bool operator()(const pat::Electron & p, pat::strbitset & ret, const float pu) {
-    ret.set(false);
-    setpassCut("minPt", p.pt(), ret);
+  virtual bool operator()(const pat::Electron & p, const float pu) {
+    bitmask.set(false);
+    setpassCut("minPt", p.pt(), bitmask);
     if(ignoreCut("minConv") || 
        fabs(p.convDist()) >= cut("minConv", double()) || fabs(p.convDcot()) >= cut("minConv", double()))
-      passCut(ret, "minConv");
-    setpassCut("maxSigmaIEtaIEta", p.sigmaIetaIeta(), ret);
-    setpassCut("maxDeltaEta", fabs(p.deltaEtaSuperClusterTrackAtVtx()), ret);
-    setpassCut("maxDeltaPhi", fabs(p.deltaPhiSuperClusterTrackAtVtx()), ret);   
-    setpassCut("maxCombRelIso",calcCombRelIso(p, pu), ret);
+      passCut(bitmask, "minConv");
+    setpassCut("maxSigmaIEtaIEta", p.sigmaIetaIeta(), bitmask);
+    setpassCut("maxDeltaEta", fabs(p.deltaEtaSuperClusterTrackAtVtx()), bitmask);
+    setpassCut("maxDeltaPhi", fabs(p.deltaPhiSuperClusterTrackAtVtx()), bitmask);   
+    setpassCut("maxCombRelIso",calcCombRelIso(p, pu), bitmask);
     setpassCut("maxMissingHits", 
-               p.gsfTrack()->trackerExpectedHitsInner().numberOfHits(), ret);
-    setIgnored(ret);
-    return (bool) ret;
+               p.gsfTrack()->trackerExpectedHitsInner().numberOfHits(), bitmask);
+    setIgnored(bitmask);
+    return (bool) bitmask;
   }
   virtual bool operator()(const heep::Ele & p, pat::strbitset & ret) {
-    return (*this)(p,ret,0.);
+    bool val = (*this)(p,0.);
+    ret = bitmask;
+    return val;
   }
-  virtual bool operator()(const heep::Ele & p, pat::strbitset & ret, const float pu) {
-    ret.set(false);
+  virtual bool operator()(const heep::Ele & p, const float pu) {
+    bitmask.set(false);
     const pat::Electron & e = p.patEle();
-    setpassCut("minPt", p.et(), ret);
+    setpassCut("minPt", p.et(), bitmask);
     if(ignoreCut("minConv") || 
        fabs(e.convDist()) >= cut("minConv", double()) || fabs(e.convDcot()) >= cut("minConv", double()))
-      passCut(ret, "minConv");
-    setpassCut("maxSigmaIEtaIEta", e.sigmaIetaIeta(), ret);
-    setpassCut("maxDeltaEta", fabs(e.deltaEtaSuperClusterTrackAtVtx()), ret);
-    setpassCut("maxDeltaPhi", fabs(e.deltaPhiSuperClusterTrackAtVtx()), ret);   
-    setpassCut("maxCombRelIso",calcCombRelIso(e, pu), ret);
+      passCut(bitmask, "minConv");
+    setpassCut("maxSigmaIEtaIEta", e.sigmaIetaIeta(), bitmask);
+    setpassCut("maxDeltaEta", fabs(e.deltaEtaSuperClusterTrackAtVtx()), bitmask);
+    setpassCut("maxDeltaPhi", fabs(e.deltaPhiSuperClusterTrackAtVtx()), bitmask);   
+    setpassCut("maxCombRelIso",calcCombRelIso(e, pu), bitmask);
     setpassCut("maxMissingHits", 
-               e.gsfTrack()->trackerExpectedHitsInner().numberOfHits(), ret);
-    setIgnored(ret);
-    return (bool) ret;
+               e.gsfTrack()->trackerExpectedHitsInner().numberOfHits(), bitmask);
+    setIgnored(bitmask);
+    return (bool) bitmask;
   }
 };
 
@@ -419,14 +427,14 @@ class ElectronSelector {
     barrelSelector_ = ElectronSelectorBase(params.getParameter<Pset>("barrel"));
     endcapSelector_ = ElectronSelectorBase(params.getParameter<Pset>("endcap"));
   }
-  bool operator()(const pat::Electron & p, pat::strbitset & ret, const float pu=0.) {
-    if     (p.isEB()) return barrelSelector_(p, ret, pu);
-    else if(p.isEE()) return endcapSelector_(p, ret, pu);
+  bool operator()(const pat::Electron & p, const float pu=0.) {
+    if     (p.isEB()) return barrelSelector_(p, pu);
+    else if(p.isEE()) return endcapSelector_(p, pu);
     return false;
   }
-  bool operator()(const heep::Ele & p, pat::strbitset & ret, const float pu=0.) {
-    if     (p.isEB()) return barrelSelector_(p, ret, pu);
-    else if(p.isEE()) return endcapSelector_(p, ret, pu);
+  bool operator()(const heep::Ele & p, const float pu=0.) {
+    if     (p.isEB()) return barrelSelector_(p, pu);
+    else if(p.isEE()) return endcapSelector_(p, pu);
     return false;
   }
   pat::strbitset getBitTemplate() { return barrelSelector_.getBitTemplate(); }
@@ -459,34 +467,38 @@ public:
     loadFromPset<int>(params, "minNMuonHits", true);
     loadFromPset<int>(params, "minNTrackerLayers", true);
     loadFromPset<double>(params, "minTrackerValidFrac", true);
+
+    bitmask = getBitTemplate();
   }
   virtual bool operator()(const TeVMuon & p, pat::strbitset & ret) {
-    return (*this)(p,ret,0.);
+    bool val = (*this)(p,0.);
+    ret = bitmask;
+    return val;
   }
-  bool operator()(const TeVMuon & p, pat::strbitset & ret, const float pu) {
-    ret.set(false);
-    setpassCut("minPt", p.pt(), ret);
-    setpassCut("maxEta", fabs(p.eta()), ret);
-    setpassCut("maxDxy", fabs(p.dB()), ret);
-    setpassCut("maxIso", p.combRelIsolation(), ret);
-    setpassCut("maxIso03", p.combRelIsolation03(pu), ret);
-    setpassCut("minIsGlobal", p.isGlobalMuon(), ret);
-    setpassCut("minIsTracker", p.isTrackerMuon(), ret);
-    setpassCut("minNMatches", p.numberOfMatches(), ret);
-    setpassCut("minNMatchedStations", p.numberOfMatchedStations(), ret);
+  bool operator()(const TeVMuon & p, const float pu=0) {
+    bitmask.set(false);
+    setpassCut("minPt", p.pt(), bitmask);
+    setpassCut("maxEta", fabs(p.eta()), bitmask);
+    setpassCut("maxDxy", fabs(p.dB()), bitmask);
+    setpassCut("maxIso", p.combRelIsolation(), bitmask);
+    setpassCut("maxIso03", p.combRelIsolation03(pu), bitmask);
+    setpassCut("minIsGlobal", p.isGlobalMuon(), bitmask);
+    setpassCut("minIsTracker", p.isTrackerMuon(), bitmask);
+    setpassCut("minNMatches", p.numberOfMatches(), bitmask);
+    setpassCut("minNMatchedStations", p.numberOfMatchedStations(), bitmask);
     
     reco::TrackRef global = p.globalTrack();
     if(!global.isNull()){
       const reco::HitPattern& gtHP = global->hitPattern();
-      setpassCut("maxNormalizedChi2", global->normalizedChi2(), ret);
-      setpassCut("minNTrackerHits", gtHP.numberOfValidTrackerHits(), ret);
-      setpassCut("minNPixelHits", gtHP.numberOfValidPixelHits(), ret);
-      setpassCut("minNMuonHits", gtHP.numberOfValidMuonHits(), ret);
-      setpassCut("minNTrackerLayers", gtHP.trackerLayersWithMeasurement(), ret);
-      setpassCut("minTrackerValidFrac", global->validFraction(), ret);
+      setpassCut("maxNormalizedChi2", global->normalizedChi2(), bitmask);
+      setpassCut("minNTrackerHits", gtHP.numberOfValidTrackerHits(), bitmask);
+      setpassCut("minNPixelHits", gtHP.numberOfValidPixelHits(), bitmask);
+      setpassCut("minNMuonHits", gtHP.numberOfValidMuonHits(), bitmask);
+      setpassCut("minNTrackerLayers", gtHP.trackerLayersWithMeasurement(), bitmask);
+      setpassCut("minTrackerValidFrac", global->validFraction(), bitmask);
     }
-    setIgnored(ret);
-    return (bool) ret;
+    setIgnored(bitmask);
+    return (bool) bitmask;
   }
 };
 
@@ -507,21 +519,28 @@ public:
     loadFromPset<double>(params, "minCHF", true);
     loadFromPset<double>(params, "maxCEF", true);
     loadFromPset<int>(params, "minCMult", true);
+
+    bitmask = getBitTemplate();
   }
   virtual bool operator()(const pat::Jet & p, pat::strbitset & ret) {
-    ret.set(false);
+    bool val = (*this)(p);
+    ret = bitmask;
+    return val;
+  }
+  virtual bool operator()(const pat::Jet & p) {
+    bitmask.set(false);
     bool inTracking = fabs(p.eta()) < 2.4;
-    if(ignoreCut("minPt")  || p.pt() > cut("minPt", double())) passCut(ret, "minPt");
-    if(ignoreCut("maxEta") || fabs(p.eta()) < cut("maxEta", double())) passCut(ret, "maxEta");
-    if(ignoreCut("maxNHF") || p.neutralHadronEnergyFraction() < cut("maxNHF", double())) passCut(ret, "maxNHF");
-    if(ignoreCut("maxNEF") || p.neutralEmEnergyFraction()     < cut("maxNEF", double())) passCut(ret, "maxNEF");
-    if(ignoreCut("minNDaughters") || (int)p.numberOfDaughters() > cut("minNDaughters", int())) passCut(ret, "minNDaughters");
+    if(ignoreCut("minPt")  || p.pt() > cut("minPt", double())) passCut(bitmask, "minPt");
+    if(ignoreCut("maxEta") || fabs(p.eta()) < cut("maxEta", double())) passCut(bitmask, "maxEta");
+    if(ignoreCut("maxNHF") || p.neutralHadronEnergyFraction() < cut("maxNHF", double())) passCut(bitmask, "maxNHF");
+    if(ignoreCut("maxNEF") || p.neutralEmEnergyFraction()     < cut("maxNEF", double())) passCut(bitmask, "maxNEF");
+    if(ignoreCut("minNDaughters") || (int)p.numberOfDaughters() > cut("minNDaughters", int())) passCut(bitmask, "minNDaughters");
     //Below are only used for fabs(eta) < 2.4 b/c tracking needed
-    if(ignoreCut("minCHF")   || !inTracking || p.chargedHadronEnergyFraction() > cut("minCHF",   double())) passCut(ret, "minCHF");
-    if(ignoreCut("maxCEF")   || !inTracking || p.chargedEmEnergyFraction()     < cut("maxCEF",   double())) passCut(ret, "maxCEF");
-    if(ignoreCut("minCMult") || !inTracking || (int)p.chargedMultiplicity()    > cut("minCMult",    int())) passCut(ret, "minCMult");
-    setIgnored(ret);
-    return (bool) ret;
+    if(ignoreCut("minCHF")   || !inTracking || p.chargedHadronEnergyFraction() > cut("minCHF",   double())) passCut(bitmask, "minCHF");
+    if(ignoreCut("maxCEF")   || !inTracking || p.chargedEmEnergyFraction()     < cut("maxCEF",   double())) passCut(bitmask, "maxCEF");
+    if(ignoreCut("minCMult") || !inTracking || (int)p.chargedMultiplicity()    > cut("minCMult",    int())) passCut(bitmask, "minCMult");
+    setIgnored(bitmask);
+    return (bool) bitmask;
   }
   
 };
@@ -540,20 +559,27 @@ public:
     loadFromPset<double>(params, "maxHoE", true);
     loadFromPset<double>(params, "maxSigmaee", true);
     loadFromPset<bool>  (params, "minHasSeed", true);
+
+    bitmask = getBitTemplate();
   }
   
   virtual bool operator()(const pat::Photon & p, pat::strbitset & ret) {
-    ret.set(false);
-    if(ignoreCut("minPt")       || p.pt() > cut("minPt", double())) passCut(ret, "minPt");
-    if(ignoreCut("maxEta")      || fabs(p.superCluster()->eta()) < cut("maxEta", double())) passCut(ret, "maxEta");
-    if(ignoreCut("maxECalIso")  || p.ecalRecHitSumEtConeDR04() < cut("maxECalIso", double())) passCut(ret, "maxECalIso");
-    if(ignoreCut("maxHCalIso")  || p.hcalTowerSumEtConeDR04() < cut("maxHCalIso", double())) passCut(ret, "maxHCalIso");
-    if(ignoreCut("maxTrkIso")   || p.trkSumPtHollowConeDR04() < cut("maxTrkIso", double())) passCut(ret, "maxTrkIso");
-    if(ignoreCut("maxHoE")      || p.hadronicOverEm() < cut("maxHoE", double())) passCut(ret, "maxHoE");
-    if(ignoreCut("maxSigmaee")  || p.sigmaIetaIeta() < cut("maxSigmaee", double())) passCut(ret, "maxSigmaee");
-    if(ignoreCut("minHasSeed")  || p.hasPixelSeed() >= cut("minHasSeed", bool())) passCut(ret, "minHasSeed");
-    setIgnored(ret);
-    return (bool) ret;
+    bool val = (*this)(p);
+    ret = bitmask;
+    return val;
+  }
+  virtual bool operator()(const pat::Photon & p) {
+    bitmask.set(false);
+    if(ignoreCut("minPt")       || p.pt() > cut("minPt", double())) passCut(bitmask, "minPt");
+    if(ignoreCut("maxEta")      || fabs(p.superCluster()->eta()) < cut("maxEta", double())) passCut(bitmask, "maxEta");
+    if(ignoreCut("maxECalIso")  || p.ecalRecHitSumEtConeDR04() < cut("maxECalIso", double())) passCut(bitmask, "maxECalIso");
+    if(ignoreCut("maxHCalIso")  || p.hcalTowerSumEtConeDR04() < cut("maxHCalIso", double())) passCut(bitmask, "maxHCalIso");
+    if(ignoreCut("maxTrkIso")   || p.trkSumPtHollowConeDR04() < cut("maxTrkIso", double())) passCut(bitmask, "maxTrkIso");
+    if(ignoreCut("maxHoE")      || p.hadronicOverEm() < cut("maxHoE", double())) passCut(bitmask, "maxHoE");
+    if(ignoreCut("maxSigmaee")  || p.sigmaIetaIeta() < cut("maxSigmaee", double())) passCut(bitmask, "maxSigmaee");
+    if(ignoreCut("minHasSeed")  || p.hasPixelSeed() >= cut("minHasSeed", bool())) passCut(bitmask, "minHasSeed");
+    setIgnored(bitmask);
+    return (bool) bitmask;
   }
  
 };

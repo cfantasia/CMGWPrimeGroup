@@ -16,7 +16,8 @@ public:
 ///////////////Utilities//////////////////
 
 //Fill Vector of Cuts based on map
-  void fillCuts();
+  typedef boost::function<bool()> fnCut;
+  void fillCuts(const std::map<std::string,fnCut >& mFnPtrs);
 
 //Tabulate results after the cut has been passed
   virtual void tabulateEvent(const int& cut_index, const float& weight);
@@ -155,8 +156,6 @@ protected:  //These are available to derived classes
   int NCuts_;
   std::vector<std::string> CutNames_;
   std::vector<std::string> CutDescs_;
-  typedef boost::function<bool()> fnCut;
-  std::map<std::string,fnCut > mFnPtrs_;
   std::vector<fnCut > CutFns_;
   TH1F * hNumEvts;
 
@@ -164,17 +163,12 @@ protected:  //These are available to derived classes
   //These should be done by the each analysis though
   ElectronSelector looseElectron_;
   ElectronSelector tightElectron_;
-  pat::strbitset electronLooseResult_;
-  pat::strbitset electronTightResult_;
 
   MuonSelector looseMuon_;
   MuonSelector tightMuon_;
-  pat::strbitset muonLooseResult_;
-  pat::strbitset muonTightResult_;
 
   JetSelector looseJet_;
   JetSelector tightJet_;
-  pat::strbitset jetLooseResult_;
 
   PatElectronVH patElectronsH_;
   PatMuonVH patMuonsH_;

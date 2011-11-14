@@ -22,22 +22,24 @@ HadronicVWAnalyzer::~HadronicVWAnalyzer(){
 }
 
 void HadronicVWAnalyzer::setupCutOrder(){
-  mFnPtrs_["NoCuts"] = boost::bind(&HadronicVWAnalyzer::passNoCut, this);
-  mFnPtrs_["HLT"] = boost::bind(&HadronicVWAnalyzer::passTriggersCut, this);
-  mFnPtrs_["MinNLeptons"] = boost::bind(&HadronicVWAnalyzer::passMinNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
-  mFnPtrs_["MaxNLeptons"] = boost::bind(&HadronicVWAnalyzer::passMaxNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
-  mFnPtrs_["MinNJets"] = boost::bind(&HadronicVWAnalyzer::passMinNJetsCut, this, boost::cref(looseJets_), boost::cref(minNJets_));
-  mFnPtrs_["ValidW"] = boost::bind(&HadronicVWAnalyzer::passValidWCut, this, boost::cref(wCand_));
-  mFnPtrs_["ValidV"] = boost::bind(&HadronicVWAnalyzer::passValidZCut, this, boost::cref(vCand_));
-  mFnPtrs_["ValidVWCand"] = boost::bind(&HadronicVWAnalyzer::passValidVWCut, this);
-  mFnPtrs_["VMass"] = boost::bind(&HadronicVWAnalyzer::passZMassCut, this, boost::cref(vCand_), boost::cref(minVmass_), boost::cref(maxVmass_));
-  mFnPtrs_["WTransMass"] = boost::bind(&HadronicVWAnalyzer::passWtransMassCut, this, boost::cref(wCand_), boost::cref(minWtransMass_));
-  mFnPtrs_["MET"] = boost::bind(&HadronicVWAnalyzer::passMinMETCut, this, boost::cref(met_), boost::cref(minMET_));
-  mFnPtrs_["Vpt"] = boost::bind(&HadronicVWAnalyzer::passZptCut, this, boost::cref(vCand_), boost::cref(minVpt_));
-  mFnPtrs_["Wpt"] = boost::bind(&HadronicVWAnalyzer::passWptCut, this, boost::cref(wCand_), boost::cref(minWpt_));
-  mFnPtrs_["AllCuts"] = boost::bind(&HadronicVWAnalyzer::passNoCut, this);
+  map<string,fnCut > mFnPtrs;
 
-  fillCuts();
+  mFnPtrs["NoCuts"] = boost::bind(&HadronicVWAnalyzer::passNoCut, this);
+  mFnPtrs["HLT"] = boost::bind(&HadronicVWAnalyzer::passTriggersCut, this);
+  mFnPtrs["MinNLeptons"] = boost::bind(&HadronicVWAnalyzer::passMinNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
+  mFnPtrs["MaxNLeptons"] = boost::bind(&HadronicVWAnalyzer::passMaxNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
+  mFnPtrs["MinNJets"] = boost::bind(&HadronicVWAnalyzer::passMinNJetsCut, this, boost::cref(looseJets_), boost::cref(minNJets_));
+  mFnPtrs["ValidW"] = boost::bind(&HadronicVWAnalyzer::passValidWCut, this, boost::cref(wCand_));
+  mFnPtrs["ValidV"] = boost::bind(&HadronicVWAnalyzer::passValidZCut, this, boost::cref(vCand_));
+  mFnPtrs["ValidVWCand"] = boost::bind(&HadronicVWAnalyzer::passValidVWCut, this);
+  mFnPtrs["VMass"] = boost::bind(&HadronicVWAnalyzer::passZMassCut, this, boost::cref(vCand_), boost::cref(minVmass_), boost::cref(maxVmass_));
+  mFnPtrs["WTransMass"] = boost::bind(&HadronicVWAnalyzer::passWtransMassCut, this, boost::cref(wCand_), boost::cref(minWtransMass_));
+  mFnPtrs["MET"] = boost::bind(&HadronicVWAnalyzer::passMinMETCut, this, boost::cref(met_), boost::cref(minMET_));
+  mFnPtrs["Vpt"] = boost::bind(&HadronicVWAnalyzer::passZptCut, this, boost::cref(vCand_), boost::cref(minVpt_));
+  mFnPtrs["Wpt"] = boost::bind(&HadronicVWAnalyzer::passWptCut, this, boost::cref(wCand_), boost::cref(minWpt_));
+  mFnPtrs["AllCuts"] = boost::bind(&HadronicVWAnalyzer::passNoCut, this);
+
+  fillCuts(mFnPtrs);
 }
 
 //--------------------------------------------------------------
@@ -362,7 +364,7 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
                      (int)patJetsH_->size());
   for (size_t i = 0; i < patJetsH_->size(); i++) {
     const pat::Jet & jet = (*patJetsH_.product())[i];
-    if (looseJet_(jet, jetLooseResult_))
+    if (looseJet_(jet))
       looseJets_.push_back(jet);
   }
   if(looseJets_.size() == 0) return;
@@ -394,19 +396,19 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
   for (size_t i = 0; i < allElectrons_.size(); i++) {
     if(Overlap(allElectrons_[i].patEle(), allMuons_)) continue;
     const float pu = ElecPU(allElectrons_[i]);
-    if (looseElectron_(allElectrons_[i].patEle(), electronLooseResult_, pu))
+    if (looseElectron_(allElectrons_[i].patEle(), pu))
       looseAllElectrons_.push_back(allElectrons_[i]);
 
-    if (tightElectron_(allElectrons_[i].patEle(), electronTightResult_, pu))
+    if (tightElectron_(allElectrons_[i].patEle(), pu))
       tightElectrons_.push_back(allElectrons_[i]);
   }
 */
   for (size_t i = 0; i < allMuons_.size(); i++) {
     const float pu = MuonPU(allMuons_[i]);
-    if (looseMuon_(allMuons_[i], muonLooseResult_,pu))
+    if (looseMuon_(allMuons_[i], pu))
       looseMuons_.push_back(allMuons_[i]);
 
-    if (tightMuon_(allMuons_[i], muonTightResult_,pu))
+    if (tightMuon_(allMuons_[i], pu))
       tightMuons_.push_back(allMuons_[i]);
   }
   if(looseElectrons_.size() + looseMuons_.size() == 0) return;
