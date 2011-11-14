@@ -48,6 +48,9 @@ public:
 
   virtual void resetCounters();
   virtual void clearEvtVariables();
+  virtual const reco::Vertex& findPV(const std::vector<reco::Vertex>& vtxs) const;
+  virtual const reco::Vertex& findPV(const std::vector<reco::Vertex>& vtxs, const reco::Candidate& p) const;
+  virtual bool sameVertex(const reco::Vertex& vtx, const reco::Candidate& p) const;
 
   //methods for printers
   virtual void printEventFull(edm::EventBase const & event) const;
@@ -187,6 +190,7 @@ protected:
 
   float weight_;
 
+  //These will get merged into a struct soon
   int NCuts_;
   std::vector<std::string> CutNames_;
   std::vector<std::string> CutDescs_;
@@ -194,6 +198,8 @@ protected:
   std::map<std::string,fnCut > mFnPtrs_;
   std::vector<fnCut > CutFns_;
 
+  //These may be combined into a struct
+  //These should be done by the each analysis though
   Pset eSelectorPset_;
   ElectronSelector looseElectron_;
   ElectronSelector tightElectron_;
@@ -218,6 +224,7 @@ protected:
   std::vector<reco::Vertex>  vertices_;
 
 //////Chosen Candidates
+  //These really should be done by each analysis
   ElectronV allElectrons_, looseElectrons_, tightElectrons_;
   MuonV allMuons_, looseMuons_, tightMuons_;
   JetV  allJets_, looseJets_, tightJets_;
