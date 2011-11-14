@@ -14,10 +14,21 @@ HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, int fileTo
 // +++++++++++++++++++Event characteristics
  
 // +++++++++++++++++++General Cut values
-  maxNJets = cfg.getParameter<uint>("maxNJets");
+  minNLeptons_ = cfg.getUntrackedParameter<uint>("minNLeptons", 0);
+  minNJets_ = cfg.getUntrackedParameter<uint>("minNJets", 0);
+  
+// +++++++++++++++++++Z Cuts
+  minZmass_ = cfg.getUntrackedParameter<double>("minZmass", 0.);
+  maxZmass_ = cfg.getUntrackedParameter<double>("maxZmass", 9e9);
+  minZpt_ = cfg.getUntrackedParameter<double>("minZpt", 0.);
+
+// +++++++++++++++++++V Cuts
+  minVmass_ = cfg.getUntrackedParameter<double>("minVmass", 0.);
+  maxVmass_ = cfg.getUntrackedParameter<double>("maxVmass", 9e9);
+  minVpt_ = cfg.getUntrackedParameter<double>("minVpt", 0.);
+
   maxAngleBetweenJets = cfg.getParameter<double>("maxAngleBetweenJets");
 
-// +++++++++++++++++++Z Cuts
 
 // +++++++++++++++++++Hadronic Boson Cuts
 

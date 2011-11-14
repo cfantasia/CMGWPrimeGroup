@@ -10,6 +10,13 @@ TBAnalyzer::TBAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
 
   
 // +++++++++++++++++++General Cut values
+  minNLeptons_ = cfg.getUntrackedParameter<uint>("minNLeptons", 0);
+  minNJets_ = cfg.getUntrackedParameter<uint>("minNJets", 0);
+  
+  minMET_ = cfg.getUntrackedParameter<double>("minMET", 0.);
+
+  minWtransMass_ = cfg.getUntrackedParameter<double>("minWtransMass", 0.);
+  minWpt_ = cfg.getUntrackedParameter<double>("minWpt", 0.);
 
   //Selectors
   Pset eSelectorPset = cfg.getParameter<Pset>("electronSelectors");

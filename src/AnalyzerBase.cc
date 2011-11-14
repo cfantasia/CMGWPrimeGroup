@@ -95,25 +95,7 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   
   triggersToUse_ = cfg.getParameter<vstring>("triggersToUse");
 
-  ////////////////////Default Cuts/////////////////
-  minNLeptons_ = cfg.getUntrackedParameter<uint>("minNLeptons", 0);
-  maxNLeptons_ = cfg.getUntrackedParameter<uint>("maxNLeptons", 99999);
-  minNTightLeptons_ = cfg.getUntrackedParameter<uint>("minNTightLeptons", 0);
-  minNJets_ = cfg.getUntrackedParameter<uint>("minNJets", 0);
-  
-  minMET_ = cfg.getUntrackedParameter<double>("minMET", 0.);
-
-  minZmass_ = cfg.getUntrackedParameter<double>("minZmass", 0.);
-  maxZmass_ = cfg.getUntrackedParameter<double>("maxZmass", 9e9);
-  minZpt_ = cfg.getUntrackedParameter<double>("minZpt", 0.);
-
-  minVmass_ = cfg.getUntrackedParameter<double>("minVmass", 0.);
-  maxVmass_ = cfg.getUntrackedParameter<double>("maxVmass", 9e9);
-  minVpt_ = cfg.getUntrackedParameter<double>("minVpt", 0.);
-
-  minWtransMass_ = cfg.getUntrackedParameter<double>("minWtransMass", 0.);
-  minWpt_ = cfg.getUntrackedParameter<double>("minWpt", 0.);
-
+  //Muon Algos
   muon_reconstructors.push_back(kGLOBAL);
   muon_reconstructors.push_back(kINNER);
   muon_reconstructors.push_back(kSTANDALONE);

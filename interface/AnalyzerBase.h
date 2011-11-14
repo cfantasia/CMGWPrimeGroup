@@ -175,23 +175,6 @@ protected:  //These are available to derived classes
 
   pat::TriggerEvent triggerEvent_; 
 
-  float minNLeptons_;
-  float maxNLeptons_;
-  float minNTightLeptons_;
-  float minNJets_;
-
-  float minMET_;
-
-  float minZmass_;
-  float maxZmass_;
-  float minVmass_;
-  float maxVmass_;
-  float minWtransMass_;
-
-  float minZpt_;
-  float minWpt_;
-  float minVpt_;
-
   std::vector<unsigned> muon_reconstructors;
 
   int NumSigSamples;

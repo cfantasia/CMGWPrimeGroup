@@ -23,12 +23,19 @@ public:
   // +++++++++++++++++++Event Characteristics
 
   // +++++++++++++++++++General Cut values
-  uint maxNJets;
+  uint minNLeptons_;
+  uint minNJets_;
   float maxAngleBetweenJets;
   
   // +++++++++++++++++++Z Cuts
+  float minZmass_;
+  float maxZmass_;
+  float minZpt_;
 
   // +++++++++++++++++++Hadronic Boson Cuts
+  float minVmass_;
+  float maxVmass_;
+  float minVpt_;
 
   //Selectors
   ElectronSelector looseElectron_;

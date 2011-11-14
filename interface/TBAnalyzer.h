@@ -25,6 +25,16 @@ public:
   bool passValidTCut(XWLeptonic & t) const;
   bool passValidTBCut(XWLeptonic & tb) const;
 
+  uint minNLeptons_;
+  uint minNJets_;
+
+  float minMET_;
+
+  float minWtransMass_;
+
+  float minZpt_;
+  float minWpt_;
+
   //Selectors
   ElectronSelector looseElectron_;
   MuonSelector looseMuon_;

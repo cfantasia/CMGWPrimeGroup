@@ -10,27 +10,36 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
 
   wzAlgo_ = (NuAlgos)cfg.getUntrackedParameter<int>("NuAlgo", kMinPz);
 
-  maxZMassDiff_ = cfg.getParameter<double>("maxZMassDiff");
-  minDeltaR_ = cfg.getParameter<double>("minDeltaR");
-
   effectiveElecArea_ = cfg.getParameter<vector<double> >("effectiveElecArea");
   effectiveMuonArea_ = cfg.getParameter<vector<double> >("effectiveMuonArea");
   
 // +++++++++++++++++++General Cut values
   maxNumZs_ = cfg.getParameter<uint>("maxNumZs");
   minLeadPt_ = cfg.getParameter<double>("minLeadPt");
+  minNLeptons_ = cfg.getUntrackedParameter<uint>("minNLeptons", 0);
+ 
+  minMET_ = cfg.getUntrackedParameter<double>("minMET", 0.);
 
 // +++++++++++++++++++Ht Cuts
   minHt_ = cfg.getUntrackedParameter<double>("minHt", -1);
 
 // +++++++++++++++++++W Cuts
   minWlepPt_ = cfg.getParameter<double>("minWlepPt");
+  minWtransMass_ = cfg.getUntrackedParameter<double>("minWtransMass", 0.);
+  minWpt_ = cfg.getUntrackedParameter<double>("minWpt", 0.);
 
 // +++++++++++++++++++Z Cuts
   minZeePt1_ = cfg.getParameter<double>("minZeePt1");
   minZeePt2_ = cfg.getParameter<double>("minZeePt2");
   minZmmPt1_ = cfg.getParameter<double>("minZmmPt1");
   minZmmPt2_ = cfg.getParameter<double>("minZmmPt2");
+  minZmass_ = cfg.getUntrackedParameter<double>("minZmass", 0.);
+  maxZmass_ = cfg.getUntrackedParameter<double>("maxZmass", 9e9);
+  minZpt_ = cfg.getUntrackedParameter<double>("minZpt", 0.);
+
+  maxZMassDiff_ = cfg.getParameter<double>("maxZMassDiff");
+  minDeltaR_ = cfg.getParameter<double>("minDeltaR");
+
 
   //Selectors
   Pset eSelectorPset = cfg.getParameter<Pset>("electronSelectors");

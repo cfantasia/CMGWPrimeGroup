@@ -75,10 +75,19 @@ public:
   uint evtType_;
 
 // +++++++++++++++++++General Cut values
+  uint minNLeptons_;
+  uint minNJets_;
+
+  float minMET_;
 
 // +++++++++++++++++++W Cuts
+  float minWtransMass_;
+  float minWpt_;
 
 // +++++++++++++++++++V Cuts
+  float minVmass_;
+  float maxVmass_;
+  float minVpt_;
 
   //Selectors
   ElectronSelector looseElectron_;

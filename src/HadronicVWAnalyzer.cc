@@ -12,10 +12,21 @@ HadronicVWAnalyzer::HadronicVWAnalyzer(const edm::ParameterSet & cfg, int fileTo
   effectiveMuonArea_ = cfg.getParameter<vector<double> >("effectiveMuonArea");
  
 // +++++++++++++++++++General Cut values
-
-// +++++++++++++++++++W Cuts
+  minNLeptons_ = cfg.getUntrackedParameter<uint>("minNLeptons", 0);
+  minNJets_ = cfg.getUntrackedParameter<uint>("minNJets", 0);
+  
+  minMET_ = cfg.getUntrackedParameter<double>("minMET", 0.);
 
 // +++++++++++++++++++V Cuts
+  minVmass_ = cfg.getUntrackedParameter<double>("minVmass", 0.);
+  maxVmass_ = cfg.getUntrackedParameter<double>("maxVmass", 9e9);
+  minVpt_ = cfg.getUntrackedParameter<double>("minVpt", 0.);
+
+// +++++++++++++++++++W Cuts
+  minWtransMass_ = cfg.getUntrackedParameter<double>("minWtransMass", 0.);
+  minWpt_ = cfg.getUntrackedParameter<double>("minWpt", 0.);
+
+
 
   //Selectors
   Pset eSelectorPset = cfg.getParameter<Pset>("electronSelectors");

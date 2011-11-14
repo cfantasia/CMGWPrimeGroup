@@ -106,8 +106,10 @@ public:
   bool TT, TF;
 
 // +++++++++++++++++++General Cut values
+  uint minNLeptons_;
   uint maxNumZs_;
   float minLeadPt_;
+  float minMET_;
 
 // +++++++++++++++++++Ht Cuts
   float minHt_;
@@ -116,8 +118,14 @@ public:
   float minDeltaR_;
 
   float minWlepPt_;
+  float minWtransMass_;
+  float minWpt_;
+
 // +++++++++++++++++++Z Cuts
+  float minZmass_;
+  float maxZmass_;
   float maxZMassDiff_;
+  float minZpt_;
 
   float minZeePt1_;
   float minZeePt2_;
