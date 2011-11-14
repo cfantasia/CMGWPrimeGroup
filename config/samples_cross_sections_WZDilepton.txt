@@ -2,10 +2,10 @@ Top Level Dir =
 integrated lumi = 4699 pb^-1
 
 samplename = DYJetsToLL
-description = DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola
+description = DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola Part 1
 subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 3048
-pathname = filelists_WZ/MCPatDilepton-W06-03-01A-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola.txt
+pathname = filelists_WZ/MCPatDilepton-W06-03-01A-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola_part1.txt
 Nprod_evt = 36277961
 
 samplename = GVJets
@@ -224,6 +224,13 @@ x-section = 1
 subdir = root://cmsxrootd.hep.wisc.edu/
 pathname = filelists_WZ/DataPatDilepton-W06-04-01A-DoubleElectron-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
+
+samplename = DYJetsToLL
+description = DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola Part 2
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 3048
+pathname = filelists_WZ/MCPatDilepton-W06-03-01A-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola_part2.txt
+Nprod_evt = 36277961
 
 DONE
 
