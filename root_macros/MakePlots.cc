@@ -114,12 +114,12 @@ MakePlots(string inName, string outName, string opt){
   SampleNames["TC_WZ_300"]="\\rho_{TC} 300";
   SampleNames["TC_WZ_400"]="\\rho_{TC} 400";
   SampleNames["TC_WZ_500"]="\\rho_{TC} 500";
-  SampleNames["Summer11_RSZZmmjj_750"]="RS 750";
-  SampleNames["Summer11_RSZZmmjj_1000"]="RS 1000";
-  SampleNames["Summer11_RSZZmmjj_1250"]="RS 1250";
-  SampleNames["Summer11_RSZZmmjj_1500"]="RS 1500";
-  SampleNames["Summer11_RSZZmmjj_1750"]="RS 1750";
-  SampleNames["Summer11_RSZZmmjj_2000"]="RS 2000";
+  SampleNames["RSZZ_750"]="RS 750";
+  SampleNames["RSZZ_1000"]="RS 1000";
+  SampleNames["RSZZ_1250"]="RS 1250";
+  SampleNames["RSZZ_1500"]="RS 1500";
+  SampleNames["RSZZ_1750"]="RS 1750";
+  SampleNames["RSZZ_2000"]="RS 2000";
   SampleNames["Summer11_WprimeToWZTo2Q2L_M-500"]="W' 500";
   SampleNames["Summer11_WprimeToWZTo2Q2L_M-1000"]="W' 1000";
 
@@ -209,7 +209,31 @@ MakePlots(string inName, string outName, string opt){
     //Sig.push_back(Sample("TC_WZ_400",     1, 1, kBlue));
     //Sig.push_back(Sample("TC_WZ_500",     1, 1, kRed));
   }else if(inName.find("HadVZ") != string::npos){
-    Sig.push_back(Sample("Summer11_RSZZmmjj_750",     kMagenta, 1, 0));
+    vector<string> RS750;
+    RS750.push_back("Summer11_RSZZeejj_750");
+    RS750.push_back("Summer11_RSZZmmjj_750");
+    Bkg.push_back(Sample("RSZZ_750", RS750, kMagenta, 1, 0));
+    vector<string> RS1000;
+    RS1000.push_back("Summer11_RSZZeejj_1000");
+    RS1000.push_back("Summer11_RSZZmmjj_1000");
+    Bkg.push_back(Sample("RSZZ_1000", RS1000, kViolet, 1, 0));
+    vector<string> RS1250;
+    RS1250.push_back("Summer11_RSZZeejj_1250");
+    RS1250.push_back("Summer11_RSZZmmjj_1250");
+    //Bkg.push_back(Sample("RSZZ_1250", RS1250, kMagenta, 1, 0));
+    vector<string> RS1500;
+    RS1500.push_back("Summer11_RSZZeejj_1500");
+    RS1500.push_back("Summer11_RSZZmmjj_1500");
+    //Bkg.push_back(Sample("RSZZ_1500", RS1500, kMagenta, 1, 0));
+    vector<string> RS1750;
+    RS1750.push_back("Summer11_RSZZeejj_1750");
+    RS1750.push_back("Summer11_RSZZmmjj_1750");
+    //Bkg.push_back(Sample("RSZZ_1750", RS1750, kMagenta, 1, 0));
+    vector<string> RS2000;
+    RS2000.push_back("Summer11_RSZZeejj_2000");
+    RS2000.push_back("Summer11_RSZZmmjj_2000");
+    //Bkg.push_back(Sample("RSZZ_2000", RS2000, kCyan, 1, 0));
+    //Sig.push_back(Sample("Summer11_RSZZmmjj_750",     kMagenta, 1, 0));
     //Sig.push_back(Sample("Summer11_RSZZmmjj_1000",     kMagenta, 2, 0));
     //Sig.push_back(Sample("Summer11_RSZZmmjj_1250",     1, 1, 0));
     //Sig.push_back(Sample("Summer11_RSZZmmjj_1500",     1, 1, 0));
@@ -388,18 +412,32 @@ MakePlots(string inName, string outName, string opt){
 
   //Make plots for a single cut
   if(inName.find("WprimeWZ") != string::npos){
-    DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht",1,0,0);
-    DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht Cumlative",1,0,1);
-    DrawandSave(fin,outName,"hMET_ValidW","Title: MET",1,0,0);
-    DrawandSave(fin,outName,"hMET_ValidW","Title: MET Cumlative",1,0,1);
-    DrawandSave(fin,outName,"hMET_ValidW","Title: MET",0,0,0);
-    DrawandSave(fin,outName,"hMET_ValidW","Title: MET",0,0,1);
-    DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,0);
-    DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut (Cumlative)",1,0,1);
-    DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",0,0,0);
-    DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut (Cumlative)",0,0,1);
-    DrawandSave(fin,outName,"hMETSig_ValidW","Title: Met Sig before met cut",1,0,0);
-    DrawandSave(fin,outName,"hMETSig_ValidW","Title: Met Sig before met cut",1,0,1);
+    if(opt.find("show") == string::npos) {
+      DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht",1,0,0);
+      DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht Cumlative",1,0,1);
+      DrawandSave(fin,outName,"hMET_ValidW","Title: MET",1,0,0);
+      DrawandSave(fin,outName,"hMET_ValidW","Title: MET Cumlative",1,0,1);
+      DrawandSave(fin,outName,"hMET_ValidW","Title: MET",0,0,0);
+      DrawandSave(fin,outName,"hMET_ValidW","Title: MET",0,0,1);
+      DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut (Cumlative)",1,0,1);
+      DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",0,0,0);
+      DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut (Cumlative)",0,0,1);
+      
+      DrawandSave(fin,outName,"hMETSig_ValidW","Title: Met Sig before met cut",1,0,0);
+      DrawandSave(fin,outName,"hMETSig_ValidW","Title: Met Sig before met cut",1,0,1);
+      DrawandSave(fin,outName,"hMETSig_MET","Title: Met Sig after met cut",1,0,0);
+      DrawandSave(fin,outName,"hMETSig_MET","Title: Met Sig after met cut",1,0,1);
+      DrawandSave(fin,outName,"hMETSig_ValidWZCand","Title: Met Sig before ht cut",1,0,0);
+      DrawandSave(fin,outName,"hMETSig_ValidWZCand","Title: Met Sig before ht cut",1,0,1);
+      
+      DrawandSave(fin,outName,"hWTransMass_ValidW","Title: w trans before met",1,0,0);
+      DrawandSave(fin,outName,"hWTransMass_ValidW","Title: w trans before met",1,0,1);
+      DrawandSave(fin,outName,"hWTransMass_MET","Title: w trans before met",1,0,0);
+      DrawandSave(fin,outName,"hWTransMass_MET","Title: w trans before met",1,0,1);
+      DrawandSave(fin,outName,"hWTransMass_ValidWZCand","Title: w trans before met",1,0,0);
+      DrawandSave(fin,outName,"hWTransMass_ValidWZCand","Title: w trans before met",1,0,1);
+    }
   }else if(inName.find("EWKWZ") != string::npos){
   }else if(inName.find("HadVZ") != string::npos){
     if(opt.find("show") == string::npos) {
