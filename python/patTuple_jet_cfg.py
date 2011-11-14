@@ -1,41 +1,71 @@
 import FWCore.ParameterSet.Config as cms
 from UserCode.CMGWPrimeGroup.patTuple_common_cfg import *
 #from PhysicsTools.PFCandProducer.PF2PAT_cff import *
-from CommonTools.ParticleFlow.PF2PAT_cff import *
+#from CommonTools.ParticleFlow.PF2PAT_cff import *
 from PhysicsTools.PatAlgos.tools.pfTools import *
+from PhysicsTools.PatAlgos.patTemplate_cfg import *
+from PhysicsTools.PatAlgos.tools.coreTools import *
+from PhysicsTools.PatAlgos.tools.jetTools import *
+from PhysicsTools.PatAlgos.tools.pfTools import *
+process.load("PhysicsTools.PatAlgos.patSequences_cff")
+
 
 
 def CMGWPswitchToPFJets(process) :
-    ## Trying to change Jet algorithm
-    process.pfJets = jetAlgo('AK7')
+
+    addJetCollection(process,cms.InputTag('ak7PFJets'),'AK7','PF',
+                     doJTA        = True,
+                     doBTagging   = True,
+#                     addDiscriminators    = True,   ## addition btag discriminators                    
+#                     discriminatorSources = cms.VInputTag(
+#            cms.InputTag("combinedSecondaryVertexBJetTags"),
+#            cms.InputTag("combinedSecondaryVertexMVABJetTags"),
+#            cms.InputTag("jetBProbabilityBJetTags"),
+#            cms.InputTag("jetProbabilityBJetTags"),
+#            cms.InputTag("simpleSecondaryVertexHighEffBJetTags"),
+#            cms.InputTag("simpleSecondaryVertexHighPurBJetTags"),
+#            cms.InputTag("softElectronByPtBJetTags"),
+#            cms.InputTag("softElectronByIP3dBJetTags"),
+#            cms.InputTag("softMuonBJetTags"),
+#            cms.InputTag("softMuonByPtBJetTags"),
+#            cms.InputTag("softMuonByIP3dBJetTags"),
+#            cms.InputTag("trackCountingHighEffBJetTags"),
+#            cms.InputTag("trackCountingHighPurBJetTags"),
+#            ),
+                     jetCorrLabel = ('AK7PF', cms.vstring(['L1Offset', 'L2Relative', 'L3Absolute'])),
+                     doType1MET   = True,
+                     genJetCollection=cms.InputTag("ak7GenJets"),
+                     doJetID      = False
+                     )
+    
 
 
-    # IMPORTANT: must have patTemplate loaded
-    # Setup so that my patJets are PFJets and not calojets
-    process.patJets.jetSource='pfJets'
+    addJetCollection(process,cms.InputTag('ak5PFJets'),'AK5','PF',
+                                          doJTA        = True,
+                                          doBTagging   = True,
+                     #                     addDiscriminators    = True,   ## addition btag discriminators
+                     #                     discriminatorSources = cms.VInputTag(
+                     #            cms.InputTag("combinedSecondaryVertexBJetTags"),
+                     #            cms.InputTag("combinedSecondaryVertexMVABJetTags"),
+                     #            cms.InputTag("jetBProbabilityBJetTags"),
+                     #            cms.InputTag("jetProbabilityBJetTags"),
+                     #            cms.InputTag("simpleSecondaryVertexHighEffBJetTags"),
+                     #            cms.InputTag("simpleSecondaryVertexHighPurBJetTags"),
+                     #            cms.InputTag("softElectronByPtBJetTags"),
+                     #            cms.InputTag("softElectronByIP3dBJetTags"),
+                     #            cms.InputTag("softMuonBJetTags"),
+                     #            cms.InputTag("softMuonByPtBJetTags"),
+                     #            cms.InputTag("softMuonByIP3dBJetTags"),
+                     #            cms.InputTag("trackCountingHighEffBJetTags"),
+                     #            cms.InputTag("trackCountingHighPurBJetTags"),
+                     #            ),
+                                          jetCorrLabel = ('AK5PF', cms.vstring(['L1Offset', 'L2Relative', 'L3Absolute'])),
+                                          doType1MET   = True,
+                                          genJetCollection=cms.InputTag("ak5GenJets"),
+                                          doJetID      = False
+                                          )
+
     
-    # Corrections
-    process.patJetCorrFactors.src = 'pfJets'
-    process.patJetCorrFactors.levels = cms.vstring('L2Relative',
-                                                   'L3Absolute')
-    process.patJetCorrFactors.payload = cms.string('AK7PF')
-    
-    # Turn off other extra factors
-    process.patJets.addJetCorrFactors = True
-    process.patJets.addBTagInfo = False
-    process.patJets.addDiscriminators = False
-    process.patJets.addJetCharge = False
-    process.patJets.addJetID = False
-    process.patJets.addGenPartonMatch = False
-    process.patJets.embedGenPartonMatch = False
-    process.patJets.genPartonMatch = ''
-    process.patJets.addGenJetMatch = False
-    process.patJets.embedGenJetMatch = False
-    process.patJets.getJetMCFlavour = False
-    process.patJets.JetPartonMapSource = '' 
-    process.patJets.embedPFCandidates = True
-    process.patJets.addAssociatedTracks = True
-    process.patJets.trackAssociationSource = "jetTracksAssociatorAtVertex"
 
     process.selectedPatPFParticles.cut = ""
 
@@ -58,8 +88,13 @@ def jet_config(process, reportEveryNum=100, maxEvents=-1) :
     process.selectedPatJets.cut = "pt > 30. & abs(eta) < 2.4"
 
     # RECO
-    process.out.outputCommands.append('keep *_selectedPatJets_*_*')
+    process.out.outputCommands.append('keep *_selectedPatJetsAK7PF_*_*')
     process.out.outputCommands.append('keep *_ak7GenJets_*_*')
+
+
+    process.out.outputCommands.append('keep *_selectedPatJetsAK5PF_*_*')
+    process.out.outputCommands.append('keep *_ak5GenJets_*_*')
+        
 
 # Modules and sequences
 
@@ -70,15 +105,20 @@ jetTracksAssociatorAtVertex = cms.EDProducer("JetTracksAssociatorAtVertex",
                                              coneSize = cms.double(0.5)
                                              )
 
+
+
+
+PF2PATmod = cms.Sequence(process.patDefaultSequence)
+
 # Adaptation of PF2PAT
-PF2PATmod = cms.Sequence(pfNoPileUpSequence +
-                         pfAllNeutralHadrons +  
-                         pfAllChargedHadrons +
-                         pfAllPhotons +
-                         pfMuonSequence +
-                         pfNoMuon +
-                         pfElectronSequence +
-                         pfNoElectron +
-                         pfJetSequence +
-                         jetTracksAssociatorAtVertex
-                         )
+#PF2PATmod = cms.Sequence(pfNoPileUpSequence +
+#                         pfAllNeutralHadrons +  
+#                         pfAllChargedHadrons +
+#                         pfAllPhotons +
+#                         pfMuonSequence +
+#                         pfNoMuon +
+#                         pfElectronSequence +
+#                         pfNoElectron +
+#                         pfJetSequence +
+#                         jetTracksAssociatorAtVertex
+#                         )
