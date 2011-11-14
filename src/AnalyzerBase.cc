@@ -264,6 +264,65 @@ void AnalyzerBase::clearEvtVariables(){
   wCand_ = WCandidate();
 }
 
+const reco::Vertex& 
+AnalyzerBase::findPV(const vector<reco::Vertex>& vtxs) const{
+  //loop over vtx and find pv
+  int pvidx = 0;
+  float maxsumpt = 0;
+  for(uint i=0; i<vtxs.size(); ++i){
+    reco::Vertex::trackRef_iterator it;
+    float sumpt = 0;
+    for(it = vtxs[i].tracks_begin(); it!= vtxs[i].tracks_end(); ++it){
+      sumpt += (*it)->pt();
+    }
+    if(sumpt > maxsumpt){
+      maxsumpt = sumpt;
+      pvidx = i;
+    }
+  }
+  return vtxs[pvidx];
+}
+
+const float maxVtxDr = 0.01;
+/*
+const reco::Vertex& 
+AnalyzerBase::findPV(const vector<reco::Vertex>& vtxs, const reco::Candidate& p) const{
+  for(uint i=0; i<vtxs.size(); ++i){
+    reco::Vertex::trackRef_iterator it;
+    for(it = vtxs[i].tracks_begin(); it!= vtxs[i].tracks_end(); ++it){
+      if(deltaR(**it, p) < maxVtxDr) return vtxs[i];
+    }
+  }
+  cout<<"Didnt find a vertex!"<<endl;
+  return vtxs[0];
+}
+*/
+
+const reco::Vertex& 
+AnalyzerBase::findPV(const vector<reco::Vertex>& vtxs, const reco::Candidate& p) const{
+  float minDz = 9e9;
+  int pvidx = 0;
+  for(uint i=0; i<vtxs.size(); ++i){
+    if(fabs(vtxs[i].z() - p.vz()) < minDz){
+      minDz = fabs(vtxs[i].z() - p.vz());
+      pvidx = i;
+    }
+  }
+  cout<<"Best dist is "<<minDz<<endl;
+  return vtxs[pvidx];
+}
+
+bool
+AnalyzerBase::sameVertex(const reco::Vertex& vtx, const reco::Candidate& p) const{
+  reco::Vertex::trackRef_iterator it;
+  for(it = vtx.tracks_begin(); it!= vtx.tracks_end(); ++it){
+    //if(deltaR(**it, p) < maxVtxDr) cout<<"track pt, p pt, dR"<<(*it)->pt()<<" "<<p.pt()<<" "<<deltaR(**it, p)<<endl;
+    if(deltaR(**it, p) < maxVtxDr) return true;
+  }
+  return false;
+}
+
+
 /////printers//////////////
 void
 AnalyzerBase::printEventFull(edm::EventBase const & event) const{
@@ -510,6 +569,7 @@ inline bool
 AnalyzerBase::passWptCut(const WCandidate& w, const float& cut) const{
   return w.pt() > cut;
 }
+
 
 //////////////////
 //file stuff//////
