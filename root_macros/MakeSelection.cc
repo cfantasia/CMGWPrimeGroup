@@ -53,6 +53,7 @@ vector<Cut> Cuts;
 bool debug_ = false;
 bool useHists_ = false;
 bool useSig_ = true;
+string treeName = "tWZCand";
 
 void
 MakeSelection(string inName, string opt){
@@ -63,7 +64,7 @@ MakeSelection(string inName, string opt){
   if(opt.find("hist") != string::npos) useHists_ = true;
   if(opt.find("eff") != string::npos) useSig_ = false;
 
-  TFile *fin = TFile::Open(inName.c_str(), "read");
+  TFile *fin = TFile::Open(inName.c_str(), "read"); assert(fin);
 
   vector<string> SigSamples;
   
@@ -99,15 +100,16 @@ MakeSelection(string inName, string opt){
     Cuts.push_back(Cut("Ht", true));
     Cuts.push_back(Cut("Zpt", true));
     Cuts.push_back(Cut("Wpt", true));
+
+    treeName = "tWZCand";
+
   }else if(inName.find("HadVZ") != string::npos){
-    BkgSamples.push_back("Summer11_ZZ");
     BkgSamples.push_back("Summer11_ZZJets_2l2q");
     BkgSamples.push_back("Summer11_VGamma");
     BkgSamples.push_back("Summer11_WW");
     BkgSamples.push_back("Summer11_WZ");
     BkgSamples.push_back("Summer11_TTJets");
-    //BkgSamples.push_back("Summer11_DYJetsToLL");
-    BkgSamples.push_back("DiLeptonJet-V301-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola");
+    BkgSamples.push_back("Summer11_DYJetsToLL_PtZ100");
 
     SigSamples.push_back("Summer11_RSZZmmjj_750");
     SigSamples.push_back("Summer11_RSZZmmjj_1000");
@@ -118,6 +120,8 @@ MakeSelection(string inName, string opt){
     
     Cuts.push_back(Cut("Zpt", true));
     Cuts.push_back(Cut("Vpt", true));
+
+    treeName = "tVZCand";
   }
 
   if(debug_) cout<<"Using "<<SigSamples.size()<<" signal samples\n"
@@ -140,10 +144,11 @@ MakeSelection(string inName, string opt){
     }
 
     cout<<"For sample: "<<SigSample[0]<<" final cut is: ";
+
     for(uint j=0; j<Cuts.size(); ++j){
       cout<<" "<<Cuts[j].name<<" "<<Cuts[j].cutVal;
     }
-    cout<<endl;
+    cout<<endl<<endl;
 
     c1.Print(Form("Selection_%s.pdf]", SigSample[0].c_str()), "pdf"); 
   }
@@ -171,8 +176,8 @@ DrawSelection(TFile* fin, Cut& thisCut){
   TH1F hSig("hSig","hSig",90,0,900);
   TH1F hBkg("hBkg","hBkg",90,0,900);
   if(!useHists_){
-    get_sum_of_hists(fin, SigSample, "tWZCand", thisCut.name, cutString.GetTitle(), hSig);
-    get_sum_of_hists(fin, BkgSamples, "tWZCand", thisCut.name, cutString.GetTitle(), hBkg);
+    get_sum_of_hists(fin, SigSample, treeName, thisCut.name, cutString.GetTitle(), hSig);
+    get_sum_of_hists(fin, BkgSamples, treeName, thisCut.name, cutString.GetTitle(), hBkg);
   }else{
     string histName;
     if(thisCut.name == "Zpt") histName = "hZpt_ZMass";
