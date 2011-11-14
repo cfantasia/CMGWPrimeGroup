@@ -88,8 +88,8 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
                   <<tightElectronType<<" for tight electrons\n";
 
   Pset mSelectorPset = cfg.getParameter<Pset>("muonSelectors");
-  string looseMuonType = cfg.getUntrackedParameter<string>("LooseMuonType", "VBTF");
-  string tightMuonType = cfg.getUntrackedParameter<string>("TightMuonType", "VBTF");
+  string looseMuonType = cfg.getUntrackedParameter<string>("LooseMuonType", "exotica");
+  string tightMuonType = cfg.getUntrackedParameter<string>("TightMuonType", "exotica");
   looseMuon_ = MuonSelector(mSelectorPset, looseMuonType);
   tightMuon_ = MuonSelector(mSelectorPset, tightMuonType);
   if(debugme) cout<<"Using "<<looseMuonType<<" for loose muons and "

@@ -219,8 +219,6 @@ protected:  //These are available to derived classes
   int maxEvents_;
   // Should we use the json file
   bool useJSON_;
-  // Should we count the number of gen evts in patTuple?
-  bool countGenEvts_;
 
   int signalSample_index;
   void setNumSignalSamples();
