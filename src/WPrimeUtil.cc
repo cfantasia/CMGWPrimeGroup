@@ -26,7 +26,7 @@ WPrimeUtil::~WPrimeUtil()
 {
   delete hRecoilPerp;
   delete hRecoilParalvsVBPt;
-  delete [] histRecoilParal;
+  delete [] histRecoilParal;//Cory: may have to delete indiv.
 }
 
 void WPrimeUtil::setupZMETcorrection()
@@ -325,21 +325,16 @@ bool WPrimeUtil::passTriggersCut(const edm::EventBase & event, std::string label
 }
 
 bool WPrimeUtil::passTriggersCut(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames){
-  const pat::TriggerPathRefVector acceptedPaths = triggerEvent.acceptedPaths();
-  //cout<<"Using "<<acceptedPaths.size()<<" accepted paths from HLT"<<endl;
-  for (size_t i = 0; i < acceptedPaths.size(); i++){
-    if(FoundAndpassed(triggerEvent, acceptedPaths[i], triggerNames)) return true;
+  const pat::TriggerPathCollection* paths = triggerEvent.paths();
+  for (size_t i = 0; i < paths->size(); i++){
+    if(FoundAndpassed(triggerEvent, paths->at(i), triggerNames)) return true;
   }//acceptedPaths loop
   return false;
 }
 
 void
 WPrimeUtil::printPassingTriggers(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames){
-  const pat::TriggerPathRefVector acceptedPaths = triggerEvent.acceptedPaths();
-//  const pat::TriggerAlgorithmRefVector algoBits = triggerEvent.physAlgorithms();
-//  for (size_t i = 0; i < algoBits.size(); i++){
-//    cout<<" L1 algo: "<<algoBits[i]->name()<<" with prescale "<<algoBits[i]->prescale()<<endl;
-//  }
+  const pat::TriggerPathCollection* paths = triggerEvent.paths();
   for (size_t i = 0; i < acceptedPaths.size(); i++){
     if(FoundAndpassed(triggerEvent, acceptedPaths[i], triggerNames))
       cout<<"passed path: "<<acceptedPaths[i]->name()<<endl;
@@ -347,26 +342,26 @@ WPrimeUtil::printPassingTriggers(const pat::TriggerEvent & triggerEvent,const st
 }
 
 inline bool
-WPrimeUtil::FoundAndpassed(const pat::TriggerEvent & triggerEvent,const pat::TriggerPathRef path,const std::vector<std::string>& triggerNames){
-  return FindTrigger(path, triggerNames) && passed(triggerEvent,path);
+WPrimeUtil::FoundAndpassed(const pat::TriggerEvent & triggerEvent,const pat::TriggerPath& path,const std::vector<std::string>& triggerNames){
+  return passed(triggerEvent,path) && FindTrigger(path, triggerNames);
 }
 
 const bool ignoreL1prescale = true;
 inline bool
-WPrimeUtil::passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path){
-  return (path->wasAccept() && path->prescale() == 1 && (ignoreL1prescale || MaxL1Prescale(triggerEvent,path)==1) );
+WPrimeUtil::passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPath& path){
+  return (path.wasAccept() && path.prescale() == 1 && (ignoreL1prescale || MaxL1Prescale(triggerEvent,path)==1) );
 }
 
 inline unsigned
-WPrimeUtil::L1Prescale(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path){
-  assert(path->l1Seeds().size() == 1);
-  return triggerEvent.algorithm(path->l1Seeds()[0].second)->prescale();
+WPrimeUtil::L1Prescale(const pat::TriggerEvent & triggerEvent, const pat::TriggerPath& path){
+  assert(path.l1Seeds().size() == 1);
+  return triggerEvent.algorithm(path.l1Seeds()[0].second)->prescale();
 }
 
 unsigned
-WPrimeUtil::MaxL1Prescale(const pat::TriggerEvent & triggerEvent,const pat::TriggerPathRef path){
+WPrimeUtil::MaxL1Prescale(const pat::TriggerEvent & triggerEvent,const pat::TriggerPath& path){
   unsigned ps = 1;
-  pat::L1SeedCollection l1algos = path->l1Seeds();
+  pat::L1SeedCollection l1algos = path.l1Seeds();
   //cout<<" Looking at "<<path->name()<<" and its "<<l1algos.size()<<" l1 seeds"<<endl;
   for (size_t j = 0; j < l1algos.size(); j++){
     //cout<<" and its seed "<<l1algos[j].second<<" and decision "<<l1algos[j].first<<endl;
@@ -384,9 +379,9 @@ WPrimeUtil::MaxL1Prescale(const pat::TriggerEvent & triggerEvent,const pat::Trig
 }
 
 inline bool
-WPrimeUtil::FindTrigger(const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames){
+WPrimeUtil::FindTrigger(const pat::TriggerPath& path, const std::vector<std::string>& triggerNames){
   for (size_t j = 0; j < triggerNames.size(); j++){
-    if(SameTrigger(path->name(), triggerNames[j])) return true;
+    if(SameTrigger(path.name(), triggerNames[j])) return true;
   }
   return false;
 }

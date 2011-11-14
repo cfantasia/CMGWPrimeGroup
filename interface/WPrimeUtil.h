@@ -91,11 +91,11 @@ class WPrimeUtil
   static bool passTriggersCut(edm::EventBase const & event, std::string label,const std::vector<std::string>& triggerNames);
   static bool passTriggersCut(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames);
   static void printPassingTriggers(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames);
-  static bool FoundAndpassed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames);
-  static bool passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path);
-  static unsigned L1Prescale(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path);
-  static unsigned MaxL1Prescale(const pat::TriggerEvent & triggerEvent, const pat::TriggerPathRef path);
-  static bool FindTrigger(const pat::TriggerPathRef path, const std::vector<std::string>& triggerNames);
+  static bool FoundAndpassed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPath& path, const std::vector<std::string>& triggerNames);
+  static bool passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPath& path);
+  static unsigned L1Prescale(const pat::TriggerEvent & triggerEvent, const pat::TriggerPath& path);
+  static unsigned MaxL1Prescale(const pat::TriggerEvent & triggerEvent, const pat::TriggerPath& path);
+  static bool FindTrigger(const pat::TriggerPath& path, const std::vector<std::string>& triggerNames);
 
   // get hadronic MET component (that needs to be corrected 
   // if applyMETCorrection=true)from Z data; this will be done according to hadronic 
