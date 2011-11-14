@@ -137,7 +137,14 @@ namespace wprime{
 
   };
 
-
+  struct AnalysisCut{
+    std::string Name;
+    std::string Desc;
+    typedef boost::function<bool()> fnCut;
+    std::map<std::string,fnCut > mFnPtrs_;
+    std::vector<fnCut > CutFn;
+  };
+  typedef std::map<std::string, AnalysisCut> mCuts;
 
   const float MUON_MASS = 0.105658366;      // GeV
   const float ELECTRON_MASS = 0.000511;     // GeV
