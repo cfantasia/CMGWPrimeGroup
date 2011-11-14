@@ -127,7 +127,7 @@ class WCandidate : public BosonCandidate {
     AddFourMomenta addP4;
     addP4.set(* this);
     leptonic_ = false;
-    mt_ = -999.9;
+    mt_ = calcMT();
  }
     WCandidate(const pat::Jet & jet1, const pat::Jet & jet2) :
     elec_(NULL), muon_(NULL){
@@ -135,8 +135,8 @@ class WCandidate : public BosonCandidate {
     AddFourMomenta addP4;
     addP4.set(* this);
     leptonic_ = false;
-    mt_ = -999.9;
-    }
+    mt_ = calcMT();
+ }
 
     WCandidate(const reco::Candidate & GenLepton, const reco::Candidate & GenNeutrino) :
       elec_(NULL), muon_(NULL) {
