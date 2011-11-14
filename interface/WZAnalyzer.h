@@ -131,6 +131,8 @@ public:
   PFCandidateVH pfCandidatesH_;
 
 //////Chosen Candidates
+  ZCandidate zCand_;
+  WCandidate wCand_;
   XWLeptonic wzCand_;
   NuAlgos wzAlgo_;
 

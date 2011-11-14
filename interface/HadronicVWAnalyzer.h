@@ -88,6 +88,8 @@ public:
   PFCandidateVH pfCandidatesH_;
 
 //////Chosen Candidates
+  ZCandidate vCand_;
+  WCandidate wCand_;
   XWLeptonic vwCand_;
 
 // +++++++++++++++++++ Histogram Definitions

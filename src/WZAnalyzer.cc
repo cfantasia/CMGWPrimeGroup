@@ -855,6 +855,8 @@ inline void
 WZAnalyzer::clearEvtVariables(){
   AnalyzerBase::clearEvtVariables();
   met_ = pat::MET();
+  zCand_ = ZCandidate();
+  wCand_ = WCandidate();
   wzCand_ = XWLeptonic();
   evtType_ = -999;
   LeadPt_ = -999;

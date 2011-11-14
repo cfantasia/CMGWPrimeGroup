@@ -250,9 +250,6 @@ void AnalyzerBase::clearEvtVariables(){
   allMuons_.clear();
   looseMuons_.clear();
   tightMuons_.clear();
-  zCand_ = ZCandidate();
-  vCand_ = ZCandidate();
-  wCand_ = WCandidate();
 }
 
 const reco::Vertex& 
@@ -343,6 +340,7 @@ void AnalyzerBase::printEventToFile(edm::EventBase const & event){
 }
 
 void AnalyzerBase::printEventDetails() const{
+/*
   if(zCand_){
     cout<<" Z Flavor: "<<zCand_.flavor()
         <<" Z Mass: "<<zCand_.mass()
@@ -364,6 +362,7 @@ void AnalyzerBase::printEventDetails() const{
         <<" V Phi: "<<vCand_.phi()
         <<endl;
   }
+*/
 }
 
 void

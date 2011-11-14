@@ -611,6 +611,8 @@ inline void
 HadronicVWAnalyzer::clearEvtVariables(){
   AnalyzerBase::clearEvtVariables();
   met_ = pat::MET();
+  wCand_ = WCandidate();
+  vCand_ = ZCandidate();
   vwCand_ = XWLeptonic();
   evtType_ = -999;
   VWMass_ = -999;

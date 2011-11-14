@@ -407,7 +407,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   //Make a WCand out of looseLeptons
   //WCandidate wCands = getWCand
-  wCand_ = getWCand(looseElectrons_, looseMuons_, met_);
+  WCandidate wCand_ = getWCand(looseElectrons_, looseMuons_, met_);
   h_WMass->Fill(wCand_.mt(), weight_);
   int goodW = 0;
   if (wCand_.mt() > 70 && wCand_.mt() < 110 && wCand_.pt() > 150)
@@ -582,6 +582,8 @@ void HadronicVZAnalyzer::printEventDetails() const{
 void
 HadronicVZAnalyzer::clearEvtVariables(){
   AnalyzerBase::clearEvtVariables();
+  zCand_ = ZCandidate();
+  vCand_ = ZCandidate();
   hadVZ_ = VZCandidate();
   VZMass_ = -999;
   evtType_ = -999;

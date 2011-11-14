@@ -95,6 +95,7 @@ public:
 
 
 //////Chosen Vector Boson Candidates 
+  ZCandidate zCand_, vCand_;
   VZCandidate hadVZ_;
 
   double gravMass_;

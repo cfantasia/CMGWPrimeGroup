@@ -182,8 +182,6 @@ protected:  //These are available to derived classes
   MuonV allMuons_, looseMuons_, tightMuons_;
   JetV  allJets_, looseJets_, tightJets_;
   pat::MET met_;
-  ZCandidate zCand_, vCand_;
-  WCandidate wCand_;
 
   pat::TriggerEvent triggerEvent_; 
 
