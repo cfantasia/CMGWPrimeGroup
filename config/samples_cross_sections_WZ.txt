@@ -246,6 +246,13 @@ subdir = root://cmsxrootd.hep.wisc.edu/
 pathname = filelists_WZ/DataPatTrilepton-W06-04-01A-DoubleElectron-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
+samplename = WZTo3LNu
+description = WZTo3LNu_TuneZ2_7TeV-madgraph-tauola
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.594
+pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WZTo3LNu_TuneZ2_7TeV_pythia6_tauola.txt
+Nprod_evt = 204725
+
 DONE
 
 Top Level Dir = root://cmsxrootd.hep.wisc.edu/
