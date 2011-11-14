@@ -159,17 +159,7 @@ protected:  //These are available to derived classes
   std::vector<fnCut > CutFns_;
   TH1F * hNumEvts;
 
-  //These may be combined into a struct
   //These should be done by the each analysis though
-  ElectronSelector looseElectron_;
-  ElectronSelector tightElectron_;
-
-  MuonSelector looseMuon_;
-  MuonSelector tightMuon_;
-
-  JetSelector looseJet_;
-  JetSelector tightJet_;
-
   PatElectronVH patElectronsH_;
   PatMuonVH patMuonsH_;
   METVH metH_;

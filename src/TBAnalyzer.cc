@@ -11,6 +11,21 @@ TBAnalyzer::TBAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   
 // +++++++++++++++++++General Cut values
 
+  //Selectors
+  Pset eSelectorPset = cfg.getParameter<Pset>("electronSelectors");
+  string looseElectronType = cfg.getUntrackedParameter<string>("LooseElectronType", "wp95");
+  looseElectron_ = ElectronSelector(eSelectorPset, looseElectronType);
+  if(debugme) cout<<"Using "<<looseElectronType<<" for loose electrons\n";
+
+  Pset mSelectorPset = cfg.getParameter<Pset>("muonSelectors");
+  string looseMuonType = cfg.getUntrackedParameter<string>("LooseMuonType", "exotica");
+  looseMuon_ = MuonSelector(mSelectorPset, looseMuonType);
+  if(debugme) cout<<"Using "<<looseMuonType<<" for loose muons\n";
+
+  Pset jSelectorPset = cfg.getParameter<Pset>("jetSelectors");
+  string looseJetType = cfg.getUntrackedParameter<string>("LooseJetType", "Base");
+  looseJet_ = JetSelector(jSelectorPset, looseJetType);
+  if(debugme) cout<<"Using "<<looseJetType<<" for jets\n";
 }
 
 TBAnalyzer::~TBAnalyzer(){
@@ -63,9 +78,6 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
     if(Overlap(allElectrons_[i].patEle(), *patMuonsH_.product(), 0.01)) continue;
     if (looseElectron_(allElectrons_[i].patEle()))
       looseElectrons_.push_back(allElectrons_[i]);
-
-    if (tightElectron_(allElectrons_[i].patEle()))
-      tightElectrons_.push_back(allElectrons_[i]);
   }
 
   // Loop over muons, and see if they pass the TeVMuon criteria  
@@ -74,9 +86,6 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
     
     if (looseMuon_(allMuons_[i]) )
       looseMuons_.push_back(allMuons_[i]);
-    
-    if (tightMuon_(allMuons_[i]) )
-      tightMuons_.push_back(allMuons_[i]);
   }
   if(debugme){
     printLeptons();
@@ -84,8 +93,6 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
            (int)allElectrons_.size(), (int)allMuons_.size());
     printf("    Contains: %i loose electron(s), %i loose muon(s)\n",
            (int)looseElectrons_.size(), (int)looseMuons_.size());
-    printf("    Contains: %i tight electron(s), %i tightmuon(s)\n",
-           (int)tightElectrons_.size(), (int)tightMuons_.size());
   }
 
   //get Jets
@@ -136,7 +143,7 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
   //////////////////////////////
 
   //TODO: Implement here
-  wCand_ = getWCand(tightElectrons_, tightMuons_, met_);
+  wCand_ = getWCand(looseElectrons_, looseMuons_, met_);
 
   if( !passValidWCut(wCand_) ) return;
   tabulateEvent(iCut++, weight_);

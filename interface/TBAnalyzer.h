@@ -25,6 +25,12 @@ public:
   bool passValidTCut(XWLeptonic & t) const;
   bool passValidTBCut(XWLeptonic & tb) const;
 
+  //Selectors
+  ElectronSelector looseElectron_;
+  MuonSelector looseMuon_;
+  JetSelector looseJet_;
+
+
 //////Chosen Candidates
   pat::Jet bCand1_;
   pat::Jet bCand2_;

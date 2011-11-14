@@ -30,6 +30,15 @@ public:
 
   // +++++++++++++++++++Hadronic Boson Cuts
 
+  //Selectors
+  ElectronSelector looseElectron_;
+  ElectronSelector tightElectron_;
+
+  MuonSelector looseMuon_;
+  MuonSelector tightMuon_;
+
+  JetSelector looseJet_;
+
   // This is actually the equivalent of the analyze() method in CMSSW.
   void eventLoop(edm::EventBase const & event);
 

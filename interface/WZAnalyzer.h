@@ -124,6 +124,13 @@ public:
   float minZmmPt1_;
   float minZmmPt2_;
 
+  //Selectors
+  ElectronSelector looseElectron_;
+  ElectronSelector tightElectron_;
+
+  MuonSelector looseMuon_;
+  MuonSelector tightMuon_;
+
   //Handles
   PatElectronVH patElectronsH_;
   PatMuonVH patMuonsH_;

@@ -24,6 +24,28 @@ HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, int fileTo
 
   genLabel_ = cfg.getParameter<edm::InputTag>("genParticles" );
 
+  //Selectors
+  Pset eSelectorPset = cfg.getParameter<Pset>("electronSelectors");
+  string looseElectronType = cfg.getUntrackedParameter<string>("LooseElectronType", "wp95");
+  string tightElectronType = cfg.getUntrackedParameter<string>("TightElectronType", "wp95");
+  looseElectron_ = ElectronSelector(eSelectorPset, looseElectronType);
+  tightElectron_ = ElectronSelector(eSelectorPset, tightElectronType);
+  if(debugme) cout<<"Using "<<looseElectronType<<" for loose electrons and "
+                  <<tightElectronType<<" for tight electrons\n";
+
+  Pset mSelectorPset = cfg.getParameter<Pset>("muonSelectors");
+  string looseMuonType = cfg.getUntrackedParameter<string>("LooseMuonType", "exotica");
+  string tightMuonType = cfg.getUntrackedParameter<string>("TightMuonType", "exotica");
+  looseMuon_ = MuonSelector(mSelectorPset, looseMuonType);
+  tightMuon_ = MuonSelector(mSelectorPset, tightMuonType);
+  if(debugme) cout<<"Using "<<looseMuonType<<" for loose muons and "
+                  <<tightMuonType<<" for tight muons\n";
+
+  Pset jSelectorPset = cfg.getParameter<Pset>("jetSelectors");
+  string looseJetType = cfg.getUntrackedParameter<string>("LooseJetType", "Base");
+  looseJet_ = JetSelector(jSelectorPset, looseJetType);
+  if(debugme) cout<<"Using "<<looseJetType<<" for jets\n";
+
 }
 
 HadronicVZAnalyzer::~HadronicVZAnalyzer(){

@@ -80,6 +80,11 @@ public:
 
 // +++++++++++++++++++V Cuts
 
+  //Selectors
+  ElectronSelector looseElectron_;
+  MuonSelector looseMuon_;
+  JetSelector looseJet_;
+
   //Handles
   PatElectronVH patElectronsH_;
   PatMuonVH patMuonsH_;
@@ -94,7 +99,6 @@ public:
 
 // +++++++++++++++++++ Histogram Definitions
   std::vector<TH1F*> hVWMass;
-  std::vector<TH1F*> hVW3e0muMass, hVW2e1muMass, hVW1e2muMass, hVW0e3muMass;
 
   std::vector<TH1F*> hQ;
   std::vector<TH1F*> hVWTransMass;
@@ -102,17 +106,13 @@ public:
   std::vector<TH1F*> hEvtType, hEvtTypeP, hEvtTypeM;
 
   std::vector<TH1F*> hVMass, hVeeMass, hVmmMass ;
-  std::vector<TH1F*> hV3e0muMass, hV2e1muMass, hV1e2muMass, hV0e3muMass;
   std::vector<TH1F*> hVpt,hVeept,hVmmpt;
 
   std::vector<TH1F*> hMET, hMETee, hMETmm;
-  std::vector<TH1F*> hMET3e0mu, hMET2e1mu, hMET1e2mu, hMET0e3mu;
 
   std::vector<TH1F*> hWTransMass, hWenuTransMass, hWmnuTransMass;
-  std::vector<TH1F*> hW3e0muTransMass, hW2e1muTransMass, hW1e2muTransMass, hW0e3muTransMass;
   std::vector<TH1F*> hWpt,hWptVee,hWptVmm;
   std::vector<TH1F*> hWQ, hWenuQ, hWmnuQ;
-  std::vector<TH1F*> hW3e0muQ, hW2e1muQ, hW1e2muQ, hW0e3muQ;
 
   std::vector<TH1F*> hNLElec;
   std::vector<TH1F*> hNLMuon;
@@ -122,8 +122,8 @@ public:
   std::vector<TH1F*> hNTMuon;
   std::vector<TH1F*> hNTLeps;
 
-  std::vector<TH1F*> hNJets,hNJetsVee,hNJetsVmm;
-  std::vector<TH1F*> hNVtxs, hNVtxsVee, hNVtxsVmm;
+  std::vector<TH1F*> hNJets;
+  std::vector<TH1F*> hNVtxs;
 
   std::vector<TH1F*> hWenuCombRelIso, hWmnuCombRelIso;
 
