@@ -565,6 +565,21 @@ AnalyzerBase::passWptCut(const WCandidate& w, const float& cut) const{
   return w.pt() > cut;
 }
 
+/////////Check XWLeptonic Properties/////
+inline bool
+AnalyzerBase::passValidXWCut(const XWLeptonic& xw) const{
+  return xw && xw().mass()>0.;
+}
+
+inline bool
+AnalyzerBase::passXWMassCut(const XWLeptonic& xw, const NuAlgos & algo, const float& min, const float& max) const{
+  return xw(algo).mass() > min && xw(algo).mass() < max;
+}
+
+inline bool
+AnalyzerBase::passXWptCut(const XWLeptonic& xw, const float& cut) const{
+  return xw().pt() > cut;
+}
 
 //////////////////
 //file stuff//////

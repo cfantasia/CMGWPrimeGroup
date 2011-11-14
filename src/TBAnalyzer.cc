@@ -22,9 +22,9 @@ void TBAnalyzer::setupCutOrder(){
   mFnPtrs_["MinNLeptons"] = boost::bind(&TBAnalyzer::passMinNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
   mFnPtrs_["MinNJets"] = boost::bind(&TBAnalyzer::passMinNJetsCut, this, boost::cref(looseJets_), boost::cref(minNJets_));
   mFnPtrs_["ValidW"] = boost::bind(&TBAnalyzer::passValidWCut, this, boost::cref(wCand_));
-  mFnPtrs_["ValidB"] = boost::bind(&TBAnalyzer::passValidBCut, this);
-  mFnPtrs_["ValidT"] = boost::bind(&TBAnalyzer::passValidTCut, this);
-  mFnPtrs_["ValidTBCand"] = boost::bind(&TBAnalyzer::passValidTBCut, this);
+  mFnPtrs_["ValidB"] = boost::bind(&TBAnalyzer::passValidBCut, this, boost::cref(bCand1_));
+  mFnPtrs_["ValidT"] = boost::bind(&TBAnalyzer::passValidTCut, this, boost::ref(tCand_));
+  mFnPtrs_["ValidTBCand"] = boost::bind(&TBAnalyzer::passValidTBCut, this, boost::ref(tbCand_));
   mFnPtrs_["WTransMass"] = boost::bind(&TBAnalyzer::passWtransMassCut, this, boost::cref(wCand_), boost::cref(minWtransMass_));
   mFnPtrs_["MET"] = boost::bind(&TBAnalyzer::passMinMETCut, this, boost::cref(met_), boost::cref(minMET_));
   mFnPtrs_["Wpt"] = boost::bind(&TBAnalyzer::passWptCut, this, boost::cref(wCand_), boost::cref(minWpt_));
@@ -58,7 +58,7 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
   }
   for (size_t i = 0; i < patElectronsH_->size(); i++) {
     allElectrons_.push_back(heep::Ele((*patElectronsH_)[i]));   
-    /////Cory:??if(Overlap(allElectrons_[i].patEle(), *patMuonsH_.product(), 0.01)) continue;
+    if(Overlap(allElectrons_[i].patEle(), *patMuonsH_.product(), 0.01)) continue;
     if (looseElectron_(allElectrons_[i].patEle(), electronLooseResult_))
       looseElectrons_.push_back(allElectrons_[i]);
 
@@ -126,7 +126,7 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
 
   //TODO: Implement here
   
-  if( !passValidBCut() ) return;
+  if( !passValidBCut(bCand1_) ) return;
   tabulateEvent(iCut++, weight_);
 
   //////////////////////////////
@@ -149,7 +149,7 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
   //TODO: Implement here
   //tCand_ = XWLeptonic(bCand1_, wCand_);
 
-  if( !passValidTCut() ) return;
+  if( !passValidTCut(tCand_) ) return;
   tabulateEvent(iCut++, weight_);
   
   //if( !passTMassCut() ) return;
@@ -165,7 +165,7 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
   //TODO: Implement here
   //How to distingush two B's??
 
-  if( !passValidBCut() ) return;
+  if( !passValidBCut(bCand2_) ) return;
   tabulateEvent(iCut++, weight_);
 
   //////////////////////////////
@@ -174,7 +174,7 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
 
   //tbCand_ = XWLeptonic(tCand_, bCand2_);
 
-  if( !passValidTBCut() ) return;
+  if( !passValidTBCut(tbCand_) ) return;
   tabulateEvent(iCut++, weight_);
 
   //AllCuts
@@ -199,26 +199,18 @@ TBAnalyzer::clearEvtVariables(){
 }
 
 /////////////////Cuts///////////////////////
-bool
-TBAnalyzer::passCuts(const float& weight){
-  for(int i=0; i<NCuts_; ++i){
-    if(!CutFns_[i]()) return false;
-    tabulateEvent(i,weight); 
-  }
-  return true;
-  
+inline bool TBAnalyzer::passValidBCut(const pat::Jet& b) const{
+  //calcBVariables();
+  return b.mass()>0.;
 }
 
-inline bool TBAnalyzer::passValidBCut() const{
-  return bCand1_.mass()>0.;
+inline bool TBAnalyzer::passValidTCut(XWLeptonic & t) const{
+  //calcWZVariables();
+  return AnalyzerBase::passValidXWCut(t);
 }
-
-inline bool TBAnalyzer::passValidTCut() const{
-  return tCand_().mass()>0.;
-}
-
 
 /////////Check TB Properties/////
-inline bool TBAnalyzer::passValidTBCut() const{
-  return tbCand_().mass()>0.;
+inline bool TBAnalyzer::passValidTBCut(XWLeptonic & tb) const{
+  //calcWZVariables();
+  return AnalyzerBase::passValidXWCut(tb);
 }

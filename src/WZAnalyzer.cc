@@ -8,6 +8,8 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   setupCutOrder();
   if(debugme) printf("Using %i cuts\n",NCuts_);
 
+  wzAlgo_ = (NuAlgos)cfg.getUntrackedParameter<int>("NuAlgo", kMinPz);
+
   maxZMassDiff_ = cfg.getParameter<double>("maxZMassDiff");
   minDeltaR_ = cfg.getParameter<double>("minDeltaR");
 
@@ -40,7 +42,7 @@ void WZAnalyzer::setupCutOrder(){
   mFnPtrs_["MinNLeptons"] = boost::bind(&WZAnalyzer::passMinNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
   mFnPtrs_["ValidW"] = boost::bind(&WZAnalyzer::passValidWCut, this, boost::ref(wCand_));
   mFnPtrs_["ValidZ"] = boost::bind(&WZAnalyzer::passValidZCut, this, boost::ref(zCand_));
-  mFnPtrs_["ValidWZCand"] = boost::bind(&WZAnalyzer::passValidWZCut, this);
+  mFnPtrs_["ValidWZCand"] = boost::bind(&WZAnalyzer::passValidWZCut, this, boost::ref(wzCand_));
   mFnPtrs_["LeadLepPt"] = boost::bind(&WZAnalyzer::passLeadingLeptonPtCut, this);
   mFnPtrs_["NumZs"] = boost::bind(&WZAnalyzer::passNumberOfZsCut, this);
   mFnPtrs_["ZMass"] = boost::bind(&WZAnalyzer::passZMassCut, this, boost::cref(zCand_), boost::cref(minZmass_), boost::cref(maxZmass_));
@@ -400,7 +402,7 @@ inline void
 WZAnalyzer::calcWZVariables(){
   if (debugme) cout<<"In calc WZ Variables\n";
   wzCand_ = (zCand_ && wCand_) ? XWLeptonic(zCand_, wCand_) : XWLeptonic();
-  WZMass_ = wzCand_(kMinPz).mass();
+  WZMass_ = wzCand_(wzAlgo_).mass();
   Q_ = (zCand_ && wCand_) ? calcQ() : -999.;
   if(debugme) printEventDetails();
 }
@@ -597,9 +599,9 @@ void WZAnalyzer::printEventDetails() const{
         <<" pfMet phi: "<<met_.phi()
         <<endl;
   }
-  if(zCand_ && wCand_ && wzCand_(kMinPz).mass()>0.){
-    cout<<" WZ Mass: "<<wzCand_(kMinPz).mass()
-        <<" Neu Pz: "<<wzCand_.neutrinoPz(kMinPz)
+  if(zCand_ && wCand_ && wzCand_(wzAlgo_).mass()>0.){
+    cout<<" WZ Mass: "<<wzCand_(wzAlgo_).mass()
+        <<" Neu Pz: "<<wzCand_.neutrinoPz(wzAlgo_)
         <<" Ht: "<<Ht_
         <<" Zpt: "<<zCand_.pt()
         <<" Wpt: "<<wCand_.pt()
@@ -758,9 +760,9 @@ WZAnalyzer::passValidZCut(ZCandidate& z){
 
 /////////Check WZ Properties/////
 inline bool 
-WZAnalyzer::passValidWZCut(){
+WZAnalyzer::passValidWZCut(XWLeptonic & xw){
   calcWZVariables();
-  return wzCand_ && wzCand_(kMinPz).mass()>0.;
+  return AnalyzerBase::passValidXWCut(xw);
 }
 
 ////////////////////////////////
@@ -834,7 +836,7 @@ inline float WZAnalyzer::calcTriLepMass() const{
 }//--- calcTriLepMass
 
 inline float WZAnalyzer::calcQ() const{
-  return wzCand_(kMinPz).mass() - zCand_.mass() - WMASS;
+  return wzCand_(wzAlgo_).mass() - zCand_.mass() - WMASS;
 }
 
 inline int WZAnalyzer::calcEvtType() const{

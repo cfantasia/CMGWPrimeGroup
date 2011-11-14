@@ -55,7 +55,7 @@ public:
   bool passNumberOfZsCut() const;
   bool passValidWCut(WCandidate& w);
   bool passValidZCut(ZCandidate& z);
-  bool passValidWZCut();
+  bool passValidWZCut(XWLeptonic& xw);
   bool passHtCut() const;
 
   bool passZLepPtCut() const;
@@ -132,6 +132,7 @@ public:
 
 //////Chosen Candidates
   XWLeptonic wzCand_;
+  NuAlgos wzAlgo_;
 
 // +++++++++++++++++++ Histogram Definitions
   std::vector<TH1F*> hWZMass;

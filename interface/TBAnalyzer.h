@@ -17,14 +17,13 @@ public:
 
   //methods for stuff to be done for each event
   void eventLoop(edm::EventBase const & event);
-  bool passCuts(const float& weight=1.);
   void clearEvtVariables();
   void fillHistos(const int& index, const float& weight=1.);
 
   //////Cuts//////////
-  bool passValidBCut() const;
-  bool passValidTCut() const;
-  bool passValidTBCut() const;
+  bool passValidBCut(const pat::Jet & b) const;
+  bool passValidTCut(XWLeptonic & t) const;
+  bool passValidTBCut(XWLeptonic & tb) const;
 
 //////Chosen Candidates
   pat::Jet bCand1_;

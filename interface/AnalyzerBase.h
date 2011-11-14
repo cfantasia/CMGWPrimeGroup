@@ -97,6 +97,11 @@ public:
   virtual bool passWtransMassCut(const WCandidate& w, const float& cut) const;
   virtual bool passWptCut(const WCandidate& w, const float& cut) const;
 
+/////////Check XW Properties/////
+  virtual bool passValidXWCut(const XWLeptonic& w) const;
+  virtual bool passXWMassCut(const XWLeptonic& w, const NuAlgos & algo, const float& min, const float& max) const;
+  virtual bool passXWptCut(const XWLeptonic& w, const float& cut) const;
+
 //////////////////
 //file stuff//////
 //////////////////
