@@ -601,7 +601,7 @@ void AnalyzerBase::createGenMtHist(const TFileDirectory & d, float Mass,
   string xtitle = "GeV/c^{2}";
   int nbins = 100;
   // need a smart way to adjust the resolution histogram range based on Mass
-  float xmin = Mass*1000 - 1000; float xmax = Mass*1000 + 300;
+  float xmin = Mass*1000 - 1300; float xmax = Mass*1000 + 300;
   defineOneHisto(name, title, xtitle, nbins, xmin, xmax, "GeV", put_here, d);
 }
 
