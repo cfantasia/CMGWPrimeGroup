@@ -145,17 +145,17 @@ void AnalyzerBase::tabulateEvent(const int& cut_index, const float& weight){
 }//tabulateEvent
 
 //Writing results to a txt file
-void AnalyzerBase::tabulateFile(std::vector<wprime::InputFile>::const_iterator fi, wprime::EffV& results){
+void AnalyzerBase::tabulateFile(std::vector<wprime::InputFile>::iterator fi){
   float nProd = fi->Nprod_evt*fi->weight;
-  for(uint i = 0; i < results.size(); ++i){
+  for(uint i = 0; i < fi->results.size(); ++i){
     //calculate efficiencies
-    float rel_denom = i==0 ? fi->Nact_evt*fi->weight : results[i-1].Nsurv_evt_cut_w;
+    float rel_denom = i==0 ? fi->Nact_evt*fi->weight : fi->results[i-1].Nsurv_evt_cut_w;
     //Calc Relative Eff
-    WPrimeUtil::getEff(results[i].eff, results[i].deff, 
-                       results[i].Nsurv_evt_cut_w, rel_denom);
+    WPrimeUtil::getEff(fi->results[i].eff, fi->results[i].deff, 
+                       fi->results[i].Nsurv_evt_cut_w, rel_denom);
     //Calc Absolute Eff
-    WPrimeUtil::getEff(results[i].eff_abs, results[i].deff_abs, 
-                       results[i].Nsurv_evt_cut_w, nProd);
+    WPrimeUtil::getEff(fi->results[i].eff_abs, fi->results[i].deff_abs, 
+                       fi->results[i].Nsurv_evt_cut_w, nProd);
   } // loop over different cuts
 }//tabulateFile
 
@@ -670,7 +670,7 @@ AnalyzerBase::eventLoop(edm::EventBase const & event){
 // (e.g. print summary)
 void AnalyzerBase::endFile(std::vector<wprime::InputFile>::iterator fi,
                                  ofstream & out){
-  tabulateFile(fi, fi->results);
+  tabulateFile(fi);
   printFileSummary(fi, out);  
 }
 
