@@ -217,8 +217,8 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
     else if(evtType_ == 2) hWZ1e2muMass[index]->Fill(WZMass_, weight);
     else if(evtType_ == 3) hWZ0e3muMass[index]->Fill(WZMass_, weight);
     hQ[index]->Fill(Q_, weight); 
-    hWZTransMass[index]->Fill(wzCand_.transMass(), weight);
-    hWZpt[index]->Fill(wzCand_.pt(), weight);
+    hWZTransMass[index]->Fill(wzCand_().mt(), weight);
+    hWZpt[index]->Fill(wzCand_().pt(), weight);
     hHt[index]->Fill(Ht_, weight);
     hTriLepMass[index]->Fill(TriLepMass_, weight);
     hEvtType[index]->Fill(evtType_, weight);
@@ -400,7 +400,7 @@ inline void
 WZAnalyzer::calcWZVariables(){
   if (debugme) cout<<"In calc WZ Variables\n";
   wzCand_ = (zCand_ && wCand_) ? XWLeptonic(zCand_, wCand_) : XWLeptonic();
-  WZMass_ = wzCand_.mass("minPz");
+  WZMass_ = wzCand_(kMinPz).mass();
   Q_ = (zCand_ && wCand_) ? calcQ() : -999.;
   if(debugme) printEventDetails();
 }
@@ -597,9 +597,9 @@ void WZAnalyzer::printEventDetails() const{
         <<" pfMet phi: "<<met_.phi()
         <<endl;
   }
-  if(zCand_ && wCand_ && wzCand_.mass("minPz")>0.){
-    cout<<" WZ Mass: "<<wzCand_.mass("minPz")
-        <<" Neu Pz: "<<wzCand_.neutrinoPz("minPz")
+  if(zCand_ && wCand_ && wzCand_(kMinPz).mass()>0.){
+    cout<<" WZ Mass: "<<wzCand_(kMinPz).mass()
+        <<" Neu Pz: "<<wzCand_.neutrinoPz(kMinPz)
         <<" Ht: "<<Ht_
         <<" Zpt: "<<zCand_.pt()
         <<" Wpt: "<<wCand_.pt()
@@ -760,7 +760,7 @@ WZAnalyzer::passValidZCut(ZCandidate& z){
 inline bool 
 WZAnalyzer::passValidWZCut(){
   calcWZVariables();
-  return wzCand_ && wzCand_.mass("minPz")>0.;
+  return wzCand_ && wzCand_(kMinPz).mass()>0.;
 }
 
 ////////////////////////////////
@@ -834,7 +834,7 @@ inline float WZAnalyzer::calcTriLepMass() const{
 }//--- calcTriLepMass
 
 inline float WZAnalyzer::calcQ() const{
-  return wzCand_.mass("minPz") - zCand_.mass() - WMASS;
+  return wzCand_(kMinPz).mass() - zCand_.mass() - WMASS;
 }
 
 inline int WZAnalyzer::calcEvtType() const{

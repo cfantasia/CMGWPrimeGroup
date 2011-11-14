@@ -95,7 +95,6 @@ public:
 /////////Check W Properties/////
   virtual bool passValidWCut(const WCandidate& w) const;
   virtual bool passWtransMassCut(const WCandidate& w, const float& cut) const;
-  virtual bool passVMassCut(const WCandidate& w, const float& mincut, const float& maxcut) const;
   virtual bool passWptCut(const WCandidate& w, const float& cut) const;
 
 //////////////////
@@ -229,8 +228,8 @@ protected:
   MuonV allMuons_, looseMuons_, tightMuons_;
   JetV  allJets_, looseJets_, tightJets_;
   pat::MET met_;
-  ZCandidate zCand_;
-  WCandidate wCand_, vCand_;
+  ZCandidate zCand_, vCand_;
+  WCandidate wCand_;
 
   pat::TriggerEvent triggerEvent_; 
 

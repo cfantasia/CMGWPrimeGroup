@@ -214,11 +214,11 @@ inline bool TBAnalyzer::passValidBCut() const{
 }
 
 inline bool TBAnalyzer::passValidTCut() const{
-  return tCand_.mass()>0.;
+  return tCand_().mass()>0.;
 }
 
 
 /////////Check TB Properties/////
 inline bool TBAnalyzer::passValidTBCut() const{
-  return tbCand_.mass()>0.;
+  return tbCand_().mass()>0.;
 }

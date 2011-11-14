@@ -83,7 +83,7 @@ WCandidate getWCand(const ElectronV & electrons,
 }
 
 /// Return a hadronic WCandidate
-WCandidate getWCand(const JetV & jets)
+ZCandidate getVCand(const JetV & jets)
 {
   // Order by pt - do it the dumb way because we only have a const&
   /*  double maxPt = -1.0;
@@ -107,12 +107,12 @@ WCandidate getWCand(const JetV & jets)
     }
   }
 
-  WCandidate w(jets[minMassPosition]);
+  ZCandidate v(jets[minMassPosition]);
 
-  return w;
+  return v;
 }
 
-WCandidate getWCand2(const JetV & jets)
+ZCandidate getVCand2(const JetV & jets)
 {
   // Order by pt - do it the dumb way because we only have a const&
   double maxPt = -1.0;
@@ -133,8 +133,7 @@ WCandidate getWCand2(const JetV & jets)
     }
   }
 
-  WCandidate w(jets[maxPtPosition1], jets[maxPtPosition2]);
-  return w;
+  return ZCandidate(jets[maxPtPosition1], jets[maxPtPosition2]);
 }
 
 /// Return a WCandidate using the highest-pT non-Z lepton

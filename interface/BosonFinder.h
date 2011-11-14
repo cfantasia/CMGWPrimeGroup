@@ -79,9 +79,16 @@ class ZCandidate : public BosonCandidate {
     addDaughters(p1, p2);
     leptonic_ = true;
   }
-    ZCandidate(const pat::Jet & jet) :
+  ZCandidate(const pat::Jet & jet) :
     elec1_(NULL), elec2_(NULL), muon1_(NULL), muon2_(NULL){
     addDaughter(jet);
+    AddFourMomenta addP4;
+    addP4.set(* this);
+    leptonic_ = false;
+ }
+ ZCandidate(const pat::Jet & jet1, const pat::Jet & jet2) :
+    elec1_(NULL), elec2_(NULL), muon1_(NULL), muon2_(NULL){
+    addDaughters(jet1,jet2);
     AddFourMomenta addP4;
     addP4.set(* this);
     leptonic_ = false;
@@ -121,33 +128,16 @@ class WCandidate : public BosonCandidate {
     leptonic_ = true;
     mt_ = calcMT();
   }
-  WCandidate(const pat::Jet & jet) :
-    elec_(NULL), muon_(NULL){
-    addDaughter(jet);
-    AddFourMomenta addP4;
-    addP4.set(* this);
-    leptonic_ = false;
-    mt_ = calcMT();
- }
-    WCandidate(const pat::Jet & jet1, const pat::Jet & jet2) :
-    elec_(NULL), muon_(NULL){
-    addDaughters(jet1,jet2);
-    AddFourMomenta addP4;
-    addP4.set(* this);
-    leptonic_ = false;
-    mt_ = calcMT();
- }
-
     WCandidate(const reco::Candidate & GenLepton, const reco::Candidate & GenNeutrino) :
       elec_(NULL), muon_(NULL) {
       addDaughters(GenLepton, GenNeutrino);
       leptonic_ = true;
       mt_ = calcMT();
     }
+
   const reco::Candidate * lepton() const {return daughter(0);}
   const reco::Candidate * met() const {return daughter(1);}
   const reco::Candidate * genLepton() const {return genLepton_;}
-  const reco::Candidate * jet() const {return daughter(0);}
   
   const heep::Ele * elec() const {return elec_;}
   const TeVMuon * muon() const {return muon_;}
@@ -164,6 +154,8 @@ class WCandidate : public BosonCandidate {
   const TeVMuon * muon_;
 };
 
+enum NuAlgos { kMinPz, kMaxPz, kMinDR, kMaxDR, kMinDRW, kMaxDRW, kMinTheta, kMaxTheta };
+#define kNuAlgos 8
 class XWLeptonic {
 public:
   XWLeptonic(){initialize_();}
@@ -171,79 +163,45 @@ public:
   XWLeptonic(const T& X, const WCandidate & W) {
     initialize_();
     if(!X || !W) return;
-    metp4_ = W.daughter(1)->p4();
-    setTransMass(X.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
-    setPt(X.p4(), W.p4());//ToDo: Should take 2D Vectors for clarity
-    setMassSolns(X.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
+    setP4Solns(X.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
   }
 
   template<class T>
   XWLeptonic(const T& X, const XWLeptonic & XW) {
     initialize_();
-    if(!X || !XW) return;
-    LorentzVector tmp = XW.p4() - XW.metp4();
-    setTransMass(X.p4(), tmp, XW.metp4());
-    setPt(X.p4(), XW.p4());
-    setMassSolns(X.p4(), tmp, XW.metp4());
+    if(!X.mass()>0. || !XW) return;
+    p4_[0] = X.p4() + XW.p4_[0];
+    p4_[1] = X.p4() + XW.p4_[1];
+    neutrinoPz_ = XW.neutrinoPz_;
+    soln_ = XW.soln_;
   }
   
-  double transMass() const {return transMass_;}
-  double mt() const {return transMass_;}
-  double pt() const {return pt_;}
-  LorentzVector metp4() const {return metp4_;}
-
-  double neutrinoPz(const std::string& type="minPz") const{
-    return neutrinoPz_[index_(type)];
+  double neutrinoPz(const NuAlgos& type) const{
+    return neutrinoPz_[soln_[type]];
   }
 
-  LorentzVector p4(const std::string& type="minPz") const{
-    return p4_[index_(type)];
-  }
-
-  double mass(const std::string& type="minPz") const{
-    return invariantMass_[index_(type)];
+  LorentzVector p4(const NuAlgos& type) const{
+    return p4_[soln_[type]];
   }
 
   operator bool() const {
-    return (invariantMass_[0] > 0);
+    return p4_[0].mass()>0;
+  }
+
+  LorentzVector operator ()(const NuAlgos& type=kMinPz) const{
+    return p4_[soln_[type]];
   }
 
 protected:
 
-  double transMass_;
-  double pt_;
-  LorentzVector metp4_;
   std::vector<double> neutrinoPz_;
   std::vector<LorentzVector> p4_;
-  std::vector<double> invariantMass_;
+  std::vector<bool> soln_;
 
   void initialize_() {
-    transMass_ = 0.;
-    pt_ = 0;
-    metp4_ = LorentzVector();
-    neutrinoPz_ = std::vector<double>(4, 0.);
-    p4_ = std::vector<LorentzVector>(4, LorentzVector());
-    invariantMass_ = std::vector<double>(4, 0.);
-  }
-
-  size_t index_(const std::string& type) const{
-    if (type == "minAngle") return 0;
-    if (type == "maxAngle") return 1;
-    if (type == "maxPz"   ) return 2;
-    if (type == "minPz"   ) return 3;
-    printf("Used a non-existent index in DiBoson Candidate\n");
-    return 9;
-  }
-
-  void setTransMass(const LorentzVector & X, const LorentzVector & wLep, const LorentzVector & met){
-    LorentzVector XplusLep = X + wLep;
-    double term1 = sqrt(XplusLep.M2() + XplusLep.Perp2()) + met.pt();
-    double term2 = (XplusLep + met).pt();
-    transMass_ = sqrt(pow(term1, 2) - pow(term2, 2));
-  }
-
-  void setPt(const LorentzVector & X, const LorentzVector & W){
-    pt_ = (X+W).pt();
+    neutrinoPz_ = std::vector<double>(2, 0.);
+    p4_ = std::vector<LorentzVector>(2, LorentzVector());
+    soln_ = std::vector<bool>(kNuAlgos, false);
   }
 
   bool setNuSolns(const LorentzVector & wLep, const LorentzVector & met){
@@ -261,17 +219,29 @@ protected:
     
       double   pz1 = -b/(2*a) + sqrt(discriminant)/(2*a);
       TVector3 p1  = TVector3(met.px(), met.py(), pz1);
+      TVector3 w1  = leptonP3 + p1;
       double   dr1 = p1.DeltaR(leptonP3);
+      double   drW1= p1.DeltaR(w1);
+      double   dt1 = fabs(p1.Theta() - leptonP3.Theta());
       
       double   pz2 = -b/(2*a) - sqrt(discriminant)/(2*a);
       TVector3 p2  = TVector3(met.px(), met.py(), pz2);
+      TVector3 w2  = leptonP3 + p2;
       double   dr2 = p2.DeltaR(leptonP3);
+      double   drW2= p2.DeltaR(w2);
+      double   dt2 = fabs(p2.Theta() - leptonP3.Theta());
 
-      neutrinoPz_[0] = (dr1 < dr2) ? pz1 : pz2;
-      neutrinoPz_[1] = (dr1 < dr2) ? pz2 : pz1;
-      neutrinoPz_[2] = (fabs(pz1) > fabs(pz2)) ? pz1 : pz2;
-      neutrinoPz_[3] = (fabs(pz1) > fabs(pz2)) ? pz2 : pz1;
+      neutrinoPz_[0] = pz1;
+      neutrinoPz_[1] = pz2;
 
+      soln_[kMinPz] = fabs(pz1) > fabs(pz2); 
+      soln_[kMaxPz] = !soln_[kMinPz];
+      soln_[kMaxDR] = dr1 < dr2;
+      soln_[kMinDR] = !soln_[kMaxDR];
+      soln_[kMaxDRW]= drW1 < drW2;
+      soln_[kMinDRW]= !soln_[kMaxDRW];
+      soln_[kMaxTheta] = dt1 < dt2;
+      soln_[kMinTheta] = !soln_[kMaxTheta];
       return true;
     }
     return false;
@@ -289,24 +259,16 @@ protected:
     }
     return true;
   }
-
-  bool setMassSolns(const LorentzVector & X, const LorentzVector & wLep, const LorentzVector & met){
-    if( !setP4Solns(X, wLep, met) ) return false;
-    for (size_t i = 0; i < neutrinoPz_.size(); i++) {
-      invariantMass_[i] = p4_[i].M();
-    }
-    return true;
-  }
   
 };
 
 class VZCandidate : public reco::CompositeCandidate{
 public:
   VZCandidate(){};
-  VZCandidate(const ZCandidate & Z, const WCandidate & W){
-    if(!Z || !W) return;
+  VZCandidate(const ZCandidate & Z, const ZCandidate & V){
+    if(!Z || !V) return;
     addDaughter(Z);
-    addDaughter(W);
+    addDaughter(V);
     AddFourMomenta addP4;
     addP4.set(* this);
   }
@@ -318,6 +280,7 @@ private:
 
 typedef std::vector<ZCandidate > ZCandV;
 typedef std::vector<WCandidate > WCandV;
+typedef std::vector<XWLeptonic > XWLepV;
 
 void removeWorstCands(ZCandV & zCands, const float & maxMassDiff);
 void removeWorstCands(ZCandV & zCands, const float& min, const float& max);
@@ -380,7 +343,7 @@ WCandidate getWCand(const ElectronV & electrons,
                     const pat::MET & met,
                     const ZCandidate & zCand,
                     double minDeltaR = 0.);
-WCandidate getWCand(const JetV & jets);
-WCandidate getWCand2(const JetV & jets);
+ZCandidate getVCand(const JetV & jets);
+ZCandidate getVCand2(const JetV & jets);
 
 #endif

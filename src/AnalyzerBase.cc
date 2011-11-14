@@ -260,7 +260,7 @@ void AnalyzerBase::clearEvtVariables(){
   looseMuons_.clear();
   tightMuons_.clear();
   zCand_ = ZCandidate();
-  vCand_ = WCandidate();
+  vCand_ = ZCandidate();
   wCand_ = WCandidate();
 }
 
@@ -558,11 +558,6 @@ AnalyzerBase::passValidWCut(const WCandidate& w) const{
 inline bool
 AnalyzerBase::passWtransMassCut(const WCandidate& w, const float& cut) const{
   return w.mt() > cut;
-}
-
-inline bool//For HadV which I dumbly made a W, to be removed
-AnalyzerBase::passVMassCut(const WCandidate& w, const float& mincut, const float& maxcut) const{
-  return (w.mass() > mincut) && (w.mass() < maxcut);  
 }
 
 inline bool

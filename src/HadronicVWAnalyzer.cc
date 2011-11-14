@@ -28,12 +28,12 @@ void HadronicVWAnalyzer::setupCutOrder(){
   mFnPtrs_["MaxNLeptons"] = boost::bind(&HadronicVWAnalyzer::passMaxNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
   mFnPtrs_["MinNJets"] = boost::bind(&HadronicVWAnalyzer::passMinNJetsCut, this, boost::cref(looseJets_), boost::cref(minNJets_));
   mFnPtrs_["ValidW"] = boost::bind(&HadronicVWAnalyzer::passValidWCut, this, boost::cref(wCand_));
-  mFnPtrs_["ValidV"] = boost::bind(&HadronicVWAnalyzer::passValidWCut, this, boost::cref(vCand_));
+  mFnPtrs_["ValidV"] = boost::bind(&HadronicVWAnalyzer::passValidZCut, this, boost::cref(vCand_));
   mFnPtrs_["ValidVWCand"] = boost::bind(&HadronicVWAnalyzer::passValidVWCut, this);
-  mFnPtrs_["VMass"] = boost::bind(&HadronicVWAnalyzer::passVMassCut, this, boost::cref(vCand_), boost::cref(minVmass_), boost::cref(maxVmass_));
+  mFnPtrs_["VMass"] = boost::bind(&HadronicVWAnalyzer::passZMassCut, this, boost::cref(vCand_), boost::cref(minVmass_), boost::cref(maxVmass_));
   mFnPtrs_["WTransMass"] = boost::bind(&HadronicVWAnalyzer::passWtransMassCut, this, boost::cref(wCand_), boost::cref(minWtransMass_));
   mFnPtrs_["MET"] = boost::bind(&HadronicVWAnalyzer::passMinMETCut, this, boost::cref(met_), boost::cref(minMET_));
-  mFnPtrs_["Vpt"] = boost::bind(&HadronicVWAnalyzer::passWptCut, this, boost::cref(vCand_), boost::cref(minVpt_));
+  mFnPtrs_["Vpt"] = boost::bind(&HadronicVWAnalyzer::passZptCut, this, boost::cref(vCand_), boost::cref(minVpt_));
   mFnPtrs_["Wpt"] = boost::bind(&HadronicVWAnalyzer::passWptCut, this, boost::cref(wCand_), boost::cref(minWpt_));
   mFnPtrs_["AllCuts"] = boost::bind(&HadronicVWAnalyzer::passNoCut, this);
 
@@ -203,14 +203,14 @@ void HadronicVWAnalyzer::defineHistos(const TFileDirectory & dir){
 void HadronicVWAnalyzer::fillHistos(const int& index, const float& weight){
   if(debugme) printf("filling Histos\n");
   if(wCand_ && vCand_){
-    hVWMass[index]->Fill(vwCand_.mass("minPz"), weight);
-    if     (evtType_ == 0) hVW3e0muMass[index]->Fill(vwCand_.mass("minPz"), weight);
-    else if(evtType_ == 1) hVW2e1muMass[index]->Fill(vwCand_.mass("minPz"), weight);
-    else if(evtType_ == 2) hVW1e2muMass[index]->Fill(vwCand_.mass("minPz"), weight);
-    else if(evtType_ == 3) hVW0e3muMass[index]->Fill(vwCand_.mass("minPz"), weight);
+    hVWMass[index]->Fill(vwCand_(kMinPz).mass(), weight);
+    if     (evtType_ == 0) hVW3e0muMass[index]->Fill(vwCand_(kMinPz).mass(), weight);
+    else if(evtType_ == 1) hVW2e1muMass[index]->Fill(vwCand_(kMinPz).mass(), weight);
+    else if(evtType_ == 2) hVW1e2muMass[index]->Fill(vwCand_(kMinPz).mass(), weight);
+    else if(evtType_ == 3) hVW0e3muMass[index]->Fill(vwCand_(kMinPz).mass(), weight);
     hQ[index]->Fill(Q_, weight); 
-    hVWTransMass[index]->Fill(vwCand_.transMass(), weight);
-    hVWpt[index]->Fill(vwCand_.pt(), weight);
+    hVWTransMass[index]->Fill(vwCand_().mt(), weight);
+    hVWpt[index]->Fill(vwCand_().pt(), weight);
     hEvtType[index]->Fill(evtType_, weight);
     if     (wCand_.charge() > 0) hEvtTypeP[index]->Fill(evtType_, weight);
     else if(wCand_.charge() < 0) hEvtTypeM[index]->Fill(evtType_, weight);
@@ -295,7 +295,7 @@ void HadronicVWAnalyzer::fillHistos(const int& index, const float& weight){
 inline void
 HadronicVWAnalyzer::calcVVariables(){
   if (debugme) cout<<"In calc V Variables\n";
-  vCand_ = getWCand(looseJets_);
+  vCand_ = getVCand(looseJets_);
   Vpt_ = vCand_.pt();
   if(debugme) printf("    Contains: %i tight V candidate(s)\n", (bool)vCand_);
   if(debugme){
@@ -334,7 +334,7 @@ inline void
 HadronicVWAnalyzer::calcVWVariables(){
   if (debugme) cout<<"In calc VW Variables\n";
   vwCand_ = (vCand_ && wCand_) ? XWLeptonic(vCand_, wCand_) : XWLeptonic();
-  VWMass_ = vwCand_.mass("minPz");
+  VWMass_ = vwCand_(kMinPz).mass();
   Q_ = (vCand_ && wCand_) ? calcQ() : -999.;
   if(debugme) printEventDetails();
 }
@@ -489,9 +489,9 @@ void HadronicVWAnalyzer::printEventDetails() const{
         <<" pfMet phi: "<<met_.phi()
         <<endl;
   }
-  if(vCand_ && wCand_ && vwCand_.mass("minPz")>0.){
-    cout<<" VW Mass: "<<vwCand_.mass("minPz")
-        <<" Neu Pz: "<<vwCand_.neutrinoPz("minPz")
+  if(vCand_ && wCand_ && vwCand_(kMinPz).mass()>0.){
+    cout<<" VW Mass: "<<vwCand_(kMinPz).mass()
+        <<" Neu Pz: "<<vwCand_.neutrinoPz(kMinPz)
         <<" Vpt: "<<vCand_.pt()
         <<" Wpt: "<<wCand_.pt()
         <<endl;
@@ -563,7 +563,7 @@ bool HadronicVWAnalyzer::passTriggersCut() const{
 
 
 inline bool HadronicVWAnalyzer::passValidVWCut() const{
-  return vwCand_ && vwCand_.mass("minPz")>0.;
+  return vwCand_ && vwCand_(kMinPz).mass()>0.;
 }
 
 ////////////////////////////////
@@ -591,7 +591,7 @@ bool HadronicVWAnalyzer::passTriggerEmulation(const heep::Ele& elec, const float
 ///////////////////////////////////
 
 inline float HadronicVWAnalyzer::calcQ() const{
-  return vwCand_.mass("minPz") - vCand_.mass() - WMASS;
+  return vwCand_(kMinPz).mass() - vCand_.mass() - WMASS;
 }
 
 inline int HadronicVWAnalyzer::calcEvtType() const{
