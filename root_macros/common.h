@@ -83,7 +83,7 @@ float
 GetLumiUsed(TFile* f){
   TH1F* hLumi = (TH1F*) f->Get("lumi_ipb");
   bool valid = hLumi;
-  if(!hLumi) cout<<" Failed getting hLumi"<<endl;
+  if(!hLumi) std::cout<<" Failed getting hLumi"<<std::endl;
   return valid ? hLumi->GetBinContent(1) / hLumi->GetBinContent(2) : -1;
 }
 
