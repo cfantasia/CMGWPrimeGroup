@@ -33,8 +33,6 @@ class WPrimeUtil
 
   ~WPrimeUtil();
 
-///////cory  fwlite::TFileService * getFileService(){return fs;}
-
   // get input files (to be retrieved from samples_cross_sections.txt)
   void getInputFiles(std::vector<wprime::InputFile> & inputFiles);
 

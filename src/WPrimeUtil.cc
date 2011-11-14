@@ -24,6 +24,8 @@ WPrimeUtil::WPrimeUtil(const char * out_filename, edm::InputTag genLabel,
 }
 WPrimeUtil::~WPrimeUtil()
 {
+  delete hRecoilPerp;
+  delete hRecoilParalvsVBPt;
   delete [] histRecoilParal;
 }
 
@@ -31,7 +33,7 @@ void WPrimeUtil::setupZMETcorrection()
 {
   string filename = "ZMET_data.root";
   // open the Z data file with info about recoil
-  TFile* File = new TFile(filename.c_str(), "READONLY");
+  TFile* File = TFile::Open(filename.c_str(), "READONLY");
   if(!File || File->IsZombie())
     {
       cerr << " **** Oops! Missing file " << filename << endl;
@@ -47,7 +49,6 @@ void WPrimeUtil::setupZMETcorrection()
   
   
   setRecoilProjections();
-
 }
 
 void WPrimeUtil::setRecoilProjections()
