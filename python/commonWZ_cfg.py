@@ -86,7 +86,7 @@ WZFakeElecCuts = cms.vstring(
     "WTransMass",
     "MET",
     
-    "FakeLepProbeTight",
+    "FakeLepProbe",
     )
 WZFakeMuonCuts = cms.vstring(
     "NoCuts", 
@@ -99,7 +99,7 @@ WZFakeMuonCuts = cms.vstring(
     "WTransMass",
     "MET",
     
-    "FakeLepProbeTight",
+    "FakeLepProbe",
     )
 WZEffCuts = cms.vstring(
     "NoCuts", 
