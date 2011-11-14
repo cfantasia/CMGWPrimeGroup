@@ -62,31 +62,31 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
 
   debugme = cfg.getParameter<bool>("debugme");
 
-  eSelectorPset_ = cfg.getParameter<Pset>("electronSelectors");
-  looseElectronType_ = cfg.getUntrackedParameter<string>("LooseElectronType", "wp95");
-  tightElectronType_ = cfg.getUntrackedParameter<string>("TightElectronType", "wp95");
-  looseElectron_ = ElectronSelector(eSelectorPset_, looseElectronType_);
-  tightElectron_ = ElectronSelector(eSelectorPset_, tightElectronType_);
+  Pset eSelectorPset = cfg.getParameter<Pset>("electronSelectors");
+  string looseElectronType = cfg.getUntrackedParameter<string>("LooseElectronType", "wp95");
+  string tightElectronType = cfg.getUntrackedParameter<string>("TightElectronType", "wp95");
+  looseElectron_ = ElectronSelector(eSelectorPset, looseElectronType);
+  tightElectron_ = ElectronSelector(eSelectorPset, tightElectronType);
   electronLooseResult_ = looseElectron_.getBitTemplate();
   electronTightResult_ = tightElectron_.getBitTemplate();
-  if(debugme) cout<<"Using "<<looseElectronType_<<" for loose electrons and "
-                  <<tightElectronType_<<" for tight electrons\n";
+  if(debugme) cout<<"Using "<<looseElectronType<<" for loose electrons and "
+                  <<tightElectronType<<" for tight electrons\n";
 
-  mSelectorPset_ = cfg.getParameter<Pset>("muonSelectors");
-  looseMuonType_ = cfg.getUntrackedParameter<string>("LooseMuonType", "VBTF");
-  tightMuonType_ = cfg.getUntrackedParameter<string>("TightMuonType", "VBTF");
-  looseMuon_ = MuonSelector(mSelectorPset_, looseMuonType_);
-  tightMuon_ = MuonSelector(mSelectorPset_, tightMuonType_);
+  Pset mSelectorPset = cfg.getParameter<Pset>("muonSelectors");
+  string looseMuonType = cfg.getUntrackedParameter<string>("LooseMuonType", "VBTF");
+  string tightMuonType = cfg.getUntrackedParameter<string>("TightMuonType", "VBTF");
+  looseMuon_ = MuonSelector(mSelectorPset, looseMuonType);
+  tightMuon_ = MuonSelector(mSelectorPset, tightMuonType);
   muonLooseResult_ = looseMuon_.getBitTemplate();
   muonTightResult_ = tightMuon_.getBitTemplate();
-  if(debugme) cout<<"Using "<<looseMuonType_<<" for loose muons and "
-                  <<tightMuonType_<<" for tight muons\n";
+  if(debugme) cout<<"Using "<<looseMuonType<<" for loose muons and "
+                  <<tightMuonType<<" for tight muons\n";
 
-  jSelectorPset_ = cfg.getParameter<Pset>("jetSelectors");
-  looseJetType_ = cfg.getUntrackedParameter<string>("LooseJetType", "Base");
-  looseJet_ = JetSelector(jSelectorPset_, looseJetType_);
+  Pset jSelectorPset = cfg.getParameter<Pset>("jetSelectors");
+  string looseJetType = cfg.getUntrackedParameter<string>("LooseJetType", "Base");
+  looseJet_ = JetSelector(jSelectorPset, looseJetType);
   jetLooseResult_ = looseJet_.getBitTemplate();
-  if(debugme) cout<<"Using "<<looseJetType_<<" for jets\n";
+  if(debugme) cout<<"Using "<<looseJetType<<" for jets\n";
 
   //////Output Files
   outputFile_  = cfg.getParameter<string  >("outputFile" );

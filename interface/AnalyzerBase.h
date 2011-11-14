@@ -127,10 +127,6 @@ protected:
   bool debugme;//print stuff if active
   bool doPreselect_;
 
-  std::string looseElectronType_, tightElectronType_;
-  std::string looseMuonType_, tightMuonType_;
-  std::string looseJetType_, tightJetType_;
-
   edm::InputTag electronsLabel_;
   edm::InputTag muonsLabel_;
   edm::InputTag jetsLabel_;
@@ -160,7 +156,6 @@ protected:
 
   float lumi_ipb; // in pb^-1, to be retrieved from samples_cross_sections.txt
 
-  int fileToRun;
   fwlite::TFileService * fs;
   // directory containing all input samples
   std::string top_level_dir; 
@@ -199,19 +194,16 @@ protected:
 
   //These may be combined into a struct
   //These should be done by the each analysis though
-  Pset eSelectorPset_;
   ElectronSelector looseElectron_;
   ElectronSelector tightElectron_;
   pat::strbitset electronLooseResult_;
   pat::strbitset electronTightResult_;
 
-  Pset mSelectorPset_;
   MuonSelector looseMuon_;
   MuonSelector tightMuon_;
   pat::strbitset muonLooseResult_;
   pat::strbitset muonTightResult_;
 
-  Pset jSelectorPset_;
   JetSelector looseJet_;
   JetSelector tightJet_;
   pat::strbitset jetLooseResult_;
