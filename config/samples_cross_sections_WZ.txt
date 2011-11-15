@@ -159,22 +159,50 @@ samplename = TC_WZ_300
 description = pythia_TC_WZ_300_413_GEN_SIMv1
 subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.05822
-pathname = filelists_WZ/MCPatTrilepton-W05-08-04H-pythia_TC_WZ_300_413_GEN_SIMv1.txt
-Nprod_evt = 10000
+pathname = filelists_WZ/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-300_7TeV-pythia6.txt
+Nprod_evt = 12500
 
 samplename = TC_WZ_400
 description = pythia_TC_WZ_400_413_GEN_SIMv1
 subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.01751
-pathname = filelists_WZ/MCPatTrilepton-W05-08-04H-pythia_TC_WZ_400_413_GEN_SIMv1.txt
-Nprod_evt = 10000
+pathname = filelists_WZ/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6.txt
+Nprod_evt = 14375
 
 samplename = TC_WZ_500
 description = pythia_TC_WZ_500_413_GEN_SIMv1
 subdir = root://cmsxrootd.hep.wisc.edu/
 x-section = 0.007056
-pathname = filelists_WZ/MCPatTrilepton-W05-08-04H-pythia_TC_WZ_500_413_GEN_SIMv1.txt
-Nprod_evt = 10000
+pathname = filelists_WZ/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-500_7TeV-pythia6.txt
+Nprod_evt = 18125
+
+samplename = TC_WZ_600
+description = pythia_TC_WZ_600_413_GEN_SIMv1
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.003364
+pathname = filelists_WZ/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6.txt
+Nprod_evt = 18125
+
+samplename = TC_WZ_700
+description = pythia_TC_WZ_700_413_GEN_SIMv1
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.001774
+pathname = filelists_WZ/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-700_7TeV-pythia6.txt
+Nprod_evt = 20000
+
+samplename = TC_WZ_800
+description = pythia_TC_WZ_800_413_GEN_SIMv1
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.0009728
+pathname = filelists_WZ/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-800_7TeV-pythia6.txt
+Nprod_evt = 16500
+
+samplename = TC_WZ_900
+description = pythia_TC_WZ_900_413_GEN_SIMv1
+subdir = root://cmsxrootd.hep.wisc.edu/
+x-section = 0.0009866
+pathname = filelists_WZ/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-900_7TeV-pythia6.txt
+Nprod_evt = 18125
 
 samplename = data
 description = Double Mu May 10
@@ -265,3 +293,4 @@ pathname = patTuple_numEvent200.root
 Nprod_evt = 99999
 
 Top Level Dir = root://cmsxrootd.hep.wisc.edu/
+
