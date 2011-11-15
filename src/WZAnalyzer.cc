@@ -336,12 +336,12 @@ WZAnalyzer::calcZVariables(){
   float matchptcut = 0.;
   bool minHighPt = false;
   
-  matchptcut = 10.;
+  matchptcut = 8.;
   ElectronV zElectrons;
   for (size_t i=0; i < looseElectrons_.size(); i++)
     if(passTriggerMatch(looseElectrons_[i], matchptcut, triggersToUse_))
       zElectrons.push_back(looseElectrons_[i]);
-  matchptcut = 20.;
+  matchptcut = 17.;
   minHighPt = false;
   for (size_t i=0; i < zElectrons.size(); i++){
     if(passTriggerMatch(looseElectrons_[i], matchptcut, triggersToUse_)){
@@ -357,7 +357,7 @@ WZAnalyzer::calcZVariables(){
     if(passTriggerMatch(looseMuons_[i], matchptcut, triggersToUse_))
       zMuons.push_back(looseMuons_[i]);
   
-  matchptcut = 13.;
+  matchptcut = 17.;
   minHighPt = false;
   for (size_t i=0; i < zMuons.size(); i++){
     if(passTriggerMatch(zMuons[i], matchptcut, triggersToUse_)){
