@@ -82,6 +82,8 @@ public:
   double rhoFastJet_;
   std::vector<double> effectiveElecArea_;
   std::vector<double> effectiveMuonArea_;
+  
+  bool doSystematics_;
 
 ///My calculated qualities//////////////////
   int runNumber_;

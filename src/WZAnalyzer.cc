@@ -9,6 +9,7 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   if(debugme) printf("Using %i cuts\n",NCuts_);
 
   wzAlgo_ = (NuAlgos)cfg.getUntrackedParameter<int>("NuAlgo", kMinPz);
+  doSystematics_ = cfg.getUntrackedParameter<bool>("doSystematics", false);
 
   effectiveElecArea_ = cfg.getParameter<vector<double> >("effectiveElecArea");
   effectiveMuonArea_ = cfg.getParameter<vector<double> >("effectiveMuonArea");
@@ -147,15 +148,16 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
   defineHistoset("hZmmMass","Reconstructed Mass of Z#mu#mu",
                   "M_{Z}^{#mu#mu} (GeV)", 30, 60, 120, "GeV", hZmmMass,dir);
 
-  //These histograms are only for systematic studies (should put in a flag)
-  defineHistoset("hZeeMassTT","Reconstructed MassTT of ZeeTT",
-                  "M_{Z}^{ee,TT} (GeV)", 30, 60, 120, "GeV", hZeeMassTT,dir);
-  defineHistoset("hZeeMassTF","Reconstructed Mass of ZeeTF",
-                  "M_{Z}^{ee,TF} (GeV)", 30, 60, 120, "GeV", hZeeMassTF,dir);
-  defineHistoset("hZmmMassTT","Reconstructed Mass of Z#mu#muTT",
-                  "M_{Z}^{#mu#mu,TT} (GeV)", 30, 60, 120, "GeV", hZmmMassTT,dir);
-  defineHistoset("hZmmMassTF","Reconstructed Mass of Z#mu#muTF",
-                  "M_{Z}^{#mu#mu,TF} (GeV)", 30, 60, 120, "GeV", hZmmMassTF,dir);
+  if(doSystematics_){//These histograms are only for systematic studies (should put in a flag)
+    defineHistoset("hZeeMassTT","Reconstructed MassTT of ZeeTT",
+                   "M_{Z}^{ee,TT} (GeV)", 30, 60, 120, "GeV", hZeeMassTT,dir);
+    defineHistoset("hZeeMassTF","Reconstructed Mass of ZeeTF",
+                   "M_{Z}^{ee,TF} (GeV)", 30, 60, 120, "GeV", hZeeMassTF,dir);
+    defineHistoset("hZmmMassTT","Reconstructed Mass of Z#mu#muTT",
+                   "M_{Z}^{#mu#mu,TT} (GeV)", 30, 60, 120, "GeV", hZmmMassTT,dir);
+    defineHistoset("hZmmMassTF","Reconstructed Mass of Z#mu#muTF",
+                   "M_{Z}^{#mu#mu,TF} (GeV)", 30, 60, 120, "GeV", hZmmMassTF,dir);
+  }
 
 //Zpt Histos
   defineHistoset("hZpt", "p_{T}^{Z}", 
@@ -271,14 +273,18 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
     hZpt[index]->Fill(zCand_.pt(), weight);
     if      (zCand_.flavor() == PDG_ID_ELEC){
       hZeeMass[index]->Fill(zCand_.mass(), weight);
-      if(TT) hZeeMassTT[index]->Fill(zCand_.mass(), weight);
-      if(TF) hZeeMassTF[index]->Fill(zCand_.mass(), weight);
+      if(doSystematics_){
+        if(TT) hZeeMassTT[index]->Fill(zCand_.mass(), weight);
+        if(TF) hZeeMassTF[index]->Fill(zCand_.mass(), weight);
+      }
       hZeept[index]->Fill(zCand_.pt(), weight);
       hMETee[index]->Fill(met_.et(), weight);
     }else if (zCand_.flavor() == PDG_ID_MUON){
       hZmmMass[index]->Fill(zCand_.mass(), weight);
-      if(TT) hZmmMassTT[index]->Fill(zCand_.mass(), weight);
-      if(TF) hZmmMassTF[index]->Fill(zCand_.mass(), weight);
+      if(doSystematics_){
+        if(TT) hZmmMassTT[index]->Fill(zCand_.mass(), weight);
+        if(TF) hZmmMassTF[index]->Fill(zCand_.mass(), weight);
+      }
       hMETmm[index]->Fill(met_.et(), weight);
       hZmmpt[index]->Fill(zCand_.pt(), weight);
     }
@@ -387,20 +393,22 @@ WZAnalyzer::calcZVariables(){
     zCandsAll.insert(zCandsAll.end(), zmmCandsAll.begin(), zmmCandsAll.end());
     removeWorstCands(zCandsAll, minZmass_, maxZmass_);
 
-    bool tight1=false, tight2=false;
-    if(zCand_.flavor() == PDG_ID_ELEC){
-      for(uint i=0; i<tightElectrons_.size(); ++i){
-        if(!tight1 && WPrimeUtil::Match(tightElectrons_[i], *zCand_.daughter(0))) tight1 = true;
-        if(!tight2 && WPrimeUtil::Match(tightElectrons_[i], *zCand_.daughter(1))) tight2 = true;
+    if(doSystematics_){
+      bool tight1=false, tight2=false;
+      if(zCand_.flavor() == PDG_ID_ELEC){
+        for(uint i=0; i<tightElectrons_.size(); ++i){
+          if(!tight1 && WPrimeUtil::Match(tightElectrons_[i], *zCand_.daughter(0))) tight1 = true;
+          if(!tight2 && WPrimeUtil::Match(tightElectrons_[i], *zCand_.daughter(1))) tight2 = true;
+        }
+      }else if(zCand_.flavor() == PDG_ID_MUON){
+        for(uint i=0; i<tightMuons_.size(); ++i){
+          if(!tight1 && WPrimeUtil::Match(tightMuons_[i], *zCand_.daughter(0))) tight1 = true;
+          if(!tight2 && WPrimeUtil::Match(tightMuons_[i], *zCand_.daughter(1))) tight2 = true;
+        } 
       }
-    }else if(zCand_.flavor() == PDG_ID_MUON){
-      for(uint i=0; i<tightMuons_.size(); ++i){
-        if(!tight1 && WPrimeUtil::Match(tightMuons_[i], *zCand_.daughter(0))) tight1 = true;
-        if(!tight2 && WPrimeUtil::Match(tightMuons_[i], *zCand_.daughter(1))) tight2 = true;
-      } 
+      TT = tight1 && tight2;
+      TF = (tight1 && !tight2) || (!tight1 && tight2);
     }
-    TT = tight1 && tight2;
-    TF = (tight1 && !tight2) || (!tight1 && tight2);
   }
   zCandsAll.insert(zCandsAll.begin(), zCand_);
   removeOverlapping(zCandsAll);
