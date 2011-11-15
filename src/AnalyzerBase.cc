@@ -10,7 +10,7 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   maxEvents_   = cfg.getParameter<int>("maxEvents");
   useJSON_   = cfg.getParameter<bool>("useJSON") ;
   doPreselect_ = cfg.getParameter<bool>("preselect");
-  debugme = cfg.getParameter<bool>("debugme");
+  debug_ = cfg.getParameter<bool>("debug");
 
   genLabel_ = cfg.getParameter<edm::InputTag>("genParticles" );
   pfCandsLabel_ = cfg.getParameter<edm::InputTag>("particleFlow");
@@ -88,7 +88,7 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   vertexLabel_ = cfg.getParameter<edm::InputTag>("vertexTag");
 
   muReconstructor_ = cfg.getParameter<int>("muonReconstructor");
-  if(debugme) cout<<"Using muon algo "<<algo_desc_long[muReconstructor_]<<endl;
+  if(debug_) cout<<"Using muon algo "<<algo_desc_long[muReconstructor_]<<endl;
   assert(muReconstructor_ < Num_MuTeVtrkAlgos);
 
   useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
@@ -130,7 +130,7 @@ void AnalyzerBase::fillCuts(const map<string,fnCut >& mFnPtrs){
 
 //Tabulate results after the cut has been passed
 void AnalyzerBase::tabulateEvent(const int& cut_index, const float& weight){
-  if(debugme) cout<<"Tabulating results for cut_index = "
+  if(debug_) cout<<"Tabulating results for cut_index = "
                   <<cut_index<<" = "<<CutNames_[cut_index]<<endl;
 
   //increase the number of events passing the cuts
@@ -440,7 +440,7 @@ AnalyzerBase::printJet(const pat::Jet& jet) const{
 ////////////////////
 bool
 AnalyzerBase::passCuts(const float& weight){
-  if (debugme) cout<<"In pass Cuts\n";
+  if (debug_) cout<<"In pass Cuts\n";
   
   for(int i=0; i<NCuts_; ++i){
     if(!CutFns_[i]()) return false;
@@ -642,7 +642,7 @@ void AnalyzerBase::defineOneHisto(const string & name, const string & title,
 void 
 AnalyzerBase::eventLoop(edm::EventBase const & event){
   clearEvtVariables();
-  if(debugme) WPrimeUtil::printEvent(event);
+  if(debug_) WPrimeUtil::printEvent(event);
 
   if (doPreselect_){
   }

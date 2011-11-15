@@ -6,7 +6,7 @@ TBAnalyzer::TBAnalyzer(){}
 TBAnalyzer::TBAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   AnalyzerBase(cfg, fileToRun){
   setupCutOrder();
-  if(debugme) printf("Using %i cuts\n",NCuts_);
+  if(debug_) printf("Using %i cuts\n",NCuts_);
 
   
 // +++++++++++++++++++General Cut values
@@ -22,17 +22,17 @@ TBAnalyzer::TBAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   Pset eSelectorPset = cfg.getParameter<Pset>("electronSelectors");
   string looseElectronType = cfg.getUntrackedParameter<string>("LooseElectronType", "wp95");
   looseElectron_ = ElectronSelector(eSelectorPset, looseElectronType);
-  if(debugme) cout<<"Using "<<looseElectronType<<" for loose electrons\n";
+  if(debug_) cout<<"Using "<<looseElectronType<<" for loose electrons\n";
 
   Pset mSelectorPset = cfg.getParameter<Pset>("muonSelectors");
   string looseMuonType = cfg.getUntrackedParameter<string>("LooseMuonType", "exotica");
   looseMuon_ = MuonSelector(mSelectorPset, looseMuonType);
-  if(debugme) cout<<"Using "<<looseMuonType<<" for loose muons\n";
+  if(debug_) cout<<"Using "<<looseMuonType<<" for loose muons\n";
 
   Pset jSelectorPset = cfg.getParameter<Pset>("jetSelectors");
   string looseJetType = cfg.getUntrackedParameter<string>("LooseJetType", "Base");
   looseJet_ = JetSelector(jSelectorPset, looseJetType);
-  if(debugme) cout<<"Using "<<looseJetType<<" for jets\n";
+  if(debug_) cout<<"Using "<<looseJetType<<" for jets\n";
 }
 
 TBAnalyzer::~TBAnalyzer(){
@@ -69,9 +69,9 @@ void TBAnalyzer::fillHistos(const int& index, const float& weight){
 void 
 TBAnalyzer::eventLoop(edm::EventBase const & event){
   clearEvtVariables();
-  if(debugme) WPrimeUtil::printEvent(event);
+  if(debug_) WPrimeUtil::printEvent(event);
   if (doPreselect_){
-    if(debugme) cout<<"Testing Preselection...\n";
+    if(debug_) cout<<"Testing Preselection...\n";
   }
 
   event.getByLabel(electronsLabel_,patElectronsH_);
@@ -94,7 +94,7 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
     if (looseMuon_(allMuons_[i]) )
       looseMuons_.push_back(allMuons_[i]);
   }
-  if(debugme){
+  if(debug_){
     printLeptons();
     printf("    Contains: %i electron(s), %i muon(s)\n",
            (int)allElectrons_.size(), (int)allMuons_.size());
@@ -108,7 +108,7 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
     cout << "Not enough jets. Bad bad event, returning now..." << endl;
     return;
   }
-  if(debugme)
+  if(debug_)
     printf("    Contains: %i pat jet(s)\n",
            (int)allJets_.size());
 
@@ -117,7 +117,7 @@ TBAnalyzer::eventLoop(edm::EventBase const & event){
     if (looseJet_(allJets_[i]) && !Overlap(allJets_[i], looseMuons_, 0.5, 2))
       looseJets_.push_back(allJets_[i]);
   }
-  if(debugme)
+  if(debug_)
     printf("    Contains: %i loose jet(s)\n",
            (int)looseJets_.size());
   

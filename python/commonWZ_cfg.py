@@ -1,9 +1,9 @@
 from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
 #process.WprimeAnalyzer.maxEvents   = 500
-#process.WprimeAnalyzer.debugme = True
+#process.WprimeAnalyzer.debug = True
 
-process.WprimeAnalyzer.debugme = False
+process.WprimeAnalyzer.debug = False
 process.WprimeAnalyzer.reportAfter = 25000
 process.WprimeAnalyzer.runWZAnalysis    = True
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_WZ.txt"

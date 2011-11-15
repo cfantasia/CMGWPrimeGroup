@@ -9,7 +9,7 @@ HadronicVZAnalyzer::HadronicVZAnalyzer(){}
 HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   AnalyzerBase(cfg, fileToRun){
   //setupCutOrder();
-  if(debugme) printf("Using %i cuts\n",NCuts_);
+  if(debug_) printf("Using %i cuts\n",NCuts_);
 
 // +++++++++++++++++++Event characteristics
  
@@ -41,7 +41,7 @@ HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, int fileTo
   string tightElectronType = cfg.getUntrackedParameter<string>("TightElectronType", "wp95");
   looseElectron_ = ElectronSelector(eSelectorPset, looseElectronType);
   tightElectron_ = ElectronSelector(eSelectorPset, tightElectronType);
-  if(debugme) cout<<"Using "<<looseElectronType<<" for loose electrons and "
+  if(debug_) cout<<"Using "<<looseElectronType<<" for loose electrons and "
                   <<tightElectronType<<" for tight electrons\n";
 
   Pset mSelectorPset = cfg.getParameter<Pset>("muonSelectors");
@@ -49,13 +49,13 @@ HadronicVZAnalyzer::HadronicVZAnalyzer(const edm::ParameterSet & cfg, int fileTo
   string tightMuonType = cfg.getUntrackedParameter<string>("TightMuonType", "exotica");
   looseMuon_ = MuonSelector(mSelectorPset, looseMuonType);
   tightMuon_ = MuonSelector(mSelectorPset, tightMuonType);
-  if(debugme) cout<<"Using "<<looseMuonType<<" for loose muons and "
+  if(debug_) cout<<"Using "<<looseMuonType<<" for loose muons and "
                   <<tightMuonType<<" for tight muons\n";
 
   Pset jSelectorPset = cfg.getParameter<Pset>("jetSelectors");
   string looseJetType = cfg.getUntrackedParameter<string>("LooseJetType", "Base");
   looseJet_ = JetSelector(jSelectorPset, looseJetType);
-  if(debugme) cout<<"Using "<<looseJetType<<" for jets\n";
+  if(debug_) cout<<"Using "<<looseJetType<<" for jets\n";
 
 }
 
@@ -231,11 +231,11 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   runNumber_ = event.id().run();
   lumiNumber_ = event.id().luminosityBlock();
   evtNumber_ = event.id().event();
-  if(debugme) WPrimeUtil::printEvent(event);
+  if(debug_) WPrimeUtil::printEvent(event);
   
   // Preselection - skip events that don't look promising
   if (doPreselect_){
-    if(debugme) cout<<"Testing Preselection...\n";
+    if(debug_) cout<<"Testing Preselection...\n";
     // We could setup some preselection here. To be implemented.
   }
 
@@ -303,7 +303,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
       tightMuons_.push_back(allMuons_[i]);
   }
 
-  if(debugme){
+  if(debug_){
     printLeptons();
     printf("    Contains: %i electron(s), %i muon(s)\n",
            (int)allElectrons_.size(), (int)allMuons_.size());
@@ -326,7 +326,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   if (looseMuons_.size() > 0){
     sort(looseMuons_.begin(), looseMuons_.end(), highestMuonPt());
-    if(debugme){
+    if(debug_){
       for (uint k=0; k<looseMuons_.size(); k++){
 	      cout << "looseMuons_ " << k << " has pt of " << looseMuons_.at(k).pt() <<  endl;
 	    }
@@ -340,7 +340,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   if (looseElectrons_.size() > 0){
     sort(looseElectrons_.begin(), looseElectrons_.end(), highestElectronPt());
-    if(debugme){
+    if(debug_){
       for (uint k=0; k<looseElectrons_.size(); k++){
 	cout << "looseElectrons_ " << k << " has pt of " << looseElectrons_.at(k).patEle().pt() <<  endl;
 	    }
@@ -361,7 +361,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     cout << "Not enough jets. Bad bad event, returning now..." << endl;
     return;
   }
-  if(debugme)
+  if(debug_)
     printf("    Contains: %i pat jet(s)\n",
            (int)allJets_.size());
 
@@ -378,7 +378,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   //fill jet histos for jets who passes the criteria
   if (looseJets_.size() > 0){
     sort(looseJets_.begin(), looseJets_.end(), highestJetPt());
-    if(debugme){
+    if(debug_){
       for (uint k=0; k<looseJets_.size(); k++){
 	      cout << "jets_ " << k << " has pt of " << looseJets_.at(k).pt() <<  endl;
 	    }
@@ -425,7 +425,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     }
   }
 
-  if (debugme){
+  if (debug_){
     printf("    Contains: %i loose jets(s)\n",
            (int)looseJets_.size());
   }
@@ -482,7 +482,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   // Make a Z candidate out of the loose leptons. 
   ZCandV zCands = getZCands(looseElectrons_, looseMuons_, 100.);
   zCand_ = zCands.size() ? zCands[0] : ZCandidate();
-  if (debugme) cout << "Made zCand" << endl;
+  if (debug_) cout << "Made zCand" << endl;
 
   if( !passValidZCut(zCand_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
@@ -502,7 +502,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   fillJetMergingHistos();
 
   vCand_ = getVCand(looseJets_);
-  if (debugme) cout << "Made vCand" << endl;
+  if (debug_) cout << "Made vCand" << endl;
 
   if( !passValidZCut(vCand_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
@@ -520,16 +520,16 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   if( !passZptCut(vCand_, minVpt_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
-  if (debugme) cout << "Good V from jet" << endl;
+  if (debug_) cout << "Good V from jet" << endl;
   fillGoodHadVHistos();
 
   ///////////////////////////////////////
   //////// Make VZ Candidate ////////////
   ///////////////////////////////////////
-  if (debugme) cout << "Im just before boson cands" << endl;
+  if (debug_) cout << "Im just before boson cands" << endl;
   
   hadVZ_ = VZCandidate(zCand_, vCand_);
-  if(debugme) cout << "Made my hadVZ" << endl;  
+  if(debug_) cout << "Made my hadVZ" << endl;  
 
   if( !passValidVZCandCut() ) return;
   tabulateEvent(iCut, weight_); ++iCut;
@@ -551,7 +551,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   if(wprimeUtil_->runningOnData()){
     cout<<" The following data event passed All Cuts!!!\n";
     printPassingEvent(event);
-    if(1 || debugme){ 
+    if(1 || debug_){ 
       //printEventLeptons();
       printElectrons();
       printMuons();
@@ -632,7 +632,7 @@ HadronicVZAnalyzer::clearEvtVariables(){
 
 //fill Histograms
 void HadronicVZAnalyzer::fillHistos(const int& index, const float& weight){
-  if(debugme) printf("filling Histos\n");
+  if(debug_) printf("filling Histos\n");
 
   if(hadVZ_){
     hVZMass[index]->Fill(hadVZ_.mass(), weight);
@@ -683,7 +683,7 @@ void HadronicVZAnalyzer::fillGoodZHistos(){
   if     (zCand_.flavor() == PDG_ID_ELEC){
     const heep::Ele & e1 = WPrimeUtil::Find(*zCand_.daughter(0), allElectrons_);
     const heep::Ele & e2 = WPrimeUtil::Find(*zCand_.daughter(1), allElectrons_);
-    if (debugme)
+    if (debug_)
       cout << "Found my electrons from loose Z" << endl;
     h_Zelec1_pt->Fill(e1.patEle().pt(), weight_);
     h_Zelec1_eta->Fill(e1.eta(), weight_);
@@ -695,7 +695,7 @@ void HadronicVZAnalyzer::fillGoodZHistos(){
   }else if(zCand_.flavor() == PDG_ID_MUON){
     const TeVMuon & m1 = WPrimeUtil::Find(*zCand_.daughter(0), allMuons_);
     const TeVMuon & m2 = WPrimeUtil::Find(*zCand_.daughter(1), allMuons_);
-    if (debugme)
+    if (debug_)
       cout << "Found my muons from loose Z" << endl;
     h_Zmuon1_pt->Fill(m1.pt(), weight_);
     h_Zmuon1_eta->Fill(m1.eta(), weight_);
@@ -711,7 +711,7 @@ void HadronicVZAnalyzer::fillGoodHadVHistos(){
   h_jet_HadV_pt->Fill(vCand_.pt(), weight_);
   h_jet_HadV_eta->Fill(vCand_.eta(), weight_);
   h_jet_HadV_phi->Fill(vCand_.phi(), weight_);
-  if (debugme)
+  if (debug_)
     cout << "filled my HadV histos" << endl;
 }
 
@@ -722,7 +722,7 @@ void HadronicVZAnalyzer::fillValidVZHistos(){
   h_HadVZphi->Fill(hadVZ_.phi(), weight_);
   if (gravMass_>0)
     h_HadVZ_res->Fill((hadVZ_.mass()-gravMass_), weight_);
-  if (debugme)
+  if (debug_)
     cout << "filled my histos from HadVZ" << endl;
   if     (zCand_.flavor() == PDG_ID_ELEC){
     const heep::Ele & VZe1 = WPrimeUtil::Find(*zCand_.daughter(0), allElectrons_);

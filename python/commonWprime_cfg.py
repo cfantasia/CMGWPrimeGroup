@@ -71,7 +71,7 @@ process.WprimeAnalyzer = cms.PSet(
     photonSelectors = photonSelectors,
 
     Cuts = cms.vstring(),
-    debugme = cms.bool(False),
+    debug = cms.bool(False),
     preselect = cms.bool(False),
     triggersToUse = cms.vstring(),
     

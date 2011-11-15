@@ -6,7 +6,7 @@ HadronicVWAnalyzer::HadronicVWAnalyzer(){}
 HadronicVWAnalyzer::HadronicVWAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   AnalyzerBase(cfg, fileToRun){
   setupCutOrder();
-  if(debugme) printf("Using %i cuts\n",NCuts_);
+  if(debug_) printf("Using %i cuts\n",NCuts_);
 
   effectiveElecArea_ = cfg.getParameter<vector<double> >("effectiveElecArea");
   effectiveMuonArea_ = cfg.getParameter<vector<double> >("effectiveMuonArea");
@@ -32,17 +32,17 @@ HadronicVWAnalyzer::HadronicVWAnalyzer(const edm::ParameterSet & cfg, int fileTo
   Pset eSelectorPset = cfg.getParameter<Pset>("electronSelectors");
   string looseElectronType = cfg.getUntrackedParameter<string>("LooseElectronType", "wp95");
   looseElectron_ = ElectronSelector(eSelectorPset, looseElectronType);
-  if(debugme) cout<<"Using "<<looseElectronType<<" for loose electrons\n";
+  if(debug_) cout<<"Using "<<looseElectronType<<" for loose electrons\n";
 
   Pset mSelectorPset = cfg.getParameter<Pset>("muonSelectors");
   string looseMuonType = cfg.getUntrackedParameter<string>("LooseMuonType", "exotica");
   looseMuon_ = MuonSelector(mSelectorPset, looseMuonType);
-  if(debugme) cout<<"Using "<<looseMuonType<<" for loose muons\n";
+  if(debug_) cout<<"Using "<<looseMuonType<<" for loose muons\n";
 
   Pset jSelectorPset = cfg.getParameter<Pset>("jetSelectors");
   string looseJetType = cfg.getUntrackedParameter<string>("LooseJetType", "Base");
   looseJet_ = JetSelector(jSelectorPset, looseJetType);
-  if(debugme) cout<<"Using "<<looseJetType<<" for jets\n";
+  if(debug_) cout<<"Using "<<looseJetType<<" for jets\n";
 
 }
 
@@ -72,7 +72,7 @@ void HadronicVWAnalyzer::setupCutOrder(){
 
 //--------------------------------------------------------------
 void HadronicVWAnalyzer::defineHistos(const TFileDirectory & dir){
-  if(debugme) printf("Declare histos\n");
+  if(debug_) printf("Declare histos\n");
   AnalyzerBase::defineHistos(dir);
 
   defineHistoset("hVWMass", "Reconstructed VW Invariant Mass",
@@ -176,7 +176,7 @@ void HadronicVWAnalyzer::defineHistos(const TFileDirectory & dir){
 
 //fill Histograms
 void HadronicVWAnalyzer::fillHistos(const int& index, const float& weight){
-  if(debugme) printf("filling Histos\n");
+  if(debug_) printf("filling Histos\n");
   if(wCand_ && vCand_){
     hVWMass[index]->Fill(vwCand_(kMinPz).mass(), weight);
     hQ[index]->Fill(Q_, weight); 
@@ -239,11 +239,11 @@ void HadronicVWAnalyzer::fillHistos(const int& index, const float& weight){
 
 inline void
 HadronicVWAnalyzer::calcVVariables(){
-  if (debugme) cout<<"In calc V Variables\n";
+  if (debug_) cout<<"In calc V Variables\n";
   vCand_ = getVCand(looseJets_);
   Vpt_ = vCand_.pt();
-  if(debugme) printf("    Contains: %i V candidate(s)\n", (bool)vCand_);
-  if(debugme){
+  if(debug_) printf("    Contains: %i V candidate(s)\n", (bool)vCand_);
+  if(debug_){
     printEventLeptons(); 
     printEventDetails();
   }
@@ -251,11 +251,11 @@ HadronicVWAnalyzer::calcVVariables(){
 
 inline void
 HadronicVWAnalyzer::calcWVariables(){
-  if (debugme) cout<<"In calc W Variables\n";
+  if (debug_) cout<<"In calc W Variables\n";
   wCand_ = getWCand(looseElectrons_, looseMuons_, met_);
   Wpt_ = wCand_.pt();
-  if(debugme) printf("    Contains: %i W candidate(s)\n", (bool)wCand_);
-  if(debugme){
+  if(debug_) printf("    Contains: %i W candidate(s)\n", (bool)wCand_);
+  if(debug_){
     printEventLeptons(); 
     printEventDetails();
   }
@@ -263,33 +263,33 @@ HadronicVWAnalyzer::calcWVariables(){
 
 inline void
 HadronicVWAnalyzer::calcVWVariables(){
-  if (debugme) cout<<"In calc VW Variables\n";
+  if (debug_) cout<<"In calc VW Variables\n";
   vwCand_ = (vCand_ && wCand_) ? XWLeptonic(vCand_, wCand_) : XWLeptonic();
   VWMass_ = vwCand_(kMinPz).mass();
   Q_ = (vCand_ && wCand_) ? calcQ() : -999.;
-  if(debugme) printEventDetails();
+  if(debug_) printEventDetails();
 }
 
 void
 HadronicVWAnalyzer::calcEventVariables(){
-  if (debugme) cout<<"In calc Event Variables\n";
+  if (debug_) cout<<"In calc Event Variables\n";
   evtType_ = (vCand_ && wCand_) ? calcEvtType() : -999;
-  if(debugme) printf("evt Type: %i, V Flav: %i, W Flav: %i\n", evtType_, (int)vCand_.flavor(), (int)wCand_.flavor());
+  if(debug_) printf("evt Type: %i, V Flav: %i, W Flav: %i\n", evtType_, (int)vCand_.flavor(), (int)wCand_.flavor());
 }
 
 void 
 HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
   clearEvtVariables();
-  if(debugme) WPrimeUtil::printEvent(event);
+  if(debug_) WPrimeUtil::printEvent(event);
 
   // Preselection - skip events that don't look promising
   if (doPreselect_){
-    if(debugme) cout<<"Testing Preselection...\n";
+    if(debug_) cout<<"Testing Preselection...\n";
   }
 
   //get Jets
   event.getByLabel(jetsLabel_,patJetsH_);
-  if(debugme) printf("    Contains: %i pat jets(s)\n",
+  if(debug_) printf("    Contains: %i pat jets(s)\n",
                      (int)patJetsH_->size());
   for (size_t i = 0; i < patJetsH_->size(); i++) {
     const pat::Jet & jet = (*patJetsH_.product())[i];
@@ -315,7 +315,7 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
                             patMuonsH_, muReconstructor_, allMuons_,
                             metH_, useAdjustedMET_, met_,
                             pfCandidatesH_);
-  if(debugme) printf("    Contains: %i electron(s), %i muon(s)\n",
+  if(debug_) printf("    Contains: %i electron(s), %i muon(s)\n",
                           (int)allElectrons_.size(), (int)allMuons_.size());
 
   rhoFastJet_ = getProduct<double>(event,"kt6PFJets:rho");
@@ -336,7 +336,7 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
   }
   if(looseElectrons_.size() + looseMuons_.size() == 0) return;
 
-  if(debugme){
+  if(debug_){
     printLeptons();
     printf("    Contains: %i loose electron(s), %i loose muon(s), %i loose jet(s)\n",
            (int)looseElectrons_.size(), (int)looseMuons_.size(), (int)looseJets_.size());
@@ -355,7 +355,7 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
   vertices_ = getProduct<vector<reco::Vertex> >(event,vertexLabel_);
 
   if(!wprimeUtil_->runningOnData()){//Don't do this for data
-    if(debugme){
+    if(debug_){
       //Cory: Update this for VW!
       GenParticleV genParticles = getProduct<GenParticleV>(event, "genParticles");
       const reco::Candidate * genV = 0;
@@ -383,10 +383,10 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
   if(wprimeUtil_->runningOnData()){
     cout<<" The following data events passed All Cuts!!!\n";
     printPassingEvent(event);
-    if(debugme) printEventLeptons();
+    if(debug_) printEventLeptons();
     cout<<" ------------------\n";
   }
-  if(debugme) printEventLeptons();
+  if(debug_) printEventLeptons();
 }
 
 void HadronicVWAnalyzer::printDebugEvent() const{
@@ -452,7 +452,7 @@ HadronicVWAnalyzer::printEventLeptons() const{
 /////////////////Cuts///////////////////////
 bool
 HadronicVWAnalyzer::passCuts(const float& weight){
-  if (debugme) cout<<"In pass Cuts\n";
+  if (debug_) cout<<"In pass Cuts\n";
   
   for(int i=0; i<NCuts_; ++i){
     if(CutNames_[i] == "ValidV"){
@@ -473,7 +473,7 @@ HadronicVWAnalyzer::passCuts(const float& weight){
 //Trigger requirements
 //-----------------------------------------------------------
 bool HadronicVWAnalyzer::passTriggersCut() const{
-  if(debugme) cout<<"Trigger requirements"<<endl;
+  if(debug_) cout<<"Trigger requirements"<<endl;
   //Apply the trigger if running on data or MC 
   //If MC, apply if no V or if V exists, zCand == PDGMuon)
   if(wprimeUtil_->runningOnData() || !vCand_ || vCand_.flavor() == PDG_ID_MUON){

@@ -6,7 +6,7 @@ WZAnalyzer::WZAnalyzer(){}
 WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   AnalyzerBase(cfg, fileToRun){
   setupCutOrder();
-  if(debugme) printf("Using %i cuts\n",NCuts_);
+  if(debug_) printf("Using %i cuts\n",NCuts_);
 
   wzAlgo_ = (NuAlgos)cfg.getUntrackedParameter<int>("NuAlgo", kMinPz);
   doSystematics_ = cfg.getUntrackedParameter<bool>("doSystematics", false);
@@ -48,7 +48,7 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   string tightElectronType = cfg.getUntrackedParameter<string>("TightElectronType", "wp95");
   looseElectron_ = ElectronSelector(eSelectorPset, looseElectronType);
   tightElectron_ = ElectronSelector(eSelectorPset, tightElectronType);
-  if(debugme) cout<<"Using "<<looseElectronType<<" for loose electrons and "
+  if(debug_) cout<<"Using "<<looseElectronType<<" for loose electrons and "
                   <<tightElectronType<<" for tight electrons\n";
 
   Pset mSelectorPset = cfg.getParameter<Pset>("muonSelectors");
@@ -56,7 +56,7 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   string tightMuonType = cfg.getUntrackedParameter<string>("TightMuonType", "exotica");
   looseMuon_ = MuonSelector(mSelectorPset, looseMuonType);
   tightMuon_ = MuonSelector(mSelectorPset, tightMuonType);
-  if(debugme) cout<<"Using "<<looseMuonType<<" for loose muons and "
+  if(debug_) cout<<"Using "<<looseMuonType<<" for loose muons and "
                   <<tightMuonType<<" for tight muons\n";
 
 }
@@ -93,7 +93,7 @@ void WZAnalyzer::setupCutOrder(){
 }
 
 void WZAnalyzer::defineHistos(const TFileDirectory & dir){
-  if(debugme) printf("Declare histos\n");
+  if(debug_) printf("Declare histos\n");
   AnalyzerBase::defineHistos(dir);
 
   defineHistoset("hWZMass", "Reconstructed WZ Invariant Mass",
@@ -241,7 +241,7 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
 
 //fill Histograms
 void WZAnalyzer::fillHistos(const int& index, const float& weight){
-  if(debugme) printf("filling Histos\n");
+  if(debug_) printf("filling Histos\n");
   if(wCand_ && zCand_){
     hWZMass[index]->Fill(WZMass_, weight);
     if     (evtType_ == 0) hWZ3e0muMass[index]->Fill(WZMass_, weight);
@@ -331,7 +331,7 @@ WZAnalyzer::countZCands(ZCandV & Zs) const{
 
 void
 WZAnalyzer::calcZVariables(){
-  if (debugme) cout<<"In calc Z Variables\n";
+  if (debug_) cout<<"In calc Z Variables\n";
   // Reconstruct the Z
   float matchptcut = 0.;
   bool minHighPt = false;
@@ -367,7 +367,7 @@ WZAnalyzer::calcZVariables(){
   }
   if(!minHighPt) zMuons.clear();
 
-  if(debugme) printf("    Contains: %i z electron(s), %i z muon(s)\n",
+  if(debug_) printf("    Contains: %i z electron(s), %i z muon(s)\n",
                      (int)zElectrons.size(), (int)zMuons.size());
 
   ZCandV zeeCands = getZCands(zElectrons, maxZMassDiff_, false);
@@ -415,7 +415,7 @@ WZAnalyzer::calcZVariables(){
   numZs_ = countZCands(zCandsAll); 
   Zpt_ = zCand_.pt();
 
-  if(debugme){
+  if(debug_){
     printf("    Contains: %i Z candidate(s)\n", (int)zCandsAll.size());
     printEventLeptons();
     printEventDetails();
@@ -424,11 +424,11 @@ WZAnalyzer::calcZVariables(){
 
 inline void
 WZAnalyzer::calcWVariables(){
-  if (debugme) cout<<"In calc W Variables\n";
+  if (debug_) cout<<"In calc W Variables\n";
   wCand_ = getWCand(tightElectrons_, tightMuons_, met_, zCand_, minDeltaR_);
   Wpt_ = wCand_.pt();
-  if(debugme) printf("    Contains: %i tight W candidate(s)\n", (bool)wCand_);
-  if(debugme){
+  if(debug_) printf("    Contains: %i tight W candidate(s)\n", (bool)wCand_);
+  if(debug_){
     printEventLeptons(); 
     printEventDetails();
   }
@@ -436,18 +436,18 @@ WZAnalyzer::calcWVariables(){
 
 inline void
 WZAnalyzer::calcWZVariables(){
-  if (debugme) cout<<"In calc WZ Variables\n";
+  if (debug_) cout<<"In calc WZ Variables\n";
   wzCand_ = (zCand_ && wCand_) ? XWLeptonic(zCand_, wCand_) : XWLeptonic();
   WZMass_ = wzCand_(wzAlgo_).mass();
   Q_ = (zCand_ && wCand_) ? calcQ() : -999.;
-  if(debugme) printEventDetails();
+  if(debug_) printEventDetails();
 }
 
 void
 WZAnalyzer::calcEventVariables(){
-  if (debugme) cout<<"In calc Event Variables\n";
+  if (debug_) cout<<"In calc Event Variables\n";
   evtType_ = (zCand_ && wCand_) ? calcEvtType() : -999;
-  if(debugme) printf("evt Type: %i, Z Flav: %i, W Flav: %i\n", evtType_, (int)zCand_.flavor(), (int)wCand_.flavor());
+  if(debug_) printf("evt Type: %i, Z Flav: %i, W Flav: %i\n", evtType_, (int)zCand_.flavor(), (int)wCand_.flavor());
   LeadPt_ = calcLeadPt(); 
   LeadElecPt_ = calcLeadPt(PDG_ID_ELEC);
   LeadMuonPt_ = calcLeadPt(PDG_ID_MUON);
@@ -476,11 +476,11 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
   }
 */  
-  if(debugme) WPrimeUtil::printEvent(event);
+  if(debug_) WPrimeUtil::printEvent(event);
 
   // Preselection - skip events that don't look promising
   if (doPreselect_){
-    if(debugme) cout<<"Testing Preselection...\n";
+    if(debug_) cout<<"Testing Preselection...\n";
     if (getProduct<double>(event, 
                            "wzPreselectionProducer:ZMassDiff") > 30.0 ||
         getProduct<double>(event, 
@@ -502,7 +502,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
                             patMuonsH_, muReconstructor_, allMuons_,
                             metH_, useAdjustedMET_, met_,
                             pfCandidatesH_);
-  if(debugme) printf("    Contains: %i electron(s), %i muon(s)\n",
+  if(debug_) printf("    Contains: %i electron(s), %i muon(s)\n",
                           (int)allElectrons_.size(), (int)allMuons_.size());
 
   rhoFastJet_ = getProduct<double>(event,"kt6PFJets:rho");
@@ -528,7 +528,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   }
   if(looseElectrons_.size() + looseMuons_.size() == 0) return;
 
-  if(debugme){
+  if(debug_){
     printLeptons();
     printf("    Contains: %i loose electron(s), %i loose muon(s)\n",
            (int)looseElectrons_.size(), (int)looseMuons_.size());
@@ -546,7 +546,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   vertices_ = getProduct<vector<reco::Vertex> >(event,vertexLabel_);
 
   if(!wprimeUtil_->runningOnData()){//Don't do this for data
-    if(debugme){
+    if(debug_){
       GenParticleV genParticles = getProduct<GenParticleV>(event, "genParticles");
       const reco::Candidate * genZ = 0;
       const reco::Candidate * genW = 0;
@@ -562,7 +562,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
   }//MC Only If
 
-  if(debugme && wprimeUtil_->DebugEvent(event)){
+  if(debug_ && wprimeUtil_->DebugEvent(event)){
     cout<<"This is a debug event\n";
     printPassingEvent(event);
     printDebugEvent();
@@ -573,10 +573,10 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   if(wprimeUtil_->runningOnData()){
     cout<<" The following data event passed All Cuts!!!\n";
     printPassingEvent(event);
-    if(1 || debugme) printEventLeptons();
+    if(1 || debug_) printEventLeptons();
     cout<<" ------------------\n";
   }
-  if(debugme) printEventLeptons();
+  if(debug_) printEventLeptons();
 
   /*
   const reco::Vertex& pv = findPV(vertices_, *zCand_.daughter(0));
@@ -827,7 +827,7 @@ bool WZAnalyzer::passTriggerEmulation(const heep::Ele& elec, const float minPt) 
 //-----------------------------------------------------------
 inline bool WZAnalyzer::passHtCut() const{
 //-----------------------------------------------------------
-  if(debugme) cout<<"Check Ht Cuts"<<endl;
+  if(debug_) cout<<"Check Ht Cuts"<<endl;
   return Ht_ > minHt_;   
 }//--- passHtCut
 

@@ -117,7 +117,7 @@ public:
   virtual void endAnalysis(ofstream & out);
 
 protected:  //These are available to derived classes
-  bool debugme;//print stuff if active
+  bool debug_;//print stuff if active
   bool doPreselect_;
 
   //Input Tags
