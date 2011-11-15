@@ -1,7 +1,0 @@
-/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleElectron2011A/TrileptonPatTuple_6_1_5ta.root
-/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleElectron2011A/TrileptonPatTuple_2_1_H6D.root
-/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleElectron2011A/TrileptonPatTuple_5_1_NC9.root
-/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleElectron2011A/TrileptonPatTuple_3_1_AHv.root
-/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleElectron2011A/TrileptonPatTuple_1_1_GTA.root
-/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleElectron2011A/TrileptonPatTuple_7_1_3Ph.root
-/store/user/fantasia/41X/MultileptonPatTupleV05-04-01E-SingleElectron2011A/TrileptonPatTuple_4_1_6Ad.root

@@ -1,3 +1,0 @@
-/uscms/home/fantasia/nobackup/42X/filelists/TrileptonMCPatTuple-W05-06-08-ZBB2JetsToLNu_TuneZ2_7TeV-alpgen-tauola/TrileptonMCPatTuple-W05-06-08-4AA1C11F-1B5E-E011-97FD-0017A477043C.root
-/uscms/home/fantasia/nobackup/42X/filelists/TrileptonMCPatTuple-W05-06-08-ZBB2JetsToLNu_TuneZ2_7TeV-alpgen-tauola/TrileptonMCPatTuple-W05-06-08-5822190D-025D-E011-8528-0017A477080C.root
-/uscms/home/fantasia/nobackup/42X/filelists/TrileptonMCPatTuple-W05-06-08-ZBB2JetsToLNu_TuneZ2_7TeV-alpgen-tauola/TrileptonMCPatTuple-W05-06-08-ACD6B569-465D-E011-AD5C-0017A4771008.root

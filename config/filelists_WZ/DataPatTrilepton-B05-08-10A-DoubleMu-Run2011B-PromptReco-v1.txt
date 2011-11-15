@@ -1,7 +1,0 @@
-/store/user/fantasia/42X/DataPatTrilepton-B05-08-10A-DoubleMu-Run2011B-PromptReco-v1/patTuple_5_1_ZV2.root
-/store/user/fantasia/42X/DataPatTrilepton-B05-08-10A-DoubleMu-Run2011B-PromptReco-v1/patTuple_3_1_fRX.root
-/store/user/fantasia/42X/DataPatTrilepton-B05-08-10A-DoubleMu-Run2011B-PromptReco-v1/patTuple_2_1_0qJ.root
-/store/user/fantasia/42X/DataPatTrilepton-B05-08-10A-DoubleMu-Run2011B-PromptReco-v1/patTuple_4_1_Hbs.root
-/store/user/fantasia/42X/DataPatTrilepton-B05-08-10A-DoubleMu-Run2011B-PromptReco-v1/patTuple_1_1_1cQ.root
-/store/user/fantasia/42X/DataPatTrilepton-B05-08-10A-DoubleMu-Run2011B-PromptReco-v1/patTuple_6_1_2tP.root
-/store/user/fantasia/42X/DataPatTrilepton-B05-08-10A-DoubleMu-Run2011B-PromptReco-v1/patTuple_7_1_Qng.root
