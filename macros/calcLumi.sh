@@ -49,4 +49,5 @@ cp finalD.json final.json
 
 rm finalA.json finalB.json finalC.json finalD.json
 
-lumiCalc2.py -i final.json -norm pp7TeV overview
+lumiCalc2.py -i final.json -norm pp7TeV -b stable overview
+
