@@ -24,9 +24,12 @@ WPrimeUtil::WPrimeUtil(edm::InputTag genLabel,
 }
 WPrimeUtil::~WPrimeUtil()
 {
+  int N = hRecoilParalvsVBPt->GetXaxis()->GetNbins();
+  for(int bin_no = 0; bin_no < N; ++bin_no)
+    delete histRecoilParal[bin_no];
+  delete [] histRecoilParal;
   delete hRecoilPerp;
   delete hRecoilParalvsVBPt;
-  delete [] histRecoilParal;//Cory: may have to delete indiv.
 }
 
 void WPrimeUtil::setupZMETcorrection()
@@ -328,16 +331,16 @@ bool WPrimeUtil::passTriggersCut(const pat::TriggerEvent & triggerEvent,const st
   const pat::TriggerPathCollection* paths = triggerEvent.paths();
   for (size_t i = 0; i < paths->size(); i++){
     if(FoundAndpassed(triggerEvent, paths->at(i), triggerNames)) return true;
-  }//acceptedPaths loop
+  }//Paths loop
   return false;
 }
 
 void
 WPrimeUtil::printPassingTriggers(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames){
   const pat::TriggerPathCollection* paths = triggerEvent.paths();
-  for (size_t i = 0; i < acceptedPaths.size(); i++){
-    if(FoundAndpassed(triggerEvent, acceptedPaths[i], triggerNames))
-      cout<<"passed path: "<<acceptedPaths[i]->name()<<endl;
+  for (size_t i = 0; i < paths->size(); i++){
+    if(FoundAndpassed(triggerEvent, paths->at(i), triggerNames))
+      cout<<"passed path: "<<paths->at(i).name()<<endl;
   }
 }
 
