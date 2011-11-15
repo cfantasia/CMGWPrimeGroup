@@ -79,7 +79,6 @@ public:
 /////Variables////
 //////////////////
 
-  double rhoFastJet_;
   std::vector<double> effectiveElecArea_;
   std::vector<double> effectiveMuonArea_;
   
@@ -146,6 +145,12 @@ public:
   PatMuonVH patMuonsH_;
   METVH metH_;
   PFCandidateVH pfCandidatesH_;
+  edm::Handle<double> rhoFastJetH_;
+  edm::Handle<std::vector<pat::Jet> > patJetsH_;
+  edm::Handle<std::vector<reco::Vertex> > verticesH_;
+
+  //Input Tags
+  edm::InputTag rhoFastJetLabel_;
 
 //////Chosen Candidates
   ZCandidate zCand_;

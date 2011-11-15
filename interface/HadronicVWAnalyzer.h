@@ -50,7 +50,6 @@ public:
 //methods for modifiers
 
 //methods for the cuts
-  bool passTriggersCut() const;
   bool passValidVWCut() const;
 
   bool passTriggerMatch(const heep::Ele& e1, const heep::Ele& e2) const;
@@ -100,6 +99,8 @@ public:
   JetVH patJetsH_;
   METVH metH_;
   PFCandidateVH pfCandidatesH_;
+  edm::Handle<std::vector<reco::Vertex> > verticesH_;
+
 
 //////Chosen Candidates
   ZCandidate vCand_;

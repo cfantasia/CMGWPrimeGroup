@@ -233,7 +233,7 @@ void HadronicVWAnalyzer::fillHistos(const int& index, const float& weight){
   hNLLeps[index]->Fill(looseElectrons_.size()+looseMuons_.size(), weight);
 
   hNJets[index]->Fill(looseJets_.size(), weight);
-  hNVtxs[index]->Fill(vertices_.size(), weight);
+  hNVtxs[index]->Fill(verticesH_->size(), weight);
 
 }//fillHistos
 
@@ -349,10 +349,10 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
 
 
   //get Trigger 
-  triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
+  event.getByLabel(hltEventLabel_, triggerEventH_);
 
   //get Vertex
-  vertices_ = getProduct<vector<reco::Vertex> >(event,vertexLabel_);
+  event.getByLabel(vertexLabel_, verticesH_);
 
   if(!wprimeUtil_->runningOnData()){//Don't do this for data
     if(debug_){
@@ -390,7 +390,7 @@ HadronicVWAnalyzer::eventLoop(edm::EventBase const & event){
 }
 
 void HadronicVWAnalyzer::printDebugEvent() const{
-  WPrimeUtil::printPassingTriggers(triggerEvent_,triggersToUse_);
+  WPrimeUtil::printPassingTriggers(*triggerEventH_,triggersToUse_);
   printEventDetails();
   printEventLeptons();
   printLeptons();
@@ -469,21 +469,6 @@ HadronicVWAnalyzer::passCuts(const float& weight){
   }
   return true;
 }
-
-//Trigger requirements
-//-----------------------------------------------------------
-bool HadronicVWAnalyzer::passTriggersCut() const{
-  if(debug_) cout<<"Trigger requirements"<<endl;
-  //Apply the trigger if running on data or MC 
-  //If MC, apply if no V or if V exists, zCand == PDGMuon)
-  if(wprimeUtil_->runningOnData() || !vCand_ || vCand_.flavor() == PDG_ID_MUON){
-    return WPrimeUtil::passTriggersCut(triggerEvent_,triggersToUse_);
-  }else{
-    return true;//Cory: This is not good, but will pass HLT in the meantime.
-  }
-  return false;
-}//--- passTriggersCut()
-
 
 inline bool HadronicVWAnalyzer::passValidVWCut() const{
   return vwCand_ && vwCand_(kMinPz).mass()>0.;

@@ -138,6 +138,7 @@ protected:  //These are available to derived classes
   std::vector<wprime::InputFile> inputFiles_; 
 
   edm::Handle<std::vector< PileupSummaryInfo > > PupH_;
+  edm::Handle<pat::TriggerEvent> triggerEventH_;
 
   float lumi_ipb; // in pb^-1, to be retrieved from samples_cross_sections.txt
 
@@ -164,7 +165,6 @@ protected:  //These are available to derived classes
   PatMuonVH patMuonsH_;
   METVH metH_;
   PFCandidateVH pfCandidatesH_;
-  std::vector<reco::Vertex>  vertices_;
 
 //////Chosen Candidates
   //These really should be done by each analysis
@@ -172,8 +172,6 @@ protected:  //These are available to derived classes
   MuonV allMuons_, looseMuons_, tightMuons_;
   JetV  allJets_, looseJets_, tightJets_;
   pat::MET met_;
-
-  pat::TriggerEvent triggerEvent_; 
 
   std::vector<unsigned> muon_reconstructors;
 

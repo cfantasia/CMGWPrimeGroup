@@ -522,12 +522,12 @@ void WPrimeUtil::convertMuons(const vector<pat::Muon>& patMuons, const uint& muA
 }
 
 void WPrimeUtil::getElectrons(const edm::EventBase & event, const edm::InputTag& label, ElectronV & electrons){
-  const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, label);
+  const vector<pat::Electron>& patElectrons = getProduct<vector<pat::Electron> >(event, label);
   convertElectrons(patElectrons, electrons);
 }
 
 void WPrimeUtil::getMuons(const edm::EventBase & event, const edm::InputTag& label, const uint& muAlgo, MuonV & muons){
-  const vector<pat::Muon> patMuons = getProduct<vector<pat::Muon> >(event, label);
+  const vector<pat::Muon>& patMuons = getProduct<vector<pat::Muon> >(event, label);
   convertMuons(patMuons, muAlgo, muons);
 }
 
@@ -546,10 +546,6 @@ inline void WPrimeUtil::getPFCands(const edm::EventBase & event, const edm::Inpu
 	}
     }
 }
-
-// inline void WPrimeUtil::getMET(const edm::EventBase & event, const edm::InputTag& label, pat::MET & met){
-//   met = getProduct<METV>(event, label)[0];
-// }
 
 void
 WPrimeUtil::AdjustMET(const edm::EventBase & event, 

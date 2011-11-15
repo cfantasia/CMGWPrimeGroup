@@ -11,6 +11,8 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   wzAlgo_ = (NuAlgos)cfg.getUntrackedParameter<int>("NuAlgo", kMinPz);
   doSystematics_ = cfg.getUntrackedParameter<bool>("doSystematics", false);
 
+
+  rhoFastJetLabel_ = cfg.getParameter<edm::InputTag>("rhoFastJet");
   effectiveElecArea_ = cfg.getParameter<vector<double> >("effectiveElecArea");
   effectiveMuonArea_ = cfg.getParameter<vector<double> >("effectiveMuonArea");
   
@@ -315,8 +317,8 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
   hNTMuon[index]->Fill(tightMuons_    .size(), weight);
   hNTLeps[index]->Fill(tightElectrons_.size()+tightMuons_.size(), weight);
 
-  hNJets[index]->Fill(allJets_.size(), weight);
-  hNVtxs[index]->Fill(vertices_.size(), weight);
+  hNJets[index]->Fill((*patJetsH_).size(), weight);
+  hNVtxs[index]->Fill((*verticesH_).size(), weight);
 
 }//fillHistos
 
@@ -457,7 +459,7 @@ WZAnalyzer::calcEventVariables(){
   WTransMass_ = wCand_.mt();
   MET_ = met_.et();
   METSig_ = met_.significance();
-  NVtxs_ = vertices_.size();
+  NVtxs_ = (*verticesH_).size();
 }
 
 void 
@@ -481,6 +483,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   // Preselection - skip events that don't look promising
   if (doPreselect_){
     if(debug_) cout<<"Testing Preselection...\n";
+    /*
     if (getProduct<double>(event, 
                            "wzPreselectionProducer:ZMassDiff") > 30.0 ||
         getProduct<double>(event, 
@@ -488,13 +491,12 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
         getProduct<vector<uint> >(event, 
                                   "wzPreselectionProducer:nLeptonsEid")[5] < 3)
       return;
+    */
   }
 
   // get leptons
   event.getByLabel(electronsLabel_,patElectronsH_);
-  //const vector<pat::Electron> patElectrons = getProduct<vector<pat::Electron> >(event, electronsLabel_);
   event.getByLabel(muonsLabel_,patMuonsH_);
-  //const vector<pat::Muon    > patMuons     = getProduct<vector<pat::Muon    > >(event, muonsLabel_);
   event.getByLabel(metLabel_, metH_);
 
   if(useAdjustedMET_) event.getByLabel(pfCandsLabel_, pfCandidatesH_);
@@ -505,7 +507,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   if(debug_) printf("    Contains: %i electron(s), %i muon(s)\n",
                           (int)allElectrons_.size(), (int)allMuons_.size());
 
-  rhoFastJet_ = getProduct<double>(event,"kt6PFJets:rho");
+  event.getByLabel(rhoFastJetLabel_, rhoFastJetH_);
 
   // Make vectors of leptons passing various criteria
   for (size_t i = 0; i < allElectrons_.size(); i++) {
@@ -537,14 +539,15 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   }
 
   //get Jets
-  allJets_  = getProduct< JetV>(event,jetsLabel_);
+  event.getByLabel(jetsLabel_, patJetsH_);
 
   //get Trigger 
-  triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
+  event.getByLabel(hltEventLabel_, triggerEventH_);
 
   //get Vertex
-  vertices_ = getProduct<vector<reco::Vertex> >(event,vertexLabel_);
+  event.getByLabel(vertexLabel_, verticesH_);
 
+  /*
   if(!wprimeUtil_->runningOnData()){//Don't do this for data
     if(debug_){
       GenParticleV genParticles = getProduct<GenParticleV>(event, "genParticles");
@@ -561,7 +564,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
       }
     }
   }//MC Only If
-
+  */
   if(debug_ && wprimeUtil_->DebugEvent(event)){
     cout<<"This is a debug event\n";
     printPassingEvent(event);
@@ -596,6 +599,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   if(vtxMask) cout<<"Someone is not a match to the pv! = "<<vtxMask<<" and z mass "<<zCand_.mass()<<endl;
   hVtxMatch->Fill(vtxMask, weight_);
   */
+  /*
   if(0 && !wprimeUtil_->runningOnData()){//Don't do this for data
     GenParticleV genParticles = getProduct<GenParticleV>(event, "genParticles");
     const reco::Candidate * genE = 0;
@@ -610,10 +614,11 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
       }
     }
   }
+  */
 }
 
 void WZAnalyzer::printDebugEvent() const{
-  WPrimeUtil::printPassingTriggers(triggerEvent_,triggersToUse_);
+  WPrimeUtil::printPassingTriggers(*triggerEventH_,triggersToUse_);
   printEventDetails();
   printEventLeptons();
   printLeptons();
@@ -936,11 +941,11 @@ WZAnalyzer::ZLepPt(int idx) const{
 
 inline float
   WZAnalyzer::ElecPU(const heep::Ele & e) const{
-  return rhoFastJet_*effectiveElecArea_[e.patEle().isEE()];
+  return (*rhoFastJetH_)*effectiveElecArea_[e.patEle().isEE()];
 }
 
 inline float
   WZAnalyzer::MuonPU(const TeVMuon & m) const{
-  return rhoFastJet_*effectiveMuonArea_[inEE(m)];
+  return (*rhoFastJetH_)*effectiveMuonArea_[inEE(m)];
 }
 

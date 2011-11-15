@@ -276,7 +276,7 @@ AnalyzerBase::sameVertex(const reco::Vertex& vtx, const reco::Candidate& p) cons
 void
 AnalyzerBase::printEventFull(edm::EventBase const & event) const{
   WPrimeUtil::printEvent(event);
-  WPrimeUtil::printPassingTriggers(triggerEvent_,triggersToUse_);
+  WPrimeUtil::printPassingTriggers(*triggerEventH_,triggersToUse_);
   printEventDetails();
   printEventLeptons();
 }
@@ -288,7 +288,7 @@ void AnalyzerBase::printPassingEvent(edm::EventBase const & event){
 }
 
 void AnalyzerBase::printDebugEvent() const{
-  WPrimeUtil::printPassingTriggers(triggerEvent_,triggersToUse_);
+  WPrimeUtil::printPassingTriggers(*triggerEventH_,triggersToUse_);
   printEventDetails();
   printEventLeptons();
   printLeptons();
@@ -454,7 +454,7 @@ inline bool AnalyzerBase::passNoCut() const{
 }
 
 inline bool AnalyzerBase::passTriggersCut() const{
-  return WPrimeUtil::passTriggersCut(triggerEvent_,triggersToUse_);
+  return WPrimeUtil::passTriggersCut(*triggerEventH_,triggersToUse_);
 }//--- passTriggersCut
 
 inline bool
