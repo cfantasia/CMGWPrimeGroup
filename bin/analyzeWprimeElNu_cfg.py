@@ -52,7 +52,7 @@ process.WprimeAnalyzer.hltPaths = cms.vstring(
     'HLT_Ele65_CaloIdVT_TrkIdT_v1','HLT_Ele65_CaloIdVT_TrkIdT_v2','HLT_Ele65_CaloIdVT_TrkIdT_v3','HLT_Ele65_CaloIdVT_TrkIdT_v4',
     'HLT_Ele25_WP80_PFMT40_v1',
     'HLT_Ele27_WP80_PFMT50_v1',
-    'HLT_Ele80_CaloIdVT_TrkIdT_v3'
+    'HLT_Ele80_CaloIdVT_TrkIdT_v2','HLT_Ele80_CaloIdVT_TrkIdT_v3'
     )
 
 process.WprimeAnalyzer.Cuts = cms.vstring("hlt","qual","1el","iso", "met")
