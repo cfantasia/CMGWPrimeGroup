@@ -288,19 +288,24 @@ void removeLowLepPtCands(ZCandV & zCands, const float& minPt1, const float& minP
 void removeOverlapping(ZCandV & zCands);
 
 template<class L>
-ZCandV ZCands(const std::vector<L> & leptons){
+ZCandV ZCands(const std::vector<L> & leptons, const std::vector<bool> & mask){
+  bool useMask = mask.size(); //Mask let's you ignore certain leptons
   ZCandV zCands;
-  for (size_t i = 0; i < leptons.size(); i++)
-    for (size_t j = i + 1; j < leptons.size(); j++)
+  for (size_t i = 0; i < leptons.size(); i++){
+    if(useMask && !mask[i]) continue;
+    for (size_t j = i + 1; j < leptons.size(); j++){
+      if(useMask && !mask[j]) continue;
       if (leptons[i].charge() != leptons[j].charge())  // get opposite-charge pairs of leptons
         zCands.push_back(ZCandidate(leptons[i], leptons[j]));
+    }
+  }
   return zCands;
 }
 
 template<class L>
-ZCandV getZCands(const std::vector<L> & leptons, float maxMassDiff, bool rmOverlap=true)
+ZCandV getZCands(const std::vector<L> & leptons, float maxMassDiff = ZMASS, bool rmOverlap=true, const std::vector<bool> & mask=std::vector<bool>())
 {
-  ZCandV zCands = ZCands(leptons);
+  ZCandV zCands = ZCands(leptons, mask);
   removeWorstCands(zCands, maxMassDiff);
   // Order by difference from Z mass
   sort(zCands.begin(), zCands.end(), closestToZMass());
@@ -310,7 +315,9 @@ ZCandV getZCands(const std::vector<L> & leptons, float maxMassDiff, bool rmOverl
   return zCands;
 }
 ZCandV getZCands(const ElectronV & electrons, const MuonV & muons, 
-                 float maxMassDiff = ZMASS, bool rmOverlap=true);
+                 float maxMassDiff = ZMASS, bool rmOverlap=true,
+                 const std::vector<bool> & eMask=std::vector<bool>(), 
+                 const std::vector<bool> & mMask=std::vector<bool>());
 
 template<class L>
 WCandV getWCandidates(const std::vector<L> & leptons, const pat::MET & met){

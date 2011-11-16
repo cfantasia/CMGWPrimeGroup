@@ -6,15 +6,16 @@ using std::vector; using std::cout; using std::endl;
 /// Return a vector of non-overlapping Z candidates
 
 ZCandV getZCands(const ElectronV & electrons, const MuonV & muons, 
-                 float maxMassDiff, bool rmOverlap)
+                 float maxMassDiff, bool rmOverlap,  
+                 const vector<bool> & eMask, const vector<bool> & mMask)
 {
 
   ZCandV zCands;
 
-  ZCandV zeeCands = getZCands(electrons, maxMassDiff, rmOverlap);
+  ZCandV zeeCands = getZCands(electrons, maxMassDiff, rmOverlap, eMask);
   zCands.insert(zCands.end(), zeeCands.begin(), zeeCands.end());
 
-  ZCandV zmmCands = getZCands(    muons, maxMassDiff, rmOverlap);
+  ZCandV zmmCands = getZCands(    muons, maxMassDiff, rmOverlap, mMask);
   zCands.insert(zCands.end(), zmmCands.begin(), zmmCands.end());
 
   // Order by difference from Z mass
