@@ -336,60 +336,60 @@ WZAnalyzer::calcZVariables(){
   if (debug_) cout<<"In calc Z Variables\n";
   // Reconstruct the Z
   float matchptcut = 0.;
-  bool minHighPt = false;
   
   matchptcut = 8.;
   ElectronV zElectrons;
   for (size_t i=0; i < looseElectrons_.size(); i++)
-    if(passTriggerMatch(looseElectrons_[i], matchptcut, triggersToUse_))
+    if(WPrimeUtil::passTriggerMatch(looseElectrons_[i], matchptcut, triggersToUse_))
       zElectrons.push_back(looseElectrons_[i]);
-  matchptcut = 17.;
-  minHighPt = false;
-  for (size_t i=0; i < zElectrons.size(); i++){
-    if(passTriggerMatch(looseElectrons_[i], matchptcut, triggersToUse_)){
-      minHighPt= true; 
-      break;  
-    }
-  }
-  if(!minHighPt) zElectrons.clear();
-  
+
   matchptcut = 8.;
   MuonV zMuons;
   for (size_t i=0; i < looseMuons_.size(); i++)
-    if(passTriggerMatch(looseMuons_[i], matchptcut, triggersToUse_))
+    if(WPrimeUtil::passTriggerMatch(looseMuons_[i], matchptcut, triggersToUse_))
       zMuons.push_back(looseMuons_[i]);
   
-  matchptcut = 17.;
-  minHighPt = false;
-  for (size_t i=0; i < zMuons.size(); i++){
-    if(passTriggerMatch(zMuons[i], matchptcut, triggersToUse_)){
-      minHighPt= true;
-      break;
-    }
-  }
-  if(!minHighPt) zMuons.clear();
-
   if(debug_) printf("    Contains: %i z electron(s), %i z muon(s)\n",
                      (int)zElectrons.size(), (int)zMuons.size());
 
+  matchptcut = 17.;
   ZCandV zeeCands = getZCands(zElectrons, maxZMassDiff_, false);
   removeLowLepPtCands(zeeCands, minZeePt1_, minZeePt2_);
+  for (ZCandV::iterator i = zeeCands.begin(); i != zeeCands.end(); ++i){
+    const heep::Ele& e1 = WPrimeUtil::Find(*i->daughter(0), allElectrons_);
+    const heep::Ele& e2 = WPrimeUtil::Find(*i->daughter(1), allElectrons_);
+    if(!WPrimeUtil::passTriggerMatch(e1, matchptcut, triggersToUse_) &&
+       !WPrimeUtil::passTriggerMatch(e2, matchptcut, triggersToUse_)){
+      zeeCands.erase(i);
+      i--;
+    }
+  }
+
   ZCandV zmmCands = getZCands(zMuons    , maxZMassDiff_, false);
   removeLowLepPtCands(zmmCands, minZmmPt1_, minZmmPt2_);
+  for (ZCandV::iterator i = zmmCands.begin(); i != zmmCands.end(); ++i){
+    const TeVMuon& m1 = WPrimeUtil::Find(*i->daughter(0), allMuons_);
+    const TeVMuon& m2 = WPrimeUtil::Find(*i->daughter(1), allMuons_);
+    if(!WPrimeUtil::passTriggerMatch(m1, matchptcut, triggersToUse_) &&
+       !WPrimeUtil::passTriggerMatch(m2, matchptcut, triggersToUse_)){
+      zmmCands.erase(i);
+      i--;
+    }
+  }
   ZCandV zCands;
   zCands.insert(zCands.end(), zeeCands.begin(), zeeCands.end());
   zCands.insert(zCands.end(), zmmCands.begin(), zmmCands.end());
+
   removeWorstCands(zCands, minZmass_, maxZmass_);
   sort(zCands.begin(), zCands.end(), closestToZMass());
   removeOverlapping(zCands);
+
   zCand_ = zCands.size() ? zCands[0] : ZCandidate();
 
   ZCandV zCandsAll;
   if(zCand_){
     ZCandV zeeCandsAll = getZCands(looseElectrons_, maxZMassDiff_, false);
-    //removeLowLepPtCands(zeeCandsAll, minZeePt1_, minZeePt2_);
     ZCandV zmmCandsAll = getZCands(looseMuons_    , maxZMassDiff_, false);
-    //removeLowLepPtCands(zmmCandsAll, minZmmPt1_, minZmmPt2_);
 
     zCandsAll.insert(zCandsAll.end(), zeeCandsAll.begin(), zeeCandsAll.end());
     zCandsAll.insert(zCandsAll.end(), zmmCandsAll.begin(), zmmCandsAll.end());
@@ -736,42 +736,6 @@ WZAnalyzer::passZLepPtCut() const{
   }
   return false;
 }
-
-bool 
-WZAnalyzer::passTriggerMatch(const heep::Ele& e, const float cut, const vstring& triggers) const{
-  const pat::Electron& p = e.patEle();
-  for(uint i=0; i<p.triggerObjectMatches().size(); ++i){
-    vector<string> names = p.triggerObjectMatches()[i].pathNames(true, false);
-    for(uint j=0; j<names.size(); ++j){
-      for (size_t k=0; k < triggers.size(); ++k){
-        if(WPrimeUtil::SameTrigger(names[j], triggers[k])){
-          if (p.triggerObjectMatchesByPath(names[j], true, false).size() > 0){
-            if(p.triggerObjectMatchByPath(names[j], true, false)->pt() > cut) return true;
-          }
-        }
-      }
-    }
-  }
-  return false;
-}
-
-bool 
-WZAnalyzer::passTriggerMatch(const TeVMuon & p, const float cut, const vstring& triggers) const{
-  for(uint i=0; i<p.triggerObjectMatches().size(); ++i){
-    vector<string> names = p.triggerObjectMatches()[i].pathNames(true, false);
-    for(uint j=0; j<names.size(); ++j){
-      for (size_t k=0; k < triggers.size(); ++k){
-        if(WPrimeUtil::SameTrigger(names[j], triggers[k])){
-          if (p.triggerObjectMatchesByPath(names[j], true, false).size() > 0){
-            if(p.triggerObjectMatchByPath(names[j], true, false)->pt() > cut) return true;
-          }
-        }
-      }
-    }
-  }
-  return false;
-}
-
 
 ////////////////////////////////
 /////////Check W Properties/////

@@ -389,38 +389,6 @@ WPrimeUtil::FindTrigger(const pat::TriggerPath& path, const std::vector<std::str
   return false;
 }
 
-////////////////////
-//Trigger Matching//
-////////////////////
-/*
-bool 
-HadronicVWAnalyzer::passTriggerMatch(const pat::Electron & p, const float cut, const vstring& triggers) const{
-  for (size_t i=0; i < triggers.size(); ++i){
-    if (p.triggerObjectMatchesByPath(triggers[i], true, false).size() > 0){
-      const pat::TriggerObjectStandAlone * trigRef = p.triggerObjectMatchByPath(triggers[i], true, false);
-      if(trigRef->et() > cut) return true;
-    }
-  }
-  return false;
-}
-
-bool 
-HadronicVWAnalyzer::passTriggerMatch(const TeVMuon & p, const float cut, const vstring& triggers) const{
-  for(uint i=0; i<p.triggerObjectMatches().size(); ++i){
-    vector<string> names = p.triggerObjectMatches()[i].pathNames(true, false);
-    for(uint j=0; j<names.size(); ++j){
-      for (size_t k=0; k < triggers.size(); ++k){
-        if(WPrimeUtil::SameTrigger(names[j], triggers[k])){
-          if (p.triggerObjectMatchesByPath(names[j], true, false).size() > 0){
-            if(p.triggerObjectMatchByPath(names[j], true, false)->pt() > cut) return true;
-          }
-        }
-      }
-    }
-  }
-  return false;
-}
-*/
 
 // return pointer to gen-particle with pdgId and mother pdgId_mother
 const reco::Candidate * WPrimeUtil::getGenParticle(edm::EventBase const & event,int pdgId, int pdgId_mother)

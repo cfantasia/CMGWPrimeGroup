@@ -71,8 +71,6 @@ public:
   bool passFakeEvtCut() const;
   bool passFakeLeptonProbeCut() const;
 
-  bool passTriggerMatch(const heep::Ele& e, const float cut, const vstring& triggers) const;
-  bool passTriggerMatch(const TeVMuon& p, const float cut, const vstring& triggers) const;
   bool passTriggerEmulation(const heep::Ele& elec, const float minPt=0.) const;
 
 //////////////////

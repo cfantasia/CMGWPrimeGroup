@@ -313,6 +313,29 @@ static bool Contains(const T1 & p, const std::vector<T2>& vec){
   return false;
 }
 
+////////////////////
+//Trigger Matching//
+////////////////////
+
+template<class P>
+static bool 
+passTriggerMatch(const P & p, const float cut, const vstring& triggers){
+  for(uint i=0; i<p.triggerObjectMatches().size(); ++i){
+    vstring names = p.triggerObjectMatches()[i].pathNames(true, false);
+    for(uint j=0; j<names.size(); ++j)
+      for (size_t k=0; k < triggers.size(); ++k)
+        if(WPrimeUtil::SameTrigger(names[j], triggers[k]))
+          if (p.triggerObjectMatchesByPath(names[j], true, false).size() > 0)
+            if(p.triggerObjectMatchByPath(names[j], true, false)->pt() > cut) return true;
+  }
+  return false;
+}
+
+static bool 
+passTriggerMatch(const heep::Ele & p, const float cut, const vstring& triggers){
+  return passTriggerMatch(p.patEle(), cut, triggers);
+}
+
 // get GEN-level transverse mass for lepton + neutrino;
 // using delta-R matching requirement between RECO-lepton and GEN-lepton
  float getGenWprimeMt(edm::EventBase const& event, int pdgId_lepton,
