@@ -2,6 +2,9 @@
    root -l CalcLimit.C
 */
 #include "consts.h"
+#include "TROOT.h"
+#include "TSystem.h"
+//#include "../../../StatisticalTools/RooStatsRoutines/root/roostats_cl95.C"
 
 void
 CalcLimit(){
@@ -43,7 +46,6 @@ CalcLimit(){
   float n = tree->GetSelectedRows(); 
   for(int isample=0; isample<n; ++isample){
     const int SignalCode = tree->GetVal(0)[isample];
-    const string SignalName = SampleName(SignalCode);
     const Double_t  mass = tree->GetVal(1)[isample];
     const Double_t  lumi = tree->GetVal(2)[isample];
     const Double_t  DataEvts = tree->GetVal(3)[isample];
@@ -56,19 +58,29 @@ CalcLimit(){
         
     float sLumi = sLumiFrac*lumi;
     
-    //LimitResult limit = roostats_limit(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "bayesian", "", 12345);
+    /*
+    ////CLs Limits
+    //Does not work for bayesian, only works with cls    
+    LimitResult limit = roostats_limit(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "cls", "");
+    Double_t obs_limit = limit.GetObservedLimit();
+    Double_t exp_limit = limit.GetExpectedLimit();
+    Double_t exp_up    = limit.GetOneSigmaHighRange();
+    Double_t exp_down  = limit.GetOneSigmaLowRange();
+    Double_t exp_2up   = limit.GetTwoSigmaHighRange();
+    Double_t exp_2down = limit.GetTwoSigmaLowRange();        
+    */
+
+    ////Bayesian Limits
     LimitResult limit  = roostats_clm (lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts);
     //Double_t obs_limit = limit.GetObservedLimit();
+    Double_t obs_limit = roostats_cl95(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "bayesian", "");
     Double_t exp_limit = limit.GetExpectedLimit();
     Double_t exp_up    = limit.GetOneSigmaHighRange();
     Double_t exp_down  = limit.GetOneSigmaLowRange();
     Double_t exp_2up   = limit.GetTwoSigmaHighRange();
     Double_t exp_2down = limit.GetTwoSigmaLowRange();        
     
-    Double_t obs_limit = roostats_cl95(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "bayesian", "");//Default
-    //Double_t obs_limit = roostats_cl95(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "mcmc", "");//For xCheck
-    
-    
+  
     out<<setprecision(0)
        <<SignalCode<<"\t"
        <<mass<<"\t"
