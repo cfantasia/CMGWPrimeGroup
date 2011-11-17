@@ -1,0 +1,264 @@
+#include <iostream>
+#include <iomanip>
+
+#include "../Limits/consts.h"
+
+using namespace std;
+
+const float eElec = 0.9358; const float SeElec = 0.0006;//done
+const float pElec = 0.062/**(1. - 0.3381)*/; const float SpElec = 0.012;//done
+
+const float eMuon = 0.9723; const float SeMuon = 0.0003;
+const float pMuon = 0.043/**(1. - -1*0.3021)*/; const float SpMuon = 0.012;//done
+
+void MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannel=true);
+void CalcMatrix(const float eTight, const  float Delta_eTight,
+                const float pFake, const float Delta_pFake, 
+                const float Nl, const float Delta_Nl,
+                const float Nt, const float Delta_Nt);
+  
+
+void MatrixCalc(bool useEWK=true){
+  cout<<"useEWK: "<<useEWK<<endl;
+
+  string tightfilename;
+  string loosefilename;
+  
+  if(useEWK){
+    tightfilename = "EWKWZ.root";
+    loosefilename = "EWKWZMatrix.root";
+  }else{
+    tightfilename = "WprimeWZ.root";
+    loosefilename = "WprimeWZMatrix.root";
+  }
+
+  TFile *fTight = TFile::Open(tightfilename.c_str(), "read"); assert(fTight);
+  TFile *fLoose = TFile::Open(loosefilename.c_str(), "read"); assert(fLoose);
+
+  vector<string> vBkg, vMC, samples;
+
+  vBkg.push_back("DYJetsToLL");
+  vBkg.push_back("TTJets");
+  vBkg.push_back("ZZ");
+  vBkg.push_back("GVJets");  
+  vBkg.push_back("WJetsToLNu");
+  vBkg.push_back("WWTo2L2Nu");
+
+  if(!useEWK)  vBkg.push_back("WZJetsTo3LNu");
+
+  vMC = vBkg;
+
+  if(useEWK) vMC.push_back("WZJetsTo3LNu");
+
+  samples = vMC;
+  samples.push_back("BKG");
+  samples.push_back("MC");
+  if(!useEWK) samples.push_back("EXO");
+  samples.push_back("data");
+
+  cout << setiosflags(ios::fixed) << setprecision(2);    
+  if(useEWK){
+    for(unsigned i=0; i<samples.size(); ++i){
+      vector<string> names;
+      if     (samples[i] == "MC"){
+        names = vMC;
+      }else if(samples[i] == "BKG"){
+        names = vBkg;
+      }else{
+        names.push_back(samples[i]);
+      }
+      TH1F* hTight = get_sum_of_hists(fTight, names, "hEvtType_AllCuts", 0);
+      TH1F* hLoose = get_sum_of_hists(fLoose, names, "hEvtType_AllCuts", 0);
+      MatrixMethod(hLoose, hTight);
+    }
+  }else{
+    TTree* tEvts = new TTree("tEvts", "Cut Values per sample");
+    tEvts->ReadFile("../Limits/cutValues.dat");
+    tEvts->Draw("SignalCode:Mass:minWindow:maxWindow:HtCut:ZptCut:WptCut","", "para goff");
+    float ntEvts = tEvts->GetSelectedRows(); cout<<"Found "<<ntEvts<<endl;
+
+    bool useHt(1), useZpt(0), useWpt(0), useWindow(1);
+
+    for(int isignal=0; isignal<ntEvts; ++isignal){
+      const int SignalCode = tEvts->GetVal(0)[isignal];
+      const string SignalName = SampleName(SignalCode);
+      const float mass = tEvts->GetVal(1)[isignal];
+      const float minWindow = useWindow ? tEvts->GetVal(2)[isignal] : 0;
+      const float maxWindow = useWindow ? tEvts->GetVal(3)[isignal] : 2000;
+      const float minHt     = useHt     ? tEvts->GetVal(4)[isignal] : 0;
+      const float minZpt    = useZpt    ? tEvts->GetVal(5)[isignal] : 0;
+      const float minWpt    = useWpt    ? tEvts->GetVal(6)[isignal] : 0;
+      
+      
+      const string cuts = Form("(WZMass > %.0f && WZMass < %.0f && Ht > %.0f && Zpt > %.0f && Wpt > %.0f)*weight",
+                               minWindow, maxWindow, minHt, minZpt, minWpt); 
+      cout<<"\n-------\nSignal: "<<SignalName<<" with cuts "<<cuts<<endl;
+      
+      for(unsigned i=0; i<samples.size(); ++i){
+        vector<string> names;
+        if     (samples[i] == "MC"){
+          names = vMC;
+          names.push_back(SignalName);
+        }else if(samples[i] == "BKG"){
+          names = vBkg;
+        }else if(samples[i] == "EXO"){
+          names.push_back(SignalName);
+        }else{
+          //if(samples[i] != "data") continue;//Cory: Remove
+          names.push_back(samples[i]);
+        }
+//        cout<<"---------------------------------\n";
+        cout<<"sample now is "<<samples[i]<<endl;
+        
+        TH1F hTight("hTight", "hTight", 4, 0, 4);
+        get_sum_of_hists(fTight, names, "tWZCand", "EvtType", cuts, hTight);
+
+        TH1F hLoose("hLoose", "hLoose", 4, 0, 4);
+        get_sum_of_hists(fLoose, names, "tWZCand", "EvtType", cuts, hLoose);
+        
+        MatrixMethod(&hLoose, &hTight, false);
+      }//samples loop
+    }//signal loop
+  }
+}
+
+void
+MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannels){
+  float e3Tight = hTight->GetBinContent(1);
+  float e2Tight = hTight->GetBinContent(2);
+  float e1Tight = hTight->GetBinContent(3);
+  float e0Tight = hTight->GetBinContent(4);  
+  float allTight = e3Tight + e2Tight + e1Tight + e0Tight;
+  
+  float Se3Tight = sqrt(e3Tight);
+  float Se2Tight = sqrt(e2Tight);
+  float Se1Tight = sqrt(e1Tight);
+  float Se0Tight = sqrt(e0Tight);
+  float SallTight = sqrt(allTight);
+  
+  cout<<"Tight Sample: "<<" N total: "<<allTight<<" +/- "<<SallTight<<endl;
+  return;//Cory: remove return
+
+  if(allChannels)
+    cout<<"N 3e: "<<e3Tight<<" +/- "<<Se3Tight<<endl//" frac: "<<e3/total<<endl
+        <<"N 2e: "<<e2Tight<<" +/- "<<Se2Tight<<endl//" frac: "<<e2/total<<endl
+        <<"N 1e: "<<e1Tight<<" +/- "<<Se1Tight<<endl//" frac: "<<e1/total<<endl
+        <<"N 0e: "<<e0Tight<<" +/- "<<Se0Tight<<endl//" frac: "<<e0/total<<endl
+        <<endl;
+
+  float e3Loose = hLoose->GetBinContent(1);
+  float e2Loose = hLoose->GetBinContent(2);
+  float e1Loose = hLoose->GetBinContent(3);
+  float e0Loose = hLoose->GetBinContent(4);    
+  float allLoose = e3Loose + e2Loose + e1Loose + e0Loose;
+  
+  float Se3Loose = sqrt(e3Loose);
+  float Se2Loose = sqrt(e2Loose);
+  float Se1Loose = sqrt(e1Loose);
+  float Se0Loose = sqrt(e0Loose);
+  float SallLoose = sqrt(allLoose);
+  
+  cout<<"Loose Sample: "<<" N total: "<<allLoose<<endl;
+  if(allChannels)
+    cout<<"N 3e: "<<e3Loose<<" +/- "<<Se3Loose<<endl//" frac: "<<e3/total<<endl
+        <<"N 2e: "<<e2Loose<<" +/- "<<Se2Loose<<endl//" frac: "<<e2/total<<endl
+        <<"N 1e: "<<e1Loose<<" +/- "<<Se1Loose<<endl//" frac: "<<e1/total<<endl
+        <<"N 0e: "<<e0Loose<<" +/- "<<Se0Loose<<endl//" frac: "<<e0/total<<endl
+        <<endl;
+  
+/////////////////////////////
+  cout<<" For All Channels\n";
+  CalcMatrix(eElec, SeElec,
+             pElec, SpElec,
+             allLoose, SallLoose,
+             allTight, SallTight);
+
+  if(!allChannels) return;
+
+  cout<<" For 3e\n";
+  CalcMatrix(eElec, SeElec,
+             pElec, SpElec, 
+               e3Loose, Se3Loose,
+             e3Tight, Se3Tight);
+  cout<<" For 2e\n";
+  CalcMatrix(eMuon, SeMuon,
+             pMuon, SpMuon, 
+             e2Loose, Se2Loose,
+             e2Tight, Se2Tight);
+  cout<<" For 1e\n";
+  CalcMatrix(eElec, SeElec,
+             pElec, SpElec, 
+             e1Loose, Se1Loose,
+             e1Tight, Se1Tight);
+  cout<<" For 0e\n";
+  CalcMatrix(eMuon, SeMuon,
+             pMuon, SpMuon, 
+             e0Loose, Se0Loose,
+             e0Tight, Se0Tight);
+  
+}
+
+
+CalcMatrix(const float eTight, const  float Delta_eTight, 
+           const float pFake, const float Delta_pFake, 
+           const float Nl, const float Delta_Nl,
+           const float Nt, const float Delta_Nt){
+    float N1 = Nl - Nt;
+    float N2 = Nt;
+
+    float dN1 = TMath::Sqrt(Delta_Nl*Delta_Nl + Delta_Nt*Delta_Nt);  
+    float dN2 = Delta_Nt;
+    
+
+    float Nlep = (Nt - pFake*Nl)/(eTight - pFake);
+    float Njet = (eTight*Nl - Nt)/(eTight - pFake);
+    //cout << "Loose: N_lep: " << Nlep << " and: N_jet: " << Njet << endl;
+  
+    float Nt_lep = eTight*Nlep;
+    float Nt_jet = pFake*Njet;
+    
+    //cout << "Tight: N_lep: " << Nt_lep << " and: N_jet: " << Nt_jet << endl;  
+    
+    //errors
+    
+    float dNlep_desig = (pFake*(pFake*(N1+N2)-N2))/((eTight-pFake)*(eTight-pFake));
+    
+    float dNlep_deqcd = (eTight*(N2-eTight*(N1+N2)))/((eTight-pFake)*(eTight-pFake));   
+    
+    float dNlep_dN1 = (-eTight*pFake)/(eTight-pFake);
+    
+    float dNlep_dN2 = (eTight*(1-pFake))/(eTight-pFake);
+
+
+    float dNjet_desig =  (pFake*(N2-pFake*(N1+N2)))/((eTight-pFake)*(eTight-pFake)); 
+
+    float dNjet_deqcd = (eTight*(eTight*(N1+N2)-N2))/((eTight-pFake)*(eTight-pFake));
+
+    float dNjet_dN1 = (pFake*eTight)/(eTight-pFake);
+
+    float dNjet_dN2 = (pFake*(eTight-1))/(eTight-pFake);
+
+
+    float DeltaNt_lep = TMath::Sqrt(((dNlep_desig)*(dNlep_desig)*Delta_eTight*Delta_eTight)+((dNlep_deqcd*dNlep_deqcd)*Delta_pFake*Delta_pFake) + ((dNlep_dN1*dNlep_dN1)*dN1*dN1) + ((dNlep_dN2*dNlep_dN2)*dN2*dN2)); 
+
+    float DeltaNt_jet = TMath::Sqrt(((dNjet_desig)*(dNjet_desig)*Delta_eTight*Delta_eTight)+((dNjet_deqcd*dNjet_deqcd)*Delta_pFake*Delta_pFake) + ((dNjet_dN1*dNjet_dN1)*dN1*dN1) + ((dNjet_dN2*dNjet_dN2)*dN2*dN2));
+  
+    //cout << "Error on tNlep: " << DeltaNt_lep << " Total: " << Nt_lep << " +- " << DeltaNt_lep << endl;
+
+    //cout << "Error on tNjet: " << DeltaNt_jet << " Total: " << Nt_jet << " +- " << DeltaNt_jet << endl;
+
+    cout<<"e: "<<eTight*100<<" +/- "<<Delta_eTight*100<<"%" 
+        <<" p: "<<pFake*100<<" +/- "<<Delta_pFake*100<<"%"
+        <<endl
+        <<"nLoose: "<<Nl<<" +/- "<<Delta_Nl
+        <<" nTight: "<<Nt<<" +/- "<<Delta_Nt
+        <<" ratio: "<<Nt/Nl*100<<"%"
+        <<endl
+        <<"Loose nLep: "<<Nlep
+        <<" Loose nJet: "<<Njet
+        <<endl
+        <<"Tight nLep: "<<Nt_lep<<" +/- "<<DeltaNt_lep
+        <<" Tight nJet: "<<Nt_jet<<" +/- "<<DeltaNt_jet
+        <<endl;
+   
+}
