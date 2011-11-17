@@ -28,69 +28,85 @@ const float sysBkgFrac = 0.033;
 const float ZWind_low = 80;
 const float ZWind_high = 100;
 
-string
+vector<string>
 SampleName(int code){
+  vector<string> name;
   switch(code){
   case 3:
-    return "WprimeToWZTo3LNu_M-300";
+    name.push_back( "WprimeToWZTo3LNu_M-300"); break;
   case 4:
-    return "WprimeToWZTo3LNu_M-400";
+    name.push_back( "WprimeToWZTo3LNu_M-400"); break;
   case 5:
-    return "WprimeToWZTo3LNu_M-500";
+    name.push_back( "WprimeToWZTo3LNu_M-500"); break;
   case 6:
-    return "WprimeToWZTo3LNu_M-600";
+    name.push_back( "WprimeToWZTo3LNu_M-600"); break;
   case 7:
-    return "WprimeToWZTo3LNu_M-700";
+    name.push_back( "WprimeToWZTo3LNu_M-700"); break;
   case 8:
-    return "WprimeToWZTo3LNu_M-800";
+    name.push_back( "WprimeToWZTo3LNu_M-800"); break;
   case 9:
-    return "WprimeToWZTo3LNu_M-900";
+    name.push_back( "WprimeToWZTo3LNu_M-900"); break;
   case 10:
-    return "WprimeToWZTo3LNu_M-1000";
+    name.push_back( "WprimeToWZTo3LNu_M-1000"); break;
   case 11:
-    return "WprimeToWZTo3LNu_M-1100";
+    name.push_back( "WprimeToWZTo3LNu_M-1100"); break;
   case 12:
-    return "WprimeToWZTo3LNu_M-1200";
+    name.push_back( "WprimeToWZTo3LNu_M-1200"); break;
   case 13:
-    return "WprimeToWZTo3LNu_M-1300";
+    name.push_back( "WprimeToWZTo3LNu_M-1300"); break;
   case 14:
-    return "WprimeToWZTo3LNu_M-1400";
+    name.push_back( "WprimeToWZTo3LNu_M-1400"); break;
   case 15:
-    return "WprimeToWZTo3LNu_M-1500";
+    name.push_back( "WprimeToWZTo3LNu_M-1500"); break;
   case 103:
-    return "TC_WZ_300";
+    name.push_back( "TC_WZ_300"); break;
   case 104:
-    return "TC_WZ_400";
+    name.push_back( "TC_WZ_400"); break;
   case 105:
-    return "TC_WZ_500";
+    name.push_back( "TC_WZ_500"); break;
   case 207:
-    return "Summer11_RSZZmmjj_750";
+    name.push_back( "Summer11_RSZZmmjj_750"); 
+    name.push_back( "Summer11_RSZZeejj_750"); 
+    break;
   case 210:
-    return "Summer11_RSZZmmjj_1000";
+    name.push_back( "Summer11_RSZZmmjj_1000"); 
+    name.push_back( "Summer11_RSZZeejj_1000"); 
+    break;
   case 212:
-    return "Summer11_RSZZmmjj_1250";
+    name.push_back( "Summer11_RSZZmmjj_1250"); 
+    name.push_back( "Summer11_RSZZeejj_1250"); 
+    break;
   case 215:
-    return "Summer11_RSZZmmjj_1500";
+    name.push_back( "Summer11_RSZZmmjj_1500"); 
+    name.push_back( "Summer11_RSZZeejj_1500"); 
+    break;
   case 217:
-    return "Summer11_RSZZmmjj_1750";
+    name.push_back( "Summer11_RSZZmmjj_1750"); 
+    name.push_back( "Summer11_RSZZeejj_1750"); 
+    break;
   case 220:
-    return "Summer11_RSZZmmjj_2000";
+    name.push_back( "Summer11_RSZZmmjj_2000"); 
+    name.push_back( "Summer11_RSZZeejj_2000"); 
+    break;
+  default:
+    cout<<"Failed looking for code "<<code<<endl;
+    abort();
+    break;
   }
-  cout<<"Failed looking for code "<<code<<endl;
-  abort();
-  return "FAIL";
+  return name;
 
 }
 
 float
 nGenerated(string sample){
+  //At this point, this only affects the stat error on eff.
   if(!sample.find("WprimeToWZTo3LNu_M-")) return 11000;
   if(!sample.find("TC_WZ_"))  return 10000;
-  if(sample.find("RSZZmmjj_750") != string::npos)  return 46754;
-  if(sample.find("RSZZmmjj_1000") != string::npos)  return 54030;
-  if(sample.find("RSZZmmjj_1250") != string::npos)  return 54153;
+  if(sample.find("RSZZmmjj_750" ) != string::npos)  return 56754;
+  if(sample.find("RSZZmmjj_1000") != string::npos)  return 44030;
+  if(sample.find("RSZZmmjj_1250") != string::npos)  return  7363;
   if(sample.find("RSZZmmjj_1500") != string::npos)  return 57176;
-  if(sample.find("RSZZmmjj_1750") != string::npos)  return 54901;
+  if(sample.find("RSZZmmjj_1750") != string::npos)  return 47484;
   if(sample.find("RSZZmmjj_2000") != string::npos)  return 56140;
   cout<<"Failed looking for "<<sample<<endl;
   abort(); 

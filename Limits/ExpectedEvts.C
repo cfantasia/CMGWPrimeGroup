@@ -114,7 +114,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
   if( debug_) cout<<"Found "<<n<<" samples "<<endl;
   for(int isample=0; isample<n; ++isample){
     const int SignalCode = tEvts->GetVal(0)[isample];
-    const string SignalName = SampleName(SignalCode);
+    const vector<string> SignalNames = SampleName(SignalCode);
     const double mass = tEvts->GetVal(1)[isample];
     double minWindow = tEvts->GetVal(2)[isample];
     double maxWindow = tEvts->GetVal(3)[isample];
@@ -135,14 +135,14 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     }
   
     if(debug_){
-      cout<<"signalName: "<<SignalName<<endl;
+      for(int i=0; i<SignalNames.size(); ++i) cout<<"signalName: "<<SignalNames[i]<<endl;
       if(!useHists_)
         cout<<"Cuts are "<<cuts<<endl;
     }
       
     //Get Histograms
     vector<string> allSamples(BkgSamples);  
-    allSamples.push_back(SignalName);
+    for(int i=0; i<SignalNames.size(); ++i) allSamples.push_back(SignalNames[i]);
     TH1F *bkghist, *datahist, *allhist;
     if(useHists_){
       bkghist = get_sum_of_hists(f, BkgSamples, histName, 0, 1.);
@@ -218,15 +218,15 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     }
 
     //Read in Xsec from sample file
-    double xsec = XSec(SignalName, mass);
+    double xsec = XSec(SignalNames[0], mass);//Cory: this is wrong, how should i combine xsecs???
     double nGenWeighted = lumi*xsec;
     double     Eff = nSigEvts / nGenWeighted;
-    double statEff = TMath::Sqrt(Eff * (1-Eff)/nGenerated(SignalName)); 
+    double statEff = TMath::Sqrt(Eff * (1-Eff)/nGenerated(SignalNames[0])); 
 
     //Add in systematic errors for signal only (bkg now below)
-    double sysMCEvts  = nSigEvts*SysErr(SignalName);
+    double sysMCEvts  = nSigEvts*SysErr(SignalNames[0]);
     double sysBkgEvts = 0.;
-    double sysEff     = Eff*SysErr(SignalName);
+    double sysEff     = Eff*SysErr(SignalNames[0]);
 
     for(unsigned iBkg=0; iBkg<BkgSamples.size(); ++iBkg){
       vector<string> persample(1, BkgSamples[iBkg]);
@@ -241,7 +241,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
 
       if(debug_) cout<<BkgSamples[iBkg]<<": # of Evts in Mass Window is "<<nPerHist<<" per "<<lumi<<" inv pb "<<endl;
       double sysSample = nPerHist*SysErr(BkgSamples[iBkg]);
-      double sysSampleWindow = nPerHist*BkgSysErrBySignal(SignalName);
+      double sysSampleWindow = nPerHist*BkgSysErrBySignal(SignalNames[0]);
       sysSample = AddInQuad(sysSampleWindow,  sysSample);
           
       sysMCEvts  = AddInQuad(sysMCEvts,  sysSample);
@@ -273,7 +273,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
        <<setw(6)<< sysEff<<"  "
        <<setw(6)<<   sEff<<"  "
        <<endl;
-    c1->SaveAs((SignalName + ".pdf").c_str());
+    c1->SaveAs((SignalNames[0] + ".pdf").c_str());
 
     //Clean Up
     delete bkghist;
