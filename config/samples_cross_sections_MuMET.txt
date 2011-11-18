@@ -64,77 +64,12 @@ subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V350/WMuNu_highPt
 pathname = filelists_MuNu/WMuNu_highPt.txt
 Nprod_evt = 1073655
 
-DONE
-
-samplename = data
-description = Muon pt > 100 GeV skim, May10th ReReco v1 (224.1 ipb DCS-only)
-x-section = 1
-subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleMuon_May10v1_LPC
-pathname = filelists_MuNu/SingleMuon_May10v1_V311.txt
-Nprod_evt = 1
-
-samplename = data2
-description = Muon pt > 100 GeV skim, PromptReco v4 (933.1 ipb DCS-only)
-x-section = 1
-subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleMuon_PRv4_LPC
-pathname = filelists_MuNu/SingleMuon_PRv4_V311.txt
-Nprod_evt = 1
-
-samplename = data3
-description = Muon pt > 100 GeV skim, 05Aug v1 (502.5 ipb DCS-only)
-x-section = 1
-subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleMuon_05Augv1_LPC
-pathname = filelists_MuNu/SingleMuon_05Augv1_V311.txt
-Nprod_evt = 1
-
-samplename = data4
-description = Muon pt > 100 GeV skim, PromptReco v6 (677.1 ipb DCS-only)
-x-section = 1
-subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleMuon_PRv6_LPC
-pathname = filelists_MuNu/SingleMuon_PRv6_V311.txt
-Nprod_evt = 1
-
-samplename = data5
-description = Muon pt > 100 GeV skim, 2011B PR v1 (356.7 ipb DCS-only)
-x-section = 1
-subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleMuon_2011B_PRV1/175832_176309/
-pathname = filelists_MuNu/SingleMuon_2011B_PRV1_175832_176298.txt
-Nprod_evt = 1
-
-samplename = data6
-description = Muon pt > 100 GeV skim, 2011B PR v1 (551.5 ipb DCS-only)
-x-section = 1
-subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleMuon_2011B_PRV1/176697_177718/
-pathname = filelists_MuNu/SingleMuon_2011B_PRV1_176697_177718.txt
-Nprod_evt = 1
-
-samplename = data7
-description = Muon pt > 100 GeV skim, 2011B PR v1 (834.6 ipb DCS-only)
-x-section = 1
-subdir = dcache:///pnfs/cms/WAX/11/store/user/cleonido/wprime/V310/SingleMuon_2011B_PRV1/177718_178985/
-pathname = filelists_MuNu/SingleMuon_2011B_PRV1_177718_178985.txt
-Nprod_evt = 1
-
-samplename = data8
-description = Muon pt > 100 GeV skim, 2011B PR v1 (319.2 ipb DCS-only)
-x-section = 1
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/SingleMuon_2011B_PRV1/179315_180252/
-pathname = filelists_MuNu/SingleMuon_2011B_PRV1_179315_180252.txt
-Nprod_evt = 1
-
 samplename = WMuNu_highPt_fullskim
 description = PYTHIA Z2 W ->munu (NNLO cross-section), pT_min > 100 GeV
 x-section = 7899.0
 subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WMuNu_highPt_fullskim
 pathname = filelists_MuNu/WMuNu_highPt_fullskim.txt
 Nprod_evt = 5413258
-
-samplename = WMuNu_highPt
-description = PYTHIA Z2 W ->munu (NNLO cross-section), pT_min > 100 GeV
-x-section = 1.569
-subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V350/WMuNu_highPt
-pathname = filelists_MuNu/WMuNu_highPt.txt
-Nprod_evt = 1073655
 
 samplename = WPlusMu_highPt
 description = POWHEG W+ ->munu without eta cut (NNLO cross-section), high-pt
@@ -304,7 +239,7 @@ subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_hig
 pathname = wprime_2.5TeV.root
 Nprod_evt = 16500
 
-samplename = wprime2.7 (check cross-section!)
+samplename = wprime2.7
 description = Wprime->munu, Tune Z2, Mass = 2.7 TeV (NNLO cross-section)
 x-section = 0.00143
 signalMass = 2.7
