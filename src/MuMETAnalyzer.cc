@@ -87,6 +87,8 @@ int MuMETAnalyzer::getTheHardestMuon()
 
 void MuMETAnalyzer::eventLoop(edm::EventBase const & event)
 {
+  if(!wprimeUtil_->runningOnData()) event.getByLabel(hltEventLabel_, triggerEventH_);
+
   event.getByLabel(muonsLabel_, muons);
   event.getByLabel(metLabel_, defMet);
   // switch to help us keep track of whether a muon has already
@@ -288,6 +290,7 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const pat::Muo
 bool MuMETAnalyzer::passedHLT(bool *, const TeVMuon *, edm::EventBase const &)
 {
   // needs implementation
+  if(!wprimeUtil_->runningOnData()) AnalyzerBase::passTriggersCut();
   return true;
 }
 

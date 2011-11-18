@@ -47,11 +47,12 @@ bool mumet_fits = false;
 
 // availability of data + MC samples indicated in these arrays
 //const unsigned NbgdSamplesMuMET = 19;
-const unsigned NbgdSamplesMuMET = 11;
-const string bgdNamesMuMET[NbgdSamplesMuMET] = {
-  "WMuNu_highPt", "DYmumu_highPt", "DYtautau_highPt", "QCD_highPt", "ttbar_highPt",
-  "WW_highPt", "WZ_highPt", "ZZ_highPt",
-  "WPlusTau_highPt", "WMinusTau_highPt", "WToMuNu_highPt_fullskim"};
+const unsigned NbgdSamplesMuMET = 1;//10;
+const string bgdNamesMuMET[NbgdSamplesMuMET] = {  "WMuNu_highPt"};
+  //  "WMuNu_highPt", "DYmumu_highPt", "DYtautau_highPt", "QCD_highPt", "ttbar_highPt",
+  //  "WW_highPt", "WZ_highPt", "ZZ_highPt",
+  //  "WPlusTau_highPt", "WMinusTau_highPt"};
+  //"WMuNu_highPt_fullskim"};
 #if 0
   "WMinusMu_highPt", "WPlusMu_highPt",
   "DYmumu_lowPt", "DYtautau_lowPt",
@@ -63,6 +64,7 @@ const string bgdNamesMuMET[NbgdSamplesMuMET] = {
 TH1F * bgdMuMET[NbgdSamplesMuMET] = {0};
 
 const unsigned NdataSamplesMuMET = 8;
+//const string dataNamesMuMET[NdataSamplesMuMET] = {"data8"};
 const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4", "data5", "data6", "data7", "data8"};
 
 TH1F * dataMuMET[NdataSamplesMuMET] = {0};
@@ -248,6 +250,8 @@ void doPlots(int option)
 
   int Nbins = data->GetNbinsX();
 
+  data = (TH1F*)data->Rebin(8);
+
   if(option == 1)
     {
       hname += "_mupt";
@@ -269,7 +273,7 @@ void doPlots(int option)
 	desc0 = "e";
       desc = desc0 + "&ME_{T} transverse mass: 2011 data (" 
 	+ string(lumi_value2) + ")";
-      xmin = 320; xmax = 2000; xmax_cumu = 1800; xmax_ratio = 1000;
+      xmin = 200; xmax = 2000; xmax_cumu = 1800; xmax_ratio = 1000;
       title = "M_{T} (GeV/c^{2})";
       var_plotted = "TM";
     }
@@ -303,7 +307,9 @@ void doPlots(int option)
     }
     bgd->Add(bgdSamples[i]);
   }
-  
+
+  bgd = (TH1F*)bgd->Rebin(8);
+
   data->SetTitle(desc.c_str());
   data->SetMarkerStyle(8);
 
@@ -311,6 +317,7 @@ void doPlots(int option)
   TH1F * ratio = new TH1F(hname_ratio.c_str(), ratio_desc.c_str(),
 			  Nbins, data->GetXaxis()->GetXmin(), 
 			  data->GetXaxis()->GetXmax());
+  ratio->Rebin(8);
   // this is the total cumulative bgd distribution (W + QCD + top + Z/DY)
   TH1F * bgd_cumu = new TH1F(hname_cumu.c_str(), cumu_desc.c_str(), 
 			    Nbins, data->GetXaxis()->GetXmin(), 
@@ -347,31 +354,29 @@ void doPlots(int option)
 
   // =============== PLOT DISTRIBUTIONS HERE ========================
 
-  TF1 *fit1, *fit2, *fit3;
+  TF1 *fit1 = new TF1(), *fit2 = new TF1(), *fit3 = new TF1();
   if(mumet_fits){
     fit1 = new TF1("fit1","[0]/(x+[1])**[2]",xmin,xmax);
-    //fit1->SetParameters(3.1e12,-80.,3.);
-    fit1->SetParameters(1e15,160,7.5); fit1->SetParNames("a","b","c");
-    fit1->SetLineColor(2); //fit1->SetLineWidth(1.0);
+    fit1->SetParameters(1e12,150,7); fit1->SetParNames("a","b","c");
+    fit1->SetLineColor(2);
     fit2 = new TF1("fit2","[0]/(x**2+[1]*x+[2])**[3]",xmin,xmax);
-    fit2->SetParameters(1.e10,-350.,4.5e4,1.5);
-    fit2->SetParameters(1.e12,-350.,4.5e4,2); fit2->SetParNames("a","b","c","d");
-    fit2->SetLineColor(3); //fit2->SetLineWidth(1.0);
+    fit2->SetParameters(1e18,-350,4.5e4,3); fit2->SetParNames("a","b","c","d");
+    fit2->SetLineColor(3);
     fit3 = new TF1("fit3","[0]*(1+x)**[1]/(x**([2]+[3]*log(x)))",xmin,xmax);
-    fit3->SetParameters(-1e10,1,-1e-5,0.5); fit3->SetParNames("a","b","c","d");
-    fit3->SetLineColor(6); //fit3->SetLineWidth(1.0);
-    data->Fit(fit1,"n","",xmin,xmin+500);
-    data->Fit(fit2,"n+","",xmin,xmin+500);
-    data->Fit(fit3,"n+","",xmin,xmin+500);
+    fit3->SetParameters(1,1,1,1); fit3->SetParNames("a","b","c","d");
+    fit3->SetLineColor(6);
+    data->Fit(fit1,"n");
+    data->Fit(fit2,"n+");
+    //data->Fit(fit3,"n+");
   }
-
+  
   TCanvas * c1 = new TCanvas();
   c1->SetLogy();
 
   data->SetMinimum(0.001);
   
   data->Draw("e");
-  if(mumet_fits) {fit1->Draw("same"); fit2->Draw("same"); fit3->Draw("same");}
+  if(mumet_fits) {fit1->Draw("same"); fit2->Draw("same");}// fit3->Draw("same");}
   if(wClr && analysis_channel == 2)hsbgd->Draw("hist same");
   else bgd->Draw("hist same");
 

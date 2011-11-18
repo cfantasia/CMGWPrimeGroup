@@ -32,3 +32,5 @@ process.WprimeAnalyzer.useAdjustedMET = cms.bool(True)
 process.inputs.lumisToProcess.extend(MuonPhysJSONList)
 
 process.WprimeAnalyzer.Cuts = cms.vstring("hlt","qual","1mu","iso", "met")
+
+process.WprimeAnalyzer.triggersToUse = cms.vstring('HLT_Mu11','HLT_Mu15_v*','HLT_Mu17_v*','HLT_Mu20_v*','HLT_Mu24_v*','HLT_Mu30_v*','HLT_IsoMu15_v*','HLT_IsoMu17_v*','HLT_IsoMu24_v*','HLT_IsoMu30_v*','HLT_IsoMu40_v*','HLT_Mu40_eta2p1_v*','HLT_Mu50_eta2p1_v*')
