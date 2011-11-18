@@ -42,9 +42,6 @@ public:
   float calcGenWZInvMass() const;
   bool inEE(const TeVMuon& mu) const;
 
-  float WLepPt() const;
-  float ZLepPt(int idx) const;
-  
   float ElecPU(const heep::Ele & e) const;
   float MuonPU(const TeVMuon & m) const;
 
