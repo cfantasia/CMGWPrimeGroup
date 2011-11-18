@@ -1,3 +1,68 @@
+18-NOV-11 (Christos, Cory, Flavia, Phil, Sunghyun), V00-03-60
+=============================================================
+General improvements:
+o Updated 3D PU reweighting histograms (all analyses)
+o Updated lumi calculations, JSON files
+o New HEEP3.2 ID for electrons
+o Updated muon quality cuts; Default muon ID is now using TeV/Exotica muon
+selection. 
+o Added btag and ak5/ak7 jet info in jet-based analyses
+o Added CLs limit calculator
+
+
+El+MET analysis:
+o Updated to full dataset
+o Updated electron ID to HEEP3.2
+o Updated electron triggers
+o Added resolution distributions for analytical fits
+o Updated MC samples: Summer11 and W-W' interference
+
+
+Mu+MET analysis:
+o Updated to full dataset
+o Updated NNLO cross-sections for additional W' samples
+o Added resolution distributions for analytical fits
+o Switched to updated muon ID definition. 
+
+
+WZ analysis:
+o Updated to full dataset
+o Electron trigger matching, updated MC triggers
+o Updated cuts
+o Work on systematic errors
+o New Fall11 technicolor samples
+o Limits: added higher mass points
+
+
+hadV+Z analysis:
+o Updated to full dataset
+o GEN utility enhancements
+o Updated x-sections and plots to include RS decays to electrons
+o Moved muon selection to TeV-muon recommendations
+o Updated limits for RS in both electrons & muons
+o Selection cut optimization
+o Added entries in tree structure
+o Bufix in cut description
+
+
+Misc:
+o Updated installation script for 3D reweighting and new HEEP id
+o W-finder: validity check run on Mt (not mass)
+o Added 2D limit plot macros
+o Updates in limit calculator
+o Added signal mass parameter in configuration files
+o Added infrastructure for mass resolution distributions with GEN-RECO
+pdgID matching
+o BosonFinder: set Mt for jet constructor
+o Common vertex utility work
+o Speedup of pass-trigger cut
+o edm handles moved outside event loops everywhere
+o Script for making input filelists from dcache
+o Cleaned up duplicate functionality by moving common code to base analyzer
+class. RIP WprimeFinder, we will miss you.
+
+
+
 31-OCT-11 (Christos, Cory, Flavia, Phil), V00-03-50
 ====================================================
 General improvements:

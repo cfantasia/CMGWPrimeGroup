@@ -9,14 +9,15 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V320, release:
+o Setup a new working area (Default name: V360, release:
 CMSSW_4_2_5)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-03-50)
+V00-03-60)
 
-o Check out the default versions of DataFormats/PatCandidates and
-PhysicsTools/PatAlgos, V08-03-03 PhysicsTools/Utilities and V00-06-01 UserCode/SHarper/HEEPAnalyzer 
+o Check out the recommended versions of DataFormats/PatCandidates,
+PhysicsTools/PatAlgos, PhysicsTools/Utilities, RecoLuminosity/LumiDB and
+UserCode/SHarper/HEEPAnalyzer
 
 o Hack the content of PAT Muon collections in order to include the 
 dedicated high-pt reconstructors (DYT, cocktail, etc)
