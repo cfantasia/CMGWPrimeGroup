@@ -7,7 +7,7 @@ process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_HadVW.txt
 process.WprimeAnalyzer.maxEvents   = 100
 process.WprimeAnalyzer.reportAfter = 1000
 process.WprimeAnalyzer.useJSON = False
-process.WprimeAnalyzer.debugme = True
+process.WprimeAnalyzer.debug = True
 process.WprimeAnalyzer.preselect = False
 
 ## enable analysis in individual channels
