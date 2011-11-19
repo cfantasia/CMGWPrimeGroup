@@ -47,12 +47,12 @@ bool mumet_fits = false;
 
 // availability of data + MC samples indicated in these arrays
 //const unsigned NbgdSamplesMuMET = 19;
-const unsigned NbgdSamplesMuMET = 1;//10;
-const string bgdNamesMuMET[NbgdSamplesMuMET] = {  "WMuNu_highPt"};
-  //  "WMuNu_highPt", "DYmumu_highPt", "DYtautau_highPt", "QCD_highPt", "ttbar_highPt",
-  //  "WW_highPt", "WZ_highPt", "ZZ_highPt",
-  //  "WPlusTau_highPt", "WMinusTau_highPt"};
-  //"WMuNu_highPt_fullskim"};
+const unsigned NbgdSamplesMuMET = 11;
+const string bgdNamesMuMET[NbgdSamplesMuMET] = {
+  "WMuNu_highPt", "DYmumu_highPt", "DYtautau_highPt", "QCD_highPt", "ttbar_highPt",
+  "WW_highPt", "WZ_highPt", "ZZ_highPt",
+  "WPlusTau_highPt", "WMinusTau_highPt",
+"WMuNu_highPt_fullskim"};
 #if 0
   "WMinusMu_highPt", "WPlusMu_highPt",
   "DYmumu_lowPt", "DYtautau_lowPt",
@@ -64,7 +64,6 @@ const string bgdNamesMuMET[NbgdSamplesMuMET] = {  "WMuNu_highPt"};
 TH1F * bgdMuMET[NbgdSamplesMuMET] = {0};
 
 const unsigned NdataSamplesMuMET = 8;
-//const string dataNamesMuMET[NdataSamplesMuMET] = {"data8"};
 const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4", "data5", "data6", "data7", "data8"};
 
 TH1F * dataMuMET[NdataSamplesMuMET] = {0};

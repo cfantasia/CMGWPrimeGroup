@@ -289,9 +289,7 @@ void MuMETAnalyzer::printHighPtMuon(edm::EventBase const & event, const pat::Muo
 // whether HLT accepted the event
 bool MuMETAnalyzer::passedHLT(bool *, const TeVMuon *, edm::EventBase const &)
 {
-  // needs implementation
-  if(!wprimeUtil_->runningOnData()) AnalyzerBase::passTriggersCut();
-  return true;
+  return wprimeUtil_->runningOnData() || AnalyzerBase::passTriggersCut();
 }
 
 // check if muon satisfies quality requirements

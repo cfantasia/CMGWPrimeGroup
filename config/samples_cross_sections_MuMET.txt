@@ -149,8 +149,6 @@ subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/QCD_highPt
 pathname = filelists_MuNu/QCD_highPt_V330.txt
 Nprod_evt = 25064715
 
-DONE
-
 samplename = wprime1.5
 description = Wprime->munu, Tune Z2, Mass = 1.5 TeV (NNLO cross-section)
 x-section = 0.0949
@@ -241,7 +239,7 @@ Nprod_evt = 16500
 
 samplename = wprime2.7
 description = Wprime->munu, Tune Z2, Mass = 2.7 TeV (NNLO cross-section)
-x-section = 0.00143
+x-section = 0.00163
 signalMass = 2.7
 subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
 pathname = wprime_2.7TeV.root
@@ -267,7 +265,7 @@ Nprod_evt = 10000
 
 samplename = wprime0.75 (cross-section is wrong! should be ~3.5pb)
 description = Wprime->munu, Tune Z2, Mass = 0.75 TeV (NNLO cross-section)
-x-section = 2.400
+x-section = 3.245
 signalMass = 0.75
 subdir = dcache:///pnfs/cms/WAX/11/store/user/hebda/wprime/V330/WprimeToMuNu_highPt
 pathname = wprime_0.75TeV.root
