@@ -40,7 +40,6 @@ class BosonCandidate : public reco::CompositeCandidate {
       return abs(daughter(0)->pdgId());
     return 0;
   }
-  bool isLeptonic() const {return leptonic_;}
   operator bool() const {
     return (numberOfDaughters() > 0);
   }
@@ -57,7 +56,6 @@ class BosonCandidate : public reco::CompositeCandidate {
     if (mom) return mom->pdgId();
     return 0;
   }
-  bool leptonic_;
 };
 
 class ZCandidate : public BosonCandidate {
@@ -102,6 +100,8 @@ class ZCandidate : public BosonCandidate {
   const heep::Ele * elec2() const {return elec2_;}
   const TeVMuon * muon1() const {return muon1_;}
   const TeVMuon * muon2() const {return muon2_;}
+
+  bool isLeptonic() const {return leptonic_;}
  private:
   const reco::Candidate * genLepton1_;
   const reco::Candidate * genLepton2_;
@@ -109,29 +109,30 @@ class ZCandidate : public BosonCandidate {
   const heep::Ele * elec2_;
   const TeVMuon * muon1_;
   const TeVMuon * muon2_;
+
+  bool leptonic_;
 };
 
+//This class is for W's decaying leptonically
+//anything with a inv. mass should be a ZCandidate
 class WCandidate : public BosonCandidate {
  public:
-  WCandidate() {genLepton_ = 0; leptonic_ = false; mt_ = -999.9; elec_=NULL; muon_=NULL;}
+  WCandidate() {genLepton_ = 0; mt_ = -999.9; elec_=NULL; muon_=NULL;}
   WCandidate(const heep::Ele & lepton, const reco::Candidate & met) :
     elec_(&lepton), muon_(NULL){
     genLepton_ = lepton.patEle().genLepton();
     addDaughters(lepton.patEle(), met);
-    leptonic_ = true;
     mt_ = calcMT();
   }
   WCandidate(const TeVMuon & lepton, const reco::Candidate & met) :
     elec_(NULL), muon_(&lepton)  {
     genLepton_ = lepton.genLepton();
     addDaughters(lepton, met);
-    leptonic_ = true;
     mt_ = calcMT();
   }
     WCandidate(const reco::Candidate & GenLepton, const reco::Candidate & GenNeutrino) :
       elec_(NULL), muon_(NULL) {
       addDaughters(GenLepton, GenNeutrino);
-      leptonic_ = true;
       mt_ = calcMT();
     }
 
@@ -144,6 +145,7 @@ class WCandidate : public BosonCandidate {
 
   int genMotherId() const {return findGenMotherId(genLepton_);}
   double mt() const { return mt_;}
+  double mass() const {std::cout<<" You asked for the mass of a leptonic W!!!\nWe don't know its value"<<std::endl; return -1;}
   double calcDPhi(){return reco::deltaPhi(daughter(0)->phi(), daughter(1)->phi());}
  private:
   const reco::Candidate * genLepton_;
