@@ -149,7 +149,6 @@ void WprimeFitter::run()
   for (int sig_i = 0; sig_i != Nmax; ++sig_i)
     {// loop over mass points
       
-#if 1
       const float mass_ = WprimeMass[sig_i];
       const float width_ = (4./3.)*(mass_/M_W)*G_W;
       // signal mass and width
@@ -177,9 +176,8 @@ void WprimeFitter::run()
 	model = (RooAbsPdf*) BgdPdf;
       else
 	model = (RooAbsPdf*) &SigBgdPdf;
-#endif
+
       runPseudoExperiments(sig_i, model, SigBgdPdf, nsig);
-      //runPseudoExperiments(sig_i);
 
     } // loop over mass points
 
@@ -266,41 +264,7 @@ void WprimeFitter::getLLR()
 
 void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model, 
 					RooAbsPdf & SigBgdPdf, RooRealVar &nsig)
-//void WprimeFitter::runPseudoExperiments(int sig_i)
 {
-#if 0
-  const float mass_ = WprimeMass[sig_i];
-  const float width_ = (4./3.)*(mass_/M_W)*G_W;
-  // signal mass and width
-  RooRealVar mass("Mass", "W' mass", mass_);//, 0, 10000);
-  RooRealVar width("Width", "W' width", width_);
-  
-  // signal modeling: JacobianRBW
-  JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
-  
-  
-  Nsig = sig_hist[sig_i]->Integral(0, Nbins+1)/scale_factor_;
-
-  // Configure manager to perform binned extended likelihood fits 
-  // (ie. Binned(),Extended()) on data generated with a Poisson fluctuation 
-  // on Nobs (Extended())
-  RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
-		       sig_model, *(resolution[sig_i]));
-		       
-  RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
-  
-  RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
-		      RooArgList(nsig, *nbgd));
-  
-  RooAbsPdf * model = 0;
-  //sig_i = 0 corresponds to bgd-only ensemble
-  // need a better way to make this clear-er
-  if(sig_i == 0)
-    model = (RooAbsPdf*) BgdPdf;
-  else
-    model = (RooAbsPdf*) &SigBgdPdf;
-#endif
-
   RooMCStudy * mcs= new RooMCStudy(*model, *mt, FitModel(SigBgdPdf), Binned(), Silence(),
 		 Extended(kTRUE), FitOptions(Extended(kTRUE), 
 					     PrintEvalErrors(0)));

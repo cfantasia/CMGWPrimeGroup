@@ -125,7 +125,6 @@ class WprimeFitter{
   void initFit();
   void runPseudoExperiments(int sig_i, RooAbsPdf * model, 
 			    RooAbsPdf & SigBgdPdf, RooRealVar &nsig);
-  //  void runPseudoExperiments(int sig_i);
 
 };
 
