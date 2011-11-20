@@ -1,0 +1,20 @@
+{
+  /* find location of include file by issuing
+     scramv1 tool info roofitcore
+   */
+  TString incpath = gSystem->GetIncludePath();
+  incpath.Append(" -I/afs/cern.ch/cms/slc5_amd64_gcc434/lcg/roofit/5.28.00a-cms10/include");
+  gSystem->SetIncludePath(incpath.Data());
+  
+
+  gSystem->Load("libRooFit") ;
+  using namespace RooFit ;
+
+  gROOT->ProcessLine(".L JacobianRBWPdf.cxx+");
+  gROOT->ProcessLine(".L RooBgdPdf.cxx+");
+  gROOT->ProcessLine(".L TripleGauss.cxx+");
+  gROOT->ProcessLine(".L WprimeFitter.cpp+");
+    
+  gROOT->ProcessLine(".x fit_wprime.C+");
+  
+}
