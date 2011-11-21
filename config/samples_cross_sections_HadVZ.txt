@@ -1,4 +1,4 @@
-Top Level Dir = 
+top Level Dir = 
 integrated lumi = 4632 pb^-1
 
 samplename = Summer11_RSZZmmjj_750
@@ -47,43 +47,43 @@ samplename = Summer11_DYJetsToLL_PtZ100
 description = Summer11_DYJetsToLL_PtZ100
 x-section = 25.1 
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V340-Summer11_DYJetsToLL_PtZ100.txt
-Nprod_evt = 1107280
+pathname = filelists_HadVZ/V350-Summer11_DYJetsToLL_PtZ100.txt
+Nprod_evt = 1137280
 
 samplename = Summer11_TTJets
 description = Summer11_TTJets
 x-section = 157.5
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V340-Elec_Summer11_TTJets.txt
-Nprod_evt = 3621947
+pathname = filelists_HadVZ/V350-Summer11_TTJets.txt
+Nprod_evt = 3646584
 
 samplename = Summer11_WW
 description = Summer11_WW
 x-section = 3.783
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V340-Elec_Summer11_WW.txt
+pathname = filelists_HadVZ/V350-Summer11_WW.txt
 Nprod_evt = 1197558
 
 samplename = Summer11_WZ
 description = Summer11_WZ
 x-section = 1.144
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V340-Elec_Summer11_WZ.txt
+pathname = filelists_HadVZ/V350-Summer11_WZ.txt
 Nprod_evt = 952332
 
-samplename = Summer11_ZZJets_2l2q
-description = Summer11_ZZJets_2l2q
+samplename = Summer11_ZZ
+description = Summer11_ZZ
 x-section = 0.5742
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V340-Elec_Summer11_ZZJets_2l2q_03.txt
-Nprod_evt = 988369
+pathname = filelists_HadVZ/V350-Summer11_ZZ.txt
+Nprod_evt = 1013369
 
 samplename = Summer11_VGamma
 description = Summer11_VGamma
 x-section = 56.54
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V340-Elec_Summer11_VGamma.txt
-Nprod_evt = 987879
+pathname = filelists_HadVZ/V350-Summer11_VGamma.txt
+Nprod_evt = 1067879
 
 samplename = Summer11_WJets_PtW100
 description = Summer11_WJets_PtW100
