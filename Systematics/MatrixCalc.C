@@ -137,7 +137,8 @@ MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannels){
   float SallTight = sqrt(allTight);
   
   cout<<"Tight Sample: "<<" N total: "<<allTight<<" +/- "<<SallTight<<endl;
-  return;//Cory: remove return
+
+  if(0) return;
 
   if(allChannels)
     cout<<"N 3e: "<<e3Tight<<" +/- "<<Se3Tight<<endl//" frac: "<<e3/total<<endl
@@ -168,7 +169,7 @@ MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannels){
   
 /////////////////////////////
   cout<<" For All Channels\n";
-  CalcMatrix(eElec, SeElec,
+  CalcMatrix(eElec, SeElec,//Cory: This is wrong.  Have to weight elec & muon eff/fake rates
              pElec, SpElec,
              allLoose, SallLoose,
              allTight, SallTight);
@@ -178,7 +179,7 @@ MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannels){
   cout<<" For 3e\n";
   CalcMatrix(eElec, SeElec,
              pElec, SpElec, 
-               e3Loose, Se3Loose,
+             e3Loose, Se3Loose,
              e3Tight, Se3Tight);
   cout<<" For 2e\n";
   CalcMatrix(eMuon, SeMuon,
@@ -206,7 +207,8 @@ CalcMatrix(const float eTight, const  float Delta_eTight,
     float N1 = Nl - Nt;
     float N2 = Nt;
 
-    float dN1 = TMath::Sqrt(Delta_Nl*Delta_Nl + Delta_Nt*Delta_Nt);  
+    float dN1 = TMath::Sqrt(N1);//Vuko's improvement
+    //float dN1 = TMath::Sqrt(Delta_Nl*Delta_Nl + Delta_Nt*Delta_Nt);  
     float dN2 = Delta_Nt;
     
 
