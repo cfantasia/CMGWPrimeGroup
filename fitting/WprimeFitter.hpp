@@ -53,7 +53,8 @@ class WprimeFitter{
   bool runFits_;
   float scale_factor_;
   bool oneMassPointOnly_;
-  
+  float lumi_ipb_;
+
   TripleGauss * resolution[Nsignal];
   
   channel channel_;

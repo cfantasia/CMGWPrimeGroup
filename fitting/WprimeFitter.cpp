@@ -115,6 +115,18 @@ void WprimeFitter::getInputHistograms()
     
     }
 
+  string lumi_histo = "lumi_ipb";
+  TH1F * lumi = (TH1F*) fileSIG->Get(lumi_histo.c_str());
+  if(!lumi)
+    {
+      cerr << " Can't find histo " << lumi_histo << endl;
+      abort();
+    }
+  lumi_ipb_ = lumi->GetBinContent(1);
+  cout << " Distributions correspond to integrated luminosity = " 
+       << lumi_ipb_ << " ipb " << endl;
+  abort();
+
 }
 
 WprimeFitter::~WprimeFitter()
