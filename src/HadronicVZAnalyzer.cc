@@ -1104,7 +1104,7 @@ void HadronicVZAnalyzer::fillPOGMuonHists(){
 		{
 
 		  double genpt = genMuons.at(j).pt();
-		  double invgenpt = 1/invgenpt;
+		  double invgenpt = 1/genpt;
 		  h_dptpt_vs_genpt->Fill(dptpt, genpt);
 		  h_dptpt2_vs_genpt->Fill(dptpt2, genpt);
 
