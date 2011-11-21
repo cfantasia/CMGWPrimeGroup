@@ -125,7 +125,6 @@ void WprimeFitter::getInputHistograms()
   lumi_ipb_ = lumi->GetBinContent(1);
   cout << " Distributions correspond to integrated luminosity = " 
        << lumi_ipb_ << " ipb " << endl;
-  abort();
 
 }
 
