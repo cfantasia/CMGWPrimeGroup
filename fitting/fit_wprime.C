@@ -22,6 +22,11 @@ void fit_wprime()
   // signal cross-section); signal distributions are (re)created every time
   // method ::run() is called, presumably with a different scale factor
 
+
+  // background option = 1 -> 1/(x+b)^c (DEFAULT)
+  // background option = 2 -> 1/(x^2 + b*x + c)^d  
+  //  a.setBackgroundOption(2);
+
   a.setScaleFactor(10);
   a.run();
 

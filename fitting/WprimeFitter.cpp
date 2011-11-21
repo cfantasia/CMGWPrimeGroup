@@ -17,19 +17,21 @@ WprimeFitter::WprimeFitter(channel ch)
   
   mt = new RooRealVar("Mt", "M_{T} GeV/c^{2}", pXMIN, pXMAX);
   mt->setRange("mt_fit", fXMIN, fXMAX);
+  mt->setRange("mt_bgdfit", bXMIN, bXMAX);
   mt->setRange("mt_plot", pXMIN, pXMAX);
   mt->setRange("mt_full", XMIN, XMAX);
   mt->setBins(10000, "fft");
 
   mt_BGD = new RooDataHist("mt_BGD","total BGD", *mt, Import(*bgd_hist));
-  modelBackground();
   modelResolutions();
 }
 
 void WprimeFitter::init()
 {
   NpseudoExp_ = 0; scale_factor_ = -1; //runFits_ = false; 
-  for(unsigned i = 0; i != Nsignal; ++i)
+  bgd_option_ = 1; backgroundModeled_ = false;
+
+  for(unsigned i = 0; i != Nsignal_points; ++i)
     {
       LLR[i] = Nsig_h[i] = sig_hist[i] = res_hist[i] = 0;
       resolution[i] = 0;
@@ -40,6 +42,7 @@ void WprimeFitter::init()
 
   // will need setter methods for these parameters...
   fXMIN = 220; fXMAX = 2500;
+  bXMIN = fXMIN; bXMAX = 1500;
   pXMIN = fXMIN; pXMAX = 2500;
   XMIN = 0; XMAX = 2500;
   rXMIN = -2000; rXMAX = 2000;
@@ -84,7 +87,7 @@ void WprimeFitter::getInputHistograms()
   bgd_hist = (TH1F*)fileBGD->Get(bgd_name.c_str());
   Nbins = bgd_hist->GetXaxis()->GetNbins();
   
-  for(unsigned sig_i = 0; sig_i != Nsignal; ++sig_i)
+  for(unsigned sig_i = 0; sig_i != Nsignal_points; ++sig_i)
     {
       string name = dirname[sig_i] + "/" + res_name;
       res_hist[sig_i] = (TH1F*) fileSIG->Get(name.c_str());
@@ -139,7 +142,7 @@ WprimeFitter::~WprimeFitter()
 
 void WprimeFitter::initFit()
 {
-  for(unsigned sig_i = 0; sig_i != Nsignal; ++sig_i)
+  for(unsigned sig_i = 0; sig_i != Nsignal_points; ++sig_i)
     {
       Nevt[sig_i].Ntot =  Nevt[sig_i].Nsig = Nevt[sig_i].Nbgd = 0;
       if(LLR[sig_i]) delete LLR[sig_i];
@@ -150,7 +153,13 @@ void WprimeFitter::initFit()
 
 void WprimeFitter::run()
 {
-  int Nmax = Nsignal;
+  if(!backgroundModeled_)
+    {
+      modelBackground();
+      backgroundModeled_ = true;
+    }
+
+  int Nmax = Nsignal_points;
   if(oneMassPointOnly_)Nmax = 1;
 
   assert(scale_factor_ > 0);
@@ -210,14 +219,14 @@ void WprimeFitter::getLLR()
   lg->SetBorderSize(0);
   lg->SetFillColor(0);
   
-  for(int sig_i = Nsignal-1; sig_i != -1; --sig_i)
+  for(int sig_i = Nsignal_points-1; sig_i != -1; --sig_i)
     { // loop over mass points
 	LLR[sig_i]->SetLineColor(color[sig_i]);
 	float cl = -999;
 
 	if(showPlot)
 	  {
-	    if(sig_i == Nsignal-1)
+	    if(sig_i == Nsignal_points-1)
 	      {	    
 		new TCanvas();
 		LLR[sig_i]->GetXaxis()->SetTitle("LLR");
@@ -246,7 +255,7 @@ void WprimeFitter::getLLR()
 
   cout << endl;
 
-  for(unsigned sig_i = 0; sig_i != Nsignal; ++sig_i)
+  for(unsigned sig_i = 0; sig_i != Nsignal_points; ++sig_i)
     { // loop over mass points
       cout<< " Sample # " << sig_i << ": " << desc[sig_i]; 
       cout << ", Nbgd = " << Nevt[sig_i].Nbgd << ", Nsig = " << Nevt[sig_i].Nsig
@@ -328,13 +337,24 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
 
 void WprimeFitter::modelBackground()
 {
+  if(bgd_option_ == 1)
+    modelBackgroundOption1();
+  else if (bgd_option_ == 2)
+    modelBackgroundOption2();
+
+  Nbgd = bgd_hist->Integral(0, Nbins+1);
+  nbgd = new RooRealVar("nbgd","number of background events,",Nbgd,0,100000);
+}
+
+void WprimeFitter::modelBackgroundOption1()
+{
   RooRealVar b("b", "b", 1000, -10000, 10000);
   RooRealVar c("c", "c", 15, -100000, 100000);
   RooBgdPdf bgd_tmp("bgd_tmp", "bgd_tmp", *mt, b, c);
   
   RooPlot* xframe2 = mt->frame(Range("mt_fit"), Title("Bgd transverse mass"));
 
-  bgd_tmp.fitTo(*mt_BGD, Range("mt_fit"), Save());
+  bgd_tmp.fitTo(*mt_BGD, Range("mt_bgdfit"), Save());
   mt_BGD->plotOn(xframe2, Name("data"));
   bgd_tmp.plotOn(xframe2, Name("model"));
   cout << " Bgd mt fit: chi2/ndof = " 
@@ -354,14 +374,44 @@ void WprimeFitter::modelBackground()
   cc = new RooRealVar("cc", "cc", cc_);
       
   BgdPdf = new RooBgdPdf("BgdPdf", "BgdPdf", *mt, *bb, *cc);
-  Nbgd = bgd_hist->Integral(0, Nbins+1);
-  nbgd = new RooRealVar("nbgd","number of background events,",Nbgd,0,100000);
+}
 
+void WprimeFitter::modelBackgroundOption2()
+{
+  RooRealVar b("b", "b", -350, -10000, 10000);
+  RooRealVar c("c", "c", 10000, -100000, 100000);
+  RooRealVar d("d", "d", 3, -100000, 100000);
+  RooBgdPdf2 bgd_tmp("bgd_tmp", "bgd_tmp", *mt, b, c, d);
+  
+  RooPlot* xframe2 = mt->frame(Range("mt_fit"), Title("Bgd transverse mass"));
+
+  bgd_tmp.fitTo(*mt_BGD, Range("mt_bgdfit"), Save());
+  mt_BGD->plotOn(xframe2, Name("data"));
+  bgd_tmp.plotOn(xframe2, Name("model"));
+  cout << " Bgd mt fit: chi2/ndof = " 
+       << xframe2->chiSquare("model", "data", 2) << endl;
+  cout << " Bgd mt fit: chi2/ndof = " << xframe2->chiSquare() << endl;
+
+  bgd_tmp.paramOn(xframe2,Layout(0.55));
+  new TCanvas();
+  xframe2->Draw();
+
+  RooArgList pars(* bgd_tmp.getParameters(RooArgSet(*mt) ) );
+
+  float bb_ = ((RooRealVar*) pars.find("b"))->getVal();
+  float cc_ = ((RooRealVar*) pars.find("c"))->getVal();
+  float dd_ = ((RooRealVar*) pars.find("d"))->getVal();
+
+  bb = new RooRealVar("bb", "bb", bb_);
+  cc = new RooRealVar("cc", "cc", cc_);
+  dd = new RooRealVar("dd", "dd", dd_);
+      
+  BgdPdf = new RooBgdPdf2("BgdPdf", "BgdPdf", *mt, *bb, *cc, *dd);
 }
 
 void WprimeFitter::modelResolutions()
 {
-  for(unsigned i = 0; i != Nsignal; ++i){ // loop over mass points
+  for(unsigned i = 0; i != Nsignal_points; ++i){ // loop over mass points
     float xmin = res_hist[i]->GetXaxis()->GetXmin();
     float xmax = res_hist[i]->GetXaxis()->GetXmax();
     
