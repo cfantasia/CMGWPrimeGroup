@@ -108,7 +108,8 @@ public:
 
 
   std::vector<reco::GenParticle> genMuons;
-
+  std::vector<reco::GenParticle> genElectrons;
+  std::vector<reco::GenJet> ak7GenJet;
 
 //////Chosen Vector Boson Candidates 
   ZCandidate zCand_, vCand_;
@@ -118,8 +119,17 @@ public:
 
 // +++++++++++++++++++ Histogram Definitions - loose
   TH1F* h_genWMass;
+  TH1F* h_genZMass;
+
+  TH2F* h_ptJetCut_nJets;
+  TH2F* h_VWMass_nJets;
+  TH2F* h_VZMass_nJets;
 
   TH1F* h_HadVWMass;
+  TH1F* h_HadVWgenMass;
+  TH1F* h_HadVZgenMass;
+
+
   TH1F* h_MET_AllCuts;
   TH1F* h_WMass;
 

@@ -85,13 +85,20 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
 
   //Loose histos
   //Dealing with MET
-  h_HadVWMass = dir.make<TH1F>("h_HadVWMass", "h_HadVWMass", 100, 0.0, 2500.0);
+  h_HadVWMass = dir.make<TH1F>("h_HadVWMass", "h_HadVWMass", 100, 0.0, 2.5);
   h_MET_AllCuts = dir.make<TH1F>("h_MET_AllCuts", "h_MET_AllCuts", 100, 0.0, 1000.0);
   h_WMass = dir.make<TH1F>("h_WMass", "h_WMass", 100, 0.0, 300.0);
   h_genWMass = dir.make<TH1F>("h_genWMass", "h_genWMass", 100, 0.0, 300.0);
+  h_genZMass = dir.make<TH1F>("h_genZMass", "h_genZMass", 100, 0.0, 300.0);
+  h_HadVZgenMass = dir.make<TH1F>("h_HadVZgenMass", "h_HadVZgenMass", 100, 0.0, 2.5);
+  h_HadVWgenMass = dir.make<TH1F>("h_HadVWgenMass", "h_HadVWgenMass", 100, 0.0, 2.5);
+
+  h_VWMass_nJets = dir.make<TH2F>("h_VWMass_nJets", "h_VWMass_nJets", 10, -0.5, 9.5, 100, 0.0, 2500.0);
+  h_VZMass_nJets = dir.make<TH2F>("h_VZMass_nJets", "h_VZMass_nJets", 10, -0.5, 9.5, 100, 0.0, 2500.0);
+  h_ptJetCut_nJets = dir.make<TH2F>("h_ptJetCut_nJets", "h_ptJetCut_nJets", 10, -0.5,9.5, 5, 25.0, 75.0);
 
   //HadVZ Properties
-  h_HadVZMass = dir.make<TH1F>("h_HadVZMass","h_HadVZMass",100,0.0,2500.0);
+  h_HadVZMass = dir.make<TH1F>("h_HadVZMass","h_HadVZMass",100,0.0,2.5);
   h_HadVZpt = dir.make<TH1F>("h_HadVZpt", "h_HadVZpt", 60, 0.0, 300.0);
   h_HadVZeta = dir.make<TH1F>("h_HadVZeta", "h_HadVZeta", 40, -5.0, 5.0);
   h_HadVZphi = dir.make<TH1F>("h_HadVZphi", "h_HadVZphi", 20, -4.0, 4.0);
@@ -233,6 +240,9 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   evtNumber_ = event.id().event();
   if(debug_) WPrimeUtil::printEvent(event);
   
+  weight_ = wprimeUtil_->getWeight();
+
+
   // Preselection - skip events that don't look promising
   if (doPreselect_){
     if(debug_) cout<<"Testing Preselection...\n";
@@ -256,6 +266,13 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   gravMass_ = -999.0;
 
   // std::vector<reco::GenParticle> genMuons;
+  edm::Handle< vector<reco::GenJet  > > genJets;
+
+  std::vector<reco::GenParticle> genZ;
+  std::vector<reco::GenParticle> genW;
+
+  int isW = 0;
+  int isZ = 0;
 
   if(!wprimeUtil_->runningOnData())
     {
@@ -269,14 +286,81 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 	  }
 	if (fabs(genP.pdgId()) == 13 && genP.status() == 3)
 	  genMuons.push_back((*genParticles)[i]);
-	if (fabs(genP.pdgId()) == PDG_ID_W && genP.status() == 3)
-	  h_genWMass->Fill(genP.mass(), weight_); 
+
+	if (fabs(genP.pdgId()) == 11 && genP.status() == 3)
+          genElectrons.push_back((*genParticles)[i]);
+
+	if (fabs(genP.pdgId()) == 24 && genP.status() == 3)
+	  {
+	    //cout << "Found W!" << endl;
+	    h_genWMass->Fill(genP.mass(), weight_);
+	    genW.push_back((*genParticles)[i]);
+	    isW = 1;
+	  }
+	if (fabs(genP.pdgId()) == 23 && genP.status() == 3)
+	  {
+	    // cout << "Found Z! With mass of " << genP.mass() << endl;
+	    h_genZMass->Fill(genP.mass(), weight_);
+            genZ.push_back((*genParticles)[i]);
+	    isZ = 1;
+	  }
+
+
       } // loop over genParticles
-    }
+
+      //Get the genJets
+      event.getByLabel(edm::InputTag("ak7GenJets"), genJets);
+      int jetID = 0;
+      for (size_t i = 0; i < genJets->size(); i++)
+	{
+	  if ( ((*genJets)[i].pt() > 30.0) && (fabs((*genJets)[i].eta()) < 2.4) )
+	    jetID = 1;
+
+	  if (jetID==1 && !Overlap((*genJets)[i], genMuons, 1.0, 2) && !Overlap((*genJets)[i], genElectrons, 1.0, 2)) 
+	    ak7GenJet.push_back((*genJets)[i]);
+	}
+      
+      sort(ak7GenJet.begin(), ak7GenJet.end(), highestJetPt());
+
+      //cout << "size of gen jet is " << ak7GenJet.size() << endl;
+
+      reco::CompositeCandidate HadVZgen;
+      reco::CompositeCandidate HadVWgen;
+      
+      //Make the gen combination of Z/W + extra jet only if extra jet is V-like
+      if (ak7GenJet.size()>0)
+	{
+
+	  if (isW == 1){
+	    if (ak7GenJet.at(0).mass()>70.0 && ak7GenJet.at(0).mass()<120.0 && ak7GenJet.at(0).pt()>290.0 && genW.at(0).pt()>150.0 && reco::deltaR(genW.at(0), ak7GenJet.at(0)) > 1.0 )
+	      {
+		HadVWgen.addDaughter(genW.at(0));
+		HadVWgen.addDaughter(ak7GenJet.at(0));
+		AddFourMomenta addFM;
+		addFM.set(HadVWgen);
+		h_HadVWgenMass->Fill(HadVWgen.mass()*1000, weight_);
+	      }
+	  }
+	  
+          if (isZ == 1){
+            if (ak7GenJet.at(0).mass()>70.0 && ak7GenJet.at(0).mass()<120.0 && ak7GenJet.at(0).pt()>290.0 && genZ.at(0).pt()>150.0 && reco::deltaR(genZ.at(0), ak7GenJet.at(0)) > 1.0)
+	      { 
+		HadVZgen.addDaughter(genZ.at(0));
+		HadVZgen.addDaughter(ak7GenJet.at(0));
+		AddFourMomenta addFM;
+		addFM.set(HadVZgen);
+                h_HadVZgenMass->Fill(HadVZgen.mass()*1000, weight_);
+	      }
+	  }
+	}//more than one jet if
+
+    }//running on MC if
   
+
+
   // for (size_t i=0; i<genMuons.size(); i++)
   //  cout << "My muon " << i << " pt is " << genMuons[i].pt() << endl;
-  weight_ = wprimeUtil_->getWeight();
+  //  weight_ = wprimeUtil_->getWeight();
 
   // Make vectors of leptons passing various criteria
   // Loop over electrons, and see if they pass the criteria
@@ -358,7 +442,8 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   allJets_      = getProduct<vector<pat::Jet     > >(event, jetsLabel_);
   if(allJets_.size() < 1){
-    cout << "Not enough jets. Bad bad event, returning now..." << endl;
+    if (debug_) 
+      cout << "Not enough jets. Bad bad event, returning now..." << endl;
     return;
   }
   if(debug_)
@@ -371,6 +456,40 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
       looseJets_.push_back(allJets_[i]);
   }
   
+  if (looseJets_.size() > 2){
+    if (debug_)
+      cout << "Too many jets. Returning now" << endl;
+    return; 
+  }
+
+  int cont40 = 0;
+  int cont50 = 0;
+  int cont60 = 0;
+  int cont70 = 0;
+
+  for (size_t i = 0; i < looseJets_.size(); i++)
+    {
+
+      if (looseJets_.at(i).pt()>40.0)
+	cont40 = cont40+1;
+
+      if (looseJets_.at(i).pt()>50.0)
+	cont50 = cont50+1;
+
+      if (looseJets_.at(i).pt()>60.0)
+	cont60 = cont60+1;
+
+      if (looseJets_.at(i).pt()>70.0)
+	cont70 = cont70+1;
+    }
+
+  h_ptJetCut_nJets->Fill(looseJets_.size(), 30, weight_);
+  h_ptJetCut_nJets->Fill(cont40, 40, weight_);
+  h_ptJetCut_nJets->Fill(cont50, 50, weight_);
+  h_ptJetCut_nJets->Fill(cont60, 60, weight_);
+  h_ptJetCut_nJets->Fill(cont70, 70, weight_);
+
+
   fillJetMultiplicityHists();
   
 
@@ -450,15 +569,48 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   
   if (looseJets_.size()>0)
     {
+
       vCand_ = getVCand(looseJets_);
       if (goodW==1 && vCand_.mass() > 70 && vCand_.mass() < 120 && vCand_.pt() > 100)
-      // if (wCand_.mt() > 70 && wCand_.mt() < 110 && wCand_.pt() > 150 && vCand_.mass() > 70 && vCand_.mass() < 120 && vCand_.pt() > 100)
+	// if (wCand_.mt() > 70 && wCand_.mt() < 110 && wCand_.pt() > 150 && vCand_.mass() > 70 && vCand_.mass() < 120 && vCand_.pt() > 100)
 	{
 	  wzCand_ = (vCand_ && wCand_) ? XWLeptonic(vCand_, wCand_) : XWLeptonic();
 	  double WZMass = wzCand_().mass();
-	  if (WZMass > 0)
-	    h_HadVWMass->Fill(WZMass, weight_);
-	  h_MET_AllCuts->Fill(met_.et(), weight_);
+	  if (WZMass > 0){
+	    h_HadVWMass->Fill(WZMass*1000, weight_);
+	    h_VWMass_nJets->Fill(looseJets_.size(), WZMass);
+	    /* cout << "W lepton four vector " << endl;
+	    cout << "px =  " << wCand_.daughter(0)->px() << endl; 
+	    cout << "py =  " << wCand_.daughter(0)->py() << endl;
+            cout << "pz =  " << wCand_.daughter(0)->pz() << endl;
+            cout << "e =  " << wCand_.daughter(0)->energy() << endl;
+
+
+	    cout << "MET Info" << endl;
+	    cout << "MET px = " << wCand_.daughter(1)->px() << endl; 
+            cout << "MET py = " << wCand_.daughter(1)->py() << endl;
+            cout << "MET pz = " << wCand_.daughter(1)->pz() << endl;
+
+
+	    cout << "Jet (vCand) Info" << endl;
+	    cout << "Jet px = " << vCand_.px() << endl;
+            cout << "Jet py = "<< vCand_.py() << endl;
+            cout << "Jet pz = "<< vCand_.pz() << endl;
+            cout << "Jet e = "<< vCand_.energy() << endl;
+	    
+	    cout << "W Transverse Mass =  " << wCand_.mt() << endl;
+	    cout << "Neutrino Min pz = " << wzCand_.neutrinoPz(kMinPz) << endl;
+	    cout << "Neutrino Max pz = " << wzCand_.neutrinoPz(kMaxPz) << endl;
+
+	    cout << "WZ Mass" << endl;
+	    cout << "WZMass(MinPZ) = " << wzCand_(kMinPz).mass() << endl; 
+            cout << "WZMass(MaxPZ) = " << wzCand_(kMaxPz).mass() << endl;
+	    */
+
+	    h_MET_AllCuts->Fill(met_.et(), weight_);
+	  
+	  }
+
 	}
     }
 
@@ -627,6 +779,7 @@ HadronicVZAnalyzer::clearEvtVariables(){
   Q_ = -999;
   weight_ = 0;
   genMuons.clear();
+  ak7GenJet.clear();
 
 }
 
@@ -716,7 +869,9 @@ void HadronicVZAnalyzer::fillGoodHadVHistos(){
 }
 
 void HadronicVZAnalyzer::fillValidVZHistos(){
-  h_HadVZMass->Fill(hadVZ_.mass(), weight_);
+  h_HadVZMass->Fill(hadVZ_.mass()*1000, weight_);
+  h_VZMass_nJets->Fill(looseJets_.size(), hadVZ_.mass());
+
   h_HadVZpt->Fill(hadVZ_.pt(), weight_);
   h_HadVZeta->Fill(hadVZ_.eta(), weight_);
   h_HadVZphi->Fill(hadVZ_.phi(), weight_);
