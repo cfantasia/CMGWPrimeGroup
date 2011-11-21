@@ -12,6 +12,7 @@
 
   gROOT->ProcessLine(".L JacobianRBWPdf.cxx+");
   gROOT->ProcessLine(".L RooBgdPdf.cxx+");
+  gROOT->ProcessLine(".L RooBgdPdf2.cxx+");
   gROOT->ProcessLine(".L TripleGauss.cxx+");
   gROOT->ProcessLine(".L WprimeFitter.cpp+");
     
