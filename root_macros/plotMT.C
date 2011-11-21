@@ -52,7 +52,7 @@ const string bgdNamesMuMET[NbgdSamplesMuMET] = {
   "WMuNu_highPt", "DYmumu_highPt", "DYtautau_highPt", "QCD_highPt", "ttbar_highPt",
   "WW_highPt", "WZ_highPt", "ZZ_highPt",
   "WPlusTau_highPt", "WMinusTau_highPt",
-"WMuNu_highPt_fullskim"};
+  "WMuNu_highPt_fullskim"};
 #if 0
   "WMinusMu_highPt", "WPlusMu_highPt",
   "DYmumu_lowPt", "DYtautau_lowPt",
@@ -63,8 +63,8 @@ const string bgdNamesMuMET[NbgdSamplesMuMET] = {
 #endif
 TH1F * bgdMuMET[NbgdSamplesMuMET] = {0};
 
-const unsigned NdataSamplesMuMET = 8;
-const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4", "data5", "data6", "data7", "data8"};
+const unsigned NdataSamplesMuMET = 5;
+const string dataNamesMuMET[NdataSamplesMuMET] = {"data", "data2", "data3", "data4", "data5"};
 
 TH1F * dataMuMET[NdataSamplesMuMET] = {0};
 
@@ -104,6 +104,8 @@ const string dataNamesElMET[NdataSamplesElMET] = {"data", "data2", "data3", "dat
 
 TH1F * dataElMET[NdataSamplesElMET] = {0};
 
+int nbins_output = 125;
+float xmin_output=0, xmax_output=2500;
 
 void plotMT()
 {
@@ -217,6 +219,7 @@ void doPlots(int option)
 #endif
 
   TH1F * data = 0;
+  TH1F * data_output = new TH1F("MT_data","MT_data",nbins_output,xmin_output,xmax_output);
   for(unsigned i = 0; i != NdataSamples; ++i)
     {
       string histo_i = dataNames[i] + "/" + histo;
@@ -228,6 +231,8 @@ void doPlots(int option)
 	data = dataSamples[i];
       else
 	data->Add(dataSamples[i]);
+
+      data_output->Add(dataSamples[i]);
     }
 
   string hname = "tot_bgd";
@@ -248,8 +253,6 @@ void doPlots(int option)
   float x_offset = 0;
 
   int Nbins = data->GetNbinsX();
-
-  data = (TH1F*)data->Rebin(8);
 
   if(option == 1)
     {
@@ -287,7 +290,7 @@ void doPlots(int option)
   TH1F * bgd = new TH1F(hname.c_str(), desc.c_str(), 
 			Nbins, data->GetXaxis()->GetXmin(), 
 			data->GetXaxis()->GetXmax());
-
+  TH1F * bgd_output = new TH1F("MT_bgd","MT_bgd",nbins_output,xmin_output,xmax_output);
   THStack *hsbgd =new THStack(hname.c_str(),desc.c_str());//+++++++++
   for(unsigned i = 0; i != NbgdSamples; ++i){
     //for(int i = NbgdSamples - 1; i != -1; i--){
@@ -305,9 +308,8 @@ void doPlots(int option)
       hsbgd->Add(bgdSamples[i]);//+++++++++
     }
     bgd->Add(bgdSamples[i]);
+    bgd_output->Add(bgdSamples[i]);
   }
-
-  bgd = (TH1F*)bgd->Rebin(8);
 
   data->SetTitle(desc.c_str());
   data->SetMarkerStyle(8);
@@ -316,7 +318,8 @@ void doPlots(int option)
   TH1F * ratio = new TH1F(hname_ratio.c_str(), ratio_desc.c_str(),
 			  Nbins, data->GetXaxis()->GetXmin(), 
 			  data->GetXaxis()->GetXmax());
-  ratio->Rebin(8);
+  int rebin_value = 5;
+  ratio->Rebin(rebin_value);
   // this is the total cumulative bgd distribution (W + QCD + top + Z/DY)
   TH1F * bgd_cumu = new TH1F(hname_cumu.c_str(), cumu_desc.c_str(), 
 			    Nbins, data->GetXaxis()->GetXmin(), 
@@ -412,10 +415,10 @@ void doPlots(int option)
 
   c1 = new TCanvas();
   c1->SetLogy();
-		       
+
   //  data->Sumw2();
   // bgd->Sumw2();
-  ratio->Divide(data, bgd);
+  ratio->Divide((TH1F*)data->Rebin(rebin_value), (TH1F*)bgd->Rebin(rebin_value));
 
   data_cumu->Draw("e");
   bgd_cumu->Draw("same");
@@ -465,6 +468,13 @@ void doPlots(int option)
 	   << " expected = " << bgd->Integral(bin, Nbins+1) 
 	   << " observed = " << data->Integral(bin, Nbins+1) << endl;
     }
-  
 
+  TFile *data_output_file = new TFile("Wprime_data.root","recreate");
+  data_output->Write();
+  data_output_file->Close();
+
+  TFile *bgd_output_file = new TFile("Wprime_bgd.root","recreate");
+  bgd_output->Write();
+  bgd_output_file->Close();
+  
 }
