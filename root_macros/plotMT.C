@@ -469,11 +469,11 @@ void doPlots(int option)
 	   << " observed = " << data->Integral(bin, Nbins+1) << endl;
     }
 
-  TFile *data_output_file = new TFile("Wprime_data.root","recreate");
+  TFile *data_output_file = new TFile("Wprime_data_mu.root","recreate");
   data_output->Write();
   data_output_file->Close();
 
-  TFile *bgd_output_file = new TFile("Wprime_bgd.root","recreate");
+  TFile *bgd_output_file = new TFile("Wprime_bgd_mu.root","recreate");
   bgd_output->Write();
   bgd_output_file->Close();
   

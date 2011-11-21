@@ -9,7 +9,7 @@ using namespace RooFit;
 void fit_wprime()
 {
   
-  WprimeFitter a(wprime_ElMET);
+  WprimeFitter a(wprime_MuMET);
   a.setNpseudoExperiments(1000);
   a.doOneMassPointOnly(false);
 
