@@ -258,14 +258,6 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
     hEvtType[index]->Fill(evtType_, weight);
     if     (wCand_.charge() > 0) hEvtTypeP[index]->Fill(evtType_, weight);
     else if(wCand_.charge() < 0) hEvtTypeM[index]->Fill(evtType_, weight);
-    hLeadPt[index]->Fill(LeadPt_, weight);
-    hLeadElecPt[index]->Fill(LeadElecPt_, weight);
-    hLeadMuonPt[index]->Fill(LeadMuonPt_, weight);
-    if     (zCand_.flavor() == PDG_ID_ELEC){
-      hLeadPtZee[index]->Fill(LeadPt_, weight);
-    }else if(zCand_.flavor() == PDG_ID_MUON){ 
-      hLeadPtZmm[index]->Fill(LeadPt_, weight);
-    }
     if(CutNames_[index] == "ValidWZCand"){//All, Wpt, Zpt, Ht + 1 for starting @ 0
       tWZCand->Fill();
     }
@@ -281,6 +273,7 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
       }
       hZeept[index]->Fill(zCand_.pt(), weight);
       hMETee[index]->Fill(met_.et(), weight);
+      hLeadPtZee[index]->Fill(LeadPt_, weight);
     }else if (zCand_.flavor() == PDG_ID_MUON){
       hZmmMass[index]->Fill(zCand_.mass(), weight);
       if(doSystematics_){
@@ -289,6 +282,7 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
       }
       hMETmm[index]->Fill(met_.et(), weight);
       hZmmpt[index]->Fill(zCand_.pt(), weight);
+      hLeadPtZmm[index]->Fill(LeadPt_, weight);
     }
   }
   if(wCand_){
@@ -306,6 +300,11 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
       hWmnuCombRelIso[index]->Fill(m.combRelIsolation03(MuonPU(m)), weight);
     }
   }  
+
+  hLeadPt[index]->Fill(LeadPt_, weight);
+  hLeadElecPt[index]->Fill(LeadElecPt_, weight);
+  hLeadMuonPt[index]->Fill(LeadMuonPt_, weight);
+  
   hMET[index]->Fill(met_.et(), weight);
   hMETSig[index]->Fill(met_.significance(), weight);
 
@@ -678,12 +677,13 @@ float
 WZAnalyzer::calcLeadPt(int type) const{
   if(type){
     double leadpt = -999.;
-    if(wCand_ && wCand_.flavor() == type) 
-      leadpt = TMath::Max(leadpt, wCand_.daughter(0)->pt());
-    if(zCand_ && zCand_.flavor() == type){
-      leadpt = TMath::Max(leadpt, zCand_.daughter(0)->pt());
-      leadpt = TMath::Max(leadpt, zCand_.daughter(1)->pt());
-    }
+    if(type == PDG_ID_ELEC)
+      for (size_t i=0; i < looseElectrons_.size(); i++)
+        leadpt = TMath::Max(leadpt, looseElectrons_[i].patEle().pt());
+    if(type == PDG_ID_MUON)
+      for (size_t i=0; i < looseMuons_.size(); i++)
+        leadpt = TMath::Max(leadpt, looseMuons_[i].pt());
+
     return (float)leadpt;
   }
   return TMath::Max(calcLeadPt(PDG_ID_ELEC), calcLeadPt(PDG_ID_MUON));
