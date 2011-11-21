@@ -228,9 +228,9 @@ void WprimeFitter::getLLR()
 	  {
 	    if(sig_i == Nsignal_points-1)
 	      {	    
-		new TCanvas();
+		new TCanvas(); gPad->SetLogy();
 		LLR[sig_i]->GetXaxis()->SetTitle("LLR");
-		LLR[sig_i]->SetMaximum(3000);
+		LLR[sig_i]->SetMaximum(3000); LLR[sig_i]->SetMinimum(0.1); 
 		LLR[sig_i]->Draw("hist");
 	      }
 	    else
@@ -263,13 +263,15 @@ void WprimeFitter::getLLR()
       
 #if 0
       string title = string("nsig") + desc[sig_i];
-      new TCanvas();
+      new TCanvas();  gPad->SetLogy();
+      Nsig_h[sig_i]->SetMaximum(1000.); Nsig_h[sig_i]->SetMinimum(0.1); 
       Nsig_h[sig_i]->GetXaxis()->SetTitle(title.c_str());
       Nsig_h[sig_i]->Draw();	
       
       if(sig_i == 0)
 	{	    
-	  new TCanvas();
+	  new TCanvas(); gPad->SetLogy();
+	  Nsig_h[0]->SetMaximum(1000.);  Nsig_h[0]->SetMinimum(0.1); 
 	  Nsig_h[0]->GetXaxis()->SetTitle("nsig");
 	  Nsig_h[0]->Draw();
 	}
