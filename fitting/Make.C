@@ -10,6 +10,7 @@
   gSystem->Load("libRooFit") ;
   using namespace RooFit ;
 
+  /*
   gROOT->ProcessLine(".L UserCode/CMGWPrimeGroup/fitting/JacobianRBWPdf.cxx+");
   gROOT->ProcessLine(".L UserCode/CMGWPrimeGroup/fitting/RooBgdPdf.cxx+");
   gROOT->ProcessLine(".L UserCode/CMGWPrimeGroup/fitting/RooBgdPdf2.cxx+");
@@ -17,5 +18,14 @@
   gROOT->ProcessLine(".L UserCode/CMGWPrimeGroup/fitting/WprimeFitter.cpp+");
     
   gROOT->ProcessLine(".x UserCode/CMGWPrimeGroup/fitting/fit_wprime.C+");
+  */
   
+  gROOT->ProcessLine(".L JacobianRBWPdf.cxx+");
+  gROOT->ProcessLine(".L RooBgdPdf.cxx+");
+  gROOT->ProcessLine(".L RooBgdPdf2.cxx+");
+  gROOT->ProcessLine(".L TripleGauss.cxx+");
+  gROOT->ProcessLine(".L WprimeFitter.cpp+");
+    
+  gROOT->ProcessLine(".x fit_wprime.C+");
+
 }
