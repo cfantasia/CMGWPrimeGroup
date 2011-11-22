@@ -1,5 +1,5 @@
 #!/bin/bash
-Ver="V330G"
+Ver="V360A"
 #Dir=/hdfs/store/user/jklukas
 Dir=/pnfs/cms/WAX/11/store/user/fantasia/42X
 #Dir=~/nobackup/42X/filelists
