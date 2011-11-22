@@ -43,10 +43,10 @@ void WprimeFitter::init()
 
   // will need setter methods for these parameters...
   fXMIN = 220; fXMAX = 2500;
-  bXMIN = 220; bXMAX = 800;
+  bXMIN = 220; bXMAX = 1500;
   pXMIN = fXMIN; pXMAX = 2500;
   XMIN = 0; XMAX = 2500;
-  rXMIN = -100; rXMAX = 100;
+  rXMIN = -600; rXMAX = 600;
 
   switch(channel_)
     {
@@ -186,9 +186,9 @@ void WprimeFitter::run()
       JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
 
       float Z_observed = 0;
-      const int Nsteps=3;
+      const int Nsteps=4;
       int step_i=0;
-      float cl_test = 1., scale_factor=700., step_size[Nsteps]={100.,10.,1.};
+      float cl_test = 1., scale_factor=0., step_size[Nsteps]={100.,10.,1.,0.1};
       do{
 	if(cl_test > 0.95)
 	  scale_factor += step_size[step_i];
@@ -216,6 +216,7 @@ void WprimeFitter::run()
 	else
 	  model = (RooAbsPdf*) &SigBgdPdf;
 
+	cout<<"PE for mass = " << WprimeMass[sig_i] << " GeV and scale factor = " << scale_factor << endl;
 	runPseudoExperiments(sig_i, model, SigBgdPdf, nsig);
 
 	if(sig_i==0) break;
@@ -223,12 +224,14 @@ void WprimeFitter::run()
 	  Z_observed = 5;
 	  cl_test = 1 - LLR[sig_i]->Integral(1, LLR[sig_i]->FindBin(Zexpected)+1)/LLR[sig_i]->Integral();
 	  cout << "*** 1 - P_tail(Zdata) = " << 100.0*cl_test << "% CL for scale_factor = " 
-	       << scale_factor << " ***" << endl;
+	       << scale_factor << " ***" << endl << endl;
 	  tracking << WprimeMass[sig_i] << '\t' << cl_test << '\t' << scale_factor << endl;
 	}
       
       }while(step_i != Nsteps-1 || cl_test > 0.95);
     
+      if(sig_i==0) continue;
+
       float counted_entries=0., total_entries=LLR[sig_i]->Integral();
       float lower2sig=-1, lower1sig=-1, median=-1, upper1sig=-1, upper2sig=-1;
       for(int i=1; i<=LLR[sig_i]->GetNbinsX(); ++i){
