@@ -207,8 +207,8 @@ void WprimeFitter::run()
 
 void WprimeFitter::getLLR()
 {
-  cout << " Zexpected from average MC background only = " 
-       << Zexpected << endl;
+  //  cout << " Zexpected from average MC background only = " 
+  //     << Zexpected << endl;
 
   // starting from largest mass point, as it corresponds to largest LLR values
   // this makes sure all LLR histograms will be visible
@@ -219,8 +219,11 @@ void WprimeFitter::getLLR()
   lg->SetTextSize(0.04);
   lg->SetBorderSize(0);
   lg->SetFillColor(0);
+
+  unsigned Nmax = Nsignal_points;
+  if(oneMassPointOnly_)Nmax = 1;
   
-  for(int sig_i = Nsignal_points-1; sig_i != -1; --sig_i)
+  for(int sig_i = Nmax-1; sig_i != -1; --sig_i)
     { // loop over mass points
 	LLR[sig_i]->SetLineColor(color[sig_i]);
 	float cl = -999;
@@ -256,7 +259,7 @@ void WprimeFitter::getLLR()
 
   cout << endl;
 
-  for(unsigned sig_i = 0; sig_i != Nsignal_points; ++sig_i)
+  for(unsigned sig_i = 0; sig_i != Nmax; ++sig_i)
     { // loop over mass points
       cout<< " Sample # " << sig_i << ": " << desc[sig_i]; 
       cout << ", Nbgd = " << Nevt[sig_i].Nbgd << ", Nsig = " << Nevt[sig_i].Nsig
@@ -444,8 +447,8 @@ void WprimeFitter::modelResolutions()
     TripleGauss res_temp("res_temp", "triple gauss", dmt, m1, s1,
 			 f1, m2, s2, f2, m3, s3);
   
-    RooFitResult * fr = res_temp.fitTo(res_hist2, Range("resol_fit"), Save());
-    res_temp.fitTo(res_hist2, Save());
+    res_temp.fitTo(res_hist2, Range("resol_fit"), Verbose(-1), Save());
+    //    res_temp.fitTo(res_hist2, Save());
     
     RooPlot * xframe = dmt.frame(Title("delta W' transverse mass"));
   
