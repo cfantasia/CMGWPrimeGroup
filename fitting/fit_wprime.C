@@ -11,7 +11,7 @@ void fit_wprime()
   
   WprimeFitter a(wprime_MuMET);
   a.setNpseudoExperiments(1000);
-  a.doOneMassPointOnly(false);
+  a.doOneMassPointOnly(true);
 
   // method WprimeFitter::run() loops over all mass points listed in 
   // wprimeFitter_signalDescription.h; user is supposed
@@ -25,9 +25,9 @@ void fit_wprime()
 
   // background option = 1 -> 1/(x+b)^c (DEFAULT)
   // background option = 2 -> 1/(x^2 + b*x + c)^d  
-  //  a.setBackgroundOption(2);
+  a.setBackgroundOption(2);
 
-  a.setScaleFactor(10);
+  a.setScaleFactor(20);
   a.run();
 
 }

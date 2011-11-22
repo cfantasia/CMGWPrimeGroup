@@ -20,6 +20,7 @@ WprimeFitter::WprimeFitter(channel ch)
   mt->setRange("mt_bgdfit", bXMIN, bXMAX);
   mt->setRange("mt_plot", pXMIN, pXMAX);
   mt->setRange("mt_full", XMIN, XMAX);
+  mt->setRange("resol_fit", rXMIN, rXMAX);
   mt->setBins(10000, "fft");
 
   mt_BGD = new RooDataHist("mt_BGD","total BGD", *mt, Import(*bgd_hist));
@@ -42,10 +43,10 @@ void WprimeFitter::init()
 
   // will need setter methods for these parameters...
   fXMIN = 220; fXMAX = 2500;
-  bXMIN = fXMIN; bXMAX = 1500;
+  bXMIN = 220; bXMAX = 1500;
   pXMIN = fXMIN; pXMAX = 2500;
   XMIN = 0; XMAX = 2500;
-  rXMIN = -2000; rXMAX = 2000;
+  rXMIN = -500; rXMAX = 500;
 
   switch(channel_)
     {
@@ -329,8 +330,18 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   Nsig_h[sig_i] = new TH1F(*nsig_h);
   if(sig_i == 0)
     {
-      // must replace mean by median!!!
-      Zexpected = LLR[sig_i]->GetMean();
+      float counted_entries=0, total_entries=LLR[sig_i]->Integral();
+      float lower2sig=-1, lower1sig=-1, median=-1, upper1sig=-1, upper2sig=-1;
+      for(int i=1; i<=LLR[sig_i]->GetNbinsX(); ++i){
+	counted_entries+=LLR[sig_i]->GetBinContent(i);
+        if(lower2sig<0 && counted_entries/total_entries>0.022) lower2sig=LLR[sig_i]->GetBinCenter(i);
+        if(lower1sig<0 && counted_entries/total_entries>0.158) lower1sig=LLR[sig_i]->GetBinCenter(i);
+        if(median<0 && counted_entries/total_entries>0.5) median=LLR[sig_i]->GetBinCenter(i);
+        if(upper1sig<0 && counted_entries/total_entries>0.841) upper1sig=LLR[sig_i]->GetBinCenter(i);
+        if(upper2sig<0 && counted_entries/total_entries>0.977) upper2sig=LLR[sig_i]->GetBinCenter(i);
+      }
+
+      Zexpected = median;
       cout << " Zexpected from average MC background only = " 
 	   << Zexpected << endl;
     }
@@ -364,7 +375,7 @@ void WprimeFitter::modelBackgroundOption1()
   cout << " Bgd mt fit: chi2/ndof = " << xframe2->chiSquare() << endl;
 
   bgd_tmp.paramOn(xframe2,Layout(0.55));
-  new TCanvas();
+  new TCanvas(); gPad->SetLogy();
   xframe2->Draw();
 
   RooArgList pars(* bgd_tmp.getParameters(RooArgSet(*mt) ) );
@@ -433,7 +444,7 @@ void WprimeFitter::modelResolutions()
     TripleGauss res_temp("res_temp", "triple gauss", dmt, m1, s1,
 			 f1, m2, s2, f2, m3, s3);
   
-    // RooFitResult * fr = resolution.fitTo(res_hist2, Range("resol_fit"), Save());
+    RooFitResult * fr = res_temp.fitTo(res_hist2, Range("resol_fit"), Save());
     res_temp.fitTo(res_hist2, Save());
     
     RooPlot * xframe = dmt.frame(Title("delta W' transverse mass"));
@@ -442,8 +453,8 @@ void WprimeFitter::modelResolutions()
     res_temp.plotOn(xframe, Name("model"));
     cout << " Sample: " << desc[i] << " Resolution fit: chi2/ndof = " 
 	 << xframe->chiSquare("model", "data", 8) << endl;
-    //  new TCanvas();
-    // xframe->Draw();
+    new TCanvas();
+    xframe->Draw();
     RooArgList pars(* res_temp.getParameters(RooArgSet(dmt) ) );
 
     float f_mean1 = ((RooRealVar*) pars.find("m1"))->getVal();
