@@ -44,7 +44,7 @@ process.WprimeAnalyzer.triggersToUse = cms.vstring(
 process.WprimeAnalyzer.electrons = 'selectedPatElectrons'
 process.WprimeAnalyzer.muons = 'selectedPatMuons'
 process.WprimeAnalyzer.muonReconstructor = 3
-process.WprimeAnalyzer.jets = 'selectedPatJets'
+process.WprimeAnalyzer.jets = 'selectedPatJetsAK7PF'
 #
 process.WprimeAnalyzer.minNLeptons =cms.untracked.uint32(2)
 process.WprimeAnalyzer.minNJets = cms.untracked.uint32(1) # Larger than
