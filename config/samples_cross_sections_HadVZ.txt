@@ -96,140 +96,126 @@ samplename = data_DoubleMu-Run2011A-May10ReReco-v1
 description = data_DoubleMu-Run2011A-May10ReReco-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-DoubleMu-Run2011A-May10ReReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleMu-Run2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu-Run2011A-May10ReReco-v1
 description = data_SingleMu-Run2011A-May10ReReco-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-SingleMu-Run2011A-May10ReReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleMu-Run2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleElectron-Run2011A-May10ReReco-v1
 description = data_DoubleElectron-Run2011A-May10ReReco-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-DoubleElectron-Run2011A-May10ReReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleElectron-Run2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleElectron-Run2011A-May10ReReco-v1
 description = data_SingleElectron-Run2011A-May10ReReco-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-SingleElectron-Run2011A-May10ReReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleElectron-Run2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleMu-Run2011A-PromptReco-v4
 description = data_DoubleMu-Run2011A-PromptReco-v4
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-DoubleMu-Run2011A-PromptReco-v4.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleMu-Run2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu-Run2011A-PromptReco-v4
 description = data_SingleMu-Run2011A-PromptReco-v4
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-SingleMu-Run2011A-PromptReco-v4.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleMu-Run2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleElectron-Run2011A-PromptReco-v4
 description = data_DoubleElectron-Run2011A-PromptReco-v4
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-DoubleElectron-Run2011A-PromptReco-v4.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleElectron-Run2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleElectron-Run2011A-PromptReco-v4
 description = data_SingleElectron-Run2011A-PromptReco-v4
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-SingleElectron-Run2011A-PromptReco-v4.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleElectron-Run2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleMu-Run2011A-05Aug2011-v1
 description = data_DoubleMu-Run2011A-05Aug2011-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-DoubleMu-Run2011A-05Aug2011-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleMu-Run2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu-Run2011A-05Aug2011-v1
 description = data_SingleMu-Run2011A-05Aug2011-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-SingleMu-Run2011A-05Aug2011-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleMu-Run2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleElectron-Run2011A-05Aug2011-v1
 description = data_DoubleElectron-Run2011A-05Aug2011-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-DoubleElectron-Run2011A-05Aug2011-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleElectron-Run2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleElectron-Run2011A-05Aug2011-v1
 description = data_SingleElectron-Run2011A-05Aug2011-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-SingleElectron-Run2011A-05Aug2011-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleElectron-Run2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleMu-Run2011A-PromptReco-v6
 description = data_DoubleMu-Run2011A-PromptReco-v6
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-DoubleMu-Run2011A-PromptReco-v6.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleMu-Run2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu-Run2011A-PromptReco-v6
 description = data_SingleMu-Run2011A-PromptReco-v6
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-SingleMu-Run2011A-PromptReco-v6.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleMu-Run2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleElectron-Run2011A-PromptReco-v6
 description = data_DoubleElectron-Run2011A-PromptReco-v6
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-DoubleElectron-Run2011A-PromptReco-v6.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleElectron-Run2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleElectron-Run2011A-PromptReco-v6
 description = data_SingleElectron-Run2011A-PromptReco-v6
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330A-SingleElectron-Run2011A-PromptReco-v6.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleElectron-Run2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleMu-Run2011B-PromptReco-v1
 description = data_DoubleMu-Run2011B-PromptReco-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330G-DoubleMu-Run2011B-PromptReco-v1.txt
-Nprod_evt = 9999999
-
-samplename = data_SingleMu-Run2011B-PromptReco-v1
-description = data_SingleMu-Run2011B-PromptReco-v1
-x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330E-SingleMu-Run2011B-PromptReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleMu-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleElectron-Run2011B-PromptReco-v1
 description = data_DoubleElectron-Run2011B-PromptReco-v1
 x-section = 1
 subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330G-DoubleElectron-Run2011B-PromptReco-v1.txt
-Nprod_evt = 9999999
-
-samplename = data_SingleElectron-Run2011B-PromptReco-v1
-description = data_SingleElectron-Run2011B-PromptReco-v1
-x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V330E-SingleElectron-Run2011B-PromptReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleElectron-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = Summer11_WprimeToWZTo2Q2L_M-500
