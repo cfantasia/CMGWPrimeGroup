@@ -1,5 +1,5 @@
 #include "WprimeFitter.hpp"
-
+#include <fstream>
 using namespace RooFit;
 
 WprimeFitter::WprimeFitter(channel ch)
@@ -43,10 +43,10 @@ void WprimeFitter::init()
 
   // will need setter methods for these parameters...
   fXMIN = 220; fXMAX = 2500;
-  bXMIN = 220; bXMAX = 1500;
+  bXMIN = 220; bXMAX = 800;
   pXMIN = fXMIN; pXMAX = 2500;
   XMIN = 0; XMAX = 2500;
-  rXMIN = -500; rXMAX = 500;
+  rXMIN = -100; rXMAX = 100;
 
   switch(channel_)
     {
@@ -167,6 +167,12 @@ void WprimeFitter::run()
 
   initFit();
 
+  ofstream limits, tracking;
+  limits.open("limits.txt");
+  tracking.open("tracking.txt");
+  limits << "Mass\tExpLimit\tObsLimit\tObsLimit+1\tObsLimit-1\tObsLimit+2\tObsLimit-2\n";
+  tracking << "Mass\tCL\tScaleFactor\n";
+
   for (int sig_i = 0; sig_i != Nmax; ++sig_i)
     {// loop over mass points
       
@@ -179,28 +185,67 @@ void WprimeFitter::run()
       // signal modeling: JacobianRBW
       JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
 
+      float Z_observed = 0;
+      const int Nsteps=3;
+      int step_i=0;
+      float cl_test = 1., scale_factor=700., step_size[Nsteps]={100.,10.,1.};
+      do{
+	if(cl_test > 0.95)
+	  scale_factor += step_size[step_i];
+	else{
+	  scale_factor += -1.*step_size[step_i] + step_size[step_i+1];
+	  step_i++;
+	}
+	if(sig_i==0) scale_factor=1.;
 
-      Nsig = sig_hist[sig_i]->Integral(0, Nbins+1)/scale_factor_;
+	Nsig = sig_hist[sig_i]->Integral(0, Nbins+1)/scale_factor;
 
-      RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
-			   sig_model, *(resolution[sig_i]));
-      RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
+	RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
+			     sig_model, *(resolution[sig_i]));
+	RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
 
       
-      RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
-			  RooArgList(nsig, *nbgd));
+	RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
+			    RooArgList(nsig, *nbgd));
       
-      RooAbsPdf * model = 0;
-      //sig_i = 0 corresponds to bgd-only ensemble
-      // need a better way to make this clear-er
-      if(sig_i == 0)
-	model = (RooAbsPdf*) BgdPdf;
-      else
-	model = (RooAbsPdf*) &SigBgdPdf;
+	RooAbsPdf * model = 0;
+	//sig_i = 0 corresponds to bgd-only ensemble
+	// need a better way to make this clear-er
+	if(sig_i == 0)
+	  model = (RooAbsPdf*) BgdPdf;
+	else
+	  model = (RooAbsPdf*) &SigBgdPdf;
 
-      runPseudoExperiments(sig_i, model, SigBgdPdf, nsig);
+	runPseudoExperiments(sig_i, model, SigBgdPdf, nsig);
+
+	if(sig_i==0) break;
+	else{
+	  Z_observed = 5;
+	  cl_test = 1 - LLR[sig_i]->Integral(1, LLR[sig_i]->FindBin(Zexpected)+1)/LLR[sig_i]->Integral();
+	  cout << "*** 1 - P_tail(Zdata) = " << 100.0*cl_test << "% CL for scale_factor = " 
+	       << scale_factor << " ***" << endl;
+	  tracking << WprimeMass[sig_i] << '\t' << cl_test << '\t' << scale_factor << endl;
+	}
+      
+      }while(step_i != Nsteps-1 || cl_test > 0.95);
+    
+      float counted_entries=0., total_entries=LLR[sig_i]->Integral();
+      float lower2sig=-1, lower1sig=-1, median=-1, upper1sig=-1, upper2sig=-1;
+      for(int i=1; i<=LLR[sig_i]->GetNbinsX(); ++i){
+        counted_entries+=LLR[sig_i]->GetBinContent(i);
+        if(lower2sig<0 && counted_entries/total_entries>0.022) lower2sig=LLR[sig_i]->GetBinCenter(i);
+	if(lower1sig<0 && counted_entries/total_entries>0.158) lower1sig=LLR[sig_i]->GetBinCenter(i);
+        if(median<0 && counted_entries/total_entries>0.5) median=LLR[sig_i]->GetBinCenter(i);
+        if(upper1sig<0 && counted_entries/total_entries>0.841) upper1sig=LLR[sig_i]->GetBinCenter(i);
+	if(upper2sig<0 && counted_entries/total_entries>0.977) upper2sig=LLR[sig_i]->GetBinCenter(i);
+      }
+	limits << WprimeMass[sig_i] << '\t' << Z_observed << '\t' << median << '\t' 
+	       << upper1sig << '\t' << lower1sig << '\t' << upper2sig << '\t' << lower2sig << '\n';
 
     } // loop over mass points
+      
+  limits.close();
+  tracking.close();
 
   getLLR();
 }
@@ -333,15 +378,13 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   Nsig_h[sig_i] = new TH1F(*nsig_h);
   if(sig_i == 0)
     {
-      float counted_entries=0, total_entries=LLR[sig_i]->Integral();
-      float lower2sig=-1, lower1sig=-1, median=-1, upper1sig=-1, upper2sig=-1;
+      float counted_entries=0, total_entries=LLR[sig_i]->Integral(), median=-1;
       for(int i=1; i<=LLR[sig_i]->GetNbinsX(); ++i){
 	counted_entries+=LLR[sig_i]->GetBinContent(i);
-        if(lower2sig<0 && counted_entries/total_entries>0.022) lower2sig=LLR[sig_i]->GetBinCenter(i);
-        if(lower1sig<0 && counted_entries/total_entries>0.158) lower1sig=LLR[sig_i]->GetBinCenter(i);
-        if(median<0 && counted_entries/total_entries>0.5) median=LLR[sig_i]->GetBinCenter(i);
-        if(upper1sig<0 && counted_entries/total_entries>0.841) upper1sig=LLR[sig_i]->GetBinCenter(i);
-        if(upper2sig<0 && counted_entries/total_entries>0.977) upper2sig=LLR[sig_i]->GetBinCenter(i);
+	if(counted_entries/total_entries>0.5) {
+	  median=LLR[sig_i]->GetBinCenter(i);
+	  break;
+	}
       }
 
       Zexpected = median;

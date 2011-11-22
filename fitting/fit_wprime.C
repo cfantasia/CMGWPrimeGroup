@@ -11,7 +11,7 @@ void fit_wprime()
   
   WprimeFitter a(wprime_MuMET);
   a.setNpseudoExperiments(1000);
-  a.doOneMassPointOnly(true);
+  a.doOneMassPointOnly(false);
 
   // method WprimeFitter::run() loops over all mass points listed in 
   // wprimeFitter_signalDescription.h; user is supposed
