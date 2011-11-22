@@ -263,19 +263,20 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     return;
   }
   
-  gravMass_ = -999.0;
-
-  // std::vector<reco::GenParticle> genMuons;
-  edm::Handle< vector<reco::GenJet  > > genJets;
-
-  std::vector<reco::GenParticle> genZ;
-  std::vector<reco::GenParticle> genW;
-
-  int isW = 0;
-  int isZ = 0;
-
   if(!wprimeUtil_->runningOnData())
     {
+
+      gravMass_ = -999.0;
+
+      // std::vector<reco::GenParticle> genMuons;                                                                                                               
+      edm::Handle< vector<reco::GenJet  > > genJets;
+
+      std::vector<reco::GenParticle> genZ;
+      std::vector<reco::GenParticle> genW;
+
+      int isW = 0;
+      int isZ = 0;
+
       event.getByLabel(genLabel_, genParticles);
       for(size_t i = 0; i != genParticles->size(); ++i) {
 	const reco::GenParticle & genP = (*genParticles)[i];
@@ -338,7 +339,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 		HadVWgen.addDaughter(ak7GenJet.at(0));
 		AddFourMomenta addFM;
 		addFM.set(HadVWgen);
-		h_HadVWgenMass->Fill(HadVWgen.mass()*1000, weight_);
+		h_HadVWgenMass->Fill(HadVWgen.mass()/1000, weight_);
 	      }
 	  }
 	  
@@ -349,7 +350,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 		HadVZgen.addDaughter(ak7GenJet.at(0));
 		AddFourMomenta addFM;
 		addFM.set(HadVZgen);
-                h_HadVZgenMass->Fill(HadVZgen.mass()*1000, weight_);
+                h_HadVZgenMass->Fill(HadVZgen.mass()/1000, weight_);
 	      }
 	  }
 	}//more than one jet if
@@ -577,7 +578,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 	  wzCand_ = (vCand_ && wCand_) ? XWLeptonic(vCand_, wCand_) : XWLeptonic();
 	  double WZMass = wzCand_().mass();
 	  if (WZMass > 0){
-	    h_HadVWMass->Fill(WZMass*1000, weight_);
+	    h_HadVWMass->Fill(WZMass/1000, weight_);
 	    h_VWMass_nJets->Fill(looseJets_.size(), WZMass);
 	    /* cout << "W lepton four vector " << endl;
 	    cout << "px =  " << wCand_.daughter(0)->px() << endl; 
@@ -869,7 +870,7 @@ void HadronicVZAnalyzer::fillGoodHadVHistos(){
 }
 
 void HadronicVZAnalyzer::fillValidVZHistos(){
-  h_HadVZMass->Fill(hadVZ_.mass()*1000, weight_);
+  h_HadVZMass->Fill(hadVZ_.mass()/1000, weight_);
   h_VZMass_nJets->Fill(looseJets_.size(), hadVZ_.mass());
 
   h_HadVZpt->Fill(hadVZ_.pt(), weight_);
