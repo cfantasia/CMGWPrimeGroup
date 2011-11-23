@@ -117,30 +117,35 @@ process.WprimeAnalyzer.LooseJetType = cms.untracked.string("Base")
 
 ####Triggers
 DoubleTriggers = cms.vstring(
-#    'HLT_DoubleMu5_v*', #For MC
     'HLT_DoubleMu7_v*',
     'HLT_Mu13_Mu8_v*', #1e33 unprescaled
     'HLT_Mu17_Mu8_v*', #3e33 unprescaled
 
-#    'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
     'HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v*',#MC
     'HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*'#Data
     
     )
-SingleElecTriggers = cms.vstring('HLT_Ele15_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
-                                 'HLT_Ele17_CaloIdL_CaloIsoVL_v*','HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
-                                 'HLT_Ele17_CaloIdVT_CaloIsoVT_TrkIdT_TrkIsoVT_SC8_Mass30_v*',
-                                 'HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v*',
-                                 'HLT_Ele17_CaloIdL_CaloIsoVL_Ele15_HFL_v*','HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
-                                 'HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
-                                 'HLT_Ele32_CaloIdL_CaloIsoVL_SC17_v*','HLT_Ele45_CaloIdVT_TrkIdT_v*',
-                                 'HLT_Ele17_SW_L1R_v*','HLT_Ele17_SW_Isol_L1R_v*',
-                                 'HLT_Ele17_SW_TighterEleIdIsol_L1R_v*','HLT_Ele17_SW_TightCaloEleId_Ele8HE_L1R_v*',
-                                 'HLT_Ele22_SW_L1R_v*','HLT_Ele22_SW_TighterCaloIdIsol_L1R_v*',
-                                 'HLT_Ele22_SW_TighterEleId_L1R_v*','HLT_Ele32_SW_TighterEleId_L1R_v*'
-                                 )
+SingleElecTriggers = cms.vstring( 'HLT_Ele17_SW_L1R',  # from 2010 data
+                                  'HLT_Ele17_SW_Isol_L1R_v*',
+                                  'HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
+                                  'HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
+                                  'HLT_Ele42_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*', #1e33 unprescaled (removed after end of June TS)
+                                  'HLT_Ele52_CaloIdVT_TrkIdT_v*',                  #1e33 unprescaled
+                                  'HLT_Ele65_CaloIdVT_TrkIdT_v*',                  #3e33 unprescaled
+                                  'HLT_Ele80_CaloIdVT_TrkIdT_v*',
+                                  )
 
-SingleMuonTriggers = cms.vstring('HLT_Mu15_v*','HLT_Mu17_v*','HLT_Mu19_v*','HLT_Mu20_v*','HLT_Mu21_v*','HLT_Mu24_v*','HLT_Mu25_v*','HLT_Mu30_v*')
+SingleMuonTriggers = cms.vstring(    'HLT_Mu15_v*',
+                                     'HLT_Mu17_v*',
+                                     'HLT_Mu19_v*',
+                                     'HLT_Mu20_v*',
+                                     'HLT_Mu21_v*',
+                                     'HLT_Mu24_v*',
+                                     'HLT_Mu25_v*',
+                                     'HLT_Mu30_v*',
+                                     'HLT_Mu40_v*',         # 2.5e33 unprescaled
+                                     'HLT_Mu40_eta2p1_v*',
+                                     )
 process.WprimeAnalyzer.triggersToUse = DoubleTriggers
 
 ####################
