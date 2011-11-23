@@ -188,11 +188,10 @@ void WprimeFitter::run()
       // signal modeling: JacobianRBW
       JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
 
-      float Z_observed = 0;
+      float Z_observed = 0, chi2_H0 = 0, chi2_H1 = 0;
       const int Nsteps=3;
       int step_i=0;
       float cl_test = 1., scale_factor=30., step_size[Nsteps]={10.,1.,0.1};
-      float chi2_H0 = 0, chi2_H1 = 0;
       do{
 	if(cl_test > 0.95)
 	  scale_factor += step_size[step_i];
@@ -225,13 +224,15 @@ void WprimeFitter::run()
 	if(sig_i==0) break;
 	else{
 	  RooPlot* xframe3 = mt->frame(Range("mt_datafit"), Title("Data transverse mass"));
-	  BgdPdf->fitTo(*mt_DATA, Range("mt_datafit"), Save());
-	  SigBgdPdf.fitTo(*mt_DATA, Range("mt_datafit"), Save());
+	  RooAbsPdf* bgd_tmp = (RooAbsPdf*) BgdPdf;
+	  //RooAbsPdf* sig_tmp = (RooAbsPdf*) SigBgdPdf
+	  bgd_tmp->fitTo(*mt_DATA, Range("mt_datafit"), Save());
+	  //sig_tmp->fitTo(*mt_DATA, Range("mt_datafit"), Save());
 	  mt_DATA->plotOn(xframe3, Name("data"));
-	  BgdPdf->plotOn(xframe3, Name("bgd_fit"));
-	  SigBgdPdf.plotOn(xframe3, Name("sigbgd_fit"));
+	  bgd_tmp->plotOn(xframe3, Name("bgd_fit"));
+	  //sig_tmp->plotOn(xframe3, Name("sigbgd_fit"));
 	  chi2_H0 = xframe3->chiSquare("bgd_fit","data",1);
-	  chi2_H1 = xframe3->chiSquare("sigbgd_fit","data",2);
+	  chi2_H1 = 5;//xframe3->chiSquare("sigbgd_fit","data",2);
 
 	  cl_test = 1 - LLR[sig_i]->Integral(1, LLR[sig_i]->FindBin(Zexpected)+1)/LLR[sig_i]->Integral();
 	  cout << "*** 1 - P_tail(Zdata) = " << 100.0*cl_test << "% CL for scale_factor = " 
