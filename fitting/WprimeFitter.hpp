@@ -119,8 +119,6 @@ class WprimeFitter{
   float Nbgd; 
   // # of sig events in full histogram range (scaled down by scale factor)
   float Nsig; 
-  // chi2 for each mass point, used to find observed limit
-  float chi2[Nsignal_points];
 
   RooAbsPdf * BgdPdf;
   RooRealVar * nbgd; 

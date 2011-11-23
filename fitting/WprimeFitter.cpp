@@ -187,22 +187,12 @@ void WprimeFitter::run()
       
       // signal modeling: JacobianRBW
       JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
-      RooPlot* xframe3 = mt->frame(Range("mt_datafit"), Title("Data transverse mass"));
-      sig_model.fitTo(*mt_DATA, Range("mt_datafit"), Save());
-      mt_DATA->plotOn(xframe3, Name("data"));
-      sig_model.plotOn(xframe3, Name("model"));
-      if(sig_i == 0)
-	chi2[sig_i] = xframe3->chiSquare("model","data",1);
-      else
-	chi2[sig_i] = xframe3->chiSquare("model","data",2);
-
-      tracking<<"Chi2 = "<<chi2[sig_i]<<' '<<xframe3->chiSquare()<<endl;//debug
 
       float Z_observed = 0;
       const int Nsteps=3;
       int step_i=0;
       float cl_test = 1., scale_factor=30., step_size[Nsteps]={10.,1.,0.1};
-
+      float chi2_H0 = 0, chi2_H1 = 0;
       do{
 	if(cl_test > 0.95)
 	  scale_factor += step_size[step_i];
@@ -217,7 +207,6 @@ void WprimeFitter::run()
 	RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
 			     sig_model, *(resolution[sig_i]));
 	RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
-
       
 	RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
 			    RooArgList(nsig, *nbgd));
@@ -235,17 +224,27 @@ void WprimeFitter::run()
 
 	if(sig_i==0) break;
 	else{
+	  RooPlot* xframe3 = mt->frame(Range("mt_datafit"), Title("Data transverse mass"));
+	  BgdPdf->fitTo(*mt_DATA, Range("mt_datafit"), Save());
+	  SigBgdPdf.fitTo(*mt_DATA, Range("mt_datafit"), Save());
+	  mt_DATA->plotOn(xframe3, Name("data"));
+	  BgdPdf->plotOn(xframe3, Name("bgd_fit"));
+	  SigBgdPdf.plotOn(xframe3, Name("sigbgd_fit"));
+	  chi2_H0 = xframe3->chiSquare("bgd_fit","data",1);
+	  chi2_H1 = xframe3->chiSquare("sigbgd_fit","data",2);
+
 	  cl_test = 1 - LLR[sig_i]->Integral(1, LLR[sig_i]->FindBin(Zexpected)+1)/LLR[sig_i]->Integral();
 	  cout << "*** 1 - P_tail(Zdata) = " << 100.0*cl_test << "% CL for scale_factor = " 
 	       << scale_factor << " ***" << endl << endl;
-	  tracking << WprimeMass[sig_i] << '\t' << cl_test << '\t' << scale_factor << endl;
+	  tracking << WprimeMass[sig_i] << '\t' << cl_test << '\t' << scale_factor 
+		   << '\t' << chi2_H0 << '\t' << chi2_H1 <<endl;
 	}
       
       }while(step_i != Nsteps-1 || cl_test > 0.95);
     
-      if(sig_i==0) continue;
+      if(sig_i==0)continue;
 
-      Z_observed = sqrt(chi2[0] - chi2[sig_i]);
+      Z_observed = chi2_H0 > chi2_H1 ? sqrt(chi2_H0 - chi2_H1) : 0.;
       float counted_entries=0., total_entries=LLR[sig_i]->Integral();
       float lower2sig=-1, lower1sig=-1, median=-1, upper1sig=-1, upper2sig=-1;
       for(int i=1; i<=LLR[sig_i]->GetNbinsX(); ++i){
