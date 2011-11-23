@@ -58,28 +58,29 @@ CalcLimit(){
         
     float sLumi = sLumiFrac*lumi;
     
-    /*
+    
     ////CLs Limits
     //Does not work for bayesian, only works with cls    
-    LimitResult limit = roostats_limit(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "cls", "");
+    LimitResult limit = roostats_limit(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "cls", "", 12345);
     Double_t obs_limit = limit.GetObservedLimit();
     Double_t exp_limit = limit.GetExpectedLimit();
     Double_t exp_up    = limit.GetOneSigmaHighRange();
     Double_t exp_down  = limit.GetOneSigmaLowRange();
     Double_t exp_2up   = limit.GetTwoSigmaHighRange();
     Double_t exp_2down = limit.GetTwoSigmaLowRange();        
-    */
-
+    
+    /*
     ////Bayesian Limits
     LimitResult limit  = roostats_clm (lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts);
     //Double_t obs_limit = limit.GetObservedLimit();
     Double_t obs_limit = roostats_cl95(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "bayesian", "");
+
     Double_t exp_limit = limit.GetExpectedLimit();
     Double_t exp_up    = limit.GetOneSigmaHighRange();
     Double_t exp_down  = limit.GetOneSigmaLowRange();
     Double_t exp_2up   = limit.GetTwoSigmaHighRange();
     Double_t exp_2down = limit.GetTwoSigmaLowRange();        
-    
+    */
   
     out<<setprecision(0)
        <<SignalCode<<"\t"
