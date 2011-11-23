@@ -47,6 +47,7 @@ ClassImp(JacobianRBWPdf)
    const Double_t accuracy = 0.1;
 
    // Small numbers here makes the integral more accurate at the expense of time.
+
    const Double_t minWidth = 0.01;
    const Double_t maxWidth = 1;
 

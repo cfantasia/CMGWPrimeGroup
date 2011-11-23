@@ -101,9 +101,10 @@ class WprimeFitter{
   string file_SIG; string file_BGD; string file_data;
   TFile * fileSIG; TFile * fileBGD; TFile * fileData;
 
-  string bgd_name; string sig_name; string res_name;
-  TH1F * bgd_hist; TH1F * sig_hist[Nsignal_points]; TH1F * res_hist[Nsignal_points];
+  string bgd_name; string data_name; string sig_name; string res_name;
+  TH1F * bgd_hist; TH1F * data_hist; TH1F * sig_hist[Nsignal_points]; TH1F * res_hist[Nsignal_points];
   RooDataHist * mt_BGD;
+  RooDataHist * mt_DATA;
 
   void init();
   void modelBackground();
@@ -118,6 +119,8 @@ class WprimeFitter{
   float Nbgd; 
   // # of sig events in full histogram range (scaled down by scale factor)
   float Nsig; 
+  // chi2 for each mass point, used to find observed limit
+  float chi2[Nsignal_points];
 
   RooAbsPdf * BgdPdf;
   RooRealVar * nbgd; 

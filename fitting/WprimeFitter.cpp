@@ -18,12 +18,14 @@ WprimeFitter::WprimeFitter(channel ch)
   mt = new RooRealVar("Mt", "M_{T} GeV/c^{2}", pXMIN, pXMAX);
   mt->setRange("mt_fit", fXMIN, fXMAX);
   mt->setRange("mt_bgdfit", bXMIN, bXMAX);
+  mt->setRange("mt_datafit", bXMIN, bXMAX);
   mt->setRange("mt_plot", pXMIN, pXMAX);
   mt->setRange("mt_full", XMIN, XMAX);
   mt->setRange("resol_fit", rXMIN, rXMAX);
   mt->setBins(10000, "fft");
 
   mt_BGD = new RooDataHist("mt_BGD","total BGD", *mt, Import(*bgd_hist));
+  mt_DATA = new RooDataHist("mt_DATA","total DATA", *mt, Import(*data_hist));
   modelResolutions();
 }
 
@@ -52,12 +54,12 @@ void WprimeFitter::init()
     {
     case wprime_MuMET:
       file_SIG = file_SIG_mu; file_BGD = file_BGD_mu; file_data = file_data_mu;
-      bgd_name = bgd_name_mu; res_name = resHist_name_mu; 
+      bgd_name = bgd_name_mu; data_name = data_name_mu; res_name = resHist_name_mu; 
       sig_name = mtHist_name_mu;
       break;
     case wprime_ElMET:
       file_SIG = file_SIG_el; file_BGD = file_BGD_el; file_data = file_data_el;
-      bgd_name = bgd_name_el; res_name = resHist_name_el;
+      bgd_name = bgd_name_el; data_name = data_name_el; res_name = resHist_name_el;
       sig_name = mtHist_name_el;
       break;
     default:
@@ -87,6 +89,7 @@ void WprimeFitter::getInputHistograms()
 
   bgd_hist = (TH1F*)fileBGD->Get(bgd_name.c_str());
   Nbins = bgd_hist->GetXaxis()->GetNbins();
+  data_hist = (TH1F*)fileData->Get(data_name.c_str());
   
   for(unsigned sig_i = 0; sig_i != Nsignal_points; ++sig_i)
     {
@@ -184,11 +187,22 @@ void WprimeFitter::run()
       
       // signal modeling: JacobianRBW
       JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
+      RooPlot* xframe3 = mt->frame(Range("mt_datafit"), Title("Data transverse mass"));
+      sig_model.fitTo(*mt_DATA, Range("mt_datafit"), Save());
+      mt_DATA->plotOn(xframe3, Name("data"));
+      sig_model.plotOn(xframe3, Name("model"));
+      if(sig_i == 0)
+	chi2[sig_i] = xframe3->chiSquare("model","data",1);
+      else
+	chi2[sig_i] = xframe3->chiSquare("model","data",2);
+
+      tracking<<"Chi2 = "<<chi2[sig_i]<<' '<<xframe3->chiSquare()<<endl;//debug
 
       float Z_observed = 0;
-      const int Nsteps=4;
+      const int Nsteps=3;
       int step_i=0;
-      float cl_test = 1., scale_factor=0., step_size[Nsteps]={100.,10.,1.,0.1};
+      float cl_test = 1., scale_factor=30., step_size[Nsteps]={10.,1.,0.1};
+
       do{
 	if(cl_test > 0.95)
 	  scale_factor += step_size[step_i];
@@ -221,7 +235,6 @@ void WprimeFitter::run()
 
 	if(sig_i==0) break;
 	else{
-	  Z_observed = 5;
 	  cl_test = 1 - LLR[sig_i]->Integral(1, LLR[sig_i]->FindBin(Zexpected)+1)/LLR[sig_i]->Integral();
 	  cout << "*** 1 - P_tail(Zdata) = " << 100.0*cl_test << "% CL for scale_factor = " 
 	       << scale_factor << " ***" << endl << endl;
@@ -232,6 +245,7 @@ void WprimeFitter::run()
     
       if(sig_i==0) continue;
 
+      Z_observed = sqrt(chi2[0] - chi2[sig_i]);
       float counted_entries=0., total_entries=LLR[sig_i]->Integral();
       float lower2sig=-1, lower1sig=-1, median=-1, upper1sig=-1, upper2sig=-1;
       for(int i=1; i<=LLR[sig_i]->GetNbinsX(); ++i){
