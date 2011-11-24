@@ -243,14 +243,14 @@ void WprimeFitter::run()
       SigBgdPdf.fitTo(*mt_DATA, Range("mt_datafit"), Save());
       mt_DATA->plotOn(xframe3, Name("data"));
       SigBgdPdf.plotOn(xframe3, Name("sigbgd_fit"));
-      chi2_H1 = xframe3->chiSquare("sigbgd_fit","data",2);
+      chi2_H1 = xframe3->chiSquare()*(Nbins-2);
       if(bgd_option_ == 1){
 	RooRealVar b("b", "b", 1000, -10000, 10000);
 	RooRealVar c("c", "c", 15, -100000, 100000);
 	RooBgdPdf bgd_tmp("bgd_tmp", "bgd_tmp", *mt, b, c);
 	bgd_tmp.fitTo(*mt_DATA, Range("mt_datafit"), Save());
 	bgd_tmp.plotOn(xframe3, Name("bgd_fit"));
-	chi2_H0 = xframe3->chiSquare("bgd_fit","data",1);
+	chi2_H0 = xframe3->chiSquare()*(Nbins-1);
       }
       else if(bgd_option_ == 2){
 	RooRealVar b("b", "b", -350, -10000, 10000);
@@ -259,9 +259,9 @@ void WprimeFitter::run()
 	RooBgdPdf2 bgd_tmp("bgd_tmp", "bgd_tmp", *mt, b, c, d);
 	bgd_tmp.fitTo(*mt_DATA, Range("mt_datafit"), Save());
 	bgd_tmp.plotOn(xframe3, Name("bgd_fit"));
-	chi2_H0 = xframe3->chiSquare("bgd_fit","data",1);
+	chi2_H0 = xframe3->chiSquare()*(Nbins-1);
       }
-      
+
       tracking << WprimeMass[sig_i] << '\t' << chi2_H0 << '\t' << chi2_H1 <<endl;
 
       Z_observed = chi2_H0 > chi2_H1 ? sqrt(chi2_H0 - chi2_H1) : 0.;
