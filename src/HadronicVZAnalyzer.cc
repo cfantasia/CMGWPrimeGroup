@@ -249,8 +249,8 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     // We could setup some preselection here. To be implemented.
   }
 
-  // if(wprimeUtil_->runningOnData())                                                                                                            
-  //  passTriggersCut();
+  if(wprimeUtil_->runningOnData())                                                                                                            
+    passTriggersCut();
   
 
   //////////////////////
@@ -456,13 +456,13 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     if (looseJet_(allJets_[i]) && !Overlap(allJets_[i], looseMuons_, 1.0, 2) && !Overlap(allJets_[i], looseElectrons_, 1.0, 2))
       looseJets_.push_back(allJets_[i]);
   }
-  
+  /*
   if (looseJets_.size() > 2){
     if (debug_)
       cout << "Too many jets. Returning now" << endl;
     return; 
   }
-
+  */
   int cont40 = 0;
   int cont50 = 0;
   int cont60 = 0;
