@@ -45,7 +45,7 @@ void WprimeFitter::init()
 
   // will need setter methods for these parameters...
   fXMIN = 220; fXMAX = 2500;
-  bXMIN = 220; bXMAX = 1200;
+  bXMIN = 380; bXMAX = 900;
   pXMIN = fXMIN; pXMAX = 2500;
   XMIN = 0; XMAX = 2500;
   rXMIN = -400; rXMAX = 400;
@@ -190,9 +190,9 @@ void WprimeFitter::run()
 			   sig_model, *(resolution[sig_i]));
       
       float Z_observed = 0, chi2_H0 = 0, chi2_H1 = 0;
-      const int Nsteps=3;
+      const int Nsteps=2;
       int step_i=0;
-      float cl_test = 1., scale_factor=30., step_size[Nsteps]={10.,1.,0.1};
+      float cl_test = 1., scale_factor=30., step_size[Nsteps]={10.,1.};
       do{
 	if(cl_test > 0.95)
 	  scale_factor += step_size[step_i];
@@ -227,12 +227,11 @@ void WprimeFitter::run()
 	       << scale_factor << " ***" << endl << endl;
 	  tracking << WprimeMass[sig_i] << '\t' << cl_test << '\t' << scale_factor << endl;
 	}
-      
+
       }while(step_i != Nsteps-1 || cl_test > 0.95);
     
       if(sig_i==0)continue;
 
-      //Duplication of code here. It's ugly, but it works.
       RooPlot* xframe3 = mt->frame(Range("mt_datafit"), Title("Data transverse mass"));
       RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
       RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
