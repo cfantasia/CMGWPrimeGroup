@@ -18,7 +18,6 @@ Est_Zjets(string infile, bool useElec, bool useData=true){
     allsamples.push_back("GVJets");
     allsamples.push_back("WWTo2L2Nu");
     allsamples.push_back("WZJetsTo3LNu");
-    ///corrupted file, uncomment
     allsamples.push_back("DYJetsToLL");
   }else{
     allsamples.push_back("data");
@@ -80,8 +79,10 @@ Est_Zjets(string infile, bool useElec, bool useData=true){
   double sigma_e = sqrt(term1 + term2) / (denom*denom);
 
   cout<<"\n\nUsing ";
-  if(useElec) cout<<"Electrons"<<endl;
-  else        cout<<"Muons"<<endl;
+  if(useElec) cout<<"Electrons";
+  else        cout<<"Muons";
+  if(useData) cout<<" from Data"<<endl;
+  else        cout<<" from MC"<<endl;
   cout<<"  Bkg TT:"<<B_TT<<" +/- " <<sigma_B_TT<<endl
       <<"  Bkg TF:"<<B_TF<<" +/- " <<sigma_B_TF<<endl
       <<"  Tot TT:"<<N_TT<<" +/- " <<sigma_N_TT<<endl
