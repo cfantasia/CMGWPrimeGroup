@@ -248,9 +248,6 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     if(debug_) cout<<"Testing Preselection...\n";
     // We could setup some preselection here. To be implemented.
   }
-
-  if(wprimeUtil_->runningOnData())                                                                                                            
-    passTriggersCut();
   
 
   //////////////////////
@@ -643,11 +640,11 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   if( !passZMassCut(zCand_, minZmass_, maxZmass_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
-  if( !passZptCut  (zCand_, minZpt_) ) return;
+  /*  if( !passZptCut  (zCand_, minZpt_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
   fillGoodZHistos();
-
+  */
   ///////////////////////////////////////
   //////// Make V from Jets  ////////////
   ///////////////////////////////////////
@@ -670,12 +667,12 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   if( !passZMassCut(vCand_, minVmass_, maxVmass_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
-  if( !passZptCut(vCand_, minVpt_) ) return;
+  /*if( !passZptCut(vCand_, minVpt_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
   if (debug_) cout << "Good V from jet" << endl;
   fillGoodHadVHistos();
-
+  */
   ///////////////////////////////////////
   //////// Make VZ Candidate ////////////
   ///////////////////////////////////////
@@ -693,9 +690,22 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   //get Trigger 
   //triggerEvent_ = getProduct<pat::TriggerEvent>(event,hltEventLabel_); 
+  event.getByLabel(hltEventLabel_, triggerEventH_);
 
-  //passTriggersCut();
+  if (!passTriggersCut())
+    return;
   tabulateEvent(iCut, weight_); ++iCut;
+
+  if( !passZptCut  (zCand_, minZpt_) ) return;
+  tabulateEvent(iCut, weight_); ++iCut;
+
+  fillGoodZHistos();
+
+  if( !passZptCut(vCand_, minVpt_) ) return;
+  tabulateEvent(iCut, weight_); ++iCut;
+
+  if (debug_) cout << "Good V from jet" << endl;
+  fillGoodHadVHistos();
 
 
   //AllCuts
