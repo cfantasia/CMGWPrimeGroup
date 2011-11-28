@@ -44,9 +44,6 @@ EWKWZCuts = cms.vstring(
     "MinNLeptons",
     
     "ValidZ", 
-#    "ZMass", 
-#    "ZLepTrigMatch",
-#    "ZLepPt",
     "HLT", 
     "NumZs", 
     
@@ -60,9 +57,6 @@ WprimeWZCuts = cms.vstring(
     "MinNLeptons",
     
     "ValidZ", 
-#    "ZMass", 
-#    "ZLepTrigMatch",
-#    "ZLepPt",
     "HLT", 
     "NumZs", 
     
@@ -72,15 +66,13 @@ WprimeWZCuts = cms.vstring(
 
     "ValidWZCand",   
     "Ht", 
-#    "Zpt", 
-#    "Wpt",
-
-#    "AllCuts"
     )
 WZFakeElecCuts = cms.vstring(
     "NoCuts", 
-    "HLT",
+    "MinNLeptons",
+    "MinNTightLeptons",
     "FakeEvt",
+    "HLT",
     
     "ValidW", 
     "WFlavorMuon",
@@ -92,8 +84,10 @@ WZFakeElecCuts = cms.vstring(
     )
 WZFakeMuonCuts = cms.vstring(
     "NoCuts", 
-    "HLT",
+    "MinNLeptons",
+    "MinNTightLeptons",
     "FakeEvt",
+    "HLT",
     
     "ValidW", 
     "WFlavorElec",
