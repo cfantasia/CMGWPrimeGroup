@@ -123,7 +123,7 @@ electronSelectors.WZTight.endcap.minPt = cms.untracked.double(20.)
 ####################
 jetSelectors = cms.PSet(
     Base = cms.PSet(
-       minPt = cms.untracked.double(40.),
+       minPt = cms.untracked.double(30.),
        maxEta = cms.untracked.double(2.4),
        maxNHF = cms.untracked.double(0.99),
        maxNEF = cms.untracked.double(0.99),
