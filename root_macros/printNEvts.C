@@ -1,4 +1,4 @@
-//Usage: root -b -q 'printNEvts.C+(file, useData)'
+//Usage: root -b -q 'printNEvts.C+(file, evtType)'
 
 #include <vector>
 #include "THStack.h"
@@ -48,11 +48,13 @@ printNEvts(string infile, int evtType=-1){
   //////////////////////////////
 
   vector<pair<string, string> > levels;
-  levels.push_back(make_pair("NoCuts", "Preselection"));
-  levels.push_back(make_pair("ValidZ", "Z Selection"));
-  //levels.push_back(make_pair("ValidW", "W Selection"));
-  //levels.push_back(make_pair("MET", "\\MET"));
-  //levels.push_back(make_pair("ValidWZCand", "WZ"));
+  if(evtType == -1){
+    levels.push_back(make_pair("NoCuts", "Preselection"));
+    levels.push_back(make_pair("ValidZ", "Z Selection"));
+  }
+  levels.push_back(make_pair("ValidW", "W Selection"));
+  levels.push_back(make_pair("MET", "\\MET"));
+  levels.push_back(make_pair("ValidWZCand", "WZ"));
 
   cout<<" Sample ";
   for(unsigned level=0; level<levels.size(); ++level) cout<<" & "<<levels[level].second;
@@ -64,20 +66,25 @@ printNEvts(string infile, int evtType=-1){
     for(unsigned level=0; level<levels.size(); ++level){
       float tot = 0;
       for(unsigned subsam=0; subsam<Samples[i].first.size(); ++subsam){
-        string hist_name = Samples[i].first[subsam] + "/hEvtType_" + levels[level].first;
-        TH1F* hist = (TH1F*) f->Get(hist_name.c_str()); 
-        if(!hist){
-          cout<<"\n\nDidn't find histo "<<hist_name<<endl;
-          abort();
+        if(evtType == -1){
+          string hist_name = Samples[i].first[subsam] + "/hNumEvts";
+          TH1F* hist = (TH1F*) f->Get(hist_name.c_str());
+          int bin = hist->GetXaxis()->FindBin(levels[level].first.c_str());
+          tot += hist->GetBinContent(bin);
+          //tot += hist->Integral();
+        }else{
+          string hist_name = Samples[i].first[subsam] + "/hEvtType_" + levels[level].first;
+          TH1F* hist = (TH1F*) f->Get(hist_name.c_str()); 
+          if(!hist){
+            cout<<"\n\nDidn't find histo "<<hist_name<<endl;
+            abort();
+          }
+          tot += hist->GetBinContent(evtType+1);//underflow
         }
-      
-        tot += (evtType == -1) ? 
-          hist->Integral() :
-          hist->GetBinContent(evtType+1);//underflow
 
-      }
+      }//loop over subsamples
       cout<<" & "<<tot;
-    }
+    }//loop over cuts
     cout<<" \\\\ \\hline"<<endl;
-  }
+  }//loop over samples
 }
