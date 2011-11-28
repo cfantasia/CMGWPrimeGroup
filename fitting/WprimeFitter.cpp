@@ -31,7 +31,7 @@ WprimeFitter::WprimeFitter(channel ch)
 
 void WprimeFitter::init()
 {
-  NpseudoExp_ = 0; scale_factor_ = -1; //runFits_ = false; 
+  NpseudoExp_ = 0; //runFits_ = false; 
   bgd_option_ = 1; backgroundModeled_ = false;
 
   for(unsigned i = 0; i != Nsignal_points; ++i)
@@ -45,10 +45,10 @@ void WprimeFitter::init()
 
   // will need setter methods for these parameters...
   fXMIN = 220; fXMAX = 2500;
-  bXMIN = 220; bXMAX = 1500;
+  bXMIN = 220; bXMAX = 1200;
   pXMIN = fXMIN; pXMAX = 2500;
   XMIN = 0; XMAX = 2500;
-  rXMIN = -600; rXMAX = 600;
+  rXMIN = -400; rXMAX = 400;
 
   switch(channel_)
     {
@@ -166,8 +166,6 @@ void WprimeFitter::run()
   int Nmax = Nsignal_points;
   if(oneMassPointOnly_)Nmax = 1;
 
-  assert(scale_factor_ > 0);
-
   initFit();
 
   ofstream limits, tracking;
@@ -224,7 +222,7 @@ void WprimeFitter::run()
 	if(sig_i==0) break;
 	else{
 	  cl_test = 1 - LLR[sig_i]->Integral(1, LLR[sig_i]->FindBin(Zexpected)+1)/LLR[sig_i]->Integral();
-	  cout << "*** 1 - P_tail(Zdata) = " << 100.0*cl_test << "% CL for scale_factor = " 
+	  cout << "*** 1 - P_tail(" << Zexpected <<") = " << 100.0*cl_test << "% CL for scale_factor = " 
 	       << scale_factor << " ***" << endl << endl;
 	  tracking << WprimeMass[sig_i] << '\t' << cl_test << '\t' << scale_factor << endl;
 	}
@@ -332,12 +330,12 @@ void WprimeFitter::getLLR()
 	
 	int bin = LLR[sig_i]->FindBin(Zexpected);
 	cl = 1 - LLR[sig_i]->Integral(1, bin+1)/LLR[sig_i]->Integral();
-	cout << ", Mean = " << LLR[sig_i]->GetMean();
-	cout << ", 1 - P_tail(Zdata) = " << 100.0*cl << "% CL" << endl;       
+	cout << ", 1 - P_tail("<< Zexpected << ") = " << 100.0*cl << "% CL"
+	     << endl;       
     } // loop over mass points
-
+  
   lg->Draw();
-
+  
   cout << endl;
 
   for(unsigned sig_i = 0; sig_i != Nmax; ++sig_i)
