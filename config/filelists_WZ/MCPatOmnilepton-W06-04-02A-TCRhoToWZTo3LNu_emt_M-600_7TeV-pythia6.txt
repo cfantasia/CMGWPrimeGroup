@@ -2,6 +2,7 @@
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0010.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0015.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0035.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0045.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0055.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0110.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0125.root
@@ -13,7 +14,9 @@
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0230.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0245.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0250.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0265.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0275.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0300.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0325.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0330.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0335.root
@@ -23,16 +26,22 @@
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0370.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0380.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0385.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0405.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0410.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0460.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0480.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0485.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0515.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0545.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0580.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0590.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0610.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0625.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0635.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0640.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0655.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0660.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0675.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0685.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0695.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0705.root
@@ -40,5 +49,6 @@
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0720.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0735.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0765.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0775.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0790.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-600_7TeV-pythia6-0795.root

@@ -3,6 +3,7 @@
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0020.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0040.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0075.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0085.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0090.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0105.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0115.root
@@ -10,6 +11,8 @@
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0145.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0150.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0165.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0180.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0205.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0215.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0225.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0245.root
@@ -22,6 +25,7 @@
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0360.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0380.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0390.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0405.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0430.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0440.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0445.root
@@ -38,9 +42,13 @@
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0630.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0635.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0640.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0655.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0665.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0670.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0690.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0710.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0715.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0720.root
 /store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0775.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0785.root
+/store/user/jklukas/MC-W06-04-02A/MCPatOmnilepton-W06-04-02A-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6/patTuple_cfg-step3-step2-TCRhoToWZTo3LNu_emt_M-400_7TeV-pythia6-0790.root
