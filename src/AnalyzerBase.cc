@@ -755,8 +755,9 @@ void AnalyzerBase::run()
   unsigned i_sample = 1;
   vector<wprime::InputFile>::iterator it;
 
+  //Loop Over input files
   for(it = inputFiles_.begin(); it != inputFiles_.end(); ++it, ++i_sample){
-    int ievt=0;  
+    int ievt=0;//Evts checked in this input file  
     cout << "\n Opening sample " << it->samplename 
          << " (" << it->description << ")... "<<std::flush;
     fwlite::ChainEvent ev(it->pathnames);
@@ -765,16 +766,16 @@ void AnalyzerBase::run()
   
     cout << " Opened sample " << it->samplename << " with " << it->Nact_evt
          << " events (Input file #" << i_sample << " out of " << inputFiles_.size()
-         << " samples) " << endl << endl;
-    
+         << " samples) " << endl << endl;   
     cout << std::fixed << std::setprecision(2);
-    beginFile(it);
+
+    beginFile(it);//Set up for input file
 
     for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){// loop over events
       edm::EventBase const & event = ev;
 
       // skip event if maximal number of events per input file is reached 
-      if(maxEvents_>0 &&  ievt > maxEvents_) continue;
+      if(maxEvents_>0 &&  ievt > maxEvents_) break;
       
       // simple event counter
       if(reportAfter_!=0 ? (ievt>0 && ievt%reportAfter_==0) : false) 
@@ -783,6 +784,7 @@ void AnalyzerBase::run()
              << " (Total events processed: " << ievt_all 
              << ", non-certified/skipped: " << ievt_skipped << ") " << endl;
       
+      //skip event if not in JSON
       if(useJSON_ && wprimeUtil_->runningOnData() &&
          !jsonContainsEvent (jsonVector, event))
       {
@@ -792,10 +794,10 @@ void AnalyzerBase::run()
       else
         ++ievt_all;
       
-      setEventWeight(event);
-      eventLoop(event);
+      setEventWeight(event); //PU Reweighting
+      eventLoop(event); //Analyze each vent
     } // loop over events
-    endFile(it, outLogFile_);
+    endFile(it, outLogFile_);//Finish up with this input sample
     
   } // loop over input files
   cout<<"Done with Input Samples\n";
@@ -805,7 +807,7 @@ void AnalyzerBase::run()
   h->SetBinContent(1, wprimeUtil_->getLumi_ipb());
   h->SetBinContent(2, 1);//counter indicates number of files merged
   
-  endAnalysis(outLogFile_);
+  endAnalysis(outLogFile_);//Finish up with analsis
 
 }
 
