@@ -44,7 +44,6 @@ class WprimeFitter{
 
   void setNpseudoExperiments(unsigned N){NpseudoExp_ = N;}
   //  void doRunFits(bool flag){runFits_ = flag;}
-  void setScaleFactor(float factor){scale_factor_ = factor;}
   void doOneMassPointOnly(bool flag){oneMassPointOnly_ = flag;}
 
   // background option = 1 -> 1/(x+b)^c (DEFAULT)
@@ -62,7 +61,6 @@ class WprimeFitter{
   bool backgroundModeled_;
   unsigned NpseudoExp_;
   bool runFits_;
-  float scale_factor_;
   bool oneMassPointOnly_;
   float lumi_ipb_;
   int bgd_option_;
