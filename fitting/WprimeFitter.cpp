@@ -246,26 +246,6 @@ void WprimeFitter::run()
       BgdPdf->plotOn(xframe3, Name("bgd_fit"));
       chi2_H0 = xframe3->chiSquare()*(Nbins-1);
      
-#if 0
-      if(bgd_option_ == 1){
-	RooRealVar b("b", "b", 1000, -10000, 10000);
-	RooRealVar c("c", "c", 15, -100000, 100000);
-	RooBgdPdf bgd_tmp("bgd_tmp", "bgd_tmp", *mt, b, c);
-	bgd_tmp.fitTo(*mt_DATA, Range("mt_datafit"), Save());
-	bgd_tmp.plotOn(xframe3, Name("bgd_fit"));
-	chi2_H0 = xframe3->chiSquare()*(Nbins-1);
-      }
-      else if(bgd_option_ == 2){
-	RooRealVar b("b", "b", -350, -10000, 10000);
-	RooRealVar c("c", "c", 10000, -100000, 100000);
-	RooRealVar d("d", "d", 3, -100000, 100000);
-	RooBgdPdf2 bgd_tmp("bgd_tmp", "bgd_tmp", *mt, b, c, d);
-	bgd_tmp.fitTo(*mt_DATA, Range("mt_datafit"), Save());
-	bgd_tmp.plotOn(xframe3, Name("bgd_fit"));
-	chi2_H0 = xframe3->chiSquare()*(Nbins-1);
-      }
-#endif
-
       tracking << WprimeMass[sig_i] << '\t' << chi2_H0 << '\t' << chi2_H1 <<endl;
 
       Z_observed = chi2_H0 > chi2_H1 ? sqrt(chi2_H0 - chi2_H1) : 0.;
