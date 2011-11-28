@@ -1,0 +1,5 @@
+/pnfs/sprace.org.br/data/cms/store/user/fladias/V350-Summer11_WPrime_m1000/patTuple_2_1_WWE.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/V350-Summer11_WPrime_m1000/patTuple_1_1_Jj1.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/V350-Summer11_WPrime_m1000/patTuple_5_1_bg2.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/V350-Summer11_WPrime_m1000/patTuple_3_1_2Sv.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/V350-Summer11_WPrime_m1000/patTuple_4_1_Uo4.root
