@@ -242,11 +242,11 @@ void WprimeFitter::run()
       SigBgdPdf.plotOn(xframe3, Name("sigbgd_fit"));
       chi2_H1 = xframe3->chiSquare()*(Nbins-2);
 
-      // BgdPdf->fitTo(*mt_DATA, Range("mt_datafit"), Save());
-      // BgdPdf->plotOn(xframe3, Name("bgd_fit"));
-      // chi2_H0 = xframe3->chiSquare()*(Nbins-1);
+      BgdPdf->fitTo(*mt_DATA, Range("mt_datafit"), Save());
+      BgdPdf->plotOn(xframe3, Name("bgd_fit"));
+      chi2_H0 = xframe3->chiSquare()*(Nbins-1);
      
-#if 1
+#if 0
       if(bgd_option_ == 1){
 	RooRealVar b("b", "b", 1000, -10000, 10000);
 	RooRealVar c("c", "c", 15, -100000, 100000);
