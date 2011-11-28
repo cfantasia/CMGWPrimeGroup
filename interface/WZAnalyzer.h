@@ -103,6 +103,7 @@ public:
 
 // +++++++++++++++++++General Cut values
   uint minNLeptons_;
+  uint minNTightLeptons_;
   uint maxNumZs_;
   float minLeadPt_;
   float minMET_;
