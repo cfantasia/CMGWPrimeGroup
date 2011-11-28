@@ -186,6 +186,9 @@ void WprimeFitter::run()
       // signal modeling: JacobianRBW
       JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
 
+      RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
+			   sig_model, *(resolution[sig_i]));
+      
       float Z_observed = 0, chi2_H0 = 0, chi2_H1 = 0;
       const int Nsteps=3;
       int step_i=0;
@@ -201,8 +204,6 @@ void WprimeFitter::run()
 
 	Nsig = sig_hist[sig_i]->Integral(0, Nbins+1)/scale_factor;
 
-	RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
-			     sig_model, *(resolution[sig_i]));
 	RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
       
 	RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
@@ -233,8 +234,6 @@ void WprimeFitter::run()
 
       //Duplication of code here. It's ugly, but it works.
       RooPlot* xframe3 = mt->frame(Range("mt_datafit"), Title("Data transverse mass"));
-      RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
-			   sig_model, *(resolution[sig_i]));
       RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
       RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
 			  RooArgList(nsig, *nbgd));
@@ -242,6 +241,12 @@ void WprimeFitter::run()
       mt_DATA->plotOn(xframe3, Name("data"));
       SigBgdPdf.plotOn(xframe3, Name("sigbgd_fit"));
       chi2_H1 = xframe3->chiSquare()*(Nbins-2);
+
+      // BgdPdf->fitTo(*mt_DATA, Range("mt_datafit"), Save());
+      // BgdPdf->plotOn(xframe3, Name("bgd_fit"));
+      // chi2_H0 = xframe3->chiSquare()*(Nbins-1);
+     
+#if 1
       if(bgd_option_ == 1){
 	RooRealVar b("b", "b", 1000, -10000, 10000);
 	RooRealVar c("c", "c", 15, -100000, 100000);
@@ -259,6 +264,7 @@ void WprimeFitter::run()
 	bgd_tmp.plotOn(xframe3, Name("bgd_fit"));
 	chi2_H0 = xframe3->chiSquare()*(Nbins-1);
       }
+#endif
 
       tracking << WprimeMass[sig_i] << '\t' << chi2_H0 << '\t' << chi2_H1 <<endl;
 
