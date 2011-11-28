@@ -67,15 +67,17 @@ process.WprimeAnalyzer.Cuts = cms.vstring(
 
         "ValidZ",
         "ZMass",
-        "Zpt",
 
         "ValidV",
         "VMass",
-        "VPt",
 
         "ValidVZ",
               
         "HLT",
+
+        "Zpt",
+        "VPt",
+        
         "AllCuts")
 
 process.WprimeAnalyzer.LooseElectronType = cms.untracked.string("WZLoose")
