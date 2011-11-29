@@ -3,7 +3,7 @@
   TFile MCFile("MCSummer11S4PUDist.root", "recreate");
 
   //Intended distribution
-  Double_t probdistFlat10[35] = {
+  Double_t probdistFlat10[25] = {
     0.0698146584,
     0.0698146584,
     0.0698146584,
@@ -29,19 +29,9 @@
     0.0002229748,
     0.0001028162,
     4.58337152809607E-05,
-    0.,
-    0.,
-    0.,
-    0.,
-    0.,
-    0.,
-    0.,
-    0.,
-    0.,
-    0.
   };
-  TH1D hprobdistFlat10("probdistFlat10", "probdistFlat10", 36, -0.5, 35.5);
-  for(int i=0; i<36; ++i) hprobdistFlat10.Fill(i, probdistFlat10[i]);
+  TH1D hprobdistFlat10("probdistFlat10", "probdistFlat10", 25, -0.5, 24.5);
+  for(int i=0; i<25; ++i) hprobdistFlat10.Fill(i, probdistFlat10[i]);
   
   //Average of +1, 0, -1 BX
   Double_t PoissonIntDist[25] = {
@@ -142,8 +132,8 @@
     0.000893794
   };
 */
-  TH1F hPoissonOneXDist("PoissonOneXDist", "PoissonOneXDist", 36, -0.5, 35.5);
-  for(int i=0; i<36; ++i) hPoissonOneXDist.Fill(i, PoissonOneXDist[i]);
+  TH1F hPoissonOneXDist("PoissonOneXDist", "PoissonOneXDist", 35, -0.5, 34.5);
+  for(int i=0; i<35; ++i) hPoissonOneXDist.Fill(i, PoissonOneXDist[i]);
 
   MCFile.Write();
   MCFile.Close();
