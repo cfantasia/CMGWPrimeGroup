@@ -47,7 +47,7 @@ void WprimeFitter::init()
   fXMIN = 220; fXMAX = 2500;
 
   if(channel_ == wprime_MuMET)
-    {bXMIN = 380; bXMAX = 1500;} // works best with bgd-option=1
+    {bXMIN = 380; bXMAX = 1500;} // works best with bgd-option=1, for bgd-option=2 use range (380,900)
   else if (channel_ == wprime_ElMET)
     {bXMIN = 220; bXMAX = 1500;}// works fine with bgd-option=1 
 
@@ -241,6 +241,8 @@ void WprimeFitter::run()
       
       if(sig_i==0)continue;
       
+      //      xsec_lep[sig_i] /= scale_factor;
+
       RooPlot* xframe3 = mt->frame(Range("mt_datafit"), Title("Data transverse mass"));
       RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
       RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
