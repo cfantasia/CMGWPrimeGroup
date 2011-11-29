@@ -43,7 +43,7 @@ class WprimeFitter{
   ~WprimeFitter();
 
   void setNpseudoExperiments(unsigned N){NpseudoExp_ = N;}
-  //  void doRunFits(bool flag){runFits_ = flag;}
+  void doRunFits(bool flag){runFits_ = flag;}
   void doOneMassPointOnly(bool flag){oneMassPointOnly_ = flag;}
 
   // background option = 1 -> 1/(x+b)^c (DEFAULT)
