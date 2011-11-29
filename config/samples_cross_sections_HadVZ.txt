@@ -85,6 +85,76 @@ subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V350-Summer11_RSZZeejj_2000.txt
 Nprod_evt = 50935
 
+samplename = Summer11_WPrimeZZlljj_300
+description = Summer11_WPrimeZZlljj_300
+x-section = 1.287
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V350-Summer11_WPrime_m300.txt
+Nprod_evt = 33000
+
+samplename = Summer11_WPrimeZZlljj_400
+description = Summer11_WPrimeZZlljj_400
+x-section = 0.4284
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V350-Summer11_WPrime_m400.txt
+Nprod_evt = 33000
+
+samplename = Summer11_WPrimeZZlljj_600
+description = Summer11_WPrimeZZlljj_600
+x-section = 0.07461
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V350-Summer11_WPrime_m600.txt
+Nprod_evt = 32208
+
+samplename = Summer11_WPrimeZZlljj_700
+description = Summer11_WPrimeZZlljj_700
+x-section = 0.03769
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V350-Summer11_WPrime_m700.txt
+Nprod_evt = 33000
+
+samplename = Summer11_WPrimeZZlljj_800
+description = Summer11_WPrimeZZlljj_800
+x-section = 0.02024
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V350-Summer11_WPrime_m800.txt
+Nprod_evt = 33000
+
+samplename = Summer11_WPrimeZZlljj_900
+description = Summer11_WPrimeZZlljj_900
+x-section = 0.01168
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V350-Summer11_WPrime_m900.txt
+Nprod_evt = 32604
+
+samplename = Summer11_WPrimeZZlljj_1000
+description = Summer11_WPrimeZZlljj_1000
+x-section = 0.006952
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V350-Summer11_WPrime_m1000.txt
+Nprod_evt = 32208
+
+samplename = Summer11_WPrimeZZlljj_1200
+description = Summer11_WPrimeZZlljj_1200
+x-section = 0.002699
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V350-Summer11_WPrime_m1200.txt
+Nprod_evt = 33000
+
+samplename = Summer11_WPrimeZZlljj_1400
+description = Summer11_WPrimeZZlljj_1400
+x-section = 0.001132
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V350-Summer11_WPrime_m1400.txt
+Nprod_evt = 30228
+
+samplename = Summer11_WPrimeZZlljj_1500
+description = Summer11_WPrimeZZlljj_1500
+x-section = 0.0007456
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V350-Summer11_WPrime_m1500.txt
+Nprod_evt = 30624
+
 samplename = Summer11_DYJetsToLL_PtZ100
 description = Summer11_DYJetsToLL_PtZ100
 x-section = 25.1 
@@ -137,126 +207,126 @@ Nprod_evt = 6382667
 samplename = data_DoubleMu-Run2011A-May10ReReco-v1
 description = data_DoubleMu-Run2011A-May10ReReco-v1
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleMu-Run2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu-Run2011A-May10ReReco-v1
 description = data_SingleMu-Run2011A-May10ReReco-v1
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleMu-Run2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleElectron-Run2011A-May10ReReco-v1
 description = data_DoubleElectron-Run2011A-May10ReReco-v1
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleElectron-Run2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleElectron-Run2011A-May10ReReco-v1
 description = data_SingleElectron-Run2011A-May10ReReco-v1
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleElectron-Run2011A-May10ReReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleMu-Run2011A-PromptReco-v4
 description = data_DoubleMu-Run2011A-PromptReco-v4
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleMu-Run2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu-Run2011A-PromptReco-v4
 description = data_SingleMu-Run2011A-PromptReco-v4
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleMu-Run2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleElectron-Run2011A-PromptReco-v4
 description = data_DoubleElectron-Run2011A-PromptReco-v4
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleElectron-Run2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleElectron-Run2011A-PromptReco-v4
 description = data_SingleElectron-Run2011A-PromptReco-v4
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleElectron-Run2011A-PromptReco-v4.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleMu-Run2011A-05Aug2011-v1
 description = data_DoubleMu-Run2011A-05Aug2011-v1
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleMu-Run2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu-Run2011A-05Aug2011-v1
 description = data_SingleMu-Run2011A-05Aug2011-v1
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleMu-Run2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleElectron-Run2011A-05Aug2011-v1
 description = data_DoubleElectron-Run2011A-05Aug2011-v1
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleElectron-Run2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleElectron-Run2011A-05Aug2011-v1
 description = data_SingleElectron-Run2011A-05Aug2011-v1
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleElectron-Run2011A-05Aug2011-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleMu-Run2011A-PromptReco-v6
 description = data_DoubleMu-Run2011A-PromptReco-v6
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleMu-Run2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleMu-Run2011A-PromptReco-v6
 description = data_SingleMu-Run2011A-PromptReco-v6
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleMu-Run2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleElectron-Run2011A-PromptReco-v6
 description = data_DoubleElectron-Run2011A-PromptReco-v6
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleElectron-Run2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
 
 samplename = data_SingleElectron-Run2011A-PromptReco-v6
 description = data_SingleElectron-Run2011A-PromptReco-v6
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-SingleElectron-Run2011A-PromptReco-v6.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleMu-Run2011B-PromptReco-v1
 description = data_DoubleMu-Run2011B-PromptReco-v1
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleMu-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
 samplename = data_DoubleElectron-Run2011B-PromptReco-v1
 description = data_DoubleElectron-Run2011B-PromptReco-v1
 x-section = 1
-subdir = dcache:/pnfs/cms/WAX/11
+subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/DiLeptonJet-V360A-DoubleElectron-Run2011B-PromptReco-v1.txt
 Nprod_evt = 9999999
 
