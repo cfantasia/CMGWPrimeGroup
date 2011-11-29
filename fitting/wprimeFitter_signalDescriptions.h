@@ -15,6 +15,13 @@ const string desc[Nsignal_points] = {"SM", "W' (1.4 TeV)"};
 //const float WprimeMass[Nsignal_points] = {2500, 1000, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200};
 const float WprimeMass[Nsignal_points] = {2500, 1400};
 
+// in pb
+//const float xsec[Nsignal_points] = {
+//  0,0.8856, 0.3461, 0.2221, 0.1440, 0.09485, 0.0633, 0.04237, 0.02851, 0.01940,
+// 0.01346, 0.009373, 0.006605};
+const float xsec[Nsignal_points] = {0, 0.1440};
+
+
 // SSM cross-sections for leptonic channels on pb;
 // these will be divided by scale factor
 // first point corresponds to bgd-only case: cross-section = 0
