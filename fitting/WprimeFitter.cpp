@@ -12,7 +12,7 @@ WprimeFitter::WprimeFitter(channel ch)
     }
   
   init();
-  
+  runFits_ = true; 
   getInputHistograms();
   
   mt = new RooRealVar("Mt", "M_{T} GeV/c^{2}", pXMIN, pXMAX);
@@ -31,7 +31,7 @@ WprimeFitter::WprimeFitter(channel ch)
 
 void WprimeFitter::init()
 {
-  NpseudoExp_ = 0; //runFits_ = false; 
+  NpseudoExp_ = 0; 
   bgd_option_ = 1; backgroundModeled_ = false;
   
   for(unsigned i = 0; i != Nsignal_points; ++i)
@@ -49,7 +49,7 @@ void WprimeFitter::init()
   if(channel_ == wprime_MuMET)
     {bXMIN = 380; bXMAX = 1500;} // works best with bgd-option=1
   else if (channel_ == wprime_ElMET)
-    {bXMIN = 360; bXMAX = 1500;}// works fine with bgd-option=1 or 2
+    {bXMIN = 220; bXMAX = 1500;}// works fine with bgd-option=1 
 
   if(fXMIN < bXMIN)fXMIN = bXMIN;
 
@@ -173,6 +173,8 @@ void WprimeFitter::run()
   int Nmax = Nsignal_points;
   if(oneMassPointOnly_)Nmax = 1;
   
+  
+  if(!runFits_)return;
   initFit();
   
   ofstream limits, tracking;
