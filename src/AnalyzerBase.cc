@@ -763,12 +763,12 @@ void AnalyzerBase::run()
     fwlite::ChainEvent ev(it->pathnames);
     it->Nact_evt = ev.size();
     cout<<" Done." << endl;
-    assert(it->Nact_evt <= it->Nprod_evt);
   
     cout << " Opened sample " << it->samplename << " with " << it->Nact_evt
          << " events (Input file #" << i_sample << " out of " << inputFiles_.size()
          << " samples) " << endl << endl;   
     cout << std::fixed << std::setprecision(2);
+    assert(it->Nact_evt <= it->Nprod_evt);
 
     beginFile(it);//Set up for input file
 
