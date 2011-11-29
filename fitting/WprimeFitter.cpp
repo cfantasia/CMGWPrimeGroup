@@ -45,11 +45,14 @@ void WprimeFitter::init()
   
   // will need setter methods for these parameters...
   fXMIN = 220; fXMAX = 2500;
-  if(channel_ != wprime_MuMET)
-    {bXMIN = 380; bXMAX = 900;}
-  else if (channel_ != wprime_ElMET)
-    {bXMIN = 220; bXMAX = 1200;}
-  
+
+  if(channel_ == wprime_MuMET)
+    {bXMIN = 380; bXMAX = 1500;} // works best with bgd-option=1
+  else if (channel_ == wprime_ElMET)
+    {bXMIN = 360; bXMAX = 1500;}// works fine with bgd-option=1 or 2
+
+  if(fXMIN < bXMIN)fXMIN = bXMIN;
+
   pXMIN = fXMIN; pXMAX = 2500;
   XMIN = 0; XMAX = 2500;
   rXMIN = -400; rXMAX = 400;
@@ -170,6 +173,7 @@ void WprimeFitter::run()
   int Nmax = Nsignal_points;
   if(oneMassPointOnly_)Nmax = 1;
   
+  return;
   initFit();
   
   ofstream limits, tracking;
@@ -449,16 +453,18 @@ void WprimeFitter::modelBackground()
   
   //////////////////////////////////
   //Estimation scale factor for MC.
-  double Nbgd220_500  
-    = bgd_hist ->Integral( bgd_hist->FindBin(220),bgd_hist->FindBin(500) );
-  double Ndata220_500 
-    = data_hist->Integral( data_hist->FindBin(220),data_hist->FindBin(500) );
+  float xmin = 220; float xmax = 500;
+  if(xmin < bXMIN)xmin = bXMIN;
+  double Nbgdsideband  
+    = bgd_hist ->Integral( bgd_hist->FindBin(xmin),bgd_hist->FindBin(xmax) );
+  double Ndatasideband 
+    = data_hist->Integral( data_hist->FindBin(xmin),data_hist->FindBin(xmax) );
   
-  //cout<<" _chang Nbgd220_500 "<<Nbgd220_500 <<" Ndata220_500 "<< Ndata220_500 	<<endl;
+  //cout<<" _chang Nbgdsideband "<<Nbgdsideband <<" Ndatasideband "<< Ndatasideband 	<<endl;
   //cout<<" _chang before bgd_hist over 220GeV "	<<bgd_hist->Integral(bgd_hist->FindBin(220),bgd_hist->GetXaxis()->GetNbins()+1) <<endl;
   //cout<<" _chang data over 220GeV "        	<<data_hist->Integral(data_hist->FindBin(220),data_hist->GetXaxis()->GetNbins()+1)<<endl;
   
-  float sf_mcdata = Nbgd220_500/Ndata220_500;
+  float sf_mcdata = Nbgdsideband/Ndatasideband;
   
   //cout<<" _chang Scale factor "<< sf_mcdata <<endl;
   
@@ -476,8 +482,8 @@ void WprimeFitter::modelBackground()
 
 void WprimeFitter::modelBackgroundOption1()
 {
-  RooRealVar b("b", "b", 1000, -10000, 10000);
-  RooRealVar c("c", "c", 15, -100000, 100000);
+  RooRealVar b("b", "b", 1000, -100000, 100000);
+  RooRealVar c("c", "c", 15, -1000000, 1000000);
   RooBgdPdf bgd_tmp("bgd_tmp", "bgd_tmp", *mt, b, c);
   
   RooPlot* xframe2 = mt->frame(Range("mt_fit"), Title("Bgd transverse mass"));
@@ -490,7 +496,7 @@ void WprimeFitter::modelBackgroundOption1()
   cout << " Bgd mt fit: chi2/ndof = " << xframe2->chiSquare() << endl;
   
   bgd_tmp.paramOn(xframe2,Layout(0.55));
-  xframe2->SetMaximum(10000); xframe2->SetMinimum(0.001);
+  xframe2->SetMaximum(10000); xframe2->SetMinimum(0.1);
   new TCanvas(); gPad->SetLogy();
   
   xframe2->Draw();
@@ -508,8 +514,8 @@ void WprimeFitter::modelBackgroundOption1()
 
 void WprimeFitter::modelBackgroundOption2()
 {
-  RooRealVar b("b", "b", -350, -10000, 10000);
-  RooRealVar c("c", "c", 10000, -100000, 100000);
+  RooRealVar b("b", "b", -500, -100000, 100000);
+  RooRealVar c("c", "c", 100000, -1000000, 1000000);
   RooRealVar d("d", "d", 3, -100000, 100000);
   RooBgdPdf2 bgd_tmp("bgd_tmp", "bgd_tmp", *mt, b, c, d);
   
@@ -523,7 +529,7 @@ void WprimeFitter::modelBackgroundOption2()
   cout << " Bgd mt fit: chi2/ndof = " << xframe2->chiSquare() << endl;
   
   bgd_tmp.paramOn(xframe2,Layout(0.55));
-  xframe2->SetMaximum(10000); xframe2->SetMinimum(0.001);
+  xframe2->SetMaximum(10000); xframe2->SetMinimum(0.1);
   new TCanvas();gPad->SetLogy();
   
   xframe2->Draw();
