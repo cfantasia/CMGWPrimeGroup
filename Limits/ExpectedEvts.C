@@ -45,7 +45,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
   vector<string> BkgSamples; 
   vector<string> dataSamples;
 
-  string paramString = "SignalCode:Mass:minWindow:maxWindow";
+  string paramString = "SignalCode:Mass:nGen:bkgSysErr:minWindow:maxWindow";
   string treeName, histName, varName;
   if(inName.find("WprimeWZ") != string::npos){
     BkgSamples.push_back("WWTo2L2Nu");
@@ -113,36 +113,39 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
   double n = tEvts->GetSelectedRows(); 
   if( debug_) cout<<"Found "<<n<<" samples "<<endl;
   for(int isample=0; isample<n; ++isample){
-    const int SignalCode = tEvts->GetVal(0)[isample];
+    int treeIdx = 0;
+    const int SignalCode = tEvts->GetVal(treeIdx++)[isample];
     const vector<string> SignalNames = SampleName(SignalCode);
-    const double mass = tEvts->GetVal(1)[isample];
-    double minWindow = tEvts->GetVal(2)[isample];
-    double maxWindow = tEvts->GetVal(3)[isample];
+    const double mass = tEvts->GetVal(treeIdx++)[isample];
+    const double nGen = tEvts->GetVal(treeIdx++)[isample];
+    const double bkgSysErr = tEvts->GetVal(treeIdx++)[isample];
+    double minWindow = tEvts->GetVal(treeIdx++)[isample];
+    double maxWindow = tEvts->GetVal(treeIdx++)[isample];
 
     string cuts;
     if(inName.find("WprimeWZ") != string::npos){ 
-      const double minHt  = tEvts->GetVal(4)[isample];
-      const double minZpt = tEvts->GetVal(5)[isample];
-      const double minWpt = tEvts->GetVal(6)[isample];
+      const double minHt  = tEvts->GetVal(treeIdx++)[isample];
+      const double minZpt = tEvts->GetVal(treeIdx++)[isample];
+      const double minWpt = tEvts->GetVal(treeIdx++)[isample];
       
       cuts = Form("(WZMass > %.0f && WZMass < %.0f && Ht > %.0f && Zpt > %.0f && Wpt > %.0f)*weight",
                   minWindow, maxWindow, minHt, minZpt, minWpt);
     }else if(inName.find("HadVZ") != string::npos){
-      const double minZpt = tEvts->GetVal(4)[isample];
-      const double minVpt = tEvts->GetVal(5)[isample];
+      const double minZpt = tEvts->GetVal(treeIdx++)[isample];
+      const double minVpt = tEvts->GetVal(treeIdx++)[isample];
       cuts = Form("(VZMass > %.0f && VZMass < %.0f && Zpt > %.0f && Vpt > %.0f)*weight",
                   minWindow, maxWindow, minZpt, minVpt);
     }
   
     if(debug_){
-      for(int i=0; i<SignalNames.size(); ++i) cout<<"signalName: "<<SignalNames[i]<<endl;
+      for(unsigned i=0; i<SignalNames.size(); ++i) cout<<"signalName: "<<SignalNames[i]<<endl;
       if(!useHists_)
         cout<<"Cuts are "<<cuts<<endl;
     }
       
     //Get Histograms
     vector<string> allSamples(BkgSamples);  
-    for(int i=0; i<SignalNames.size(); ++i) allSamples.push_back(SignalNames[i]);
+    for(unsigned i=0; i<SignalNames.size(); ++i) allSamples.push_back(SignalNames[i]);
     TH1F *bkghist, *datahist, *allhist;
     if(useHists_){
       bkghist = get_sum_of_hists(f, BkgSamples, histName, 0, 1.);
@@ -200,12 +203,13 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     double DataEvts = datahist->Integral(minBin, maxBin);
 
     if(inName.find("WprimeWZ") != string::npos){ 
-      const double ZJets = tEvts->GetVal(7)[isample];
-      const double sZJets = tEvts->GetVal(8)[isample];
+      const double  ZJets = tEvts->GetVal(treeIdx++)[isample];
+      const double sZJets = tEvts->GetVal(treeIdx++)[isample];
 
-      //Not using anymore
-      //AddDataDriven(nMCEvts, statMCEvts, ZJets, sZJets);
-      //AddDataDriven(nBkgEvts, statBkgEvts, ZJets, sZJets);
+      if(0){      //Not using anymore
+        AddDataDriven(nMCEvts, statMCEvts, ZJets, sZJets);
+        AddDataDriven(nBkgEvts, statBkgEvts, ZJets, sZJets);
+      }
     }
     if(debug_){
       cout<<"# of All Evts in Mass Window is "<<nMCEvts<<" +/- "<<statMCEvts<<" per "<<lumi<<" inv pb "<<endl;
@@ -221,7 +225,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     double xsec = XSec(SignalNames[0], mass);//Cory: this is wrong, how should i combine xsecs???
     double nGenWeighted = lumi*xsec;
     double     Eff = nSigEvts / nGenWeighted;
-    double statEff = TMath::Sqrt(Eff * (1-Eff)/nGenerated(SignalNames[0])); 
+    double statEff = TMath::Sqrt(Eff * (1-Eff)/nGen); 
 
     //Add in systematic errors for signal only (bkg now below)
     double sysMCEvts  = nSigEvts*SysErr(SignalNames[0]);
@@ -241,7 +245,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
 
       if(debug_) cout<<BkgSamples[iBkg]<<": # of Evts in Mass Window is "<<nPerHist<<" per "<<lumi<<" inv pb "<<endl;
       double sysSample = nPerHist*SysErr(BkgSamples[iBkg]);
-      double sysSampleWindow = nPerHist*BkgSysErrBySignal(SignalNames[0]);
+      double sysSampleWindow = nPerHist*bkgSysErr;
       sysSample = AddInQuad(sysSampleWindow,  sysSample);
           
       sysMCEvts  = AddInQuad(sysMCEvts,  sysSample);
