@@ -19,6 +19,8 @@ printNEvts(string infile, int evtType=-1){
   Samples.push_back(make_pair(vector<string>(1,"WWTo2L2Nu"), "$WW$"));
   Samples.push_back(make_pair(vector<string>(1,"WZJetsTo3LNu"), "$WZ$"));
 
+  cout << std::fixed << std::setprecision(1);
+    
   //total bkg
   vector<string> bkg;
   for(unsigned i=0; i<Samples.size(); ++i){
