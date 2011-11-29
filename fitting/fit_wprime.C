@@ -32,7 +32,7 @@ void fit_wprime()
 
   // background option = 1 -> 1/(x+b)^c (DEFAULT)
   // background option = 2 -> 1/(x^2 + b*x + c)^d  
-  a.setBackgroundOption(2);
+  a.setBackgroundOption(1);
 
   a.run();
 
