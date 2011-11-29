@@ -180,7 +180,7 @@ void WprimeFitter::run()
   ofstream limits, tracking;
   limits.open("limits.txt");
   tracking.open("tracking.txt");
-  limits << "Mass\tExpLimit\tObsLimit\tObsLimit+1\tObsLimit-1\tObsLimit+2\tObsLimit-2\n";
+  limits << "Mass\tObsLimit\tExpLimit\tExpLimit+1\tExpLimit-1\tExpLimit+2\tExpLimit-2\n";
   tracking << "Mass\tCL\tScaleFactor\n";
   
   for (int sig_i = 0; sig_i != Nmax; ++sig_i)
@@ -267,8 +267,11 @@ void WprimeFitter::run()
 	if(upper1sig<0 && counted_entries/total_entries>0.841) upper1sig=LLR[sig_i]->GetBinCenter(i);
 	if(upper2sig<0 && counted_entries/total_entries>0.977) upper2sig=LLR[sig_i]->GetBinCenter(i);
       }
-      limits << WprimeMass[sig_i] << '\t' << Z_observed << '\t' << median << '\t' 
-	     << upper1sig << '\t' << lower1sig << '\t' << upper2sig << '\t' << lower2sig << '\n';
+      // THIS IS WRONG; WE NEED THE scale-factors used to get these 
+      // z-points, and the corresponding cross-sections 
+      limits << WprimeMass[sig_i] << '\t' << Z_observed << '\t' << median 
+	     << '\t' << upper1sig << '\t' << lower1sig << '\t' << upper2sig 
+	     << '\t' << lower2sig << '\n';
       
     } // loop over mass points
   
