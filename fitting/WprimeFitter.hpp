@@ -122,6 +122,8 @@ class WprimeFitter{
   RooRealVar * nbgd; 
   Nexp Nevt[Nsignal_points];
 
+  RooFitResult * bgd_fr;
+
   RooRealVar * bb;
   RooRealVar * cc;
   RooRealVar * dd;
