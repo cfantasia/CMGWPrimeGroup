@@ -198,10 +198,10 @@ void WprimeFitter::run()
       RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
 			   sig_model, *(resolution[sig_i]));
       
-      float Z_observed = 0, chi2_H0 = 0, chi2_H1 = 0;
-      const int Nsteps=2;
+      float Z_observed = 0; Double_t nChi2H0 = 0, nChi2H1 = 0, dChi2 = 0;
+      const int Nsteps=3;
       int step_i=0;
-      float cl_test = 1., scale_factor=30., step_size[Nsteps]={10.,1.};
+      float cl_test = 1., scale_factor=30., step_size[Nsteps]={10.,1., 0.1};
       do{
 	if(cl_test > 0.95)
 	  scale_factor += step_size[step_i];
@@ -243,22 +243,39 @@ void WprimeFitter::run()
       
       //      xsec_lep[sig_i] /= scale_factor;
 
-      RooPlot* xframe3 = mt->frame(Range("mt_datafit"), Title("Data transverse mass"));
+      // method RooPlot::chiSquare returns chi2/(Nbins-NFITPARAM)
+      // (where Nbins: # of bins that corresponds to fitting range). Then:
+      // if nChi2H1 = chi2_H1/Nbins and nChi2H0 = chi2_H0/Nbins,
+      // delta-chi2 := chi2_H0 - chi2_H1 = (nChi2H0-nChi2H1)*Nbins
+      // where Nbins can be determined by calculating the reduced chi2 twice
+      // by varying the # of dof by one.
+      RooPlot* xframe_H1 = mt->frame(Range("mt_datafit"), Title("Data transverse mass"));
       RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
       RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
 			  RooArgList(nsig, *nbgd));
       SigBgdPdf.fitTo(*mt_DATA, Range("mt_datafit"), Save());
-      mt_DATA->plotOn(xframe3, Name("data"));
-      SigBgdPdf.plotOn(xframe3, Name("sigbgd_fit"));
-      chi2_H1 = xframe3->chiSquare()*(Nbins-2);
-      
+      mt_DATA->plotOn(xframe_H1, Name("data"));
+      SigBgdPdf.plotOn(xframe_H1, Name("sigbgd_fit"));
+      nChi2H1 = xframe_H1->chiSquare("sigbgd_fit", "data");
+      Double_t nChi2H1_b = xframe_H1->chiSquare("sigbgd_fit", "data", 1);
+
+      // function floor(x + 0.5) returns the closest integer to (float) x
+      int Nfit_bins = int (floor(nChi2H1_b/(nChi2H1_b - nChi2H1) + 0.5));
+
+      RooPlot* xframe_H0 = mt->frame(Range("mt_datafit"), Title("Data transverse mass"));
       BgdPdf->fitTo(*mt_DATA, Range("mt_datafit"), Save());
-      BgdPdf->plotOn(xframe3, Name("bgd_fit"));
-      chi2_H0 = xframe3->chiSquare()*(Nbins-1);
+      mt_DATA->plotOn(xframe_H0, Name("data"));
+      BgdPdf->plotOn(xframe_H0, Name("bgd_fit"));
+      nChi2H0 = xframe_H0->chiSquare("bgd_fit", "data");
       
-      tracking << WprimeMass[sig_i] << '\t' << chi2_H0 << '\t' << chi2_H1 <<endl;
+      cout << " Chi2H1 = " << nChi2H1*Nfit_bins 
+	   << " Chi2H0 = " << nChi2H0*Nfit_bins << endl;
+
+      dChi2 = nChi2H0*Nfit_bins - nChi2H1*Nfit_bins;
+      tracking << WprimeMass[sig_i] << '\t' << nChi2H0*Nfit_bins << '\t' 
+	       << nChi2H1*Nfit_bins <<endl;
       
-      Z_observed = chi2_H0 > chi2_H1 ? sqrt(chi2_H0 - chi2_H1) : 0.;
+      Z_observed = dChi2 >= 0 ? sqrt(dChi2) : 0.;
       float counted_entries=0., total_entries=LLR[sig_i]->Integral();
       float lower2sig=-1, lower1sig=-1, median=-1, upper1sig=-1, upper2sig=-1;
       for(int i=1; i<=LLR[sig_i]->GetNbinsX(); ++i){
@@ -494,12 +511,11 @@ void WprimeFitter::modelBackgroundOption1()
   
   RooPlot* xframe2 = mt->frame(Range("mt_fit"), Title("Bgd transverse mass"));
   
-  bgd_tmp.fitTo(*mt_BGD, Range("mt_bgdfit"), Save());
+  bgd_tmp.fitTo(*mt_BGD, Range("mt_bgdfit"), RooFit::SumW2Error (kFALSE), Save());
   mt_BGD->plotOn(xframe2, Name("data"));
   bgd_tmp.plotOn(xframe2, Name("model"));
   cout << " Bgd mt fit: chi2/ndof = " 
        << xframe2->chiSquare("model", "data", 2) << endl;
-  cout << " Bgd mt fit: chi2/ndof = " << xframe2->chiSquare() << endl;
   
   bgd_tmp.paramOn(xframe2,Layout(0.55));
   xframe2->SetMaximum(10000); xframe2->SetMinimum(0.1);
@@ -527,12 +543,11 @@ void WprimeFitter::modelBackgroundOption2()
   
   RooPlot* xframe2 = mt->frame(Range("mt_fit"), Title("Bgd transverse mass"));
   
-  bgd_tmp.fitTo(*mt_BGD, Range("mt_bgdfit"), Save());
+  bgd_tmp.fitTo(*mt_BGD, Range("mt_bgdfit"), RooFit::SumW2Error (kFALSE), Save());
   mt_BGD->plotOn(xframe2, Name("data"));
   bgd_tmp.plotOn(xframe2, Name("model"));
   cout << " Bgd mt fit: chi2/ndof = " 
-       << xframe2->chiSquare("model", "data", 2) << endl;
-  cout << " Bgd mt fit: chi2/ndof = " << xframe2->chiSquare() << endl;
+       << xframe2->chiSquare("model", "data", 3) << endl;
   
   bgd_tmp.paramOn(xframe2,Layout(0.55));
   xframe2->SetMaximum(10000); xframe2->SetMinimum(0.1);
