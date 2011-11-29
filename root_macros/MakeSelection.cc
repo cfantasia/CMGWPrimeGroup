@@ -93,6 +93,12 @@ MakeSelection(string inName, string opt){
     SigSamples.push_back("WprimeToWZTo3LNu_M-700");
     SigSamples.push_back("WprimeToWZTo3LNu_M-800");
     SigSamples.push_back("WprimeToWZTo3LNu_M-900");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-1000");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-1100");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-1200");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-1300");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-1400");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-1500");
     SigSamples.push_back("TC_WZ_300");
     SigSamples.push_back("TC_WZ_400");
     SigSamples.push_back("TC_WZ_500");
