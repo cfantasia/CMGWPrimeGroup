@@ -45,7 +45,11 @@ void WprimeFitter::init()
   
   // will need setter methods for these parameters...
   fXMIN = 220; fXMAX = 2500;
-  bXMIN = 380; bXMAX = 900;
+  if(channel_ != wprime_MuMET)
+    {bXMIN = 380; bXMAX = 900;}
+  else if (channel_ != wprime_ElMET)
+    {bXMIN = 220; bXMAX = 1200;}
+  
   pXMIN = fXMIN; pXMAX = 2500;
   XMIN = 0; XMAX = 2500;
   rXMIN = -400; rXMAX = 400;
