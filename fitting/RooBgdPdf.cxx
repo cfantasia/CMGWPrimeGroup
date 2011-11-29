@@ -40,9 +40,8 @@ ClassImp(RooBgdPdf)
 
  Double_t RooBgdPdf::evaluate() const 
  { 
-   if (mt == -bb)
-     return 0;
    Double_t tmp = pow(mt+bb, cc);
+   if(tmp <= 0)return 0;
    return 1./tmp;
  } 
 

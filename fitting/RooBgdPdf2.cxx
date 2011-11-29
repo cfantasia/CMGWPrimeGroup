@@ -45,7 +45,7 @@ ClassImp(RooBgdPdf2)
  { 
    Double_t tmp = mt*mt + bb*mt + cc;
    Double_t tmp2 = pow(tmp, dd);
-   if(tmp2 == 0)
+   if(tmp2 <= 0)
      return 0;
    return 1./tmp2;
 
