@@ -599,7 +599,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   if(wprimeUtil_->runningOnData()){
     cout<<" The following data event passed All Cuts!!!\n";
     printPassingEvent(event);
-    if(1 || debug_) printEventLeptons();
+    if(debug_) printEventLeptons();
     cout<<" ------------------\n";
   }
   if(debug_) printEventLeptons();
