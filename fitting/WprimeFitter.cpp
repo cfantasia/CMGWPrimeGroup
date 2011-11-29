@@ -173,7 +173,6 @@ void WprimeFitter::run()
   int Nmax = Nsignal_points;
   if(oneMassPointOnly_)Nmax = 1;
   
-  return;
   initFit();
   
   ofstream limits, tracking;
