@@ -2,8 +2,8 @@
 #include <fstream>
 using namespace RooFit;
 
-const int Nsteps=3;
-const float step_size[Nsteps]={10.,1., 0.1};
+const int Nsteps=2;
+const float step_size[Nsteps]={10.,1.};
 
 const float eff_corr_TP_muon = 0.974;
 const float eff_corr_TP_electron = 0.960;
@@ -317,7 +317,7 @@ void WprimeFitter::run()
   getLLR();
 }
 
-// if sig_i, method will calculate LLR for bgd-only ensemble
+// if sig_i==0, method will calculate LLR for bgd-only ensemble
 // otherwise, will calculate cl95 that corresponds to Zexpect and return
 // scale-factor (ie. x-sec(SSM)/scale-factor) for which this is achieved
 float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
@@ -335,7 +335,7 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
   RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
 		       sig_model, *(resolution[sig_i]));
   
-  int step_i=0; float cl_test = 1., scale_factor=1.; 
+  int step_i=0; float cl_test = 1., scale_factor=40.; 
   
   do{
     if(sig_i == 0)
@@ -367,7 +367,7 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     
     RooAbsPdf * model = 0;
     //sig_i = 0 corresponds to bgd-only ensemble
-    // need a better way to make this clear-er
+    // need a better way to make this clearer
     if(sig_i == 0)
       model = (RooAbsPdf*) BgdPdf;
     else
@@ -522,7 +522,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
     randModule.sampleSumGauss(RooArgSet(nsig,*nbgd),Ntot, dNtot) ;
     mcs->addModule(randModule) ;  
     
-    mcs->generateAndFit(NpseudoExp_);
+    mcs->generateAndFit(NpseudoExp_, 0, kTRUE);
     
     /*
       new TCanvas();
@@ -537,6 +537,15 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
       hh_nsig_nbgd->Draw();
     */
     
+  //Find average number of signal entries above some threshold
+  int totalSignalEvents = 0;
+  float signalMin = fXMIN;
+  for(unsigned sample_i=0; sample_i<NpseudoExp_; ++sample_i){
+    TH1F * signal_hist = (TH1F*) mcs->genData(sample_i)->createHistogram("Mt");
+    totalSignalEvents += signal_hist->Integral(signal_hist->FindBin(signalMin),signal_hist->GetXaxis()->GetNbins()+1);
+  }
+  cout << "Average number of signal events above " << signalMin << " GeV is " << ((float)totalSignalEvents)/NpseudoExp_ << endl;
+
   }
   
   // Make some plots
@@ -555,7 +564,6 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   
   LLR[sig_i] = new TH1F(*dll);
   Nsig_h[sig_i] = new TH1F(*nsig_h);
-
 }
 
 void WprimeFitter::calculateZvalues()
@@ -655,6 +663,10 @@ void WprimeFitter::modelBackgroundOption1()
   cc = new RooRealVar("cc", "cc", cc_);
   
   BgdPdf = new RooBgdPdf("BgdPdf", "BgdPdf", *mt, *bb, *cc);
+
+  //  RooArgSet prodSet(BgdPdf);
+  //RooBgdPdf unNormPdf("fitted Function", "fitted Function", prodSet);
+  //TF1 * bgd_func = unNormPdf.asTF(RooArgList(x), pars);
 }
 
 void WprimeFitter::modelBackgroundOption2()
