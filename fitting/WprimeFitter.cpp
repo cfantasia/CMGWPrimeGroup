@@ -346,6 +346,9 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     // expected # of events given by sig_hist integral
     // first correction is from T&P (eff_corr_TP_)
     Nsig = sig_hist[sig_i]->Integral(0, Nbins+1);
+
+    cout << "\n Running with MC sample: " << desc[sig_i] 
+	 << " and scale factor = " << scale_factor << endl;
     cout << " Nbgd = " << Nbgd << endl;
     cout << " By assuming SSM cross-section, Nsig = " << Nsig << endl;
     Nsig = Nsig/scale_factor;
@@ -370,8 +373,8 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     else
       model = (RooAbsPdf*) &SigBgdPdf;
     
-    cout << "\n Will run PE ensemble for mass = " << WprimeMass[sig_i] << 
-      " GeV and scale factor = " << scale_factor << endl;
+    cout << "\n Will run PE ensemble for sample " << desc[sig_i] << 
+      " and scale factor = " << scale_factor << endl;
     runPseudoExperiments(sig_i, model, SigBgdPdf, nsig);
     
     if(sig_i == 0)break;
@@ -481,17 +484,27 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   RooDLLSignificanceMCSModule sigModule(nsig,0);
   mcs->addModule(sigModule);
   
-  float Ntot = Nsig+Nbgd;
+  Nevt[sig_i].Nsig = Nsig;
+  Nevt[sig_i].Nbgd = Nbgd;
+  
+  float Ntot = 0;
+  if(sig_i == 0)
+    {
+      Ntot = Nbgd;
+      Nevt[sig_i].Ntot = Nbgd;
+    }
+  else
+    {
+      Ntot = Nsig+Nbgd;
+      Nevt[sig_i].Ntot = Nsig+Nbgd;      
+    }
+
   // correction due to lumi uncertainty (4.5%)
   float dNtot = sqrt(Ntot + 0.045 * Nsig);
 
+  cout << " Ntot = " << Ntot << endl;
   cout << " Before lumi correction, dNtot = " << sqrt(Ntot) 
        << " after lumi correction, dNtot = " << dNtot << endl;
-  
-
-  Nevt[sig_i].Nsig = Nsig;
-  Nevt[sig_i].Nbgd = Nbgd;
-  Nevt[sig_i].Ntot = Nsig+Nbgd;
   
   // sig_i = 0 corresponds to bgd-only ensemble of pseudo-experiments
   if(sig_i == 0)
