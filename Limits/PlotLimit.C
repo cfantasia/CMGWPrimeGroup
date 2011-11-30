@@ -47,6 +47,9 @@ PlotLimit(string inName){
     sigs.push_back(SignalSample("W'","xSec_WprimeVZ.dat", "Mass:Xsec", "", "\\sigma_{W'}"));
     sigs.push_back(SignalSample("RS","xSec_RSZZ.dat", "Mass:Xsec", "", "\\sigma_{RS}", kRed));
     outFile = "limitVsMass_VZ.pdf";
+  }else if(inName.find("LNu") != string::npos){
+    sigs.push_back(SignalSample("W'","xSec_SSMWprimeToLNu.dat", "Mass:Xsec", "", "\\sigma_{W'}"));
+    outFile = "limitVsMass_LNu.pdf";
   }
 
   ////Load Trees////////
@@ -76,18 +79,17 @@ PlotLimit(string inName){
   TGraph* gData;
 
   //cout<<"Drawing Limit Curve\n";
-  ///////////tLimit->Draw("SignalCode:Mass:Lumi:ObsLimit:ExpLimit:ExpLimitP1:ExpLimitM1:ExpLimitP2:ExpLimitM2", cutString.c_str(), "para goff");
-  tLimit->Draw("SignalCode:Mass:Lumi:ObsLimit:ExpLimit:ExpLimitP1:ExpLimitM1:ExpLimitP2:ExpLimitM2", "", "para goff");
+  tLimit->Draw("Mass:Lumi:ObsLimit:ExpLimit:ExpLimitP1:ExpLimitM1:ExpLimitP2:ExpLimitM2", "", "para goff");
   n = tLimit->GetSelectedRows(); assert(n); 
-  
-  const Double_t* mass = tLimit->GetVal(1);
-  const Double_t* lumi = tLimit->GetVal(2);
-  const Double_t* ObsLimit = tLimit->GetVal(3);
-  const Double_t* ExpLimit = tLimit->GetVal(4);
-  const Double_t* ExpLimitP1 = tLimit->GetVal(5);
-  const Double_t* ExpLimitM1 = tLimit->GetVal(6);
-  const Double_t* ExpLimitP2 = tLimit->GetVal(7);
-  const Double_t* ExpLimitM2 = tLimit->GetVal(8);
+  int treeIdx=0;
+  const Double_t* mass = tLimit->GetVal(treeIdx++);
+  const Double_t* lumi = tLimit->GetVal(treeIdx++);
+  const Double_t* ObsLimit = tLimit->GetVal(treeIdx++);
+  const Double_t* ExpLimit = tLimit->GetVal(treeIdx++);
+  const Double_t* ExpLimitP1 = tLimit->GetVal(treeIdx++);
+  const Double_t* ExpLimitM1 = tLimit->GetVal(treeIdx++);
+  const Double_t* ExpLimitP2 = tLimit->GetVal(treeIdx++);
+  const Double_t* ExpLimitM2 = tLimit->GetVal(treeIdx++);
   
   glumi = new TGraph(n, mass, ExpLimit);
   g2Sigma = new TGraph(2*n);
