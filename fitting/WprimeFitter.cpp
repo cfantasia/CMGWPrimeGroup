@@ -239,15 +239,24 @@ void WprimeFitter::run()
       lower1sig = xsec_limit[1]; lower2sig = xsec_limit[2];
       upper1sig = xsec_limit[3]; upper2sig = xsec_limit[4];
 
-      limits << WprimeMass[sig_i] << '\t' << Z_observed << '\t' << median 
-	     << '\t' << upper1sig << '\t' << lower1sig << '\t' << upper2sig 
-	     << '\t' << lower2sig << '\n';
-      
-
       // Then, find the observed limits
 
-#if 0
 
+      // COPY + PASTE FROM runPseudoExperiments - NEED A BETTER WAY
+      const float mass_ = WprimeMass[sig_i];
+      const float width_ = (4./3.)*(mass_/M_W)*G_W;
+      // signal mass and width
+      RooRealVar mass("Mass", "W' mass", mass_);//, 0, 10000);
+      RooRealVar width("Width", "W' width", width_);
+      
+      // signal modeling: JacobianRBW
+      JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
+  
+      RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
+			   sig_model, *(resolution[sig_i]));
+      // COPY + PASTE FROM runPseudoExperiments - NEED A BETTER WAY
+
+      Double_t nChi2H0 = 0, nChi2H1 = 0, dChi2 = 0;
       // method RooPlot::chiSquare returns chi2/(Nbins-NFITPARAM)
       // (where Nbins: # of bins that corresponds to fitting range). Then:
       // if nChi2H1 = chi2_H1/Nbins and nChi2H0 = chi2_H0/Nbins,
@@ -282,13 +291,10 @@ void WprimeFitter::run()
       
       Z_observed = dChi2 >= 0 ? sqrt(dChi2) : 0.;
 
-#endif
-
-
-
-
-
-
+      limits << WprimeMass[sig_i] << '\t' << Z_observed << '\t' << median 
+	     << '\t' << upper1sig << '\t' << lower1sig << '\t' << upper2sig 
+	     << '\t' << lower2sig << '\n';
+      
     } // loop over mass points
   
   limits.close();
@@ -315,7 +321,6 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
   RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
 		       sig_model, *(resolution[sig_i]));
   
-  float Z_observed = 0; Double_t nChi2H0 = 0, nChi2H1 = 0, dChi2 = 0;
   int step_i=0; float cl_test = 1., scale_factor=1.; 
   
   do{
