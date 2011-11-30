@@ -29,8 +29,7 @@ WprimeFitter::WprimeFitter(channel ch)
 void WprimeFitter::init()
 {
   NpseudoExp_ = 0; 
-  bgd_option_ = 1; backgroundModeled_ = false;
-  findOnlyMedian_ = false;
+  bgd_option_ = 1; backgroundModeled_ = findOnlyMedian_ = debugMe_ = false;
 
   for(unsigned i = 0; i != Nsignal_points; ++i)
     {
@@ -42,7 +41,7 @@ void WprimeFitter::init()
     }
   
   // will need setter methods for these parameters...
-  fXMIN = 450; fXMAX = 2500;
+  fXMIN = 380; fXMAX = 2500;
 
   if(channel_ == wprime_MuMET)
     {bXMIN = 380; bXMAX = 1500;} // works best with bgd-option=1, for bgd-option=2 use range (380,900)
@@ -202,7 +201,7 @@ void WprimeFitter::run()
   ofstream limits, tracking;
   limits.open("limits.txt");
   tracking.open("tracking.txt");
-  limits << "Mass/F:\tObsLimit/F:\tExpLimit/F:\tExpLimitP1/F:\tExpLimitM1/F:\tExpLimitP2/F:\tExpLimitM2/F:\n";
+  limits << "Mass/F:ObsLimit/F:ExpLimit/F:ExpLimitP1/F:ExpLimitM1/F:ExpLimitP2/F:ExpLimitM2/F:\n";
   tracking << "Mass\t  Zexpect\tCL\tScaleFactor\n";
   
   for (int sig_i = 0; sig_i != Nmax; ++sig_i)
@@ -352,18 +351,24 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     // first correction is from T&P (eff_corr_TP_)
     Nsig = sig_hist[sig_i]->Integral(0, Nbins+1);
 
-    cout << "\n Running with MC sample: " << desc[sig_i] 
-	 << " and scale factor = " << scale_factor << endl;
-    cout << " Nbgd = " << Nbgd << endl;
-    cout << " By assuming SSM cross-section, Nsig = " << Nsig << endl;
+    if(debugMe_){
+      cout << "\n Running with MC sample: " << desc[sig_i] 
+	   << " and scale factor = " << scale_factor << endl;
+      cout << " Nbgd = " << Nbgd << endl;
+      cout << " By assuming SSM cross-section, Nsig = " << Nsig << endl;
+    }
     Nsig = Nsig/scale_factor;
-    cout << " After scaling down by factor " << scale_factor 
-	 << ", Nsig = " << Nsig << endl;
+    if(debugMe_){
+      cout << " After scaling down by factor " << scale_factor 
+	   << ", Nsig = " << Nsig << endl;
+    }
     // correct expected # of signal events according to 
     // efficiency calculated from T&P
     Nsig = Nsig * eff_corr_TP_;
-    cout << " After correcting for T&P-calculated efficiency, Nsig = "
-	 << Nsig << endl;
+    if(debugMe_){
+      cout << " After correcting for T&P-calculated efficiency, Nsig = "
+	   << Nsig << endl;
+    }
 	
     RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
     
@@ -387,9 +392,11 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     assert(Zexpect >= 0);
 
     cl_test = 1 - LLR[sig_i]->Integral(1, LLR[sig_i]->FindBin(Zexpect)+1)/LLR[sig_i]->Integral();
-    cout << "*** 1 - P_tail(" << Zexpect <<") = " << 100.0*cl_test 
-	 << "% CL for scale_factor = " << scale_factor << " ***" 
-	 << endl << endl;
+    if(debugMe_)
+      cout << "*** 1 - P_tail(" << Zexpect <<") = " << 100.0*cl_test 
+	   << "% CL for scale_factor = " << scale_factor << " ***" 
+	   << endl << endl;
+
     tracking << WprimeMass[sig_i] << '\t' << Zexpect << '\t' 
 	     << cl_test << '\t' 
 	     << scale_factor << endl;
@@ -452,10 +459,12 @@ void WprimeFitter::getLLR()
   
   for(unsigned sig_i = 0; sig_i != Nmax; ++sig_i)
     { // loop over mass points
-      cout<< " Sample # " << sig_i << ": " << desc[sig_i]; 
-      cout << ", Nbgd = " << Nevt[sig_i].Nbgd << ", Nsig = " << Nevt[sig_i].Nsig
-	   << ", Ntot = " << Nevt[sig_i].Ntot << endl;
-      
+      if(debugMe_)
+	{
+	  cout<< " Sample # " << sig_i << ": " << desc[sig_i]; 
+	  cout << ", Nbgd = " << Nevt[sig_i].Nbgd << ", Nsig = " 
+	       << Nevt[sig_i].Nsig << ", Ntot = " << Nevt[sig_i].Ntot << endl;
+	}
 #if 0
       string title = string("nsig") + desc[sig_i];
       new TCanvas();  gPad->SetLogy();
@@ -507,10 +516,13 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   // correction due to lumi uncertainty (4.5%)
   float dNtot = sqrt(Ntot + 0.045 * Nsig);
 
-  cout << " Ntot = " << Ntot << endl;
-  cout << " Before lumi correction, dNtot = " << sqrt(Ntot) 
-       << " after lumi correction, dNtot = " << dNtot << endl;
-  
+  if(debugMe_)
+    {
+      cout << " Ntot = " << Ntot << endl;
+      cout << " Before lumi correction, dNtot = " << sqrt(Ntot) 
+	   << " after lumi correction, dNtot = " << dNtot << endl;
+    }
+
   // sig_i = 0 corresponds to bgd-only ensemble of pseudo-experiments
   if(sig_i == 0)
     {
@@ -526,8 +538,12 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
     // randModule.sampleGaussian(nbgd,Ntot, sqrt(Ntot)) ;
     randModule.sampleSumGauss(RooArgSet(nsig,*nbgd),Ntot, dNtot) ;
     mcs->addModule(randModule) ;  
+
+    if(debugMe_)
+      mcs->generateAndFit(NpseudoExp_, 0, kTRUE);
+    else
+      mcs->generateAndFit(NpseudoExp_, 0);
     
-    mcs->generateAndFit(NpseudoExp_, 0, kTRUE);
     
     /*
       new TCanvas();
@@ -542,21 +558,20 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
       hh_nsig_nbgd->Draw();
     */
 
-#if 0
-    
-  //Find average number of entries above some threshold
-    float totalEvents1 = 0;  float totalEvents2 = 0; float totalEvents3 = 0;
-  for(unsigned sample_i=0; sample_i<NpseudoExp_; ++sample_i){
-    TH1F * signal_hist = (TH1F*) mcs->genData(sample_i)->createHistogram("Mt");
-    totalEvents1 += signal_hist->Integral(signal_hist->FindBin(fXMIN),signal_hist->GetXaxis()->GetNbins()+1);
-    totalEvents2 += signal_hist->Integral(signal_hist->FindBin(bXMIN),signal_hist->GetXaxis()->GetNbins()+1);
-    totalEvents3 += signal_hist->Integral(signal_hist->FindBin(220),signal_hist->GetXaxis()->GetNbins()+1);
-  }
-  cout << "Average number of generated events above " << fXMIN << " GeV is " << ((float)totalEvents1)/NpseudoExp_ << endl;
-  cout << "Average number of generated events above " << bXMIN << " GeV is " << ((float)totalEvents2)/NpseudoExp_ << endl;
-  cout << "Average number of generated events above " << 220 << " GeV is " << ((float)totalEvents3)/NpseudoExp_ << endl;
+    if(debugMe_){
+      //Find average number of entries above some threshold
+      float totalEvents1 = 0;  float totalEvents2 = 0; float totalEvents3 = 0;
+      for(unsigned sample_i=0; sample_i<NpseudoExp_; ++sample_i){
+	TH1F * signal_hist = (TH1F*) mcs->genData(sample_i)->createHistogram("Mt");
+	totalEvents1 += signal_hist->Integral(signal_hist->FindBin(fXMIN),signal_hist->GetXaxis()->GetNbins()+1);
+	totalEvents2 += signal_hist->Integral(signal_hist->FindBin(bXMIN),signal_hist->GetXaxis()->GetNbins()+1);
+	totalEvents3 += signal_hist->Integral(signal_hist->FindBin(220),signal_hist->GetXaxis()->GetNbins()+1);
+      }
+      cout << "Average number of generated events above " << fXMIN << " GeV is " << ((float)totalEvents1)/NpseudoExp_ << endl;
+      cout << "Average number of generated events above " << bXMIN << " GeV is " << ((float)totalEvents2)/NpseudoExp_ << endl;
+      cout << "Average number of generated events above " << 220 << " GeV is " << ((float)totalEvents3)/NpseudoExp_ << endl;
+    }
 
-#endif
   }
   
   // Make some plots
