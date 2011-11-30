@@ -51,7 +51,7 @@ printNEvts(string infile, int evtType=-1){
 
   vector<pair<string, string> > levels;
   if(evtType == -1){
-    levels.push_back(make_pair("NoCuts", "Preselection"));
+    levels.push_back(make_pair("MinNLeptons", "Preselection"));
     levels.push_back(make_pair("ValidZ", "Z Selection"));
   }
   levels.push_back(make_pair("ValidW", "W Selection"));
