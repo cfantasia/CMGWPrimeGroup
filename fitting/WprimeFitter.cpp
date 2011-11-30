@@ -196,6 +196,8 @@ void WprimeFitter::run()
   if(oneMassPointOnly_)Nmax = 1;
   
   if(!runFits_)return;
+
+  initFit();
   
   ofstream limits, tracking;
   limits.open("limits.txt");
@@ -303,6 +305,14 @@ void WprimeFitter::run()
   
   limits.close();
   tracking.close();
+
+  cout << " # of bgd events: " << endl;
+  cout << " Above " << pXMIN << " GeV = "
+       << bgd_hist->Integral(bgd_hist->FindBin(pXMIN), Nbins+1) << endl;
+  cout << " Above " << fXMIN << " GeV = "
+       << bgd_hist->Integral(bgd_hist->FindBin(fXMIN), Nbins+1) << endl;
+  cout << " Above " << bXMIN << " GeV = "
+       << bgd_hist->Integral(bgd_hist->FindBin(bXMIN), Nbins+1) << endl;
   
   getLLR();
 }
@@ -335,7 +345,17 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
 	
     // expected # of events given by sig_hist integral
     // first correction is from T&P (eff_corr_TP_)
-    Nsig = sig_hist[sig_i]->Integral(0, Nbins+1)/scale_factor;
+    Nsig = sig_hist[sig_i]->Integral(0, Nbins+1);
+    cout << " Nbgd = " << Nbgd << endl;
+    cout << " By assuming SSM cross-section, Nsig = " << Nsig << endl;
+    Nsig = Nsig/scale_factor;
+    cout << " After scaling down by factor " << scale_factor 
+	 << ", Nsig = " << Nsig << endl;
+    // correct expected # of signal events according to 
+    // efficiency calculated from T&P
+    Nsig = Nsig * eff_corr_TP_;
+    cout << " After correcting for T&P-calculated efficiency, Nsig = "
+	 << Nsig << endl;
 	
     RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
     
@@ -352,7 +372,6 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     
     cout << "\n Will run PE ensemble for mass = " << WprimeMass[sig_i] << 
       " GeV and scale factor = " << scale_factor << endl;
-    initFit();
     runPseudoExperiments(sig_i, model, SigBgdPdf, nsig);
     
     if(sig_i == 0)break;
@@ -462,28 +481,25 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   RooDLLSignificanceMCSModule sigModule(nsig,0);
   mcs->addModule(sigModule);
   
-  // correct expected # of signal events:
-  // first correction is in efficiency calculated from T&P
-  Nsig = Nsig * eff_corr_TP_;
-  int Ntot = int(Nsig+Nbgd);
-  // second correction is due to lumi uncertainty (4.5%)
+  float Ntot = Nsig+Nbgd;
+  // correction due to lumi uncertainty (4.5%)
   float dNtot = sqrt(Ntot + 0.045 * Nsig);
 
   cout << " Before lumi correction, dNtot = " << sqrt(Ntot) 
        << " after lumi correction, dNtot = " << dNtot << endl;
   
 
-  Nevt[sig_i].Ntot = Nsig+Nbgd;
   Nevt[sig_i].Nsig = Nsig;
   Nevt[sig_i].Nbgd = Nbgd;
+  Nevt[sig_i].Ntot = Nsig+Nbgd;
   
   // sig_i = 0 corresponds to bgd-only ensemble of pseudo-experiments
   if(sig_i == 0)
     {
-      Ntot = int(Nbgd);
+      Ntot = Nbgd;
       Nevt[sig_i].Ntot = Nbgd;
       
-      mcs->generateAndFit(NpseudoExp_, Ntot);
+      mcs->generateAndFit(NpseudoExp_, int(Ntot));
       
     }
   else{
