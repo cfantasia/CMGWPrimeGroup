@@ -13,7 +13,8 @@ void fit_wprime()
   a.setNpseudoExperiments(1000);
   a.doOneMassPointOnly(false);
   a.doRunFits(true);
-
+  a.findOnlyMedian(false);
+  
   /* method WprimeFitter::run() loops over all mass points listed in 
      wprimeFitter_signalDescription.h; for each mass point it 
      varies the nominal/SSM W' cross-section by scanning over the parameter 
