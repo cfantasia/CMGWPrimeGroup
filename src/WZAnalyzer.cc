@@ -299,7 +299,6 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
       hWTransMass[index]->Fill(wCand_.mt(), weight);
       hWpt[index]->Fill(wCand_.pt(), weight);
       hWQ[index]->Fill(wCand_.charge(), weight);
-      ///////////hWTheta[index]->Fill(wCand_.theta(), weight);
       if      (wCand_.flavor() == PDG_ID_ELEC){
         hWenuTransMass[index]->Fill(wCand_.mt(), weight);
         const heep::Ele& e = *wCand_.elec();
@@ -439,6 +438,7 @@ WZAnalyzer::calcZVariables(){
   removeOverlapping(zCandsAll);
   numZs_ = countZCands(zCandsAll); 
   Zpt_ = zCand_.pt();
+  ZMass_ = zCand_.mass();
 
   if(debug_){
     printf("    Contains: %i Z candidate(s)\n", (int)zCandsAll.size());
@@ -478,7 +478,6 @@ WZAnalyzer::calcEventVariables(){
   LeadMuonPt_ = calcLeadPt(PDG_ID_MUON);
   Ht_ = (zCand_ && wCand_) ? calcHt() : -999.;
   TriLepMass_ = (zCand_ && wCand_) ? calcTriLepMass() : -999.;
-  ZMass_ = zCand_.mass();
   WTransMass_ = wCand_.mt();
   MET_ = met_.et();
   METSig_ = met_.significance();
