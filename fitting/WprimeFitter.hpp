@@ -67,6 +67,8 @@ class WprimeFitter{
   float lumi_ipb_;
   int bgd_option_;
   TripleGauss * resolution[Nsignal_points];
+
+  float eff_corr_TP_;
   
   channel channel_;
   

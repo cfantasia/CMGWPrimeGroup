@@ -5,6 +5,9 @@ using namespace RooFit;
 const int Nsteps=3;
 const float step_size[Nsteps]={10.,1., 0.1};
 
+const float eff_corr_TP_muon = 0.974;
+const float eff_corr_TP_electron = 0.960;
+
 WprimeFitter::WprimeFitter(channel ch)
 {
   channel_ = ch;
@@ -67,11 +70,13 @@ void WprimeFitter::init()
       file_SIG = file_SIG_mu; file_BGD = file_BGD_mu; file_data = file_data_mu;
       bgd_name = bgd_name_mu; data_name = data_name_mu; res_name = resHist_name_mu; 
       sig_name = mtHist_name_mu;
+      eff_corr_TP_ = eff_corr_TP_muon;
       break;
     case wprime_ElMET:
       file_SIG = file_SIG_el; file_BGD = file_BGD_el; file_data = file_data_el;
       bgd_name = bgd_name_el; data_name = data_name_el; res_name = resHist_name_el;
       sig_name = mtHist_name_el;
+      eff_corr_TP_ = eff_corr_TP_electron;
       break;
     default:
       ; // do nothing     
@@ -329,7 +334,10 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     else
       adjustScaleFactor(scale_factor, cl_test, step_i);
 	
-    Nsig = sig_hist[sig_i]->Integral(0, Nbins+1)/scale_factor;
+    // expected # of events given by sig_hist integral;
+    // first correction is from T&P (eff_corr_TP_)
+    // second correction is by scaling down SSM cross-section by scale factor
+    Nsig = eff_corr_TP_ * sig_hist[sig_i]->Integral(0, Nbins+1)/scale_factor;
 	
     RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
     
