@@ -22,11 +22,6 @@
 
 #include "../root_macros/common.h"
 const float sLumiFrac = 0.045;
-const float sysSigFrac = 0.032;
-const float sysBkgFrac = 0.033;
-
-const float ZWind_low = 80;
-const float ZWind_high = 100;
 
 vector<string>
 SampleName(int code){
@@ -98,22 +93,6 @@ SampleName(int code){
 }
 
 float
-nGenerated(string sample){
-  //At this point, this only affects the stat error on eff.
-  if(!sample.find("WprimeToWZTo3LNu_M-")) return 11000;
-  if(!sample.find("TC_WZ_"))  return 10000;
-  if(sample.find("RSZZmmjj_750" ) != string::npos)  return 56754;
-  if(sample.find("RSZZmmjj_1000") != string::npos)  return 44030;
-  if(sample.find("RSZZmmjj_1250") != string::npos)  return  7363;
-  if(sample.find("RSZZmmjj_1500") != string::npos)  return 57176;
-  if(sample.find("RSZZmmjj_1750") != string::npos)  return 47484;
-  if(sample.find("RSZZmmjj_2000") != string::npos)  return 56140;
-  cout<<"Failed looking for "<<sample<<endl;
-  abort(); 
-  return 0;
-}
-
-float
 SysErr(string sample){
   if(!sample.find("GV")) return 0.13;
   if(!sample.find("ZZ")) return 0.075;
@@ -130,23 +109,6 @@ SysErr(string sample){
   if(!sample.find("TC_WZ_500"))  return 0.0495;
   if(!sample.find("WprimeToWZTo3LNu_M-")) return 0.0635;//Assume >900 is same as 900
   return 0;
-}
-
-float
-BkgSysErrBySignal(string signal){
-    if(!signal.find("WprimeToWZTo3LNu_M-300")) return 0.352193;
-    if(!signal.find("WprimeToWZTo3LNu_M-400")) return 0.164742;
-    if(!signal.find("WprimeToWZTo3LNu_M-500")) return 0.126254;
-    if(!signal.find("WprimeToWZTo3LNu_M-600")) return 0.203814;
-    if(!signal.find("WprimeToWZTo3LNu_M-700")) return 0.135794;
-    if(!signal.find("WprimeToWZTo3LNu_M-800")) return 0.0716938;
-    if(!signal.find("WprimeToWZTo3LNu_M-900")) return 0.063561;
-    if(!signal.find("TC_WZ_300")) return 0.223473;
-    if(!signal.find("TC_WZ_400")) return 0.0404969;
-    if(!signal.find("TC_WZ_500")) return 0.155048;
-    if(!signal.find("WprimeToWZTo3LNu_M-")) return 0.063561;//Assume >900 is same as 900
-    
-    return 0;
 }
 
 float
@@ -199,6 +161,7 @@ XSec(std::string sample, float mass){
   if(sample.find("RSZZ") != string::npos)  return XSecRSZZ(mass);
 
   std::cout<<"Didn't find sample named "<<sample<<std::endl;
+  abort();
   return 0;
 }
 
@@ -209,6 +172,10 @@ AddInQuad(float a, float b){
 
 const float FitWind_low = 70;
 const float FitWind_high = 110;
+
+const float ZWind_low = 80;
+const float ZWind_high = 100;
+
 Bool_t reject;
 Double_t fline(Double_t *x, Double_t *par)
 {
@@ -217,57 +184,6 @@ Double_t fline(Double_t *x, Double_t *par)
       return 0;
    }
    return par[0] + par[1]*x[0];
-}
-/*
-float
-IntegralError(const TH1F* h, int lowbin, int highbin){
-  float err2=0;
-  for(int bin=lowbin;bin<=highbin;bin++) {
-    err2 += TMath::Power( h->GetBinError(bin),2 );
-  }
-  return sqrt(err2);
-}
-
-float
-LinearIntegralError(Double_t a, Double_t b, const Double_t * errs){
-  //Linear Function Error
-//y = params[0] + params[1]*x
-// integral(y) = params[0]*(b-a) + 0.5*params[1]*(b^2 - a^2)
-  return AddInQuad( errs[0]*(b-a),  0.5*errs[1]*(b*b - a*a));
-}
-
-
-*/
-float
-KFactor(string sample){
-  if      (!sample.find("Wprime"))
-    return 1.35;//Cory: Approx.
-  else if (!sample.find("TC"))
-    return 1.35;
-  else if (!sample.find("WZ"))
-    return 18./10.5;
-  else if (!sample.find("TTbar"))
-    return 165/94.3;
-  else if (!sample.find("WenuJets"))
-    return 28000/25900.4;
-  else if (!sample.find("WmunuJets"))
-    return 28000/25900.4;
-  else if (!sample.find("WlnuJets"))
-    return 28000/25900.4;
-  else if (!sample.find("ZJetsBinned"))
-    return 2800/2541.89;
-  else if (!sample.find("Zee"))
-    return 2800/2541.89;
-  else if (!sample.find("Zmumu"))
-    return 2800/2541.89;
-  else if (!sample.find("ZGamma"))
-    return 7.3/7.3;//Cory: This is wrong, but no evts survive anyway(guess ~ZZ)
-  else if (!sample.find("ZZ"))
-    return 5.9/4.3;
-  else
-    cout<<"Didn't find the sample "<<sample
-        <<" Not weighted!!!!!\n\n\n";
-  return 1.;
 }
 
 float Slope(const float x1, const float y1,
