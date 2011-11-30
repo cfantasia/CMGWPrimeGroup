@@ -10,9 +10,10 @@ void fit_wprime()
 {
   
   WprimeFitter a(wprime_MuMET);
-  a.setNpseudoExperiments(1000);
+  a.setNpseudoExperiments(2000);
   a.doOneMassPointOnly(false);
   a.doRunFits(true);
+  a.debugMe(false);
   a.findOnlyMedian(true);
   
   /* method WprimeFitter::run() loops over all mass points listed in 
