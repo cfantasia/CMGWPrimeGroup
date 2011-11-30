@@ -2,6 +2,9 @@
 #include <fstream>
 using namespace RooFit;
 
+const int Nsteps=3;
+const float step_size[Nsteps]={10.,1., 0.1};
+
 WprimeFitter::WprimeFitter(channel ch)
 {
   channel_ = ch;
@@ -33,7 +36,8 @@ void WprimeFitter::init()
 {
   NpseudoExp_ = 0; 
   bgd_option_ = 1; backgroundModeled_ = false;
-  
+  findOnlyMedian_ = false;
+
   for(unsigned i = 0; i != Nsignal_points; ++i)
     {
       LLR[i] = Nsig_h[i] = sig_hist[i] = res_hist[i] = 0;
@@ -156,11 +160,25 @@ void WprimeFitter::initFit()
   for(unsigned sig_i = 0; sig_i != Nsignal_points; ++sig_i)
     {
       Nevt[sig_i].Ntot =  Nevt[sig_i].Nsig = Nevt[sig_i].Nbgd = 0;
-      if(LLR[sig_i]) delete LLR[sig_i];
-      if(Nsig_h[sig_i]) delete Nsig_h[sig_i];
+      //      if(LLR[sig_i]) delete LLR[sig_i];
+      // if(Nsig_h[sig_i]) delete Nsig_h[sig_i];
     }
-  Zexpected = 99999;
 }
+
+// try adjusting scale-factor depending on cl_test value and step_i;
+// for step_i = 0 (1, 2), scale_factor is increased by 10 (1, 0.1);
+// this method will be called till cl95 point is found
+void WprimeFitter::adjustScaleFactor(float & scale_factor, float cl_test, 
+				     int & step_i)
+{
+  if(cl_test > 0.95)
+    scale_factor += step_size[step_i];
+  else{
+    scale_factor += -1.*step_size[step_i] + step_size[step_i+1];
+    step_i++;
+  }
+}
+ 
 
 void WprimeFitter::run()
 {
@@ -173,75 +191,62 @@ void WprimeFitter::run()
   int Nmax = Nsignal_points;
   if(oneMassPointOnly_)Nmax = 1;
   
-  
   if(!runFits_)return;
-  initFit();
   
   ofstream limits, tracking;
   limits.open("limits.txt");
   tracking.open("tracking.txt");
   limits << "Mass\tObsLimit\tExpLimit\tExpLimit+1\tExpLimit-1\tExpLimit+2\tExpLimit-2\n";
-  tracking << "Mass\tCL\tScaleFactor\n";
+  tracking << "Mass\t  Zexpect\tCL\tScaleFactor\n";
   
   for (int sig_i = 0; sig_i != Nmax; ++sig_i)
     {// loop over mass points
-      
-      const float mass_ = WprimeMass[sig_i];
-      const float width_ = (4./3.)*(mass_/M_W)*G_W;
-      // signal mass and width
-      RooRealVar mass("Mass", "W' mass", mass_);//, 0, 10000);
-      RooRealVar width("Width", "W' width", width_);
-      
-      // signal modeling: JacobianRBW
-      JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
-      
-      RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
-			   sig_model, *(resolution[sig_i]));
-      
-      float Z_observed = 0; Double_t nChi2H0 = 0, nChi2H1 = 0, dChi2 = 0;
-      const int Nsteps=3;
-      int step_i=0;
-      float cl_test = 1., scale_factor=30., step_size[Nsteps]={10.,1., 0.1};
-      do{
-	if(cl_test > 0.95)
-	  scale_factor += step_size[step_i];
-	else{
-	  scale_factor += -1.*step_size[step_i] + step_size[step_i+1];
-	  step_i++;
+
+
+      // First, find the Z-values that corresponds to median & 1,2 sigma points
+      if(sig_i == 0)
+	{
+	  runPseudoExperiments(sig_i, tracking);
+	  calculateZvalues(); 
+	  continue;
 	}
-	if(sig_i==0) scale_factor=1.;
-	
-	Nsig = sig_hist[sig_i]->Integral(0, Nbins+1)/scale_factor;
-	
-	RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
-	
-	RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
-			    RooArgList(nsig, *nbgd));
-	
-	RooAbsPdf * model = 0;
-	//sig_i = 0 corresponds to bgd-only ensemble
-	// need a better way to make this clear-er
-	if(sig_i == 0)
-	  model = (RooAbsPdf*) BgdPdf;
-	else
-	  model = (RooAbsPdf*) &SigBgdPdf;
-	
-	cout<<"PE for mass = " << WprimeMass[sig_i] << " GeV and scale factor = " << scale_factor << endl;
-	runPseudoExperiments(sig_i, model, SigBgdPdf, nsig);
-	
-	if(sig_i==0) break;
-	else{
-	  cl_test = 1 - LLR[sig_i]->Integral(1, LLR[sig_i]->FindBin(Zexpected)+1)/LLR[sig_i]->Integral();
-	  cout << "*** 1 - P_tail(" << Zexpected <<") = " << 100.0*cl_test << "% CL for scale_factor = " 
-	       << scale_factor << " ***" << endl << endl;
-	  tracking << WprimeMass[sig_i] << '\t' << cl_test << '\t' << scale_factor << endl;
-	}
-	
-      }while(step_i != Nsteps-1 || cl_test > 0.95);
+
+
+      // Then, find the expected limits
       
-      if(sig_i==0)continue;
+      const int NZMAX = 5;
+      float Zexp[NZMAX] = {Zexpect_0, Zexpect_Minus1, Zexpect_Minus2, 
+		       Zexpect_Plus1, Zexpect_Plus2};
+      float xsec_limit[NZMAX] = {-1};
       
-      //      xsec_lep[sig_i] /= scale_factor;
+      int NZmax = NZMAX;
+      if(findOnlyMedian_)NZmax = 1;
+      
+      float Z_observed = -9999, median = -999, 
+	upper1sig = -999, lower1sig = -999, 
+	upper2sig = -9999, lower2sig = -9999;
+
+      for(int z = 0; z != NZmax; ++z)
+	{ // loop over Z-values
+	  cout << "\n Calculating CL95 limit for Z value # " << z << " out of "
+	       << NZmax << " possible values " << endl;
+	  float scale_factor = runPseudoExperiments(sig_i, tracking, Zexp[z]);
+	  
+	  xsec_limit[z] = xsec[sig_i]/scale_factor;
+	} // loop over Z-values
+
+      median = xsec_limit[0]; 
+      lower1sig = xsec_limit[1]; lower2sig = xsec_limit[2];
+      upper1sig = xsec_limit[3]; upper2sig = xsec_limit[4];
+
+      limits << WprimeMass[sig_i] << '\t' << Z_observed << '\t' << median 
+	     << '\t' << upper1sig << '\t' << lower1sig << '\t' << upper2sig 
+	     << '\t' << lower2sig << '\n';
+      
+
+      // Then, find the observed limits
+
+#if 0
 
       // method RooPlot::chiSquare returns chi2/(Nbins-NFITPARAM)
       // (where Nbins: # of bins that corresponds to fitting range). Then:
@@ -276,22 +281,14 @@ void WprimeFitter::run()
 	       << nChi2H1*Nfit_bins <<endl;
       
       Z_observed = dChi2 >= 0 ? sqrt(dChi2) : 0.;
-      float counted_entries=0., total_entries=LLR[sig_i]->Integral();
-      float lower2sig=-1, lower1sig=-1, median=-1, upper1sig=-1, upper2sig=-1;
-      for(int i=1; i<=LLR[sig_i]->GetNbinsX(); ++i){
-	counted_entries+=LLR[sig_i]->GetBinContent(i);
-	if(lower2sig<0 && counted_entries/total_entries>0.022) lower2sig=LLR[sig_i]->GetBinCenter(i);
-	if(lower1sig<0 && counted_entries/total_entries>0.158) lower1sig=LLR[sig_i]->GetBinCenter(i);
-	if(median<0 && counted_entries/total_entries>0.5) median=LLR[sig_i]->GetBinCenter(i);
-	if(upper1sig<0 && counted_entries/total_entries>0.841) upper1sig=LLR[sig_i]->GetBinCenter(i);
-	if(upper2sig<0 && counted_entries/total_entries>0.977) upper2sig=LLR[sig_i]->GetBinCenter(i);
-      }
-      // THIS IS WRONG; WE NEED THE scale-factors used to get these 
-      // z-points, and the corresponding cross-sections 
-      limits << WprimeMass[sig_i] << '\t' << Z_observed << '\t' << median 
-	     << '\t' << upper1sig << '\t' << lower1sig << '\t' << upper2sig 
-	     << '\t' << lower2sig << '\n';
-      
+
+#endif
+
+
+
+
+
+
     } // loop over mass points
   
   limits.close();
@@ -300,11 +297,72 @@ void WprimeFitter::run()
   getLLR();
 }
 
+// if sig_i, method will calculate LLR for bgd-only ensemble
+// otherwise, will calculate cl95 that corresponds to Zexpect and return
+// scale-factor (ie. x-sec(SSM)/scale-factor) for which this is achieved
+float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
+					 float Zexpect)
+{      
+  const float mass_ = WprimeMass[sig_i];
+  const float width_ = (4./3.)*(mass_/M_W)*G_W;
+  // signal mass and width
+  RooRealVar mass("Mass", "W' mass", mass_);//, 0, 10000);
+  RooRealVar width("Width", "W' width", width_);
+  
+  // signal modeling: JacobianRBW
+  JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
+  
+  RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
+		       sig_model, *(resolution[sig_i]));
+  
+  float Z_observed = 0; Double_t nChi2H0 = 0, nChi2H1 = 0, dChi2 = 0;
+  int step_i=0; float cl_test = 1., scale_factor=1.; 
+  
+  do{
+    if(sig_i == 0)
+      scale_factor = 1;
+    else
+      adjustScaleFactor(scale_factor, cl_test, step_i);
+	
+    Nsig = sig_hist[sig_i]->Integral(0, Nbins+1)/scale_factor;
+	
+    RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
+    
+    RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
+			RooArgList(nsig, *nbgd));
+    
+    RooAbsPdf * model = 0;
+    //sig_i = 0 corresponds to bgd-only ensemble
+    // need a better way to make this clear-er
+    if(sig_i == 0)
+      model = (RooAbsPdf*) BgdPdf;
+    else
+      model = (RooAbsPdf*) &SigBgdPdf;
+    
+    cout << "\n Will run PE ensemble for mass = " << WprimeMass[sig_i] << 
+      " GeV and scale factor = " << scale_factor << endl;
+    initFit();
+    runPseudoExperiments(sig_i, model, SigBgdPdf, nsig);
+    
+    if(sig_i == 0)break;
+
+    assert(Zexpect >= 0);
+
+    cl_test = 1 - LLR[sig_i]->Integral(1, LLR[sig_i]->FindBin(Zexpect)+1)/LLR[sig_i]->Integral();
+    cout << "*** 1 - P_tail(" << Zexpect <<") = " << 100.0*cl_test 
+	 << "% CL for scale_factor = " << scale_factor << " ***" 
+	 << endl << endl;
+    tracking << WprimeMass[sig_i] << '\t' << Zexpect << '\t' 
+	     << cl_test << '\t' 
+	     << scale_factor << endl;
+    
+  }while(step_i != Nsteps-1 || cl_test > 0.95);
+   
+  return scale_factor;
+}
+
 void WprimeFitter::getLLR()
 {
-  //  cout << " Zexpected from average MC background only = " 
-  //     << Zexpected << endl;
-  
   // starting from largest mass point, as it corresponds to largest LLR values
   // this makes sure all LLR histograms will be visible
   
@@ -344,9 +402,9 @@ void WprimeFitter::getLLR()
       
       cout<< " Sample # " << sig_i << ": " << desc[sig_i]; 
       
-      int bin = LLR[sig_i]->FindBin(Zexpected);
+      int bin = LLR[sig_i]->FindBin(Zexpect_0);
       cl = 1 - LLR[sig_i]->Integral(1, bin+1)/LLR[sig_i]->Integral();
-      cout << ", 1 - P_tail("<< Zexpected << ") = " << 100.0*cl << "% CL"
+      cout << ", 1 - P_tail("<< Zexpect_0 << ") = " << 100.0*cl << "% CL"
 	   << endl;       
     } // loop over mass points
   
@@ -386,9 +444,10 @@ void WprimeFitter::getLLR()
 void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model, 
 					RooAbsPdf & SigBgdPdf, RooRealVar &nsig)
 {
-  RooMCStudy * mcs= new RooMCStudy(*model, *mt, FitModel(SigBgdPdf), Binned(), Silence(),
-				   Extended(kTRUE), FitOptions(Extended(kTRUE), 
-							       PrintEvalErrors(0)));
+  RooMCStudy * mcs= new RooMCStudy(*model, *mt, FitModel(SigBgdPdf), 
+				   Binned(), Silence(), Extended(kTRUE), 
+				   FitOptions(Extended(kTRUE),
+					      PrintEvalErrors(0)));
   RooDLLSignificanceMCSModule sigModule(nsig,0);
   mcs->addModule(sigModule);
   
@@ -447,21 +506,36 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   
   LLR[sig_i] = new TH1F(*dll);
   Nsig_h[sig_i] = new TH1F(*nsig_h);
-  if(sig_i == 0)
-    {
-      float counted_entries=0, total_entries=LLR[sig_i]->Integral(), median=-1;
-      for(int i=1; i<=LLR[sig_i]->GetNbinsX(); ++i){
-	counted_entries+=LLR[sig_i]->GetBinContent(i);
-	if(counted_entries/total_entries>0.5) {
-	  median=LLR[sig_i]->GetBinCenter(i);
-	  break;
-	}
-      }
-      
-      Zexpected = median;
-      cout << " Zexpected from average MC background only = " 
-	   << Zexpected << endl;
-    }
+
+}
+
+void WprimeFitter::calculateZvalues()
+{
+  initZvalues();
+  const int sig_i = 0;
+  float counted_entries=0., total_entries=LLR[sig_i]->Integral();
+
+  for(int i=1; i<=LLR[sig_i]->GetNbinsX(); ++i){
+    counted_entries += LLR[sig_i]->GetBinContent(i);
+
+    if(Zexpect_Minus2<0 && counted_entries/total_entries>0.022) 
+      Zexpect_Minus2 = LLR[sig_i]->GetBinCenter(i);
+    if(Zexpect_Minus1<0 && counted_entries/total_entries>0.158) 
+      Zexpect_Minus1 = LLR[sig_i]->GetBinCenter(i);
+    if(Zexpect_0<0 && counted_entries/total_entries>0.5) 
+      Zexpect_0 = LLR[sig_i]->GetBinCenter(i);
+    if(Zexpect_Plus1<0 && counted_entries/total_entries>0.841)
+      Zexpect_Plus1 = LLR[sig_i]->GetBinCenter(i);
+    if(Zexpect_Plus2<0 && counted_entries/total_entries>0.977)
+      Zexpect_Plus2 = LLR[sig_i]->GetBinCenter(i);
+  }
+  
+  cout << " Expected Z-values from LLR of MC background ensembles\n";
+  cout << "  Median = " << Zexpect_0 << endl;
+  cout << " -1sigma = " << Zexpect_Minus1 << endl;
+  cout << " +1sigma = " << Zexpect_Plus1 << endl;
+  cout << " -2sigma = " << Zexpect_Minus2 << endl;
+  cout << " +2sigma = " << Zexpect_Plus2 << endl;
   
 }
 

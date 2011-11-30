@@ -45,6 +45,7 @@ class WprimeFitter{
   void setNpseudoExperiments(unsigned N){NpseudoExp_ = N;}
   void doRunFits(bool flag){runFits_ = flag;}
   void doOneMassPointOnly(bool flag){oneMassPointOnly_ = flag;}
+  void findOnlyMedian(bool flag){findOnlyMedian_ = flag;}
 
   // background option = 1 -> 1/(x+b)^c (DEFAULT)
   // background option = 2 -> 1/(x^2 + b*x + c)^d
@@ -58,6 +59,7 @@ class WprimeFitter{
   void run();
 
  private:
+  bool findOnlyMedian_;
   bool backgroundModeled_;
   unsigned NpseudoExp_;
   bool runFits_;
@@ -137,12 +139,35 @@ class WprimeFitter{
   RooRealVar * mean3[Nsignal_points];
   RooRealVar * sigma3[Nsignal_points];
     
-  float Zexpected;
-  
+  // corresponds to median of LLR distribution 
+  // for bgd-only ensemble of pseudo-experiments
+  float Zexpect_0; 
+  // correspond to +-1/2 sigma coverage points
+  float Zexpect_Minus1;
+  float Zexpect_Minus2;
+  float Zexpect_Plus1;
+  float Zexpect_Plus2;
+
+  void initZvalues()
+  {Zexpect_0 = Zexpect_Minus1 = Zexpect_Minus2 = Zexpect_Plus1 = Zexpect_Plus2
+      = -1;}
+
+  void calculateZvalues();
+
+  // try adjusting scale-factor depending on cl_test value and step_i;
+  // for step_i = 0 (1, 2), scale_factor is increased by 10 (1, 0.1);
+  // this method will be called till cl95 point is found
+  void adjustScaleFactor(float & scale_factor, float cl_test, int & step_i);
+    
   void getLLR();
   void initFit();
   void runPseudoExperiments(int sig_i, RooAbsPdf * model, 
 			    RooAbsPdf & SigBgdPdf, RooRealVar &nsig);
+
+  // if sig_i, method will calculate LLR for bgd-only ensemble
+  // otherwise, will calculate cl95 that corresponds to Zexpect and return
+  // scale-factor (ie. x-sec(SSM)/scale-factor) for which this is achieved
+  float runPseudoExperiments(int sig_i, ofstream & tracking, float Zexpect=-1);
 
 };
 
