@@ -21,15 +21,6 @@ WprimeFitter::WprimeFitter(channel ch)
   runFits_ = true; 
   getInputHistograms();
   
-  mt = new RooRealVar("Mt", "M_{T} GeV/c^{2}", pXMIN, pXMAX);
-  mt->setRange("mt_fit", fXMIN, fXMAX);
-  mt->setRange("mt_bgdfit", bXMIN, bXMAX);
-  mt->setRange("mt_datafit", bXMIN, bXMAX);
-  mt->setRange("mt_plot", pXMIN, pXMAX);
-  mt->setRange("mt_full", XMIN, XMAX);
-  mt->setRange("resol_fit", rXMIN, rXMAX);
-  mt->setBins(10000, "fft");
-  
   mt_BGD = new RooDataHist("mt_BGD","total BGD", *mt, Import(*bgd_hist));
   mt_DATA = new RooDataHist("mt_DATA","total DATA", *mt, Import(*data_hist));
   modelResolutions();
@@ -51,7 +42,7 @@ void WprimeFitter::init()
     }
   
   // will need setter methods for these parameters...
-  fXMIN = 220; fXMAX = 2500;
+  fXMIN = 450; fXMAX = 2500;
 
   if(channel_ == wprime_MuMET)
     {bXMIN = 380; bXMAX = 1500;} // works best with bgd-option=1, for bgd-option=2 use range (380,900)
@@ -60,9 +51,17 @@ void WprimeFitter::init()
 
   if(fXMIN < bXMIN)fXMIN = bXMIN;
 
-  pXMIN = fXMIN; pXMAX = 2500;
+  pXMIN = min(fXMIN, bXMIN); pXMAX = fXMAX;
   XMIN = 0; XMAX = 2500;
   rXMIN = -400; rXMAX = 400;
+
+  mt = new RooRealVar("Mt", "M_{T} GeV/c^{2}", pXMIN, pXMAX);
+  mt->setRange("mt_fit", fXMIN, fXMAX);
+  mt->setRange("mt_bgdfit", bXMIN, bXMAX);
+  mt->setRange("mt_plot", pXMIN, pXMAX);
+  mt->setRange("mt_full", XMIN, XMAX);
+  mt->setRange("resol_fit", rXMIN, rXMAX);
+  mt->setBins(10000, "fft");
   
   switch(channel_)
     {
@@ -268,11 +267,11 @@ void WprimeFitter::run()
       // delta-chi2 := chi2_H0 - chi2_H1 = (nChi2H0-nChi2H1)*Nbins
       // where Nbins can be determined by calculating the reduced chi2 twice
       // by varying the # of dof by one.
-      RooPlot* xframe_H1 = mt->frame(Range("mt_datafit"), Title("Data transverse mass"));
+      RooPlot* xframe_H1 = mt->frame(Range("mt_fit"), Title("Data transverse mass"));
       RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
       RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
 			  RooArgList(nsig, *nbgd));
-      SigBgdPdf.fitTo(*mt_DATA, Range("mt_datafit"), Save());
+      SigBgdPdf.fitTo(*mt_DATA, Range("mt_fit"), Save());
       mt_DATA->plotOn(xframe_H1, Name("data"));
       SigBgdPdf.plotOn(xframe_H1, Name("sigbgd_fit"));
       nChi2H1 = xframe_H1->chiSquare("sigbgd_fit", "data");
@@ -281,8 +280,8 @@ void WprimeFitter::run()
       // function floor(x + 0.5) returns the closest integer to (float) x
       int Nfit_bins = int (floor(nChi2H1_b/(nChi2H1_b - nChi2H1) + 0.5));
 
-      RooPlot* xframe_H0 = mt->frame(Range("mt_datafit"), Title("Data transverse mass"));
-      BgdPdf->fitTo(*mt_DATA, Range("mt_datafit"), Save());
+      RooPlot* xframe_H0 = mt->frame(Range("mt_fit"), Title("Data transverse mass"));
+      BgdPdf->fitTo(*mt_DATA, Range("mt_fit"), Save());
       mt_DATA->plotOn(xframe_H0, Name("data"));
       BgdPdf->plotOn(xframe_H0, Name("bgd_fit"));
       nChi2H0 = xframe_H0->chiSquare("bgd_fit", "data");
@@ -458,7 +457,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
 {
   RooMCStudy * mcs= new RooMCStudy(*model, *mt, FitModel(SigBgdPdf), 
 				   Binned(), Silence(), Extended(kTRUE), 
-				   FitOptions(Extended(kTRUE),
+				   FitOptions(Range("mt_fit"),Extended(kTRUE),
 					      PrintEvalErrors(0)));
   RooDLLSignificanceMCSModule sigModule(nsig,0);
   mcs->addModule(sigModule);
@@ -604,7 +603,7 @@ void WprimeFitter::modelBackgroundOption1()
   RooRealVar c("c", "c", 15, -1000000, 1000000);
   RooBgdPdf bgd_tmp("bgd_tmp", "bgd_tmp", *mt, b, c);
   
-  RooPlot* xframe2 = mt->frame(Range("mt_fit"), Title("Bgd transverse mass"));
+  RooPlot* xframe2 = mt->frame(Range("mt_bgdfit"), Title("Bgd transverse mass"));
   
   bgd_tmp.fitTo(*mt_BGD, Range("mt_bgdfit"), RooFit::SumW2Error (kFALSE), Save());
   mt_BGD->plotOn(xframe2, Name("data"));
@@ -636,7 +635,7 @@ void WprimeFitter::modelBackgroundOption2()
   RooRealVar d("d", "d", 3, -100000, 100000);
   RooBgdPdf2 bgd_tmp("bgd_tmp", "bgd_tmp", *mt, b, c, d);
   
-  RooPlot* xframe2 = mt->frame(Range("mt_fit"), Title("Bgd transverse mass"));
+  RooPlot* xframe2 = mt->frame(Range("mt_bgdfit"), Title("Bgd transverse mass"));
   
   bgd_tmp.fitTo(*mt_BGD, Range("mt_bgdfit"), RooFit::SumW2Error (kFALSE), Save());
   mt_BGD->plotOn(xframe2, Name("data"));
