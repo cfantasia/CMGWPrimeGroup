@@ -26,8 +26,7 @@ const float xsec[Nsignal_points] = {0, 0.1440};
 // SSM cross-sections for leptonic channels on pb;
 // these will be divided by scale factor
 // first point corresponds to bgd-only case: cross-section = 0
-//float xsec_lep[Nsignal_points] = {0, 17.726, 8.555, 4.514, 2.519, 1.470, 0.8856, 0.3461, 0.2221, 0.1440, 0.0949, 0.0633, 0.0424, 0.0285, 0.0194, 0.0135, 0.009373, 0.006605};
-float xsec_lep[Nsignal_points] = {0, 0.1440};
+//float xsec_lep[Nsignal_points] = {0, 17.726, 8.555, 4.514, 2.519, 1.470, 0.8856, 0.3461, 0.2221, 0.1440, 0.09485, 0.0633, 0.04237, 0.02851, 0.01940, 0.01346, 0.009373, 0.006605};
 
 // color for plotting Z-values of different signals
 //Color_t color[Nsignal_points] = {kBlack, kRed, kBlue, kViolet, kGreen, kOrange, kYellow, kOrange, kMagenta, kCyan, kSpring, kTeal, kAzure, kPink, kBlue, kViolet, kGreen, kOrange};

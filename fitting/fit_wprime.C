@@ -10,7 +10,7 @@ void fit_wprime()
 {
   
   WprimeFitter a(wprime_MuMET);
-  a.setNpseudoExperiments(4000);
+  a.setNpseudoExperiments(1000);
   a.doOneMassPointOnly(false);
   a.doRunFits(true);
   a.findOnlyMedian(true);
