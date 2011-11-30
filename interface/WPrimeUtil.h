@@ -9,6 +9,7 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+#include "PhysicsTools/Utilities/interface/Lumi3DReWeighting.h"
 
 #include "UserCode/CMGWPrimeGroup/interface/util.h"
 #include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
@@ -383,6 +384,7 @@ private:
   edm::Handle<reco::GenParticleCollection> genParticles;
   
   edm::LumiReWeighting LumiWeights_;
+  edm::Lumi3DReWeighting LumiWeights3D_;
   
 };
 

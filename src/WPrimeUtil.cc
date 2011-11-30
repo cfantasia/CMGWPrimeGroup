@@ -118,8 +118,10 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
 
 void WPrimeUtil::setLumiWeights(const string & MCFile, const string & DataFile,
                                 const string & MCHist, const string & DataHist){
+  LumiWeights3D_ = edm::Lumi3DReWeighting(MCFile, DataFile, MCHist, DataHist);
+  LumiWeights3D_.weight3D_init( 1.0);
   LumiWeights_ = edm::LumiReWeighting(MCFile, DataFile, MCHist, DataHist);
-  LumiWeights_.weight3D_init("UserCode/CMGWPrimeGroup/root_macros/Weight3D.root");
+  //LumiWeights_.weight3D_init("UserCode/CMGWPrimeGroup/root_macros/Weight3D.root");
 }
 
 int WPrimeUtil::getPU1BX(const std::vector< PileupSummaryInfo > & PupInfo){
@@ -169,7 +171,7 @@ float WPrimeUtil::getPUWeight3D(const std::vector< PileupSummaryInfo > & PupInfo
     else if(BX ==  0)  n0 = PVI->getPU_NumInteractions();
     else if(BX ==  1) np1 = PVI->getPU_NumInteractions();
   }
-  return LumiWeights_.weight3D( nm1,n0,np1);
+  return LumiWeights3D_.weight3D( nm1,n0,np1);
 }
 ////////////
 
