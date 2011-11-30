@@ -46,6 +46,7 @@ class WprimeFitter{
   void doRunFits(bool flag){runFits_ = flag;}
   void doOneMassPointOnly(bool flag){oneMassPointOnly_ = flag;}
   void findOnlyMedian(bool flag){findOnlyMedian_ = flag;}
+  void debugMe(bool flag){debugMe_ = flag;}
 
   // background option = 1 -> 1/(x+b)^c (DEFAULT)
   // background option = 2 -> 1/(x^2 + b*x + c)^d
@@ -59,6 +60,7 @@ class WprimeFitter{
   void run();
 
  private:
+  bool debugMe_;
   bool findOnlyMedian_;
   bool backgroundModeled_;
   unsigned NpseudoExp_;
