@@ -2,8 +2,8 @@
 #include <fstream>
 using namespace RooFit;
 
-const int Nsteps=2;
-const float step_size[Nsteps]={10.,1.};
+const int Nsteps=3;
+const float step_size[Nsteps]={10.,1., 0.1};
 
 const float eff_corr_TP_muon = 0.974;
 const float eff_corr_TP_electron = 0.960;
@@ -228,7 +228,7 @@ void WprimeFitter::run()
       int NZmax = NZMAX;
       if(findOnlyMedian_)NZmax = 1;
       
-      float Z_observed = -9999, median = -999, 
+      float Z_observed = -9999, observed = -9999, median = -999, 
 	upper1sig = -999, lower1sig = -999, 
 	upper2sig = -9999, lower2sig = -9999;
 
@@ -297,7 +297,11 @@ void WprimeFitter::run()
       
       Z_observed = dChi2 >= 0 ? sqrt(dChi2) : 0.;
 
-      limits << WprimeMass[sig_i] << '\t' << Z_observed << '\t' << median 
+      float sf = runPseudoExperiments(sig_i, tracking, Z_observed);
+      
+      observed = xsec[sig_i]/sf;
+
+      limits << WprimeMass[sig_i] << '\t' << observed << '\t' << median 
 	     << '\t' << upper1sig << '\t' << lower1sig << '\t' << upper2sig 
 	     << '\t' << lower2sig << '\n';
       
@@ -306,13 +310,14 @@ void WprimeFitter::run()
   limits.close();
   tracking.close();
 
-  cout << " # of bgd events: " << endl;
-  cout << " Above " << pXMIN << " GeV = "
-       << bgd_hist->Integral(bgd_hist->FindBin(pXMIN), Nbins+1) << endl;
-  cout << " Above " << fXMIN << " GeV = "
-       << bgd_hist->Integral(bgd_hist->FindBin(fXMIN), Nbins+1) << endl;
-  cout << " Above " << bXMIN << " GeV = "
-       << bgd_hist->Integral(bgd_hist->FindBin(bXMIN), Nbins+1) << endl;
+  int bin_max = bgd_hist->FindBin(pXMAX);
+  cout << " # of expected bgd events: " << endl;
+  cout << " Between " << pXMIN << " and " << pXMAX << " GeV = "
+       << bgd_hist->Integral(bgd_hist->FindBin(pXMIN), bin_max) << endl;
+  cout << " Between " << fXMIN << " and " << pXMAX << " GeV = "
+       << bgd_hist->Integral(bgd_hist->FindBin(fXMIN), bin_max) << endl;
+  cout << " Between " << bXMIN << " and " << pXMAX << " GeV = "
+       << bgd_hist->Integral(bgd_hist->FindBin(bXMIN), bin_max) << endl;
   
   getLLR();
 }
@@ -335,7 +340,7 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
   RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
 		       sig_model, *(resolution[sig_i]));
   
-  int step_i=0; float cl_test = 1., scale_factor=40.; 
+  int step_i=0; float cl_test = 1., scale_factor=1.; 
   
   do{
     if(sig_i == 0)
@@ -536,16 +541,22 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
       //TH2* hh_nsig_nbgd = (TH2*) mcs->fitParDataSet().createHistogram("nsig,nbgd") ;
       hh_nsig_nbgd->Draw();
     */
+
+#if 0
     
-  //Find average number of signal entries above some threshold
-  int totalSignalEvents = 0;
-  float signalMin = fXMIN;
+  //Find average number of entries above some threshold
+    float totalEvents1 = 0;  float totalEvents2 = 0; float totalEvents3 = 0;
   for(unsigned sample_i=0; sample_i<NpseudoExp_; ++sample_i){
     TH1F * signal_hist = (TH1F*) mcs->genData(sample_i)->createHistogram("Mt");
-    totalSignalEvents += signal_hist->Integral(signal_hist->FindBin(signalMin),signal_hist->GetXaxis()->GetNbins()+1);
+    totalEvents1 += signal_hist->Integral(signal_hist->FindBin(fXMIN),signal_hist->GetXaxis()->GetNbins()+1);
+    totalEvents2 += signal_hist->Integral(signal_hist->FindBin(bXMIN),signal_hist->GetXaxis()->GetNbins()+1);
+    totalEvents3 += signal_hist->Integral(signal_hist->FindBin(220),signal_hist->GetXaxis()->GetNbins()+1);
   }
-  cout << "Average number of signal events above " << signalMin << " GeV is " << ((float)totalSignalEvents)/NpseudoExp_ << endl;
+  cout << "Average number of generated events above " << fXMIN << " GeV is " << ((float)totalEvents1)/NpseudoExp_ << endl;
+  cout << "Average number of generated events above " << bXMIN << " GeV is " << ((float)totalEvents2)/NpseudoExp_ << endl;
+  cout << "Average number of generated events above " << 220 << " GeV is " << ((float)totalEvents3)/NpseudoExp_ << endl;
 
+#endif
   }
   
   // Make some plots
@@ -603,11 +614,9 @@ void WprimeFitter::modelBackground()
   else if (bgd_option_ == 2)
     modelBackgroundOption2();
   
-  //Nbgd = bgd_hist->Integral(0, Nbins+1);
-  
   //////////////////////////////////
   //Estimation scale factor for MC.
-  float xmin = 220; float xmax = 500;
+  float xmin = 220; float xmax = fXMIN;
   if(xmin < bXMIN)xmin = bXMIN;
   double Nbgdsideband  
     = bgd_hist ->Integral( bgd_hist->FindBin(xmin),bgd_hist->FindBin(xmax) );
@@ -620,14 +629,15 @@ void WprimeFitter::modelBackground()
   
   float sf_mcdata = Nbgdsideband/Ndatasideband;
   
-  //cout<<" _chang Scale factor "<< sf_mcdata <<endl;
+  cout<<" Scale factor for background from sideband region = "<< 
+    sf_mcdata <<endl;
   
   bgd_hist->Scale(1./(sf_mcdata));
   
   //cout<<" _chang after bgd_hist over 220GeV "
   //<<bgd_hist->Integral(bgd_hist->FindBin(220),bgd_hist->GetXaxis()->GetNbins()) <<endl;
   
-  float NmcBGscaled = bgd_hist->Integral(bgd_hist->FindBin(fXMIN),bgd_hist->GetXaxis()->GetNbins()+1);
+  float NmcBGscaled = bgd_hist->Integral(bgd_hist->FindBin(pXMIN),bgd_hist->FindBin(pXMAX));
   
   Nbgd = NmcBGscaled;
   
