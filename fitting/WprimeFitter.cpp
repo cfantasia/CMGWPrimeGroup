@@ -590,7 +590,7 @@ void WprimeFitter::modelBackground()
   //cout<<" _chang after bgd_hist over 220GeV "
   //<<bgd_hist->Integral(bgd_hist->FindBin(220),bgd_hist->GetXaxis()->GetNbins()) <<endl;
   
-  float NmcBGscaled = bgd_hist->Integral(bgd_hist->FindBin(220),bgd_hist->GetXaxis()->GetNbins()+1);
+  float NmcBGscaled = bgd_hist->Integral(bgd_hist->FindBin(fXMIN),bgd_hist->GetXaxis()->GetNbins()+1);
   
   Nbgd = NmcBGscaled;
   
