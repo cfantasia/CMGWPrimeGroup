@@ -13,7 +13,7 @@ void fit_wprime()
   a.setNpseudoExperiments(1000);
   a.doOneMassPointOnly(false);
   a.doRunFits(true);
-  a.findOnlyMedian(false);
+  a.findOnlyMedian(true);
   
   /* method WprimeFitter::run() loops over all mass points listed in 
      wprimeFitter_signalDescription.h; for each mass point it 
