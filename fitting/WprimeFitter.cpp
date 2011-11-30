@@ -201,7 +201,7 @@ void WprimeFitter::run()
   ofstream limits, tracking;
   limits.open("limits.txt");
   tracking.open("tracking.txt");
-  limits << "Mass\tObsLimit\tExpLimit\tExpLimit+1\tExpLimit-1\tExpLimit+2\tExpLimit-2\n";
+  limits << "Mass/F:\tObsLimit/F:\tExpLimit/F:\tExpLimitP1/F:\tExpLimitM1/F:\tExpLimitP2/F:\tExpLimitM2/F:\n";
   tracking << "Mass\t  Zexpect\tCL\tScaleFactor\n";
   
   for (int sig_i = 0; sig_i != Nmax; ++sig_i)
@@ -334,10 +334,9 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     else
       adjustScaleFactor(scale_factor, cl_test, step_i);
 	
-    // expected # of events given by sig_hist integral;
+    // expected # of events given by sig_hist integral
     // first correction is from T&P (eff_corr_TP_)
-    // second correction is by scaling down SSM cross-section by scale factor
-    Nsig = eff_corr_TP_ * sig_hist[sig_i]->Integral(0, Nbins+1)/scale_factor;
+    Nsig = sig_hist[sig_i]->Integral(0, Nbins+1)/scale_factor;
 	
     RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
     
@@ -464,8 +463,17 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   RooDLLSignificanceMCSModule sigModule(nsig,0);
   mcs->addModule(sigModule);
   
-  
+  // correct expected # of signal events:
+  // first correction is in efficiency calculated from T&P
+  Nsig = Nsig * eff_corr_TP_;
   int Ntot = int(Nsig+Nbgd);
+  // second correction is due to lumi uncertainty (4.5%)
+  float dNtot = sqrt(Ntot + 0.045 * Nsig);
+
+  cout << " Before lumi correction, dNtot = " << sqrt(Ntot) 
+       << " after lumi correction, dNtot = " << dNtot << endl;
+  
+
   Nevt[sig_i].Ntot = Nsig+Nbgd;
   Nevt[sig_i].Nsig = Nsig;
   Nevt[sig_i].Nbgd = Nbgd;
@@ -483,7 +491,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
     //
     RooRandomizeParamMCSModule randModule ;
     // randModule.sampleGaussian(nbgd,Ntot, sqrt(Ntot)) ;
-    randModule.sampleSumGauss(RooArgSet(nsig,*nbgd),Ntot,sqrt(Ntot)) ;
+    randModule.sampleSumGauss(RooArgSet(nsig,*nbgd),Ntot, dNtot) ;
     mcs->addModule(randModule) ;  
     
     mcs->generateAndFit(NpseudoExp_);
