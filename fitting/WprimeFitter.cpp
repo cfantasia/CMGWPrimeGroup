@@ -630,30 +630,27 @@ void WprimeFitter::modelBackground()
     modelBackgroundOption2();
   
   //////////////////////////////////
-  //Estimation scale factor for MC.
+  //Estimation scale factor for MC sideband region
+
+  // maximum should not go above fXMIN
   float xmin = 220; float xmax = fXMIN;
-  if(xmin < bXMIN)xmin = bXMIN;
+  // better to use region down to bXMIN if possible (220 may be too low)
+  if(bXMIN < xmax)xmin = bXMIN; 
+  assert(xmin < xmax);
+
   double Nbgdsideband  
     = bgd_hist ->Integral( bgd_hist->FindBin(xmin),bgd_hist->FindBin(xmax) );
   double Ndatasideband 
     = data_hist->Integral( data_hist->FindBin(xmin),data_hist->FindBin(xmax) );
   
-  //cout<<" _chang Nbgdsideband "<<Nbgdsideband <<" Ndatasideband "<< Ndatasideband 	<<endl;
-  //cout<<" _chang before bgd_hist over 220GeV "	<<bgd_hist->Integral(bgd_hist->FindBin(220),bgd_hist->GetXaxis()->GetNbins()+1) <<endl;
-  //cout<<" _chang data over 220GeV "        	<<data_hist->Integral(data_hist->FindBin(220),data_hist->GetXaxis()->GetNbins()+1)<<endl;
-  
   float sf_mcdata = Nbgdsideband/Ndatasideband;
   
-  cout<<" Scale factor for background from sideband region = "<< 
-    sf_mcdata <<endl;
+  cout<<" Scale factor for background from sideband region = "
+      << sf_mcdata <<endl;
   
   bgd_hist->Scale(1./(sf_mcdata));
   
-  //cout<<" _chang after bgd_hist over 220GeV "
-  //<<bgd_hist->Integral(bgd_hist->FindBin(220),bgd_hist->GetXaxis()->GetNbins()) <<endl;
-  
   float NmcBGscaled = bgd_hist->Integral(bgd_hist->FindBin(pXMIN),bgd_hist->FindBin(pXMAX));
-  
   Nbgd = NmcBGscaled;
   
   nbgd = new RooRealVar("nbgd","number of background events,",Nbgd,0,100000);
