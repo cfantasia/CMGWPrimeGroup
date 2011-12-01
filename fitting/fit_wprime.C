@@ -11,10 +11,11 @@ void fit_wprime()
   
   WprimeFitter a(wprime_MuMET);
   a.setNpseudoExperiments(2000);
-  a.doOneMassPointOnly(false);
+  // integer corresponds to 1...Nsignal_points index
+  a.doOneMassPointOnly(9); 
   a.doRunFits(true);
   a.debugMe(false);
-  a.findOnlyMedian(true);
+  a.findOnlyMedian(false);
   
   /* method WprimeFitter::run() loops over all mass points listed in 
      wprimeFitter_signalDescription.h; for each mass point it 
