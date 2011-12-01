@@ -395,12 +395,20 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     
     RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
 			RooArgList(nsig, *nbgd));
+    RooGaussian nsigc("nsigc","nsigc",nsig,RooConst(0.0),RooConst(0.00000001));
+    //RooLandau nsigc("nsigc","nsigc",nsig,RooConst(0.00001),RooConst(0.0000001));
     
+    //RooGenericPdf nsigc("nsigc","nsigc","1.0/(1000000.0*nsig)",RooArgSet(nsig)) ;
+    //RooPoisson nsigc("nsigc","nsigc",nsig,RooConst(0.000000001));
+    
+    RooProdPdf  SigBgdPdfc("SigBgdPdfc","SigBgdPdfc for BG only",RooArgSet(SigBgdPdf, nsigc));
+  
     RooAbsPdf * model = 0;
     //sig_i = 0 corresponds to bgd-only ensemble
     // need a better way to make this clearer
     if(sig_i == 0)
-      model = (RooAbsPdf*) BgdPdf;
+      model = (RooAbsPdf*) &SigBgdPdfc;
+    //      model = (RooAbsPdf*) BgdPdf;
     else
       model = (RooAbsPdf*) &SigBgdPdf;
     
@@ -511,10 +519,26 @@ void WprimeFitter::getLLR()
 void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model, 
 					RooAbsPdf & SigBgdPdf, RooRealVar &nsig)
 {
-  RooMCStudy * mcs= new RooMCStudy(*model, *mt, FitModel(SigBgdPdf), 
-				   Binned(), Silence(), Extended(kTRUE), 
-				   FitOptions(Range("mt_fit"),Extended(kTRUE),
-					      PrintEvalErrors(0)));
+  //RooMCStudy * mcs= new RooMCStudy(*model, *mt, FitModel(SigBgdPdf), 
+  //				   Binned(), Silence(), Extended(kTRUE), 
+  //				   FitOptions(Range("mt_fit"),Extended(kTRUE),
+  //				      PrintEvalErrors(0)));
+
+  RooMCStudy * mcs;
+  if(sig_i == 0){   
+    
+    mcs = new RooMCStudy(*model, *mt,Constrain(nsig),FitModel(SigBgdPdf),
+			 Binned(), Silence(), Extended(kTRUE), 
+			 FitOptions(Range("mt_fit"),Extended(kTRUE),
+				    PrintEvalErrors(0)));
+  }
+  else{
+    mcs = new RooMCStudy(*model, *mt, FitModel(SigBgdPdf),
+			 Binned(), Silence(), Extended(kTRUE), 
+			 FitOptions(Range("mt_fit"),Extended(kTRUE),
+				    PrintEvalErrors(0)));
+  }
+
   RooDLLSignificanceMCSModule sigModule(nsig,0);
   mcs->addModule(sigModule);
   
@@ -535,6 +559,15 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
 
   // correction due to lumi uncertainty (4.5%)
   float dNtot = sqrt(Ntot + 0.045 * Nsig);
+  
+  RooRandomizeParamMCSModule randModule ;
+  randModule.sampleSumGauss(RooArgSet(nsig,*nbgd),Ntot, dNtot) ;
+  mcs->addModule(randModule) ; 
+  
+  if(debugMe_)
+    mcs->generateAndFit(NpseudoExp_, 0, kTRUE);
+  else
+    mcs->generateAndFit(NpseudoExp_);
 
   if(debugMe_)
     {
@@ -544,54 +577,31 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
     }
 
   // sig_i = 0 corresponds to bgd-only ensemble of pseudo-experiments
-  if(sig_i == 0)
-    {
-      Ntot = Nbgd;
-      Nevt[sig_i].Ntot = Nbgd;
-      
-      mcs->generateAndFit(NpseudoExp_, int(Ntot));
-      
-    }
-  else{
-    //
-    RooRandomizeParamMCSModule randModule ;
-    // randModule.sampleGaussian(nbgd,Ntot, sqrt(Ntot)) ;
-    randModule.sampleSumGauss(RooArgSet(nsig,*nbgd),Ntot, dNtot) ;
-    mcs->addModule(randModule) ;  
-
-    if(debugMe_)
-      mcs->generateAndFit(NpseudoExp_, 0, kTRUE);
-    else
-      mcs->generateAndFit(NpseudoExp_);
-    
-    
-    /*
+  if(debugMe_ && sig_i == 0)
+    {    
+      //mcs->generateAndFit(NpseudoExp_, int(Ntot));
       new TCanvas();
       TH1* h_sig_gen = (TH1F*) mcs->fitParDataSet().createHistogram("nsig");
       TH1* h_bgd_gen = (TH1F*) mcs->fitParDataSet().createHistogram("nbgd");
       h_sig_gen->Draw();
       new TCanvas();
       h_bgd_gen->Draw();
-      new TCanvas();
-      TH1* hh_nsig_nbgd  = mcs->fitParDataSet().createHistogram("hh",&nsig,YVar(*nbgd)) ;
-      //TH2* hh_nsig_nbgd = (TH2*) mcs->fitParDataSet().createHistogram("nsig,nbgd") ;
-      hh_nsig_nbgd->Draw();
-    */
-
-    if(debugMe_){
-      //Find average number of entries above some threshold
-      float totalEvents1 = 0;  float totalEvents2 = 0; float totalEvents3 = 0;
-      for(unsigned sample_i=0; sample_i<NpseudoExp_; ++sample_i){
-	TH1F * signal_hist = (TH1F*) mcs->genData(sample_i)->createHistogram("Mt");
-	totalEvents1 += signal_hist->Integral(signal_hist->FindBin(fXMIN),signal_hist->GetXaxis()->GetNbins()+1);
-	totalEvents2 += signal_hist->Integral(signal_hist->FindBin(bXMIN),signal_hist->GetXaxis()->GetNbins()+1);
-	totalEvents3 += signal_hist->Integral(signal_hist->FindBin(220),signal_hist->GetXaxis()->GetNbins()+1);
-      }
-      cout << "Average number of generated events above " << fXMIN << " GeV is " << ((float)totalEvents1)/NpseudoExp_ << endl;
-      cout << "Average number of generated events above " << bXMIN << " GeV is " << ((float)totalEvents2)/NpseudoExp_ << endl;
-      cout << "Average number of generated events above " << 220 << " GeV is " << ((float)totalEvents3)/NpseudoExp_ << endl;
+    }  
+    
+  
+  
+  if(debugMe_){
+    //Find average number of entries above some threshold
+    float totalEvents1 = 0;  float totalEvents2 = 0; float totalEvents3 = 0;
+    for(unsigned sample_i=0; sample_i<NpseudoExp_; ++sample_i){
+      TH1F * signal_hist = (TH1F*) mcs->genData(sample_i)->createHistogram("Mt");
+      totalEvents1 += signal_hist->Integral(signal_hist->FindBin(fXMIN),signal_hist->GetXaxis()->GetNbins()+1);
+      totalEvents2 += signal_hist->Integral(signal_hist->FindBin(bXMIN),signal_hist->GetXaxis()->GetNbins()+1);
+      totalEvents3 += signal_hist->Integral(signal_hist->FindBin(220),signal_hist->GetXaxis()->GetNbins()+1);
     }
-
+    cout << "Average number of generated events above " << fXMIN << " GeV is " << ((float)totalEvents1)/NpseudoExp_ << endl;
+    cout << "Average number of generated events above " << bXMIN << " GeV is " << ((float)totalEvents2)/NpseudoExp_ << endl;
+    cout << "Average number of generated events above " << 220 << " GeV is " << ((float)totalEvents3)/NpseudoExp_ << endl;
   }
   
   // Make some plots
