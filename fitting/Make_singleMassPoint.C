@@ -1,3 +1,6 @@
+// MassPoint: should be between 1 and Nsignal_points-1
+// channel: should be 0 (MuMET) or 1 (ElMET)
+int Make_singleMassPoint(int MassPoint, int channel)
 {
   /* find location of include file by issuing
      scramv1 tool info roofitcore
@@ -26,7 +29,10 @@
   gROOT->ProcessLine(".L RooBgdPdf2.cxx+");
   gROOT->ProcessLine(".L TripleGauss.cxx+");
   gROOT->ProcessLine(".L WprimeFitter.cpp+");
-    
-  gROOT->ProcessLine(".x fit_wprime.C+");
-   
+  
+  char command[1024];
+  sprintf(command, ".x fit_wprime_singleMassPoint.C+(%d, %d)", MassPoint, channel);
+  // cout << command << endl;
+  gROOT->ProcessLine(command);
+  return 0;
 }

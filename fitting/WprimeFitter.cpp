@@ -32,7 +32,7 @@ void WprimeFitter::init()
   bgd_option_ = 1; backgroundModeled_ = findOnlyMedian_ = debugMe_ = false;
   MassPoint_ = -1;
 
-  for(unsigned int i = 0; i != Nsignal_points; ++i)
+  for(int i = 0; i != Nsignal_points; ++i)
     {
       LLR[i] = Nsig_h[i] = sig_hist[i] = res_hist[i] = 0;
       resolution[i] = 0;
@@ -106,7 +106,7 @@ void WprimeFitter::getInputHistograms()
   Nbins = bgd_hist->GetXaxis()->GetNbins();
   data_hist = (TH1F*)fileData->Get(data_name.c_str());
   
-  for(unsigned int sig_i = 0; sig_i != Nsignal_points; ++sig_i)
+  for(int sig_i = 0; sig_i != Nsignal_points; ++sig_i)
     {
       string name = dirname[sig_i] + "/" + res_name;
       res_hist[sig_i] = (TH1F*) fileSIG->Get(name.c_str());
@@ -161,7 +161,7 @@ WprimeFitter::~WprimeFitter()
 
 void WprimeFitter::initFit()
 {
-  for(unsigned int sig_i = 0; sig_i != Nsignal_points; ++sig_i)
+  for(int sig_i = 0; sig_i != Nsignal_points; ++sig_i)
     {
       Nevt[sig_i].Ntot =  Nevt[sig_i].Nsig = Nevt[sig_i].Nbgd = 0;
       //      if(LLR[sig_i]) delete LLR[sig_i];
@@ -215,8 +215,16 @@ void WprimeFitter::run()
       filename += Form("_%.1f", WprimeMass[MassPoint_]/1000);
       filename2 += Form("_%.1f", WprimeMass[MassPoint_]/1000);
     }
-  filename += ".txt";
-  filename2 += ".txt";
+  if(channel_ == wprime_MuMET)
+    {
+      filename += "_MuMET.txt";
+      filename2 += "_MuMET.txt";
+    }
+  else  if(channel_ == wprime_ElMET)
+    {
+      filename += "_ElMET.txt";
+      filename2 += "_ElMET.txt";
+    }
 
   limits.open(filename.c_str());
   tracking.open(filename2.c_str());
@@ -408,7 +416,7 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     // need a better way to make this clearer
     if(sig_i == 0)
       model = (RooAbsPdf*) &SigBgdPdfc;
-    //      model = (RooAbsPdf*) BgdPdf;
+    // model = (RooAbsPdf*) BgdPdf;
     else
       model = (RooAbsPdf*) &SigBgdPdf;
     
@@ -519,10 +527,10 @@ void WprimeFitter::getLLR()
 void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model, 
 					RooAbsPdf & SigBgdPdf, RooRealVar &nsig)
 {
-  //RooMCStudy * mcs= new RooMCStudy(*model, *mt, FitModel(SigBgdPdf), 
+  // RooMCStudy * mcs= new RooMCStudy(*model, *mt, FitModel(SigBgdPdf), 
   //				   Binned(), Silence(), Extended(kTRUE), 
-  //				   FitOptions(Range("mt_fit"),Extended(kTRUE),
-  //				      PrintEvalErrors(0)));
+  // 				   FitOptions(Range("mt_fit"),Extended(kTRUE),
+  //					      PrintEvalErrors(0)));
 
   RooMCStudy * mcs;
   if(sig_i == 0){   
