@@ -562,7 +562,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
     if(debugMe_)
       mcs->generateAndFit(NpseudoExp_, 0, kTRUE);
     else
-      mcs->generateAndFit(NpseudoExp_, 0);
+      mcs->generateAndFit(NpseudoExp_);
     
     
     /*
@@ -747,7 +747,7 @@ void WprimeFitter::modelBackgroundOption2()
 
 void WprimeFitter::modelResolutions()
 {
-  for(unsigned i = 0; i != Nsignal_points; ++i){ // loop over mass points
+  for(int i = 0; i != Nsignal_points; ++i){ // loop over mass points
     float xmin = res_hist[i]->GetXaxis()->GetXmin();
     float xmax = res_hist[i]->GetXaxis()->GetXmax();
     
