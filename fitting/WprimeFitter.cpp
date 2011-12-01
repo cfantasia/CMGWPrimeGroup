@@ -199,7 +199,7 @@ void WprimeFitter::run()
   initFit();
   
   ofstream limits, tracking;
-  limits.open("limits.txt");
+  limits.open("nLimit.txt");
   tracking.open("tracking.txt");
   limits << "Mass/F:Lumi/F:ObsLimit/F:ExpLimit/F:ExpLimitP1/F:ExpLimitM1/F:ExpLimitP2/F:ExpLimitM2/F\n";
   tracking << "Mass\t  Zexpect\tCL\tScaleFactor\n";
