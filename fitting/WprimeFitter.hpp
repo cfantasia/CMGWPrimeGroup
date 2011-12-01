@@ -1,6 +1,10 @@
 #ifndef _WprimeFitter_hpp_
 #define _WprimeFitter_hpp_
 
+#include "RooConstVar.h"
+#include "RooProdPdf.h"
+#include "RooFormulaVar.h"
+#include "RooUniform.h"
 
 #include "RooRealVar.h"
 #include "RooDataSet.h"
