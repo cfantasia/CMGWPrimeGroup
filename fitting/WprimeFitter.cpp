@@ -32,7 +32,7 @@ void WprimeFitter::init()
   bgd_option_ = 1; backgroundModeled_ = findOnlyMedian_ = debugMe_ = false;
   MassPoint_ = -1;
 
-  for(int i = 0; i != Nsignal_points; ++i)
+  for(unsigned int i = 0; i != Nsignal_points; ++i)
     {
       LLR[i] = Nsig_h[i] = sig_hist[i] = res_hist[i] = 0;
       resolution[i] = 0;
@@ -106,7 +106,7 @@ void WprimeFitter::getInputHistograms()
   Nbins = bgd_hist->GetXaxis()->GetNbins();
   data_hist = (TH1F*)fileData->Get(data_name.c_str());
   
-  for(int sig_i = 0; sig_i != Nsignal_points; ++sig_i)
+  for(unsigned int sig_i = 0; sig_i != Nsignal_points; ++sig_i)
     {
       string name = dirname[sig_i] + "/" + res_name;
       res_hist[sig_i] = (TH1F*) fileSIG->Get(name.c_str());
@@ -161,7 +161,7 @@ WprimeFitter::~WprimeFitter()
 
 void WprimeFitter::initFit()
 {
-  for(int sig_i = 0; sig_i != Nsignal_points; ++sig_i)
+  for(unsigned int sig_i = 0; sig_i != Nsignal_points; ++sig_i)
     {
       Nevt[sig_i].Ntot =  Nevt[sig_i].Nsig = Nevt[sig_i].Nbgd = 0;
       //      if(LLR[sig_i]) delete LLR[sig_i];
@@ -421,7 +421,7 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     tracking << WprimeMass[sig_i] << '\t' << Zexpect << '\t' 
 	     << cl_test << '\t' 
 	     << scale_factor << endl;
-    
+
   }while(step_i != Nsteps-1 || cl_test > 0.95);
    
   return scale_factor;
@@ -684,7 +684,7 @@ void WprimeFitter::modelBackgroundOption1()
   
   RooPlot* xframe2 = mt->frame(Range("mt_bgdfit"), Title("Bgd transverse mass"));
   
-  bgd_tmp.fitTo(*mt_BGD, Range("mt_bgdfit"), RooFit::SumW2Error (kFALSE), Save());
+  RooFitResult * rf = bgd_tmp.fitTo(*mt_BGD, Range("mt_bgdfit"), RooFit::SumW2Error (kFALSE), Save());
   mt_BGD->plotOn(xframe2, Name("data"));
   bgd_tmp.plotOn(xframe2, Name("model"));
   cout << " Bgd mt fit: chi2/ndof = " 
@@ -706,9 +706,20 @@ void WprimeFitter::modelBackgroundOption1()
   
   BgdPdf = new RooBgdPdf("BgdPdf", "BgdPdf", *mt, *bb, *cc);
 
-  //  RooArgSet prodSet(BgdPdf);
-  //RooBgdPdf unNormPdf("fitted Function", "fitted Function", prodSet);
-  //TF1 * bgd_func = unNormPdf.asTF(RooArgList(x), pars);
+  RooArgSet prodSet(bgd_tmp);
+  RooProduct unNormPdf("fitted Function", "fitted Function", prodSet);
+  TF1 * bgd_func = unNormPdf.asTF(RooArgList(*mt), pars);
+
+  float rangeMin=fXMIN, rangeMax=fXMAX;
+  Double_t integ = bgd_func->Integral(rangeMax, rangeMin);
+  Double_t dinteg = bgd_func->IntegralError(rangeMin, rangeMax, 0, rf->covarianceMatrix().GetMatrixArray())/integ;
+
+  cout << " Actual # of entries between [" << rangeMin << ", " << rangeMax 
+       << "] = " << bgd_hist->Integral(bgd_hist->GetBin(rangeMin), bgd_hist->GetBin(rangeMax)) << endl;
+  cout << " Extrapolation between [" << rangeMin << ", " << rangeMax 
+       << "] = " << integ << " +- " << dinteg << endl;
+  cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
+  
 }
 
 void WprimeFitter::modelBackgroundOption2()
