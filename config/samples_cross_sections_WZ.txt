@@ -46,14 +46,14 @@ Nprod_evt = 81352581
 samplename = WWTo2L2Nu
 description = WWTo2L2Nu_TuneZ2_7TeV-pythia6_tauola
 subdir = root://cmsxrootd.hep.wisc.edu/
-x-section = 4.65
+x-section = 4.882
 pathname = filelists_WZ/MCPatTrilepton-W06-03-01A-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola.txt
 Nprod_evt = 210667
 
 samplename = WZJetsTo3LNu
 description = WZJetsTo3LNu_TuneZ2_7TeV-madgraph-tauola.txt
 subdir = root://cmsxrootd.hep.wisc.edu/
-x-section = 0.594
+x-section = 0.879
 pathname = filelists_WZ/MCPatOmnilepton-W06-03-01A-WZJetsTo3LNu_TuneZ2_7TeV-madgraph-tauola.txt
 Nprod_evt = 1221134
 
