@@ -2,8 +2,8 @@
 #include <fstream>
 using namespace RooFit;
 
-const int Nsteps=3;
-const float step_size[Nsteps]={10.,1., 0.1};
+const int Nsteps=4;
+const float step_size[Nsteps]={100, 10.,1., 0.1};
 
 const float eff_corr_TP_muon = 0.974;
 const float eff_corr_TP_electron = 0.960;
