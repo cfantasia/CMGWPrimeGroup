@@ -48,7 +48,12 @@ class WprimeFitter{
 
   void setNpseudoExperiments(unsigned N){NpseudoExp_ = N;}
   void doRunFits(bool flag){runFits_ = flag;}
-  void doOneMassPointOnly(bool flag){oneMassPointOnly_ = flag;}
+  void doOneMassPointOnly(int MassPoint)
+  {
+    assert(MassPoint > 0 && MassPoint < Nsignal_points);
+    MassPoint_ = MassPoint;
+  }
+
   void findOnlyMedian(bool flag){findOnlyMedian_ = flag;}
   void debugMe(bool flag){debugMe_ = flag;}
 
@@ -64,6 +69,8 @@ class WprimeFitter{
   void run();
 
  private:
+  int MassPoint_;
+  vector<int> massPoints;
   bool debugMe_;
   bool findOnlyMedian_;
   bool backgroundModeled_;
