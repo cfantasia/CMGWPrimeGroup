@@ -30,8 +30,9 @@ void WprimeFitter::init()
 {
   NpseudoExp_ = 0; 
   bgd_option_ = 1; backgroundModeled_ = findOnlyMedian_ = debugMe_ = false;
+  MassPoint_ = -1;
 
-  for(unsigned i = 0; i != Nsignal_points; ++i)
+  for(int i = 0; i != Nsignal_points; ++i)
     {
       LLR[i] = Nsig_h[i] = sig_hist[i] = res_hist[i] = 0;
       resolution[i] = 0;
@@ -105,7 +106,7 @@ void WprimeFitter::getInputHistograms()
   Nbins = bgd_hist->GetXaxis()->GetNbins();
   data_hist = (TH1F*)fileData->Get(data_name.c_str());
   
-  for(unsigned sig_i = 0; sig_i != Nsignal_points; ++sig_i)
+  for(int sig_i = 0; sig_i != Nsignal_points; ++sig_i)
     {
       string name = dirname[sig_i] + "/" + res_name;
       res_hist[sig_i] = (TH1F*) fileSIG->Get(name.c_str());
@@ -160,7 +161,7 @@ WprimeFitter::~WprimeFitter()
 
 void WprimeFitter::initFit()
 {
-  for(unsigned sig_i = 0; sig_i != Nsignal_points; ++sig_i)
+  for(int sig_i = 0; sig_i != Nsignal_points; ++sig_i)
     {
       Nevt[sig_i].Ntot =  Nevt[sig_i].Nsig = Nevt[sig_i].Nbgd = 0;
       //      if(LLR[sig_i]) delete LLR[sig_i];
@@ -191,27 +192,46 @@ void WprimeFitter::run()
       backgroundModeled_ = true;
     }
   
-  int Nmax = Nsignal_points;
-  if(oneMassPointOnly_)Nmax = 1;
-  
+  if(MassPoint_ < 0)
+    {
+      for(int i = 0; i != Nsignal_points; ++i)
+	massPoints.push_back(i);
+    }
+  else
+    {
+      massPoints.push_back(0); // this is the bgd-only case
+      massPoints.push_back(MassPoint_);
+    }
+
   if(!runFits_)return;
 
   initFit();
   
   ofstream limits, tracking;
-  limits.open("nLimit.txt");
-  tracking.open("tracking.txt");
+  string filename = "nLimit";
+  string filename2 = "tracking";
+  if(MassPoint_ > 0)
+    {
+      filename += Form("_%.1f", WprimeMass[MassPoint_]/1000);
+      filename2 += Form("_%.1f", WprimeMass[MassPoint_]/1000);
+    }
+  filename += ".txt";
+  filename2 += ".txt";
+
+  limits.open(filename.c_str());
+  tracking.open(filename2.c_str());
   limits << "Mass/F:Lumi/F:ObsLimit/F:ExpLimit/F:ExpLimitP1/F:ExpLimitM1/F:ExpLimitP2/F:ExpLimitM2/F\n";
   tracking << "Mass\t  Zexpect\tCL\tScaleFactor\n";
   
-  for (int sig_i = 0; sig_i != Nmax; ++sig_i)
+  typedef vector<int>::const_iterator It;
+  for (It sig_i = massPoints.begin(); sig_i != massPoints.end(); ++sig_i)
     {// loop over mass points
 
 
       // First, find the Z-values that corresponds to median & 1,2 sigma points
-      if(sig_i == 0)
+      if(*sig_i == 0)
 	{
-	  runPseudoExperiments(sig_i, tracking);
+	  runPseudoExperiments(*sig_i, tracking);
 	  calculateZvalues(); 
 	  continue;
 	}
@@ -235,9 +255,9 @@ void WprimeFitter::run()
 	{ // loop over Z-values
 	  cout << "\n Calculating CL95 limit for Z value # " << z << " out of "
 	       << NZmax << " possible values " << endl;
-	  float scale_factor = runPseudoExperiments(sig_i, tracking, Zexp[z]);
+	  float scale_factor = runPseudoExperiments(*sig_i, tracking, Zexp[z]);
 	  
-	  xsec_limit[z] = xsec[sig_i]/scale_factor;
+	  xsec_limit[z] = xsec[*sig_i]/scale_factor;
 	} // loop over Z-values
 
       median = xsec_limit[0]; 
@@ -248,7 +268,7 @@ void WprimeFitter::run()
 
 
       // COPY + PASTE FROM runPseudoExperiments - NEED A BETTER WAY
-      const float mass_ = WprimeMass[sig_i];
+      const float mass_ = WprimeMass[*sig_i];
       const float width_ = (4./3.)*(mass_/M_W)*G_W;
       // signal mass and width
       RooRealVar mass("Mass", "W' mass", mass_);//, 0, 10000);
@@ -258,7 +278,7 @@ void WprimeFitter::run()
       JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
   
       RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
-			   sig_model, *(resolution[sig_i]));
+			   sig_model, *(resolution[*sig_i]));
       // COPY + PASTE FROM runPseudoExperiments - NEED A BETTER WAY
 
       Double_t nChi2H0 = 0, nChi2H1 = 0, dChi2 = 0;
@@ -291,16 +311,16 @@ void WprimeFitter::run()
 	   << " Chi2H0 = " << nChi2H0*Nfit_bins << endl;
 
       dChi2 = nChi2H0*Nfit_bins - nChi2H1*Nfit_bins;
-      tracking << WprimeMass[sig_i] << '\t' << nChi2H0*Nfit_bins << '\t' 
+      tracking << WprimeMass[*sig_i] << '\t' << nChi2H0*Nfit_bins << '\t' 
 	       << nChi2H1*Nfit_bins <<endl;
       
       Z_observed = dChi2 >= 0 ? sqrt(dChi2) : 0.;
 
-      float sf = runPseudoExperiments(sig_i, tracking, Z_observed);
+      float sf = runPseudoExperiments(*sig_i, tracking, Z_observed);
       
-      observed = xsec[sig_i]/sf;
+      observed = xsec[*sig_i]/sf;
 
-      limits << WprimeMass[sig_i] << '\t' << lumi_ipb_ << '\t' 
+      limits << WprimeMass[*sig_i] << '\t' << lumi_ipb_ << '\t' 
 	     << observed << '\t' << median 
 	     << '\t' << upper1sig << '\t' << lower1sig << '\t' << upper2sig 
 	     << '\t' << lower2sig << '\n';
@@ -319,7 +339,7 @@ void WprimeFitter::run()
   cout << " Between " << bXMIN << " and " << pXMAX << " GeV = "
        << bgd_hist->Integral(bgd_hist->FindBin(bXMIN), bin_max) << endl;
   
-  getLLR();
+  //  getLLR();
 }
 
 // if sig_i==0, method will calculate LLR for bgd-only ensemble
@@ -419,37 +439,35 @@ void WprimeFitter::getLLR()
   lg->SetBorderSize(0);
   lg->SetFillColor(0);
   
-  unsigned Nmax = Nsignal_points;
-  if(oneMassPointOnly_)Nmax = 1;
-  
-  for(int sig_i = Nmax-1; sig_i != -1; --sig_i)
+  typedef vector<int>::const_iterator It;
+  for (It sig_i = massPoints.begin(); sig_i != massPoints.end(); ++sig_i)
     { // loop over mass points
-      LLR[sig_i]->SetLineColor(color[sig_i]);
+      LLR[*sig_i]->SetLineColor(color[*sig_i]);
       float cl = -999;
       
       if(showPlot)
 	{
-	  if(sig_i == Nsignal_points-1)
+	  if(*sig_i == Nsignal_points-1)
 	    {	    
 	      new TCanvas(); gPad->SetLogy();
-	      LLR[sig_i]->GetXaxis()->SetTitle("LLR");
-	      LLR[sig_i]->SetMaximum(3000); LLR[sig_i]->SetMinimum(0.1); 
-	      LLR[sig_i]->Draw("hist");
+	      LLR[*sig_i]->GetXaxis()->SetTitle("LLR");
+	      LLR[*sig_i]->SetMaximum(3000); LLR[*sig_i]->SetMinimum(0.1); 
+	      LLR[*sig_i]->Draw("hist");
 	    }
 	  else
 	    {
-	      LLR[sig_i]->Draw("hist same");
+	      LLR[*sig_i]->Draw("hist same");
 	    }
 	  
-	  lg->AddEntry(LLR[sig_i], desc[sig_i].c_str());
+	  lg->AddEntry(LLR[*sig_i], desc[*sig_i].c_str());
 	}
       // show every second plot; canvas gets crowded otherwise
       showPlot = !showPlot; 
       
-      cout<< " Sample # " << sig_i << ": " << desc[sig_i]; 
+      cout<< " Sample # " << *sig_i << ": " << desc[*sig_i]; 
       
-      int bin = LLR[sig_i]->FindBin(Zexpect_0);
-      cl = 1 - LLR[sig_i]->Integral(1, bin+1)/LLR[sig_i]->Integral();
+      int bin = LLR[*sig_i]->FindBin(Zexpect_0);
+      cl = 1 - LLR[*sig_i]->Integral(1, bin+1)/LLR[*sig_i]->Integral();
       cout << ", 1 - P_tail("<< Zexpect_0 << ") = " << 100.0*cl << "% CL"
 	   << endl;       
     } // loop over mass points
@@ -458,22 +476,23 @@ void WprimeFitter::getLLR()
   
   cout << endl;
   
-  for(unsigned sig_i = 0; sig_i != Nmax; ++sig_i)
+  for (It sig_i = massPoints.begin(); sig_i != massPoints.end(); ++sig_i)
     { // loop over mass points
       if(debugMe_)
 	{
-	  cout<< " Sample # " << sig_i << ": " << desc[sig_i]; 
-	  cout << ", Nbgd = " << Nevt[sig_i].Nbgd << ", Nsig = " 
-	       << Nevt[sig_i].Nsig << ", Ntot = " << Nevt[sig_i].Ntot << endl;
+	  cout<< " Sample # " << *sig_i << ": " << desc[*sig_i]; 
+	  cout << ", Nbgd = " << Nevt[*sig_i].Nbgd << ", Nsig = " 
+	       << Nevt[*sig_i].Nsig << ", Ntot = " << Nevt[*sig_i].Ntot 
+	       << endl;
 	}
 #if 0
-      string title = string("nsig") + desc[sig_i];
+      string title = string("nsig") + desc[*sig_i];
       new TCanvas();  gPad->SetLogy();
-      Nsig_h[sig_i]->SetMaximum(1000.); Nsig_h[sig_i]->SetMinimum(0.1); 
-      Nsig_h[sig_i]->GetXaxis()->SetTitle(title.c_str());
-      Nsig_h[sig_i]->Draw();	
+      Nsig_h[*sig_i]->SetMaximum(1000.); Nsig_h[*sig_i]->SetMinimum(0.1); 
+      Nsig_h[*sig_i]->GetXaxis()->SetTitle(title.c_str());
+      Nsig_h[*sig_i]->Draw();	
       
-      if(sig_i == 0)
+      if(*sig_i == 0)
 	{	    
 	  new TCanvas(); gPad->SetLogy();
 	  Nsig_h[0]->SetMaximum(1000.);  Nsig_h[0]->SetMinimum(0.1); 
@@ -482,7 +501,7 @@ void WprimeFitter::getLLR()
 	}
       else
 	{
-	  Nsig_h[sig_i]->Draw("same");
+	  Nsig_h[*sig_i]->Draw("same");
 	}
 #endif
     } // loop over mass points
