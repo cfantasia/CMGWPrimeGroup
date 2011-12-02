@@ -29,12 +29,14 @@ WprimeFitter::WprimeFitter(channel ch)
 void WprimeFitter::init()
 {
   NpseudoExp_ = 0; 
-  bgd_option_ = 1; backgroundModeled_ = findOnlyMedian_ = debugMe_ = false;
+  bgd_option_ = 1; 
+  backgroundModeled_ = findOnlyMedian_ = debugMe_ = 
+    skipLimitCalculation_ = false;
   MassPoint_ = -1;
 
   for(int i = 0; i != Nsignal_points; ++i)
     {
-      LLR[i] = Nsig_h[i] = sig_hist[i] = res_hist[i] = 0;
+      LLR[i] = Nsig_h[i] = Nbgd_h[i] = sig_hist[i] = res_hist[i] = 0;
       resolution[i] = 0;
       mean1[i] = mean2[i] = mean3[i] = 0;
       sigma1[i] = sigma2[i] = sigma3[i] = 0;
@@ -244,7 +246,14 @@ void WprimeFitter::run()
 	  continue;
 	}
 
-
+      // this is for sig_i != 0, where we calculate the 1-p_tail probability
+      // by asssuming a SSM x-section, but will not attempt to determine
+      // an exclusion limit on the cross-section
+      if(skipLimitCalculation_)
+	{
+	  runPseudoExperiments(*sig_i, tracking, Zexpect_0);
+	  continue;
+	}
       // Then, find the expected limits
       
       const int NZMAX = 5;
@@ -347,7 +356,7 @@ void WprimeFitter::run()
   cout << " Between " << bXMIN << " and " << pXMAX << " GeV = "
        << bgd_hist->Integral(bgd_hist->FindBin(bXMIN), bin_max) << endl;
   
-  //  getLLR();
+  if(skipLimitCalculation_)getLLR();
 }
 
 // if sig_i==0, method will calculate LLR for bgd-only ensemble
@@ -371,7 +380,7 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
   int step_i=0; float cl_test = 1., scale_factor=1.; 
   
   do{
-    if(sig_i == 0)
+    if(sig_i == 0 || skipLimitCalculation_)
       scale_factor = 1;
     else
       adjustScaleFactor(scale_factor, cl_test, step_i);
@@ -438,6 +447,8 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
 	     << cl_test << '\t' 
 	     << scale_factor << endl;
 
+    if(skipLimitCalculation_)break;
+
   }while(step_i != Nsteps-1 || cl_test > 0.95);
    
   return scale_factor;
@@ -501,25 +512,23 @@ void WprimeFitter::getLLR()
 	       << Nevt[*sig_i].Nsig << ", Ntot = " << Nevt[*sig_i].Ntot 
 	       << endl;
 	}
-#if 0
-      string title = string("nsig") + desc[*sig_i];
-      new TCanvas();  gPad->SetLogy();
-      Nsig_h[*sig_i]->SetMaximum(1000.); Nsig_h[*sig_i]->SetMinimum(0.1); 
-      Nsig_h[*sig_i]->GetXaxis()->SetTitle(title.c_str());
-      Nsig_h[*sig_i]->Draw();	
-      
-      if(*sig_i == 0)
-	{	    
-	  new TCanvas(); gPad->SetLogy();
-	  Nsig_h[0]->SetMaximum(1000.);  Nsig_h[0]->SetMinimum(0.1); 
-	  Nsig_h[0]->GetXaxis()->SetTitle("nsig");
-	  Nsig_h[0]->Draw();
-	}
-      else
-	{
-	  Nsig_h[*sig_i]->Draw("same");
-	}
-#endif
+      if(debugMe_ && skipLimitCalculation_){
+
+	string title = string("nsig") + desc[*sig_i];
+	new TCanvas();  gPad->SetLogy();
+	Nsig_h[*sig_i]->SetMaximum(10000.); Nsig_h[*sig_i]->SetMinimum(0.1); 
+	Nsig_h[*sig_i]->GetXaxis()->SetTitle(title.c_str());
+	Nsig_h[*sig_i]->Draw();	
+	
+	title = string("nbgd") + desc[*sig_i];
+	new TCanvas();  gPad->SetLogy();
+	Nbgd_h[*sig_i]->SetMaximum(10000.); Nbgd_h[*sig_i]->SetMinimum(0.1); 
+	Nbgd_h[*sig_i]->GetXaxis()->SetTitle(title.c_str());
+	Nbgd_h[*sig_i]->Draw();	
+	
+      }
+
+
     } // loop over mass points
   
 }
@@ -584,21 +593,9 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
 	   << " after lumi correction, dNtot = " << dNtot << endl;
     }
 
-  // sig_i = 0 corresponds to bgd-only ensemble of pseudo-experiments
-  if(debugMe_ && sig_i == 0)
-    {    
-      //mcs->generateAndFit(NpseudoExp_, int(Ntot));
-      new TCanvas();
-      TH1* h_sig_gen = (TH1F*) mcs->fitParDataSet().createHistogram("nsig");
-      TH1* h_bgd_gen = (TH1F*) mcs->fitParDataSet().createHistogram("nbgd");
-      h_sig_gen->Draw();
-      new TCanvas();
-      h_bgd_gen->Draw();
-    }  
-    
   
-  
-  if(debugMe_){
+  if(0){
+    //  if(debugMe_){
     //Find average number of entries above some threshold
     float totalEvents1 = 0;  float totalEvents2 = 0; float totalEvents3 = 0;
     for(unsigned sample_i=0; sample_i<NpseudoExp_; ++sample_i){
@@ -615,6 +612,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   // Make some plots
   TH1F* dll = (TH1F*) mcs->fitParDataSet().createHistogram("dll_nullhypo_nsig");
   TH1F * nsig_h = (TH1F*) mcs->fitParDataSet().createHistogram("nsig");
+  TH1F * nbgd_h = (TH1F*) mcs->fitParDataSet().createHistogram("nbgd");
   if(!dll)
     {
       cout << " oops, dll = " << dll << " for sig_i = " << sig_i << endl;
@@ -625,9 +623,27 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
       cout << " oops, nsig_h = " << nsig_h << " for sig_i = " << sig_i << endl;
       abort();
     }
-  
+  if(!nbgd_h)
+    {
+      cout << " oops, nbgd_h = " << nbgd_h << " for sig_i = " << sig_i << endl;
+      abort();
+    }
+
+  if(debugMe_ && skipLimitCalculation_)
+    {
+      RooPlot * frame = mcs->plotPull(nsig, Bins(40), FitGauss());
+      string title = "Distribution of N_{sig} pull value " + desc[sig_i];
+      frame->SetTitle(title.c_str());
+      new TCanvas(); frame->Draw();
+      RooPlot * frame2 = mcs->plotPull(*nbgd, Bins(40), FitGauss());
+      title = "Distribution of N_{bgd} pull value " + desc[sig_i];
+      frame2->SetTitle(title.c_str());
+      new TCanvas(); frame2->Draw();
+    }
+
   LLR[sig_i] = new TH1F(*dll);
   Nsig_h[sig_i] = new TH1F(*nsig_h);
+  Nbgd_h[sig_i] = new TH1F(*nbgd_h);
 }
 
 void WprimeFitter::calculateZvalues()
