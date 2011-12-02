@@ -23,6 +23,8 @@ void fit_wprime_singleMassPoint(int MassPoint, int chan)
   // integer corresponds to 1...Nsignal_points index
   if(MassPoint > 0)
     a->doOneMassPointOnly(MassPoint); 
+
+  a->skipLimitCalculation(false);
   a->doRunFits(true);
   a->debugMe(false);
   a->findOnlyMedian(false);
