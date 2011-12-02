@@ -65,10 +65,14 @@ class WprimeFitter{
     bgd_option_ = option; 
     backgroundModeled_ = false;
   }
+  void skipLimitCalculation(bool flag){skipLimitCalculation_ = flag;}
 
   void run();
 
  private:
+  // if true, will only calculate the 1-p_tail probability for SSM x-section,
+  // but will not attempt to extract a cross-section limit
+  bool skipLimitCalculation_; 
   int MassPoint_;
   vector<int> massPoints;
   bool debugMe_;
@@ -87,6 +91,7 @@ class WprimeFitter{
   
   TH1F * LLR[Nsignal_points];
   TH1F * Nsig_h[Nsignal_points];
+  TH1F * Nbgd_h[Nsignal_points];
   
   void getBins(TH1F * & h, float xmin, float xmax, 
 	       int & bin_first, int  & bin_last)
