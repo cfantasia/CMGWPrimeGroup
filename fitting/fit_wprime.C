@@ -10,9 +10,9 @@ void fit_wprime()
 {
   
   WprimeFitter a(wprime_MuMET);
-  a.setNpseudoExperiments(2000);
+  a.setNpseudoExperiments(1000);
   // integer corresponds to 1...Nsignal_points index
-  a.doOneMassPointOnly(9); 
+  //  a.doOneMassPointOnly(9); 
 
   a->skipLimitCalculation(false);
   a.doRunFits(true);
