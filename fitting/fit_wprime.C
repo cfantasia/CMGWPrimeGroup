@@ -14,7 +14,7 @@ void fit_wprime()
   // integer corresponds to 1...Nsignal_points index
   //  a.doOneMassPointOnly(9); 
 
-  a->skipLimitCalculation(false);
+  a.skipLimitCalculation(false);
   a.doRunFits(true);
   a.debugMe(false);
   a.findOnlyMedian(false);
