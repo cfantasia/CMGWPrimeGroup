@@ -340,7 +340,7 @@ void WprimeFitter::run()
       limits << WprimeMass[*sig_i] << '\t' << lumi_ipb_ << '\t' 
 	     << observed << '\t' << median 
 	     << '\t' << upper1sig << '\t' << lower1sig << '\t' << upper2sig 
-	     << '\t' << lower2sig << '\n';
+	     << '\t' << lower2sig << endl;
       
     } // loop over mass points
   
