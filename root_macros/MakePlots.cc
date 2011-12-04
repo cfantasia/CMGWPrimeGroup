@@ -162,7 +162,7 @@ MakePlots(string inName, string outName, string opt){
   /////Background Samples
 
   if(inName.find("WprimeWZ") != string::npos || inName.find("EWKWZ") != string::npos){
-    Bkg.push_back(Sample("WJetsToLNu", kOrange+3, 1, kOrange+10));
+    Bkg.push_back(Sample("WJetsToLNu", kOrange+6, 1, kOrange+10));
 
     //Bkg.push_back(Sample("ZZ", kOrange+3, 1, kOrange+10));
     //Bkg.push_back(Sample("GVJets", kOrange+3, 1, kOrange+10));
@@ -173,7 +173,7 @@ MakePlots(string inName, string outName, string opt){
     VV.push_back("WWTo2L2Nu");
     Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
     
-    Bkg.push_back(Sample("TTJets"  , kRed+4, 1, kRed+2));
+    Bkg.push_back(Sample("TTJets"  , kViolet+4, 1, kViolet+2));
     
     vector<string> ZJets; 
     ZJets.push_back("DYJetsToLL");
@@ -416,28 +416,28 @@ MakePlots(string inName, string outName, string opt){
       DrawandSave(fin,outName,"hMETee_ValidW","Title: MET After Valid W (zee)",1,0,0);
       DrawandSave(fin,outName,"hMETmm_ValidW","Title: MET After Valid W (Zmm)",1,0,0);
 
-      DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht",1,0,0);
+      DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht before Ht Cut",1,0,0);
 
       DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,0);
       DrawandSave(fin,outName,"hWZMass_Ht","Title: WZ Mass After Ht Cut ",1,0,0);
       DrawandSave(fin,outName,"hWZMass_Ht","Title: WZ Mass After Ht Cut (Cumlative) ",1,0,1);
 
       ////////////////
-      DrawandSave(fin,outName,"hNLLeps_ValidWZCand","Title: After Valid WZ",1,0,0);
-      DrawandSave(fin,outName,"hNJets_ValidWZCand","Title: After Valid WZ",1,0,0);
-      DrawandSave(fin,outName,"hZeept_ValidWZCand","Title: After Valid WZ",1,0,0);
-      DrawandSave(fin,outName,"hZmmpt_ValidWZCand","Title: After Valid WZ",1,0,0);
-      DrawandSave(fin,outName,"hNVtxs_ValidWZCand","Title: After Valid WZ",1,0,0);
-      DrawandSave(fin,outName,"hLeadPt_ValidWZCand","Title: After Valid WZ",1,0,0);
+      DrawandSave(fin,outName,"hNLLeps_ValidWZCand","Title: NLepAfter Valid WZ",1,0,0);
+      DrawandSave(fin,outName,"hNJets_ValidWZCand","Title: NJet After Valid WZ",1,0,0);
+      DrawandSave(fin,outName,"hZeept_ValidWZCand","Title: ZeePt After Valid WZ",1,0,0);
+      DrawandSave(fin,outName,"hZmmpt_ValidWZCand","Title: ZmmPt After Valid WZ",1,0,0);
+      DrawandSave(fin,outName,"hNVtxs_ValidWZCand","Title: NVtx After Valid WZ",1,0,0);
+      DrawandSave(fin,outName,"hLeadPt_ValidWZCand","Title: Lead Pt After Valid WZ",1,0,0);
 
-      DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht",1,0,0);
-      DrawandSave(fin,outName,"hZpt_ValidWZCand","Title: Zpt",1,0,0);
-      DrawandSave(fin,outName,"hWpt_ValidWZCand","Title: Wpt",1,0,0);
+      DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht After Valid WZ",1,0,0);
+      DrawandSave(fin,outName,"hZpt_ValidWZCand","Title: Zpt After Valid WZ",1,0,0);
+      DrawandSave(fin,outName,"hWpt_ValidWZCand","Title: Wpt After Valid WZ",1,0,0);
 
-      DrawandSave(fin,outName,"hWZ3e0muMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,0);
-      DrawandSave(fin,outName,"hWZ2e1muMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,0);
-      DrawandSave(fin,outName,"hWZ1e2muMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,0);
-      DrawandSave(fin,outName,"hWZ0e3muMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZ3e0muMass_ValidWZCand","Title: WZ 3e0mu Mass before Ht Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZ2e1muMass_ValidWZCand","Title: WZ 2e1mu Mass before Ht Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZ1e2muMass_ValidWZCand","Title: WZ 1e2mu Mass before Ht Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZ0e3muMass_ValidWZCand","Title: WZ 0e3mu Mass before Ht Cut",1,0,0);
      
      }
   }else if(inName.find("EWKWZ") != string::npos){
@@ -511,13 +511,17 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
           newtitle += curSample.hist->GetYaxis()->GetTitle();
           curSample.hist->SetYTitle(newtitle.c_str());
         }
-      }else if(eff && debug_){
-        cout<<" Sample: "<<curSample.name<<endl;
-        TH1F* hist = curSample.hist;
-        for(int iBin=1; iBin<=hist->GetNbinsX(); ++iBin){
-          cout<<"\tCut: "<<hist->GetXaxis()->GetBinLabel(iBin)<<": "
-              <<hist->GetBinContent(iBin)
-              <<" +/- "<<hist->GetBinError(iBin)<<endl;
+      }else{//Eff Histos
+        if(i!=1) curSample.hist->SetLineColor(curSample.fill);
+        
+        if(debug_){
+          cout<<" Sample: "<<curSample.name<<endl;
+          TH1F* hist = curSample.hist;
+          for(int iBin=1; iBin<=hist->GetNbinsX(); ++iBin){
+            cout<<"\tCut: "<<hist->GetXaxis()->GetBinLabel(iBin)<<": "
+                <<hist->GetBinContent(iBin)
+                <<" +/- "<<hist->GetBinError(iBin)<<endl;
+          }
         }
       }
     }
