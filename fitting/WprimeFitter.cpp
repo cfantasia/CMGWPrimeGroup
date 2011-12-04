@@ -749,7 +749,7 @@ void WprimeFitter::modelBackgroundOption1()
   Double_t dinteg = bgd_func->IntegralError(rangeMin, rangeMax, 0, rf->covarianceMatrix().GetMatrixArray())/integ;
 
   cout << " Actual # of entries between [" << rangeMin << ", " << rangeMax 
-       << "] = " << bgd_hist->Integral(bgd_hist->GetBin(rangeMin), bgd_hist->GetBin(rangeMax)) << endl;
+       << "] = " << bgd_hist->Integral(bgd_hist->FindBin(rangeMin), bgd_hist->FindBin(rangeMax)) << endl;
   cout << " Extrapolation between [" << rangeMin << ", " << rangeMax 
        << "] = " << integ << " +- " << dinteg << endl;
   cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
