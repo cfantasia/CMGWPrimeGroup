@@ -610,7 +610,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   }
   
   // Make some plots
-  TH1F* dll = (TH1F*) mcs->fitParDataSet().createHistogram("dll_nullhypo_nsig");
+  TH1F* dll = (TH1F*) mcs->fitParDataSet().createHistogram("dll_nullhypo_nsig", 5000);
   TH1F * nsig_h = (TH1F*) mcs->fitParDataSet().createHistogram("nsig");
   TH1F * nbgd_h = (TH1F*) mcs->fitParDataSet().createHistogram("nbgd");
   if(!dll)
@@ -654,7 +654,8 @@ void WprimeFitter::calculateZvalues()
 
   for(int i=1; i<=LLR[sig_i]->GetNbinsX(); ++i){
     counted_entries += LLR[sig_i]->GetBinContent(i);
-
+    //    cout << " i = " << i << " Z = " << LLR[sig_i]->GetBinCenter(i) 
+    // << " cumulative = " <<  counted_entries/total_entries << endl;
     if(Zexpect_Minus2<0 && counted_entries/total_entries>0.022) 
       Zexpect_Minus2 = LLR[sig_i]->GetBinCenter(i);
     if(Zexpect_Minus1<0 && counted_entries/total_entries>0.158) 
@@ -673,7 +674,7 @@ void WprimeFitter::calculateZvalues()
   cout << " +1sigma = " << Zexpect_Plus1 << endl;
   cout << " -2sigma = " << Zexpect_Minus2 << endl;
   cout << " +2sigma = " << Zexpect_Plus2 << endl;
-  
+
 }
 
 void WprimeFitter::modelBackground()
