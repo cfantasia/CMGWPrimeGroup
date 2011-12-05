@@ -356,7 +356,7 @@ void WprimeFitter::run()
   cout << " Between " << bXMIN << " and " << pXMAX << " GeV = "
        << bgd_hist->Integral(bgd_hist->FindBin(bXMIN), bin_max) << endl;
   
-  if(skipLimitCalculation_)getLLR();
+    if(skipLimitCalculation_)    getLLR();
 }
 
 // if sig_i==0, method will calculate LLR for bgd-only ensemble
@@ -378,8 +378,9 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
 		       sig_model, *(resolution[sig_i]));
   
   int step_i=0; float cl_test = 1., scale_factor=1.; 
-  
+  //int steps = 0;   
   do{
+    //steps ++;
     if(sig_i == 0 || skipLimitCalculation_)
       scale_factor = 1;
     else
@@ -389,17 +390,17 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     // first correction is from T&P (eff_corr_TP_)
     Nsig = sig_hist[sig_i]->Integral(0, Nbins+1);
 
-    if(debugMe_){
+    //    if(debugMe_){
       cout << "\n Running with MC sample: " << desc[sig_i] 
 	   << " and scale factor = " << scale_factor << endl;
       cout << " Nbgd = " << Nbgd << endl;
       cout << " By assuming SSM cross-section, Nsig = " << Nsig << endl;
-    }
+      //    }
     Nsig = Nsig/scale_factor;
-    if(debugMe_){
+    //if(debugMe_){
       cout << " After scaling down by factor " << scale_factor 
 	   << ", Nsig = " << Nsig << endl;
-    }
+      //}
     // correct expected # of signal events according to 
     // efficiency calculated from T&P
     Nsig = Nsig * eff_corr_TP_;
@@ -407,33 +408,56 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
       cout << " After correcting for T&P-calculated efficiency, Nsig = "
 	   << Nsig << endl;
     }
+
+
+    RooAbsPdf * model = 0;
 	
+    //make model
+    TH1F * hSig = (TH1F*)sig_hist[sig_i]->Clone("hSig");
+    
+    mt_SIG = new RooDataHist("mt_SIG","Hist Siganl", *mt, Import(*hSig));
+
+    RooHistPdf Model_s("Model_sb","Signal pdf",*mt, *mt_SIG,0) ;
+
+    RooHistPdf Model_b("Model_b","bgd only pdf",*mt, *mt_BGD,0) ;
+
+    // for interference sample
+    // intHistogram ->BG
+    // virtual SIG histogram is needed, because of MCStudy()
+    //    RooHistPdf Model_inf("Model_inf","interference pdf",*mt, *mt_SigInt,0) ;
+
     RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
     
-    RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
-			RooArgList(nsig, *nbgd));
+
+    //for Modeling
+    RooAddPdf SigBgdhistPdf("SigBgdPdf", "SigBgdPdf", RooArgList(Model_s,Model_b),
+			    RooArgList(nsig, *nbgd));
+    
     RooGaussian nsigc("nsigc","nsigc",nsig,RooConst(0.0),RooConst(0.00000001));
-    //RooLandau nsigc("nsigc","nsigc",nsig,RooConst(0.00001),RooConst(0.0000001));
+    //#RooLandau nsigc("nsigc","nsigc",nsig,RooConst(0.00001),RooConst(0.0000001));
+    //#RooGenericPdf nsigc("nsigc","nsigc","1.0/(1000000.0*nsig)",RooArgSet(nsig)) ;
+    //#RooPoisson nsigc("nsigc","nsigc",nsig,RooConst(0.000000001));
     
-    //RooGenericPdf nsigc("nsigc","nsigc","1.0/(1000000.0*nsig)",RooArgSet(nsig)) ;
-    //RooPoisson nsigc("nsigc","nsigc",nsig,RooConst(0.000000001));
-    
-    RooProdPdf  SigBgdPdfc("SigBgdPdfc","SigBgdPdfc for BG only",RooArgSet(SigBgdPdf, nsigc));
+    RooProdPdf  SigBgdhistPdfc("SigBgdPdfc","SigBgdPdfc for BG only",RooArgSet(SigBgdhistPdf, nsigc));
   
-    RooAbsPdf * model = 0;
+
+    //for Fitting Function
+    RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
+    			RooArgList(nsig, *nbgd));
+
+
     //sig_i = 0 corresponds to bgd-only ensemble
     // need a better way to make this clearer
     if(sig_i == 0)
-      model = (RooAbsPdf*) &SigBgdPdfc;
-    // model = (RooAbsPdf*) BgdPdf;
+      model = (RooAbsPdf*) &SigBgdhistPdfc;
     else
-      model = (RooAbsPdf*) &SigBgdPdf;
-    
+      model = (RooAbsPdf*) &SigBgdhistPdf;
+
     cout << "\n Will run PE ensemble for sample " << desc[sig_i] << 
       " and scale factor = " << scale_factor << endl;
     runPseudoExperiments(sig_i, model, SigBgdPdf, nsig);
     
-    if(sig_i == 0)break;
+     if(sig_i == 0) break;
 
     assert(Zexpect >= 0);
 
@@ -449,8 +473,9 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
 
     if(skipLimitCalculation_)break;
 
-  }while(step_i != Nsteps-1 || cl_test > 0.95);
-   
+  }while(step_i != Nsteps-1 || cl_test > 0.95 ) ;
+ 
+    
   return scale_factor;
 }
 
@@ -471,7 +496,7 @@ void WprimeFitter::getLLR()
     { // loop over mass points
       LLR[*sig_i]->SetLineColor(color[*sig_i]);
       float cl = -999;
-      
+      //            cout<< " Sample # " << *sig_i << ": " << desc[*sig_i]; 
       if(showPlot)
 	{
 	  if(*sig_i == Nsignal_points-1)
@@ -541,25 +566,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   // 				   FitOptions(Range("mt_fit"),Extended(kTRUE),
   //					      PrintEvalErrors(0)));
 
-  RooMCStudy * mcs;
-  if(sig_i == 0){   
-    
-    mcs = new RooMCStudy(*model, *mt,Constrain(nsig),FitModel(SigBgdPdf),
-			 Binned(), Silence(), Extended(kTRUE), 
-			 FitOptions(Range("mt_fit"),Extended(kTRUE),
-				    PrintEvalErrors(0)));
-  }
-  else{
-    mcs = new RooMCStudy(*model, *mt, FitModel(SigBgdPdf),
-			 Binned(), Silence(), Extended(kTRUE), 
-			 FitOptions(Range("mt_fit"),Extended(kTRUE),
-				    PrintEvalErrors(0)));
-  }
-
-  RooDLLSignificanceMCSModule sigModule(nsig,0);
-  mcs->addModule(sigModule);
-  
-  Nevt[sig_i].Nsig = Nsig;
+    Nevt[sig_i].Nsig = Nsig;
   Nevt[sig_i].Nbgd = Nbgd;
   
   float Ntot = 0;
@@ -574,17 +581,39 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
       Nevt[sig_i].Ntot = Nsig+Nbgd;      
     }
 
+  RooMCStudy * mcs;
+  
+  if(sig_i == 0){   
+    
+    mcs = new RooMCStudy(*model, *mt,Constrain(nsig),FitModel(SigBgdPdf),
+			 Binned(), Silence(), Extended(kTRUE), 
+			 FitOptions(Range("mt_fit"),Extended(kTRUE),
+				    PrintEvalErrors(0)));
+  }
+  else{
+    
+    mcs = new RooMCStudy(*model, *mt, FitModel(SigBgdPdf),
+			 Binned(), Silence(), Extended(kTRUE), 
+			 FitOptions(Range("mt_fit"),Extended(kTRUE),
+				    PrintEvalErrors(0)));
+  }
+  
+  RooDLLSignificanceMCSModule sigModule(nsig,0);
+  mcs->addModule(sigModule);
+  
+  
   // correction due to lumi uncertainty (4.5%)
   float dNtot = sqrt(Ntot + 0.045 * Nsig);
   
   RooRandomizeParamMCSModule randModule ;
   randModule.sampleSumGauss(RooArgSet(nsig,*nbgd),Ntot, dNtot) ;
-  mcs->addModule(randModule) ; 
-  
+  mcs->addModule(randModule) ;
+ 
   if(debugMe_)
     mcs->generateAndFit(NpseudoExp_, 0, kTRUE);
   else
-    mcs->generateAndFit(NpseudoExp_);
+    mcs->generateAndFit(NpseudoExp_); // model from histograms (Numerical)
+
 
   if(debugMe_)
     {
@@ -729,7 +758,7 @@ void WprimeFitter::modelBackgroundOption1()
   xframe2->SetMaximum(10000); xframe2->SetMinimum(0.1);
   new TCanvas(); gPad->SetLogy();
   
-  xframe2->Draw();
+    xframe2->Draw();
   
   RooArgList pars(* bgd_tmp.getParameters(RooArgSet(*mt) ) );
   
@@ -776,7 +805,7 @@ void WprimeFitter::modelBackgroundOption2()
   xframe2->SetMaximum(10000); xframe2->SetMinimum(0.1);
   new TCanvas();gPad->SetLogy();
   
-  xframe2->Draw();
+    xframe2->Draw();
   
   RooArgList pars(* bgd_tmp.getParameters(RooArgSet(*mt) ) );
   
@@ -826,7 +855,7 @@ void WprimeFitter::modelResolutions()
     xframe->SetMaximum(10000);xframe->SetMinimum(0.1);
     new TCanvas();gPad->SetLogy();
     
-    xframe->Draw();
+    //    xframe->Draw();
     RooArgList pars(* res_temp.getParameters(RooArgSet(dmt) ) );
     
     float f_mean1 = ((RooRealVar*) pars.find("m1"))->getVal();

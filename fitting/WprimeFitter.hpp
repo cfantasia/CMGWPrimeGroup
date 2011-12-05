@@ -6,6 +6,8 @@
 #include "RooFormulaVar.h"
 #include "RooUniform.h"
 
+#include "RooHistPdf.h"
+
 #include "RooRealVar.h"
 #include "RooDataSet.h"
 #include "RooGaussian.h"
@@ -126,6 +128,7 @@ class WprimeFitter{
   RooDataHist * mt_BGD;
   RooDataHist * mt_DATA;
 
+  RooDataHist * mt_SIG;
   void init();
   void modelBackground();
   void modelBackgroundOption1();
