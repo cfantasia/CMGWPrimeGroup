@@ -1,18 +1,18 @@
 #ifndef _wprimeFitter_signalDescriptions_h_
 #define _wprimeFitter_signalDescriptions_h_
 
-const int Nsignal_points = 30; // 1 bgd-only + 17 true-signal mass points + 12 interference mass points
+const int Nsignal_points = 24; // 1 bgd-only + 17 true-signal mass points + 6 interference mass points
 
 // the first point corresponds to bgd-only distributions (ie. not a real W')
 // the first mass value is used for the S+B hypothesis fit;
 // may have to revisit this argument
-const string dirname[Nsignal_points] = {"wprime2.5", "wprime0.5", "wprime0.6", "wprime0.7", "wprime0.8", "wprime0.9", "wprime1.0", "wprime1.2", "wprime1.3", "wprime1.4", "wprime1.5", "wprime1.6", "wprime1.7", "wprime1.8", "wprime1.9", "wprime2.0", "wprime2.1", "wprime2.2", "wprime1.5_noint", "wprime2.0_noint", "wprime2.5_noint", "wprime3.0_noint", "wprime1.5_oppsign", "wprime2.0_oppsign", "wprime2.5_oppsign", "wprime3.0_oppsign", "wprime1.5_samesign", "wprime2.0_samesign", "wprime2.5_samesign", "wprime3.0_samesign"};
+const string dirname[Nsignal_points] = {"wprime2.5", "wprime0.5", "wprime0.6", "wprime0.7", "wprime0.8", "wprime0.9", "wprime1.0", "wprime1.2", "wprime1.3", "wprime1.4", "wprime1.5", "wprime1.6", "wprime1.7", "wprime1.8", "wprime1.9", "wprime2.0", "wprime2.1", "wprime2.2", "wprime1.5_noint", "wprime2.0_noint", "wprime1.5_oppsign", "wprime2.0_oppsign", "wprime1.5_samesign", "wprime2.0_samesign"};
 //const string dirname[Nsignal_points] = {"wprime2.5", "wprime1.4"};
 
-const string desc[Nsignal_points] = {"SM", "W' (0.5 TeV)", "W' (0.6 TeV)", "W' (0.7 TeV)", "W' (0.8 TeV)", "W' (0.9 TeV)", "W' (1.0 TeV)", "W' (1.2 TeV)", "W' (1.3 TeV)", "W' (1.4 TeV)", "W' (1.5 TeV)", "W' (1.6 TeV)", "W' (1.7 TeV)", "W' (1.8 TeV)", "W' (1.9 TeV)", "W' (2.0 TeV)", "W' (2.1 TeV)", "W' (2.2 TeV)", "W + W' no interference (1.5 TeV)", "W + W' no interference (2.0 TeV)", "W + W' no interference (2.5 TeV)", "W + W' no interference (3.0 TeV)", "W + W' neg interference (1.5 TeV)", "W + W' neg interference (2.0 TeV)", "W + W' neg interference (2.5 TeV)", "W + W' neg interference (3.0 TeV)", "W + W' pos interference (1.5 TeV)", "W + W' pos interference (2.0 TeV)", "W + W' pos interference (2.5 TeV)", "W + W' pos interference (3.0 TeV)"};
+const string desc[Nsignal_points] = {"SM", "W' (0.5 TeV)", "W' (0.6 TeV)", "W' (0.7 TeV)", "W' (0.8 TeV)", "W' (0.9 TeV)", "W' (1.0 TeV)", "W' (1.2 TeV)", "W' (1.3 TeV)", "W' (1.4 TeV)", "W' (1.5 TeV)", "W' (1.6 TeV)", "W' (1.7 TeV)", "W' (1.8 TeV)", "W' (1.9 TeV)", "W' (2.0 TeV)", "W' (2.1 TeV)", "W' (2.2 TeV)", "W + W' no interference (1.5 TeV)", "W + W' no interference (2.0 TeV)", "W + W' neg interference (1.5 TeV)", "W + W' neg interference (2.0 TeV)", "W + W' pos interference (1.5 TeV)", "W + W' pos interference (2.0 TeV)"};
 //const string desc[Nsignal_points] = {"SM", "W' (1.4 TeV)"};
 
-const float WprimeMass[Nsignal_points] = {2500, 500, 600, 700, 800, 900, 1000, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 1500, 2000, 2500, 3000, 1500, 2000, 2500, 3000, 1500, 2000, 2500, 3000};
+const float WprimeMass[Nsignal_points] = {2500, 500, 600, 700, 800, 900, 1000, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 1500, 2000, 1500, 2000, 1500, 2000};
 //const float WprimeMass[Nsignal_points] = {2500, 1400};
 
 // SSM cross-sections for leptonic channels in pb;
@@ -21,14 +21,14 @@ const float WprimeMass[Nsignal_points] = {2500, 500, 600, 700, 800, 900, 1000, 1
 const float xsec[Nsignal_points] = {
   0, 17.726, 8.555, 4.514, 2.519, 1.470, 
   0.8856, 0.3461, 0.2221, 0.1440, 0.09485, 0.0633, 0.04237, 0.02851, 0.01940,
-  0.01346, 0.009373, 0.006605, 
-  0.0920, 0.03852, 0.030823, 0.0065075, 
-  0.0723, 0.02877, 0.025163, 0.0049949, 
-  0.1117, 0.04862, 0.036515, 0.0080253};
+  0.01346, 0.009373,  
+  0.0920, 0.03852, 
+  0.0723, 0.02877, 
+  0.1117, 0.04862 };
 //const float xsec[Nsignal_points] = {0, 0.1440};
 
 // color for plotting Z-values of different signals
-Color_t color[Nsignal_points] = {kBlack, kRed, kBlue, kViolet, kGreen, kOrange, kYellow, kOrange, kMagenta, kCyan, kSpring, kTeal, kAzure, kPink, kBlue, kViolet, kGreen, kOrange, kYellow, kOrange, kMagenta, kCyan, kSpring, kTeal, kAzure, kPink, kBlue, kViolet, kGreen, kOrange};
+Color_t color[Nsignal_points] = {kBlack, kRed, kBlue, kViolet, kGreen, kOrange, kYellow, kOrange, kMagenta, kCyan, kSpring, kTeal, kAzure, kPink, kBlue, kViolet, kGreen, kOrange, kYellow, kOrange, kMagenta, kCyan, kSpring, kTeal};
 //Color_t color[Nsignal_points] = {kBlack, kRed};
 
 // this structure is used to keep track of expected bgd, sig 
