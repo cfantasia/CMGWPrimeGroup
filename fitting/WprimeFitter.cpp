@@ -610,12 +610,12 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   }
   
   // Make some plots
-  TH1F* dll = (TH1F*) mcs->fitParDataSet().createHistogram("dll_nullhypo_nsig", 5000);
+  TH1F* z_sig = (TH1F*) mcs->fitParDataSet().createHistogram("significance_nullhypo_nsig", 5000);
   TH1F * nsig_h = (TH1F*) mcs->fitParDataSet().createHistogram("nsig");
   TH1F * nbgd_h = (TH1F*) mcs->fitParDataSet().createHistogram("nbgd");
-  if(!dll)
+  if(!z_sig)
     {
-      cout << " oops, dll = " << dll << " for sig_i = " << sig_i << endl;
+      cout << " oops, z_sig = " << z_sig << " for sig_i = " << sig_i << endl;
       abort();
     }
   if(!nsig_h)
@@ -641,7 +641,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
       new TCanvas(); frame2->Draw();
     }
 
-  LLR[sig_i] = new TH1F(*dll);
+  LLR[sig_i] = new TH1F(*z_sig);
   Nsig_h[sig_i] = new TH1F(*nsig_h);
   Nbgd_h[sig_i] = new TH1F(*nbgd_h);
 }
