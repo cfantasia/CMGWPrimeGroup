@@ -8,7 +8,7 @@
 const float minPI = 150;
 const float maxPI = 500;
 const float maxRHO = 700;
-const float minRHO = 300;
+const float minRHO = 250;
 const int RHO_INC = 1;
 const int PI_INC = 1;
 
@@ -69,7 +69,7 @@ void PlotLimit2D() {
     exp->SetPoint(i, masses[i], expPiLims[i]);
     obs->SetPoint(i, masses[i], obsPiLims[i]);
 
-    cout<<"mass:ExpPi:ObsPi = "<<masses[i]<<"\t"<<expPiLims[i]<<"\t\t"<<obsPiLims[i]<<endl;
+    //cout<<"mass:ExpPi:ObsPi = "<<masses[i]<<"\t"<<expPiLims[i]<<"\t\t"<<obsPiLims[i]<<endl;
   }
   exp->SetPoint(expPiLims.size(), maxRHO, maxPI);
   obs->SetPoint(expPiLims.size(), maxRHO, maxPI);
@@ -134,6 +134,7 @@ void PlotLimit2D() {
   text3->Draw(); 
 
   c1->RedrawAxis();
+  c1->Print("tcLimit.pdf");
   c1->Print("tcLimit.eps");
   c1->Print("tcLimit.gif");
 
