@@ -133,7 +133,7 @@ void PlotLimit2D() {
 */
   TLatex* text3 = new TLatex(317, 249, "m(#pi_{T}) = m(#rho_{T}) - m(W)");
   text3->SetTextSize(0.06);
-  text3->SetTextAngle(43);
+  text3->SetTextAngle(45);
   text3->Draw(); 
 
   c1->RedrawAxis();
