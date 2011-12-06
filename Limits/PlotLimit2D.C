@@ -13,6 +13,9 @@ const int RHO_INC = 1;
 const int PI_INC = 1;
 
 void PlotLimit2D() {
+  gErrorIgnoreLevel = kWarning;
+  CMSstyle();
+
   TCanvas* c1 = new TCanvas("c1","",600,500);
   gStyle->SetOptStat(0);
 
@@ -65,7 +68,7 @@ void PlotLimit2D() {
   TGraph* obs = new TGraph(expPiLims.size()+2);
 
 
-  for(int i=0; i<expPiLims.size(); ++i){///////
+  for(unsigned i=0; i<expPiLims.size(); ++i){///////
     exp->SetPoint(i, masses[i], expPiLims[i]);
     obs->SetPoint(i, masses[i], obsPiLims[i]);
 
@@ -102,7 +105,7 @@ void PlotLimit2D() {
   exp->Draw("L");
   obs->Draw("L");
 
-  TLegend* leg = new TLegend(0.50, 0.20, 0.90, 0.36);
+  TLegend* leg = new TLegend(0.50, 0.29, 0.90, 0.45);
   leg->SetBorderSize(0);
   leg->SetFillColor(0);
   leg->AddEntry(exp, "95% C.L. limit (exp)", "fl");
@@ -114,7 +117,7 @@ void PlotLimit2D() {
   text->SetTextSize(0.05);
   text->Draw();
 
-  TLatex* text2 = new TLatex(520, 280, Form("#int L dt = %.2f fb^{-1}",lumi[0]/1000));
+  TLatex* text2 = new TLatex(520, 285, Form("#int L dt = %.2f fb^{-1}",lumi[0]/1000));
   text2->SetTextSize(0.05);
   text2->Draw();
 
