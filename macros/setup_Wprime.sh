@@ -35,7 +35,7 @@ echo -e  "**************************"
 cvs -Q co -r V06-04-19-01 DataFormats/PatCandidates
 cvs -Q co -r V08-06-41 PhysicsTools/PatAlgos
 cvs -Q co -r V00-07-00 -d SHarper/HEEPAnalyzer UserCode/SHarper/HEEPAnalyzer 
-cvs -Q co -r V08-03-10 PhysicsTools/Utilities
+cvs -Q co -r V08-03-12 PhysicsTools/Utilities
 cvs -Q co -r V03-03-07 RecoLuminosity/LumiDB
 cvs -Q co -r V00-01-03 StatisticalTools/RooStatsRoutines
 cvs -Q co -r V00-03-60 UserCode/CMGWPrimeGroup
