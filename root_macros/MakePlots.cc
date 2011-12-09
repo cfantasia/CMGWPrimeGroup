@@ -120,6 +120,7 @@ MakePlots(string inName, string outName, string opt){
   SampleNames["RSZZ_1500"]="RS 1500";
   SampleNames["RSZZ_1750"]="RS 1750";
   SampleNames["RSZZ_2000"]="RS 2000";
+  SampleNames["WPrimeWZ_1000"]="W'1000";
   SampleNames["Summer11_WprimeToWZTo2Q2L_M-500"]="W' 500";
   SampleNames["Summer11_WprimeToWZTo2Q2L_M-1000"]="W' 1000";
 
@@ -151,14 +152,13 @@ MakePlots(string inName, string outName, string opt){
     vData.push_back("data_SingleElectron-Run2011A-PromptReco-v6");
     
     vData.push_back("data_DoubleMu-Run2011B-PromptReco-v1");
-    vData.push_back("data_SingleMu-Run2011B-PromptReco-v1");
     vData.push_back("data_DoubleElectron-Run2011B-PromptReco-v1");
-    vData.push_back("data_SingleElectron-Run2011B-PromptReco-v1");
     
     Data.push_back(Sample("data", vData, 1, 0, 0));
-  }
+      
+} 
   CheckSamples(fin,Data);
-  
+    
   /////Background Samples
 
   if(inName.find("WprimeWZ") != string::npos || inName.find("EWKWZ") != string::npos){
@@ -182,17 +182,17 @@ MakePlots(string inName, string outName, string opt){
     Bkg.push_back(Sample("WZJetsTo3LNu"       , kOrange+3, 1, kOrange-2));
   }else if(inName.find("HadVZ") != string::npos){
     vector<string> VV;
-    VV.push_back("Summer11_ZZJets_2l2q");
+    VV.push_back("Summer11_ZZ");
     VV.push_back("Summer11_VGamma");
     VV.push_back("Summer11_WW");
     VV.push_back("Summer11_WZ");
-    Bkg.push_back(Sample("VV", VV, kGreen, 1, kGreen));
+    Bkg.push_back(Sample("VV", VV, kGreen-7, 1, kGreen-7));
     
-    Bkg.push_back(Sample("Summer11_TTJets"  , kBlue, 1, kBlue));
+    Bkg.push_back(Sample("Summer11_TTJets"  , kBlue-7, 1, kBlue-7));
     
     vector<string> ZJets; 
     ZJets.push_back("Summer11_DYJetsToLL_PtZ100");
-    Bkg.push_back(Sample("ZJets", ZJets, kRed, 1, kRed));
+    Bkg.push_back(Sample("ZJets", ZJets, kRed-7, 1, kRed-7));
     
   }
   CheckSamples(fin,Bkg);
@@ -216,12 +216,19 @@ MakePlots(string inName, string outName, string opt){
     vector<string> RS750;
     RS750.push_back("Summer11_RSZZeejj_750");
     RS750.push_back("Summer11_RSZZmmjj_750");
-    Bkg.push_back(Sample("RSZZ_750", RS750, kMagenta, 1, 0));
+    //Bkg.push_back(Sample("RSZZ_750", RS750, kMagenta, 1, 0));
+    Sig.push_back(Sample("RSZZ_750", RS750, kMagenta+3, 1, 0));                                                                                            
     vector<string> RS1000;
     RS1000.push_back("Summer11_RSZZeejj_1000");
     RS1000.push_back("Summer11_RSZZmmjj_1000");
-    Bkg.push_back(Sample("RSZZ_1000", RS1000, kViolet, 1, 0));
-    vector<string> RS1250;
+    //Bkg.push_back(Sample("RSZZ_1000", RS1000, kViolet, 1, 0));
+    //    Sig.push_back(Sample("RSZZ_1000", RS1000, kViolet+4, 2, 0));
+
+    vector<string> WPrime1000;
+    WPrime1000.push_back("Summer11_WPrimeZZlljj_1000");
+    Sig.push_back(Sample("WPrimeWZ_1000", WPrime1000, kViolet+4, 2, 0));
+ 
+   vector<string> RS1250;
     RS1250.push_back("Summer11_RSZZeejj_1250");
     RS1250.push_back("Summer11_RSZZmmjj_1250");
     //Bkg.push_back(Sample("RSZZ_1250", RS1250, kMagenta, 1, 0));
@@ -237,8 +244,8 @@ MakePlots(string inName, string outName, string opt){
     RS2000.push_back("Summer11_RSZZeejj_2000");
     RS2000.push_back("Summer11_RSZZmmjj_2000");
     //Bkg.push_back(Sample("RSZZ_2000", RS2000, kCyan, 1, 0));
-    //Sig.push_back(Sample("Summer11_RSZZmmjj_750",     kMagenta, 1, 0));
-    //Sig.push_back(Sample("Summer11_RSZZmmjj_1000",     kMagenta, 2, 0));
+    // Sig.push_back(Sample("Summer11_RSZZmmjj_750",     kMagenta, 1, 0));
+    // Sig.push_back(Sample("Summer11_RSZZmmjj_1000",     kMagenta, 2, 0));
     //Sig.push_back(Sample("Summer11_RSZZmmjj_1250",     1, 1, 0));
     //Sig.push_back(Sample("Summer11_RSZZmmjj_1500",     1, 1, 0));
     //Sig.push_back(Sample("Summer11_RSZZmmjj_1750",     1, 1, 0));
@@ -488,6 +495,9 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
   if(title.find("VZMass") != string::npos ||
      title.find("VZeeMass") != string::npos ||
      title.find("VZmmMass") != string::npos) rebin = 2;
+
+  //  if(title.find("VMass") != string::npos) rebin = 3;
+
   if(title.find("hMET_") != string::npos) rebin = 5;
   if(title.find("hHt_") != string::npos) rebin = 5;
   
@@ -503,6 +513,11 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
       curSample.hist->SetLineStyle(curSample.style);
       curSample.hist->SetLineColor(curSample.line); 
 
+      if (title.find("VMass") != string::npos){
+	int min = curSample.hist->GetXaxis()->FindBin(70.);
+	int max = curSample.hist->GetXaxis()->FindBin(120.);
+	curSample.hist->GetXaxis()->SetRangeUser(70,120);
+      }
       if(!eff){
         curSample.hist->SetFillColor(curSample.fill);
         if(cum){
@@ -578,7 +593,7 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
     }
     for(unsigned int i=0; i<Sig.size(); i++){
       //This is if you want to see the shape of a low xsec signal
-      //////Cory: Sig[i].hist->Draw("HIST SAME");
+      Sig[i].hist->Draw("HIST SAME");
     }
     if(hData){
       max = TMath::Max(max, hData->GetMaximum());
