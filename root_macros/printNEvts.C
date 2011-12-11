@@ -35,7 +35,7 @@ printNEvts(string infile, int evtType=-1){
   //signal
   Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-300"), "300"));
   Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-400"), "400"));
-  //Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-500"), "500"));
+  Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-500"), "500"));
   Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-600"), "600"));
   Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-700"), "700"));
   Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-800"), "800"));
@@ -67,25 +67,28 @@ printNEvts(string infile, int evtType=-1){
 
     for(unsigned level=0; level<levels.size(); ++level){
       float tot = 0;
+      float sigma2 = 0;
       for(unsigned subsam=0; subsam<Samples[i].first.size(); ++subsam){
+        TH1F* hist = NULL;
+        int bin = -1;
         if(evtType == -1){
           string hist_name = Samples[i].first[subsam] + "/hNumEvts";
-          TH1F* hist = (TH1F*) f->Get(hist_name.c_str());
-          int bin = hist->GetXaxis()->FindBin(levels[level].first.c_str());
-          tot += hist->GetBinContent(bin);
-          //tot += hist->Integral();
+          hist = (TH1F*) f->Get(hist_name.c_str()); assert(hist);
+          bin = hist->GetXaxis()->FindBin(levels[level].first.c_str());
         }else{
           string hist_name = Samples[i].first[subsam] + "/hEvtType_" + levels[level].first;
-          TH1F* hist = (TH1F*) f->Get(hist_name.c_str()); 
+          hist = (TH1F*) f->Get(hist_name.c_str()); 
           if(!hist){
             cout<<"\n\nDidn't find histo "<<hist_name<<endl;
             abort();
           }
-          tot += hist->GetBinContent(evtType+1);//underflow
+          bin = hist->FindBin(evtType);
         }
+        tot += hist->GetBinContent(bin);//underflow
+        sigma2 += hist->GetBinError(bin)*hist->GetBinError(bin);
 
       }//loop over subsamples
-      cout<<" & "<<tot;
+      cout<<" & "<<tot<<" $\\pm$ "<<sqrt(sigma2);
     }//loop over cuts
     cout<<" \\\\ \\hline"<<endl;
   }//loop over samples
