@@ -426,6 +426,7 @@ MakePlots(string inName, string outName, string opt){
       DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht before Ht Cut",1,0,0);
 
       DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,1);
       DrawandSave(fin,outName,"hWZMass_Ht","Title: WZ Mass After Ht Cut ",1,0,0);
       DrawandSave(fin,outName,"hWZMass_Ht","Title: WZ Mass After Ht Cut (Cumlative) ",1,0,1);
 
