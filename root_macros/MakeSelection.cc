@@ -88,7 +88,7 @@ MakeSelection(string inName, string opt){
 */
     SigSamples.push_back("WprimeToWZTo3LNu_M-300");
     SigSamples.push_back("WprimeToWZTo3LNu_M-400");
-    //SigSamples.push_back("WprimeToWZTo3LNu_M-500");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-500");
     SigSamples.push_back("WprimeToWZTo3LNu_M-600");
     SigSamples.push_back("WprimeToWZTo3LNu_M-700");
     SigSamples.push_back("WprimeToWZTo3LNu_M-800");
@@ -195,8 +195,6 @@ DrawSelection(TFile* fin, Cut& thisCut){
     hBkg = *pBkg;
   }
   
-
-
   int first = 0;//Include under flow
   int last  = hSig.GetNbinsX() + 1;//Include over flow
   int nbins = hSig.GetNbinsX() + 2;
