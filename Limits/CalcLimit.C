@@ -1,5 +1,8 @@
-/* To Use: 
-   root -l CalcLimit.C
+/* 
+Author: Cory Fantasia
+Wrapper to calculate limits for each mass point
+To Use: 
+root -b -q -n CalcLimit.C+
 */
 #include "consts.h"
 #include "TROOT.h"
@@ -7,7 +10,7 @@
 #include "../../../StatisticalTools/RooStatsRoutines/root/roostats_cl95.C"
 
 void
-CalcLimit(){
+CalcLimit(bool useCLs=true){
   gErrorIgnoreLevel = kWarning;
 //  gSystem->SetIncludePath( "-I$ROOFITSYS/include" );
   gSystem->SetIncludePath( "-I/afs/hep.wisc.edu/cern/.root/root_v5.30.00.Linux-slc5_amd64-gcc4.3/include/RooStats" );
@@ -58,29 +61,30 @@ CalcLimit(){
         
     float sLumi = sLumiFrac*lumi;
     
+    Double_t obs_limit, exp_limit;
+    Double_t exp_up, exp_down, exp_2up, exp_2down;
     
-    ////CLs Limits
-    //Does not work for bayesian, only works with cls    
-    LimitResult limit = roostats_limit(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "cls", "", 12345);
-    Double_t obs_limit = limit.GetObservedLimit();
-    Double_t exp_limit = limit.GetExpectedLimit();
-    Double_t exp_up    = limit.GetOneSigmaHighRange();
-    Double_t exp_down  = limit.GetOneSigmaLowRange();
-    Double_t exp_2up   = limit.GetTwoSigmaHighRange();
-    Double_t exp_2down = limit.GetTwoSigmaLowRange();        
-    
-    /*
-    ////Bayesian Limits
-    LimitResult limit  = roostats_clm (lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts);
-    //Double_t obs_limit = limit.GetObservedLimit();
-    Double_t obs_limit = roostats_cl95(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "bayesian", "");
-
-    Double_t exp_limit = limit.GetExpectedLimit();
-    Double_t exp_up    = limit.GetOneSigmaHighRange();
-    Double_t exp_down  = limit.GetOneSigmaLowRange();
-    Double_t exp_2up   = limit.GetTwoSigmaHighRange();
-    Double_t exp_2down = limit.GetTwoSigmaLowRange();        
-    */
+    if(useCLs){////CLs Limits
+      //Does not work for bayesian, only works with cls    
+      LimitResult limit = roostats_limit(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "cls", "", 12345);
+      obs_limit = limit.GetObservedLimit();
+      exp_limit = limit.GetExpectedLimit();
+      exp_up    = limit.GetOneSigmaHighRange();
+      exp_down  = limit.GetOneSigmaLowRange();
+      exp_2up   = limit.GetTwoSigmaHighRange();
+      exp_2down = limit.GetTwoSigmaLowRange();        
+    }else{
+      ////Bayesian Limits
+      LimitResult limit  = roostats_clm (lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts);
+      //obs_limit = limit.GetObservedLimit();
+      obs_limit = roostats_cl95(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "bayesian", "");
+      
+      exp_limit = limit.GetExpectedLimit();
+      exp_up    = limit.GetOneSigmaHighRange();
+      exp_down  = limit.GetOneSigmaLowRange();
+      exp_2up   = limit.GetTwoSigmaHighRange();
+      exp_2down = limit.GetTwoSigmaLowRange();        
+    }
   
     out<<setprecision(0)
        <<SignalCode<<"\t"

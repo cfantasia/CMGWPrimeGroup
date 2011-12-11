@@ -5,10 +5,10 @@
 #include "consts.h"
 #include "TGraph2D.h"
 
-const float minPI = 150;
-const float maxPI = 500;
-const float maxRHO = 700;
-const float minRHO = 250;
+const float minPI = 100;
+const float maxPI = 900;
+const float maxRHO = 900;
+const float minRHO = 200;
 const int RHO_INC = 1;
 const int PI_INC = 1;
 
@@ -72,8 +72,27 @@ void PlotLimit2D() {
     exp->SetPoint(i, masses[i], expPiLims[i]);
     obs->SetPoint(i, masses[i], obsPiLims[i]);
 
-    //cout<<"mass:ExpPi:ObsPi = "<<masses[i]<<"\t"<<expPiLims[i]<<"\t\t"<<obsPiLims[i]<<endl;
+    cout<<"mass:expLim:obsLim:ExpPi:ObsPi = "<<masses[i]<<":"<<gExpLim->Eval(masses[i])<<":"<<gObsLim->Eval(masses[i])<<"\t"<<expPiLims[i]<<"\t\t"<<obsPiLims[i]<<endl;
+    
   }
+
+  //Find Optimistic Limits
+  for(unsigned i=0; i<expPiLims.size(); ++i){///////
+    if(masses[i] < 250) continue;
+    if(expPiLims[i] > masses[i] - 80.4){
+      cout<<"Exp Limit is "<<masses[i]<<endl;
+      break;
+    }
+  }
+  
+  for(unsigned i=0; i<obsPiLims.size(); ++i){///////
+    if(masses[i] < 250) continue;
+    if(obsPiLims[i] > masses[i] - 80.4){
+      cout<<"Obs Limit is "<<masses[i]<<endl;
+      break;
+    }
+  }
+
   exp->SetPoint(expPiLims.size(), maxRHO, maxPI);
   obs->SetPoint(expPiLims.size(), maxRHO, maxPI);
   exp->SetPoint(expPiLims.size()+1, minRHO, maxPI);
@@ -86,7 +105,7 @@ void PlotLimit2D() {
   obs->SetLineColor(kRed);
   exp->SetLineColor(4);
   
-  TH2F* frame = new TH2F("frame", "", 100, minRHO, maxRHO, 100, 150, maxPI);
+  TH2F* frame = new TH2F("frame", "", 100, minRHO, maxRHO, 100, minPI, maxPI);
   TAxis* ax = frame->GetXaxis();
   TAxis* ay = frame->GetYaxis();
   ax->SetLabelFont(132);
@@ -105,7 +124,7 @@ void PlotLimit2D() {
   exp->Draw("L");
   obs->Draw("L");
 
-  TLegend* leg = new TLegend(0.50, 0.29, 0.90, 0.45);
+  TLegend* leg = new TLegend(0.20, 0.70, 0.60, 0.90);
   leg->SetBorderSize(0);
   leg->SetFillColor(0);
   leg->AddEntry(exp, "95% C.L. limit (exp)", "fl");
@@ -121,7 +140,7 @@ void PlotLimit2D() {
   text2->SetTextSize(0.05);
   text2->Draw();
 
-  TLine* line1 = new TLine(minRHO, minRHO - 80.4, maxPI+80.4, maxPI);
+  TLine* line1 = new TLine(minRHO, minRHO-80.4, maxPI, maxPI-80.4);
   line1->SetLineStyle(2);
   line1->SetLineWidth(2);
   line1->Draw();
@@ -131,24 +150,14 @@ void PlotLimit2D() {
   line2->SetLineWidth(2);
   line2->Draw();
 */
-  TLatex* text3 = new TLatex(317, 249, "m(#pi_{T}) = m(#rho_{T}) - m(W)");
+  TLatex* text3 = new TLatex(317, 265, "m(#pi_{T}) = m(#rho_{T}) - m(W)");
   text3->SetTextSize(0.06);
-  text3->SetTextAngle(45);
+  text3->SetTextAngle(38);
   text3->Draw(); 
 
   c1->RedrawAxis();
-  c1->Print("tcLimit.pdf");
-  c1->Print("tcLimit.eps");
-  c1->Print("tcLimit.gif");
+  c1->Print("tcLimit-2D.pdf");
+  c1->Print("tcLimit-2D.eps");
+  c1->Print("tcLimit-2D.gif");
 
 }
-/*
-float 
-  FindLimit(const TGraph2D* xsec, const TGraph* limit, const float def=-1){
-  float lower = min(xsec->GetX()[0], limit->GetX()[0]);
-  float upper = max(xsec->GetX()[xsec->GetN()-1], limit->GetX()[limit->GetN()-1]);
-  const float INC = 1;
-  for(float mass=lower; mass<upper; mass+=INC){
-    if(xsec->Interpolate(rho,pi) > limit->Eval(rho)) return pi;
-}
-*/
