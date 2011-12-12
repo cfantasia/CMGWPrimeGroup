@@ -211,6 +211,11 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
     
     defineHistoset("hNVtxs", "Number of Vertexs in Event",
                    "N_{Vtx}", 50, 0, 50, "NONE", hNVtxs,dir);
+
+    defineHistoset("hWeight", "PU Weight",
+                   "Weight", 40, 0, 2, "NONE", hWeight,dir);
+    defineHistoset("hL1FastJet", "L1 Fast Jet Correction",
+                   "#rho", 50, 0, 25, "NONE", hL1FastJet,dir);
     
     
     hVtxMatch = dir.make<TH1F>("hVtxMatch","Mask of leptons in PV", 10, 0, 10);
@@ -327,6 +332,8 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
     
     hNJets[index]->Fill((*patJetsH_).size(), weight);
     hNVtxs[index]->Fill((*verticesH_).size(), weight);
+    hWeight[index]->Fill(weight_/wprimeUtil_->getSampleWeight(), 1.);//Don't weight
+    hL1FastJet[index]->Fill(*rhoFastJetH_, weight);
   }else{//Systematics plots
     if(zCand_){
       if(zCand_.flavor() == PDG_ID_ELEC){
@@ -452,6 +459,7 @@ WZAnalyzer::calcWVariables(){
   if (debug_) cout<<"In calc W Variables\n";
   wCand_ = getWCand(tightElectrons_, tightMuons_, met_, zCand_, minDeltaR_);
   Wpt_ = wCand_.pt();
+  WTransMass_ = wCand_.mt();
   if(debug_){
     printf("    Contains: %i tight W candidate(s)\n", (bool)wCand_);
     printEventLeptons(); 
@@ -478,10 +486,6 @@ WZAnalyzer::calcEventVariables(){
   LeadMuonPt_ = calcLeadPt(PDG_ID_MUON);
   Ht_ = (zCand_ && wCand_) ? calcHt() : -999.;
   TriLepMass_ = (zCand_ && wCand_) ? calcTriLepMass() : -999.;
-  WTransMass_ = wCand_.mt();
-  MET_ = met_.et();
-  METSig_ = met_.significance();
-  NVtxs_ = (*verticesH_).size();
 }
 
 void 
@@ -568,6 +572,10 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
   //get Vertex
   event.getByLabel(vertexLabel_, verticesH_);
+
+  MET_ = met_.et();
+  METSig_ = met_.significance();
+  NVtxs_ = (*verticesH_).size();
 
   /*
   if(!wprimeUtil_->runningOnData()){//Don't do this for data

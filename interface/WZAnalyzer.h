@@ -184,6 +184,8 @@ public:
 
   std::vector<TH1F*> hNJets;
   std::vector<TH1F*> hNVtxs;
+  std::vector<TH1F*> hWeight;
+  std::vector<TH1F*> hL1FastJet;
 
   std::vector<TH1F*> hWenuCombRelIso, hWmnuCombRelIso;
 
