@@ -559,7 +559,7 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
     // at the end of the job - nothing else!
     fi->Nprod_evt = fi->Nact_evt;
 
-  TFileDirectory dir = fs->mkdir(fi->samplename); 
+  TFileDirectory dir = fs->mkdir(fi->samplename, fi->description); 
   defineHistos(dir);
   if(wprimeUtil_->isSignalSample())
     {
