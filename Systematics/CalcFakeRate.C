@@ -4,6 +4,7 @@
 #include "THStack.h"
 #include "TStyle.h"
 #include "TLine.h"
+#include "TMath.h"
 #include "../Limits/consts.h"
 
 void
@@ -38,6 +39,8 @@ CalcFakeRate(string infile, bool useData=true){
 
     cout<<"Sample: "<<allsamples[i]<<" = "<<in/out<<" = pass/total = "<<in<<"/"<<out<<endl;
   }
+  float  eff = in_tot/out_tot;
+  float deff = TMath::Sqrt(eff * (1-eff)/out_tot);
+  cout<<"Total: "<<eff*100<<" +/- "<<deff*100<<"% = in_tot/out_tot*100% = "<<in_tot<<"/"<<out_tot<<"*100%\n";
 
-  cout<<"Total: "<<in_tot/out_tot*100<<"% = in_tot/out_tot*100% = "<<in_tot<<"/"<<out_tot<<"*100%\n";
 }

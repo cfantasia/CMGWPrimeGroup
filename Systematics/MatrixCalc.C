@@ -1,3 +1,4 @@
+//Usage: root -b -q 'MatrixMethod(useEWK)'
 #include <iostream>
 #include <iomanip>
 
@@ -5,18 +6,25 @@
 
 using namespace std;
 
-const float eElec = 0.9358; const float SeElec = 0.0006;//done
-const float pElec = 0.062/**(1. - 0.3381)*/; const float SpElec = 0.012;//done
+const float eElec = 0.9359; const float SeElec = 0.0004;//done
+const float pElec = 0.07/**(1. - 0.3381)*/; const float SpElec = 0.01;//done
 
-const float eMuon = 0.9723; const float SeMuon = 0.0003;
-const float pMuon = 0.043/**(1. - -1*0.3021)*/; const float SpMuon = 0.012;//done
+const float eMuon = 0.9711; const float SeMuon = 0.0002;
+const float pMuon = 0.06/**(1. - -1*0.3021)*/; const float SpMuon = 0.01;//done
+
+struct MatrixResult{
+  float Nt_lep;
+  float DeltaNt_lep;
+  float Nt_jet;
+  float DeltaNt_jet;
+};
 
 void MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannel=true);
-void CalcMatrix(const float eTight, const  float Delta_eTight,
-                const float pFake, const float Delta_pFake, 
-                const float Nl, const float Delta_Nl,
-                const float Nt, const float Delta_Nt);
-  
+MatrixResult CalcMatrix(const float eTight, const  float Delta_eTight,
+                        const float pFake, const float Delta_pFake, 
+                        const float Nl, const float Delta_Nl,
+                        const float Nt, const float Delta_Nt);
+
 
 void MatrixCalc(bool useEWK=true){
   cout<<"useEWK: "<<useEWK<<endl;
@@ -28,8 +36,8 @@ void MatrixCalc(bool useEWK=true){
     tightfilename = "EWKWZ.root";
     loosefilename = "EWKWZMatrix.root";
   }else{
-    tightfilename = "WprimeWZ.root";
-    loosefilename = "WprimeWZMatrix.root";
+    tightfilename = "../../../WprimeWZ.root";
+    loosefilename = "../../../WprimeWZMatrix.root";
   }
 
   TFile *fTight = TFile::Open(tightfilename.c_str(), "read"); assert(fTight);
@@ -73,7 +81,7 @@ void MatrixCalc(bool useEWK=true){
     }
   }else{
     TTree* tEvts = new TTree("tEvts", "Cut Values per sample");
-    tEvts->ReadFile("../Limits/cutValues.dat");
+    tEvts->ReadFile("../Limits/cutValues.wz.dat");
     tEvts->Draw("SignalCode:Mass:minWindow:maxWindow:HtCut:ZptCut:WptCut","", "para goff");
     float ntEvts = tEvts->GetSelectedRows(); cout<<"Found "<<ntEvts<<endl;
 
@@ -81,16 +89,16 @@ void MatrixCalc(bool useEWK=true){
 
     for(int isignal=0; isignal<ntEvts; ++isignal){
       const int SignalCode = tEvts->GetVal(0)[isignal];
-      const string SignalName = SampleName(SignalCode);
+      const string SignalName = SampleName(SignalCode)[0];
       const float mass = tEvts->GetVal(1)[isignal];
       const float minWindow = useWindow ? tEvts->GetVal(2)[isignal] : 0;
-      const float maxWindow = useWindow ? tEvts->GetVal(3)[isignal] : 2000;
+      const float maxWindow = useWindow ? tEvts->GetVal(3)[isignal] : 99999;
       const float minHt     = useHt     ? tEvts->GetVal(4)[isignal] : 0;
       const float minZpt    = useZpt    ? tEvts->GetVal(5)[isignal] : 0;
       const float minWpt    = useWpt    ? tEvts->GetVal(6)[isignal] : 0;
       
       
-      const string cuts = Form("(WZMass > %.0f && WZMass < %.0f && Ht > %.0f && Zpt > %.0f && Wpt > %.0f)*weight",
+      const string cuts = Form("(WZMass > %.0f && WZMass < %.0f && Ht > %.0f && Zpt > %.0f && Wpt > %.0f && MET>50)*weight",
                                minWindow, maxWindow, minHt, minZpt, minWpt); 
       cout<<"\n-------\nSignal: "<<SignalName<<" with cuts "<<cuts<<endl;
       
@@ -116,7 +124,7 @@ void MatrixCalc(bool useEWK=true){
         TH1F hLoose("hLoose", "hLoose", 4, 0, 4);
         get_sum_of_hists(fLoose, names, "tWZCand", "EvtType", cuts, hLoose);
         
-        MatrixMethod(&hLoose, &hTight, false);
+        MatrixMethod(&hLoose, &hTight, samples[i]=="data");
       }//samples loop
     }//signal loop
   }
@@ -159,7 +167,7 @@ MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannels){
   float Se0Loose = sqrt(e0Loose);
   float SallLoose = sqrt(allLoose);
   
-  cout<<"Loose Sample: "<<" N total: "<<allLoose<<endl;
+  cout<<"Loose Sample: "<<" N total: "<<allLoose<<" +/- "<<SallLoose<<endl;
   if(allChannels)
     cout<<"N 3e: "<<e3Loose<<" +/- "<<Se3Loose<<endl//" frac: "<<e3/total<<endl
         <<"N 2e: "<<e2Loose<<" +/- "<<Se2Loose<<endl//" frac: "<<e2/total<<endl
@@ -177,33 +185,59 @@ MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannels){
   if(!allChannels) return;
 
   cout<<" For 3e\n";
-  CalcMatrix(eElec, SeElec,
-             pElec, SpElec, 
-             e3Loose, Se3Loose,
-             e3Tight, Se3Tight);
+  MatrixResult result3e = CalcMatrix(eElec, SeElec,
+                                     pElec, SpElec, 
+                                     e3Loose, Se3Loose,
+                                     e3Tight, Se3Tight);
   cout<<" For 2e\n";
-  CalcMatrix(eMuon, SeMuon,
-             pMuon, SpMuon, 
-             e2Loose, Se2Loose,
-             e2Tight, Se2Tight);
+  MatrixResult result2e = CalcMatrix(eMuon, SeMuon,
+                                     pMuon, SpMuon, 
+                                     e2Loose, Se2Loose,
+                                     e2Tight, Se2Tight);
   cout<<" For 1e\n";
-  CalcMatrix(eElec, SeElec,
-             pElec, SpElec, 
-             e1Loose, Se1Loose,
-             e1Tight, Se1Tight);
+  MatrixResult result1e = CalcMatrix(eElec, SeElec,
+                                     pElec, SpElec, 
+                                     e1Loose, Se1Loose,
+                                     e1Tight, Se1Tight);
   cout<<" For 0e\n";
-  CalcMatrix(eMuon, SeMuon,
-             pMuon, SpMuon, 
-             e0Loose, Se0Loose,
-             e0Tight, Se0Tight);
+  MatrixResult result0e = CalcMatrix(eMuon, SeMuon,
+                                     pMuon, SpMuon, 
+                                     e0Loose, Se0Loose,
+                                     e0Tight, Se0Tight);
   
+  MatrixResult resultAll;
+  resultAll.Nt_lep = result3e.Nt_lep
+    + result2e.Nt_lep
+    + result1e.Nt_lep 
+    + result0e.Nt_lep;
+
+  resultAll.Nt_jet = result3e.Nt_jet +
+    result2e.Nt_jet +
+    result1e.Nt_jet +
+    result0e.Nt_jet;
+
+  resultAll.DeltaNt_lep = sqrt(result3e.DeltaNt_lep*result3e.DeltaNt_lep +
+                               result2e.DeltaNt_lep*result2e.DeltaNt_lep +
+                               result1e.DeltaNt_lep*result1e.DeltaNt_lep +
+                               result0e.DeltaNt_lep*result0e.DeltaNt_lep);
+
+  resultAll.DeltaNt_jet = sqrt(result3e.DeltaNt_jet*result3e.DeltaNt_jet +
+                               result2e.DeltaNt_jet*result2e.DeltaNt_jet +
+                               result1e.DeltaNt_jet*result1e.DeltaNt_jet +
+                               result0e.DeltaNt_jet*result0e.DeltaNt_jet);
+
+  cout<<"Tight nLep: "<<resultAll.Nt_lep<<" +/- "<<resultAll.DeltaNt_lep<<endl
+      <<"Tight nJet: "<<resultAll.Nt_jet<<" +/- "<<resultAll.DeltaNt_jet
+      <<endl;
 }
 
-
+MatrixResult
 CalcMatrix(const float eTight, const  float Delta_eTight, 
            const float pFake, const float Delta_pFake, 
            const float Nl, const float Delta_Nl,
            const float Nt, const float Delta_Nt){
+    MatrixResult result;
+
     float N1 = Nl - Nt;
     float N2 = Nt;
 
@@ -216,8 +250,8 @@ CalcMatrix(const float eTight, const  float Delta_eTight,
     float Njet = (eTight*Nl - Nt)/(eTight - pFake);
     //cout << "Loose: N_lep: " << Nlep << " and: N_jet: " << Njet << endl;
   
-    float Nt_lep = eTight*Nlep;
-    float Nt_jet = pFake*Njet;
+    result.Nt_lep = eTight*Nlep;
+    result.Nt_jet = pFake*Njet;
     
     //cout << "Tight: N_lep: " << Nt_lep << " and: N_jet: " << Nt_jet << endl;  
     
@@ -241,15 +275,16 @@ CalcMatrix(const float eTight, const  float Delta_eTight,
     float dNjet_dN2 = (pFake*(eTight-1))/(eTight-pFake);
 
 
-    float DeltaNt_lep = TMath::Sqrt(((dNlep_desig)*(dNlep_desig)*Delta_eTight*Delta_eTight)+((dNlep_deqcd*dNlep_deqcd)*Delta_pFake*Delta_pFake) + ((dNlep_dN1*dNlep_dN1)*dN1*dN1) + ((dNlep_dN2*dNlep_dN2)*dN2*dN2)); 
+    result.DeltaNt_lep = TMath::Sqrt(((dNlep_desig)*(dNlep_desig)*Delta_eTight*Delta_eTight)+((dNlep_deqcd*dNlep_deqcd)*Delta_pFake*Delta_pFake) + ((dNlep_dN1*dNlep_dN1)*dN1*dN1) + ((dNlep_dN2*dNlep_dN2)*dN2*dN2)); 
 
-    float DeltaNt_jet = TMath::Sqrt(((dNjet_desig)*(dNjet_desig)*Delta_eTight*Delta_eTight)+((dNjet_deqcd*dNjet_deqcd)*Delta_pFake*Delta_pFake) + ((dNjet_dN1*dNjet_dN1)*dN1*dN1) + ((dNjet_dN2*dNjet_dN2)*dN2*dN2));
+    result.DeltaNt_jet = TMath::Sqrt(((dNjet_desig)*(dNjet_desig)*Delta_eTight*Delta_eTight)+((dNjet_deqcd*dNjet_deqcd)*Delta_pFake*Delta_pFake) + ((dNjet_dN1*dNjet_dN1)*dN1*dN1) + ((dNjet_dN2*dNjet_dN2)*dN2*dN2));
   
     //cout << "Error on tNlep: " << DeltaNt_lep << " Total: " << Nt_lep << " +- " << DeltaNt_lep << endl;
 
     //cout << "Error on tNjet: " << DeltaNt_jet << " Total: " << Nt_jet << " +- " << DeltaNt_jet << endl;
-
-    cout<<"e: "<<eTight*100<<" +/- "<<Delta_eTight*100<<"%" 
+/*
+    cout<<"Debug Results are: \n"
+        <<"e: "<<eTight*100<<" +/- "<<Delta_eTight*100<<"%" 
         <<" p: "<<pFake*100<<" +/- "<<Delta_pFake*100<<"%"
         <<endl
         <<"nLoose: "<<Nl<<" +/- "<<Delta_Nl
@@ -259,8 +294,9 @@ CalcMatrix(const float eTight, const  float Delta_eTight,
         <<"Loose nLep: "<<Nlep
         <<" Loose nJet: "<<Njet
         <<endl
-        <<"Tight nLep: "<<Nt_lep<<" +/- "<<DeltaNt_lep
-        <<" Tight nJet: "<<Nt_jet<<" +/- "<<DeltaNt_jet
+        <<"Tight nLep: "<<result.Nt_lep<<" +/- "<<result.DeltaNt_lep
+        <<" Tight nJet: "<<result.Nt_jet<<" +/- "<<result.DeltaNt_jet
         <<endl;
-   
+*/
+    return result;
 }
