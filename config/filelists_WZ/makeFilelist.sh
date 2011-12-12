@@ -12,4 +12,5 @@ for Directory in `ls ${Dir} | grep ${Ver} | grep Pat`
 done
 
 /usr/bin/perl -p -i -e "s/\/pnfs\/cms\/WAX\/11//g" *${Ver}*.txt
+#/usr/bin/perl -p -i -e "s/\/hdfs//g" *.txt
 #./mergeFilelists.sh
