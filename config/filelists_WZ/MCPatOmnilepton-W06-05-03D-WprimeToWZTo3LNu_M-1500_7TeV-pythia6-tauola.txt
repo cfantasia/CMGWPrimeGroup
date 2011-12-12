@@ -1,0 +1,2 @@
+/store/user/jklukas/MC-W06-05-03D/WprimeToWZTo3LNu_M-1500_7TeV-pythia6-tauola/MCPatOmnilepton-WprimeToWZTo3LNu_M-1500_7TeV-pythia6-tauola/patTuple_cfg-copyAllEvents-8CC39AD1-D904-E111-B712-00215E21DC06.root
+/store/user/jklukas/MC-W06-05-03D/WprimeToWZTo3LNu_M-1500_7TeV-pythia6-tauola/MCPatOmnilepton-WprimeToWZTo3LNu_M-1500_7TeV-pythia6-tauola/patTuple_cfg-copyAllEvents-BA6138A5-7206-E111-B0A7-00215E221782.root

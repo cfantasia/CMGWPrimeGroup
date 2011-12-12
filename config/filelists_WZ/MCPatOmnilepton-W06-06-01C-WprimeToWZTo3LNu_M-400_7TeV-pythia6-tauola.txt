@@ -1,0 +1,3 @@
+/store/user/jklukas/MC-W06-06-01C/WprimeToWZTo3LNu_M-400_7TeV-pythia6-tauola/MCPatOmnilepton-WprimeToWZTo3LNu_M-400_7TeV-pythia6-tauola/patTuple_cfg-C2BB264F-4B06-E111-B175-00215E221098.root
+/store/user/jklukas/MC-W06-06-01C/WprimeToWZTo3LNu_M-400_7TeV-pythia6-tauola/MCPatOmnilepton-WprimeToWZTo3LNu_M-400_7TeV-pythia6-tauola/patTuple_cfg-EAB2E259-9706-E111-BBEB-00215E21D6A8.root
+/store/user/jklukas/MC-W06-06-01C/WprimeToWZTo3LNu_M-400_7TeV-pythia6-tauola/MCPatOmnilepton-WprimeToWZTo3LNu_M-400_7TeV-pythia6-tauola/patTuple_cfg-FCB35E37-8A0B-E111-B048-00215E221EC6.root

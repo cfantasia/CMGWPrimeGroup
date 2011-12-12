@@ -1,0 +1,12 @@
+/store/user/jklukas/MC-W06-05-03A/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/MCPatTrilepton-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-185083AF-D9F8-E011-A646-003048678FA0.root
+/store/user/jklukas/MC-W06-05-03A/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/MCPatTrilepton-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-3ECFBCF1-CCF8-E011-8D2E-003048678C26.root
+/store/user/jklukas/MC-W06-05-03A/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/MCPatTrilepton-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-6AB3B4CF-C8F8-E011-8A06-003048678FE4.root
+/store/user/jklukas/MC-W06-05-03A/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/MCPatTrilepton-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-6C61A474-D9F8-E011-B18F-0026189438FA.root
+/store/user/jklukas/MC-W06-05-03A/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/MCPatTrilepton-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-72355303-C7F8-E011-9B27-002618943865.root
+/store/user/jklukas/MC-W06-05-03A/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/MCPatTrilepton-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-78684BE4-CDF8-E011-BA58-002618943963.root
+/store/user/jklukas/MC-W06-05-03A/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/MCPatTrilepton-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-7A67AF5B-D3F8-E011-9EDA-0026189438D6.root
+/store/user/jklukas/MC-W06-05-03A/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/MCPatTrilepton-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-88E03773-F2F8-E011-AB31-0030486790FE.root
+/store/user/jklukas/MC-W06-05-03A/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/MCPatTrilepton-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-A4F4D6E4-0BF9-E011-9C3A-0026189437FC.root
+/store/user/jklukas/MC-W06-05-03A/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/MCPatTrilepton-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-A8E7AA6F-F2F8-E011-9561-00261894391B.root
+/store/user/jklukas/MC-W06-05-03A/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/MCPatTrilepton-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-B8589044-D0F8-E011-BDED-002618FDA262.root
+/store/user/jklukas/MC-W06-05-03A/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/MCPatTrilepton-WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/patTuple_cfg-BEB5316C-D6F8-E011-8F22-003048678AE2.root
