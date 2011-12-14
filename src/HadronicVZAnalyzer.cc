@@ -640,11 +640,11 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   if( !passZMassCut(zCand_, minZmass_, maxZmass_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
-  /*  if( !passZptCut  (zCand_, minZpt_) ) return;
+  if( !passZptCut  (zCand_, minZpt_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
-
+  
   fillGoodZHistos();
-  */
+  
   ///////////////////////////////////////
   //////// Make V from Jets  ////////////
   ///////////////////////////////////////
@@ -696,11 +696,11 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     return;
   tabulateEvent(iCut, weight_); ++iCut;
 
-  if( !passZptCut  (zCand_, minZpt_) ) return;
+  /*if( !passZptCut  (zCand_, minZpt_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 
   fillGoodZHistos();
-
+  */
   if( !passZptCut(vCand_, minVpt_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
 

@@ -67,7 +67,8 @@ process.WprimeAnalyzer.Cuts = cms.vstring(
 
         "ValidZ",
         "ZMass",
-
+        "Zpt",
+        
         "ValidV",
         "VMass",
 
@@ -75,7 +76,7 @@ process.WprimeAnalyzer.Cuts = cms.vstring(
               
         "HLT",
 
-        "Zpt",
+
         "VPt",
         
         "AllCuts")
