@@ -4,7 +4,8 @@
    ""    = every plot after every cut, note some may be blank
    "final" = show me all plots but only after the last cut
    "show" = show me only the main plots(eg for weekly update), only after the last cut
-   "debug" = show debuging statements
+   "debug" = show debugging statements
+   "lowSig" = show low xsec signal unstacked
 */
 #include <stdio.h>
 #include <math.h>
@@ -59,6 +60,7 @@ std::vector<Sample> Sig;
 std::map<std::string, std::string> SampleNames;
 
 bool debug_ = false;
+bool drawLowSig_ = false;
 float lumiUsed_ = 0.;
 
 int main(int argc, char ** argv);
@@ -77,6 +79,7 @@ MakePlots(string inName, string outName, string opt){
   CMSstyle();
 
   if(opt.find("debug") != string::npos) debug_ = true;
+  if(opt.find("lowSig") != string::npos) drawLowSig_ = true;
   
   TFile *fin = TFile::Open(inName.c_str(), "read"); assert(fin);
   lumiUsed_ = GetLumiUsed(fin);
@@ -259,22 +262,22 @@ MakePlots(string inName, string outName, string opt){
   }
   CheckSamples(fin,Sig);
 
+  //Put all the samples into a single structure
   samples_.push_back(&Data);
   samples_.push_back(&Sig);
   samples_.push_back(&Bkg);
   if(debug_) cout<<"Size of samples: "<<samples_.size()
                 <<" Size of Data: "<<Data.size()
                 <<" Size of Sig: "<<Sig.size()
-                <<" Size of Bkg: "<<Bkg.size()<<endl;
-
-  string efftitle[] = {"hNumEvts", "hEffAbs", "hEffRel"};
+                <<" Size of Bkg: "<<Bkg.size()
+                 <<endl;
 
 
   //Cuts plotted after every cut defined here
   vector<string> Cuts = GetListofCuts(fin);
   vector<string> variable; 
 
-  //These variables will be plotted
+  //These variables will be plotted after each cut always
   if(inName.find("WprimeWZ") != string::npos){
     variable.push_back("hWZMass");
   }else if(inName.find("EWKWZ") != string::npos){
@@ -287,7 +290,8 @@ MakePlots(string inName, string outName, string opt){
     variable.push_back("hVZmmMass");
   }
 
-  //These variables are cross checks but not critical to be shown
+  //These variables will be plotted after each cut unless you say "show"
+  //They are cross checks but not critical to be shown
   if(opt.find("show") == string::npos){
     if(inName.find("WprimeWZ") != string::npos){
       variable.push_back("hHt");
@@ -368,13 +372,17 @@ MakePlots(string inName, string outName, string opt){
       variable.push_back("hNLLeps");
     }
   }
-  TCanvas c1;
-  
-  c1.Print(Form("%s[", outName.c_str()), "pdf"); 
+
+  TCanvas c1; 
+  c1.Print(Form("%s[", outName.c_str()), "pdf"); //Open .pdf
 
   //Plot the # of Evts plot
+  string efftitle[] = {"hNumEvts"};
   if(opt.find("show") == string::npos){
-    for(int i=0;i<1;++i) DrawandSave(fin,outName,efftitle[i],"Title: "+efftitle[i], i==0, 1, 0);
+    //This is the # of evts after each cut
+    DrawandSave(fin,outName,efftitle[0],"Title: "+efftitle[0], 1, 1, 0);
+    //This is the # of evts after each cut (stacked)
+    DrawandSave(fin,outName,efftitle[0],"Title: "+efftitle[0], 1, 0, 0);
   }
 
   //Determine where to start showing plots
@@ -389,7 +397,6 @@ MakePlots(string inName, string outName, string opt){
   for(uint i=0;i<variable.size();++i){
     for(uint j=begin;j<Cuts.size();++j){
       string title = variable[i] + "_" + Cuts[j];
-      //string bkmark = (j==begin) ? "Title: " + title : "";
       string bkmark = "Title: " + title;
 
       bool log = 1;
@@ -469,7 +476,7 @@ MakePlots(string inName, string outName, string opt){
     
   }
 
-  c1.Print(Form("%s]", outName.c_str()), "pdf"); 
+  c1.Print(Form("%s]", outName.c_str()), "pdf"); //Close .pdf
 
 }
 
@@ -487,7 +494,8 @@ bool
 GetHistograms(TFile* fin, string title, bool eff, bool cum){
   if(debug_) printf("  GetHisto %s\n", title.c_str());
   string hist_name;
-  
+
+  //How many bins should I combine
   int rebin = (title.find("WZMass") != string::npos || 
                title.find("WZ3e0muMass") != string::npos ||
                title.find("WZ2e1muMass") != string::npos ||
@@ -501,12 +509,14 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
 
   if(title.find("hMET_") != string::npos) rebin = 5;
   if(title.find("hHt_") != string::npos) rebin = 5;
+  if(title.find("hWZTransMass_") != string::npos) rebin = 2;
+  if(title.find("hWZpt_") != string::npos) rebin = 2;
   
-  bool validHist = false;
-  for(unsigned int i=0; i<samples_.size(); ++i){
+  bool validHist = false;//If none of the histograms are filled ,don't draw it
+  for(unsigned int i=0; i<samples_.size(); ++i){//Loop over Data, Bkg, Sig
     for(unsigned int j=0; j<samples_[i]->size(); ++j){
       if(debug_) cout<<"i: "<<i<<" j:"<<j<<endl;
-      Sample& curSample = samples_[i]->at(j);
+      Sample& curSample = samples_[i]->at(j);//Let's make this easy
 
       curSample.hist = get_sum_of_hists(fin, curSample.names, title, rebin);
       if(!validHist && curSample.hist->GetEntries() > 0)
@@ -519,16 +529,17 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
 	int max = curSample.hist->GetXaxis()->FindBin(120.);
 	curSample.hist->GetXaxis()->SetRangeUser(70,120);
       }
+
       if(!eff){
         curSample.hist->SetFillColor(curSample.fill);
-        if(cum){
+        if(cum){//Do you want a cumlative distrubution
           curSample.hist = FillCum(curSample.hist);
           string newtitle = "Cumlative ";
           newtitle += curSample.hist->GetYaxis()->GetTitle();
           curSample.hist->SetYTitle(newtitle.c_str());
         }
       }else{//Eff Histos
-        if(i!=1) curSample.hist->SetLineColor(curSample.fill);
+        if(i!=1) curSample.hist->SetLineColor(curSample.fill); //If not signal
         
         if(debug_){
           cout<<" Sample: "<<curSample.name<<endl;
@@ -586,20 +597,25 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
       sSigs[i]->Add(Sig[i].hist);
     }
     
+    //Find Maximum
     Double_t max = sBkg->GetMaximum();
     sBkg->Draw("HIST");
     for(unsigned int i=0; i<Sig.size(); i++){
       max = TMath::Max(max, sSigs[i]->GetMaximum());
       sSigs[i]->Draw("HIST SAME");
     }
-    for(unsigned int i=0; i<Sig.size(); i++){
-      //This is if you want to see the shape of a low xsec signal
-      Sig[i].hist->Draw("HIST SAME");
+
+    if(drawLowSig_){//This is if you want to see the shape of a low xsec signal
+      for(unsigned int i=0; i<Sig.size(); i++){
+        Sig[i].hist->Draw("HIST SAME");
+      }
     }
-    if(hData){
+
+    if(hData){//Draw Data if it exists
       max = TMath::Max(max, hData->GetMaximum());
       hData->Draw("E1 SAME");
     }
+
     if(logy){
       sBkg->SetMaximum(50*max);
       sBkg->SetMinimum(0.1);
@@ -607,12 +623,13 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
       sBkg->SetMaximum(1.5*max);
       sBkg->SetMinimum(0.);
     }
+
     sBkg->GetXaxis()->SetTitleFont(132);
     sBkg->GetYaxis()->SetTitleFont(132);
     sBkg->GetXaxis()->SetTitleSize(0.06);
     sBkg->GetYaxis()->SetTitleSize(0.06);
 
-  }else{
+  }else{//Eff Histos
     THStack* hs = new THStack("hs",title.c_str());
     for(unsigned int i=0; i<Bkg.size(); ++i){
       Bkg[i].hist->SetLineWidth(3);
