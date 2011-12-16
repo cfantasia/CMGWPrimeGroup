@@ -426,9 +426,23 @@ MakePlots(string inName, string outName, string opt){
       DrawandSave(fin,outName,"hWenuTransMass_ValidW","Title: W TMass After Valid Wen",1,0,0);
       DrawandSave(fin,outName,"hWmnuTransMass_ValidW","Title: W TMass After Valid Wmu",1,0,0);
 
+//Adding bunch of MET plots
       DrawandSave(fin,outName,"hMET_ValidW","Title: MET After Valid W",1,0,0);
       DrawandSave(fin,outName,"hMETee_ValidW","Title: MET After Valid W (zee)",1,0,0);
       DrawandSave(fin,outName,"hMETmm_ValidW","Title: MET After Valid W (Zmm)",1,0,0);
+
+      DrawandSave(fin,outName,"hMET_ValidW","Title: MET After Valid W",1,0,1);
+      DrawandSave(fin,outName,"hMETee_ValidW","Title: MET After Valid W (zee)",1,0,1);
+      DrawandSave(fin,outName,"hMETmm_ValidW","Title: MET After Valid W (Zmm)",1,0,1);
+
+      DrawandSave(fin,outName,"hMET_ValidW","Title: MET After Valid W",0,0,0);
+      DrawandSave(fin,outName,"hMETee_ValidW","Title: MET After Valid W (zee)",0,0,0);
+      DrawandSave(fin,outName,"hMETmm_ValidW","Title: MET After Valid W (Zmm)",0,0,0);
+
+      DrawandSave(fin,outName,"hMET_ValidW","Title: MET After Valid W",0,0,1);
+      DrawandSave(fin,outName,"hMETee_ValidW","Title: MET After Valid W (zee)",0,0,1);
+      DrawandSave(fin,outName,"hMETmm_ValidW","Title: MET After Valid W (Zmm)",0,0,1);
+//End MET
 
       DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht before Ht Cut",1,0,0);
 
@@ -507,8 +521,8 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
 
   //  if(title.find("VMass") != string::npos) rebin = 3;
 
-  if(title.find("hMET_") != string::npos) rebin = 5;
-  if(title.find("hHt_") != string::npos) rebin = 5;
+  if(title.find("hMET_") != string::npos) rebin = 1;
+  if(title.find("hHt_") != string::npos) rebin = 1;
   if(title.find("hWZTransMass_") != string::npos) rebin = 2;
   if(title.find("hWZpt_") != string::npos) rebin = 2;
   
