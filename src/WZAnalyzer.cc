@@ -220,23 +220,28 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
     
     hVtxMatch = dir.make<TH1F>("hVtxMatch","Mask of leptons in PV", 10, 0, 10);
     
-    tWZCand = dir.make<TTree>("tWZCand", "Analysis Variables after WZCand");//Only 1 for now;
-    tWZCand->Branch("Run", &runNumber_);
-    tWZCand->Branch("Lumi", &lumiNumber_);
-    tWZCand->Branch("Event", &evtNumber_);
-    tWZCand->Branch("WZMass", &WZMass_);
-    tWZCand->Branch("EvtType", &evtType_);
-    tWZCand->Branch("Ht", &Ht_);
-    tWZCand->Branch("Zpt", &Zpt_);
-    tWZCand->Branch("ZMass", &ZMass_);
-    tWZCand->Branch("Wpt", &Wpt_);
-    tWZCand->Branch("WTransMass", &WTransMass_);
-    tWZCand->Branch("MET", &MET_);
-    tWZCand->Branch("METSig", &METSig_);
-    tWZCand->Branch("Q", &Q_);
-    tWZCand->Branch("TriLepMass", &TriLepMass_);
-    tWZCand->Branch("NVtxs", &NVtxs_);
-    tWZCand->Branch("weight", &weight_);
+    tEvts.assign(NCuts_,NULL);
+    for(int i=0; i<NCuts_; ++i){
+      string name = "tEvts_" + CutNames_[i];
+      string title = "Analysis Variables (After " + CutDescs_[i] + " Cut)";
+      tEvts[i] = dir.make<TTree>(name.c_str(), title.c_str());
+      tEvts[i]->Branch("Run", &runNumber_);
+      tEvts[i]->Branch("Lumi", &lumiNumber_);
+      tEvts[i]->Branch("Event", &evtNumber_);
+      tEvts[i]->Branch("WZMass", &WZMass_);
+      tEvts[i]->Branch("EvtType", &evtType_);
+      tEvts[i]->Branch("Ht", &Ht_);
+      tEvts[i]->Branch("Zpt", &Zpt_);
+      tEvts[i]->Branch("ZMass", &ZMass_);
+      tEvts[i]->Branch("Wpt", &Wpt_);
+      tEvts[i]->Branch("WTransMass", &WTransMass_);
+      tEvts[i]->Branch("MET", &MET_);
+      tEvts[i]->Branch("METSig", &METSig_);
+      tEvts[i]->Branch("Q", &Q_);
+      tEvts[i]->Branch("TriLepMass", &TriLepMass_);
+      tEvts[i]->Branch("NVtxs", &NVtxs_);
+      tEvts[i]->Branch("weight", &weight_);
+    }
     
   }else{
     defineHistoset("hZeeMassTT","Reconstructed MassTT of ZeeTT",
@@ -281,9 +286,6 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
       hEvtType[index]->Fill(evtType_, weight);
       if     (wCand_.charge() > 0) hEvtTypeP[index]->Fill(evtType_, weight);
       else if(wCand_.charge() < 0) hEvtTypeM[index]->Fill(evtType_, weight);
-      if(CutNames_[index] == "ValidWZCand"){
-        tWZCand->Fill();
-      }
     }
     if(zCand_){
       hZMass[index]->Fill(ZMass_, weight);
@@ -334,6 +336,8 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
     hNVtxs[index]->Fill((*verticesH_).size(), weight);
     hWeight[index]->Fill(weight_/wprimeUtil_->getSampleWeight(), 1.);//Don't weight
     hL1FastJet[index]->Fill(*rhoFastJetH_, weight);
+
+    tEvts[index]->Fill();
   }else{//Systematics plots
     if(zCand_){
       if(zCand_.flavor() == PDG_ID_ELEC){

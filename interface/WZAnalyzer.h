@@ -191,7 +191,7 @@ public:
 
   TH1F* hVtxMatch;
   
-  TTree* tWZCand;
+  std::vector<TTree*> tEvts;
 
 };
 
