@@ -47,6 +47,10 @@ def jetlep_config(process, reportEveryNum=100, maxEvents=-1) :
         SelectEvents = cms.vstring('p')
         )
 
+    #Keep NVtxs
+    process.out.outputCommands.append('keep *_offlinePrimaryVertices_*_*')
+    
+
 #    from RecoJets.JetProducers.kt4PFJets_cfi import kt4PFJets
 #    process.kt6PFJetsPFlow = kt4PFJets.clone(
 #        rParam = cms.double(0.6),
