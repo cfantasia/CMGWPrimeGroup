@@ -38,6 +38,8 @@ process.WprimeAnalyzer.maxZMassDiff = cms.double(999999.)
 process.WprimeAnalyzer.effectiveElecArea = cms.vdouble(0.0997,0.1123)#Not using Recommended PI*0.3*0.3
 process.WprimeAnalyzer.effectiveMuonArea = cms.vdouble(0.1057,0.0769)
 
+process.WprimeAnalyzer.MCPUDistHist = cms.string('Fall11Dist')
+
 ###Analysis Cuts
 EWKWZCuts = cms.vstring(
     "NoCuts", 
