@@ -58,7 +58,6 @@ void TBAnalyzer::setupCutOrder(){
 }
 
 void TBAnalyzer::defineHistos(const TFileDirectory & dir){
-  AnalyzerBase::defineHistos(dir);
 }//defineHistos
 
 

@@ -66,7 +66,6 @@ HadronicVZAnalyzer::~HadronicVZAnalyzer(){
 /// Declare Histograms
 void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   printf("Declare histos\n");
-  AnalyzerBase::defineHistos(dir);
 
   //POG histos
   h_dptpt2 = dir.make<TH1F>("h_dptpt2", "h_dptpt2", 500, 0., 0.05);
@@ -180,37 +179,37 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
 
 
   /////////////////
-  defineHistoset("hVZMass", "Reconstructed VZ Invariant Mass",
+  defineHistoSet("hVZMass", "Reconstructed VZ Invariant Mass",
                   "M_{VZ} (GeV)", 100, 0, 2500, "GeV", hVZMass,dir);
-  defineHistoset("hVZeeMass", "Reconstructed VZee Invariant Mass",
+  defineHistoSet("hVZeeMass", "Reconstructed VZee Invariant Mass",
                   "M_{VZ}^{ee} (GeV)", 100, 0, 2500, "GeV", hVZeeMass,dir);
-  defineHistoset("hVZmmMass", "Reconstructed VZmm Invariant Mass",
+  defineHistoSet("hVZmmMass", "Reconstructed VZmm Invariant Mass",
                   "M_{VZ}^{#mu#mu} (GeV)", 100, 0, 2500, "GeV", hVZmmMass,dir);
-  defineHistoset("hVZpt", "Reconstructed VZ Transverse Momentum",
+  defineHistoSet("hVZpt", "Reconstructed VZ Transverse Momentum",
                   "p_{VZ}^{T} (GeV)", 100, 0, 1000, "GeV", hVZpt,dir);
 
-  defineHistoset("hQ", "Q=M_{VZ} - M_{V} - M_{Z}",
+  defineHistoSet("hQ", "Q=M_{VZ} - M_{V} - M_{Z}",
                   "Q (GeV)", 50, 0, 2500, "GeV", hQ,dir);
 
-  defineHistoset("hZMass" , "Reconstructed Mass of Z",
+  defineHistoSet("hZMass" , "Reconstructed Mass of Z",
                   "M_{Z} (GeV)", 30, 60, 120, "GeV", hZMass,dir);
-  defineHistoset("hZeeMass" , "Reconstructed Mass of Zee",
+  defineHistoSet("hZeeMass" , "Reconstructed Mass of Zee",
                   "M_{Z}^{ee} (GeV)", 30, 60, 120, "GeV", hZeeMass,dir);
-  defineHistoset("hZmmMass" , "Reconstructed Mass of Zmm",
+  defineHistoSet("hZmmMass" , "Reconstructed Mass of Zmm",
                   "M_{Z}^{#mu#mu} (GeV)", 30, 60, 120, "GeV", hZmmMass,dir);
-  defineHistoset("hZpt", "p_{T}^{Z}", 
+  defineHistoSet("hZpt", "p_{T}^{Z}", 
                   "p_{T}^{Z} (GeV)", 100, 0, 1000, "GeV", hZpt,dir);
-  defineHistoset("hEvtType", "Event Type",
+  defineHistoSet("hEvtType", "Event Type",
                   "N_{#mu}", 3, 0, 3, "NONE", hEvtType,dir);
 
-  defineHistoset("hVMass" , "Reconstructed Mass of V",
+  defineHistoSet("hVMass" , "Reconstructed Mass of V",
                   "M_{V} (GeV)", 75, 0, 150, "GeV", hVMass,dir);//Cory: Change back
-  defineHistoset("hVpt", "p_{T}^{V}", 
+  defineHistoSet("hVpt", "p_{T}^{V}", 
                   "p_{T}^{V} (GeV)", 100, 0, 1000, "GeV", hVpt,dir);
 
-  defineHistoset("hNLLeps", "Number of Loose Leptons in Event",
+  defineHistoSet("hNLLeps", "Number of Loose Leptons in Event",
                   "N_{l}^{Loose}", 10, 0, 10, "NONE", hNLLeps,dir);
-  defineHistoset("hNLJets", "Number of Loose Jets in Event",
+  defineHistoSet("hNLJets", "Number of Loose Jets in Event",
                   "N_{Jets}^{Loose}", 10, 0, 10, "NONE", hNLJets,dir);
 
   cout << "Histos declared" << endl;

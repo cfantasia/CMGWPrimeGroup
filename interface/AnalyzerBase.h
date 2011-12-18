@@ -25,9 +25,9 @@ public:
   virtual void printFileSummary(std::vector<wprime::InputFile>::const_iterator fi, ofstream& out);
  
   virtual void fillHistos(const int& index, const float& weight=1.) = 0;//Pure Virtual
-  virtual void defineHistos(const TFileDirectory & dir);
+  virtual void defineHistos(const TFileDirectory & dir) = 0;
   virtual void defineResolutionHistos(const TFileDirectory & dir, float Mass){}
-  virtual void defineHistoset(const std::string& n, const std::string& t, 
+  virtual void defineHistoSet(const std::string& n, const std::string& t, 
 			      const std::string& xtitle, int nbins, 
 			      float xmin, float xmax, 
 			      const std::string& units,
@@ -109,7 +109,7 @@ public:
   
   void run();
   virtual void beginFile(std::vector<wprime::InputFile>::iterator fi);
-  virtual void eventLoop(edm::EventBase const & event);
+  virtual void eventLoop(edm::EventBase const & event) = 0;
   
 // operations to be done when closing input file 
   virtual void endFile(std::vector<wprime::InputFile>::iterator fi,

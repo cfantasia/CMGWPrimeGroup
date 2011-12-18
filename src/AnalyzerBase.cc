@@ -560,6 +560,11 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
     fi->Nprod_evt = fi->Nact_evt;
 
   TFileDirectory dir = fs->mkdir(fi->samplename, fi->description); 
+  string title = Form("Expected # of Events / %.0f pb^{-1}",  wprimeUtil_->getLumi_ipb());
+  title = title + ";;" + title;
+  hNumEvts = NULL; hNumEvts = dir.make<TH1F>("hNumEvts",title.c_str(),NCuts_,0,NCuts_);
+  for(int i=0; i<NCuts_; ++i) hNumEvts->GetXaxis()->SetBinLabel(i+1,CutNames_[i].c_str());
+
   defineHistos(dir);
   if(wprimeUtil_->isSignalSample())
     {
@@ -570,17 +575,8 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
   fi->results.assign(NCuts_,wprime::FilterEff());
 }
 
-void AnalyzerBase::defineHistos(const TFileDirectory & dir){
-
-  string title = Form("Expected # of Events / %.0f pb^{-1}",  wprimeUtil_->getLumi_ipb());
-  title = title + ";;" + title;
-  hNumEvts = NULL; hNumEvts = dir.make<TH1F>("hNumEvts",title.c_str(),NCuts_,0,NCuts_);
-  for(int i=0; i<NCuts_; ++i) hNumEvts->GetXaxis()->SetBinLabel(i+1,CutNames_[i].c_str());
-
-}//defineHistos
-
 void
-AnalyzerBase::defineHistoset(const string& n, const string& t, 
+AnalyzerBase::defineHistoSet(const string& n, const string& t, 
 			     const string& xtitle,
 			     int nbins, float xmin, float xmax, 
 			     const string& units,
@@ -637,33 +633,6 @@ void AnalyzerBase::defineOneHisto(const string & name, const string & title,
   if(units.compare("NONE"))
     title2 += Form(" / %.0f ",binWidth) + units;
   h = d.make<TH1F>(name.c_str(),title2.c_str(),nbins,xmin,xmax);
-}
-
-void 
-AnalyzerBase::eventLoop(edm::EventBase const & event){
-  clearEvtVariables();
-  if(debug_) WPrimeUtil::printEvent(event);
-
-  if (doPreselect_){
-  }
-
-  event.getByLabel(electronsLabel_,patElectronsH_);
-  event.getByLabel(muonsLabel_,patMuonsH_);
-  event.getByLabel(metLabel_, metH_);
-
-  if(wprimeUtil_->DebugEvent(event)){
-    cout<<"This is a debug event\n";
-    printPassingEvent(event);
-    printDebugEvent();
-  }
-
-  if(!passCuts(wprimeUtil_->getWeight())) return;
-  if(wprimeUtil_->runningOnData()){
-    cout<<" The following data event passed All Cuts!!!\n";
-    printPassingEvent(event);
-    cout<<" ------------------\n";
-  }
-  
 }
 
 // operations to be done when closing input file 

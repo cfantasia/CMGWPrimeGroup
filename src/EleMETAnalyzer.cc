@@ -46,7 +46,6 @@ void EleMETAnalyzer::defineResolutionHistos(const TFileDirectory & dir, float Ma
 
 void EleMETAnalyzer::defineHistos(const TFileDirectory & dir)
 {
-  AnalyzerBase::defineHistos(dir);
   for(int i = 0; i != NCuts_; ++i)
     {
       hPT[i] = hETA[i] = hPHI[i] = /*hMJDPHI[i] =*/ hTM[i] = 0;

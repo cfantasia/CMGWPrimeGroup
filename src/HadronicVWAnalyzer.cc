@@ -73,95 +73,94 @@ void HadronicVWAnalyzer::setupCutOrder(){
 //--------------------------------------------------------------
 void HadronicVWAnalyzer::defineHistos(const TFileDirectory & dir){
   if(debug_) printf("Declare histos\n");
-  AnalyzerBase::defineHistos(dir);
 
-  defineHistoset("hVWMass", "Reconstructed VW Invariant Mass",
+  defineHistoSet("hVWMass", "Reconstructed VW Invariant Mass",
                   "M_{VW} (GeV)", 1200, 0, 1200, "GeV", hVWMass,dir);
 
 //Q=M_{VW} - M_W - M_V
-  defineHistoset("hQ", "Q=M_{VW} - M_{W} - M_{V}",
+  defineHistoSet("hQ", "Q=M_{VW} - M_{W} - M_{V}",
                   "Q (GeV)", 50, 0, 500, "GeV", hQ,dir);
-  defineHistoset("hVWTransMass", "Reconstructed VW Transverse Mass",
+  defineHistoSet("hVWTransMass", "Reconstructed VW Transverse Mass",
                   "M_{VW}^{T} (GeV)", 100, 0, 1000, "GeV", hVWTransMass,dir);
 //VWpt Histos
-  defineHistoset("hVWpt", "Reconstructed VW Transverse Momentum",
+  defineHistoSet("hVWpt", "Reconstructed VW Transverse Momentum",
                   "p_{VW}^{T} (GeV)", 50, 0, 500, "GeV", hVWpt,dir);
 
-  defineHistoset("hEvtType", "Event Type",
+  defineHistoSet("hEvtType", "Event Type",
                   "N_{#mu}", 4, 0, 4, "NONE", hEvtType,dir);
-  defineHistoset("hEvtTypeP", "Event Type for Q=+1",
+  defineHistoSet("hEvtTypeP", "Event Type for Q=+1",
                   "N_{#mu},W^{+}", 4, 0, 4, "NONE", hEvtTypeP,dir);
-  defineHistoset("hEvtTypeM", "Event Type for Q=-1",
+  defineHistoSet("hEvtTypeM", "Event Type for Q=-1",
                   "N_{#mu},W^{-}", 4, 0, 4, "NONE", hEvtTypeM,dir);
 
 ///////////////////////////
 //V Mass Histos
-  defineHistoset("hVMass" , "Reconstructed Mass of V",
+  defineHistoSet("hVMass" , "Reconstructed Mass of V",
                   "M_{V} (GeV)", 30, 60, 120, "GeV", hVMass,dir);
-  defineHistoset("hVeeMass","Reconstructed Mass of Vee",
+  defineHistoSet("hVeeMass","Reconstructed Mass of Vee",
                   "M_{V}^{ee} (GeV)", 30, 60, 120, "GeV", hVeeMass,dir);
-  defineHistoset("hVmmMass","Reconstructed Mass of V#mu#mu",
+  defineHistoSet("hVmmMass","Reconstructed Mass of V#mu#mu",
                   "M_{V}^{#mu#mu} (GeV)", 30, 60, 120, "GeV", hVmmMass,dir);
 
 //Vpt Histos
-  defineHistoset("hVpt", "p_{T}^{V}", 
+  defineHistoSet("hVpt", "p_{T}^{V}", 
                   "p_{T}^{V} (GeV)", 40, 0, 400, "GeV", hVpt,dir);
-  defineHistoset("hVeept", "p_{T}^{V#rightarrowee}", 
+  defineHistoSet("hVeept", "p_{T}^{V#rightarrowee}", 
                   "p_{T}^{V#rightarrowee} (GeV)", 40, 0, 400, "GeV", hVeept,dir);
-  defineHistoset("hVmmpt", "p_{T}^{V#rightarrow#mu#mu}", 
+  defineHistoSet("hVmmpt", "p_{T}^{V#rightarrow#mu#mu}", 
                   "p_{T}^{V#rightarrow#mu#mu} (GeV)", 40, 0, 400, "GeV", hVmmpt,dir);
 //MET Histos
-  defineHistoset("hMET", "MET",
+  defineHistoSet("hMET", "MET",
                   "#slash{E}_{T} (GeV)", 30, 0, 300, "GeV", hMET,dir);
-  defineHistoset("hMETee", "MET",
+  defineHistoSet("hMETee", "MET",
                   "#slash{E}_{T}^{ee} (GeV)", 30, 0, 300, "GeV", hMETee,dir);
-  defineHistoset("hMETmm", "MET",
+  defineHistoSet("hMETmm", "MET",
                   "#slash{E}_{T}^{#mu#mu} (GeV)", 30, 0, 300, "GeV", hMETmm,dir);
 
 //W Trans Mass Histos
-  defineHistoset("hWTransMass", "Reconstructed Transverse Mass of W",
+  defineHistoSet("hWTransMass", "Reconstructed Transverse Mass of W",
                   "M_{T} (GeV)", 20, 0, 100, "GeV", hWTransMass,dir);
-  defineHistoset("hWenuTransMass", "Reconstructed Transverse Mass of We\\nu",
+  defineHistoSet("hWenuTransMass", "Reconstructed Transverse Mass of We\\nu",
                   "M_{T}^{e#nu} (GeV)", 20, 0, 100, "GeV", hWenuTransMass,dir);
-  defineHistoset("hWmnuTransMass", "Reconstructed TransverseMass of W#mu\\nu",
+  defineHistoSet("hWmnuTransMass", "Reconstructed TransverseMass of W#mu\\nu",
                   "M_{T}^{#mu#nu} (GeV)", 20, 0, 100, "GeV", hWmnuTransMass,dir);
 
 //Wpt Histos
-  defineHistoset("hWpt", "p_{T}^{W}", 
+  defineHistoSet("hWpt", "p_{T}^{W}", 
                   "p_{T}^{W} (GeV)", 40, 0, 400, "GeV", hWpt,dir);
-  defineHistoset("hWptVee", "p_{T}^{W,V#rightarrowee}", 
+  defineHistoSet("hWptVee", "p_{T}^{W,V#rightarrowee}", 
                   "p_{T}^{W,V#rightarrowee} (GeV)", 40, 0, 400, "GeV", hWptVee,dir);
-  defineHistoset("hWptVmm", "p_{T}^{W,V#rightarrow#mu#mu}", 
+  defineHistoSet("hWptVmm", "p_{T}^{W,V#rightarrow#mu#mu}", 
                   "p_{T}^{W,V#rightarrow#mu#mu} (GeV)", 40, 0, 400, "GeV", hWptVmm,dir);
 
 //W Charge Histos
-  defineHistoset("hWQ", "Reconstructed Charge of W",
+  defineHistoSet("hWQ", "Reconstructed Charge of W",
                   "q_{W}", 3, -1, 1, "", hWQ,dir);
-  defineHistoset("hWenuQ", "Reconstructed Charge of We\\nu",
+  defineHistoSet("hWenuQ", "Reconstructed Charge of We\\nu",
                   "q_{W}^{e#nu}", 3, -1.5, 1.5, "", hWenuQ,dir);
-  defineHistoset("hWmnuQ", "Reconstructed TransverseMass of W#mu\\nu",
+  defineHistoSet("hWmnuQ", "Reconstructed TransverseMass of W#mu\\nu",
                   "q_{W}^{#mu#nu}", 3, -1.5, 1.5, "", hWmnuQ,dir);
 
-  defineHistoset("hNLElec", "Number of Loose Electrons in Event",
+  defineHistoSet("hNLElec", "Number of Loose Electrons in Event",
                   "N_{e}^{Loose}", 10, 0, 10, "NONE", hNLElec,dir);
-  defineHistoset("hNLMuon", "Number of Loose Muons in Event",
+  defineHistoSet("hNLMuon", "Number of Loose Muons in Event",
                   "N_{#mu}^{Loose}", 10, 0, 10, "NONE", hNLMuon,dir);
-  defineHistoset("hNLLeps", "Number of Loose Leptons in Event",
+  defineHistoSet("hNLLeps", "Number of Loose Leptons in Event",
                   "N_{l}^{Loose}", 10, 0, 10, "NONE", hNLLeps,dir);
-  defineHistoset("hNLLepsVee", "Number of Loose Leptons in Event, V#rightarrowee",
+  defineHistoSet("hNLLepsVee", "Number of Loose Leptons in Event, V#rightarrowee",
                   "N_{l}^{Loose,V#rightarrowee}", 10, 0, 10, "NONE", hNLLepsVee,dir);
-  defineHistoset("hNLLepsVmm", "Number of Loose Leptons in Event",
+  defineHistoSet("hNLLepsVmm", "Number of Loose Leptons in Event",
                   "N_{l}^{Loose,V#rightarrow#mu#mu}", 10, 0, 10, "NONE", hNLLepsVmm,dir);
 
-  defineHistoset("hNJets", "Number of Jets in Event",
+  defineHistoSet("hNJets", "Number of Jets in Event",
                   "N_{Jets}", 10, 0, 10, "NONE", hNJets,dir);
 
-  defineHistoset("hNVtxs", "Number of Vertexs in Event",
+  defineHistoSet("hNVtxs", "Number of Vertexs in Event",
                   "N_{Vtx}", 50, 0, 50, "NONE", hNVtxs,dir);
 
-  defineHistoset("hWenuCombRelIso", "Comb Rel Iso of W Electron",
+  defineHistoSet("hWenuCombRelIso", "Comb Rel Iso of W Electron",
                   "Electron Combined Relative Isolation", 20, 0, 0.2, "NONE", hWenuCombRelIso,dir);
-  defineHistoset("hWmnuCombRelIso", "Comb Rel Iso of W Muon",
+  defineHistoSet("hWmnuCombRelIso", "Comb Rel Iso of W Muon",
                   "Muon Combined Relative Isolation", 20, 0, 0.2, "NONE", hWmnuCombRelIso,dir);
   
 

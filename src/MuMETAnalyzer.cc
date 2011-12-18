@@ -41,23 +41,22 @@ void MuMETAnalyzer::defineResolutionHistos(const TFileDirectory & dir, float Mas
 
 void MuMETAnalyzer::defineHistos(const TFileDirectory & dir)
 {
-  AnalyzerBase::defineHistos(dir);
-  defineHistoset("hPT"+algo_desc_short[muReconstructor_], 
+  defineHistoSet("hPT"+algo_desc_short[muReconstructor_], 
                  algo_desc_long[muReconstructor_]+ " muon p_{T} ",
                  "p_{T} (GeV)", nBinPtMu, minPtMu, maxPtMu, "GeV", hPT,dir);
-  defineHistoset("hPTgen"+algo_desc_short[muReconstructor_], 
+  defineHistoSet("hPTgen"+algo_desc_short[muReconstructor_], 
                  algo_desc_long[muReconstructor_]+ " muon p_{T} ",
                  "p_{T} (GeV)", nBinPtMu, minPtMu, maxPtMu, "GeV", hPTgen,dir);
-  defineHistoset("hETA"+algo_desc_short[muReconstructor_], 
+  defineHistoSet("hETA"+algo_desc_short[muReconstructor_], 
                  algo_desc_long[muReconstructor_]+ " muon #eta ",
                  "#eta", nBinEtaMu, minEtaMu, maxEtaMu, "NONE", hETA,dir);
-  defineHistoset("hPHI"+algo_desc_short[muReconstructor_], 
+  defineHistoSet("hPHI"+algo_desc_short[muReconstructor_], 
                  algo_desc_long[muReconstructor_]+ " muon #phi ",
                  "#phi", nBinPhiMu, minPhiMu, maxPhiMu, "NONE", hPHI,dir);
-  defineHistoset("hISO"+algo_desc_short[muReconstructor_], 
+  defineHistoSet("hISO"+algo_desc_short[muReconstructor_], 
                  algo_desc_long[muReconstructor_]+ " muon isol ",
                  "Iso", nBinIsoMu, minIsoMu, maxIsoMu, "NONE", hISO,dir);
-  defineHistoset("hTM"+algo_desc_short[muReconstructor_], 
+  defineHistoSet("hTM"+algo_desc_short[muReconstructor_], 
                  algo_desc_long[muReconstructor_]+ " Transv. Mass ",
                  "m_{T} (GeV)", nBinTmMu, minTmMu, maxTmMu, "GeV", hTM,dir);
   defineHistos_TMvPT(dir);

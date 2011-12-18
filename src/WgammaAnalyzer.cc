@@ -62,7 +62,6 @@ WgammaAnalyzer::~WgammaAnalyzer()
 
 void WgammaAnalyzer::defineHistos(const TFileDirectory & dir)
 {
-  AnalyzerBase::defineHistos(dir);
   for(int i = 0; i != Num_mumet_cuts; ++i)
       hPT[i] = hETA[i] = hPHI[i] = hMUMETDPHI[i] = hWTM[i] = 0;
  
