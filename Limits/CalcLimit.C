@@ -25,7 +25,7 @@ CalcLimit(bool useCLs=true){
   
   out  << setiosflags(ios::fixed) << setprecision(4) << setiosflags(ios::left);
     
-  out<<"SignalCode/I:"
+  out<<"SignalCode/F:"
      <<"Mass/F:"
      <<"Lumi/F:"
      <<"sLumi/F:"
@@ -48,7 +48,7 @@ CalcLimit(bool useCLs=true){
              "", "para goff");
   float n = tree->GetSelectedRows(); 
   for(int isample=0; isample<n; ++isample){
-    const int SignalCode = tree->GetVal(0)[isample];
+    const Double_t SignalCode = tree->GetVal(0)[isample];
     const Double_t  mass = tree->GetVal(1)[isample];
     const Double_t  lumi = tree->GetVal(2)[isample];
     const Double_t  DataEvts = tree->GetVal(3)[isample];
@@ -86,8 +86,9 @@ CalcLimit(bool useCLs=true){
       exp_2down = limit.GetTwoSigmaLowRange();        
     }
   
-    out<<setprecision(0)
+    out<<setprecision(1)
        <<SignalCode<<"\t"
+       <<setprecision(0)
        <<mass<<"\t"
        <<lumi<<"\t"
        <<sLumi<<"\t"

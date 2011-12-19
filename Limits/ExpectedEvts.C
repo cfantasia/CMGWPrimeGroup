@@ -27,7 +27,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     abort();
   } 
 
-  out<<"SignalCode/I:"
+  out<<"SignalCode/F:"
      <<"Mass/F:"
      <<"Lumi/F:"
      <<"DataEvts/F:"
@@ -54,18 +54,18 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
   string paramString = "SignalCode:Mass:nGen:bkgSysErr:minWindow:maxWindow";
   string treeName, histName, varName;
   if(inName.find("WprimeWZ") != string::npos){
-    //BkgSamples.push_back("DYJetsToLL"); 
+    BkgSamples.push_back("DYJetsToLL"); 
     BkgSamples.push_back("TTJets"); 
     BkgSamples.push_back("ZZ"); 
-    //BkgSamples.push_back("GVJets");  
+    BkgSamples.push_back("GVJets");  
     BkgSamples.push_back("WZJetsTo3LNu"); 
-    //BkgSamples.push_back("WWTo2L2Nu"); 
-    //BkgSamples.push_back("WJetsToLNu"); 
+    BkgSamples.push_back("WWTo2L2Nu"); 
+    BkgSamples.push_back("WJetsToLNu"); 
 
     dataSamples.push_back("data");
 
     paramString += ":HtCut:ZptCut:WptCut:WZKFactor:ZJets:sZJets";
-    treeName = "tWZCand";
+    treeName = "tEvts_ValidWZCand";
     histName = "hWZMass_AllCuts";
     varName = "WZMass";
   }else if(inName.find("HadVZ") != string::npos){
@@ -128,7 +128,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
   if( debug_) cout<<"Found "<<n<<" samples "<<endl;
   for(int isample=0; isample<n; ++isample){
     int treeIdx = 0;
-    const int SignalCode = tEvts->GetVal(treeIdx++)[isample];
+    const double SignalCode = tEvts->GetVal(treeIdx++)[isample];
     const vector<string> SignalNames = SampleName(SignalCode);
     const double mass = tEvts->GetVal(treeIdx++)[isample];
     const double nGen = tEvts->GetVal(treeIdx++)[isample];
@@ -305,8 +305,9 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
       cout<<" \\\\ \\hline"<<endl;
     }
 
-    out<<setprecision(0)
+    out<<setprecision(1)
        <<SignalCode<<"\t"
+       <<setprecision(0)
        <<setw(6)<<mass<<"\t"
        <<setw(6)<<lumi<<"\t"
        <<setw(8)<<    DataEvts<<"\t"

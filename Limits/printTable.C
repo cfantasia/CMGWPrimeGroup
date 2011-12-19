@@ -8,7 +8,7 @@ root -b -q printTable.C+
 #include "TROOT.h"
 #include "TSystem.h"
 
-int FindIdx(Double_t* arr, int size, int num){
+int FindIdx(Double_t* arr, int size, double num){
   for(int i=0; i<size; ++i)
     if(arr[i] == num) return i;
   
@@ -42,7 +42,7 @@ printTable(){
 
   //loop over signals:
   for(int iLims=0; iLims<nLims; ++iLims){
-    const int  signalCode = tLims->GetVal(0)[iLims];
+    const Double_t  signalCode = tLims->GetVal(0)[iLims];
     int iCuts = FindIdx(tCuts->GetVal(0), nCuts, signalCode);
     int iEvts = FindIdx(tEvts->GetVal(0), nEvts, signalCode);
 
@@ -82,7 +82,7 @@ printTable(){
   
   //loop over signals:
   for(int iEvts=0; iEvts<nEvts; ++iEvts){
-    const int  signalCode = tEvts->GetVal(0)[iEvts];
+    const Double_t  signalCode = tEvts->GetVal(0)[iEvts];
     int iCuts = FindIdx(tCuts->GetVal(0), nCuts, signalCode);
 
     const Double_t  mass = tCuts->GetVal(1)[iCuts];
