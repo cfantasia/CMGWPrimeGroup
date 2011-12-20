@@ -539,7 +539,16 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   event.getByLabel(rhoFastJetLabel_, rhoFastJetH_);
 
   // Make vectors of leptons passing various criteria
+  PatElectronV corElectrons(allElectrons_.size());
   for (size_t i = 0; i < allElectrons_.size(); i++) {
+    //adjust electron with corrections
+    corElectrons[i] = allElectrons_[i].patEle();
+    pat::Electron & patEle = corElectrons[i];
+    float cor = patEle.userFloat("corrEt") / patEle.et();
+    patEle.setP4(LorentzVector(patEle.px()*cor, patEle.py()*cor, 
+                               patEle.pz()*cor, patEle.energy()*cor));
+    allElectrons_[i] = heep::Ele(patEle);
+
     if(Overlap(allElectrons_[i].patEle(), *patMuonsH_.product(), 0.01)) continue;
     const float pu = ElecPU(allElectrons_[i]);
     if (looseElectron_(allElectrons_[i].patEle(), pu))
