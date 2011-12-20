@@ -100,6 +100,7 @@ CalcLimit(bool useCLs=true){
        <<setprecision(4)
        <<BkgEvts<<"\t"
        <<sBkgEvts<<"\t"
+       <<setprecision(6)
        <<obs_limit<<"\t"
        <<exp_limit<<"\t"
        <<exp_up<<"\t"
