@@ -28,7 +28,7 @@ printTable(){
   //# of Events File
   TTree* tEvts = new TTree("tEvts", "Evts");
   tEvts->ReadFile("nEvents.txt");
-  tEvts->Draw("SignalCode:DataEvts:MCEvts:sMCEvts:BkgEvts:sBkgEvts:Eff:sEff", 
+  tEvts->Draw("SignalCode:DataEvts:MCEvts:statMCEvts:BkgEvts:statBkgEvts:Eff:sEff", 
              "", "para goff");
   float nEvts = tEvts->GetSelectedRows(); 
 
@@ -51,12 +51,12 @@ printTable(){
     const Double_t  maxWind = tCuts->GetVal(3)[iCuts];
 
     const Double_t  DataEvts = tEvts->GetVal(1)[iCuts];
-    const Double_t    MCEvts = tEvts->GetVal(2)[iCuts];
-    const Double_t   sMCEvts = tEvts->GetVal(3)[iCuts];
-    const Double_t    BkgEvts = tEvts->GetVal(4)[iCuts];
-    const Double_t   sBkgEvts = tEvts->GetVal(5)[iCuts];
-    const Double_t   SigEvts = MCEvts - BkgEvts;
-    const Double_t  sSigEvts = sqrt(sMCEvts*sMCEvts - sBkgEvts*sBkgEvts);
+    const Double_t     MCEvts = tEvts->GetVal(2)[iCuts];
+    const Double_t statMCEvts = tEvts->GetVal(3)[iCuts];
+    const Double_t     BkgEvts = tEvts->GetVal(4)[iCuts];
+    const Double_t statBkgEvts = tEvts->GetVal(5)[iCuts];
+    const Double_t     SigEvts = MCEvts - BkgEvts;
+    const Double_t statSigEvts = sqrt(statMCEvts*statMCEvts - statBkgEvts*statBkgEvts);
     const Double_t       Eff = tEvts->GetVal(6)[iCuts];
     const Double_t      sEff = tEvts->GetVal(7)[iCuts];
 
@@ -66,9 +66,9 @@ printTable(){
     cout<<setiosflags(ios::fixed) << setprecision(0)
         <<"W' "<<mass<<" & "
         <<minWind<<"-"<<maxWind<<" & "
-        <<BkgEvts<<" $\\pm$ "<<sBkgEvts<<" & "
+        <<BkgEvts<<" $\\pm$ "<<statBkgEvts<<" & "
         <<DataEvts<<" & "
-        <<SigEvts<<" $\\pm$ "<<sSigEvts<<" & "
+        <<SigEvts<<" $\\pm$ "<<statSigEvts<<" & "
         <<Eff*100<<" $\\pm$ "<<sEff*100<<" & "
         <<setprecision(4)
         <<expLim<<" & "
@@ -78,7 +78,7 @@ printTable(){
 
   }//Table 1
 
-  cout<<"\n\n -------------------\n\n";
+  cout<<"\n\n ----After Ht Cut Table (remember to use noWind option!!!!---------------\n\n";
   
   //loop over signals:
   for(int iEvts=0; iEvts<nEvts; ++iEvts){
@@ -91,19 +91,19 @@ printTable(){
     const Double_t  minHt   = tCuts->GetVal(4)[iCuts];
 
     const Double_t  DataEvts = tEvts->GetVal(1)[iCuts];
-    const Double_t    MCEvts = tEvts->GetVal(2)[iCuts];
-    const Double_t   sMCEvts = tEvts->GetVal(3)[iCuts];
-    const Double_t    BkgEvts = tEvts->GetVal(4)[iCuts];
-    const Double_t   sBkgEvts = tEvts->GetVal(5)[iCuts];
-    const Double_t   SigEvts = MCEvts - BkgEvts;
-    const Double_t  sSigEvts = sqrt(sMCEvts*sMCEvts - sBkgEvts*sBkgEvts);
+    const Double_t     MCEvts = tEvts->GetVal(2)[iCuts];
+    const Double_t statMCEvts = tEvts->GetVal(3)[iCuts];
+    const Double_t     BkgEvts = tEvts->GetVal(4)[iCuts];
+    const Double_t statBkgEvts = tEvts->GetVal(5)[iCuts];
+    const Double_t     SigEvts = MCEvts - BkgEvts;
+    const Double_t statSigEvts = sqrt(statMCEvts*statMCEvts - statBkgEvts*statBkgEvts);
 
     cout<<setiosflags(ios::fixed) << setprecision(0)
         <<"W' "<<mass<<" & "
         <<minHt<<" & "
-        <<BkgEvts<<" $\\pm$ "<<sBkgEvts<<" & "
+        <<BkgEvts<<" $\\pm$ "<<statBkgEvts<<" & "
         <<DataEvts<<" & "
-        <<SigEvts<<" $\\pm$ "<<sSigEvts
+        <<SigEvts<<" $\\pm$ "<<statSigEvts
         <<" \\\\ \\hline"
         <<endl;
   }//Table 2
