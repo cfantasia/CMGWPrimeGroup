@@ -86,6 +86,8 @@ MakeSelection(string inName, string opt){
   BkgSamples.push_back("ZCC2JetsToLNu");
   BkgSamples.push_back("ZCC3JetsToLNu");
 */
+    SigSamples.push_back("WprimeToWZTo3LNu_M-200");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-250");
     SigSamples.push_back("WprimeToWZTo3LNu_M-300");
     SigSamples.push_back("WprimeToWZTo3LNu_M-400");
     SigSamples.push_back("WprimeToWZTo3LNu_M-500");
@@ -102,12 +104,16 @@ MakeSelection(string inName, string opt){
     SigSamples.push_back("TC_WZ_300");
     SigSamples.push_back("TC_WZ_400");
     SigSamples.push_back("TC_WZ_500");
+    SigSamples.push_back("TC_WZ_600");
+    SigSamples.push_back("TC_WZ_700");
+    SigSamples.push_back("TC_WZ_800");
+    SigSamples.push_back("TC_WZ_900");
   
     Cuts.push_back(Cut("Ht", true));
-    Cuts.push_back(Cut("Zpt", true));
-    Cuts.push_back(Cut("Wpt", true));
+    //Cuts.push_back(Cut("Zpt", true));
+    //Cuts.push_back(Cut("Wpt", true));
 
-    treeName = "tWZCand";
+    treeName = "tEvts_ValidWZCand";
 
   }else if(inName.find("HadVZ") != string::npos){
     BkgSamples.push_back("Summer11_ZZJets_2l2q");
