@@ -78,19 +78,24 @@ void PlotLimit2D() {
 
   //Find Optimistic Limits
   for(unsigned i=0; i<expPiLims.size(); ++i){///////
-    if(masses[i] < 250) continue;
+    if(masses[i] < 350) continue;
     if(expPiLims[i] > masses[i] - 80.4){
-      cout<<"Exp Limit is "<<masses[i]<<endl;
+      cout<<"Optmistic Exp Limit is "<<masses[i]<<endl;
       break;
     }
   }
   
   for(unsigned i=0; i<obsPiLims.size(); ++i){///////
-    if(masses[i] < 250) continue;
+    if(masses[i] < 350) continue;
     if(obsPiLims[i] > masses[i] - 80.4){
-      cout<<"Obs Limit is "<<masses[i]<<endl;
+      cout<<"Optimistic Obs Limit is "<<masses[i]<<endl;
       break;
     }
+  }
+
+  
+  for(unsigned i=0; i<obsPiLims.size(); ++i){///////
+    if(masses[i] == 290) cout<<"For rho=290, pi limit is "<<obsPiLims[i]<<endl;
   }
 
   exp->SetPoint(expPiLims.size(), maxRHO, maxPI);
