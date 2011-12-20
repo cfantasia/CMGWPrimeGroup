@@ -322,7 +322,7 @@ template<class P>
 static bool 
 passTriggerMatch(const P & p, const float cut, const vstring& triggers){
   for(uint i=0; i<p.triggerObjectMatches().size(); ++i){
-    vstring names = p.triggerObjectMatches()[i].pathNames(true, false);
+    const vstring & names = p.triggerObjectMatches()[i].pathNames(true, false);
     for(uint j=0; j<names.size(); ++j)
       for (size_t k=0; k < triggers.size(); ++k)
         if(WPrimeUtil::SameTrigger(names[j], triggers[k]))
