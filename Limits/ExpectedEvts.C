@@ -7,6 +7,7 @@ bool debug_ = false;
 bool useHists_ = false;
 bool noWind_ = false;
 bool printTbl_ = false;
+bool scaleMC_ = false;
 
 void
 ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt=""){
@@ -14,6 +15,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
   if(opt.find("useHists") != string::npos) useHists_ = true;
   if(opt.find("noWind") != string::npos) noWind_ = true;
   if(opt.find("tbl") != string::npos) printTbl_ = true;
+  if(opt.find("scaleMC") != string::npos) scaleMC_ = true;
 
   gErrorIgnoreLevel = kWarning;
   double windFrac = windFracTenths/10.;
@@ -54,11 +56,11 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
   string paramString = "SignalCode:Mass:nGen:bkgSysErr:minWindow:maxWindow";
   string treeName, histName, varName;
   if(inName.find("WprimeWZ") != string::npos){
-    BkgSamples.push_back("DYJetsToLL"); 
     BkgSamples.push_back("TTJets"); 
     BkgSamples.push_back("ZZ"); 
-    BkgSamples.push_back("GVJets");  
     BkgSamples.push_back("WZJetsTo3LNu"); 
+    BkgSamples.push_back("DYJetsToLL"); 
+    BkgSamples.push_back("GVJets");  
     BkgSamples.push_back("WWTo2L2Nu"); 
     BkgSamples.push_back("WJetsToLNu"); 
 
@@ -116,9 +118,15 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
   if(printTbl_){
     cout<<" Mass & Window";
     for(unsigned iBkg=0; iBkg<BkgSamples.size(); ++iBkg){
-      cout<<" & "<<BkgSamples[iBkg];
+      if(inName.find("WprimeWZ") != string::npos){
+        if(BkgSamples[iBkg].find("TTJets") != string::npos ||
+           BkgSamples[iBkg].find("ZZ") != string::npos ||
+           BkgSamples[iBkg].find("WZJetsTo3LNu") != string::npos ){
+          cout<<" & "<<BkgSamples[iBkg];
+        }
+      }
     }
-    cout<<endl;
+    cout<<" & Total"<<endl;
   }
 
   tEvts->Draw(paramString.c_str(), "", "para goff");
@@ -145,6 +153,18 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
       const double minWpt = tEvts->GetVal(treeIdx++)[isample];
       cuts = Form("(WZMass > %.0f && WZMass < %.0f && Ht > %.0f && Zpt > %.0f && Wpt > %.0f)*weight",
                   minWindow, maxWindow, minHt, minZpt, minWpt);
+
+      if(scaleMC_){
+        float wZee = 0.960;
+        float wZmm = 1.050;
+        float wWen = 1.046;
+        float wWmn = 1.021;
+        float w3e = wZee * wWen;
+        float w2e = wZee * wWmn;
+        float w1e = wZmm * wWen;
+        float w0e = wZmm * wWmn;
+        cuts += Form("*( (weight==1.0) + (weight!=1.0)*((EvtType==0)*%f + (EvtType==1)*%f + (EvtType==2)*%f + (EvtType==3)*%f))", w0e,w1e,w2e,w3e);
+      }
 
       BkgWeights.assign(BkgSamples.size(), 1.);
       const double wzKFac = tEvts->GetVal(treeIdx++)[isample];
@@ -278,12 +298,20 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
       }
       double sPerHist = 0;
       double nPerHist = perhist->IntegralAndError(minBin, maxBin, sPerHist);
-      if(printTbl_) cout<<" & "<<setiosflags(ios::fixed)<<setprecision(1)<<nPerHist
-                        <<" $\\pm$ "<<sPerHist;
+      if(printTbl_){
+             if(inName.find("WprimeWZ") != string::npos){
+        if(BkgSamples[iBkg].find("TTJets") != string::npos ||
+           BkgSamples[iBkg].find("ZZ") != string::npos ||
+           BkgSamples[iBkg].find("WZJetsTo3LNu") != string::npos ){
+          cout<<" & "<<setiosflags(ios::fixed)<<setprecision(1)<<nPerHist
+              <<" $\\pm$ "<<sPerHist;
+        }
+      }
+      }
 
       if(debug_) cout<<BkgSamples[iBkg]<<": # of Evts in Mass Window is "<<nPerHist<<" per "<<lumi<<" inv pb "<<endl;
-      double sysSample = nPerHist*SysErr(BkgSamples[iBkg]);
-      double sysSampleWindow = nPerHist*bkgSysErr;
+      double sysSample = nPerHist*SysErr(BkgSamples[iBkg]); //Bkg due to this bkg
+      double sysSampleWindow = nPerHist*bkgSysErr; //Bkg error in this signal window
       sysSample = AddInQuad(sysSampleWindow,  sysSample);
           
       sysMCEvts  = AddInQuad(sysMCEvts,  sysSample);
@@ -296,7 +324,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     double sBkgEvts   = AddInQuad( statBkgEvts,  sysBkgEvts);
     double sEff       = AddInQuad(statEff,      sysEff);
 
-    if(printTbl_){ cout<<" & "<<nBkgEvts<<" $\\pm$ "<<sBkgEvts;
+    if(printTbl_){ cout<<" & "<<nBkgEvts<<" $\\pm$ "<<statBkgEvts;
       if(!noWind_){
         //cout<<" & -  ";
       }
