@@ -69,7 +69,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     histName = "hWZMass_AllCuts";
     varName = "WZMass";
   }else if(inName.find("HadVZ") != string::npos){
-    BkgSamples.push_back("Summer11_ZZJets_2l2q");
+    BkgSamples.push_back("Summer11_ZZ");
     BkgSamples.push_back("Summer11_VGamma");
     BkgSamples.push_back("Summer11_WW");
     BkgSamples.push_back("Summer11_WZ");
@@ -97,9 +97,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     dataSamples.push_back("data_SingleElectron-Run2011A-PromptReco-v6");
 
     dataSamples.push_back("data_DoubleMu-Run2011B-PromptReco-v1");
-    dataSamples.push_back("data_SingleMu-Run2011B-PromptReco-v1");
     dataSamples.push_back("data_DoubleElectron-Run2011B-PromptReco-v1");
-    dataSamples.push_back("data_SingleElectron-Run2011B-PromptReco-v1");
 
     paramString += ":ZptCut:VptCut";
     treeName = "tVZCand";
