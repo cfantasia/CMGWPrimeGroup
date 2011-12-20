@@ -92,18 +92,22 @@ float
 SysErr(string sample){
   if(!sample.find("GV")) return 0.13;
   if(!sample.find("ZZ")) return 0.075;
-  if(!sample.find("WZ")) return 0.17;
-  if(!sample.find("WprimeToWZTo3LNu_M-300")) return 0.0447;
-  if(!sample.find("WprimeToWZTo3LNu_M-400")) return 0.0469;
-  if(!sample.find("WprimeToWZTo3LNu_M-500")) return 0.0495;
-  if(!sample.find("WprimeToWZTo3LNu_M-600")) return 0.0530;
-  if(!sample.find("WprimeToWZTo3LNu_M-700")) return 0.0566;
-  if(!sample.find("WprimeToWZTo3LNu_M-800")) return 0.0598;
-  if(!sample.find("WprimeToWZTo3LNu_M-900")) return 0.0635;
-  if(!sample.find("TC_WZ_300"))  return 0.0447;
-  if(!sample.find("TC_WZ_400"))  return 0.0469;
-  if(!sample.find("TC_WZ_500"))  return 0.0495;
-  if(!sample.find("WprimeToWZTo3LNu_M-")) return 0.0635;//Assume >900 is same as 900
+  if(!sample.find("WZ")) return sqrt(0.17*0.17+0.15*0.15);
+  if(!sample.find("WprimeToWZTo3LNu_M-200")) return 0.063;
+  if(!sample.find("WprimeToWZTo3LNu_M-250")) return 0.042;
+  if(!sample.find("WprimeToWZTo3LNu_M-300")) return 0.025;
+  if(!sample.find("WprimeToWZTo3LNu_M-400")) return 0.021;
+  if(!sample.find("WprimeToWZTo3LNu_M-500")) return 0.022;
+  if(!sample.find("WprimeToWZTo3LNu_M-600")) return 0.020;
+  if(!sample.find("WprimeToWZTo3LNu_M-700")) return 0.020;
+  if(!sample.find("WprimeToWZTo3LNu_M-800")) return 0.019;
+  if(!sample.find("WprimeToWZTo3LNu_M-900")) return 0.019;
+  if(!sample.find("WprimeToWZTo3LNu_M-1000")) return 0.019;
+  if(!sample.find("WprimeToWZTo3LNu_M-1100")) return 0.019;
+  if(!sample.find("WprimeToWZTo3LNu_M-1200")) return 0.019;
+  if(!sample.find("WprimeToWZTo3LNu_M-1300")) return 0.020;
+  if(!sample.find("WprimeToWZTo3LNu_M-1400")) return 0.020;
+  if(!sample.find("WprimeToWZTo3LNu_M-1500")) return 0.020;
   return 0;
 }
 
