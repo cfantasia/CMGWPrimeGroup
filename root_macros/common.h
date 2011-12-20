@@ -50,14 +50,18 @@ void get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
                       const std::vector<float> & weights=std::vector<float>()){
   bool doWeight = weights.size() == samples.size();
   for(unsigned j=0; j<samples.size(); ++j){
-    std::string fullName = samples[j] + "/" + objName; //std::cout<<"tree name is "<<fullName<<std::endl;
-    TTree* tree = (TTree*) f->Get(fullName.c_str()); assert(tree != NULL);
-    tree->Draw(Form("weight:%s",variable.c_str()), cuts.c_str(), "goff");
+    std::string fullName = samples[j] + "/" + objName; 
+    TTree* tree = (TTree*) f->Get(fullName.c_str()); 
+    if(!tree){
+      std::cout<<"Failed getting tree named "<<fullName<<std::endl;
+      assert(tree != NULL);
+    }
+    tree->Draw(variable.c_str(), cuts.c_str(), "goff");
     int n = tree->GetSelectedRows();
     for(int ientry=0; ientry<n; ++ientry){
-      float weight = tree->GetVal(0)[ientry];
+      float weight = tree->GetW()[ientry];
       if(doWeight) weight *= weights[j];
-      const float var = tree->GetVal(1)[ientry];
+      const float var = tree->GetVal(0)[ientry];
       hist.Fill(var, weight);
     }
     delete tree;
