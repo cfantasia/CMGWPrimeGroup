@@ -300,6 +300,8 @@ MakePlots(string inName, string outName, string opt){
       variable.push_back("hWpt");
       variable.push_back("hZMass");
       variable.push_back("hZpt");
+      variable.push_back("hZeept");
+      variable.push_back("hZmmpt");
       
       variable.push_back("hWZ3e0muMass");
       variable.push_back("hWZ2e1muMass");
