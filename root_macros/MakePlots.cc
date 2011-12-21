@@ -348,6 +348,7 @@ MakePlots(string inName, string outName, string opt){
       variable.push_back("hLeadPtZmm");
 
       variable.push_back("hTriLepMass");
+      variable.push_back("hL1FastJet");
 
     }else if(inName.find("EWKWZ") != string::npos){
       variable.push_back("hEvtType");          
@@ -535,7 +536,7 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
       Sample& curSample = samples_[i]->at(j);//Let's make this easy
 
       curSample.hist = get_sum_of_hists(fin, curSample.names, title, rebin);
-      if(!validHist && curSample.hist->GetEntries() > 0)
+      if(!validHist && curSample.hist->Integral() > 0)
         validHist = true;
       curSample.hist->SetLineStyle(curSample.style);
       curSample.hist->SetLineColor(curSample.line); 
