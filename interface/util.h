@@ -129,9 +129,14 @@ namespace wprime{
     }
     void checkFile()
     {
-      assert(x_sect > 0); assert(Nprod_evt > 0); //assert(Nact_evt > 0);
+      if(samplename.find("data") == std::string::npos){
+        //Only require these if running on MC
+        assert(x_sect > 0); 
+        assert(Nprod_evt > 0); 
+      }
       assert(weight > 0);
-      assert(pathnames.size()); assert(description != INVALID); 
+      assert(pathnames.size()); 
+      assert(description != INVALID); 
       assert(samplename != INVALID);
     }
 
