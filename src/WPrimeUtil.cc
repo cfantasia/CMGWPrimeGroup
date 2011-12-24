@@ -85,6 +85,8 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
   {
     // if DONE, we are done!
     if(new_line == "DONE")break;
+    //if starts with #, ignore the line
+    if(new_line.find("#") == 0) continue;
 
     if(new_line.find("samplename = ") != string::npos)
       // new file found! create structure to put in info
