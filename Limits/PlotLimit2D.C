@@ -121,15 +121,15 @@ void PlotLimit2D() {
   ay->SetLabelSize(0.05);
   ax->SetTitleSize(0.06);
   ay->SetTitleSize(0.06);
-  ax->SetTitle("m(#rho_{T}) (GeV)");
-  ay->SetTitle("m(#pi_{T}) (GeV)");
+  ax->SetTitle("M(#rho_{TC}) (GeV)");
+  ay->SetTitle("M(#pi_{TC}) (GeV)");
   frame->Draw();
   obs->Draw("F");
   exp->Draw("F");
   exp->Draw("L");
   obs->Draw("L");
 
-  TLegend* leg = new TLegend(0.20, 0.70, 0.60, 0.90);
+  TLegend* leg = new TLegend(0.30, 0.75, 0.60, 0.90);
   leg->SetBorderSize(0);
   leg->SetFillColor(0);
   leg->AddEntry(exp, "Exp. Limit", "fl");
