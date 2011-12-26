@@ -20,7 +20,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
   gErrorIgnoreLevel = kWarning;
   double windFrac = windFracTenths/10.;
 
-  TFile *f = TFile::Open(inName.c_str(), "read");
+  TFile *f = TFile::Open(inName.c_str(), "read");  assert(f);
   TCanvas* c1 = new TCanvas("c1", "Number of Events");
   string outfile("nEvents.txt");
   ofstream out(outfile.c_str());
