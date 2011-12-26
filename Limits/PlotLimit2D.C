@@ -132,8 +132,8 @@ void PlotLimit2D() {
   TLegend* leg = new TLegend(0.20, 0.70, 0.60, 0.90);
   leg->SetBorderSize(0);
   leg->SetFillColor(0);
-  leg->AddEntry(exp, "95% C.L. limit (exp)", "fl");
-  leg->AddEntry(obs, "95% C.L. limit (obs)", "fl");
+  leg->AddEntry(exp, "Exp. Limit", "fl");
+  leg->AddEntry(obs, "Obs. Limit", "fl");
   leg->Draw();
 
 
@@ -155,7 +155,7 @@ void PlotLimit2D() {
   line2->SetLineWidth(2);
   line2->Draw();
 */
-  TLatex* text3 = new TLatex(317, 265, "m(#pi_{T}) = m(#rho_{T}) - m(W)");
+  TLatex* text3 = new TLatex(317, 265, "M(#pi_{TC}) = M(#rho_{TC}) - M(W)");
   text3->SetTextSize(0.06);
   text3->SetTextAngle(38);
   text3->Draw(); 
