@@ -58,12 +58,18 @@ def jet_config(process, reportEveryNum=100, maxEvents=-1) :
     
     # RECO
     process.out.outputCommands.append('keep *_selectedPatJetsAK7PF_*_*')
+    process.out.outputCommands.append('drop *_selectedPatJetsAK7PF_caloTowers_PAT')
+    process.out.outputCommands.append('drop *_selectedPatJetsAK7PF_pfCandidates_PAT')
     process.out.outputCommands.append('keep *_ak7GenJets_*_*')
+    process.out.outputCommands.append('drop *_ak7GenJets_*_HLT')
 
 
     process.out.outputCommands.append('keep *_selectedPatJetsAK5PF_*_*')
+    process.out.outputCommands.append('drop *_selectedPatJetsAK5PF_caloTowers_PAT') 
+    process.out.outputCommands.append('drop *_selectedPatJetsAK5PF_pfCandidates_PAT')  
     process.out.outputCommands.append('keep *_ak5GenJets_*_*')
-        
+    process.out.outputCommands.append('drop *_ak5GenJets_*_HLT')
+            
 
 # Modules and sequences
 
