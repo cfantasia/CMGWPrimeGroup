@@ -140,8 +140,6 @@ protected:  //These are available to derived classes
   edm::Handle<std::vector< PileupSummaryInfo > > PupH_;
   edm::Handle<pat::TriggerEvent> triggerEventH_;
 
-  float lumi_ipb; // in pb^-1, to be retrieved from samples_cross_sections.txt
-
   fwlite::TFileService * fs;
 
   WPrimeUtil* wprimeUtil_;
