@@ -560,11 +560,34 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
     fi->Nprod_evt = fi->Nact_evt;
 
   TFileDirectory dir = fs->mkdir(fi->samplename, fi->description); 
+
+  //Save # of events after each cut
   string title = Form("Expected # of Events / %.0f pb^{-1}",  wprimeUtil_->getLumi_ipb());
   title = title + ";;" + title;
   hNumEvts = NULL; hNumEvts = dir.make<TH1F>("hNumEvts",title.c_str(),NCuts_,0,NCuts_);
   for(int i=0; i<NCuts_; ++i) hNumEvts->GetXaxis()->SetBinLabel(i+1,CutNames_[i].c_str());
 
+  //Save Important File Info//////////
+  title = "Info for Sample " + fi->samplename + " ( " + fi->description + " )";
+  TH1F* hFileInfo = NULL; 
+  hFileInfo = dir.make<TH1F>("hFileInfo",title.c_str(),8,0,8);
+  hFileInfo->GetXaxis()->SetBinLabel  (1, "#intL dt (pb^{-1})");
+  hFileInfo->SetBinContent(1, wprimeUtil_->getLumi_ipb());
+  hFileInfo->GetXaxis()->SetBinLabel  (2, "#sigma (pb)");
+  hFileInfo->SetBinContent(2, fi->x_sect);
+  hFileInfo->GetXaxis()->SetBinLabel  (3, "Number of Events Produced");
+  hFileInfo->SetBinContent(3, fi->Nprod_evt);
+  hFileInfo->GetXaxis()->SetBinLabel  (4, "Number of Events in root Files");
+  hFileInfo->SetBinContent(4, fi->Nact_evt);
+  hFileInfo->GetXaxis()->SetBinLabel  (5, "Sample Weight");
+  hFileInfo->SetBinContent(5, fi->weight);
+  hFileInfo->GetXaxis()->SetBinLabel  (6, "Number of root files");
+  hFileInfo->SetBinContent(6, fi->pathnames.size());
+  hFileInfo->GetXaxis()->SetBinLabel  (7, "Signal Mass");
+  hFileInfo->SetBinContent(7, fi->signalMass);
+  hFileInfo->GetXaxis()->SetBinLabel  (8, "Number of Files Merged");
+  hFileInfo->SetBinContent(8, 1);
+  
   defineHistos(dir);
   if(wprimeUtil_->isSignalSample())
     {
