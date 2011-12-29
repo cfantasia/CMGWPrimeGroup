@@ -91,48 +91,47 @@ printNEvts(string infile, int evtType=-1){
     vector<string> RS750;
     RS750.push_back("Summer11_RSZZeejj_750");
     RS750.push_back("Summer11_RSZZmmjj_750");
-    Samples.push_back(make_pair(RS750, "$G_{RS}$ 750"));
+    Samples.push_back(make_pair(RS750, "$G_{RS}$ (750 \\GeV)"));
 
     vector<string> RS1000;
     RS1000.push_back("Summer11_RSZZeejj_1000");
     RS1000.push_back("Summer11_RSZZmmjj_1000");
-    Samples.push_back(make_pair(RS1000, "$G_{RS}$ 1000"));
+    Samples.push_back(make_pair(RS1000, "$G_{RS}$ (1000 \\GeV)"));
 
    vector<string> RS1250;
     RS1250.push_back("Summer11_RSZZeejj_1250");
     RS1250.push_back("Summer11_RSZZmmjj_1250");
-    Samples.push_back(make_pair(RS1250, "$G_{RS}$ 1250"));
+    Samples.push_back(make_pair(RS1250, "$G_{RS}$ (1250 \\GeV)"));
 
     vector<string> RS1500;
     RS1500.push_back("Summer11_RSZZeejj_1500");
     RS1500.push_back("Summer11_RSZZmmjj_1500");
-    Samples.push_back(make_pair(RS1500, "$G_{RS}$ 1500"));
+    Samples.push_back(make_pair(RS1500, "$G_{RS}$ (1500 \\GeV)"));
 
     vector<string> RS1750;
     RS1750.push_back("Summer11_RSZZeejj_1750");
     RS1750.push_back("Summer11_RSZZmmjj_1750");
-    Samples.push_back(make_pair(RS1750, "$G_{RS}$ 1750"));
+    Samples.push_back(make_pair(RS1750, "$G_{RS}$ (1750 \\GeV)"));
 
     vector<string> RS2000;
     RS2000.push_back("Summer11_RSZZeejj_2000");
     RS2000.push_back("Summer11_RSZZmmjj_2000");
-    Samples.push_back(make_pair(RS2000, "$G_{RS}$ 2000"));
-
+    Samples.push_back(make_pair(RS2000, "$G_{RS}$ (2000 \\GeV)"));
+    
     Samples.push_back(make_pair(vector<string>(), "BREAK"));//Print hline
-
-    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_300"), "W' 300"));
-    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_400"), "W' 400"));
-    //Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_500"), "W' 500"));
-    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_600"), "W' 600"));
-    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_700"), "W' 700"));
-    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_800"), "W' 800"));
-    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_900"), "W' 900"));
-    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_1000"), "W' 1000"));
-    //Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_1100"), "W' 1100"));
-    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_1200"), "W' 1200"));
-    //Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_1300"), "W' 1300"));
-    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_1400"), "W' 1400"));
-    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_1500"), "W' 1500"));
+    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_300"), "\\Wprime (300 \\GeV)"));
+    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_400"), "\\Wprime (400 \\GeV)"));
+    //Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_500"), "\\Wprime (500 \\GeV)"));
+    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_600"), "\\Wprime (600 \\GeV)"));
+    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_700"), "\\Wprime (700 \\GeV)"));
+    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_800"), "\\Wprime (800 \\GeV)"));
+    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_900"), "\\Wprime (900 \\GeV)"));
+    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_1000"), "\\Wprime (1000 \\GeV)"));
+    //Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_1100"), "\\Wprime (1100 \\GeV)"));
+    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_1200"), "\\Wprime (1200 \\GeV)"));
+    //Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_1300"), "\\Wprime (1300 \\GeV)"));
+    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_1400"), "\\Wprime (1400 \\GeV)"));
+    Samples.push_back(make_pair(vector<string>(1, "Summer11_WPrimeZZlljj_1500"), "\\Wprime (1500 \\GeV)"));
   }
 
   //////////////////////////////
@@ -148,11 +147,9 @@ printNEvts(string infile, int evtType=-1){
     levels.push_back(make_pair("ValidWZCand", "WZ"));
   }else if(infile.find("HadVZ") != string::npos){
     if(evtType == -1){
-      levels.push_back(make_pair("MinNJets", "Preselection"));
     }
-    levels.push_back(make_pair("ZMass", "Z Selection"));
+    levels.push_back(make_pair("Zpt", "Z Selection"));
     levels.push_back(make_pair("VMass", "V Selection"));
-    //levels.push_back(make_pair("ValidVZ", "VZ"));
   }  
 
   cout<<" Sample ";
@@ -168,6 +165,27 @@ printNEvts(string infile, int evtType=-1){
     cout<<Samples[i].second;
 
     for(unsigned level=0; level<levels.size(); ++level){
+      string hName;
+      int bin = -1;
+      if(evtType == -1){
+        hName = "hNumEvts";
+      }else{
+        hName = "hEvtType_" + levels[level].first;
+      }
+      TH1F* hist = get_sum_of_hists(f, Samples[i].first, hName.c_str());
+      if(evtType == -1){
+        bin = hist->GetXaxis()->FindBin(levels[level].first.c_str());
+      }else{
+        bin = hist->FindBin(evtType);
+      }
+      float tot = hist->GetBinContent(bin);
+      float sigma = hist->GetBinError(bin);
+      
+      cout<<" & "<<tot<<" $\\pm$ "<<sigma;
+    }//loop over cuts
+    //////Old Way
+    /*
+    for(unsigned level=0; level<levels.size(); ++level){
       float tot = 0;
       float sigma2 = 0;
       for(unsigned subsam=0; subsam<Samples[i].first.size(); ++subsam){
@@ -175,6 +193,7 @@ printNEvts(string infile, int evtType=-1){
         int bin = -1;
         if(evtType == -1){
           string hist_name = Samples[i].first[subsam] + "/hNumEvts";
+          //curSample.hist = get_sum_of_hists(fin, curSample.names, title, rebin);
           hist = (TH1F*) f->Get(hist_name.c_str()); 
           if(!hist){
             cout<<"\n\nFailed getting "<<hist_name<<endl;
@@ -196,6 +215,7 @@ printNEvts(string infile, int evtType=-1){
       }//loop over subsamples
       cout<<" & "<<tot<<" $\\pm$ "<<sqrt(sigma2);
     }//loop over cuts
+    */
     cout<<" \\\\ \\hline"<<endl;
   }//loop over samples
 }
