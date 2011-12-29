@@ -164,14 +164,15 @@ public:
   template<class T>
   XWLeptonic(const T& X, const WCandidate & W) {
     initialize_();
-    if(!X || !W) return;
-    setP4Solns(X.p4(), W.daughter(0)->p4(), W.daughter(1)->p4());
+    if(!X.mass() || !W) return;
+    if(!setP4Solns(X.p4(), W.daughter(0)->p4(), W.daughter(1)->p4())) 
+      initialize_();
   }
 
   template<class T>
   XWLeptonic(const T& X, const XWLeptonic & XW) {
     initialize_();
-    if(!X.mass()>0. || !XW) return;
+    if(!X.mass() || !XW) return;
     p4_[0] = X.p4() + XW.p4_[0];
     p4_[1] = X.p4() + XW.p4_[1];
     neutrinoPz_ = XW.neutrinoPz_;
@@ -182,7 +183,7 @@ public:
     return neutrinoPz_[soln_[type]];
   }
 
-  LorentzVector p4(const NuAlgos& type) const{
+  const LorentzVector & p4(const NuAlgos& type) const{
     return p4_[soln_[type]];
   }
 
@@ -190,7 +191,7 @@ public:
     return p4_[0].mass()>0;
   }
 
-  LorentzVector operator ()(const NuAlgos& type=kMinPz) const{
+  const LorentzVector & operator ()(const NuAlgos& type=kMinPz) const{
     return p4_[soln_[type]];
   }
 
