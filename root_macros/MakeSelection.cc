@@ -116,7 +116,7 @@ MakeSelection(string inName, string opt){
     treeName = "tEvts_ValidWZCand";
 
   }else if(inName.find("HadVZ") != string::npos){
-    BkgSamples.push_back("Summer11_ZZJets_2l2q");
+    BkgSamples.push_back("Summer11_ZZ");
     BkgSamples.push_back("Summer11_VGamma");
     BkgSamples.push_back("Summer11_WW");
     BkgSamples.push_back("Summer11_WZ");
@@ -129,6 +129,20 @@ MakeSelection(string inName, string opt){
     SigSamples.push_back("Summer11_RSZZmmjj_1500");
     SigSamples.push_back("Summer11_RSZZmmjj_1750");
     SigSamples.push_back("Summer11_RSZZmmjj_2000");
+
+    SigSamples.push_back("Summer11_WPrimeZZlljj_300");
+    SigSamples.push_back("Summer11_WPrimeZZlljj_400");
+    //SigSamples.push_back("Summer11_WPrimeZZlljj_500");
+    SigSamples.push_back("Summer11_WPrimeZZlljj_600");
+    SigSamples.push_back("Summer11_WPrimeZZlljj_700");
+    SigSamples.push_back("Summer11_WPrimeZZlljj_800");
+    SigSamples.push_back("Summer11_WPrimeZZlljj_900");
+    SigSamples.push_back("Summer11_WPrimeZZlljj_1000");
+    //SigSamples.push_back("Summer11_WPrimeZZlljj_1100");
+    SigSamples.push_back("Summer11_WPrimeZZlljj_1200");
+    //SigSamples.push_back("Summer11_WPrimeZZlljj_1300");
+    SigSamples.push_back("Summer11_WPrimeZZlljj_1400");
+    SigSamples.push_back("Summer11_WPrimeZZlljj_1500");
     
     Cuts.push_back(Cut("Zpt", true));
     Cuts.push_back(Cut("Vpt", true));
