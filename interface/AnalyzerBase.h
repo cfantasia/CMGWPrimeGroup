@@ -180,8 +180,8 @@ protected:  //These are available to derived classes
 
  private:  //These are not directly available to derived classes
 
-  // print out event # 
-  unsigned int reportAfter_;
+  // print out event # (set to <0 for percentage of events)
+  int reportAfter_;
   // maximum # of events to process (set to <0 for processing all events)
   int maxEvents_;
   // Should we use the json file

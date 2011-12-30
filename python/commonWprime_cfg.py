@@ -34,7 +34,7 @@ process.WprimeAnalyzer = cms.PSet(
     candEvtFile = cms.string("Wprime_candEvts.txt"),
 
     maxEvents   = cms.int32(-1),                     
-    reportAfter = cms.uint32(5000),                  
+    reportAfter = cms.int32(5000),                  
 
     useJSON = cms.bool(True),
     countGenEvts = cms.bool(False),

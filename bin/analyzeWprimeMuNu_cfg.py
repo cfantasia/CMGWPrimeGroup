@@ -1,7 +1,7 @@
 from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
 process.WprimeAnalyzer.outputFile  = cms.string('Wprime_analysis_MuMET.root')## mandatory
-process.WprimeAnalyzer.reportAfter = cms.uint32(15000)                     ## optional
+process.WprimeAnalyzer.reportAfter = 15000                     ## optional
 process.WprimeAnalyzer.useJSON = True
 process.WprimeAnalyzer.doRecoilCorrectionForW = cms.bool(False)
 process.WprimeAnalyzer.sample_cross_sections = cms.string("samples_cross_sections_MuMET.txt")

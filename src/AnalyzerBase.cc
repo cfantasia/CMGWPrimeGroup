@@ -6,7 +6,7 @@ AnalyzerBase::AnalyzerBase(){}
 AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   //Put here everything you want EVERY CONSTRUCTOR TO DO
 
-  reportAfter_ = cfg.getParameter<unsigned int>("reportAfter");
+  reportAfter_ = cfg.getParameter<int>("reportAfter");
   maxEvents_   = cfg.getParameter<int>("maxEvents");
   useJSON_   = cfg.getParameter<bool>("useJSON") ;
   doPreselect_ = cfg.getParameter<bool>("preselect");
@@ -745,6 +745,7 @@ void AnalyzerBase::run()
 {
   int ievt_all=0;  int ievt_skipped = 0;
   unsigned i_sample = 1;
+  float reportPercent = reportAfter_<0 ? reportAfter_/100. : 0;
   vector<wprime::InputFile>::iterator it;
 
   //Loop Over input files
@@ -763,6 +764,7 @@ void AnalyzerBase::run()
     assert(it->Nact_evt <= it->Nprod_evt);
 
     beginFile(it);//Set up for input file
+    if(reportPercent) reportAfter_ = fabs(it->Nact_evt * reportPercent);
 
     for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){// loop over events
       edm::EventBase const & event = ev;

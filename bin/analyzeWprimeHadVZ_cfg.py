@@ -6,7 +6,7 @@ process.WprimeAnalyzer.candEvtFile = "HadVZAnalyzer.lst"
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_HadVZ.txt"
 
 process.WprimeAnalyzer.maxEvents   = -1
-process.WprimeAnalyzer.reportAfter = 100000
+process.WprimeAnalyzer.reportAfter = -10
 process.WprimeAnalyzer.useJSON = False
 process.WprimeAnalyzer.debug = False
 process.WprimeAnalyzer.preselect = False
