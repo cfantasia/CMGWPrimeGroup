@@ -85,7 +85,7 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   //Loose histos
   //Dealing with MET
   h_HadVWMass = dir.make<TH1F>("h_HadVWMass", "h_HadVWMass", 100, 0.0, 2.5);
-  h_MET_AllCuts = dir.make<TH1F>("h_MET_AllCuts", "h_MET_AllCuts", 100, 0.0, 1000.0);
+  // h_MET_AllCuts = dir.make<TH1F>("h_MET_AllCuts", "h_MET_AllCuts", 100, 0.0, 1000.0);
   h_WMass = dir.make<TH1F>("h_WMass", "h_WMass", 100, 0.0, 300.0);
   h_genWMass = dir.make<TH1F>("h_genWMass", "h_genWMass", 100, 0.0, 300.0);
   h_genZMass = dir.make<TH1F>("h_genZMass", "h_genZMass", 100, 0.0, 300.0);
@@ -190,6 +190,13 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
 
   defineHistoSet("hQ", "Q=M_{VZ} - M_{V} - M_{Z}",
                   "Q (GeV)", 50, 0, 2500, "GeV", hQ,dir);
+  defineHistoSet("hMET", "Missing Transverse Energy", 
+		 "MET (GeV)", 100, 0., 1000., "GeV", hMET,dir);
+  defineHistoSet("hMETmm", "Missing Transverse Energy",
+                 "MET (GeV)", 100, 0., 1000., "GeV", hMETmm,dir);
+  defineHistoSet("hMETee", "Missing Transverse Energy",
+                 "MET (GeV)", 100, 0., 1000., "GeV", hMETee,dir);
+
 
   defineHistoSet("hZMass" , "Reconstructed Mass of Z",
                   "M_{Z} (GeV)", 30, 60, 120, "GeV", hZMass,dir);
@@ -604,7 +611,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
             cout << "WZMass(MaxPZ) = " << wzCand_(kMaxPz).mass() << endl;
 	    */
 
-	    h_MET_AllCuts->Fill(met_.et(), weight_);
+	    //h_MET_AllCuts->Fill(met_.et(), weight_);
 	  
 	  }
 
@@ -682,7 +689,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
   if( !passValidVZCandCut() ) return;
   tabulateEvent(iCut, weight_); ++iCut;
-  h_MET_AllCuts->Fill(met_.et(), weight_);
+  //h_MET_AllCuts->Fill(met_.et(), weight_);
 
   Q_ = hadVZ_.mass() - zCand_.mass() - vCand_.mass();
   fillValidVZHistos();
@@ -805,8 +812,16 @@ void HadronicVZAnalyzer::fillHistos(const int& index, const float& weight){
   }
   if(zCand_){
     hZMass[index]->Fill(zCand_.mass(), weight);
-    if      (zCand_.flavor() == PDG_ID_ELEC) hZeeMass[index]->Fill(zCand_.mass(), weight);
-    else if (zCand_.flavor() == PDG_ID_MUON) hZmmMass[index]->Fill(zCand_.mass(), weight);
+    if      (zCand_.flavor() == PDG_ID_ELEC) 
+      {
+	hZeeMass[index]->Fill(zCand_.mass(), weight);
+	hMETee[index]->Fill(met_.et(), weight);
+      }
+    else if (zCand_.flavor() == PDG_ID_MUON) 
+      {
+	hZmmMass[index]->Fill(zCand_.mass(), weight);
+	hMETmm[index]->Fill(met_.et(), weight);
+      }
     hZpt[index]->Fill(zCand_.pt(), weight);
     hEvtType[index]->Fill(2*(zCand_.flavor() == PDG_ID_MUON), weight);
   }
@@ -817,6 +832,8 @@ void HadronicVZAnalyzer::fillHistos(const int& index, const float& weight){
   hNLLeps[index]->Fill(looseElectrons_.size()+looseMuons_.size(), weight);
   hNLJets[index]->Fill(looseJets_.size(), weight);
 
+  hMET[index]->Fill(met_.et(), weight);
+  
   if(CutNames_[index] == "ValidVZ"){
     if(hadVZ_) VZMass_ = hadVZ_.mass();
     if(zCand_){
