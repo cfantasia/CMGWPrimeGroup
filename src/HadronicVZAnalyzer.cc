@@ -97,54 +97,57 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   h_ptJetCut_nJets = dir.make<TH2F>("h_ptJetCut_nJets", "h_ptJetCut_nJets", 10, -0.5,9.5, 5, 25.0, 75.0);
 
   //HadVZ Properties
-  h_HadVZMass = dir.make<TH1F>("h_HadVZMass","h_HadVZMass",100,0.0,2.5);
-  h_HadVZpt = dir.make<TH1F>("h_HadVZpt", "h_HadVZpt", 60, 0.0, 300.0);
-  h_HadVZeta = dir.make<TH1F>("h_HadVZeta", "h_HadVZeta", 40, -5.0, 5.0);
-  h_HadVZphi = dir.make<TH1F>("h_HadVZphi", "h_HadVZphi", 20, -4.0, 4.0);
-  h_HadVZ_res = dir.make<TH1F>("h_HadVZ_res", "h_hadVZ_res", 400, -200.0, 200.0); 
+  h_HadVZMass = dir.make<TH1F>("h_HadVZMass","h_HadVZMass; M_{VZ} (TeV)",100,0.0,2.5);
+  h_HadVZpt = dir.make<TH1F>("h_HadVZpt", "h_HadVZptp_{T}^{VZ} (GeV)", 60, 0.0, 300.0);
+  h_HadVZeta = dir.make<TH1F>("h_HadVZeta", "h_HadVZeta; #eta^{VZ}", 40, -5.0, 5.0);
+  h_HadVZphi = dir.make<TH1F>("h_HadVZphi", "h_HadVZphi; #phi^{VZ}", 20, -4.0, 4.0);
+  h_HadVZ_res = dir.make<TH1F>("h_HadVZ_res", "h_hadVZ_res; M_{VZ}^{Reco} - M_{VZ}^{Gen} (GeV)", 400, -200.0, 200.0); 
   //ZLeptons Properties
-  h_Zelec1_pt = dir.make<TH1F>("h_Zelec1_pt", "h_Zelec1_pt", 100, 0.0, 1000.0);
-  h_Zelec1_eta = dir.make<TH1F>("h_Zelec1_eta", "h_Zelec1_eta", 40, -5.0, 5.0);
-  h_Zelec1_phi = dir.make<TH1F>("h_Zelec1_phi", "h_Zelec1_phi", 20, -4.0, 4.0);
-  h_Zelec2_pt = dir.make<TH1F>("h_Zelec2_pt", "h_Zelec2_pt", 100, 0.0, 1000.0);
-  h_Zelec2_eta = dir.make<TH1F>("h_Zelec2_eta", "h_Zelec2_eta", 40, -5.0, 5.0);
-  h_Zelec2_phi = dir.make<TH1F>("h_Zelec2_phi", "h_Zelec2_phi", 20, -4.0, 4.0);
-  h_Zmuon1_pt = dir.make<TH1F>("h_Zmuon1_pt", "h_Zmuon1_pt", 100, 0.0, 1000.0);
-  h_Zmuon1_eta = dir.make<TH1F>("h_Zmuon1_eta", "h_Zmuon1_eta", 40, -5.0, 5.0);
-  h_Zmuon1_phi = dir.make<TH1F>("h_Zmuon1_phi", "h_Zmuon1_phi", 20, -4.0, 4.0);
-  h_Zmuon2_pt = dir.make<TH1F>("h_Zmuon2_pt", "h_Zmuon2_pt", 100, 0.0, 1000.0);
-  h_Zmuon2_eta = dir.make<TH1F>("h_Zmuon2_eta", "h_Zmuon2_eta", 40, -5.0, 5.0);
-  h_Zmuon2_phi = dir.make<TH1F>("h_Zmuon2_phi", "h_Zmuon2_phi", 20, -4.0, 4.0);
-  h_deltaR_elec1elec2 = dir.make<TH1F>("h_deltaR_elec1elec2", "h_deltaR_elec1elec2", 50, 0., 5.);
-  h_deltaR_muon1muon2 = dir.make<TH1F>("h_deltaR_muon1muon2", "h_deltaR_muon1muon2", 50, 0., 5.);
+  h_Zelec1_pt = dir.make<TH1F>("h_Zelec1_pt", "h_Zelec1_pt; p_{T}^{e1} (GeV)", 100, 0.0, 1000.0);
+  h_Zelec1_eta = dir.make<TH1F>("h_Zelec1_eta", "h_Zelec1_eta; #eta^{e1}", 40, -5.0, 5.0);
+  h_Zelec1_phi = dir.make<TH1F>("h_Zelec1_phi", "h_Zelec1_phi; #phi^{e1}", 20, -4.0, 4.0);
+  h_Zelec2_pt = dir.make<TH1F>("h_Zelec2_pt", "h_Zelec2_pt; p_{T}^{e2} (GeV)", 100, 0.0, 1000.0);
+  h_Zelec2_eta = dir.make<TH1F>("h_Zelec2_eta", "h_Zelec2_eta; #eta^{e2}", 40, -5.0, 5.0);
+  h_Zelec2_phi = dir.make<TH1F>("h_Zelec2_phi", "h_Zelec2_phi; #phi^{e2}", 20, -4.0, 4.0);
+  h_Zmuon1_pt = dir.make<TH1F>("h_Zmuon1_pt", "h_Zmuon1_pt; p_{T}^{#mu1} (GeV)", 100, 0.0, 1000.0);
+  h_Zmuon1_eta = dir.make<TH1F>("h_Zmuon1_eta", "h_Zmuon1_eta; #eta^{#mu1}", 40, -5.0, 5.0);
+  h_Zmuon1_phi = dir.make<TH1F>("h_Zmuon1_phi", "h_Zmuon1_phi; #phi^{#mu1}", 20, -4.0, 4.0);
+  h_Zmuon2_pt = dir.make<TH1F>("h_Zmuon2_pt", "h_Zmuon2_pt; p_{T}^{#mu2} (GeV)", 100, 0.0, 1000.0);
+  h_Zmuon2_eta = dir.make<TH1F>("h_Zmuon2_eta", "h_Zmuon2_eta; #eta^{#mu2}", 40, -5.0, 5.0);
+  h_Zmuon2_phi = dir.make<TH1F>("h_Zmuon2_phi", "h_Zmuon2_phi; #phi^{#mu2}", 20, -4.0, 4.0);
+  h_deltaR_elec1elec2 = dir.make<TH1F>("h_deltaR_elec1elec2", "h_deltaR_elec1elec2; #Delta_{R}^{e1,e2}", 50, 0., 5.);
+  h_deltaR_muon1muon2 = dir.make<TH1F>("h_deltaR_muon1muon2", "h_deltaR_muon1muon2; #Delta_{R}^{#mu1,#mu2}", 50, 0., 5.);
 
   //HadV vs Leptons properties
-  h_deltaR_HadVelec1 = dir.make<TH1F>("h_deltaR_HadVelec1", "h_deltaR_HadVelec1", 50, 0., 5.);
-  h_deltaR_HadVelec2 = dir.make<TH1F>("h_deltaR_HadVelec2", "h_deltaR_HadVelec2", 50, 0., 5.);
-  h_deltaR_HadVmuon1 = dir.make<TH1F>("h_deltaR_HadVmuon1", "h_deltaR_HadVmuon1", 50, 0., 5.);
-  h_deltaR_HadVmuon2 = dir.make<TH1F>("h_deltaR_HadVmuon2", "h_deltaR_HadVmuon2", 50, 0., 5.);
+  h_deltaR_HadVelec1 = dir.make<TH1F>("h_deltaR_HadVelec1", "h_deltaR_HadVelec1; #Delta_{R}^{V,e1}", 50, 0., 5.);
+  h_deltaR_HadVelec2 = dir.make<TH1F>("h_deltaR_HadVelec2", "h_deltaR_HadVelec2;\
+ #Delta_{R}^{V,e2}", 50, 0., 5.);
+  h_deltaR_HadVmuon1 = dir.make<TH1F>("h_deltaR_HadVmuon1", "h_deltaR_HadVmuon1;\
+ #Delta_{R}^{V,#mu1}", 50, 0., 5.);
+  h_deltaR_HadVmuon2 = dir.make<TH1F>("h_deltaR_HadVmuon2", "h_deltaR_HadVmuon2;\
+ #Delta_{R}^{V,#mu2}", 50, 0., 5.);
   
   //Jet Properties
-  h_jet1_pt = dir.make<TH1F>("h_jet1_pt", "h_jet1_pt", 100, 0.0, 1000.0);
-  h_jet1_eta = dir.make<TH1F>("h_jet1_eta", "h_jet1_eta", 40, -5.0, 5.0);
-  h_jet1_phi = dir.make<TH1F>("h_jet1_phi", "h_jet1_phi", 20, -4.0, 4.0);
-  h_jet2_pt = dir.make<TH1F>("h_jet2_pt", "h_jet2_pt", 100, 0.0, 1000.0);
-  h_jet2_eta = dir.make<TH1F>("h_jet2_eta", "h_jet2_eta", 40, -5.0, 5.0);
-  h_jet2_phi = dir.make<TH1F>("h_jet2_phi", "h_jet2_phi", 20, -4.0, 4.0);
-  h_jet1_mass = dir.make<TH1F>("h_jet1_mass", "h_jet1_mass", 100, 0.0, 500.);
-  h_jet2_mass = dir.make<TH1F>("h_jet2_mass", "h_jet2_mass", 100, 0.0, 500.);
+  h_jet1_pt = dir.make<TH1F>("h_jet1_pt", "h_jet1_pt; p_{T}^{jet1} (GeV)", 100, 0.0, 1000.0);
+  h_jet1_eta = dir.make<TH1F>("h_jet1_eta", "h_jet1_eta; #eta^{jet1}", 40, -5.0, 5.0);
+  h_jet1_phi = dir.make<TH1F>("h_jet1_phi", "h_jet1_phi; #phi^{jet1}", 20, -4.0, 4.0);
+  h_jet2_pt = dir.make<TH1F>("h_jet2_pt", "h_jet2_pt; p_{T}^{jet2} (GeV)", 100, 0.0, 1000.0);
+  h_jet2_eta = dir.make<TH1F>("h_jet2_eta", "h_jet2_eta; #eta^{jet2}", 40, -5.0, 5.0);
+  h_jet2_phi = dir.make<TH1F>("h_jet2_phi", "h_jet2_phi; #phi^{jet2}", 20, -4.0, 4.0);
+  h_jet1_mass = dir.make<TH1F>("h_jet1_mass", "h_jet1_mass; M_{jet1} (GeV)", 100, 0.0, 500.);
+  h_jet2_mass = dir.make<TH1F>("h_jet2_mass", "h_jet2_mass; M_{jet2} (GeV)", 100, 0.0, 500.);
   // h_jet1_Vwindow = dir.make<TH1F>("h_jet1_Vwindow", "h_jet1_Vwindow", 100, 0., 500.);
-  h_deltaR_jet1muon1 = dir.make<TH1F>("h_deltaR_jet1muon1", "h_deltaR_jet1muon1", 50, 0., 5.);
-  h_deltaR_jet1muon2 = dir.make<TH1F>("h_deltaR_jet1muon2", "h_deltaR_jet1muon2", 50, 0., 5.);
-  h_deltaR_jet2muon1 = dir.make<TH1F>("h_deltaR_jet2muon1", "h_deltaR_jet2muon1", 50, 0., 5.);
-  h_deltaR_jet2muon2 = dir.make<TH1F>("h_deltaR_jet2muon2", "h_deltaR_jet2muon2", 50, 0., 5.);
-  h_jet_mult = dir.make<TH1F>("h_jet_mult", "h_jet_mult", 10, -0.5, 9.5); 
-  h_jet_mult_inc = dir.make<TH1F>("h_jet_mult_incl", "h_jet_mult_incl", 10, -0.5, 9.5); 
-  h_jet1jet2_mass = dir.make<TH1F>("h_jet1jet2_mass", "h_jet1jet2_mass", 100, 0.0, 500.);
-  h_deltaR_jet1jet2 = dir.make<TH1F>("h_deltaR_jet1jet2", "h_deltaR_jet1jet2", 50, 0.0, 5.0);
-  h_jet_HadV_pt = dir.make<TH1F>("h_jet_HadV_pt", "h_jet_HadV_pt", 100, 0.0, 1000.);
-  h_jet_HadV_eta = dir.make<TH1F>("h_jet_HadV_eta", "h_jet_HadV_eta", 40, -5.0, 5.);  
-  h_jet_HadV_phi = dir.make<TH1F>("h_jet_HadV_phi", "h_jet_HadV_phi", 20, -4.0, 4.);
+  h_deltaR_jet1muon1 = dir.make<TH1F>("h_deltaR_jet1muon1", "h_deltaR_jet1muon1; #Delta_{R}^{jet1,#mu1}", 50, 0., 5.);
+  h_deltaR_jet1muon2 = dir.make<TH1F>("h_deltaR_jet1muon2", "h_deltaR_jet1muon2; #Delta_{R}^{jet1,#mu2}", 50, 0., 5.);
+  h_deltaR_jet2muon1 = dir.make<TH1F>("h_deltaR_jet2muon1", "h_deltaR_jet2muon1; #Delta_{R}^{jet2,#mu1}", 50, 0., 5.);
+  h_deltaR_jet2muon2 = dir.make<TH1F>("h_deltaR_jet2muon2", "h_deltaR_jet2muon2; #Delta_{R}^{jet2,#mu2}", 50, 0., 5.);
+  h_jet_mult = dir.make<TH1F>("h_jet_mult", "h_jet_mult; N_{Jets}", 10, -0.5, 9.5); 
+  h_jet_mult_inc = dir.make<TH1F>("h_jet_mult_incl", "h_jet_mult_incl; N_{Jets}^{Inc}", 10, -0.5, 9.5); 
+  h_jet1jet2_mass = dir.make<TH1F>("h_jet1jet2_mass", "h_jet1jet2_mass; M_{jet1, jet2}", 100, 0.0, 500.);
+  h_deltaR_jet1jet2 = dir.make<TH1F>("h_deltaR_jet1jet2", "h_deltaR_jet1jet2; #Delta_{R}^{jet1, jet2}", 50, 0.0, 5.0);
+  h_jet_HadV_pt = dir.make<TH1F>("h_jet_HadV_pt", "h_jet_HadV_pt; p_{T}^{V} (GeV)", 100, 0.0, 1000.);
+  h_jet_HadV_eta = dir.make<TH1F>("h_jet_HadV_eta", "h_jet_HadV_eta; #eta_{V}", 40, -5.0, 5.);  
+  h_jet_HadV_phi = dir.make<TH1F>("h_jet_HadV_phi", "h_jet_HadV_phi; #phi_{V}", 20, -4.0, 4.);
 
 
   //Jet merging histos
