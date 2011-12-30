@@ -29,23 +29,6 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
       copy( lumisTemp.begin(), lumisTemp.end(), jsonVector.begin() );
     }
 
-  //////Output Files
-  string outputFile  = cfg.getParameter<string  >("outputFile" );
-  string logFile  = cfg.getParameter<string  >("logFile" );
-  string candEvtFile = cfg.getParameter<string>("candEvtFile");
-
-  if(fileToRun != -1){
-    outputFile = Form("Sample%i_%s",fileToRun,outputFile.c_str()); 
-    logFile = Form("Sample%i_%s",fileToRun,logFile.c_str()); 
-    candEvtFile = Form("Sample%i_%s",fileToRun,candEvtFile.c_str()); 
-  }
-
-  fs = new fwlite::TFileService(outputFile);
-  outLogFile_.open(logFile.c_str());
-  WPrimeUtil::CheckStream(outLogFile_, logFile);
-  outCandEvtFile_.open(candEvtFile.c_str());
-  WPrimeUtil::CheckStream(outCandEvtFile_, candEvtFile);
-
   string MCPUDistFile   = cfg.getParameter<string>("MCPUDistFile" );
   string MCPUDistHist   = cfg.getParameter<string>("MCPUDistHist" );
   string DataPUDistFile = cfg.getParameter<string>("DataPUDistFile" );
@@ -70,6 +53,23 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
       abort();
     }
   }
+
+  //////Output Files
+  string outputFile  = cfg.getParameter<string  >("outputFile" );
+  string logFile  = cfg.getParameter<string  >("logFile" );
+  string candEvtFile = cfg.getParameter<string>("candEvtFile");
+
+  if(fileToRun != -1){
+    outputFile = Form("Sample%i_%s",fileToRun,outputFile.c_str()); 
+    logFile = Form("Sample%i_%s",fileToRun,logFile.c_str()); 
+    candEvtFile = Form("Sample%i_%s",fileToRun,candEvtFile.c_str()); 
+  }
+
+  fs = new fwlite::TFileService(outputFile);
+  outLogFile_.open(logFile.c_str());
+  WPrimeUtil::CheckStream(outLogFile_, logFile);
+  outCandEvtFile_.open(candEvtFile.c_str());
+  WPrimeUtil::CheckStream(outCandEvtFile_, candEvtFile);
 
   setNumSignalSamples();
 
