@@ -4,7 +4,7 @@ from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 #process.WprimeAnalyzer.debug = True
 
 process.WprimeAnalyzer.debug = False
-process.WprimeAnalyzer.reportAfter = 25000
+process.WprimeAnalyzer.reportAfter = -5
 process.WprimeAnalyzer.runWZAnalysis    = True
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_WZ.txt"
 
