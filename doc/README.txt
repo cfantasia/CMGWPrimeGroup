@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V360, release:
+o Setup a new working area (Default name: V370, release:
 CMSSW_4_2_5)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-03-60)
+V00-03-70)
 
 o Check out the recommended versions of DataFormats/PatCandidates,
 PhysicsTools/PatAlgos, PhysicsTools/Utilities, RecoLuminosity/LumiDB and
@@ -40,12 +40,12 @@ doc/data_and_MC_samples.txt
 (3) Structure of python files for PAT-tuple making:
 
 (a) In directory python (low-level files): 
- o patTuple_common_cfg.py contains common defitions (e.g. addition of
+ o patTuple_common_cfg.py contains common definitions (e.g. addition of
 pfMET, event-content for trigger, pileup info,  etc); it is not called
 directly from user/high-level cfg file 
  
  o patTuple_mumet_cfg.py and patTuple_elmet_cfg.py: files containing info
-specific to mu+MET and el+MET analyses (e.g. aditional event-content to
+specific to mu+MET and el+MET analyses (e.g. additional event-content to
 keep; for the muon channel, the subset of pfParticles that needs to be
 stored for the correction of pfMET when using TeV muon reconstructors);
 this is where the call to patTuple_common is made. 
@@ -73,19 +73,27 @@ To run:
 (ele+MET)
 
  WPrimeAnalyzer UserCode/CMGWPrimeGroup/bin/analyzeWprimeWZ_cfg.py
-(W[mu]Z)
+(WZ)
 
  WPrimeAnalyzer UserCode/CMGWPrimeGroup/bin/analyzeWprimeWgamma_cfg.py
 (W[mu]+gamma)
 
+ WPrimeAnalyzer UserCode/CMGWPrimeGroup/bin/analyzeWprimeHadVZ_cfg.py
+(HadVZ)
+
+ WPrimeAnalyzer UserCode/CMGWPrimeGroup/bin/analyzeWprimeHadWZ_cfg.py
+(HadWZ)
+
+ WPrimeAnalyzer UserCode/CMGWPrimeGroup/bin/analyzeWprimeTB_cfg.py
+(TB)
 
 
 Options:
 - enable/disable analyzers for Mu+MET (available), W(mu)+gamma (available),
-El+MET (available), WZ (available), hadV+Z (available), hadV + Z
+El+MET (available), WZ (available), hadV+Z (available), hadV + W
 (available), tb (available)
 - specify input collections 
-- specify parameters for Mu+MET/El+MET/WZ/W+gamma analysis
+- specify parameters for specific analysis
 
 
 
@@ -96,21 +104,18 @@ Code structure:
 
 (b) In directory UserCode/CMGWPrimeGroup/interface/ (and src/)
 
-- class WPrimeFinder: high-level class/wrapper invoking analyzers for
-different channels. Expected analyzer methods that get called by this
+- class AnalyzerBase: Base class that individual channels inherit from.  
+Expected analyzer methods that get called by this
 class: 
-  o beginFile (operations to be done when changing input file, e.g create
-new histograms) 
-  o endFile (operations to be done when closing input file, e.g. save
-histograms, print summary)
-  o endAnalysis (e.g. print summary of expected events for all samples)
+  o defineHistos
+  o fillHistos
   o eventLoop (run analysis, ie. selection cuts and fill in histograms)
 
 - class WPrimeUtil: helper class to carry out work that is common across
 channels. Examples: 
   o parse description of input files, extract integrated luminosity and
 weight 
-  o calculate tranverse mass for lepton and MET
+  o calculate transverse mass for lepton and MET
   o calculate hadronic MET correction from Z->mumu events
 for MC W->mu samples
 
@@ -127,6 +132,7 @@ creates kinematic distributions)
 - class WgammaAnalyzer.cc: W(mu)+gamma analysis (applies selection cuts and
 creates kinematic distributions)
 
+- etc
 
 Location of top-level directory with input files to be specified in text
 file samples_cross_sections_*txt (located in
@@ -134,3 +140,6 @@ UserCode/CMGWPrimeGroup/config/). The parameters for all input MC files
 (description, cross-section, # of events produced etc), can be found in the
 same file. 
 
+If the filename given for a sample ends in .txt, it will be read in as a list of root files to be analyzed.
+
+A subdirectory can be specified for all root files for a given sample.

@@ -1,3 +1,45 @@
+31-DEC-11 (Christos, Cory, Flavia, Phil, Sunghyun), V00-03-70
+=============================================================
+General improvements:
+o Latest 3D PU reweighting
+o Cut and Count Limit code switched default to cls
+o Added a few utilities to print out latex tables, tis the season for notes!
+o Updated version of roostats
+o Cut and Count Limit code less wz centric
+o In sample list, lines starting with # are ignored
+o In sample list data samples don't need xsec or nevets
+o If report after is negative, it's a percentage of total evts
+o WCandidate class is now only-leptonic, anything with an invariant mass is a "ZCandidate"
+o Improvements to XWLeptonic Class
+o Sped up code, reduce memory leaks / waste
+o Fix bug where histogram made from trees had wrong error handling
+o Improved documentation
+o Improved debugging
+o Save extra info in a new histogram (nprod, nact, xsec, weight, nfiles, lumi)
+
+El+MET analysis:
+o Shape based fitting
+
+Mu+MET analysis:
+o Shape based fitting
+o Revert pt-cut (25->100 GeV), as it should be for high-pt data skimming
+o Added low mass samples
+o Added interference samples
+
+WZ analysis:
+o Optimize code for speed
+o Util to split up input files to run in parallel
+o Moved to Fall11 MC
+o Tree filled after every cut
+o Added electron e scale corrections
+
+
+hadV+Z analysis:
+o Work on W+jets/Z+jets comparison
+o Work on using VMass sideband to extract shape of VZMass tail
+o Updated cuts, drop single e triggers
+o Keeping nVtxs
+
 18-NOV-11 (Christos, Cory, Flavia, Phil, Sunghyun), V00-03-60
 =============================================================
 General improvements:
