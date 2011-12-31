@@ -146,16 +146,15 @@ void AnalyzerBase::tabulateEvent(const int& cut_index, const float& weight){
 
 //Writing results to a txt file
 void AnalyzerBase::tabulateFile(std::vector<wprime::InputFile>::iterator fi){
-  float nProd = fi->Nprod_evt*fi->weight;
   for(uint i = 0; i < fi->results.size(); ++i){
     //calculate efficiencies
-    float rel_denom = i==0 ? fi->Nact_evt*fi->weight : fi->results[i-1].Nsurv_evt_cut_w;
+    float rel_denom = i==0 ? fi->Nact_evt : fi->results[i-1].Nsurv_evt_cut;
     //Calc Relative Eff
     WPrimeUtil::getEff(fi->results[i].eff, fi->results[i].deff, 
-                       fi->results[i].Nsurv_evt_cut_w, rel_denom);
+                       fi->results[i].Nsurv_evt_cut, rel_denom);
     //Calc Absolute Eff
     WPrimeUtil::getEff(fi->results[i].eff_abs, fi->results[i].deff_abs, 
-                       fi->results[i].Nsurv_evt_cut_w, nProd);
+                       fi->results[i].Nsurv_evt_cut, fi->Nprod_evt);
   } // loop over different cuts
 }//tabulateFile
 
