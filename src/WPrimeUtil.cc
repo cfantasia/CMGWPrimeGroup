@@ -102,15 +102,36 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
           new_file->weight = 1;
         cout << " Weight to be applied on " << new_file->samplename
              << " sample = " << new_file->weight << endl;
-	if(new_file->isSignal())
-	  cout << " This is a signal sample with mass = " 
-	       << new_file->signalMass << " TeV " << endl;
-	cout << endl;
-        // all info should now be logged in; check!
-        new_file->checkFile();
-	// if we made it here, everything looks good: 
-	// add to vector of input files
-        inputFiles.push_back(*new_file);
+        if(new_file->isSignal())
+          cout << " This is a signal sample with mass = " 
+               << new_file->signalMass << " TeV " << endl;
+
+        //This section will split the list of input files into a number of
+        //smaller samples for faster processing in parallel.  
+        //Caveat: Splitting is not recommended if you do not run in parallel
+        //since the directory (sample) name is not being changed.
+        //Default is not to split (splitInto = 1)
+        vstring pathnames = new_file->pathnames;
+        size_t splitInto = new_file->splitInto;
+        size_t nPerFile = ceil((float) pathnames.size() / splitInto);
+        if(splitInto > 1) 
+          cout<<"Trying to split file with "<<pathnames.size()<<" files into "
+              <<splitInto<<" parts, with "<<nPerFile<<" files per part"<<endl;
+        for(size_t i=0; i<splitInto; ++i){
+          size_t first = i*nPerFile;
+          size_t last  = std::min(first+nPerFile, pathnames.size());
+          if(first >= pathnames.size()) break;
+          new_file->pathnames.assign(pathnames.begin()+first,
+                                     pathnames.begin()+last);
+
+          // all info should now be logged in; check!
+          new_file->checkFile();
+          // if we made it here, everything looks good: 
+          // add to vector of input files
+          inputFiles.push_back(*new_file);
+        }
+        //////////
+        cout << endl;
         // release memory
         delete new_file;
       }
@@ -312,6 +333,12 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
       return;
     }
   
+  i = new_line.find("splitInto = ");
+  if(i != string::npos)
+    {
+      in_file->splitInto = atoi(new_line.substr(12, new_line.length() - 12).c_str());
+      return;
+    }
 }
 
 //////////////////

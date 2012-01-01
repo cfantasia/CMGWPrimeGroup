@@ -51,12 +51,14 @@
 #include "UserCode/CMGWPrimeGroup/interface/NewElec.h"
 #include "SHarper/HEEPAnalyzer/interface/HEEPEle.h"
 
+
 typedef unsigned int uint;
 typedef std::vector<int> vint;
 typedef std::vector<std::string> vstring;
 typedef math::XYZPoint Point;
 typedef math::XYZTLorentzVector LorentzVector;
 typedef edm::ParameterSet Pset;
+typedef std::vector<Pset> VPset;
 typedef edm::MergeableCounter counter;
 
 typedef std::vector<pat::Electron> PatElectronV;
@@ -119,11 +121,12 @@ namespace wprime{
     std::string description; // sample description
     float signalMass; // in <x>.<y> TeV for signal samples (e.g. 1.2), -1 otherwise (default)
     bool isSignal() const {return signalMass > 0;}
+    int splitInto;
     EffV results;
     //
     InputFile()
     {
-      x_sect = signalMass = -1; Nprod_evt = Nact_evt = -1; weight = 0;
+      x_sect = signalMass = -1; Nprod_evt = Nact_evt = -1; weight = 0; splitInto = 1;
       samplename = description = INVALID;
       subdir = "";
     }
@@ -135,6 +138,7 @@ namespace wprime{
         assert(Nprod_evt > 0); 
       }
       assert(weight > 0);
+      assert(splitInto > 0);
       assert(pathnames.size()); 
       assert(description != INVALID); 
       assert(samplename != INVALID);
@@ -322,8 +326,6 @@ template <class T, class P>
 
 
 //////// Selectors ///////////////////////////////////////////////////////////
-typedef edm::ParameterSet Pset;
-
 /// Class derived from Selector that implements some convenience functions
 template<class T>
 class MinMaxSelector : public Selector<T> {
