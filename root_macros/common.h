@@ -6,6 +6,27 @@
 #include "TH2F.h"
 #include "TTree.h"
 
+struct Value{
+  float val;
+  float err;
+
+  Value():val(1),err(1){}//Let's not mess up log10
+  Value(float v):val(v),err(v){}
+  Value(float v, float e):val(v),err(e){}
+  
+  int findPrecision() const{
+    return max(-1*floor(log10(err)), 0.); 
+  }
+
+  friend std::ostream& operator << (std::ostream &o, const Value & v){
+    ios_base::fmtflags flags = o.flags();//Get Current config
+    o<<setiosflags(ios::fixed) << setprecision(v.findPrecision())<<v.val;
+    o.flags(flags);//Reset config
+    return o;
+  }
+
+};
+
 TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
                        const std::string& objName, int rebinme=0, float weight=1.){
   TH1F* hall=NULL;
