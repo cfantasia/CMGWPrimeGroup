@@ -49,22 +49,18 @@ printNEvts(string infile, int evtType=-1){
     Data.push_back("data_DoubleMu-Run2011A-May10ReReco-v1");
     Data.push_back("data_SingleMu-Run2011A-May10ReReco-v1");
     Data.push_back("data_DoubleElectron-Run2011A-May10ReReco-v1");
-    Data.push_back("data_SingleElectron-Run2011A-May10ReReco-v1");
 
     Data.push_back("data_DoubleMu-Run2011A-PromptReco-v4");
     Data.push_back("data_SingleMu-Run2011A-PromptReco-v4");
     Data.push_back("data_DoubleElectron-Run2011A-PromptReco-v4");
-    Data.push_back("data_SingleElectron-Run2011A-PromptReco-v4");
 
     Data.push_back("data_DoubleMu-Run2011A-05Aug2011-v1");
     Data.push_back("data_SingleMu-Run2011A-05Aug2011-v1");
     Data.push_back("data_DoubleElectron-Run2011A-05Aug2011-v1");
-    Data.push_back("data_SingleElectron-Run2011A-05Aug2011-v1");
 
     Data.push_back("data_DoubleMu-Run2011A-PromptReco-v6");
     Data.push_back("data_SingleMu-Run2011A-PromptReco-v6");
     Data.push_back("data_DoubleElectron-Run2011A-PromptReco-v6");
-    Data.push_back("data_SingleElectron-Run2011A-PromptReco-v6");
     
     Data.push_back("data_DoubleMu-Run2011B-PromptReco-v1");
     Data.push_back("data_DoubleElectron-Run2011B-PromptReco-v1");
@@ -181,41 +177,8 @@ printNEvts(string infile, int evtType=-1){
       float tot = hist->GetBinContent(bin);
       float sigma = hist->GetBinError(bin);
       
-      cout<<" & "<<tot<<" $\\pm$ "<<sigma;
+      cout<<" & "<<Value(tot,sigma)<<" $\\pm$ "<<Value(sigma);
     }//loop over cuts
-    //////Old Way
-    /*
-    for(unsigned level=0; level<levels.size(); ++level){
-      float tot = 0;
-      float sigma2 = 0;
-      for(unsigned subsam=0; subsam<Samples[i].first.size(); ++subsam){
-        TH1F* hist = NULL;
-        int bin = -1;
-        if(evtType == -1){
-          string hist_name = Samples[i].first[subsam] + "/hNumEvts";
-          //curSample.hist = get_sum_of_hists(fin, curSample.names, title, rebin);
-          hist = (TH1F*) f->Get(hist_name.c_str()); 
-          if(!hist){
-            cout<<"\n\nFailed getting "<<hist_name<<endl;
-            abort();
-          }
-          bin = hist->GetXaxis()->FindBin(levels[level].first.c_str());
-        }else{
-          string hist_name = Samples[i].first[subsam] + "/hEvtType_" + levels[level].first;
-          hist = (TH1F*) f->Get(hist_name.c_str()); 
-          if(!hist){
-            cout<<"\n\nDidn't find histo "<<hist_name<<endl;
-            abort();
-          }
-          bin = hist->FindBin(evtType);
-        }
-        tot += hist->GetBinContent(bin);//underflow
-        sigma2 += hist->GetBinError(bin)*hist->GetBinError(bin);
-
-      }//loop over subsamples
-      cout<<" & "<<tot<<" $\\pm$ "<<sqrt(sigma2);
-    }//loop over cuts
-    */
     cout<<" \\\\ \\hline"<<endl;
   }//loop over samples
 }
