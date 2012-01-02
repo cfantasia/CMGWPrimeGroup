@@ -760,9 +760,9 @@ void AnalyzerBase::run()
          << " events (Input file #" << i_sample << " out of " << inputFiles_.size()
          << " samples) " << endl << endl;   
     cout << std::fixed << std::setprecision(2);
-    assert(it->Nact_evt <= it->Nprod_evt);
 
     beginFile(it);//Set up for input file
+    assert(it->Nact_evt <= it->Nprod_evt);
     if(reportPercent) reportAfter_ = fabs(it->Nact_evt * reportPercent);
 
     for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){// loop over events
