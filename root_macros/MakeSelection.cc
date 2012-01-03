@@ -267,6 +267,12 @@ DrawSelection(TFile* fin, Cut& thisCut){
   if(useSig_) thisCut.cutVal = hSig.GetBinLowEdge(cutBinSig);
   else        thisCut.cutVal = hSig.GetBinLowEdge(cutBinEff);
 
+  if(debug_){
+    cout<<" For the significance cut, the sig eff is "
+        <<fsig[cutBinSig]*100<<"\% and bkg eff is "<<fbkg[cutBinSig]*100
+        <<"\%"<<endl;
+  }
+
   TCanvas c1;
   hBkg.Draw();
   c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
@@ -314,7 +320,7 @@ DrawSelection(TFile* fin, Cut& thisCut){
 
   //////////////////////////////
   //TVirtualPad* p2 = c1.cd(2);
-  graph_title = "; Cut Value (GeV);#frac{S}{#sqrt{S+B}}";
+  graph_title = "; Cut Value (GeV);#frac{N_{S}}{#sqrt{N_{S}+N_{B}}}";
   TMultiGraph mgSignif(graph_name.c_str(), graph_title.c_str());
   TGraph gSignif(nbins, cut, Signif);
   TGraph gSignifPointSig(1, &cut[cutBinSig], &Signif[cutBinSig]);
