@@ -211,7 +211,11 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
                   "p_{T}^{Z} (GeV)", 100, 0, 1000, "GeV", hZpt,dir);
   defineHistoSet("hEvtType", "Event Type",
                   "N_{#mu}", 3, 0, 3, "NONE", hEvtType,dir);
-
+  defineHistoSet("hDRee", "#Delta_{R}^{e_{1},e_{2}}",
+                 "#Delta_{R}^{e_{1},e_{2}}", 50, 0, 5, "NONE", hDRee, dir);
+  defineHistoSet("hDRmm", "#Delta_{R}^{#mu_{1},#mu_{2}}",
+                 "#Delta_{R}^{#mu_{1},#mu_{2}}", 50, 0, 5, "NONE", hDRmm, dir);
+  
   defineHistoSet("hVMass" , "Reconstructed Mass of V",
                   "M_{V} (GeV)", 75, 0, 150, "GeV", hVMass,dir);//Cory: Change back
   defineHistoSet("hVpt", "p_{T}^{V}", 
@@ -235,6 +239,8 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   tVZCand->Branch("Zpt", &Zpt_);
   tVZCand->Branch("Vpt", &Vpt_);
   tVZCand->Branch("Q", &Q_);
+  tVZCand->Branch("DeltaRll", &DeltaRll_);
+  tVZCand->Branch("DeltaRVZ", &DeltaRVZ_);
   tVZCand->Branch("weight", &weight_);
 
 
@@ -639,7 +645,11 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   //////////////////////////////
   
   // Make a Z candidate out of the loose leptons. 
-  ZCandV zCands = getZCands(looseElectrons_, looseMuons_, 100.);
+  ZCandV zCands = getZCands(looseElectrons_, looseMuons_, 100., false);
+  removeLowLepPtCands(zCands, 45., 10);
+  sort(zCands.begin(), zCands.end(), closestToZMass());
+  removeOverlapping(zCands);
+
   zCand_ = zCands.size() ? zCands[0] : ZCandidate();
   if (debug_) cout << "Made zCand" << endl;
 
@@ -661,7 +671,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   fillJetMergingHistos();
 
   vCand_ = getVCand(looseJets_);
-  if (debug_) cout << "Made vCand" << endl;
+  if (debug_) cout << "Made vCand" << endl; 
 
   if( !passValidZCut(vCand_) ) return;
   tabulateEvent(iCut, weight_); ++iCut;
@@ -694,7 +704,6 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   tabulateEvent(iCut, weight_); ++iCut;
   //h_MET_AllCuts->Fill(met_.et(), weight_);
 
-  Q_ = hadVZ_.mass() - zCand_.mass() - vCand_.mass();
   fillValidVZHistos();
 
   //get Trigger 
@@ -797,6 +806,7 @@ HadronicVZAnalyzer::clearEvtVariables(){
   VMass_=-999;
   Vpt_ = -999;
   Q_ = -999;
+  DeltaRll_ = DeltaRVZ_ = -999;
   weight_ = 0;
   genMuons.clear();
   ak7GenJet.clear();
@@ -819,11 +829,13 @@ void HadronicVZAnalyzer::fillHistos(const int& index, const float& weight){
       {
 	hZeeMass[index]->Fill(zCand_.mass(), weight);
 	hMETee[index]->Fill(met_.et(), weight);
+  hDRee[index]->Fill(deltaR(*zCand_.daughter(0), *zCand_.daughter(1)), weight);
       }
     else if (zCand_.flavor() == PDG_ID_MUON) 
       {
 	hZmmMass[index]->Fill(zCand_.mass(), weight);
 	hMETmm[index]->Fill(met_.et(), weight);
+  hDRmm[index]->Fill(deltaR(*zCand_.daughter(0), *zCand_.daughter(1)), weight);
       }
     hZpt[index]->Fill(zCand_.pt(), weight);
     hEvtType[index]->Fill(2*(zCand_.flavor() == PDG_ID_MUON), weight);
@@ -838,11 +850,17 @@ void HadronicVZAnalyzer::fillHistos(const int& index, const float& weight){
   hMET[index]->Fill(met_.et(), weight);
   
   if(CutNames_[index] == "ValidVZ"){
-    if(hadVZ_) VZMass_ = hadVZ_.mass();
+    if(hadVZ_){
+      VZMass_ = hadVZ_.mass();
+      DeltaRVZ_ = deltaR(zCand_, vCand_);
+      Q_ = hadVZ_.mass() - zCand_.mass() - vCand_.mass();
+    }
+
     if(zCand_){
       evtType_ = 2*(zCand_.flavor() == PDG_ID_MUON);
       ZMass_ = zCand_.mass();
       Zpt_ = zCand_.pt();
+      DeltaRll_ = deltaR(*zCand_.daughter(0), *zCand_.daughter(1));
     }
     if(vCand_){
       VMass_ = vCand_.mass();

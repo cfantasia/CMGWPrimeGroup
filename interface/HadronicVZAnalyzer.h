@@ -89,6 +89,7 @@ public:
   float Vpt_;
   float VMass_;
   float Q_;
+  float DeltaRll_, DeltaRVZ_;
   uint evtType_;
 
 
@@ -221,6 +222,7 @@ public:
   std::vector<TH1F*> hZMass, hZeeMass, hZmmMass;
   std::vector<TH1F*> hZpt;
   std::vector<TH1F*> hEvtType;
+  std::vector<TH1F*> hDRee, hDRmm;
 
   std::vector<TH1F*> hMET, hMETee, hMETmm;
 
