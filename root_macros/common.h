@@ -5,6 +5,8 @@
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TTree.h"
+#include <iomanip>
+#include <iostream>
 
 struct Value{
   float val;
@@ -15,6 +17,11 @@ struct Value{
   Value(float v, float e):val(v),err(e){}
   
   int findPrecision() const{
+    if(err < 0.){
+      int nExtra = abs((int)err);
+      Value temp(val);
+      return temp.findPrecision()+nExtra-1;//-1 is since we always print 1 sig fig
+    }
     return max(-1*floor(log10(err)), 0.); 
   }
 
