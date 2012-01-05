@@ -17,7 +17,7 @@ int FindIdx(Double_t* arr, int size, double num){
 }
 
 void
-printTable(){
+printTable(int mode){
   //Need 3 files open:
   //Cuts File
   TTree* tCuts = new TTree("tCuts", "Cuts");
@@ -38,73 +38,83 @@ printTable(){
   tLims->Draw("SignalCode:ExpLimit:ObsLimit", "", "para goff");
   float nLims = tLims->GetSelectedRows(); 
   
-  cout<<"Mass point Window NBkgMC eSig NSig Data Exp. Limit Obs. Limit"<<endl;
+  switch(mode){
 
-  //loop over signals:
-  for(int iLims=0; iLims<nLims; ++iLims){
-    const Double_t  signalCode = tLims->GetVal(0)[iLims];
-    int iCuts = FindIdx(tCuts->GetVal(0), nCuts, signalCode);
-    int iEvts = FindIdx(tEvts->GetVal(0), nEvts, signalCode);
+  case 0:
+    cout<<"Mass point Window NBkgMC eSig NSig Data Exp. Limit Obs. Limit"<<endl;
 
-    const Double_t  mass = tCuts->GetVal(1)[iCuts];
-    const Double_t  minWind = tCuts->GetVal(2)[iCuts];
-    const Double_t  maxWind = tCuts->GetVal(3)[iCuts];
+    //loop over signals:
+    for(int iLims=0; iLims<nLims; ++iLims){
+      const Double_t  signalCode = tLims->GetVal(0)[iLims];
+      int iCuts = FindIdx(tCuts->GetVal(0), nCuts, signalCode);
+      int iEvts = FindIdx(tEvts->GetVal(0), nEvts, signalCode);
 
-    const Double_t  DataEvts = tEvts->GetVal(1)[iCuts];
-    const Double_t     MCEvts = tEvts->GetVal(2)[iCuts];
-    const Double_t statMCEvts = tEvts->GetVal(3)[iCuts];
-    const Double_t     BkgEvts = tEvts->GetVal(4)[iCuts];
-    const Double_t statBkgEvts = tEvts->GetVal(5)[iCuts];
-    const Double_t     SigEvts = MCEvts - BkgEvts;
-    const Double_t statSigEvts = sqrt(statMCEvts*statMCEvts - statBkgEvts*statBkgEvts);
-    const Double_t       Eff = tEvts->GetVal(6)[iCuts];
-    const Double_t      sEff = tEvts->GetVal(7)[iCuts];
+      const Double_t  mass = tCuts->GetVal(1)[iCuts];
+      const Double_t  minWind = tCuts->GetVal(2)[iCuts];
+      const Double_t  maxWind = tCuts->GetVal(3)[iCuts];
 
-    const Double_t expLim = tLims->GetVal(1)[iLims];
-    const Double_t obsLim = tLims->GetVal(2)[iLims];
+      const Double_t  DataEvts = tEvts->GetVal(1)[iCuts];
+      const Double_t     MCEvts = tEvts->GetVal(2)[iCuts];
+      const Double_t statMCEvts = tEvts->GetVal(3)[iCuts];
+      const Double_t     BkgEvts = tEvts->GetVal(4)[iCuts];
+      const Double_t statBkgEvts = tEvts->GetVal(5)[iCuts];
+      const Double_t     SigEvts = MCEvts - BkgEvts;
+      const Double_t statSigEvts = sqrt(statMCEvts*statMCEvts - statBkgEvts*statBkgEvts);
+      const Double_t       Eff = tEvts->GetVal(6)[iCuts];
+      const Double_t      sEff = tEvts->GetVal(7)[iCuts];
 
-    cout<<setiosflags(ios::fixed) << setprecision(0)
-        <<"W' "<<mass<<" & "
-        <<minWind<<"-"<<maxWind<<" & "
-        <<BkgEvts<<" $\\pm$ "<<statBkgEvts<<" & "
-        <<DataEvts<<" & "
-        <<SigEvts<<" $\\pm$ "<<statSigEvts<<" & "
-        <<Eff*100<<" $\\pm$ "<<sEff*100<<" & "
-        <<setprecision(4)
-        <<expLim<<" & "
-        <<obsLim
-        <<" \\\\ \\hline"
-        <<endl;
+      const Double_t expLim = tLims->GetVal(1)[iLims];
+      const Double_t obsLim = tLims->GetVal(2)[iLims];
 
-  }//Table 1
+      cout<<setiosflags(ios::fixed) << setprecision(0)
+          <<"W' "<<mass<<" & "
+          <<minWind<<"-"<<maxWind<<" & "
+          <<Value(BkgEvts,statBkgEvts)<<" $\\pm$ "<<Value(statBkgEvts)<<" & "
+          <<DataEvts<<" & "
+          <<Value(SigEvts,statSigEvts)<<" $\\pm$ "<<Value(statSigEvts)<<" & "
+          <<Value(Eff*100,sEff*100)<<" $\\pm$ "<<Value(sEff*100)<<" & "
+          <<setprecision(4)
+          <<Value(expLim, -2)<<" & "
+          <<Value(obsLim, -2)
+          <<" \\\\ \\hline"
+          <<endl;
 
-  cout<<"\n\n ----After Ht Cut Table (remember to use noWind option!!!!---------------\n\n";
+    }//Table 0
+
+    break;
+
+  case 1:
+    cout<<"\n\n ----After Ht Cut Table (remember to use noWind option!!!!---------------\n\n";
   
-  //loop over signals:
-  for(int iEvts=0; iEvts<nEvts; ++iEvts){
-    const Double_t  signalCode = tEvts->GetVal(0)[iEvts];
-    int iCuts = FindIdx(tCuts->GetVal(0), nCuts, signalCode);
+    //loop over signals:
+    for(int iEvts=0; iEvts<nEvts; ++iEvts){
+      const Double_t  signalCode = tEvts->GetVal(0)[iEvts];
+      int iCuts = FindIdx(tCuts->GetVal(0), nCuts, signalCode);
 
-    const Double_t  mass = tCuts->GetVal(1)[iCuts];
-    const Double_t  minWind = tCuts->GetVal(2)[iCuts];
-    const Double_t  maxWind = tCuts->GetVal(3)[iCuts];
-    const Double_t  minHt   = tCuts->GetVal(4)[iCuts];
+      const Double_t  mass = tCuts->GetVal(1)[iCuts];
+      const Double_t  minWind = tCuts->GetVal(2)[iCuts];
+      const Double_t  maxWind = tCuts->GetVal(3)[iCuts];
+      const Double_t  minHt   = tCuts->GetVal(4)[iCuts];
+      const Double_t  DataEvts = tEvts->GetVal(1)[iCuts];
+      const Double_t     MCEvts = tEvts->GetVal(2)[iCuts];
+      const Double_t statMCEvts = tEvts->GetVal(3)[iCuts];
+      const Double_t     BkgEvts = tEvts->GetVal(4)[iCuts];
+      const Double_t statBkgEvts = tEvts->GetVal(5)[iCuts];
+      const Double_t     SigEvts = MCEvts - BkgEvts;
+      const Double_t statSigEvts = sqrt(statMCEvts*statMCEvts - statBkgEvts*statBkgEvts);
 
-    const Double_t  DataEvts = tEvts->GetVal(1)[iCuts];
-    const Double_t     MCEvts = tEvts->GetVal(2)[iCuts];
-    const Double_t statMCEvts = tEvts->GetVal(3)[iCuts];
-    const Double_t     BkgEvts = tEvts->GetVal(4)[iCuts];
-    const Double_t statBkgEvts = tEvts->GetVal(5)[iCuts];
-    const Double_t     SigEvts = MCEvts - BkgEvts;
-    const Double_t statSigEvts = sqrt(statMCEvts*statMCEvts - statBkgEvts*statBkgEvts);
-
-    cout<<setiosflags(ios::fixed) << setprecision(0)
-        <<"W' "<<mass<<" & "
-        <<minHt<<" & "
-        <<BkgEvts<<" $\\pm$ "<<statBkgEvts<<" & "
-        <<DataEvts<<" & "
-        <<SigEvts<<" $\\pm$ "<<statSigEvts
-        <<" \\\\ \\hline"
-        <<endl;
-  }//Table 2
+      cout<<setiosflags(ios::fixed) << setprecision(0)
+          <<"W' "<<mass<<" & "
+          <<minHt<<" & "
+          <<Value(BkgEvts,statBkgEvts)<<" $\\pm$ "<<Value(statBkgEvts)<<" & "
+          <<DataEvts<<" & "
+          <<Value(SigEvts,statSigEvts)<<" $\\pm$ "<<Value(statSigEvts)
+          <<" \\\\ \\hline"
+          <<endl;
+    }//Table 1
+    break;
+    
+  default:
+    cout<<" What mode did you want???"<<endl;
+  }
 }

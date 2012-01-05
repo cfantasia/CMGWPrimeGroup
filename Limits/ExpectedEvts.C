@@ -303,8 +303,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
         if(BkgSamples[iBkg].find("TTJets") != string::npos ||
            BkgSamples[iBkg].find("ZZ") != string::npos ||
            BkgSamples[iBkg].find("WZJetsTo3LNu") != string::npos ){
-          cout<<" & "<<setiosflags(ios::fixed)<<setprecision(1)<<nPerHist
-              <<" $\\pm$ "<<sPerHist;
+          cout<<" & "<<Value(nPerHist,sPerHist)<<" $\\pm$ "<<Value(sPerHist);
         }
       }
       }
@@ -324,7 +323,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     double sBkgEvts   = AddInQuad( statBkgEvts,  sysBkgEvts);
     double sEff       = AddInQuad(statEff,      sysEff);
 
-    if(printTbl_){ cout<<" & "<<nBkgEvts<<" $\\pm$ "<<statBkgEvts;
+    if(printTbl_){ cout<<" & "<<Value(nBkgEvts,statBkgEvts)<<" $\\pm$ "<<Value(statBkgEvts);
       if(!noWind_){
         //cout<<" & -  ";
       }
