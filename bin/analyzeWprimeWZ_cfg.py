@@ -6,7 +6,7 @@ process.WprimeAnalyzer.candEvtFile = "WprimeWZ.evt"
 
 process.WprimeAnalyzer.Cuts = WprimeWZCuts
 
-process.WprimeAnalyzer.minMET = 50.
+process.WprimeAnalyzer.minMET = 30.
 
 # +++++++++++++++++++Analysis Cuts
 process.WprimeAnalyzer.minHt = cms.untracked.double(270.) #W'600 Cut
