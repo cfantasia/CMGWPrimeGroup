@@ -70,6 +70,8 @@ printNEvts(string infile, int evtType=-1){
 
   //signal
   if(infile.find("WprimeWZ") != string::npos || infile.find("EWKWZ") != string::npos){
+    Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-200"), "200"));
+    Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-250"), "250"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-300"), "300"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-400"), "400"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-500"), "500"));
