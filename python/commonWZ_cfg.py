@@ -19,7 +19,7 @@ process.WprimeAnalyzer.eventCounters = cms.vstring(
     'nEventsHLT',
     'nEventsFiltered',
     'nEventsPat')
-
+process.WprimeAnalyzer.puScale = 1.08
 
 ## input specific for this analyzer
 process.WprimeAnalyzer.muons = 'userPatMuons'

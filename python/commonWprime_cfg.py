@@ -82,6 +82,7 @@ process.WprimeAnalyzer = cms.PSet(
     MCPUDistHist = cms.string('probdistFlat10'),
     DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/root_macros/Cert_160404-180252_7TeV_Collisions11_JSON.pileupTruth_v2_finebin.root'),
     DataPUDistHist = cms.string('pileup'),
+    puScale = cms.double(1.0),
 
     vEventsToDebug = cms.VEventID(#'1:1:1', '2:2:22','3:33:3'
     ),

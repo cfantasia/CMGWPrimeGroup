@@ -33,11 +33,12 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   string MCPUDistHist   = cfg.getParameter<string>("MCPUDistHist" );
   string DataPUDistFile = cfg.getParameter<string>("DataPUDistFile" );
   string DataPUDistHist = cfg.getParameter<string>("DataPUDistHist" );
+  float  puScale        = cfg.getParameter<double>("puScale");
   
   std::vector<edm::EventID> vEventsToDebug = cfg.getParameter<std::vector<edm::EventID> >("vEventsToDebug");
   
   wprimeUtil_ = new WPrimeUtil(genLabel_, pfCandsLabel_, sample_cross_sections);
-  wprimeUtil_->setLumiWeights(MCPUDistFile, DataPUDistFile, MCPUDistHist, DataPUDistHist);
+  wprimeUtil_->setLumiWeights(MCPUDistFile, DataPUDistFile, MCPUDistHist, DataPUDistHist, puScale);
   wprimeUtil_->setEventsToDebug(vEventsToDebug);
   assert(wprimeUtil_);
 

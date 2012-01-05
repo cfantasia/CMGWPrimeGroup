@@ -104,7 +104,8 @@ class WPrimeUtil
   TVector2 getHadronicMET(edm::EventBase const & event);
 
   void setLumiWeights(const std::string & MCFile, const std::string & DataFile, 
-                      const std::string & MCHist, const std::string & DataHist);
+                      const std::string & MCHist, const std::string & DataHist,
+                      const float & puScale);
   static void CheckStream(const ofstream& stream, const std::string & s);
   
   /////////////////////
