@@ -62,25 +62,7 @@ def jetlep_config(process, reportEveryNum=100, maxEvents=-1) :
     process.out.outputCommands.append('keep *_offlinePrimaryVertices_*_*')
     
 
-#    from RecoJets.JetProducers.kt4PFJets_cfi import kt4PFJets
-#    process.kt6PFJetsPFlow = kt4PFJets.clone(
-#        rParam = cms.double(0.6),
-#        src = cms.InputTag('patDefaultSequence'),
-#        doAreaFastjet = cms.bool(True),
-#        doRhoFastjet = cms.bool(True)
-#        )
-
-
     process.patJetCorrFactors.rho = cms.InputTag("kt6PFJetsPFlow", "rho")
-    process.out.outputCommands.append('keep *_kt6PFJets_*_PAT')
+    process.out.outputCommands.append('keep *_kt6PFJets_rho_PAT')
 
-#    process.out.outputCommands.append('keep *')
-#    
-#    getattr(process,"PF2PATmod").replace(
-#        getattr(process,"patDefaultSequence"),
-#        getattr(process,"patDefaultSequence")*process.kt6PFJetsPFlow )
-
-#    process.SkipEvent = cms.untracked.vstring('ProductNotFound')
-
-  
 #print process.patDefaultSequence
