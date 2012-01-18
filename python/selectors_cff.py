@@ -49,12 +49,12 @@ muonSelectors.WZTight = muonSelectors.VBTF.clone(
     )
 muonSelectors.HadVZLoose = muonSelectors.exotica.clone(
     minPt = cms.untracked.double(20.),
-    maxIso03 = cms.untracked.double(0.1)
+#    maxIso03 = cms.untracked.double(0.1)
     
     )
 muonSelectors.HadVZTight = muonSelectors.exotica.clone(
     minPt = cms.untracked.double(35.),
-    maxIso03 = cms.untracked.double(0.1)
+#    maxIso03 = cms.untracked.double(0.1)
     
     )
 #muonSelectors.HadVZTight.remove(maxNormalizedChi2)
