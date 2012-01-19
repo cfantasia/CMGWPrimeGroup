@@ -195,11 +195,32 @@ public:
     return p4_[soln_[type]];
   }
 
+  double discriminant() const{
+    return discriminant_;
+  }
+  double discriminantFrac() const{
+    return discriminantFrac_;
+  }
+  double discriminantAngle() const{
+    return discriminantAngle_;
+  }
+  double discriminantReal() const{
+    return discriminantReal_;
+  }
+  double discriminantImag() const{
+    return discriminantImag_;
+  }
+  
 protected:
 
   std::vector<double> neutrinoPz_;
   std::vector<LorentzVector> p4_;
   std::vector<bool> soln_;
+  double discriminant_;
+  double discriminantFrac_;
+  double discriminantAngle_;
+  double discriminantReal_;
+  double discriminantImag_;
 
   void initialize_() {
     neutrinoPz_ = std::vector<double>(2, 0.);
@@ -208,26 +229,40 @@ protected:
   }
 
   bool setNuSolns(const LorentzVector & wLep, const LorentzVector & met){
+    float mt = sqrt(2 * wLep.Et() * met.Et() * ( 1-cos(reco::deltaPhi(wLep.phi(),met.phi())) ) );
+    double motherMass = std::max(WMASS, mt);
+
     double dPhi         = deltaPhi(wLep.phi(), met.phi());
-    double g            = (WMASS * WMASS / 2. + 
+    double g            = (motherMass * motherMass / 2. + 
                            wLep.pt() * met.pt() * cos(dPhi));
     double a            = - wLep.Perp2();
     double b            = 2 * g * wLep.pz();
     double c            = pow(g, 2) - wLep.P2() * met.Perp2();
+    double term1        = b/(2*a);
     double discriminant = (b * b) - (4 * a * c);
-    
-    if (discriminant > 0) {
+    double discFrac     = term1*term1 - c/a;
+
+    discriminant_ = discriminant;
+    discriminantFrac_ = discFrac;
+    discriminantReal_ = -b + (discriminant > 0 ? sqrt(discriminant) : 0);
+    discriminantImag_ = discriminant > 0 ? 0 :  sqrt(-discriminant);
+
+    discriminantAngle_ = atan( discriminantImag_ / discriminantReal_ );
+
+    //Need a tolerace in here to deal with floating point math
+    if(discFrac < 0 && discFrac > -1.) discFrac = 0.;
+    if (discFrac >= 0) {
       
       TVector3 leptonP3(wLep.px(), wLep.py(), wLep.pz());
     
-      double   pz1 = -b/(2*a) + sqrt(discriminant)/(2*a);
+      double   pz1 = -term1 + sqrt(discFrac);
       TVector3 p1  = TVector3(met.px(), met.py(), pz1);
       TVector3 w1  = leptonP3 + p1;
       double   dr1 = p1.DeltaR(leptonP3);
       double   drW1= p1.DeltaR(w1);
       double   dt1 = fabs(p1.Theta() - leptonP3.Theta());
       
-      double   pz2 = -b/(2*a) - sqrt(discriminant)/(2*a);
+      double   pz2 = -term1 - sqrt(discFrac);
       TVector3 p2  = TVector3(met.px(), met.py(), pz2);
       TVector3 w2  = leptonP3 + p2;
       double   dr2 = p2.DeltaR(leptonP3);
@@ -247,6 +282,23 @@ protected:
       soln_[kMinTheta] = !soln_[kMaxTheta];
       return true;
     }
+
+/*
+    std::cout<<" mother mass: "<<motherMass
+             <<" mt:" <<mt
+             <<" dphi:" <<dPhi
+             <<" g:" <<g
+             <<" a:" <<a
+             <<" b:" <<b
+             <<" c:" <<c
+             <<" b*b:"<<b*b
+             <<" 4ac: "<<4*a*c
+             <<" first: "<<term1*term1
+             <<" 2nd  : "<<c/a
+             <<" disc:" <<discriminant
+             <<" discFrac:" <<discFrac
+             <<"\n";
+*/
     return false;
   }
 
