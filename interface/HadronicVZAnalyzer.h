@@ -227,8 +227,10 @@ public:
   std::vector<TH1F*> hMET, hMETee, hMETmm;
 
 
-  std::vector<TH1F*> hVMass;
-  std::vector<TH1F*> hVpt;
+  std::vector<TH1F*> heeVMass;
+  std::vector<TH1F*> hmmVMass;
+  std::vector<TH1F*> heeVpt;
+  std::vector<TH1F*> hmmVpt;
 
   std::vector<TH1F*> hNLLeps;
   std::vector<TH1F*> hNLJets;

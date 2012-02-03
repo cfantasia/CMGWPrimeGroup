@@ -216,10 +216,18 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   defineHistoSet("hDRmm", "#Delta_{R}^{#mu_{1},#mu_{2}}",
                  "#Delta_{R}^{#mu_{1},#mu_{2}}", 50, 0, 5, "NONE", hDRmm, dir);
   
-  defineHistoSet("hVMass" , "Reconstructed Mass of V",
-                  "M_{V} (GeV)", 75, 0, 150, "GeV", hVMass,dir);//Cory: Change back
-  defineHistoSet("hVpt", "p_{T}^{V}", 
-                  "p_{T}^{V} (GeV)", 100, 0, 1000, "GeV", hVpt,dir);
+  defineHistoSet("heeVMass" , "Reconstructed Mass of V (Zee channel)",
+                  "M_{V} (GeV)", 75, 0, 150, "GeV", heeVMass,dir);//Cory: Change back
+  defineHistoSet("heeVpt", "p_{T}^{V} (Zee channel)", 
+                  "p_{T}^{V} (GeV)", 100, 0, 1000, "GeV", heeVpt,dir);
+
+
+  defineHistoSet("hmmVMass" , "Reconstructed Mass of V (Zmm channel)",
+		 "M_{V} (GeV)", 75, 0, 150, "GeV", hmmVMass,dir);//Cory: Change back                                                                        
+  defineHistoSet("hmmVpt", "p_{T}^{V} (Zmm channel)",
+		 "p_{T}^{V} (GeV)", 100, 0, 1000, "GeV", hmmVpt,dir);
+
+
 
   defineHistoSet("hNLLeps", "Number of Loose Leptons in Event",
                   "N_{l}^{Loose}", 10, 0, 10, "NONE", hNLLeps,dir);
@@ -841,9 +849,21 @@ void HadronicVZAnalyzer::fillHistos(const int& index, const float& weight){
     hEvtType[index]->Fill(2*(zCand_.flavor() == PDG_ID_MUON), weight);
   }
   if(vCand_){
-    hVMass[index]->Fill(vCand_.mass(), weight);
-    hVpt[index]->Fill(vCand_.pt(), weight);
+   
+    if (zCand_.flavor() == PDG_ID_MUON)
+      {
+	hmmVMass[index]->Fill(vCand_.mass(), weight);
+	hmmVpt[index]->Fill(vCand_.pt(), weight);
+      }
+    else if (zCand_.flavor() == PDG_ID_ELEC)
+      { 
+        heeVMass[index]->Fill(vCand_.mass(), weight);
+        heeVpt[index]->Fill(vCand_.pt(), weight);
+      }
+
+
   }
+
   hNLLeps[index]->Fill(looseElectrons_.size()+looseMuons_.size(), weight);
   hNLJets[index]->Fill(looseJets_.size(), weight);
 
