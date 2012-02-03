@@ -14,29 +14,22 @@ process.WprimeAnalyzer.preselect = False
 ## enable analysis in individual channels
 process.WprimeAnalyzer.runHadVZAnalysis = True
 process.WprimeAnalyzer.triggersToUse = cms.vstring(
-    'HLT_Mu11',          # from 2010 data
+    #single mu
     'HLT_Mu15_v*',
     'HLT_Mu17_v*',
     'HLT_Mu20_v*',
     'HLT_Mu24_v*',
     'HLT_Mu30_v*',
-    'HLT_IsoMu15_v*',
-    'HLT_IsoMu17_v*',
-    'HLT_IsoMu24_v*',
-    'HLT_IsoMu30_v*',
-    'HLT_IsoMu40_v*',
-    'HLT_DoubleMu5_v*',
-    'HLT_DoubleMu7_v*',
-    'HLT_TripleMu5_v*',
+    'HLT_Mu40_v*',
+    #double mu
+    'HLT_DoubleMu7_v*',#MC?
     'HLT_Mu13_Mu8_v*', #1e33 unprescaled
-    'HLT_Mu17_Mu8_v*' #3e33 unprescaled
-    'HLT_Ele17_SW_L1R',  # from 2010 data
-    'HLT_Ele17_SW_Isol_L1R_v*',
-    'HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
-    'HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
-    'HLT_Ele42_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*' #2e33(?) unprescaled
-    'HLT_DoubleEle17_SW_L1R_v*',
+    'HLT_Mu17_Mu8_v*', #3e33 unprescaled
+    'HLT_Mu17_TkMu8_v*', #3e33 unprescaled
+
+    #Double E (1 for mc, 1 for data)
     'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
+    'HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v*',#MC
     'HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*',
     )
 
@@ -54,9 +47,14 @@ process.WprimeAnalyzer.maxAngleBetweenJets = cms.double(9999.9)
 process.WprimeAnalyzer.minZpt = cms.untracked.double(150.0) # All units in GeV
 process.WprimeAnalyzer.minZmass = cms.untracked.double(70.0)
 process.WprimeAnalyzer.maxZmass = cms.untracked.double(110.0)
+
 process.WprimeAnalyzer.minVpt = cms.untracked.double(290.0)
+#Nominal V Mass
 process.WprimeAnalyzer.minVmass = cms.untracked.double(70.0)
 process.WprimeAnalyzer.maxVmass = cms.untracked.double(120.0)
+#Sideband V Mass
+#process.WprimeAnalyzer.minVmass = cms.untracked.double(30.0)
+#process.WprimeAnalyzer.maxVmass = cms.untracked.double(70.0)
 #
 
 process.WprimeAnalyzer.Cuts = cms.vstring(
