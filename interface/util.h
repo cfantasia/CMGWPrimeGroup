@@ -140,8 +140,9 @@ namespace wprime{
       assert(weight > 0);
       assert(splitInto > 0);
       assert(pathnames.size()); 
-      assert(description != INVALID); 
       assert(samplename != INVALID);
+      if(description != INVALID) description = samplename;
+      assert(description != INVALID);
     }
 
   };
