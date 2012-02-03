@@ -8,7 +8,7 @@
 const float minPI = 100;
 const float maxPI = 900;
 const float maxRHO = 900;
-const float minRHO = 200;
+const float minRHO = 150;
 const int RHO_INC = 1;
 const int PI_INC = 1;
 
@@ -34,6 +34,7 @@ void PlotLimit2D() {
   //Fill Xsec 2D graph
   TTree* tXsec = new TTree("tXsec", "X Sec");
   tXsec->ReadFile("xSec_TCWZ.dat");
+  //tXsec->ReadFile("xSec_TCWZ-sinchi1d2.dat");
   tXsec->Draw("Rho:Pi:Xsec", "", "para goff");
   int nXsec = tXsec->GetSelectedRows(); assert(nXsec); 
   Double_t* gRho = tXsec->GetVal(0);
@@ -72,7 +73,7 @@ void PlotLimit2D() {
     exp->SetPoint(i, masses[i], expPiLims[i]);
     obs->SetPoint(i, masses[i], obsPiLims[i]);
 
-    cout<<"mass:expLim:obsLim:ExpPi:ObsPi = "<<masses[i]<<":"<<gExpLim->Eval(masses[i])<<":"<<gObsLim->Eval(masses[i])<<"\t"<<expPiLims[i]<<"\t\t"<<obsPiLims[i]<<endl;
+    //cout<<"mass:expLim:obsLim:ExpPi:ObsPi = "<<masses[i]<<":"<<gExpLim->Eval(masses[i])<<":"<<gObsLim->Eval(masses[i])<<"\t"<<expPiLims[i]<<"\t\t"<<obsPiLims[i]<<endl;
     
   }
 
@@ -95,7 +96,12 @@ void PlotLimit2D() {
 
   
   for(unsigned i=0; i<obsPiLims.size(); ++i){///////
-    if(masses[i] == 290) cout<<"For rho=290, pi limit is "<<obsPiLims[i]<<endl;
+    if(masses[i] == 290) cout<<"For rho="<<masses[i]<<", pi limit is "<<obsPiLims[i]
+                             <<" (obs) and "<<expPiLims[i]<<" (exp)"<<endl;
+  }
+  for(unsigned i=0; i<obsPiLims.size(); ++i){///////
+    if(masses[i] == 290) cout<<"For rho=290, pi limit is "<<obsPiLims[i]
+                             <<" (obs) and "<<expPiLims[i]<<" (exp)"<<endl;
   }
 
   exp->SetPoint(expPiLims.size(), maxRHO, maxPI);
@@ -129,32 +135,43 @@ void PlotLimit2D() {
   exp->Draw("L");
   obs->Draw("L");
 
+  TGraph* cdfPoint = new TGraph(1);
+  cdfPoint->SetMarkerColor(kGreen);
+  cdfPoint->SetMarkerStyle(20);
+  cdfPoint->SetPoint(0,290, 160);
+  //cdfPoint->Draw("p");
+
   TLegend* leg = new TLegend(0.30, 0.75, 0.60, 0.90);
   leg->SetBorderSize(0);
   leg->SetFillColor(0);
   leg->AddEntry(exp, "Exp. Limit", "fl");
   leg->AddEntry(obs, "Obs. Limit", "fl");
+  //leg->AddEntry(cdfPoint, "CDF Bump", "p");
   leg->Draw();
 
 
-  TLatex* text = new TLatex(400, 180, "CMS Preliminary 2011 #sqrt{s} = 7 TeV");
-  text->SetTextSize(0.05);
-  text->Draw();
+  TLatex* text0 = new TLatex(540, 200, "CMS Preliminary 2011");
+  text0->SetTextSize(0.05);
+  text0->Draw();
 
-  TLatex* text2 = new TLatex(520, 285, Form("#int L dt = %.2f fb^{-1}",lumi[0]/1000));
+  TLatex* text1 = new TLatex(650, 130, "#sqrt{s} = 7 TeV");
+  text1->SetTextSize(0.05);
+  text1->Draw();
+
+  TLatex* text2 = new TLatex(600, 285, Form("#int L dt = %.2f fb^{-1}",lumi[0]/1000));
   text2->SetTextSize(0.05);
   text2->Draw();
 
-  TLine* line1 = new TLine(minRHO, minRHO-80.4, maxPI, maxPI-80.4);
+  TLine* line1 = new TLine(minPI+80.4, minPI, maxPI, maxPI-80.4);
   line1->SetLineStyle(2);
   line1->SetLineWidth(2);
   line1->Draw();
-/*
-  TLine* line2 = new TLine(300, 200, 700, 500);
+
+  TLine* line2 = new TLine(100, 50, 900, 650);
   line2->SetLineStyle(1);
   line2->SetLineWidth(2);
-  line2->Draw();
-*/
+  //line2->Draw();
+
   TLatex* text3 = new TLatex(317, 265, "M(#pi_{TC}) = M(#rho_{TC}) - M(W)");
   text3->SetTextSize(0.06);
   text3->SetTextAngle(38);

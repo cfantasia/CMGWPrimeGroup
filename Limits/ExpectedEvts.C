@@ -272,6 +272,10 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     }
 
     //Read in Xsec from sample file
+    //double xsec = GetFileInfo(hInfo, "#sigma (pb)");
+    //double lumi = GetFileInfo(hInfo, "#intL dt (pb^{-1})")
+    //double nGen = GetFileInfo(hInfo, "Number of Events Produced");
+
     double xsec = XSec(SignalNames[0], mass);//Cory: this is wrong, how should i combine xsecs???
     double nGenWeighted = lumi*xsec;
     double     Eff = nSigEvts / nGenWeighted;
@@ -303,6 +307,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
         if(BkgSamples[iBkg].find("TTJets") != string::npos ||
            BkgSamples[iBkg].find("ZZ") != string::npos ||
            BkgSamples[iBkg].find("WZJetsTo3LNu") != string::npos ){
+          //cout<<" & "<<std::fixed << std::setprecision(1)<<nPerHist<<" $\\pm$ "<<sPerHist;
           cout<<" & "<<Value(nPerHist,sPerHist)<<" $\\pm$ "<<Value(sPerHist);
         }
       }
@@ -324,6 +329,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     double sEff       = AddInQuad(statEff,      sysEff);
 
     if(printTbl_){ cout<<" & "<<Value(nBkgEvts,statBkgEvts)<<" $\\pm$ "<<Value(statBkgEvts);
+  //if(printTbl_){ cout<<" & "<<std::fixed << std::setprecision(1)<<nBkgEvts<<" $\\pm$ "<<statBkgEvts;
       if(!noWind_){
         //cout<<" & -  ";
       }
@@ -350,7 +356,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
        <<setw(6)<< sysEff<<"  "
        <<setw(6)<<   sEff<<"  "
        <<endl;
-    c1->SaveAs((SignalNames[0] + ".pdf").c_str());
+    if(0) c1->SaveAs((SignalNames[0] + ".pdf").c_str());
 
     //Clean Up
     delete bkghist;

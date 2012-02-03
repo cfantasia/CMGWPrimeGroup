@@ -3,6 +3,7 @@
 #include "TROOT.h"
 #include "TStyle.h"
 #include "TLatex.h"
+#include "TGraphAsymmErrors.h"
 #include "../root_macros/CMSStyle.C"
 #include "consts.h"
 
@@ -17,10 +18,13 @@ struct SignalSample{
   string legendString;
   TTree* tXsec;
   int lineColor;
+  int lineStyle;
+  int bandColor;
   TGraph* gXsec;
+  TGraph* gXsecBand;
 
   SignalSample(){}
-  SignalSample(string n, string xsec, string mass, string cut, string leg, int lc=kBlack){
+  SignalSample(string n, string xsec, string mass, string cut, string leg, int lc=kBlack, int ls=1, int bc=-1){
     name = n;
     sigXsec = xsec;
     massString = mass;
@@ -28,7 +32,10 @@ struct SignalSample{
     legendString = leg;
     tXsec = NULL;
     lineColor = lc;
+    lineStyle = ls;
+    bandColor = bc==-1 ? lc - 7 : bc;
     gXsec = NULL;
+    gXsecBand = NULL;
   }
 };
 
@@ -40,8 +47,10 @@ PlotLimit(string inName){
   string outFile;
   vector<SignalSample> sigs;
   if(inName.find("WprimeWZ") != string::npos){
-    sigs.push_back(SignalSample("W'","xSec_WZ.dat",  "Mass:Xsec",  "", "\\sigma_{W'}"));
-    sigs.push_back(SignalSample("TC","xSec_TCWZ.dat",  "Rho:Xsec",  "Rho>=300 && Pi==Rho*3/4 - 25",  "\\sigma_{TC}", kRed));
+    sigs.push_back(SignalSample("W'","xSec_WZ.dat",  "Mass:Xsec",  "", "\\sigma_{W'}", kBlack, 1, kGray));
+    sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{2}","xSec_TCWZ-sinchi1d2.dat",  "Rho:Xsec",  "Rho>=200 && Pi==Rho*3/4 - 25",  "\\sigma_{TC, sin(#chi)=#frac{1}{2}}", kRed, kDashed));
+    sigs.push_back(SignalSample("TC","xSec_TCWZ.dat",  "Rho:Xsec",  "Rho>=200 && Pi==Rho*3/4 - 25",  "\\sigma_{TC, sin(#chi)=#frac{1}{3}}", kRed));
+    sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{4}","xSec_TCWZ-sinchi1d4.dat",  "Rho:Xsec",  "Rho>=200 && Pi==Rho*3/4 - 25",  "\\sigma_{TC, sin(#chi)=#frac{1}{4}}", kRed, 3));
     outFile = "limitVsMass_WZ.pdf";
   }else if(inName.find("HadVZ") != string::npos){
     sigs.push_back(SignalSample("W'","xSec_WprimeVZ.dat", "Mass:Xsec", "", "\\sigma_{W'}"));
@@ -68,12 +77,13 @@ PlotLimit(string inName){
   cout<<"Now Plot Limit vs Mass\n";
   TCanvas* c1 = new TCanvas("c1", "Exclusion Limit vs Mass");
   TMultiGraph *mg = new TMultiGraph("mg", ";M_{WZ} (GeV);\\sigma #upoint BR (pb)");
-  TLegend *legend = new TLegend(0.18,0.18,0.52,0.42,"");
+  TLegend *legend = new TLegend(0.52, 0.60,0.52+0.38, 0.60+0.24,"");
+  //oldTLegend *legend = new TLegend(0.18,0.18,0.52,0.42,"");
   c1->SetLogy();
   int n=0;
   float* x; 
-  float* y;
-
+  float* y, *yl, *yh;
+  
   TGraph *glumi;
   TGraph *g1Sigma, *g2Sigma;
   TGraph* gData;
@@ -109,32 +119,54 @@ PlotLimit(string inName){
   mg->Add(g1Sigma, "F");
   
   glumi->SetLineColor(kBlack);
-  glumi->SetLineStyle(2);//dashed
+  glumi->SetLineStyle(kDashed);//dashed
   mg->Add(glumi, "L");
-  legend->AddEntry(glumi,"Exp. Limit", "L");
-  legend->AddEntry(g1Sigma,"Exp. \\pm 1\\sigma", "F");
-  legend->AddEntry(g2Sigma,"Exp. \\pm 2\\sigma", "F");
 
   gData = new TGraph(n, mass, ObsLimit);
   gData->SetMarkerStyle(20);
   mg->Add(gData, "P");
   legend->AddEntry(gData,"Obs. Limit", "P");
+
+  legend->AddEntry(glumi,"Exp. Limit", "L");
+  legend->AddEntry(g1Sigma,"Exp. \\pm 1\\sigma", "F");
+  legend->AddEntry(g2Sigma,"Exp. \\pm 2\\sigma", "F");
    
   //////
   
   for(unsigned iSig=0; iSig<sigs.size(); ++iSig){
+    bool drawBand = sigs[iSig].massString.find("percentError") != string::npos;
     sigs[iSig].tXsec->Draw( sigs[iSig].massString.c_str(), sigs[iSig].cutString.c_str(), "goff");
     n = sigs[iSig].tXsec->GetSelectedRows(); assert(n);
     x = new float[n]; y = new float[n];
+    yl = new float[n]; yh = new float[n];
+    sigs[iSig].gXsecBand = new TGraph(2*n);
+    float* sxSec = new float[n];
     for(int i=0; i<n; ++i){
       x[i] = sigs[iSig].tXsec->GetV1()[i];
       y[i] = sigs[iSig].tXsec->GetV2()[i];
+
+      //Fill theory band around xsec curve
+      //Cory: testing for now
+      if(drawBand){
+        sxSec[i] = sigs[iSig].tXsec->GetV3()[i] / 100.;
+        sigs[iSig].gXsecBand->SetPoint(    i  , x[i], y[i]*(1 + sxSec[i]));
+        sigs[iSig].gXsecBand->SetPoint(2*n-i-1, x[i], y[i]*(1 - sxSec[i]));
+      }
     }
+    if(drawBand){
+      sigs[iSig].gXsecBand->SetFillColor(sigs[iSig].bandColor);
+      mg->Add(sigs[iSig].gXsecBand,"F");
+    }
+
     sigs[iSig].gXsec = new TGraph(n, x, y);
     sigs[iSig].gXsec->SetLineColor(sigs[iSig].lineColor);
-    mg->Add(sigs[iSig].gXsec,"l");
-    legend->AddEntry(sigs[iSig].gXsec,sigs[iSig].legendString.c_str(), "L");
-    delete x; delete y;
+    sigs[iSig].gXsec->SetLineStyle(sigs[iSig].lineStyle);
+    if(drawBand) sigs[iSig].gXsec->SetFillColor(sigs[iSig].bandColor);
+    mg->Add(sigs[iSig].gXsec,"L");
+    legend->AddEntry(sigs[iSig].gXsec,sigs[iSig].legendString.c_str(), drawBand ? "LF" : "L");
+
+    
+    delete[] x; delete[] y; delete sxSec;
   }
 
   cout<<"Drawing multigraph"<<endl;
@@ -144,9 +176,14 @@ PlotLimit(string inName){
   for(unsigned iSig=0; iSig<sigs.size(); ++iSig){
     float limit(-1);
     limit = FindLimit(sigs[iSig].gXsec, gData); 
+    if(0){//round limit
+      int roundToNearest = 10;//Cool trick
+      limit = round(limit/roundToNearest)*roundToNearest; 
+    }
     cout<<sigs[iSig].name<<" Limit is "<<limit<<endl;
-    if(limit > 0.) 
-      latexLabel.DrawLatex(0.69, 0.75-iSig*0.05, Form("#font[132]{Limit_{%s} = %.0f GeV}",sigs[iSig].name.c_str(),limit));
+    if(limit > 0. && sigs[iSig].lineStyle == 1) 
+      latexLabel.DrawLatex(0.20, 0.3-iSig*0.04, Form("#font[132]{Limit_{%s} = %.0f GeV}",sigs[iSig].name.c_str(),limit));
+    //old latexLabel.DrawLatex(0.69, 0.75-iSig*0.05, Form("#font[132]{Limit_{%s} = %.0f GeV}",sigs[iSig].name.c_str(),limit));
   }  
   latexLabel.DrawLatex(0.18, 0.96, "#font[132]{CMS Preliminary 2011}");
   latexLabel.DrawLatex(0.5, 0.955, "#font[132]{#sqrt{s} = 7 TeV}");
@@ -156,11 +193,12 @@ PlotLimit(string inName){
   legend->SetTextSize(0.05);
   legend->SetBorderSize(0);
   legend->SetFillStyle(0);
-  //legend->SetNColumns(2);
+  legend->SetNColumns(2);
   legend->Draw();
 
   cout<<"Saving as "<<outFile<<endl;
   c1->SaveAs(outFile.c_str());
+  //c1->SaveAs("limitVsMass_WZ.C");
 
   return;
 }
@@ -177,11 +215,18 @@ GetEndPoints(int & start, int& end, Double_t* y, float line){
 
 float 
 FindLimit(const TGraph* xsec, const TGraph* limit){
-  float lower = min(xsec->GetX()[0], limit->GetX()[0]);
+/*  float lower = 300;///min(xsec->GetX()[0], limit->GetX()[0]);
   float upper = max(xsec->GetX()[xsec->GetN()-1], limit->GetX()[limit->GetN()-1]);
   const float INC = 1;
   for(float mass=lower; mass<upper; mass+=INC){
     if(xsec->Eval(mass) < limit->Eval(mass)) return mass;
+  }
+*/
+  float lower = 0;///min(xsec->GetX()[0], limit->GetX()[0]);
+  float upper = max(xsec->GetX()[xsec->GetN()-1], limit->GetX()[limit->GetN()-1]);
+  const float INC = 1;
+  for(float mass=upper; mass>=lower; mass-=INC){
+    if(xsec->Eval(mass) > limit->Eval(mass)) return mass+1;
   }
 
   return -1;

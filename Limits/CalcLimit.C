@@ -10,13 +10,13 @@ root -b -q -n CalcLimit.C+
 #include "../../../StatisticalTools/RooStatsRoutines/root/roostats_cl95.C"
 
 void
-CalcLimit(bool useCLs=true){
+CalcLimit(bool useCLs=true, string inName="nEvents.txt", string outName="nLimit.txt"){
   gErrorIgnoreLevel = kWarning;
 //  gSystem->SetIncludePath( "-I$ROOFITSYS/include" );
   gSystem->SetIncludePath( "-I/afs/hep.wisc.edu/cern/.root/root_v5.30.00.Linux-slc5_amd64-gcc4.3/include/RooStats" );
 //  gROOT->ProcessLine(".L ../../../StatisticalTools/RooStatsRoutines/root/roostats_cl95.C+");
   
-  string outfile("nLimit.txt");
+  string outfile(outName.c_str());
   ofstream out(outfile.c_str());
   if(!out) { 
     cout << "Cannot open file " << outfile << endl; 
@@ -43,7 +43,7 @@ CalcLimit(bool useCLs=true){
      <<endl;
 
   TTree* tree = new TTree("tree", "Number of Events");
-  tree->ReadFile("nEvents.txt");
+  tree->ReadFile(inName.c_str());
   tree->Draw("SignalCode:Mass:Lumi:DataEvts:BkgEvts:sBkgEvts:Eff:sEff", 
              "", "para goff");
   float n = tree->GetSelectedRows(); 
@@ -100,13 +100,13 @@ CalcLimit(bool useCLs=true){
        <<setprecision(4)
        <<BkgEvts<<"\t"
        <<sBkgEvts<<"\t"
-       <<setprecision(6)
-       <<obs_limit<<"\t"
-       <<exp_limit<<"\t"
-       <<exp_up<<"\t"
-       <<exp_down<<"\t"
-       <<exp_2up<<"\t"
-       <<exp_2down
+//       <<setprecision(4)
+       <<Value(obs_limit,-4)<<"\t"
+       <<Value(exp_limit,-4)<<"\t"
+       <<Value(exp_up,-4)<<"\t"
+       <<Value(exp_down,-4)<<"\t"
+       <<Value(exp_2up,-4)<<"\t"
+       <<Value(exp_2down,-4)
        <<endl;
   }
   

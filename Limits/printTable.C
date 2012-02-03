@@ -69,9 +69,15 @@ printTable(int mode){
       cout<<setiosflags(ios::fixed) << setprecision(0)
           <<"W' "<<mass<<" & "
           <<minWind<<"-"<<maxWind<<" & "
+          <<std::fixed << std::setprecision(1)
           <<Value(BkgEvts,statBkgEvts)<<" $\\pm$ "<<Value(statBkgEvts)<<" & "
-          <<DataEvts<<" & "
+        //<<BkgEvts<<" $\\pm$ "<<statBkgEvts<<" & "
+          <<(int)DataEvts<<" & "
+          <<std::fixed << std::setprecision(1)
+        //<<SigEvts<<" $\\pm$ "<<statSigEvts<<" & "
           <<Value(SigEvts,statSigEvts)<<" $\\pm$ "<<Value(statSigEvts)<<" & "
+          <<std::fixed << std::setprecision(1)
+        //<<Eff*100<<" $\\pm$ "<<sEff*100<<" & "
           <<Value(Eff*100,sEff*100)<<" $\\pm$ "<<Value(sEff*100)<<" & "
           <<setprecision(4)
           <<Value(expLim, -2)<<" & "
@@ -106,8 +112,12 @@ printTable(int mode){
       cout<<setiosflags(ios::fixed) << setprecision(0)
           <<"W' "<<mass<<" & "
           <<minHt<<" & "
+          <<setiosflags(ios::fixed) << setprecision(1)
+        //<<BkgEvts<<" $\\pm$ "<<statBkgEvts<<" & "
           <<Value(BkgEvts,statBkgEvts)<<" $\\pm$ "<<Value(statBkgEvts)<<" & "
-          <<DataEvts<<" & "
+          <<(int)DataEvts<<" & "
+          <<setiosflags(ios::fixed) << setprecision(1)
+        //<<SigEvts<<" $\\pm$ "<<statSigEvts
           <<Value(SigEvts,statSigEvts)<<" $\\pm$ "<<Value(statSigEvts)
           <<" \\\\ \\hline"
           <<endl;
