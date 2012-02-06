@@ -1,8 +1,8 @@
 from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
-process.WprimeAnalyzer.outputFile  = "HadVZAnalyzer.root"
-process.WprimeAnalyzer.logFile     = "HadVZAnalyzer.log"
-process.WprimeAnalyzer.candEvtFile = "HadVZAnalyzer.lst"
+process.WprimeAnalyzer.outputFile  = "HadVZAnalyzer_Fall11.root"
+process.WprimeAnalyzer.logFile     = "HadVZAnalyzer_Fall11.log"
+process.WprimeAnalyzer.candEvtFile = "HadVZAnalyzer_Fall11.lst"
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_HadVZ.txt"
 
 process.WprimeAnalyzer.maxEvents   = -1
@@ -10,6 +10,9 @@ process.WprimeAnalyzer.reportAfter = -10
 process.WprimeAnalyzer.useJSON = False
 process.WprimeAnalyzer.debug = False
 process.WprimeAnalyzer.preselect = False
+
+## Add proper Fall11 PU distribution
+process.WprimeAnalyzer.MCPUDistHist = 'Fall11Dist'
 
 ## enable analysis in individual channels
 process.WprimeAnalyzer.runHadVZAnalysis = True
