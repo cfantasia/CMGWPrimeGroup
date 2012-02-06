@@ -112,6 +112,10 @@ public:
   std::vector<reco::GenParticle> genElectrons;
   std::vector<reco::GenJet> ak7GenJet;
 
+  //Handles
+  edm::Handle<std::vector<reco::Vertex> > verticesH_;
+
+
 //////Chosen Vector Boson Candidates 
   ZCandidate zCand_, vCand_;
   VZCandidate hadVZ_;
@@ -232,6 +236,7 @@ public:
   std::vector<TH1F*> heeVpt;
   std::vector<TH1F*> hmmVpt;
 
+  std::vector<TH1F*> hNVtxs;
   std::vector<TH1F*> hNLLeps;
   std::vector<TH1F*> hNLJets;
 

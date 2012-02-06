@@ -227,7 +227,8 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   defineHistoSet("hmmVpt", "p_{T}^{V} (Zmm channel)",
 		 "p_{T}^{V} (GeV)", 100, 0, 1000, "GeV", hmmVpt,dir);
 
-
+  defineHistoSet("hNVtxs", "Number of Vertexs in Event",
+                 "N_{Vtx}", 50, 0, 50, "NONE", hNVtxs,dir);
 
   defineHistoSet("hNLLeps", "Number of Loose Leptons in Event",
                   "N_{l}^{Loose}", 10, 0, 10, "NONE", hNLLeps,dir);
@@ -571,7 +572,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   }
 
   //get Vertex
-  //vertices_ = getProduct<vector<reco::Vertex> >(event,vertexLabel_);
+  event.getByLabel(vertexLabel_, verticesH_);
 
 
   //////////////////////////////////////////////
@@ -867,6 +868,7 @@ void HadronicVZAnalyzer::fillHistos(const int& index, const float& weight){
   hNLLeps[index]->Fill(looseElectrons_.size()+looseMuons_.size(), weight);
   hNLJets[index]->Fill(looseJets_.size(), weight);
 
+  hNVtxs[index]->Fill((*verticesH_).size(), weight);
   hMET[index]->Fill(met_.et(), weight);
   
   if(CutNames_[index] == "ValidVZ"){
