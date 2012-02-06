@@ -42,7 +42,7 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   wprimeUtil_->setEventsToDebug(vEventsToDebug);
   assert(wprimeUtil_);
 
-  wprimeUtil_->getInputFiles(inputFiles_);
+  wprimeUtil_->getInputFiles(inputFiles_, fileToRun);
   if(fileToRun != -1){
     if(fileToRun < (int)inputFiles_.size()){
       inputFiles_.assign(1,inputFiles_[fileToRun]);
@@ -61,9 +61,10 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   string candEvtFile = cfg.getParameter<string>("candEvtFile");
 
   if(fileToRun != -1){
-    outputFile = Form("Sample%i_%s",fileToRun,outputFile.c_str()); 
-    logFile = Form("Sample%i_%s",fileToRun,logFile.c_str()); 
-    candEvtFile = Form("Sample%i_%s",fileToRun,candEvtFile.c_str()); 
+    string tail = Form("_Sample%i.",fileToRun);
+    outputFile.replace(outputFile.find_last_of("."), 1, tail); 
+    logFile.replace(logFile.find_last_of("."), 1, tail); 
+    candEvtFile.replace(candEvtFile.find_last_of("."), 1, tail); 
   }
 
   fs = new fwlite::TFileService(outputFile);

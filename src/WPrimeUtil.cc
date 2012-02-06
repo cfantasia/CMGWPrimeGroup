@@ -76,7 +76,7 @@ void WPrimeUtil::setRecoilProjections()
 }
 
 // get input files (to be retrieved from samples_cross_sections.txt)
-void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
+void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles, const int fileToRun)
 {
   string txt_file = "UserCode/CMGWPrimeGroup/config/" + sample_cross_sections;
   ifstream in(txt_file.c_str());
@@ -110,10 +110,12 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
         //smaller samples for faster processing in parallel.  
         //Caveat: Splitting is not recommended if you do not run in parallel
         //since the directory (sample) name is not being changed.
+        //This is now protected against
         //Default is not to split (splitInto = 1)
         vstring pathnames = new_file->pathnames;
-        size_t splitInto = new_file->splitInto;
+        size_t splitInto = (fileToRun == -1) ? 1 : new_file->splitInto;
         size_t nPerFile = ceil((float) pathnames.size() / splitInto);
+        string descrip = new_file->description;
         if(splitInto > 1) 
           cout<<"Trying to split file with "<<pathnames.size()<<" files into "
               <<splitInto<<" parts, with "<<nPerFile<<" files per part"<<endl;
@@ -123,7 +125,7 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles)
           if(first >= pathnames.size()) break;
           new_file->pathnames.assign(pathnames.begin()+first,
                                      pathnames.begin()+last);
-
+          if(splitInto > 1) new_file->description = descrip + Form(" (Part %lu)",i+1);
           // all info should now be logged in; check!
           new_file->checkFile();
           // if we made it here, everything looks good: 
