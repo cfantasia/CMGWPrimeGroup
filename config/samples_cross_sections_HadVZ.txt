@@ -1,6 +1,10 @@
 Top Level Dir = 
 integrated lumi = 4632 pb^-1
 
+#############
+##Summer 11##
+#############
+
 samplename = Summer11_RSZZmmjj_750
 description = Summer11_RSZZmmjj_750
 x-section = 0.00835
@@ -161,6 +165,7 @@ x-section = 25.1
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V350-Summer11_DYJetsToLL_PtZ100.txt
 Nprod_evt = 1137280
+splitInto = 10
 
 samplename = Summer11_TTJets
 description = Summer11_TTJets
@@ -168,6 +173,7 @@ x-section = 157.5
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V350-Summer11_TTJets.txt
 Nprod_evt = 3646584
+splitInto = 30
 
 samplename = Summer11_WW
 description = Summer11_WW
@@ -175,6 +181,7 @@ x-section = 3.783
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V350-Summer11_WW.txt
 Nprod_evt = 1197558
+splitInto = 10
 
 samplename = Summer11_WZ
 description = Summer11_WZ
@@ -182,6 +189,7 @@ x-section = 1.144
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V350-Summer11_WZ.txt
 Nprod_evt = 952332
+splitInto = 5
 
 samplename = Summer11_ZZ
 description = Summer11_ZZ
@@ -189,6 +197,7 @@ x-section = 0.5742
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V350-Summer11_ZZ.txt
 Nprod_evt = 1013369
+splitInto = 10
 
 samplename = Summer11_VGamma
 description = Summer11_VGamma
@@ -196,6 +205,7 @@ x-section = 56.54
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V350-Summer11_VGamma.txt
 Nprod_evt = 1067879
+splitInto = 5
 
 samplename = Summer11_WJets_PtW100
 description = Summer11_WJets_PtW100
@@ -203,6 +213,23 @@ x-section = 212.5
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V350-Summer11_WJetsToLNu_PtW100.txt
 Nprod_evt = 6382667
+splitInto = 10
+
+#############
+###Fall 11###
+#############
+
+samplename = Fall11_DYJetsToLL_M50
+description = Fall11_DYJetsToLL_M50
+x-section = 2475.0
+subdir = dcache:/pnfs/cms/WAX/11
+pathname = filelists_HadVZ/DiLeptonJet-V360B-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola.txt
+Nprod_evt = 36209629
+splitInto = 20
+
+############
+### Data ###
+############
 
 samplename = data_DoubleMu-Run2011A-May10ReReco-v1
 description = data_DoubleMu-Run2011A-May10ReReco-v1
@@ -223,16 +250,19 @@ samplename = data_DoubleMu-Run2011A-PromptReco-v4
 description = data_DoubleMu-Run2011A-PromptReco-v4
 subdir = dcache:/pnfs/cms/WAX/11
 pathname = filelists_HadVZ/DiLeptonJet-V360B-DoubleMu-Run2011A-PromptReco-v4.txt
+splitInto = 2
 
 samplename = data_SingleMu-Run2011A-PromptReco-v4
 description = data_SingleMu-Run2011A-PromptReco-v4
 subdir = dcache:/pnfs/cms/WAX/11
 pathname = filelists_HadVZ/DiLeptonJet-V360B-SingleMu-Run2011A-PromptReco-v4.txt
+splitInto = 2
 
 samplename = data_DoubleElectron-Run2011A-PromptReco-v4
 description = data_DoubleElectron-Run2011A-PromptReco-v4
 subdir = dcache:/pnfs/cms/WAX/11
 pathname = filelists_HadVZ/DiLeptonJet-V360B-DoubleElectron-Run2011A-PromptReco-v4.txt
+splitInto = 2
 
 samplename = data_DoubleMu-Run2011A-05Aug2011-v1
 description = data_DoubleMu-Run2011A-05Aug2011-v1
@@ -268,11 +298,19 @@ samplename = data_DoubleMu-Run2011B-PromptReco-v1
 description = data_DoubleMu-Run2011B-PromptReco-v1
 subdir = dcache:/pnfs/cms/WAX/11
 pathname = filelists_HadVZ/DiLeptonJet-V360B-DoubleMu-Run2011B-PromptReco-v1.txt
+splitInto = 3
 
 samplename = data_DoubleElectron-Run2011B-PromptReco-v1
 description = data_DoubleElectron-Run2011B-PromptReco-v1
 subdir = dcache:/pnfs/cms/WAX/11
 pathname = filelists_HadVZ/DiLeptonJet-V360B-DoubleElectron-Run2011B-PromptReco-v1.txt
+splitInto = 3
+
+samplename = data_SingleMu-Run2011B-PromptReco-v1
+description = data_SingleMu-Run2011B-PromptReco-v1
+subdir = dcache:/pnfs/cms/WAX/11
+pathname = filelists_HadVZ/DiLeptonJet-V360B-SingleMu-Run2011B-PromptReco-v1.txt
+splitInto = 3
 
 DONE
 
