@@ -49,7 +49,10 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
     }else{
       cerr<<"You asked for sample "<<fileToRun
           <<" but only "<<inputFiles_.size()
-          <<" are listed!\n";
+          <<" are listed!\nHere is the list\n";
+      for(unsigned i=0; i<inputFiles_.size(); ++i) 
+        cerr<<" Sample "<<i<<": "<<inputFiles_[i].samplename
+            <<" (" << inputFiles_[i].description << ")\n";
       inputFiles_.clear();
       abort();
     }
