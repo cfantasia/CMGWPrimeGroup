@@ -136,6 +136,7 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles, cons
         cout << endl;
         // release memory
         delete new_file;
+        new_file = NULL;
       }
     }
   }
