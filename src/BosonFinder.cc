@@ -84,38 +84,35 @@ WCandidate getWCand(const ElectronV & electrons,
 }
 
 /// Return a hadronic WCandidate
-ZCandidate getVCand(const JetV & jets)
+ZCandidate getVCand(const JetV & jets, const int mode)
 {
-  // Order by pt - do it the dumb way because we only have a const&
-  /*  double maxPt = -1.0;
-  size_t maxPtPosition = 0;
-  for (size_t i=0; i!= jets.size(); ++i) {
-    if(jets[i].pt() > maxPt) {
-      maxPt = jets[i].pt();
-      maxPtPosition = i;
+  size_t bestPos = 0;
+  if(mode==0){
+    // Order by pt - do it the dumb way because we only have a const&
+    double maxPt = -1.0;
+    for (size_t i=0; i!= jets.size(); ++i) {
+      if(jets[i].pt() > maxPt) {
+        maxPt = jets[i].pt();
+        bestPos = i;
+      }
     }
-    }*/
-  //  WCandidate w(jets[maxPtPosition]);                                                                                                                     
-
-  //order by closest to 85GeV (Vmass)
-  double minMassDiff = -999.0;
-  double Vmass = 85.0;
-  size_t minMassPosition = 0;
-  for (size_t i=0; i!=jets.size(); ++i) {
-    if(fabs(jets[i].mass()-Vmass) < minMassDiff ) {
-      minMassDiff = fabs(jets[i].mass()-Vmass);
-      minMassPosition = i;
+  }else if(mode==1){
+    //order by closest to 85GeV (VMASS)
+    double minMassDiff = 999.0;
+    for (size_t i=0; i!=jets.size(); ++i) {
+      if(fabs(jets[i].mass()-VMASS) < minMassDiff ) {
+        minMassDiff = fabs(jets[i].mass()-VMASS);
+        bestPos = i;
+      }
     }
   }
-
-  ZCandidate v(jets[minMassPosition]);
-
-  return v;
+  return jets.size() ? ZCandidate(jets[bestPos]) : ZCandidate();
 }
 
 ZCandidate getVCand2(const JetV & jets)
 {
   // Order by pt - do it the dumb way because we only have a const&
+  if(jets.size() < 2) return ZCandidate();
   double maxPt = -1.0;
   size_t maxPtPosition1 = 0;
   size_t maxPtPosition2 = 1;
@@ -133,7 +130,7 @@ ZCandidate getVCand2(const JetV & jets)
       maxPtPosition2 = i;
     }
   }
-
+  
   return ZCandidate(jets[maxPtPosition1], jets[maxPtPosition2]);
 }
 

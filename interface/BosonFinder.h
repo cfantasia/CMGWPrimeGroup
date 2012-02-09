@@ -405,7 +405,7 @@ WCandidate getWCand(const ElectronV & electrons,
                     const pat::MET & met,
                     const ZCandidate & zCand,
                     double minDeltaR = 0.);
-ZCandidate getVCand(const JetV & jets);
+ZCandidate getVCand(const JetV & jets, const int mode=0);
 ZCandidate getVCand2(const JetV & jets);
 
 #endif
