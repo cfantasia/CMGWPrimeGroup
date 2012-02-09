@@ -5,6 +5,11 @@ integrated lumi = 4632 pb^-1
 ##Summer 11##
 #############
 
+################
+##Signal Samples##
+################
+
+
 samplename = Summer11_RSZZmmjj_750
 description = Summer11_RSZZmmjj_750
 x-section = 0.00835
@@ -159,6 +164,10 @@ subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V350-Summer11_WPrime_m1500.txt
 Nprod_evt = 30624
 
+#####################
+##Background Samples ##
+#####################
+
 samplename = Summer11_DYJetsToLL_PtZ100
 description = Summer11_DYJetsToLL_PtZ100
 x-section = 25.1 
@@ -219,6 +228,10 @@ splitInto = 10
 ###Fall 11###
 #############
 
+#####################
+##Background Samples ##
+#####################
+
 samplename = Fall11_DYJetsToLL_M50
 description = Fall11_DYJetsToLL_M50
 x-section = 2475.0
@@ -226,6 +239,70 @@ subdir = dcache:/pnfs/cms/WAX/11
 pathname = filelists_HadVZ/DiLeptonJet-V360B-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola.txt
 Nprod_evt = 36209629
 splitInto = 20
+
+samplename = Fall11_DYJetsToLL_PtZ100
+description = Fall1111_DYJetsToLL_PtZ100
+x-section = 25.1 
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V370-Fall11_DYJetsToLL_PtZ100.txt
+Nprod_evt = 1134960
+splitInto = 10
+
+samplename = Fall11_TTJets
+description = Fall11_TTJets
+x-section = 157.5
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V370-Feb6-Fall11-TTJets_02.txt
+Nprod_evt = 3636139
+splitInto = 30
+
+samplename = Fall11_WW
+description = Fall11_WW
+x-section = 3.783
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V370-Feb6-Fall11-WW.txt
+Nprod_evt = 956134
+splitInto = 10
+
+samplename = Fall11_WZ
+description = Fall11_WZ
+x-section = 1.144
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V370-Feb6-Fall11-WZ.txt
+Nprod_evt = 952332
+splitInto = 5
+
+samplename = Fall11_ZZ
+description = Fall11_ZZ
+x-section = 0.5742
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V370-Feb6-Fall11-ZZ.txt
+Nprod_evt = 1010808
+splitInto = 10
+
+samplename = Fall11_VGamma
+description = Fall11_VGamma
+x-section = 56.54
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V370-Feb6-Fall11-VGamma.txt
+Nprod_evt = 1058387
+splitInto = 5
+
+samplename = Fall11_WJets_PtW100
+description = Fall11_WJets_PtW100
+x-section = 212.5
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V370-Feb6-Fall11-WJetsToLNu_PtW100.txt
+Nprod_evt = 8087094
+splitInto = 10
+
+samplename = Fall11_WJets
+description = Fall11_WJets
+x-section = 27770
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V370-Feb6-Fall11-WJets.txt
+Nprod_evt = 30359298
+splitInto = 10
 
 ############
 ### Data ###
