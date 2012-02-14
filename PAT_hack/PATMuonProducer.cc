@@ -583,7 +583,7 @@ void PATMuonProducer::fillDescriptions(edm::ConfigurationDescriptions & descript
   iDesc.add<bool>("embedPFCandidate", false)->setComment("embed external particle flow object");
 
   // TeV refit 
-  iDesc.ifValue( edm::ParameterDescription<bool>("addTeVRefits", true, true, true, true),
+  iDesc.ifValue( edm::ParameterDescription<bool>("addTeVRefits", true, true),
 		 true >> (edm::ParameterDescription<edm::InputTag>("pickySrc", edm::InputTag(), true) and
 			  edm::ParameterDescription<edm::InputTag>("tpfmsSrc", edm::InputTag(), true) and 
 			  edm::ParameterDescription<edm::InputTag>("defaultTeVSrc", edm::InputTag(), true) and 
