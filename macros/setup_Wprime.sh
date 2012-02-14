@@ -9,8 +9,8 @@ exit
 fi
 
 # Definitions
-RELEASE_VERSION=CMSSW_4_2_5
-WORKING_AREA=V380
+RELEASE_VERSION=CMSSW_4_2_8_patch7
+WORKING_AREA=V390
 # end definitions
 
 export RELEASE_VERSION WORKING_AREA
@@ -32,14 +32,16 @@ echo -e  " Checking out the code..."
 echo -e  "**************************"
 #cvs -Q co -r $RELEASE_VERSION DataFormats/PatCandidates
 #cvs -Q co -r $RELEASE_VERSION PhysicsTools/PatAlgos
-cvs -Q co -r V06-04-19-01 DataFormats/PatCandidates
-cvs -Q co -r V08-06-41 PhysicsTools/PatAlgos
+cvs -Q co -r V06-04-19-04 DataFormats/PatCandidates
+cvs -Q co -r V08-06-54 PhysicsTools/PatAlgos
 cvs -Q co -r V00-07-00 -d SHarper/HEEPAnalyzer UserCode/SHarper/HEEPAnalyzer 
 cvs -Q co -r V08-03-12 PhysicsTools/Utilities
 cvs -Q co -r V03-03-07 RecoLuminosity/LumiDB
 cvs -Q co -r V00-01-03 StatisticalTools/RooStatsRoutines
-cvs -Q co -r V00-03-80 UserCode/CMGWPrimeGroup
-#cvs -Q co UserCode/CMGWPrimeGroup
+cvs -Q co -r B4_2_X_cbern_eNoVeto_18Jan12 CommonTools/ParticleFlow
+cvs -Q co -r V03-09-18 PhysicsTools/PatUtils
+#cvs -Q co -r V00-03-90 UserCode/CMGWPrimeGroup
+cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"
 echo -e  " Hack PAT Muon content to include high-pt reconstructors..."
