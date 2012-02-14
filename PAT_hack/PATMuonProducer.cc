@@ -402,6 +402,20 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 	  if (it != tpfmsMap->end()) aMuon.setTpfmsMuon(it->val);
 	  if (embedTpfmsMuon_) aMuon.embedTpfmsMuon();
 	}
+
+	if (!defaultTeVMap.failedToGet()) {
+	  it = defaultTeVMap->find(globalTrack);
+	  if (it != defaultTeVMap->end())
+	    aMuon.setDefaultTeVMuon(it->val);
+	  if (embedDefaultTeVMuon_) aMuon.embedDefaultTeVMuon();
+	}
+	
+	if (!dytMap.failedToGet()) {
+	  it = dytMap->find(globalTrack);
+	  if (it != dytMap->end()) aMuon.setDytMuon(it->val);
+	  if (embedDytMuon_) aMuon.embedDytMuon();
+	}
+
       }
       
       // Isolation
@@ -569,9 +583,11 @@ void PATMuonProducer::fillDescriptions(edm::ConfigurationDescriptions & descript
   iDesc.add<bool>("embedPFCandidate", false)->setComment("embed external particle flow object");
 
   // TeV refit 
-  iDesc.ifValue( edm::ParameterDescription<bool>("addTeVRefits", true, true),
+  iDesc.ifValue( edm::ParameterDescription<bool>("addTeVRefits", true, true, true, true),
 		 true >> (edm::ParameterDescription<edm::InputTag>("pickySrc", edm::InputTag(), true) and
-			  edm::ParameterDescription<edm::InputTag>("tpfmsSrc", edm::InputTag(), true)) 
+			  edm::ParameterDescription<edm::InputTag>("tpfmsSrc", edm::InputTag(), true) and 
+			  edm::ParameterDescription<edm::InputTag>("defaultTeVSrc", edm::InputTag(), true) and 
+			  edm::ParameterDescription<edm::InputTag>("dytSrc", edm::InputTag(), true))
 		 )->setComment("If TeV refits are added, their sources need to be specified");
 
   // MC matching configurables
