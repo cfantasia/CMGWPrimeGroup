@@ -230,6 +230,12 @@ void HadronicVZAnalyzer::defineHistos(const TFileDirectory & dir){
   defineHistoSet("hNVtxs", "Number of Vertexs in Event",
                  "N_{Vtx}", 50, 0, 50, "NONE", hNVtxs,dir);
 
+  defineHistoSet("hmmNVtxs", "Number of Vertexs in Event",
+                 "N_{Vtx}", 50, 0, 50, "NONE", hmmNVtxs,dir);
+
+  defineHistoSet("heeNVtxs", "Number of Vertexs in Event",
+                 "N_{Vtx}", 50, 0, 50, "NONE", heeNVtxs,dir);
+
   defineHistoSet("hNLLeps", "Number of Loose Leptons in Event",
                   "N_{l}^{Loose}", 10, 0, 10, "NONE", hNLLeps,dir);
   defineHistoSet("hNLJets", "Number of Loose Jets in Event",
@@ -283,7 +289,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     cout << "Not enough leptons. Bad bad event, returning now..." << endl;
     return;
   }
-  
+  /*
   if(!wprimeUtil_->runningOnData())
     {
 
@@ -378,7 +384,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 
     }//running on MC if
   
-
+  */
 
   // for (size_t i=0; i<genMuons.size(); i++)
   //  cout << "My muon " << i << " pt is " << genMuons[i].pt() << endl;
@@ -869,6 +875,18 @@ void HadronicVZAnalyzer::fillHistos(const int& index, const float& weight){
   hNLJets[index]->Fill(looseJets_.size(), weight);
 
   hNVtxs[index]->Fill((*verticesH_).size(), weight);
+
+  if(zCand_){
+    if      (zCand_.flavor() == PDG_ID_ELEC)
+      {
+	heeNVtxs[index]->Fill((*verticesH_).size(), weight);
+      }
+    else if (zCand_.flavor() == PDG_ID_MUON)
+      {
+	hmmNVtxs[index]->Fill((*verticesH_).size(), weight);
+      }
+  }
+
   hMET[index]->Fill(met_.et(), weight);
   
   if(CutNames_[index] == "ValidVZ"){

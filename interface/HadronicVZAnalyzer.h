@@ -237,6 +237,9 @@ public:
   std::vector<TH1F*> hmmVpt;
 
   std::vector<TH1F*> hNVtxs;
+  std::vector<TH1F*> hmmNVtxs;
+  std::vector<TH1F*> heeNVtxs;
+
   std::vector<TH1F*> hNLLeps;
   std::vector<TH1F*> hNLJets;
 
