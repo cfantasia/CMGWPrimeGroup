@@ -213,6 +213,7 @@ reco::TrackRef Muon::tpfmsMuon() const {
   }
 }
 
+
 /// reference to default TeV refit
 reco::TrackRef Muon::defaultTeVMuon() const {
   if (embeddedDefaultTeVMuon_) {
@@ -240,7 +241,8 @@ reco::TrackRef Muon::cocktailMuon() const {
   }
 }
 
-//// reference to the source IsolatedPFCandidates
+
+/// reference to the source IsolatedPFCandidates
 reco::PFCandidateRef Muon::pfCandidateRef() const {
   if (embeddedPFCandidate_) {
     return reco::PFCandidateRef(&pfCandidate_, 0);
@@ -319,6 +321,7 @@ void Muon::embedTpfmsMuon() {
   }
 }
 
+
 /// embed the default-TeV Track
 void Muon::embedDefaultTeVMuon() {
   defaultTeVMuon_.clear();
@@ -345,6 +348,8 @@ void Muon::embedCocktailMuon() {
       embeddedCocktailMuon_ = true;
   }
 }
+
+
 
 /// embed the IsolatedPFCandidate pointed to by pfCandidateRef_
 void Muon::embedPFCandidate() {

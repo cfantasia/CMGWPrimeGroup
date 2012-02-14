@@ -1,6 +1,3 @@
-//
-// $Id: PATMuonProducer.cc,v 1.42.2.3 2011/07/05 16:25:28 bellan Exp $
-//
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
 
@@ -207,6 +204,15 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
   // this will be the new object collection
   std::vector<Muon> * patMuons = new std::vector<Muon>();
 
+  // prepare the TeV refit track retrieval
+  edm::Handle<reco::TrackToTrackMap> pickyMap, tpfmsMap, defaultTeVMap, dytMap;
+  if (addTeVRefits_) {
+    iEvent.getByLabel(pickySrc_, pickyMap);
+    iEvent.getByLabel(tpfmsSrc_, tpfmsMap);
+    iEvent.getByLabel(defaultTeVSrc_, defaultTeVMap);
+    iEvent.getByLabel(dytSrc_, dytMap);
+  }
+  
   if( useParticleFlow_ ){
     // get the PFCandidates of type muons 
     edm::Handle< reco::PFCandidateCollection >  pfMuons;
@@ -275,70 +281,21 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
       if( embedPFCandidate_ ) aMuon.embedPFCandidate();
       fillMuon( aMuon, muonBaseRef, pfBaseRef, genMatches, deposits, isolationValues );
 
-      //-- SAK ----------------------------------------------------------------
-      if (linkToPFSource_.label().length() && aMuon.pfCandidateRef().id() != pfForLinking.id()) {
-        reco::CandidatePtr  source  = aMuon.pfCandidateRef()->sourceCandidatePtr(0);
-        while (source.id() != pfForLinking.id()) {
-          source  = source->sourceCandidatePtr(0);
-          if (source.isNull())
-            throw cms::Exception("InputSource", "Object in "+pfMuonSrc_.encode()+" does not link back to "+linkToPFSource_.encode());
-        } // end loop over inheritance chain
-        aMuon.setPFCandidateRef(reco::PFCandidateRef(pfForLinking, source.key()));
-      }
-      //-- SAK ----------------------------------------------------------------
-      patMuons->push_back(aMuon); 
-    } 
-  }
-  else {
-    edm::Handle<edm::View<reco::Muon> > muons;
-    iEvent.getByLabel(muonSrc_, muons);
-
-    // prepare the TeV refit track retrieval
-    edm::Handle<reco::TrackToTrackMap> pickyMap, tpfmsMap, defaultTeVMap, dytMap;
-    if (addTeVRefits_) {
-      iEvent.getByLabel(pickySrc_, pickyMap);
-      iEvent.getByLabel(tpfmsSrc_, tpfmsMap);
-      iEvent.getByLabel(defaultTeVSrc_, defaultTeVMap);
-      iEvent.getByLabel(dytSrc_, dytMap);
-    }
-
-    // embedding of muon MET corrections
-    edm::Handle<edm::ValueMap<reco::MuonMETCorrectionData> > caloMETMuonCorrs;
-    //edm::ValueMap<reco::MuonMETCorrectionData> caloMETmuCorValueMap;
-    if(embedCaloMETMuonCorrs_){
-      iEvent.getByLabel(caloMETMuonCorrs_, caloMETMuonCorrs);
-      //caloMETmuCorValueMap  = *caloMETmuCorValueMap_h;
-    }
-    edm::Handle<edm::ValueMap<reco::MuonMETCorrectionData> > tcMETMuonCorrs;
-    //edm::ValueMap<reco::MuonMETCorrectionData> tcMETmuCorValueMap;
-    if(embedTcMETMuonCorrs_) {
-      iEvent.getByLabel(tcMETMuonCorrs_, tcMETMuonCorrs);
-      //tcMETmuCorValueMap  = *tcMETmuCorValueMap_h;
-    }
-    for (edm::View<reco::Muon>::const_iterator itMuon = muons->begin(); itMuon != muons->end(); ++itMuon) {
-      // construct the Muon from the ref -> save ref to original object
-      unsigned int idx = itMuon - muons->begin();
-      MuonBaseRef muonRef = muons->refAt(idx);
-      reco::CandidateBaseRef muonBaseRef( muonRef ); 
-      
-      Muon aMuon(muonRef);
-      fillMuon( aMuon, muonRef, muonBaseRef, genMatches, deposits, isolationValues);
-
+      //(SK) add TeV refits
       // store the TeV refit track refs (only available for globalMuons)
-      if (addTeVRefits_ && itMuon->isGlobalMuon()) {
+      if (addTeVRefits_ && muonRef->isGlobalMuon()) {
 	reco::TrackToTrackMap::const_iterator it_picky;
 	reco::TrackToTrackMap::const_iterator it_tpfms;
 	reco::TrackToTrackMap::const_iterator it_defTeV;
 	reco::TrackToTrackMap::const_iterator it_dyt;
-
-	const reco::TrackRef& globalTrack = itMuon->globalTrack();
 	
-	bool TeVfailed = false;
+	const reco::TrackRef& globalTrack = muonRef->globalTrack();
 
+	bool TeVfailed = false;
+	
 	// If the getByLabel calls failed above (i.e. if the TeV refit
 	// maps/collections were not in the event), then the TrackRefs
 	// in the Muon object will remain null.
-
 	if (!pickyMap.failedToGet()) {
 	  it_picky = pickyMap->find(globalTrack);
 	  if (it_picky != pickyMap->end()) 
@@ -371,17 +328,80 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 	  if (it_dyt != dytMap->end()) aMuon.setDytMuon(it_dyt->val);
 	  if (embedDytMuon_) aMuon.embedDytMuon();
 	}
+	else TeVfailed = true;
 	
 	if(!TeVfailed)
 	  {
 	    reco::TrackRef cocktail = 
-	      muon::tevOptimized(globalTrack, itMuon->track(), 
+	      muon::tevOptimized(globalTrack, muonRef->track(), 
 				 *defaultTeVMap, *tpfmsMap, *pickyMap);
 	    aMuon.setCocktailMuon(cocktail);
 	    if(embedCocktailMuon_)aMuon.embedCocktailMuon();
 	  }
+	
 
 
+      }
+      
+      //-- SAK ----------------------------------------------------------------
+      if (linkToPFSource_.label().length() && aMuon.pfCandidateRef().id() != pfForLinking.id()) {
+        reco::CandidatePtr  source  = aMuon.pfCandidateRef()->sourceCandidatePtr(0);
+        while (source.id() != pfForLinking.id()) {
+          source  = source->sourceCandidatePtr(0);
+          if (source.isNull())
+            throw cms::Exception("InputSource", "Object in "+pfMuonSrc_.encode()+" does not link back to "+linkToPFSource_.encode());
+        } // end loop over inheritance chain
+        aMuon.setPFCandidateRef(reco::PFCandidateRef(pfForLinking, source.key()));
+      }
+      //-- SAK ----------------------------------------------------------------
+      patMuons->push_back(aMuon); 
+    } 
+  }
+  else {
+    edm::Handle<edm::View<reco::Muon> > muons;
+    iEvent.getByLabel(muonSrc_, muons);
+
+    // embedding of muon MET corrections
+    edm::Handle<edm::ValueMap<reco::MuonMETCorrectionData> > caloMETMuonCorrs;
+    //edm::ValueMap<reco::MuonMETCorrectionData> caloMETmuCorValueMap;
+    if(embedCaloMETMuonCorrs_){
+      iEvent.getByLabel(caloMETMuonCorrs_, caloMETMuonCorrs);
+      //caloMETmuCorValueMap  = *caloMETmuCorValueMap_h;
+    }
+    edm::Handle<edm::ValueMap<reco::MuonMETCorrectionData> > tcMETMuonCorrs;
+    //edm::ValueMap<reco::MuonMETCorrectionData> tcMETmuCorValueMap;
+    if(embedTcMETMuonCorrs_) {
+      iEvent.getByLabel(tcMETMuonCorrs_, tcMETMuonCorrs);
+      //tcMETmuCorValueMap  = *tcMETmuCorValueMap_h;
+    }
+    for (edm::View<reco::Muon>::const_iterator itMuon = muons->begin(); itMuon != muons->end(); ++itMuon) {
+      // construct the Muon from the ref -> save ref to original object
+      unsigned int idx = itMuon - muons->begin();
+      MuonBaseRef muonRef = muons->refAt(idx);
+      reco::CandidateBaseRef muonBaseRef( muonRef ); 
+      
+      Muon aMuon(muonRef);
+      fillMuon( aMuon, muonRef, muonBaseRef, genMatches, deposits, isolationValues);
+
+      // store the TeV refit track refs (only available for globalMuons)
+      if (addTeVRefits_ && itMuon->isGlobalMuon()) {
+	reco::TrackToTrackMap::const_iterator it;
+	const reco::TrackRef& globalTrack = itMuon->globalTrack();
+	
+	// If the getByLabel calls failed above (i.e. if the TeV refit
+	// maps/collections were not in the event), then the TrackRefs
+	// in the Muon object will remain null.
+	if (!pickyMap.failedToGet()) {
+	  it = pickyMap->find(globalTrack);
+	  if (it != pickyMap->end()) aMuon.setPickyMuon(it->val);
+	  if (embedPickyMuon_) aMuon.embedPickyMuon();
+	}
+ 
+	if (!tpfmsMap.failedToGet()) {
+	  it = tpfmsMap->find(globalTrack);
+	  if (it != tpfmsMap->end()) aMuon.setTpfmsMuon(it->val);
+	  if (embedTpfmsMuon_) aMuon.embedTpfmsMuon();
+	}
       }
       
       // Isolation
@@ -571,6 +591,8 @@ void PATMuonProducer::fillDescriptions(edm::ConfigurationDescriptions & descript
   isoDepositsPSet.addOptional<edm::InputTag>("hcal");
   isoDepositsPSet.addOptional<edm::InputTag>("particle");
   isoDepositsPSet.addOptional<edm::InputTag>("pfChargedHadrons");
+  isoDepositsPSet.addOptional<edm::InputTag>("pfChargedAll");
+  isoDepositsPSet.addOptional<edm::InputTag>("pfPUChargedHadrons");
   isoDepositsPSet.addOptional<edm::InputTag>("pfNeutralHadrons");
   isoDepositsPSet.addOptional<edm::InputTag>("pfPhotons");
   isoDepositsPSet.addOptional<std::vector<edm::InputTag> >("user");
@@ -583,6 +605,8 @@ void PATMuonProducer::fillDescriptions(edm::ConfigurationDescriptions & descript
   isolationValuesPSet.addOptional<edm::InputTag>("hcal");
   isolationValuesPSet.addOptional<edm::InputTag>("particle");
   isolationValuesPSet.addOptional<edm::InputTag>("pfChargedHadrons");
+  isolationValuesPSet.addOptional<edm::InputTag>("pfChargedAll");
+  isolationValuesPSet.addOptional<edm::InputTag>("pfPUChargedHadrons");
   isolationValuesPSet.addOptional<edm::InputTag>("pfNeutralHadrons");
   isolationValuesPSet.addOptional<edm::InputTag>("pfPhotons");
   iDesc.addOptional("isolationValues", isolationValuesPSet);
@@ -631,6 +655,12 @@ void PATMuonProducer::readIsolationLabels( const edm::ParameterSet & iConfig, co
     }
     if (depconf.exists("pfChargedHadrons"))  {
       labels.push_back(std::make_pair(pat::PfChargedHadronIso, depconf.getParameter<edm::InputTag>("pfChargedHadrons")));
+    }
+    if (depconf.exists("pfChargedAll"))  {
+      labels.push_back(std::make_pair(pat::PfChargedAllIso, depconf.getParameter<edm::InputTag>("pfChargedAll")));
+    }
+    if (depconf.exists("pfPUChargedHadrons"))  {
+      labels.push_back(std::make_pair(pat::PfPUChargedHadronIso, depconf.getParameter<edm::InputTag>("pfPUChargedHadrons")));
     }
     if (depconf.exists("pfNeutralHadrons"))  {
       labels.push_back(std::make_pair(pat::PfNeutralHadronIso, depconf.getParameter<edm::InputTag>("pfNeutralHadrons")));
