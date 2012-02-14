@@ -9,11 +9,11 @@ UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V370, release:
+o Setup a new working area (Default name: V380, release:
 CMSSW_4_2_5)
 
 o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-03-70)
+V00-03-80)
 
 o Check out the recommended versions of DataFormats/PatCandidates,
 PhysicsTools/PatAlgos, PhysicsTools/Utilities, RecoLuminosity/LumiDB and

@@ -1,3 +1,30 @@
+14-FEB-12 (Cory, Flavia), V00-03-80
+=============================================================
+
+General improvements:
+o Fall11 PU distribution
+o Boson finder: default option is to make V from leading-pt jet; additional
+option to pick closest to Z-mass. 
+o Boson finder #2: recover 20% of non-real solution to neutrino-pz
+quadratic equation
+o puScale is now a parameter
+o added option to split big samples for faster processing
+o jet-lepton event content: keep rho, drop other kt6 stuff
+o Updated MC global tag for Fall11 (suppressing 100 GB worth of error messages)
+o Scripts for printing out tables at end of job
+
+WZ analysis:
+o Updates (analysis cuts, background uncertainties, limits for enhanced
+couplings, k-factors, theory bands)
+o Fixed cross-section for low-mass W' 
+
+VZ analysis:
+o Updated triggers
+o Fall11 background samples
+o Added # of vertices variable
+o Added new kinematic distributions
+
+
 31-DEC-11 (Christos, Cory, Flavia, Phil, Sunghyun), V00-03-70
 =============================================================
 General improvements:
