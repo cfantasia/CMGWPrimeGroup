@@ -16,7 +16,7 @@ def CMGWPswitchToPFJets(process) :
     addJetCollection(process,cms.InputTag('ak7PFJets'),'AK7','PF',
                      doJTA        = True,
                      doBTagging   = True,
-                     jetCorrLabel = ('AK7PF', cms.vstring(['L1Offset', 'L2Relative', 'L3Absolute'])),
+                     jetCorrLabel = ('AK7PF', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute'])),
                      doType1MET   = True,
                      genJetCollection=cms.InputTag("ak7GenJets"),
                      doJetID      = False
@@ -27,7 +27,7 @@ def CMGWPswitchToPFJets(process) :
     addJetCollection(process,cms.InputTag('ak5PFJets'),'AK5','PF',
                                           doJTA        = True,
                                           doBTagging   = True,
-                                          jetCorrLabel = ('AK5PF', cms.vstring(['L1Offset', 'L2Relative', 'L3Absolute'])),
+                                          jetCorrLabel = ('AK5PF', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute'])),
                                           doType1MET   = True,
                                           genJetCollection=cms.InputTag("ak5GenJets"),
                                           doJetID      = False
