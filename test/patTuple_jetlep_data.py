@@ -14,6 +14,10 @@ jetlep_config(process, 1000, 100)
 addHLTFilter(process, 'HLT', "doublemu")
 #addHLTFilter(process, 'HLT', "doubleelectron")
 
+process.patJetCorrFactorsAK7PF.levels = cms.vstring('L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual')
+process.patJetCorrFactorsAK5PF.levels = cms.vstring('L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual')
+
+
 process.p.replace(process.patTrigger, process.patTrigger+process.hltFilter)
 
 process.source.fileNames = [
