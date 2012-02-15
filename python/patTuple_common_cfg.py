@@ -20,7 +20,7 @@ def common_config(process, reportEveryNum=100, maxEvents=-1) :
     process.MessageLogger.cerr.FwkReport.reportEvery = reportEveryNum
 
     process.maxEvents.input = maxEvents    ##  (e.g. -1 to run on all events)
-    process.GlobalTag.globaltag = cms.string('GR_R_42_V18::All')
+    process.GlobalTag.globaltag = cms.string('GR_R_42_V24::All')
     #                                         ##
     process.out.outputCommands = [
     # GEN
