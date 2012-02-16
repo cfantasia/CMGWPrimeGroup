@@ -387,34 +387,53 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
       if (addTeVRefits_ && itMuon->isGlobalMuon()) {
 	reco::TrackToTrackMap::const_iterator it;
 	const reco::TrackRef& globalTrack = itMuon->globalTrack();
-	
+
+	bool TeVfailed = false;	
 	// If the getByLabel calls failed above (i.e. if the TeV refit
 	// maps/collections were not in the event), then the TrackRefs
 	// in the Muon object will remain null.
 	if (!pickyMap.failedToGet()) {
 	  it = pickyMap->find(globalTrack);
 	  if (it != pickyMap->end()) aMuon.setPickyMuon(it->val);
+	  else TeVfailed = true;	  
 	  if (embedPickyMuon_) aMuon.embedPickyMuon();
 	}
+	else TeVfailed = true;
  
 	if (!tpfmsMap.failedToGet()) {
 	  it = tpfmsMap->find(globalTrack);
 	  if (it != tpfmsMap->end()) aMuon.setTpfmsMuon(it->val);
+	  else TeVfailed = true;
 	  if (embedTpfmsMuon_) aMuon.embedTpfmsMuon();
 	}
+	else TeVfailed = true;
 
 	if (!defaultTeVMap.failedToGet()) {
 	  it = defaultTeVMap->find(globalTrack);
 	  if (it != defaultTeVMap->end())
 	    aMuon.setDefaultTeVMuon(it->val);
+	  else TeVfailed = true;
 	  if (embedDefaultTeVMuon_) aMuon.embedDefaultTeVMuon();
 	}
+	else TeVfailed = true;
 	
 	if (!dytMap.failedToGet()) {
 	  it = dytMap->find(globalTrack);
 	  if (it != dytMap->end()) aMuon.setDytMuon(it->val);
+	  else TeVfailed = true;
 	  if (embedDytMuon_) aMuon.embedDytMuon();
 	}
+	else TeVfailed = true;
+	
+	if(!TeVfailed)
+	  {
+	    reco::TrackRef cocktail = 
+	      muon::tevOptimized(globalTrack, itMuon->track(), 
+				 *defaultTeVMap, *tpfmsMap, *pickyMap);
+	    aMuon.setCocktailMuon(cocktail);
+	    if(embedCocktailMuon_)aMuon.embedCocktailMuon();
+	  }
+
 
       }
       
