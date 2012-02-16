@@ -13,10 +13,10 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
 def CMGWPswitchToPFJets(process) :
 
-    addJetCollection(process,cms.InputTag('ak7PFJets'),'AK7','PF',
+    addJetCollection(process,cms.InputTag('newAK7PF'),'AK7','PF',
                      doJTA        = True,
                      doBTagging   = True,
-                     jetCorrLabel = ('AK7PF', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute'])),
+                     jetCorrLabel = ('AK7PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute'])),
                      doType1MET   = True,
                      genJetCollection=cms.InputTag("ak7GenJets"),
                      doJetID      = False

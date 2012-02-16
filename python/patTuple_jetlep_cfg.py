@@ -33,6 +33,38 @@ def jetlep_config(process, reportEveryNum=100, maxEvents=-1) :
     process.countPatJets.minNumber = 1
     process.countPatJets.src = "selectedPatJets"
 
+    process.newAK7PF = cms.EDProducer("FastjetJetProducer",
+                                      Active_Area_Repeats = cms.int32(1),
+                                      doAreaFastjet = cms.bool(True),
+                                      voronoiRfact = cms.double(-0.9),
+                                      maxBadHcalCells = cms.uint32(9999999),
+                                      doAreaDiskApprox = cms.bool(False),
+                                      maxRecoveredEcalCells = cms.uint32(9999999),
+                                      jetType = cms.string('PFJet'),
+                                      minSeed = cms.uint32(14327),
+                                      Ghost_EtaMax = cms.double(5.0),
+                                      doRhoFastjet = cms.bool(False),
+                                      jetAlgorithm = cms.string('AntiKt'),
+                                      nSigmaPU = cms.double(1.0),
+                                      GhostArea = cms.double(0.01),
+                                      Rho_EtaMax = cms.double(4.4),
+                                      maxBadEcalCells = cms.uint32(9999999),
+                                      useDeterministicSeed = cms.bool(True),
+                                      doPVCorrection = cms.bool(False),
+                                      maxRecoveredHcalCells = cms.uint32(9999999),
+                                      rParam = cms.double(0.7),
+                                      maxProblematicHcalCells = cms.uint32(9999999),
+                                      doOutputJets = cms.bool(True),
+                                      src = cms.InputTag("pfNoPileUpIso"),
+                                      inputEtMin = cms.double(0.0),
+                                      srcPVs = cms.InputTag(""),
+                                      jetPtMin = cms.double(3.0),
+                                      radiusPU = cms.double(0.5),
+                                      maxProblematicEcalCells = cms.uint32(9999999),
+                                      doPUOffsetCorr = cms.bool(False),
+                                      inputEMin = cms.double(0.0)
+                                      )
+    
     ## let it run
     process.p = cms.Path(
         process.patMuons *
@@ -64,5 +96,6 @@ def jetlep_config(process, reportEveryNum=100, maxEvents=-1) :
 
     process.patJetCorrFactors.rho = cms.InputTag("kt6PFJetsPFlow", "rho")
     process.out.outputCommands.append('keep *_kt6PFJets_rho_PAT')
+    
 
 #print process.patDefaultSequence
