@@ -89,12 +89,12 @@ MakePlots(string inName, string outName, string opt){
   SampleNames["WJetsToLNu"]="W+Jets";
   SampleNames["WWTo2L2Nu"]="WW\\rightarrow2l2\\nu";
   SampleNames["TTJets"]="t\\bar{t}";
-  SampleNames["Summer11_TTJets"]="t\\bar{t}";
+  SampleNames["Fall11-TTJets"]="t\\bar{t}";
   SampleNames["ZZTo4L_TuneZ2"]="ZZ\\rightarrow4l";
   SampleNames["PhotonVJets"]="V\\gamma";
   SampleNames["VV"]="VV";
   SampleNames["DYJetsToLL"]="DY+Jets\\rightarrow2l";
-  SampleNames["Summer11_DYJetsToLL"]="DY+Jets\\rightarrow2l";
+  SampleNames["Fall11-DYJetsToLL"]="DY+Jets\\rightarrow2l";
   SampleNames["ZJets"]="Z+Jets";
   SampleNames["ZBB0JetsToLNu"]="Z+0Jets\\rightarrowbb";
   SampleNames["ZBB1JetsToLNu"]="Z+1Jets\\rightarrowbb";
@@ -137,23 +137,24 @@ MakePlots(string inName, string outName, string opt){
     vData.push_back("data_DoubleMu-Run2011A-May10ReReco-v1");
     vData.push_back("data_SingleMu-Run2011A-May10ReReco-v1");
     vData.push_back("data_DoubleElectron-Run2011A-May10ReReco-v1");
-    vData.push_back("data_SingleElectron-Run2011A-May10ReReco-v1");
+    //vData.push_back("data_SingleElectron-Run2011A-May10ReReco-v1");
 
     vData.push_back("data_DoubleMu-Run2011A-PromptReco-v4");
     vData.push_back("data_SingleMu-Run2011A-PromptReco-v4");
     vData.push_back("data_DoubleElectron-Run2011A-PromptReco-v4");
-    vData.push_back("data_SingleElectron-Run2011A-PromptReco-v4");
+    //vData.push_back("data_SingleElectron-Run2011A-PromptReco-v4");
 
     vData.push_back("data_DoubleMu-Run2011A-05Aug2011-v1");
     vData.push_back("data_SingleMu-Run2011A-05Aug2011-v1");
     vData.push_back("data_DoubleElectron-Run2011A-05Aug2011-v1");
-    vData.push_back("data_SingleElectron-Run2011A-05Aug2011-v1");
+    //vData.push_back("data_SingleElectron-Run2011A-05Aug2011-v1");
 
     vData.push_back("data_DoubleMu-Run2011A-PromptReco-v6");
     vData.push_back("data_SingleMu-Run2011A-PromptReco-v6");
     vData.push_back("data_DoubleElectron-Run2011A-PromptReco-v6");
-    vData.push_back("data_SingleElectron-Run2011A-PromptReco-v6");
+    //vData.push_back("data_SingleElectron-Run2011A-PromptReco-v6");
     
+    vData.push_back("data_SingleMu-Run2011B-PromptReco-v1");
     vData.push_back("data_DoubleMu-Run2011B-PromptReco-v1");
     vData.push_back("data_DoubleElectron-Run2011B-PromptReco-v1");
     
@@ -185,16 +186,16 @@ MakePlots(string inName, string outName, string opt){
     Bkg.push_back(Sample("WZJetsTo3LNu"       , kOrange+3, 1, kOrange-2));
   }else if(inName.find("HadVZ") != string::npos){
     vector<string> VV;
-    VV.push_back("Summer11_ZZ");
-    VV.push_back("Summer11_VGamma");
-    VV.push_back("Summer11_WW");
-    VV.push_back("Summer11_WZ");
+    VV.push_back("Fall11-ZZ");
+    VV.push_back("Fall11-VGamma");
+    VV.push_back("Fall11-WW");
+    VV.push_back("Fall11-WZ");
     Bkg.push_back(Sample("VV", VV, kGreen-7, 1, kGreen-7));
     
-    Bkg.push_back(Sample("Summer11_TTJets"  , kBlue-7, 1, kBlue-7));
+    Bkg.push_back(Sample("Fall11-TTJets"  , kBlue-7, 1, kBlue-7));
     
     vector<string> ZJets; 
-    ZJets.push_back("Summer11_DYJetsToLL_PtZ100");
+    ZJets.push_back("Fall11-DYJetsToLL_PtZ100");
     Bkg.push_back(Sample("ZJets", ZJets, kRed-7, 1, kRed-7));
     
   }
@@ -220,7 +221,7 @@ MakePlots(string inName, string outName, string opt){
     RS750.push_back("Summer11_RSZZeejj_750");
     RS750.push_back("Summer11_RSZZmmjj_750");
     //Bkg.push_back(Sample("RSZZ_750", RS750, kMagenta, 1, 0));
-    Sig.push_back(Sample("RSZZ_750", RS750, kMagenta+3, 1, 0));                                                                                            
+    //Sig.push_back(Sample("RSZZ_750", RS750, kMagenta+3, 1, 0)); 
     vector<string> RS1000;
     RS1000.push_back("Summer11_RSZZeejj_1000");
     RS1000.push_back("Summer11_RSZZmmjj_1000");
@@ -229,7 +230,7 @@ MakePlots(string inName, string outName, string opt){
 
     vector<string> WPrime1000;
     WPrime1000.push_back("Summer11_WPrimeZZlljj_1000");
-    Sig.push_back(Sample("WPrimeWZ_1000", WPrime1000, kViolet+4, 2, 0));
+    //Sig.push_back(Sample("WPrimeWZ_1000", WPrime1000, kViolet+4, 2, 0));
  
    vector<string> RS1250;
     RS1250.push_back("Summer11_RSZZeejj_1250");
@@ -368,8 +369,12 @@ MakePlots(string inName, string outName, string opt){
       variable.push_back("hZMass");
       variable.push_back("hZpt");
 
-      variable.push_back("hVMass");
-      variable.push_back("hVpt");
+      variable.push_back("heeVMass");
+      variable.push_back("heeVpt");
+
+      variable.push_back("hmmVMass");
+      variable.push_back("hmmVpt");
+
 
       variable.push_back("hNLJets");
       variable.push_back("hNLLeps");
@@ -476,7 +481,8 @@ MakePlots(string inName, string outName, string opt){
   }else if(inName.find("HadVZ") != string::npos){
     if(opt.find("show") == string::npos) {
       DrawandSave(fin,outName,"h_bestmass","Title: Best Mass",1,0,0);
-      DrawandSave(fin,outName,"hVMass_ValidV","Title: Leading Jet Mass",1,0,0);
+      DrawandSave(fin,outName,"heeVMass_ValidV","Title: Leading Jet Mass",1,0,0);
+      DrawandSave(fin,outName,"hmmVMass_ValidV","Title: Leading Jet Mass",1,0,0);
 
       DrawandSave(fin,outName,"h_deltaR_elec1elec2","Title: DeltaR ee",1,0,0);
       DrawandSave(fin,outName,"h_deltaR_muon1muon2","Title: DeltaR mm",1,0,0);
@@ -522,7 +528,8 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
      title.find("VZeeMass") != string::npos ||
      title.find("VZmmMass") != string::npos) rebin = 2;
 
-  //  if(title.find("VMass") != string::npos) rebin = 3;
+  if(title.find("eeVMass") != string::npos) rebin = 3;
+  if(title.find("mmVMass") != string::npos) rebin = 3;
 
   if(title.find("hMET_") != string::npos) rebin = 1;
   if(title.find("hHt_") != string::npos) rebin = 1;
@@ -540,12 +547,12 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
         validHist = true;
       curSample.hist->SetLineStyle(curSample.style);
       curSample.hist->SetLineColor(curSample.line); 
-
+      /*
       if (title.find("VMass") != string::npos){
 	int min = curSample.hist->GetXaxis()->FindBin(70.);
 	int max = curSample.hist->GetXaxis()->FindBin(120.);
 	curSample.hist->GetXaxis()->SetRangeUser(70,120);
-      }
+	}*/
 
       if(!eff){
         curSample.hist->SetFillColor(curSample.fill);
