@@ -1,0 +1,5 @@
+/pnfs/sprace.org.br/data/cms/store/user/fladias/V390C-Summer11-RSZZmmjj-2000/patTuple_4_1_QxO.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/V390C-Summer11-RSZZmmjj-2000/patTuple_1_1_IOj.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/V390C-Summer11-RSZZmmjj-2000/patTuple_3_1_c56.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/V390C-Summer11-RSZZmmjj-2000/patTuple_5_1_bpI.root
+/pnfs/sprace.org.br/data/cms/store/user/fladias/V390C-Summer11-RSZZmmjj-2000/patTuple_2_1_HMs.root
