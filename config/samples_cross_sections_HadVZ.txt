@@ -9,159 +9,179 @@ integrated lumi = 4632 pb^-1
 ##Signal Samples##
 ################
 
-
-samplename = Summer11_RSZZmmjj_750
-description = Summer11_RSZZmmjj_750
+samplename = Summer11-RSZZmmjj-750
+description = Summer11-RSZZmmjj-750
 x-section = 0.00835
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_RSZZmmjj_m750.txt
+pathname = filelists_HadVZ/V390C-Summer11-RSZZmmjj-750.txt
 Nprod_evt = 56754
 
-samplename = Summer11_RSZZmmjj_1000
-description = Summer11_RSZZmmjj_1000
+samplename = Summer11-RSZZmmjj-1000
+description = Summer11-RSZZmmjj-1000
 x-section = 0.00152
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_RSZZmmjj_m1000.txt
+pathname = filelists_HadVZ/V390C-Summer11-RSZZmmjj-1000.txt
 Nprod_evt = 54030
 
-samplename = Summer11_RSZZmmjj_1250
-description = Summer11_RSZZmmjj_1250
+samplename = Summer11-RSZZmmjj-1250
+description = Summer11-RSZZmmjj-1250
 x-section = 0.000347
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_RSZZmmjj_m1250.txt
-Nprod_evt = 34153
+pathname = filelists_HadVZ/V390C-Summer11-RSZZmmjj-1250.txt
+Nprod_evt = 43323
 
-samplename = Summer11_RSZZmmjj_1500
-description = Summer11_RSZZmmjj_1500
+samplename = Summer11-RSZZmmjj-1500
+description = Summer11-RSZZmmjj-1500
 x-section = 0.0000883
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_RSZZmmjj_m1500.txt
+pathname = filelists_HadVZ/V390C-Summer11-RSZZmmjj-1500.txt
 Nprod_evt = 57176
 
-samplename = Summer11_RSZZmmjj_1750
-description = Summer11_RSZZmmjj_1750
+samplename = Summer11-RSZZmmjj-1750
+description = Summer11-RSZZmmjj-1750
 x-section = 0.0000243
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_RSZZmmjj_m1750.txt
+pathname = filelists_HadVZ/V390C-Summer11-RSZZmmjj-1750.txt
 Nprod_evt = 54901
 
-samplename = Summer11_RSZZmmjj_2000
-description = Summer11_RSZZmmjj_2000
+samplename = Summer11-RSZZmmjj-2000
+description = Summer11-RSZZmmjj-2000
 x-section = 0.00000705
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_RSZZmmjj_m2000.txt
+pathname = filelists_HadVZ/V390C-Summer11-RSZZmmjj-2000.txt
 Nprod_evt = 56140
 
-samplename = Summer11_RSZZeejj_750
-description = Summer11_RSZZeejj_750
+samplename = Summer11-RSZZeejj-750
+description = Summer11-RSZZeejj-750
 x-section = 0.00835
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_RSZZeejj_750.txt
+pathname = filelists_HadVZ/V390C-Summer11-RSZZeejj-750.txt
 Nprod_evt = 53648
 
-samplename = Summer11_RSZZeejj_1000
-description = Summer11_RSZZeejj_1000
+samplename = Summer11-RSZZeejj-1000
+description = Summer11-RSZZeejj-1000
 x-section = 0.00152
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_RSZZeejj_1000.txt
+pathname = filelists_HadVZ/V390C-Summer11-RSZZeejj-1000.txt
 Nprod_evt = 53232
 
-samplename = Summer11_RSZZeejj_1250
-description = Summer11_RSZZeejj_1250
+samplename = Summer11-RSZZeejj-1250
+description = Summer11-RSZZeejj-1250
 x-section = 0.000347
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_RSZZeejj_1250.txt
+pathname = filelists_HadVZ/V390C-Summer11-RSZZeejj-1250.txt
 Nprod_evt = 55998
 
-samplename = Summer11_RSZZeejj_1500
-description = Summer11_RSZZeejj_1500
+samplename = Summer11-RSZZeejj-1500
+description = Summer11-RSZZeejj-1500
 x-section = 0.0000883
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_RSZZeejj_1500.txt
+pathname = filelists_HadVZ/V390C-Summer11-RSZZeejj-1500.txt
 Nprod_evt = 53282
 
-samplename = Summer11_RSZZeejj_1750
-description = Summer11_RSZZeejj_1750
+samplename = Summer11-RSZZeejj-1750
+description = Summer11-RSZZeejj-1750
 x-section = 0.0000243
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_RSZZeejj_1750.txt
+pathname = filelists_HadVZ/V390C-Summer11-RSZZeejj-1750.txt
 Nprod_evt = 50496
 
-samplename = Summer11_RSZZeejj_2000
-description = Summer11_RSZZeejj_2000
+samplename = Summer11-RSZZeejj-2000
+description = Summer11-RSZZeejj-2000
 x-section = 0.00000705
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_RSZZeejj_2000.txt
+pathname = filelists_HadVZ/V390C-Summer11-RSZZeejj-2000.txt
 Nprod_evt = 50935
 
-samplename = Summer11_WPrimeZZlljj_300
-description = Summer11_WPrimeZZlljj_300
+samplename = Summer11-WPrimeWZlljj-300
+description = Summer11-WPrimeWZlljj-300
 x-section = 1.287
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WPrime_m300.txt
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-300.txt
 Nprod_evt = 33000
 
-samplename = Summer11_WPrimeZZlljj_400
-description = Summer11_WPrimeZZlljj_400
+samplename = Summer11-WPrimeWZlljj-400
+description = Summer11-WPrimeWZlljj-400
 x-section = 0.4284
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WPrime_m400.txt
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-400.txt
 Nprod_evt = 33000
 
-samplename = Summer11_WPrimeZZlljj_600
-description = Summer11_WPrimeZZlljj_600
+samplename = Summer11-WPrimeWZlljj-500
+description = Summer11-WPrimeWZlljj-500
+x-section = 0.1659
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-500.txt
+Nprod_evt = 33000
+
+samplename = Summer11-WPrimeWZlljj-600
+description = Summer11-WPrimeWZlljj-600
 x-section = 0.07461
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WPrime_m600.txt
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-600.txt
 Nprod_evt = 32208
 
-samplename = Summer11_WPrimeZZlljj_700
-description = Summer11_WPrimeZZlljj_700
+samplename = Summer11-WPrimeWZlljj-700
+description = Summer11-WPrimeWZlljj-700
 x-section = 0.03769
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WPrime_m700.txt
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-700.txt
 Nprod_evt = 33000
 
-samplename = Summer11_WPrimeZZlljj_800
-description = Summer11_WPrimeZZlljj_800
+samplename = Summer11-WPrimeWZlljj-800
+description = Summer11-WPrimeWZlljj-800
 x-section = 0.02024
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WPrime_m800.txt
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-800.txt
 Nprod_evt = 33000
 
-samplename = Summer11_WPrimeZZlljj_900
-description = Summer11_WPrimeZZlljj_900
+samplename = Summer11-WPrimeWZlljj-900
+description = Summer11-WPrimeWZlljj-900
 x-section = 0.01168
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WPrime_m900.txt
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-900.txt
 Nprod_evt = 32604
 
-samplename = Summer11_WPrimeZZlljj_1000
-description = Summer11_WPrimeZZlljj_1000
+samplename = Summer11-WPrimeWZlljj-1000
+description = Summer11-WPrimeWZlljj-1000
 x-section = 0.006952
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WPrime_m1000.txt
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-1000.txt
 Nprod_evt = 32208
 
-samplename = Summer11_WPrimeZZlljj_1200
-description = Summer11_WPrimeZZlljj_1200
-x-section = 0.002699
+samplename = Summer11-WPrimeWZlljj-1100
+description = Summer11-WPrimeWZlljj-1100
+x-section = 0.004238
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WPrime_m1200.txt
-Nprod_evt = 33000
-
-samplename = Summer11_WPrimeZZlljj_1400
-description = Summer11_WPrimeZZlljj_1400
-x-section = 0.001132
-subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WPrime_m1400.txt
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-1100.txt
 Nprod_evt = 30228
 
-samplename = Summer11_WPrimeZZlljj_1500
-description = Summer11_WPrimeZZlljj_1500
+samplename = Summer11-WPrimeWZlljj-1200
+description = Summer11-WPrimeWZlljj-1200
+x-section = 0.002699
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-1200.txt
+Nprod_evt = 33000
+
+samplename = Summer11-WPrimeWZlljj-1300
+description = Summer11-WPrimeWZlljj-1300
+x-section = 0.001725
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-1300.txt
+Nprod_evt = 33000
+
+samplename = Summer11-WPrimeWZlljj-1400
+description = Summer11-WPrimeWZlljj-1400
+x-section = 0.001132
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-1400.txt
+Nprod_evt = 30228
+
+samplename = Summer11-WPrimeWZlljj-1500
+description = Summer11-WPrimeWZlljj-1500
 x-section = 0.0007456
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WPrime_m1500.txt
+pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-1500.txt
 Nprod_evt = 30624
 
 #####################
@@ -172,128 +192,139 @@ samplename = Summer11_DYJetsToLL_PtZ100
 description = Summer11_DYJetsToLL_PtZ100
 x-section = 25.1 
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_DYJetsToLL_PtZ100.txt
+pathname = filelists_HadVZ/V370-Summer11_DYJetsToLL_PtZ100.txt
 Nprod_evt = 1137280
-splitInto = 10
 
 samplename = Summer11_TTJets
 description = Summer11_TTJets
 x-section = 157.5
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_TTJets.txt
+pathname = filelists_HadVZ/V370-Summer11_TTJets.txt
 Nprod_evt = 3646584
-splitInto = 30
 
 samplename = Summer11_WW
 description = Summer11_WW
 x-section = 3.783
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WW.txt
+pathname = filelists_HadVZ/V370-Summer11_WW.txt
 Nprod_evt = 1197558
-splitInto = 10
 
 samplename = Summer11_WZ
 description = Summer11_WZ
 x-section = 1.144
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WZ.txt
+pathname = filelists_HadVZ/V370-Summer11_WZ.txt
 Nprod_evt = 952332
-splitInto = 5
 
 samplename = Summer11_ZZ
 description = Summer11_ZZ
 x-section = 0.5742
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_ZZ.txt
+pathname = filelists_HadVZ/V370-Summer11_ZZ.txt
 Nprod_evt = 1013369
-splitInto = 10
 
 samplename = Summer11_VGamma
 description = Summer11_VGamma
 x-section = 56.54
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_VGamma.txt
+pathname = filelists_HadVZ/V370-Summer11_VGamma.txt
 Nprod_evt = 1067879
-splitInto = 5
 
 samplename = Summer11_WJets_PtW100
 description = Summer11_WJets_PtW100
 x-section = 212.5
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V350-Summer11_WJetsToLNu_PtW100.txt
+pathname = filelists_HadVZ/V370-Summer11_WJetsToLNu_PtW100.txt
 Nprod_evt = 6382667
-splitInto = 10
 
 #############
 ###Fall 11###
 #############
 
 #####################
+##Signal Samples ##
+#####################
+
+samplename = Fall11-WPrimeWZlljj_900
+description = Fall11-WPrimeWZlljj_900
+x-section = 0.01168
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V390C-Fall11-WprimeWZlljj-900.txt
+Nprod_evt = 32604
+
+samplename = Fall11-WPrimeWZlljj_1000
+description = Fall11-WPrimeWZlljj_1000
+x-section = 0.006952
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V390C-Fall11-WprimeWZlljj-1000.txt
+Nprod_evt = 32208
+
+samplename = Fall11-RSZZeejj-1000
+description = Fall11-RSZZeejj-1000
+x-section = 0.00152
+subdir = dcap://osg-se.sprace.org.br/
+pathname = filelists_HadVZ/V390C-Fall11-RSZZeejj-M1000.txt
+Nprod_evt = 53232
+
+#####################
 ##Background Samples ##
 #####################
 
-samplename = Fall11_DYJetsToLL_M50
-description = Fall11_DYJetsToLL_M50
-x-section = 2475.0
-subdir = dcache:/pnfs/cms/WAX/11
-pathname = filelists_HadVZ/DiLeptonJet-V360B-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola.txt
-Nprod_evt = 36209629
-splitInto = 20
+#samplename = Fall11-DYJetsToLL_M50
+#description = Fall11-DYJetsToLL_M50
+#x-section = 2475.0
+#subdir = dcap://osg-se.sprace.org.br/
+#pathname = filelists_HadVZ/V360A-Fall11-DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola.txt
+#Nprod_evt = 36209629
 
-samplename = Fall11_DYJetsToLL_PtZ100
+samplename = Fall11-DYJetsToLL_PtZ100
 description = Fall1111_DYJetsToLL_PtZ100
 x-section = 25.1 
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Fall11_DYJetsToLL_PtZ100.txt
-Nprod_evt = 1134960
-splitInto = 10
+pathname = filelists_HadVZ/V390C-Fall11-DYJetsToLL_PtZ-100.txt
+Nprod_evt = 1117064
 
-samplename = Fall11_TTJets
-description = Fall11_TTJets
+samplename = Fall11-TTJets
+description = Fall11-TTJets
 x-section = 157.5
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Feb6-Fall11-TTJets_02.txt
-Nprod_evt = 3636139
-splitInto = 30
+pathname = filelists_HadVZ/V390C-Fall11-TTJets.txt
+Nprod_evt = 3463393
 
-samplename = Fall11_WW
-description = Fall11_WW
+samplename = Fall11-WW
+description = Fall11-WW
 x-section = 3.783
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Feb6-Fall11-WW.txt
-Nprod_evt = 956134
-splitInto = 10
+pathname = filelists_HadVZ/V390C-Fall11-WW.txt
+Nprod_evt = 1168795
 
-samplename = Fall11_WZ
-description = Fall11_WZ
+samplename = Fall11-WZ
+description = Fall11-WZ
 x-section = 1.144
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Feb6-Fall11-WZ.txt
-Nprod_evt = 952332
-splitInto = 5
+pathname = filelists_HadVZ/V390C-Fall11-WZ.txt
+Nprod_evt = 912234
 
-samplename = Fall11_ZZ
-description = Fall11_ZZ
+samplename = Fall11-ZZ
+description = Fall11-ZZ
 x-section = 0.5742
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Feb6-Fall11-ZZ.txt
-Nprod_evt = 1010808
-splitInto = 10
+pathname = filelists_HadVZ/V390C-Fall11-ZZ.txt
+Nprod_evt = 1004365
 
-samplename = Fall11_VGamma
-description = Fall11_VGamma
+samplename = Fall11-VGamma
+description = Fall11-VGamma
 x-section = 56.54
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Feb6-Fall11-VGamma.txt
-Nprod_evt = 1058387
-splitInto = 5
+pathname = filelists_HadVZ/V390C-Fall11-VGamma.txt
+Nprod_evt = 875523
 
-samplename = Fall11_WJets_PtW100
-description = Fall11_WJets_PtW100
+samplename = Fall11-WJets_PtW100
+description = Fall11-WJets_PtW100
 x-section = 212.5
 subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Feb6-Fall11-WJetsToLNu_PtW100.txt
-Nprod_evt = 8087094
+pathname = filelists_HadVZ/V390C-Fall11-WJets_PtW100.txt
+Nprod_evt = 6331972
 splitInto = 10
 
 samplename = Fall11_WJets
@@ -395,6 +426,11 @@ In order to use xrootd:
 source /afs/cern.ch/cms/cmsset_default.sh
 source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env.sh
 voms-proxy-init
+>>>>>>> 1.35
 
-root://xrootd.unl.edu/
-dcache:/pnfs/cms/WAX/11
+#samplename = Fall11-WJets
+#description = Fall11-WJets
+#x-section = 27770
+#subdir = dcap://osg-se.sprace.org.br/
+#pathname = filelists_HadVZ/V390C-Fall11-WJets.txt
+#Nprod_evt = 72130454
