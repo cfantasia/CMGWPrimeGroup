@@ -478,13 +478,56 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     printf("    Contains: %i pat jet(s)\n",
            (int)allJets_.size());
 
+
+  /*
+  //Loop over jets to change their JES correction - systematics calculation
+  
+  JetCorrectionUncertainty *jecUnc_PF;
+  jecUnc_PF =
+    (JetCorrectionUncertainty*) new JetCorrectionUncertainty("GR_R_42_V19_AK7PF_Uncertainty.txt");
+  
+
+  
+  for (size_t i=0; i<allJets_.size(); ++i) {
+
+    float mass = allJets_[i].mass();
+    float ptUnscaled = allJets_[i].pt();
+    
+    // estimate the uncertainty                                                                                                                             
+    jecUnc_PF->setJetEta(allJets_[i].eta());
+    jecUnc_PF->setJetPt(ptUnscaled);
+    
+    int scaleEnergy = 0;
+    //If I want to scale up
+    scaleEnergy = 1.0;
+    //If I want to scale down
+    //scaleEnergy = -1.0;
+    
+    // apply the uncertainty                                                                                                                                
+    float pt = ptUnscaled + scaleEnergy*jecUnc_PF->getUncertainty(true)*ptUnscaled;
+    float p = pt/fabs(sin(allJets_[i].theta()));
+    float energy = sqrt(p*p+mass*mass);
+    float eta = allJets_[i].eta();
+    float phi =allJets_[i].phi();
+
+    math::PtEtaPhiMLorentzVector polar = allJets_[i].polarP4();
+
+    polar.SetPt(pt);
+    allJets_[i].setP4(polar);
+
+
+    // allJets_[i].setP4(LorentzVector(pt, eta, phi, energy));
+
+
+    }
+  */
   // Loop over jets, and see if they pass the jet criteria
   for (size_t i = 0; i < allJets_.size(); ++i) {
     if (looseJet_(allJets_[i]) && !Overlap(allJets_[i], looseMuons_, 1.0, 2) && !Overlap(allJets_[i], looseElectrons_, 1.0, 2))
       looseJets_.push_back(allJets_[i]);
   }
-  /*
-  if (looseJets_.size() > 2){
+  
+  /*  if (looseJets_.size() > 2){
     if (debug_)
       cout << "Too many jets. Returning now" << endl;
     return; 

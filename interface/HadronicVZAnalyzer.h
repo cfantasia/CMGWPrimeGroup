@@ -4,6 +4,7 @@
 #include "UserCode/CMGWPrimeGroup/interface/AnalyzerBase.h"
 #include "TH2F.h"
 #include "TTree.h"
+#include "UserCode/CMGWPrimeGroup/interface/JetCorrectionUncertainty.h"
 
 /// The class HadronicVZAnalyzer will analyze X -> VZ -> (heavy) jet + dilepton.
 /// For now, we do only simple cuts and simple histograms - fancy things come later.
