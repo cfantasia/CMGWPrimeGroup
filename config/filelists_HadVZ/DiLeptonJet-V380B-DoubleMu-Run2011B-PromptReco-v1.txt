@@ -60,6 +60,7 @@
 /store/user/fantasia/42X/DiLeptonJet-V380B-DoubleMu-Run2011B-PromptReco-v1/patTuple_51_1_30o.root
 /store/user/fantasia/42X/DiLeptonJet-V380B-DoubleMu-Run2011B-PromptReco-v1/patTuple_82_1_jYM.root
 /store/user/fantasia/42X/DiLeptonJet-V380B-DoubleMu-Run2011B-PromptReco-v1/patTuple_83_1_ukS.root
+/store/user/fantasia/42X/DiLeptonJet-V380B-DoubleMu-Run2011B-PromptReco-v1/patTuple_46_2_AY1.root
 /store/user/fantasia/42X/DiLeptonJet-V380B-DoubleMu-Run2011B-PromptReco-v1/patTuple_4_1_Kes.root
 /store/user/fantasia/42X/DiLeptonJet-V380B-DoubleMu-Run2011B-PromptReco-v1/patTuple_48_1_eVM.root
 /store/user/fantasia/42X/DiLeptonJet-V380B-DoubleMu-Run2011B-PromptReco-v1/patTuple_53_1_Qgg.root
