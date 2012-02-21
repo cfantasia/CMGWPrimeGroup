@@ -40,8 +40,8 @@ cvs -Q co -r V03-03-07 RecoLuminosity/LumiDB
 cvs -Q co -r V00-01-03 StatisticalTools/RooStatsRoutines
 cvs -Q co -r B4_2_X_cbern_eNoVeto_18Jan12 CommonTools/ParticleFlow
 cvs -Q co -r V03-09-18 PhysicsTools/PatUtils
-#cvs -Q co -r V00-03-90 UserCode/CMGWPrimeGroup
-cvs -Q co UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-03-90 UserCode/CMGWPrimeGroup
+#cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"
 echo -e  " Hack PAT Muon content to include high-pt reconstructors..."

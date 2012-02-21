@@ -1,3 +1,22 @@
+21-FEB-12 (Christos, Flavia, Phil), V00-03-90
+=============================================
+General improvements
+o Updated base release to 4_2_8_patch7; includes latest JEC
+o Updated data (GR_R_42_V18:All --> GR_R_42_V24:All) and MC
+(START42_V14B:All --> START42_V17:All) global tags
+o Jets: Moved from L1Offset to L1FastJet JEC, added L2L3Residual correction
+on data, added charged hadron subtraction
+o JES utilities for systematic studies
+
+Mu+MET analysis:
+o Updated configurations and plotting macros for W-W' interference studies
+
+VZ analysis:
+o Added more plots
+o Fall11 background samples
+
+
+
 14-FEB-12 (Cory, Flavia), V00-03-80
 =============================================================
 
