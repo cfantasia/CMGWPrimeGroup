@@ -490,7 +490,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   
   for (size_t i=0; i<allJets_.size(); ++i) {
 
-    float mass = allJets_[i].mass();
+    //    float mass = allJets_[i].mass();
     float ptUnscaled = allJets_[i].pt();
     
     // estimate the uncertainty                                                                                                                             
@@ -505,19 +505,18 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     
     // apply the uncertainty                                                                                                                                
     float pt = ptUnscaled + scaleEnergy*jecUnc_PF->getUncertainty(true)*ptUnscaled;
-    float p = pt/fabs(sin(allJets_[i].theta()));
-    float energy = sqrt(p*p+mass*mass);
-    float eta = allJets_[i].eta();
-    float phi =allJets_[i].phi();
-
     math::PtEtaPhiMLorentzVector polar = allJets_[i].polarP4();
 
     polar.SetPt(pt);
     allJets_[i].setP4(polar);
 
-
-    // allJets_[i].setP4(LorentzVector(pt, eta, phi, energy));
-
+#if 0
+    float p = pt/fabs(sin(allJets_[i].theta()));
+    float energy = sqrt(p*p+mass*mass);
+    float eta = allJets_[i].eta();
+    float phi =allJets_[i].phi();
+    allJets_[i].setP4(LorentzVector(pt, eta, phi, energy));
+#endif
 
     }
   
