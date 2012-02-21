@@ -479,7 +479,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
            (int)allJets_.size());
 
 
-  
+  /*
   //Loop over jets to change their JES correction - systematics calculation
   
   JetCorrectionUncertainty *jecUnc_PF;
@@ -519,7 +519,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
 #endif
 
     }
-  
+  */
   // Loop over jets, and see if they pass the jet criteria
   for (size_t i = 0; i < allJets_.size(); ++i) {
     if (looseJet_(allJets_[i]) && !Overlap(allJets_[i], looseMuons_, 1.0, 2) && !Overlap(allJets_[i], looseElectrons_, 1.0, 2))
