@@ -15,7 +15,7 @@ process.WprimeAnalyzer.TightMuonType = "WZRelaxed"
 process.WprimeAnalyzer.minNLeptons = cms.untracked.uint32(2)
 
 # +++++++++++++++++++Analysis Cuts
-process.WprimeAnalyzer.minHt = cms.untracked.double(270.) #W'600 Cut
+process.WprimeAnalyzer.minHt = cms.untracked.double(290.) #W'600 Cut
 process.WprimeAnalyzer.minZpt =  cms.untracked.double(0.)
 process.WprimeAnalyzer.minWpt = cms.untracked.double(0.)
     
