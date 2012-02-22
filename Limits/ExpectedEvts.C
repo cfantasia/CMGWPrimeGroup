@@ -328,10 +328,13 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     double sBkgEvts   = AddInQuad( statBkgEvts,  sysBkgEvts);
     double sEff       = AddInQuad(statEff,      sysEff);
 
-    if(printTbl_){ cout<<" & "<<Value(nBkgEvts,statBkgEvts)<<" $\\pm$ "<<Value(statBkgEvts);
-  //if(printTbl_){ cout<<" & "<<std::fixed << std::setprecision(1)<<nBkgEvts<<" $\\pm$ "<<statBkgEvts;
+    if(printTbl_){ 
+      cout<<" & "<<Value(nBkgEvts,statBkgEvts)<<" $\\pm$ "<<Value(statBkgEvts);
+      //cout<<" & "<<std::fixed << std::setprecision(1)<<nBkgEvts<<" $\\pm$ "<<statBkgEvts;
       if(!noWind_){
-        //cout<<" & -  ";
+        cout<<" & "<<(int)DataEvts;
+        float statSigEvts = sqrt(statMCEvts*statMCEvts - statBkgEvts*statBkgEvts);
+        cout<<" & "<<Value(nSigEvts,statSigEvts)<<" $\\pm$ "<<Value(statSigEvts);
       }
       cout<<" \\\\ \\hline"<<endl;
     }

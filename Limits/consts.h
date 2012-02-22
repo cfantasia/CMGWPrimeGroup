@@ -92,7 +92,7 @@ float
 SysErr(string sample){
   if(!sample.find("GV")) return 0.13;
   if(!sample.find("ZZ")) return 0.075;
-  if(!sample.find("WZ")) return sqrt(0.17*0.17+0.15*0.15);
+  if(!sample.find("WZ")) return sqrt(0.17*0.17+0.10*0.10);
   if(!sample.find("WprimeToWZTo3LNu_M-200")) return 0.045;
   if(!sample.find("WprimeToWZTo3LNu_M-250")) return 0.038;
   if(!sample.find("WprimeToWZTo3LNu_M-300")) return 0.032;

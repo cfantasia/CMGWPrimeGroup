@@ -16,8 +16,8 @@ for windFracTenths in -1
   echo "Done with counting events"
 
   #/afs/hep.wisc.edu/cern/.root/root_v5.30.00.Linux-slc5_amd64-gcc4.3/bin/root -b -q -n 'CalcLimit.C+(1)' > CalcLimit.log
-  #root -b -q -n 'CalcLimit.C+(1)' > CalcLimit.log #CLs
-  root -b -q -n 'CalcLimit.C+(0)' > CalcLimit.log #Bay
+  root -b -q -n 'CalcLimit.C+(1)' > CalcLimit.log #CLs
+  #root -b -q -n 'CalcLimit.C+(0)' > CalcLimit.log #Bay
 
   echo "Done with calculating limits"
 

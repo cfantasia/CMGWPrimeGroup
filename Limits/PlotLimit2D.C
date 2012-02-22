@@ -5,9 +5,9 @@
 #include "consts.h"
 #include "TGraph2D.h"
 
-const float minPI = 100;
-const float maxPI = 900;
-const float maxRHO = 900;
+const float minPI = 60;
+const float maxPI = 1000;
+const float maxRHO = 1000;
 const float minRHO = 150;
 const int RHO_INC = 1;
 const int PI_INC = 1;
@@ -29,7 +29,7 @@ void PlotLimit2D() {
   const Double_t* ExpLimit = tLimit->GetVal(4);
   TGraph* gExpLim = new TGraph(n, mass, ExpLimit);
   TGraph* gObsLim = new TGraph(n, mass, ObsLimit);
-  cout<<"Done with importing limits "<<endl;
+  cout<<"Done with importing limits.  There were "<<n<<endl;
 
   //Fill Xsec 2D graph
   TTree* tXsec = new TTree("tXsec", "X Sec");
@@ -41,7 +41,7 @@ void PlotLimit2D() {
   Double_t* gPi =  tXsec->GetVal(1);
   Double_t* gXsec = tXsec->GetVal(2);
   TGraph2D *gXsec2D = new TGraph2D(nXsec, gRho, gPi, gXsec);
-  cout<<"Done with 2D xsec graph "<<endl;
+  cout<<"Done with 2D xsec graph. There were "<<nXsec<<endl;
 
   vector<float> masses, expPiLims, obsPiLims;
   for(int rho=minRHO; rho<=maxRHO; rho+=RHO_INC){
@@ -72,16 +72,21 @@ void PlotLimit2D() {
   for(unsigned i=0; i<expPiLims.size(); ++i){///////
     exp->SetPoint(i, masses[i], expPiLims[i]);
     obs->SetPoint(i, masses[i], obsPiLims[i]);
-
-    //cout<<"mass:expLim:obsLim:ExpPi:ObsPi = "<<masses[i]<<":"<<gExpLim->Eval(masses[i])<<":"<<gObsLim->Eval(masses[i])<<"\t"<<expPiLims[i]<<"\t\t"<<obsPiLims[i]<<endl;
-    
+    //cout<<"mass:expLim:obsLim:ExpPi:ObsPi = "<<masses[i]<<":"<<gExpLim->Eval(masses[i])<<":"<<gObsLim->Eval(masses[i])<<"\t"<<expPiLims[i]<<"\t\t"<<obsPiLims[i]<<endl;  
   }
 
   //Find Optimistic Limits
   for(unsigned i=0; i<expPiLims.size(); ++i){///////
     if(masses[i] < 350) continue;
     if(expPiLims[i] > masses[i] - 80.4){
-      cout<<"Optmistic Exp Limit is "<<masses[i]<<endl;
+      cout<<"Upper Optimistic Exp Limit is "<<masses[i]<<endl;
+      break;
+    }
+  }
+  for(unsigned i=expPiLims.size()-1; i>=0; --i){///////
+    if(masses[i] > 350) continue;
+    if(expPiLims[i] > masses[i] - 80.4){
+      cout<<"Lower Optmistic Exp Limit is "<<masses[i]<<endl;
       break;
     }
   }
@@ -89,18 +94,56 @@ void PlotLimit2D() {
   for(unsigned i=0; i<obsPiLims.size(); ++i){///////
     if(masses[i] < 350) continue;
     if(obsPiLims[i] > masses[i] - 80.4){
-      cout<<"Optimistic Obs Limit is "<<masses[i]<<endl;
+      cout<<"Upper Optimistic Obs Limit is "<<masses[i]<<endl;
+      break;
+    }
+  }
+  for(unsigned i=obsPiLims.size()-1; i>=0; --i){///////
+    if(masses[i] > 350) continue;
+    if(obsPiLims[i] > masses[i] - 80.4){
+      cout<<"Lower Optimistic Obs Limit is "<<masses[i]<<endl;
       break;
     }
   }
 
-  
+  /////Les Houches Param/////////////
+
+  for(unsigned i=0; i<expPiLims.size(); ++i){///////
+    if(masses[i] < 350) continue;
+    if(expPiLims[i] > 0.75 * masses[i] - 25){
+      cout<<"Upper Les Houches Exp Limit is "<<masses[i]<<endl;
+      break;
+    }
+  }
+  for(unsigned i=expPiLims.size()-1; i>=0; --i){///////
+    if(masses[i] > 350) continue;
+    if(expPiLims[i] > 0.75 * masses[i] - 25){
+      cout<<"Lower Les Houches Exp Limit is "<<masses[i]<<endl;
+      break;
+    }
+  }
+
+  for(unsigned i=0; i<obsPiLims.size(); ++i){///////
+    if(masses[i] < 350) continue;
+    if(obsPiLims[i] > 0.75 * masses[i] - 25){
+      cout<<"Upper Les Houches Obs Limit is "<<masses[i]<<endl;
+      break;
+    }
+  }
+  for(unsigned i=obsPiLims.size()-1; i>=0; --i){///////
+    if(masses[i] > 350) continue;
+    if(obsPiLims[i] > 0.75 * masses[i] - 25){
+      cout<<"Lower Les Houches Obs Limit is "<<masses[i]<<endl;
+      break;
+    }
+  }
+
+
+
+  /////CDF Bump Param/////////
+
   for(unsigned i=0; i<obsPiLims.size(); ++i){///////
     if(masses[i] == 290) cout<<"For rho="<<masses[i]<<", pi limit is "<<obsPiLims[i]
-                             <<" (obs) and "<<expPiLims[i]<<" (exp)"<<endl;
-  }
-  for(unsigned i=0; i<obsPiLims.size(); ++i){///////
-    if(masses[i] == 290) cout<<"For rho=290, pi limit is "<<obsPiLims[i]
                              <<" (obs) and "<<expPiLims[i]<<" (exp)"<<endl;
   }
 
@@ -149,20 +192,19 @@ void PlotLimit2D() {
   //leg->AddEntry(cdfPoint, "CDF Bump", "p");
   leg->Draw();
 
-
-  TLatex* text0 = new TLatex(540, 200, "CMS Preliminary 2011");
+  TLatex* text0 = new TLatex(550, 200, "CMS Preliminary 2011");
   text0->SetTextSize(0.05);
   text0->Draw();
 
-  TLatex* text1 = new TLatex(650, 130, "#sqrt{s} = 7 TeV");
+  TLatex* text1 = new TLatex(660, 130, "#sqrt{s} = 7 TeV");
   text1->SetTextSize(0.05);
   text1->Draw();
 
-  TLatex* text2 = new TLatex(600, 285, Form("#int L dt = %.2f fb^{-1}",lumi[0]/1000));
+  TLatex* text2 = new TLatex(610, 285, Form("#int L dt = %.1f fb^{-1}",lumi[0]/1000));
   text2->SetTextSize(0.05);
   text2->Draw();
 
-  TLine* line1 = new TLine(minPI+80.4, minPI, maxPI, maxPI-80.4);
+  TLine* line1 = new TLine(minRHO, minRHO-80.4, maxRHO, maxRHO-80.4);
   line1->SetLineStyle(2);
   line1->SetLineWidth(2);
   line1->Draw();
@@ -179,7 +221,11 @@ void PlotLimit2D() {
 
   c1->RedrawAxis();
   c1->Print("tcLimit-2D.pdf");
-  c1->Print("tcLimit-2D.eps");
-  c1->Print("tcLimit-2D.gif");
+  c1->Print("tcLimit-2D.C");
+
+  cout<<"Extra points:\n";
+  for(int i=100; i<=900; i+=25){
+    cout<<i<<" "<<i*3./4. - 25<<" "<<gXsec2D->Interpolate(i, i*3./4. - 25)<<endl;
+  }
 
 }
