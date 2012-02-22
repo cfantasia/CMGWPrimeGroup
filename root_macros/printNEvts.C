@@ -142,7 +142,7 @@ printNEvts(string infile, int evtType=-1){
     }
     levels.push_back(make_pair("ValidW", "W Selection"));
     levels.push_back(make_pair("MET", "\\MET"));
-    levels.push_back(make_pair("ValidWZCand", "WZ"));
+    //levels.push_back(make_pair("ValidWZCand", "WZ"));
   }else if(infile.find("HadVZ") != string::npos){
     if(evtType == -1){
     }
@@ -179,7 +179,9 @@ printNEvts(string infile, int evtType=-1){
       float tot = hist->GetBinContent(bin);
       float sigma = hist->GetBinError(bin);
       
-      cout<<" & "<<Value(tot,sigma)<<" $\\pm$ "<<Value(sigma);
+      //cout<<" & "<<std::fixed << std::setprecision(1)<<tot<<" $\\pm$ "<<sigma;
+      cout<<" & "<<Value(tot,sigma);
+      if(Samples[i].second.find("ata") == string::npos) cout<<" $\\pm$ "<<Value(sigma);
     }//loop over cuts
     cout<<" \\\\ \\hline"<<endl;
   }//loop over samples
