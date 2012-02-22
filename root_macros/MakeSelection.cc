@@ -231,7 +231,8 @@ DrawSelection(TFile* fin, Cut& thisCut){
   double* fbkg = new double[nbins];
 
   double* cut = new double[nbins];
-  double* Signif = new double[nbins];
+  double* Signif1 = new double[nbins];
+  double* Signif2 = new double[nbins];
 
   for(int bin=first; bin<=last; ++bin){
     //printf("bin:%i low:%f\n",bin, hists[0]->GetBinCenter(bin));
@@ -240,7 +241,8 @@ DrawSelection(TFile* fin, Cut& thisCut){
     fsig[bin] = 0;
     fbkg[bin] = 0;
     cut[bin] = 0;
-    Signif[bin] = 0;
+    Signif1[bin] = 0;
+    Signif2[bin] = 0;
 
     if(thisCut.isMin){
       Nsig[bin] = hSig.Integral(bin, last);
@@ -253,26 +255,41 @@ DrawSelection(TFile* fin, Cut& thisCut){
     fbkg[bin] = Nbkg[bin] / Nbkg_tot;
     
     cut[bin] = hSig.GetBinCenter(bin);
-    if(Nsig[bin] + Nbkg[bin] > 0) Signif[bin] = Nsig[bin] / sqrt(Nsig[bin] + Nbkg[bin]);
+    //default
+    float numerator, denominator;
+    numerator = Nsig[bin];
+    denominator =  sqrt(Nsig[bin] + Nbkg[bin]);
+    if(denominator > 0) Signif1[bin] = numerator / denominator;
+
+    //cross check S/sqrt(B+dB^2) 
+    numerator = Nsig[bin];
+    denominator =  sqrt(Nbkg[bin] * (1. + 0.17*0.17+0.15*0.15));
+
+    if(denominator > 0) Signif2[bin] = numerator / denominator;
   }
   //Find the optimial cut
-  int cutBinSig = 0;
+  int cutBinSig1 = 0;
+  int cutBinSig2 = 0;
   int cutBinEff = 0;
   for(int bin=first; bin<last; ++bin){
-    if(Signif[bin] > Signif[cutBinSig]) cutBinSig = bin;
+    if(Signif1[bin] > Signif1[cutBinSig1]) cutBinSig1 = bin;
+    if(Signif2[bin] > Signif2[cutBinSig2]) cutBinSig2 = bin;
     if(Straddles(fsig[bin],fsig[bin+1], 0.98)) 
       cutBinEff = fsig[bin+1] > fsig[bin] ? bin+1 : bin;
   }
 
-  if(useSig_) thisCut.cutVal = hSig.GetBinLowEdge(cutBinSig);
-  else        thisCut.cutVal = hSig.GetBinLowEdge(cutBinEff);
+  if     (useSig_) thisCut.cutVal = hSig.GetBinLowEdge(cutBinSig1);
+  else if(0 && useSig_) thisCut.cutVal = hSig.GetBinLowEdge(cutBinSig2);
+  else             thisCut.cutVal = hSig.GetBinLowEdge(cutBinEff);
 
   if(debug_){
     cout<<" For the significance cut, the sig eff is "
-        <<fsig[cutBinSig]*100<<"\% and bkg eff is "<<fbkg[cutBinSig]*100
-        <<"\%"<<endl;
+        <<fsig[cutBinSig1]*100<<"\% and bkg eff is "<<fbkg[cutBinSig1]*100<<"\%"
+        <<fsig[cutBinSig2]*100<<"\% and bkg eff is "<<fbkg[cutBinSig2]*100<<"\%"
+        <<endl;
   }
 
+  //Draw Signal and Bkg dists
   TCanvas c1;
   hBkg.Draw();
   c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
@@ -280,66 +297,113 @@ DrawSelection(TFile* fin, Cut& thisCut){
   hSig.Draw();
   c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
   c1.Clear();
+  //THStack hs;
+  //hs.Add(&hSig);
+  //hs.Add(&hBkg);
+  //c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
+  //c1.Clear();
 
   //c1.Divide(1,2);
   
+  //Draw Sig Eff vs Bkg Eff
   //TVirtualPad* p1 = c1.cd(1);
   string graph_name = "g" + thisCut.name;
   string graph_title = ";Signal Eff;Background Eff";
 
   TMultiGraph mg(graph_name.c_str(), graph_title.c_str());
   TGraph graph(nbins, fsig, fbkg);
-  TGraph pointSig(1, &fsig[cutBinSig], &fbkg[cutBinSig]);
-  pointSig.SetMarkerColor(kRed);
+  TGraph pointSig1(1, &fsig[cutBinSig1], &fbkg[cutBinSig1]);
+  pointSig1.SetMarkerColor(kRed);
+  TGraph pointSig2(1, &fsig[cutBinSig2], &fbkg[cutBinSig2]);
+  pointSig2.SetMarkerColor(kBlue);
   TGraph pointEff(1, &fsig[cutBinEff], &fbkg[cutBinEff]);
   pointEff.SetMarkerColor(kGreen);
 
   mg.Add(&graph,"*");
-  mg.Add(&pointSig,"*");
-  mg.Add(&pointEff,"*");
+  mg.Add(&pointSig1,"*");
+  mg.Add(&pointSig2,"*");
+  //mg.Add(&pointEff,"*");
     
   mg.Draw("A");
 
   string cutResult = thisCut.name + (thisCut.isMin ? " >" : " <");
 
-  TText tCutSig;
-  tCutSig.SetNDC();
-  tCutSig.SetTextSize(0.07);
-  tCutSig.SetTextColor(kRed);
-  tCutSig.DrawText(0.2, 0.75, Form("%s %.0f GeV (Sig)", cutResult.c_str(), hSig.GetBinLowEdge(cutBinSig)));
+  TLatex tCutSig1;
+  tCutSig1.SetNDC();
+  tCutSig1.SetTextSize(0.04);
+  tCutSig1.SetTextColor(kRed);
 
-  TText tCutEff;
+  TLatex tCutSig2;
+  tCutSig2.SetNDC();
+  tCutSig2.SetTextSize(0.04);
+  tCutSig2.SetTextColor(kBlue);
+
+  TLatex tCutEff;
   tCutEff.SetNDC();
-  tCutEff.SetTextSize(0.07);
+  tCutEff.SetTextSize(0.04);
   tCutEff.SetTextColor(kGreen);
-  tCutEff.DrawText(0.2, 0.65, Form("%s %.0f GeV (Eff)", cutResult.c_str(), hSig.GetBinLowEdge(cutBinEff)));
+
+  tCutSig1.DrawLatex(0.2, 0.75, Form("%s %.0f GeV (#frac{N_{S}}{#sqrt{N_{S}+N_{B}}})", cutResult.c_str(), hSig.GetBinLowEdge(cutBinSig1)));
+  tCutSig2.DrawLatex(0.2, 0.65, Form("%s %.0f GeV (#frac{N_{S}}{#sqrt{N_{B}+#sigma^{2}_{sys,N_{B}}}})", cutResult.c_str(), hSig.GetBinLowEdge(cutBinSig2)));
+  //tCutEff.DrawLatex(0.2, 0.55, Form("%s %.0f GeV (98%% Eff)", cutResult.c_str(), hSig.GetBinLowEdge(cutBinEff)));
 
   c1.SaveAs(Form("plots/%s_%sEff.pdf", SigSample[0].c_str(), thisCut.name.c_str()));
   c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
   c1.Clear();
 
-  //////////////////////////////
+  ////Plot Significance Option 1//////////////////////////
   //TVirtualPad* p2 = c1.cd(2);
   graph_title = "; Cut Value (GeV);#frac{N_{S}}{#sqrt{N_{S}+N_{B}}}";
-  TMultiGraph mgSignif(graph_name.c_str(), graph_title.c_str());
-  TGraph gSignif(nbins, cut, Signif);
-  TGraph gSignifPointSig(1, &cut[cutBinSig], &Signif[cutBinSig]);
-  TGraph gSignifPointEff(1, &cut[cutBinEff], &Signif[cutBinEff]);
-  gSignifPointSig.SetMarkerColor(kRed);
+  TMultiGraph mgSignif1(graph_name.c_str(), graph_title.c_str());
+  TGraph gSignif1(nbins, cut, Signif1);
+  TGraph gSignifPointSig1(1, &cut[cutBinSig1], &Signif1[cutBinSig1]);
+  TGraph gSignifPointSig2(1, &cut[cutBinSig2], &Signif1[cutBinSig2]);
+  TGraph gSignifPointEff(1, &cut[cutBinEff], &Signif1[cutBinEff]);
+  gSignifPointSig1.SetMarkerColor(kRed);
+  gSignifPointSig2.SetMarkerColor(kBlue);
   gSignifPointEff.SetMarkerColor(kGreen);
 
-  mgSignif.Add(&gSignif,"*");
-  mgSignif.Add(&gSignifPointSig,"*");
-  mgSignif.Add(&gSignifPointEff,"*");
+  mgSignif1.Add(&gSignif1,"*");
+  mgSignif1.Add(&gSignifPointSig1,"*");
+  mgSignif1.Add(&gSignifPointSig2,"*");
+  mgSignif1.Add(&gSignifPointEff,"*");
     
-  mgSignif.Draw("A");
+  mgSignif1.Draw("A");
   
-  tCutSig.DrawText(0.2, 0.75, Form("%s %.0f GeV (Sig)", cutResult.c_str(), hSig.GetBinLowEdge(cutBinSig)));
-  tCutEff.DrawText(0.2, 0.65, Form("%s %.0f GeV (Eff)", cutResult.c_str(), hSig.GetBinLowEdge(cutBinEff)));
+  tCutSig1.DrawLatex(0.2, 0.75, Form("%s %.0f GeV (#frac{N_{S}}{#sqrt{N_{S}+N_{B}}})", cutResult.c_str(), hSig.GetBinLowEdge(cutBinSig1)));
+  tCutSig2.DrawLatex(0.2, 0.65, Form("%s %.0f GeV (#frac{N_{S}}{#sqrt{N_{B}+#sigma^{2}_{sys,N_{B}}}})", cutResult.c_str(), hSig.GetBinLowEdge(cutBinSig2)));
+  tCutEff.DrawLatex(0.2, 0.55, Form("%s %.0f GeV (98 %% Eff)", cutResult.c_str(), hSig.GetBinLowEdge(cutBinEff)));
 
-  c1.SaveAs(Form("plots/%s_%sSignificance.pdf", SigSample[0].c_str(), thisCut.name.c_str()));
+  c1.SaveAs(Form("plots/%s_%sSignificance1.pdf", SigSample[0].c_str(), thisCut.name.c_str()));
   c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
+  c1.Clear();
 
+  ////Plot Significance Option 2//////////////////////////
+  //TVirtualPad* p2 = c1.cd(2);
+  graph_title = "; Cut Value (GeV);#frac{N_{S}}{#sqrt{N_{B}+#sigma^{2}_{sys,N_{B}}}}";
+  TMultiGraph mgSignif2(graph_name.c_str(), graph_title.c_str());
+  TGraph gSignif2(nbins, cut, Signif2);
+  gSignifPointSig1 = TGraph(1, &cut[cutBinSig1], &Signif2[cutBinSig1]);
+  gSignifPointSig2 = TGraph(1, &cut[cutBinSig2], &Signif2[cutBinSig2]);
+  gSignifPointEff = TGraph(1, &cut[cutBinEff], &Signif2[cutBinEff]);
+  gSignifPointSig1.SetMarkerColor(kRed);
+  gSignifPointSig2.SetMarkerColor(kBlue);
+  gSignifPointEff.SetMarkerColor(kGreen);
+
+  mgSignif2.Add(&gSignif2,"*");
+  mgSignif2.Add(&gSignifPointSig1,"*");
+  mgSignif2.Add(&gSignifPointSig2,"*");
+  mgSignif2.Add(&gSignifPointEff,"*");
+    
+  mgSignif2.Draw("A");
+  
+  tCutSig1.DrawLatex(0.2, 0.75, Form("%s %.0f GeV (#frac{N_{S}}{#sqrt{N_{S}+N_{B}}})", cutResult.c_str(), hSig.GetBinLowEdge(cutBinSig1)));
+  tCutSig2.DrawLatex(0.2, 0.65, Form("%s %.0f GeV (#frac{N_{S}}{#sqrt{N_{B}+#sigma^{2}_{sys,N_{B}}}})", cutResult.c_str(), hSig.GetBinLowEdge(cutBinSig2)));
+  tCutEff.DrawLatex(0.2, 0.55, Form("%s %.0f GeV (98 %% Eff)", cutResult.c_str(), hSig.GetBinLowEdge(cutBinEff)));
+
+  c1.SaveAs(Form("plots/%s_%sSignificance2.pdf", SigSample[0].c_str(), thisCut.name.c_str()));
+  c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
+  c1.Clear();
 
 }
 
