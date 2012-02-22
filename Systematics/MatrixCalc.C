@@ -1,4 +1,4 @@
-//Usage: root -b -q 'MatrixMethod(useEWK)'
+//Usage: root -b -q 'MatrixCalc.C+(useEWK)'
 #include <iostream>
 #include <iomanip>
 
@@ -77,7 +77,7 @@ void MatrixCalc(bool useEWK=true){
       }
       TH1F* hTight = get_sum_of_hists(fTight, names, "hEvtType_AllCuts", 0);
       TH1F* hLoose = get_sum_of_hists(fLoose, names, "hEvtType_AllCuts", 0);
-      MatrixMethod(hLoose, hTight);
+      MatrixMethod(hLoose, hTight, samples[i]=="data");
     }
   }else{
     TTree* tEvts = new TTree("tEvts", "Cut Values per sample");
@@ -98,7 +98,7 @@ void MatrixCalc(bool useEWK=true){
       const float minWpt    = useWpt    ? tEvts->GetVal(6)[isignal] : 0;
       
       
-      const string cuts = Form("(WZMass > %.0f && WZMass < %.0f && Ht > %.0f && Zpt > %.0f && Wpt > %.0f && MET>50)*weight",
+      const string cuts = Form("(WZMass > %.0f && WZMass < %.0f && Ht > %.0f && Zpt > %.0f && Wpt > %.0f)*weight",
                                minWindow, maxWindow, minHt, minZpt, minWpt); 
       cout<<"\n-------\nSignal: "<<SignalName<<" with cuts "<<cuts<<endl;
       
@@ -119,10 +119,10 @@ void MatrixCalc(bool useEWK=true){
         cout<<"sample now is "<<samples[i]<<endl;
         
         TH1F hTight("hTight", "hTight", 4, 0, 4);
-        get_sum_of_hists(fTight, names, "tWZCand", "EvtType", cuts, hTight);
+        get_sum_of_hists(fTight, names, "tEvts_ValidWZCand", "EvtType", cuts, hTight);
 
         TH1F hLoose("hLoose", "hLoose", 4, 0, 4);
-        get_sum_of_hists(fLoose, names, "tWZCand", "EvtType", cuts, hLoose);
+        get_sum_of_hists(fLoose, names, "tEvts_ValidWZCand", "EvtType", cuts, hLoose);
         
         MatrixMethod(&hLoose, &hTight, samples[i]=="data");
       }//samples loop
@@ -144,7 +144,7 @@ MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannels){
   float Se0Tight = sqrt(e0Tight);
   float SallTight = sqrt(allTight);
   
-  cout<<"Tight Sample: "<<" N total: "<<allTight<<" +/- "<<SallTight<<endl;
+  cout<<"Tight Sample: "<<" N total: "<<Value(allTight,SallTight)<<" +/- "<<Value(SallTight)<<endl;
 
   if(0) return;
 
@@ -167,7 +167,7 @@ MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannels){
   float Se0Loose = sqrt(e0Loose);
   float SallLoose = sqrt(allLoose);
   
-  cout<<"Loose Sample: "<<" N total: "<<allLoose<<" +/- "<<SallLoose<<endl;
+  cout<<"Loose Sample: "<<" N total: "<<Value(allLoose,SallLoose)<<" +/- "<<Value(SallLoose)<<endl;
   if(allChannels)
     cout<<"N 3e: "<<e3Loose<<" +/- "<<Se3Loose<<endl//" frac: "<<e3/total<<endl
         <<"N 2e: "<<e2Loose<<" +/- "<<Se2Loose<<endl//" frac: "<<e2/total<<endl
@@ -226,9 +226,12 @@ MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannels){
                                result1e.DeltaNt_jet*result1e.DeltaNt_jet +
                                result0e.DeltaNt_jet*result0e.DeltaNt_jet);
 
-  cout<<"Tight nLep: "<<resultAll.Nt_lep<<" +/- "<<resultAll.DeltaNt_lep<<endl
-      <<"Tight nJet: "<<resultAll.Nt_jet<<" +/- "<<resultAll.DeltaNt_jet
-      <<endl;
+  cout<<" & Tight nLep +- error & Tight nJet +- error "<<endl
+      <<" & "<<Value(resultAll.Nt_lep,resultAll.DeltaNt_lep)
+      <<" & "<<Value(resultAll.DeltaNt_lep)
+      <<" & "<<Value(resultAll.Nt_jet,resultAll.DeltaNt_jet)
+      <<" & "<<Value(resultAll.DeltaNt_jet)
+      <<" &  & \\\\ \\hline"<<endl;
 }
 
 MatrixResult
