@@ -113,7 +113,7 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
   
 //Q=M_{WZ} - M_W - M_Z
     defineHistoSet("hQ", "Q=M_{WZ} - M_{W} - M_{Z}",
-                   "Q (GeV)", 50, 0, 500, "GeV", hQ,dir);
+                   "Q #equiv M_{WZ} - M_{W} - M_{Z} (GeV)", 50, 0, 500, "GeV", hQ,dir);
     defineHistoSet("hWZTransMass", "Reconstructed WZ Transverse Mass",
                    "M_{WZ}^{T} (GeV)", 250, 0, 2500, "GeV", hWZTransMass,dir);
 //WZpt Histos
@@ -122,7 +122,7 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
     
 //Ht Histos
     defineHistoSet("hHt", "H_{T}", 
-                   "Lepton Pt Sum: H_{T} (GeV)", 80, 0, 800, "GeV", hHt,dir);
+                   "H_{T} #equiv #Sigma p_{T}^{Lep} (GeV)", 80, 0, 800, "GeV", hHt,dir);
     defineHistoSet("hTriLepMass", "hTriLepMass",
                    "Trilepton Invariant Mass", 100, 0., 1000., "GeV", hTriLepMass, dir);
   
@@ -172,11 +172,11 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
     
 //W Trans Mass Histos
     defineHistoSet("hWTransMass", "Reconstructed Transverse Mass of W",
-                   "M_{T} (GeV)", 20, 0, 100, "GeV", hWTransMass,dir);
+                   "M_{T}^{W} (GeV)", 40, 0, 200, "GeV", hWTransMass,dir);
     defineHistoSet("hWenuTransMass", "Reconstructed Transverse Mass of We\\nu",
-                   "M_{T}^{e#nu} (GeV)", 20, 0, 100, "GeV", hWenuTransMass,dir);
+                   "M_{T}^{W#rightarrowe#nu} (GeV)", 40, 0, 200, "GeV", hWenuTransMass,dir);
     defineHistoSet("hWmnuTransMass", "Reconstructed TransverseMass of W#mu\\nu",
-                   "M_{T}^{#mu#nu} (GeV)", 20, 0, 100, "GeV", hWmnuTransMass,dir);
+                   "M_{T}^{W#rightarrow#mu#nu} (GeV)", 40, 0, 200, "GeV", hWmnuTransMass,dir);
     
 //Wpt Histos
     defineHistoSet("hWpt", "p_{T}^{W}", 
@@ -217,6 +217,11 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
                    "#rho", 50, 0, 25, "NONE", hL1FastJet,dir);
     
     
+    hDiscriminant = dir.make<TH1F>("hDiscriminant","disc", 1e4, -1e9, 1e9);
+    hDiscriminantFrac = dir.make<TH1F>("hDiscriminantFrac","Disc Frac", 1e4, -1e6, 1e6);
+    hDiscriminantAngle = dir.make<TH1F>("hDiscriminantAngle","Disc Angle", 40, -2, 2);
+    hDiscriminantReal = dir.make<TH1F>("hDiscriminantReal","Disc Real Part", 1e4, -1e7, 1e7);
+    hDiscriminantImag = dir.make<TH1F>("hDiscriminantImag","Disc Imag Part", 1e4, -1e7, 1e7);
     hVtxMatch = dir.make<TH1F>("hVtxMatch","Mask of leptons in PV", 10, 0, 10);
     
     tEvts.assign(NCuts_,NULL);
@@ -236,6 +241,7 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
       tEvts[i]->Branch("WTransMass", &WTransMass_);
       tEvts[i]->Branch("MET", &MET_);
       tEvts[i]->Branch("METSig", &METSig_);
+      tEvts[i]->Branch("Discriminant", &Discriminant_);
       tEvts[i]->Branch("Q", &Q_);
       tEvts[i]->Branch("TriLepMass", &TriLepMass_);
       tEvts[i]->Branch("NVtxs", &NVtxs_);
@@ -474,6 +480,12 @@ inline void
 WZAnalyzer::calcWZVariables(){
   if (debug_) cout<<"In calc WZ Variables\n";
   wzCand_ = (zCand_ && wCand_) ? XWLeptonic(zCand_, wCand_) : XWLeptonic();
+  Discriminant_ = wzCand_.discriminant();
+  hDiscriminant->Fill(wzCand_.discriminant(), weight_);
+  hDiscriminantFrac->Fill(wzCand_.discriminantFrac(), weight_);
+  hDiscriminantAngle->Fill(wzCand_.discriminantAngle(), weight_);
+  hDiscriminantReal->Fill(wzCand_.discriminantReal(), weight_);
+  hDiscriminantImag->Fill(wzCand_.discriminantImag(), weight_);
   WZMass_ = wzCand_(wzAlgo_).mass();
   Q_ = (zCand_ && wCand_) ? calcQ() : -999.;
   if(debug_) printEventDetails();
@@ -656,7 +668,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
       }
     }
   }
-  */
+x  */
 }
 
 void WZAnalyzer::printDebugEvent() const{
@@ -911,6 +923,7 @@ WZAnalyzer::clearEvtVariables(){
   Wpt_ = -999;
   WTransMass_ = -999;
   Q_ = -999;
+  Discriminant_ = 0;
   TT = TF = false;
   runNumber_ = 0;
   lumiNumber_ = 0;

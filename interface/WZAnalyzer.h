@@ -91,6 +91,7 @@ public:
   float Ht_;
   float TriLepMass_;
   float Q_;
+  float Discriminant_;
   float MET_;
   float METSig_;
   uint evtType_;
@@ -189,6 +190,7 @@ public:
 
   std::vector<TH1F*> hWenuCombRelIso, hWmnuCombRelIso;
 
+  TH1F *hDiscriminant, *hDiscriminantFrac, *hDiscriminantAngle, *hDiscriminantReal, *hDiscriminantImag,;
   TH1F* hVtxMatch;
   
   std::vector<TTree*> tEvts;
