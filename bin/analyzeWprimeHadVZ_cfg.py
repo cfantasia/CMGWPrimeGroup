@@ -14,6 +14,9 @@ process.WprimeAnalyzer.preselect = False
 ## Add proper Fall11 PU distribution
 process.WprimeAnalyzer.MCPUDistHist = 'Fall11Dist'
 
+## To run PU systematics jobs
+#process.WprimeAnalyzer.puScale = 1.08
+
 ## enable analysis in individual channels
 process.WprimeAnalyzer.runHadVZAnalysis = True
 process.WprimeAnalyzer.triggersToUse = cms.vstring(
@@ -39,7 +42,7 @@ process.WprimeAnalyzer.triggersToUse = cms.vstring(
 ## input specific for this analyzer
 process.WprimeAnalyzer.electrons = 'selectedPatElectrons'
 process.WprimeAnalyzer.muons = 'selectedPatMuons'
-process.WprimeAnalyzer.muonReconstructor = 3
+process.WprimeAnalyzer.muonReconstructor = 0
 process.WprimeAnalyzer.jets = 'selectedPatJetsAK7PF'
 #
 process.WprimeAnalyzer.minNLeptons =cms.untracked.uint32(2)
@@ -51,17 +54,19 @@ process.WprimeAnalyzer.minZpt = cms.untracked.double(150.0) # All units in GeV
 process.WprimeAnalyzer.minZmass = cms.untracked.double(70.0)
 process.WprimeAnalyzer.maxZmass = cms.untracked.double(110.0)
 
-process.WprimeAnalyzer.minVpt = cms.untracked.double(290.0)
+process.WprimeAnalyzer.minVpt = cms.untracked.double(250.0)
 #Nominal V Mass
-process.WprimeAnalyzer.minVmass = cms.untracked.double(70.0)
+process.WprimeAnalyzer.minVmass = cms.untracked.double(65.0)
 process.WprimeAnalyzer.maxVmass = cms.untracked.double(120.0)
 #Sideband V Mass
 #process.WprimeAnalyzer.minVmass = cms.untracked.double(30.0)
-#process.WprimeAnalyzer.maxVmass = cms.untracked.double(70.0)
+#process.WprimeAnalyzer.maxVmass = cms.untracked.double(65.0)
 #
 
 process.WprimeAnalyzer.Cuts = cms.vstring(
         "NoCuts",
+
+        "HLT",
 
         "MinNLeptons",
         "MinNJets",
@@ -75,9 +80,6 @@ process.WprimeAnalyzer.Cuts = cms.vstring(
 
         "ValidVZ",
               
-        "HLT",
-
-
         "VPt",
         
         "AllCuts")
