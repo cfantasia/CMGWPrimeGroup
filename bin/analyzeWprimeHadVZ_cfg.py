@@ -1,8 +1,8 @@
 from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
-process.WprimeAnalyzer.outputFile  = "HadVZAnalyzer_Fall11.root"
-process.WprimeAnalyzer.logFile     = "HadVZAnalyzer_Fall11.log"
-process.WprimeAnalyzer.candEvtFile = "HadVZAnalyzer_Fall11.lst"
+process.WprimeAnalyzer.outputFile  = "HadVZAnalyzer.root"
+process.WprimeAnalyzer.logFile     = "HadVZAnalyzer.log"
+process.WprimeAnalyzer.candEvtFile = "HadVZAnalyzer.lst"
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_HadVZ.txt"
 
 process.WprimeAnalyzer.maxEvents   = -1
@@ -15,7 +15,7 @@ process.WprimeAnalyzer.preselect = False
 process.WprimeAnalyzer.MCPUDistHist = 'Fall11Dist'
 
 ## To run PU systematics jobs
-#process.WprimeAnalyzer.puScale = 1.08
+##process.WprimeAnalyzer.puScale = 1.08
 
 ## enable analysis in individual channels
 process.WprimeAnalyzer.runHadVZAnalysis = True
@@ -42,7 +42,7 @@ process.WprimeAnalyzer.triggersToUse = cms.vstring(
 ## input specific for this analyzer
 process.WprimeAnalyzer.electrons = 'selectedPatElectrons'
 process.WprimeAnalyzer.muons = 'selectedPatMuons'
-process.WprimeAnalyzer.muonReconstructor = 0
+process.WprimeAnalyzer.muonReconstructor = 3
 process.WprimeAnalyzer.jets = 'selectedPatJetsAK7PF'
 #
 process.WprimeAnalyzer.minNLeptons =cms.untracked.uint32(2)
@@ -59,9 +59,8 @@ process.WprimeAnalyzer.minVpt = cms.untracked.double(250.0)
 process.WprimeAnalyzer.minVmass = cms.untracked.double(65.0)
 process.WprimeAnalyzer.maxVmass = cms.untracked.double(120.0)
 #Sideband V Mass
-#process.WprimeAnalyzer.minVmass = cms.untracked.double(30.0)
+#process.WprimeAnalyzer.minVmass = cms.untracked.double(50.0)
 #process.WprimeAnalyzer.maxVmass = cms.untracked.double(65.0)
-#
 
 process.WprimeAnalyzer.Cuts = cms.vstring(
         "NoCuts",
