@@ -63,23 +63,44 @@ SampleName(float code){
   }else if(code == 105){
     name.push_back( "TC_WZ_500"); 
   }else if(code == 207){
-    name.push_back( "Summer11_RSZZmmjj_750"); 
-    name.push_back( "Summer11_RSZZeejj_750"); 
+    name.push_back( "Summer11-RSZZmmjj-750"); 
+    name.push_back( "Summer11-RSZZeejj-750"); 
   }else if(code == 210){
-    name.push_back( "Summer11_RSZZmmjj_1000"); 
-    name.push_back( "Summer11_RSZZeejj_1000"); 
+    name.push_back( "Summer11-RSZZmmjj-1000"); 
+    name.push_back( "Summer11-RSZZeejj-1000"); 
   }else if(code == 212){
-    name.push_back( "Summer11_RSZZmmjj_1250"); 
-    name.push_back( "Summer11_RSZZeejj_1250"); 
+    name.push_back( "Summer11-RSZZmmjj-1250"); 
+    name.push_back( "Summer11-RSZZeejj-1250"); 
   }else if(code == 215){
-    name.push_back( "Summer11_RSZZmmjj_1500"); 
-    name.push_back( "Summer11_RSZZeejj_1500"); 
+    name.push_back( "Summer11-RSZZmmjj-1500"); 
+    name.push_back( "Summer11-RSZZeejj-1500"); 
   }else if(code == 217){
-    name.push_back( "Summer11_RSZZmmjj_1750"); 
-    name.push_back( "Summer11_RSZZeejj_1750"); 
+    name.push_back( "Summer11-RSZZmmjj-1750"); 
+    name.push_back( "Summer11-RSZZeejj-1750"); 
   }else if(code == 220){
-    name.push_back( "Summer11_RSZZmmjj_2000"); 
-    name.push_back( "Summer11_RSZZeejj_2000"); 
+    name.push_back( "Summer11-RSZZmmjj-2000"); 
+    name.push_back( "Summer11-RSZZeejj-2000"); 
+  }else if(code == 306){
+    name.push_back( "Summer11-WPrimeWZlljj-600");
+  }else if(code == 307){
+    name.push_back( "Summer11-WPrimeWZlljj-700");
+  }else if(code == 308){
+    name.push_back( "Summer11-WPrimeWZlljj-800");
+  }else if(code == 309){
+    name.push_back( "Summer11-WPrimeWZlljj-900");
+  }else if(code == 310){
+    name.push_back( "Summer11-WPrimeWZlljj-1000");
+  }else if(code == 311){
+    name.push_back( "Summer11-WPrimeWZlljj-1100"); 
+  }else if(code == 312){
+    name.push_back( "Summer11-WPrimeWZlljj-1200");
+  }else if(code == 313){
+    name.push_back( "Summer11-WPrimeWZlljj-1300"); 
+  }else if(code == 314){
+    name.push_back( "Summer11-WPrimeWZlljj-1400"); 
+  }else if(code == 315){
+    name.push_back( "Summer11-WPrimeWZlljj-1500");
+
   }else{
     cout<<"Failed looking for code "<<code<<endl;
     abort();
