@@ -601,7 +601,7 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
   string title = "";
   if(Data.size()){
     if(0) title = Data[0].hist->GetTitle();
-    title += ";"; 
+   title += ";"; 
     if(filename.find("hHt_") != string::npos) title += "H_{T} #equiv #Sigma p_{T}^{Lep} (GeV)";
     else                                title += Data[0].hist->GetXaxis()->GetTitle();
     title += ";";
@@ -721,7 +721,10 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
   c1.RedrawAxis(); 
 
   c1.SaveAs(filename.c_str());
-  c1.SaveAs((filename + ".png").c_str());
+  if(paperMode_){
+    filename.replace(filename.find(".pdf"), 4, ".png"); 
+    c1.SaveAs(filename.c_str());
+  }
   //string bookmark = string Form("Title: %s",bookmark.c_str());
   c1.Print(pdfName.c_str(), bookmark.c_str());
 }
