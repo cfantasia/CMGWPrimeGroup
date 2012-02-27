@@ -1,11 +1,12 @@
 /* 
-   Usage: root -b -q 'MakePlots.cc+("input.root", "output.pdf, "options")'
+   Usage: root -b -q 'MakePlots.cc+("input.root", "output.pdf", "options")'
    Options include:
    ""    = every plot after every cut, note some may be blank
    "final" = show me all plots but only after the last cut
    "show" = show me only the main plots(eg for weekly update), only after the last cut
    "debug" = show debugging statements
    "lowSig" = show low xsec signal unstacked
+   "paper" = Change style to official cms style
 */
 #include <stdio.h>
 #include <math.h>
@@ -30,6 +31,7 @@
 
 #include "common.h"
 #include "CMSStyle.C"
+#include "setTDR_modified.C"
 using namespace std;
 
 struct Sample{
@@ -62,6 +64,7 @@ std::map<std::string, std::string> SampleNames;
 bool debug_ = false;
 bool drawLowSig_ = false;
 float lumiUsed_ = 0.;
+bool paperMode_ = false;
 
 int main(int argc, char ** argv);
 void MakePlots(string inName, string outName, string opt="");
@@ -76,10 +79,14 @@ vector<string> GetListofCuts(TFile* f, TH1F* hist=NULL);
 void
 MakePlots(string inName, string outName, string opt){  
   gErrorIgnoreLevel = kWarning;
-  CMSstyle();
 
   if(opt.find("debug") != string::npos) debug_ = true;
   if(opt.find("lowSig") != string::npos) drawLowSig_ = true;
+  if(opt.find("paper") != string::npos) paperMode_ = true;
+
+  if(paperMode_) setTDRStyle();
+  else           CMSstyle();
+  gROOT->ForceStyle();
   
   TFile *fin = TFile::Open(inName.c_str(), "read"); assert(fin);
   lumiUsed_ = GetLumiUsed(fin);
@@ -92,7 +99,7 @@ MakePlots(string inName, string outName, string opt){
   SampleNames["Fall11-TTJets"]="t\\bar{t}";
   SampleNames["ZZTo4L_TuneZ2"]="ZZ\\rightarrow4l";
   SampleNames["PhotonVJets"]="V\\gamma";
-  SampleNames["VV"]="VV";
+  SampleNames["VV"]="ZZ/Z#gamma";//"VV";
   SampleNames["DYJetsToLL"]="DY+Jets\\rightarrow2l";
   SampleNames["Fall11-DYJetsToLL"]="DY+Jets\\rightarrow2l";
   SampleNames["ZJets"]="Z+Jets";
@@ -105,14 +112,16 @@ MakePlots(string inName, string outName, string opt){
   SampleNames["ZCC2JetsToLNu"]="Z+2Jets\\rightarrowcc";
   SampleNames["ZCC3JetsToLNu"]="Z+3Jets\\rightarrowcc";
   SampleNames["WZ"]="WZ";
-  SampleNames["WZJetsTo3LNu"]="WZ\\rightarrow3l\\nu";
-  SampleNames["WprimeToWZTo3LNu_M-300"]="W' 300";
-  SampleNames["WprimeToWZTo3LNu_M-400"]="W' 400";
-  SampleNames["WprimeToWZTo3LNu_M-500"]="W' 500";
-  SampleNames["WprimeToWZTo3LNu_M-600"]="W' 600";
-  SampleNames["WprimeToWZTo3LNu_M-700"]="W' 700";
-  SampleNames["WprimeToWZTo3LNu_M-800"]="W' 800";
-  SampleNames["WprimeToWZTo3LNu_M-900"]="W' 900";
+  SampleNames["WZJetsTo3LNu"]="WZ";//\\rightarrow3l\\nu";
+  SampleNames["WprimeToWZTo3LNu_M-200"]="W' (200 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-250"]="W' (250 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-300"]="W' (300 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-400"]="W' (400 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-500"]="W' (500 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-600"]="W' (600 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-700"]="W' (700 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-800"]="W' (800 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-900"]="W' (900 GeV)";
   SampleNames["TC225"]="\\rho_{TC} 225";
   SampleNames["TC_WZ_300"]="\\rho_{TC} 300";
   SampleNames["TC_WZ_400"]="\\rho_{TC} 400";
@@ -166,7 +175,7 @@ MakePlots(string inName, string outName, string opt){
   /////Background Samples
 
   if(inName.find("WprimeWZ") != string::npos || inName.find("EWKWZ") != string::npos){
-    Bkg.push_back(Sample("WJetsToLNu", kOrange+6, 1, kOrange+10));
+    //Bkg.push_back(Sample("WJetsToLNu", kOrange+6, 1, kOrange+10));
 
     //Bkg.push_back(Sample("ZZ", kOrange+3, 1, kOrange+10));
     //Bkg.push_back(Sample("GVJets", kOrange+3, 1, kOrange+10));
@@ -204,13 +213,15 @@ MakePlots(string inName, string outName, string opt){
   /////Signal Samples
 
   if(inName.find("WprimeWZ") != string::npos){
-    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-300", 1, 1, kGreen));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-200", kBlue, 1, 0));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-250", kRed, 1, 0));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-300", kGreen, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-400", 1, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-500", 1, 1, 0));
     Sig.push_back(Sample("WprimeToWZTo3LNu_M-600", 1, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-700", 1, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-800", 1, 1, 0));
-    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-900", 1, 1, 0));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-900", 1, kDashed, 0));
 
     //Sig.push_back(Sample("TC225",     2, 1, 0));
     //Sig.push_back(Sample("TC_WZ_300",     1, 1, kBlue));
@@ -295,15 +306,6 @@ MakePlots(string inName, string outName, string opt){
   //They are cross checks but not critical to be shown
   if(opt.find("show") == string::npos){
     if(inName.find("WprimeWZ") != string::npos){
-      variable.push_back("hHt");
-      variable.push_back("hMET");
-      variable.push_back("hWTransMass");
-      variable.push_back("hWpt");
-      variable.push_back("hZMass");
-      variable.push_back("hZpt");
-      variable.push_back("hZeept");
-      variable.push_back("hZmmpt");
-      
       variable.push_back("hWZ3e0muMass");
       variable.push_back("hWZ2e1muMass");
       variable.push_back("hWZ1e2muMass");
@@ -312,24 +314,31 @@ MakePlots(string inName, string outName, string opt){
       variable.push_back("hWZTransMass");
       variable.push_back("hWZpt");
     
+      variable.push_back("hHt");
       variable.push_back("hQ");       
-
-      variable.push_back("hEvtType");
-      variable.push_back("hEvtTypeP");
-      variable.push_back("hEvtTypeM");
 
       variable.push_back("hZMass");
       variable.push_back("hZeeMass");
       variable.push_back("hZmmMass");
 
+      variable.push_back("hZpt");
+      variable.push_back("hZeept");
+      variable.push_back("hZmmpt");
+
       variable.push_back("hWTransMass");
       variable.push_back("hWenuTransMass");
       variable.push_back("hWmnuTransMass");
+
+      variable.push_back("hWpt");
 
       variable.push_back("hMET");
       variable.push_back("hMETSig");
       variable.push_back("hMETee");
       variable.push_back("hMETmm");
+
+      variable.push_back("hEvtType");
+      variable.push_back("hEvtTypeP");
+      variable.push_back("hEvtTypeM");
 
       variable.push_back("hWenuCombRelIso");
       variable.push_back("hWmnuCombRelIso");
@@ -387,10 +396,10 @@ MakePlots(string inName, string outName, string opt){
   //Plot the # of Evts plot
   string efftitle[] = {"hNumEvts"};
   if(opt.find("show") == string::npos){
-    //This is the # of evts after each cut
-    DrawandSave(fin,outName,efftitle[0],"Title: "+efftitle[0], 1, 1, 0);
     //This is the # of evts after each cut (stacked)
     DrawandSave(fin,outName,efftitle[0],"Title: "+efftitle[0], 1, 0, 0);
+    //This is the # of evts after each cut
+    DrawandSave(fin,outName,efftitle[0],"Title: "+efftitle[0], 1, 1, 0);
   }
 
   //Determine where to start showing plots
@@ -452,7 +461,7 @@ MakePlots(string inName, string outName, string opt){
       DrawandSave(fin,outName,"hMETmm_ValidW","Title: MET After Valid W (Zmm)",0,0,1);
 //End MET
 
-      DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht before Ht Cut",1,0,0);
+      DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Cumlative Ht before Ht Cut",1,0,1);
 
       DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,0);
       DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,1);
@@ -475,7 +484,13 @@ MakePlots(string inName, string outName, string opt){
       DrawandSave(fin,outName,"hWZ2e1muMass_ValidWZCand","Title: WZ 2e1mu Mass before Ht Cut",1,0,0);
       DrawandSave(fin,outName,"hWZ1e2muMass_ValidWZCand","Title: WZ 1e2mu Mass before Ht Cut",1,0,0);
       DrawandSave(fin,outName,"hWZ0e3muMass_ValidWZCand","Title: WZ 0e3mu Mass before Ht Cut",1,0,0);
-     
+/*
+      DrawandSave(fin,outName,"hDiscriminant","Title: Disc ",1,0,0);
+      DrawandSave(fin,outName,"hDiscriminantFrac","Title: Disc Frac",1,0,0);
+      DrawandSave(fin,outName,"hDiscriminantAngle","Title: Disc Angle",1,0,0);
+      DrawandSave(fin,outName,"hDiscriminantReal","Title: Disc Real",1,0,0);
+      DrawandSave(fin,outName,"hDiscriminantImag","Title: Disc Imag",1,0,0);
+*/     
      }
   }else if(inName.find("EWKWZ") != string::npos){
   }else if(inName.find("HadVZ") != string::npos){
@@ -510,6 +525,7 @@ DrawandSave(TFile* fin, string pdfName, string title, string bookmark, bool logy
   if(!logy) filename += "_Linear"; 
   if(cum)  filename += "_Cumlative";
   filename += ".pdf";
+
   Draw(filename, pdfName, bookmark, logy, eff, line);
 }
 
@@ -547,12 +563,6 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
         validHist = true;
       curSample.hist->SetLineStyle(curSample.style);
       curSample.hist->SetLineColor(curSample.line); 
-      /*
-      if (title.find("VMass") != string::npos){
-	int min = curSample.hist->GetXaxis()->FindBin(70.);
-	int max = curSample.hist->GetXaxis()->FindBin(120.);
-	curSample.hist->GetXaxis()->SetRangeUser(70,120);
-	}*/
 
       if(!eff){
         curSample.hist->SetFillColor(curSample.fill);
@@ -563,7 +573,8 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
           curSample.hist->SetYTitle(newtitle.c_str());
         }
       }else{//Eff Histos
-        if(i!=1) curSample.hist->SetLineColor(curSample.fill); //If not signal
+        if     (i==1) curSample.hist->SetMarkerStyle(kOpenCircle);//Sig
+        else if(i==2) curSample.hist->SetMarkerColor(curSample.fill); //Bkg
         
         if(debug_){
           cout<<" Sample: "<<curSample.name<<endl;
@@ -591,7 +602,8 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
   if(Data.size()){
     if(0) title = Data[0].hist->GetTitle();
     title += ";"; 
-    title += Data[0].hist->GetXaxis()->GetTitle();
+    if(filename.find("hHt_") != string::npos) title += "H_{T} #equiv #Sigma p_{T}^{Lep} (GeV)";
+    else                                title += Data[0].hist->GetXaxis()->GetTitle();
     title += ";";
     title += Data[0].hist->GetYaxis()->GetTitle();
   }else if(Bkg.size()){
@@ -606,7 +618,7 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
     if(i==0) hData = (TH1F*)Data[i].hist->Clone("hData");
     else     hData->Add(Data[i].hist);
   }
-  if(hData) hData->SetMarkerStyle(20);
+  //obsoleteif(hData) hData->SetMarkerStyle(20);
 
   if(!eff){
     THStack* sBkg  = new THStack("sBkg",title.c_str());
@@ -637,21 +649,25 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
 
     if(hData){//Draw Data if it exists
       max = TMath::Max(max, hData->GetMaximum());
-      hData->Draw("E1 SAME");
+      hData->Draw("E SAME");
     }
 
     if(logy){
-      sBkg->SetMaximum(50*max);
+      sBkg->SetMaximum(100*max);
       sBkg->SetMinimum(0.1);
     }else{
       sBkg->SetMaximum(1.5*max);
       sBkg->SetMinimum(0.);
     }
 
-    sBkg->GetXaxis()->SetTitleFont(132);
-    sBkg->GetYaxis()->SetTitleFont(132);
-    sBkg->GetXaxis()->SetTitleSize(0.06);
-    sBkg->GetYaxis()->SetTitleSize(0.06);
+    //This changes the range of the X axis
+    if (filename.find("hWZ3e0muMass_") != string::npos ||
+        filename.find("hWZ2e1muMass_") != string::npos ||
+        filename.find("hWZ1e2muMass_") != string::npos ||
+        filename.find("hWZ0e3muMass_") != string::npos ||
+        filename.find("hWZMass_") != string::npos){
+      sBkg->GetXaxis()->SetRangeUser(0,1500);
+    }
 
   }else{//Eff Histos
     THStack* hs = new THStack("hs",title.c_str());
@@ -664,45 +680,48 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
       hs->Add(Sig[i].hist);
     }
 
-    hs->Add(hData, "E1");
-    
+    hs->Add(hData, "E");
     hs->Draw("nostack");
-    hs->GetXaxis()->SetTitleFont(132);
-    hs->GetYaxis()->SetTitleFont(132);
-    hs->GetXaxis()->SetTitleSize(0.06);
-    hs->GetYaxis()->SetTitleSize(0.06);
+
+    Double_t max = hs->GetMaximum();
+    hs->SetMaximum(500*max);
   }
   if(debug_) cout<<"Title: "<<title<<endl;
 
   TLatex latexLabel;
   latexLabel.SetNDC();
-  latexLabel.SetTextSize(0.045);
-  latexLabel.DrawLatex(0.18, 0.96, "#font[132]{CMS Preliminary 2011}");
-  latexLabel.DrawLatex(0.5, 0.955, "#font[132]{#sqrt{s} = 7 TeV}");
-  latexLabel.DrawLatex(0.73, 0.87, Form("#font[132]{#intL dt = %.2f fb^{-1}}",lumiUsed_/1000.));
+  latexLabel.SetTextSize(0.05);
+  latexLabel.SetTextFont(42);
+  latexLabel.DrawLatex(0.33, 0.96, "CMS Preliminary 2011");
+  latexLabel.DrawLatex(paperMode_ ? 0.20 : 0.25, 0.77, "#sqrt{s} = 7 TeV");
+  latexLabel.DrawLatex(paperMode_ ? 0.16 : 0.20, 0.85, Form("#intL dt = %.1f fb^{-1}",lumiUsed_/1000.));
 
   if(debug_) cout<<"Creating Legend\n";
-  TLegend *legend = new TLegend(0.62,0.69,0.92,0.85,"");
+  float legMinX = paperMode_ ? 0.55 : 0.43;
+  float legMinY = paperMode_ ? 0.65 : 0.68;
+  TLegend *legend = new TLegend(legMinX,legMinY,0.91,0.92,"");
   
-  if(Data.size()) legend->AddEntry(hData, "Data", "PLE");
+  if(Data.size()) legend->AddEntry(hData, "Data", "PE");
   for(unsigned int i=0; i<Bkg.size(); ++i){
-    legend->AddEntry(Bkg[i].hist,SampleNames[Bkg[i].name].c_str(), "F");
+    legend->AddEntry(Bkg[i].hist,SampleNames[Bkg[i].name].c_str(), eff ? "P" : "F");
   }
   for(unsigned int i=0; i<Sig.size(); ++i){
-    legend->AddEntry(Sig[i].hist,SampleNames[Sig[i].name].c_str(), "FL");
+    legend->AddEntry(Sig[i].hist,SampleNames[Sig[i].name].c_str(), eff ? "P" : "FL");
   }
  
   legend->SetTextSize(0.05);
-
+  legend->SetTextFont(42);
 	legend->SetBorderSize(0);
   legend->SetFillStyle(0);
-  legend->SetNColumns(2);
+  legend->SetNColumns(paperMode_ ? 1 : 2);
+  legend->SetColumnSeparation(0.05);
   legend->Draw();
 
   if(line) line->Draw();
   c1.RedrawAxis(); 
 
   c1.SaveAs(filename.c_str());
+  c1.SaveAs((filename + ".png").c_str());
   //string bookmark = string Form("Title: %s",bookmark.c_str());
   c1.Print(pdfName.c_str(), bookmark.c_str());
 }
