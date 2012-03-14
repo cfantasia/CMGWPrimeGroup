@@ -327,6 +327,12 @@ public:
     AddFourMomenta addP4;
     addP4.set(* this);
   }
+  VZCandidate(const pat::Jet & j1, const pat::Jet & j2){
+    addDaughter(j1);
+    addDaughter(j2);
+    AddFourMomenta addP4;
+    addP4.set(* this);
+  }
   operator bool() const {
     return (numberOfDaughters() > 0);
   }

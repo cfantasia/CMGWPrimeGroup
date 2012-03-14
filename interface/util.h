@@ -141,7 +141,7 @@ namespace wprime{
       assert(splitInto > 0);
       assert(pathnames.size()); 
       assert(samplename != INVALID);
-      if(description == INVALID) description = samplename;
+      if(description.find(INVALID) == 0) description.replace(0, INVALID.size(),samplename); 
       assert(description != INVALID);
     }
 
@@ -165,6 +165,8 @@ namespace wprime{
 const float ZMASS = 91.188;
 const float WMASS = 80.398;
 const float VMASS = (ZMASS+WMASS)/2.;
+const float TMASS = 172.9;
+const float MAX_MBL = 153.1; //sqrt(TMASS*TMASS - WMASS*WMASS)
 
 const int PDG_ID_ELEC = 11;
 const int PDG_ID_ELECNEU = 12;
@@ -204,6 +206,23 @@ struct highestPtLepton {
   bool operator() (const reco::CompositeCandidate a, 
                    const reco::CompositeCandidate b) {
     return a.daughter(0)->pt() > b.daughter(0)->pt();
+  }
+};
+struct highestMuonPt {                                                                                                                                     
+  bool operator() (const TeVMuon & a, const TeVMuon & b){                                                                                  
+    return a.pt() > b.pt();                                                                                                                                
+  }                                                                                                                                                        
+};
+
+struct highestElectronPt{                                                                                                                                   
+  bool operator() (const heep::Ele & a, const heep::Ele & b){                                                                                              
+    return a.patEle().pt() > b.patEle().pt();                                                                                                           
+  }                                                                                                                                                        
+};
+
+struct highestJetPt {
+  bool operator() (const pat::Jet & a, const pat::Jet & b){
+    return a.pt() > b.pt();
   }
 };
 
