@@ -252,24 +252,5 @@ public:
   
 };
 
-struct highestMuonPt {                                                                                                                                     
-  bool operator() (const TeVMuon & a, const TeVMuon & b){                                                                                  
-    return a.pt() > b.pt();                                                                                                                                
-  }                                                                                                                                                        
-};
-
-struct highestElectronPt{                                                                                                                                   
-  bool operator() (const heep::Ele & a, const heep::Ele & b){                                                                                              
-    return a.patEle().pt() > b.patEle().pt();                                                                                                           
-  }                                                                                                                                                        
-};
-
-struct highestJetPt {
-  bool operator() (const pat::Jet & a, const pat::Jet & b){
-    return a.pt() > b.pt();
-  }
-};
-
-
 
 #endif//#define _HadronicVZAnalyzer_h_
