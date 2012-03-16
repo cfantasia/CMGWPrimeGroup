@@ -51,6 +51,7 @@ process.WprimeAnalyzer = cms.PSet(
     runHadVWAnalysis = cms.bool(False),
     runTBAnalysis    = cms.bool(False),
     runWgammaAnalysis = cms.bool(False),
+    runTTbarAnalysis = cms.bool(False),
 
     ## input specific for this analyzer
     muonReconstructor = cms.int32(3), ## see TeVMuon_tracking.h
