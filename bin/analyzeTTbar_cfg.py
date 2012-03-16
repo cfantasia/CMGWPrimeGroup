@@ -27,11 +27,24 @@ process.WprimeAnalyzer.triggersToUse = cms.vstring(
     'HLT_Mu24_v*',
     'HLT_Mu30_v*',
     'HLT_Mu40_v*',
+    'HLT_Mu40_eta2p1_v*',
     #double mu
 #    'HLT_DoubleMu7_v*',#MC?
 #    'HLT_Mu13_Mu8_v*', #1e33 unprescaled
 #    'HLT_Mu17_Mu8_v*', #3e33 unprescaled
 #    'HLT_Mu17_TkMu8_v*', #3e33 unprescaled
+
+    #SingleE
+    'HLT_Ele17_SW_L1R',  # from 2010 data
+    'HLT_Ele17_SW_Isol_L1R_v*',
+    'HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
+    'HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
+    'HLT_Ele42_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v*',
+    'HLT_Ele52_CaloIdVT_TrkIdT_v*',
+    'HLT_Ele65_CaloIdVT_TrkIdT_v*',
+    'HLT_Ele80_CaloIdVT_TrkIdT_v*',
+    
+
 
     #Double E (1 for mc, 1 for data)
     'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
