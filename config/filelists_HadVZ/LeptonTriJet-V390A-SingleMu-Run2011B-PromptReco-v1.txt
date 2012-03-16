@@ -1,0 +1,4 @@
+/store/user/fantasia/42X/LeptonTriJet-V390A-SingleMu-Run2011B-PromptReco-v1/patTuple_3_1_ajL.root
+/store/user/fantasia/42X/LeptonTriJet-V390A-SingleMu-Run2011B-PromptReco-v1/patTuple_9_1_YYb.root
+/store/user/fantasia/42X/LeptonTriJet-V390A-SingleMu-Run2011B-PromptReco-v1/patTuple_2_1_uem.root
+/store/user/fantasia/42X/LeptonTriJet-V390A-SingleMu-Run2011B-PromptReco-v1/patTuple_1_1_KHP.root

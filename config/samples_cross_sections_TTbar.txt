@@ -1,0 +1,102 @@
+Top Level Dir = dcache:/pnfs/cms/WAX/11
+integrated lumi = 4632 pb^-1
+
+#############
+### TTbar ###
+#############
+samplename = TTJets_TuneZ2_7TeV-madgraph-tauola
+pathname = filelists_HadVZ/LeptonTriJet-V390A-TTJets_TuneZ2_7TeV-madgraph-tauola.txt
+x-section = 157.5
+Nprod_evt = 59613991
+splitInto = 4
+
+samplename = WJetsToLNu_PtW-100_TuneZ2_7TeV-madgraph
+pathname = filelists_HadVZ/LeptonTriJet-V390A-WJetsToLNu_PtW-100_TuneZ2_7TeV-madgraph.txt
+x-section = 212.5
+Nprod_evt = 8087094
+splitInto = 4
+
+samplename = WJetsToLNu_TuneZ2_7TeV-madgraph-tauola
+pathname = filelists_HadVZ/LeptonTriJet-V390A-WJetsToLNu_TuneZ2_7TeV-madgraph-tauola.txt
+x-section = 27770
+Nprod_evt = 81345381
+splitInto = 4
+
+samplename = data-DiLeptonJet-V360B-SingleElectron-Run2011A-05Aug2011-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360B-SingleElectron-Run2011A-05Aug2011-v1.txt
+
+samplename = data-DiLeptonJet-V360B-SingleElectron-Run2011A-May10ReReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360B-SingleElectron-Run2011A-May10ReReco-v1.txt
+
+samplename = data-DiLeptonJet-V360B-SingleElectron-Run2011A-PromptReco-v4.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360B-SingleElectron-Run2011A-PromptReco-v4.txt
+
+samplename = data-DiLeptonJet-V360B-SingleElectron-Run2011A-PromptReco-v6.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360B-SingleElectron-Run2011A-PromptReco-v6.txt
+
+samplename = data-DiLeptonJet-V360B-SingleElectron-Run2011B-PromptReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360B-SingleElectron-Run2011B-PromptReco-v1.txt
+
+samplename = data-DiLeptonJet-V360B-SingleMu-Run2011A-05Aug2011-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360B-SingleMu-Run2011A-05Aug2011-v1.txt
+
+samplename = data-DiLeptonJet-V360B-SingleMu-Run2011A-May10ReReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360B-SingleMu-Run2011A-May10ReReco-v1.txt
+
+samplename = data-DiLeptonJet-V360B-SingleMu-Run2011A-PromptReco-v4.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360B-SingleMu-Run2011A-PromptReco-v4.txt
+splitInto = 10
+
+samplename = data-DiLeptonJet-V360B-SingleMu-Run2011A-PromptReco-v6.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360B-SingleMu-Run2011A-PromptReco-v6.txt
+splitInto = 10
+
+samplename = data-DiLeptonJet-V360B-SingleMu-Run2011B-PromptReco-v1.txt
+pathname = filelists_HadVZ/DiLeptonJet-V360B-SingleMu-Run2011B-PromptReco-v1.txt
+splitInto = 10
+
+
+DONE
+
+#THESE AREN"T DONE RUNNNING
+
+samplename = data-SingleElectron-Run2011A-05Aug2011-v1
+pathname = filelists_HadVZ/LeptonTriJet-V390A-SingleElectron-Run2011A-05Aug2011-v1.txt
+
+samplename = data-SingleElectron-Run2011A-May10ReReco-v1
+pathname = filelists_HadVZ/LeptonTriJet-V390A-SingleElectron-Run2011A-May10ReReco-v1.txt
+
+samplename = data-SingleElectron-Run2011A-PromptReco-v4
+pathname = filelists_HadVZ/LeptonTriJet-V390A-SingleElectron-Run2011A-PromptReco-v4.txt
+
+samplename = data-SingleElectron-Run2011A-PromptReco-v6
+pathname = filelists_HadVZ/LeptonTriJet-V390A-SingleElectron-Run2011A-PromptReco-v6.txt
+
+samplename = data-SingleMu-Run2011A-May10ReReco-v1
+pathname = filelists_HadVZ/LeptonTriJet-V390A-SingleMu-Run2011A-May10ReReco-v1.txt
+
+samplename = data-SingleMu-Run2011A-PromptReco-v4
+pathname = filelists_HadVZ/LeptonTriJet-V390A-SingleMu-Run2011A-PromptReco-v4.txt
+
+samplename = data-SingleMu-Run2011A-PromptReco-v6
+pathname = filelists_HadVZ/LeptonTriJet-V390A-SingleMu-Run2011A-PromptReco-v6.txt
+
+samplename = data-SingleMu-Run2011B-PromptReco-v1
+pathname = filelists_HadVZ/LeptonTriJet-V390A-SingleMu-Run2011B-PromptReco-v1.txt
+
+DONE
+
+#samplename = TTJets-Sal
+#x-section = 157.5
+#Nprod_evt = 3940198
+#pathname = filelists_HadVZ/V390_TTJets_Sal_v2.txt
+#splitInto = 4
+
+#samplename = TTjets-Sal
+#x-section = 212.5
+#pathname = filelists_HadVZ/V390_WJets_Sal_v2.txt
+#Nprod_evt = 6382667
+#splitInto = 4
+
+
+DONE
