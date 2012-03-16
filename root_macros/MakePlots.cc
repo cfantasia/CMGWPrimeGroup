@@ -139,7 +139,7 @@ MakePlots(string inName, string outName, string opt){
   /////Data Samples
   
   if(inName.find("WprimeWZ") != string::npos || inName.find("EWKWZ") != string::npos){
-  Data.push_back(Sample("data"));
+    Data.push_back(Sample("data"));
   }else if(inName.find("HadVZ") != string::npos){
     vector<string> vData;
 
@@ -167,9 +167,27 @@ MakePlots(string inName, string outName, string opt){
     vData.push_back("data_DoubleMu-Run2011B-PromptReco-v1");
     vData.push_back("data_DoubleElectron-Run2011B-PromptReco-v1");
     
+    Data.push_back(Sample("data", vData, 1, 0, 0));     
+  }else if(inName.find("TTbar") != string::npos){
+    vector<string> vData;
+
+    vData.push_back("data-DiLeptonJet-V360B-SingleMu-Run2011A-May10ReReco-v1.txt");
+    vData.push_back("data-DiLeptonJet-V360B-SingleElectron-Run2011A-May10ReReco-v1.txt");
+
+    vData.push_back("data-DiLeptonJet-V360B-SingleMu-Run2011A-PromptReco-v4.txt");
+    vData.push_back("data-DiLeptonJet-V360B-SingleElectron-Run2011A-PromptReco-v4.txt");
+
+    vData.push_back("data-DiLeptonJet-V360B-SingleMu-Run2011A-05Aug2011-v1.txt");
+    vData.push_back("data-DiLeptonJet-V360B-SingleElectron-Run2011A-05Aug2011-v1.txt");
+
+    vData.push_back("data-DiLeptonJet-V360B-SingleMu-Run2011A-PromptReco-v6.txt");
+    vData.push_back("data-DiLeptonJet-V360B-SingleElectron-Run2011A-PromptReco-v6.txt");
+    
+    vData.push_back("data-DiLeptonJet-V360B-SingleMu-Run2011B-PromptReco-v1.txt");
+    vData.push_back("data-DiLeptonJet-V360B-SingleElectron-Run2011B-PromptReco-v1.txt");
+    
     Data.push_back(Sample("data", vData, 1, 0, 0));
-      
-} 
+  } 
   CheckSamples(fin,Data);
     
   /////Background Samples
@@ -207,6 +225,10 @@ MakePlots(string inName, string outName, string opt){
     ZJets.push_back("Fall11-DYJetsToLL_PtZ100");
     Bkg.push_back(Sample("ZJets", ZJets, kRed-7, 1, kRed-7));
     
+  }else if(inName.find("TTbar") != string::npos){
+    Bkg.push_back(Sample("TTJets_TuneZ2_7TeV-madgraph-tauola"  , kBlue-7, 1, kBlue-7));
+    Bkg.push_back(Sample("WJetsToLNu_TuneZ2_7TeV-madgraph-tauola", kRed-7, 1, kRed-7));
+
   }
   CheckSamples(fin,Bkg);
 
@@ -243,7 +265,7 @@ MakePlots(string inName, string outName, string opt){
     WPrime1000.push_back("Summer11_WPrimeZZlljj_1000");
     //Sig.push_back(Sample("WPrimeWZ_1000", WPrime1000, kViolet+4, 2, 0));
  
-   vector<string> RS1250;
+    vector<string> RS1250;
     RS1250.push_back("Summer11_RSZZeejj_1250");
     RS1250.push_back("Summer11_RSZZmmjj_1250");
     //Bkg.push_back(Sample("RSZZ_1250", RS1250, kMagenta, 1, 0));
@@ -279,9 +301,9 @@ MakePlots(string inName, string outName, string opt){
   samples_.push_back(&Sig);
   samples_.push_back(&Bkg);
   if(debug_) cout<<"Size of samples: "<<samples_.size()
-                <<" Size of Data: "<<Data.size()
-                <<" Size of Sig: "<<Sig.size()
-                <<" Size of Bkg: "<<Bkg.size()
+                 <<" Size of Data: "<<Data.size()
+                 <<" Size of Sig: "<<Sig.size()
+                 <<" Size of Bkg: "<<Bkg.size()
                  <<endl;
 
 
@@ -293,9 +315,9 @@ MakePlots(string inName, string outName, string opt){
   if(inName.find("WprimeWZ") != string::npos){
     variable.push_back("hWZMass");
   }else if(inName.find("EWKWZ") != string::npos){
-      variable.push_back("hZMass");
-      variable.push_back("hWTransMass");
-      variable.push_back("hMET");
+    variable.push_back("hZMass");
+    variable.push_back("hWTransMass");
+    variable.push_back("hMET");
   }else if(inName.find("HadVZ") != string::npos){
     variable.push_back("hVZMass");
     variable.push_back("hVZeeMass");
@@ -387,6 +409,19 @@ MakePlots(string inName, string outName, string opt){
 
       variable.push_back("hNLJets");
       variable.push_back("hNLLeps");
+    }else if(inName.find("TTbar") != string::npos){
+      variable.push_back("hTMass");
+      variable.push_back("hT2Mass");
+
+      variable.push_back("hTpt");
+      variable.push_back("hT2pt");
+
+      variable.push_back("hMET");
+      variable.push_back("hWTransMass");
+      variable.push_back("hW2Mass");
+
+      variable.push_back("hWpt");
+      variable.push_back("hW2pt");
     }
   }
 
@@ -485,13 +520,13 @@ MakePlots(string inName, string outName, string opt){
       DrawandSave(fin,outName,"hWZ1e2muMass_ValidWZCand","Title: WZ 1e2mu Mass before Ht Cut",1,0,0);
       DrawandSave(fin,outName,"hWZ0e3muMass_ValidWZCand","Title: WZ 0e3mu Mass before Ht Cut",1,0,0);
 /*
-      DrawandSave(fin,outName,"hDiscriminant","Title: Disc ",1,0,0);
-      DrawandSave(fin,outName,"hDiscriminantFrac","Title: Disc Frac",1,0,0);
-      DrawandSave(fin,outName,"hDiscriminantAngle","Title: Disc Angle",1,0,0);
-      DrawandSave(fin,outName,"hDiscriminantReal","Title: Disc Real",1,0,0);
-      DrawandSave(fin,outName,"hDiscriminantImag","Title: Disc Imag",1,0,0);
+  DrawandSave(fin,outName,"hDiscriminant","Title: Disc ",1,0,0);
+  DrawandSave(fin,outName,"hDiscriminantFrac","Title: Disc Frac",1,0,0);
+  DrawandSave(fin,outName,"hDiscriminantAngle","Title: Disc Angle",1,0,0);
+  DrawandSave(fin,outName,"hDiscriminantReal","Title: Disc Real",1,0,0);
+  DrawandSave(fin,outName,"hDiscriminantImag","Title: Disc Imag",1,0,0);
 */     
-     }
+    }
   }else if(inName.find("EWKWZ") != string::npos){
   }else if(inName.find("HadVZ") != string::npos){
     if(opt.find("show") == string::npos) {
@@ -601,7 +636,7 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
   string title = "";
   if(Data.size()){
     if(0) title = Data[0].hist->GetTitle();
-   title += ";"; 
+    title += ";"; 
     if(filename.find("hHt_") != string::npos) title += "H_{T} #equiv #Sigma p_{T}^{Lep} (GeV)";
     else                                title += Data[0].hist->GetXaxis()->GetTitle();
     title += ";";
@@ -703,9 +738,11 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
   
   if(Data.size()) legend->AddEntry(hData, "Data", "PE");
   for(unsigned int i=0; i<Bkg.size(); ++i){
-    legend->AddEntry(Bkg[i].hist,SampleNames[Bkg[i].name].c_str(), eff ? "P" : "F");
+    string legName = SampleNames.find(Bkg[i].name) != SampleNames.end() ? SampleNames[Bkg[i].name] : Bkg[i].name;
+    legend->AddEntry(Bkg[i].hist,legName.c_str(), eff ? "P" : "F");
   }
   for(unsigned int i=0; i<Sig.size(); ++i){
+    string legName = SampleNames.find(Sig[i].name) != SampleNames.end() ? SampleNames[Sig[i].name] : Sig[i].name;
     legend->AddEntry(Sig[i].hist,SampleNames[Sig[i].name].c_str(), eff ? "P" : "FL");
   }
  
