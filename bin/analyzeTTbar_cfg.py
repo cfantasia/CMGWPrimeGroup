@@ -3,7 +3,7 @@ from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 process.WprimeAnalyzer.outputFile  = "TTbarAnalyzer.root"
 process.WprimeAnalyzer.logFile     = "TTbarAnalyzer.log"
 process.WprimeAnalyzer.candEvtFile = "TTbarAnalyzer.lst"
-process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_HadVZ.txt"
+process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_TTbar.txt"
 
 process.WprimeAnalyzer.maxEvents   = -1
 process.WprimeAnalyzer.reportAfter = -10
