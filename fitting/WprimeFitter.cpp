@@ -426,8 +426,9 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     // virtual SIG histogram is needed, because of MCStudy()
     //    RooHistPdf Model_inf("Model_inf","interference pdf",*mt, *mt_SigInt,0) ;
 
-    RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
-    
+    RooRealVar nsig("nsig", "# of signal events", Nsig);
+    if(sig_i != 0)
+      nsig.setRange(0, 10000000);
 
     //for Modeling
     RooAddPdf SigBgdhistPdf("SigBgdPdf", "SigBgdPdf", RooArgList(Model_s,Model_b),
@@ -581,22 +582,10 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
       Nevt[sig_i].Ntot = Nsig+Nbgd;      
     }
 
-  RooMCStudy * mcs;
-  
-  if(sig_i == 0){   
-    
-    mcs = new RooMCStudy(*model, *mt,Constrain(nsig),FitModel(SigBgdPdf),
+  RooMCStudy * mcs = new RooMCStudy(*model, *mt, FitModel(SigBgdPdf),
 			 Binned(), Silence(), Extended(kTRUE), 
 			 FitOptions(Range("mt_fit"),Extended(kTRUE),
 				    PrintEvalErrors(0)));
-  }
-  else{
-    
-    mcs = new RooMCStudy(*model, *mt, FitModel(SigBgdPdf),
-			 Binned(), Silence(), Extended(kTRUE), 
-			 FitOptions(Range("mt_fit"),Extended(kTRUE),
-				    PrintEvalErrors(0)));
-  }
   
   RooDLLSignificanceMCSModule sigModule(nsig,0);
   mcs->addModule(sigModule);
