@@ -243,6 +243,7 @@ void WprimeFitter::run()
 	{
 	  runPseudoExperiments(*sig_i, tracking);
 	  calculateZvalues(); 
+	  return;//!!!!remove this line
 	  continue;
 	}
 
@@ -426,33 +427,18 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     // virtual SIG histogram is needed, because of MCStudy()
     //    RooHistPdf Model_inf("Model_inf","interference pdf",*mt, *mt_SigInt,0) ;
 
-    RooRealVar nsig("nsig", "# of signal events", Nsig);
-    if(sig_i != 0)
-      nsig.setRange(0, 10000000);
+    if(sig_i==0) Nsig=0;
+    RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
 
     //for Modeling
     RooAddPdf SigBgdhistPdf("SigBgdPdf", "SigBgdPdf", RooArgList(Model_s,Model_b),
 			    RooArgList(nsig, *nbgd));
     
-    RooGaussian nsigc("nsigc","nsigc",nsig,RooConst(0.0),RooConst(0.00000001));
-    //#RooLandau nsigc("nsigc","nsigc",nsig,RooConst(0.00001),RooConst(0.0000001));
-    //#RooGenericPdf nsigc("nsigc","nsigc","1.0/(1000000.0*nsig)",RooArgSet(nsig)) ;
-    //#RooPoisson nsigc("nsigc","nsigc",nsig,RooConst(0.000000001));
-    
-    RooProdPdf  SigBgdhistPdfc("SigBgdPdfc","SigBgdPdfc for BG only",RooArgSet(SigBgdhistPdf, nsigc));
-  
-
     //for Fitting Function
     RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
     			RooArgList(nsig, *nbgd));
 
-
-    //sig_i = 0 corresponds to bgd-only ensemble
-    // need a better way to make this clearer
-    if(sig_i == 0)
-      model = (RooAbsPdf*) &SigBgdhistPdfc;
-    else
-      model = (RooAbsPdf*) &SigBgdhistPdf;
+    model = (RooAbsPdf*) &SigBgdhistPdf;
 
     cout << "\n Will run PE ensemble for sample " << desc[sig_i] << 
       " and scale factor = " << scale_factor << endl;
@@ -567,20 +553,12 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   // 				   FitOptions(Range("mt_fit"),Extended(kTRUE),
   //					      PrintEvalErrors(0)));
 
-    Nevt[sig_i].Nsig = Nsig;
+  Nevt[sig_i].Nsig = Nsig;
   Nevt[sig_i].Nbgd = Nbgd;
   
   float Ntot = 0;
-  if(sig_i == 0)
-    {
-      Ntot = Nbgd;
-      Nevt[sig_i].Ntot = Nbgd;
-    }
-  else
-    {
-      Ntot = Nsig+Nbgd;
-      Nevt[sig_i].Ntot = Nsig+Nbgd;      
-    }
+  Ntot = Nsig+Nbgd;
+  Nevt[sig_i].Ntot = Nsig+Nbgd;      
 
   RooMCStudy * mcs = new RooMCStudy(*model, *mt, FitModel(SigBgdPdf),
 			 Binned(), Silence(), Extended(kTRUE), 
