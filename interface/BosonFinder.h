@@ -179,20 +179,20 @@ public:
     soln_ = XW.soln_;
   }
   
-  double neutrinoPz(const NuAlgos& type) const{
+  inline double neutrinoPz(const NuAlgos& type) const{
     return neutrinoPz_[soln_[type]];
   }
 
-  const LorentzVector & p4(const NuAlgos& type) const{
+  inline const LorentzVector & p4(const NuAlgos& type) const{
     return p4_[soln_[type]];
   }
 
-  operator bool() const {
+  inline operator bool() const {
     return p4_[0].mass()>0;
   }
 
-  const LorentzVector & operator ()(const NuAlgos& type=kMinPz) const{
-    return p4_[soln_[type]];
+  inline const LorentzVector & operator ()(const NuAlgos& type=kMinPz) const{
+    return p4(type);
   }
 
   double discriminant() const{
