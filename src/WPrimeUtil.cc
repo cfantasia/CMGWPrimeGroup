@@ -19,22 +19,25 @@ WPrimeUtil::WPrimeUtil(edm::InputTag genLabel,
   genLabel_ = genLabel;
   pfLabel_ = pfLabel;
   sample_cross_sections = cross_sections;
-  setupZMETcorrection();
 
 }
 WPrimeUtil::~WPrimeUtil()
 {
-  int N = hRecoilParalvsVBPt->GetXaxis()->GetNbins();
-  for(int bin_no = 0; bin_no < N; ++bin_no)
-    delete histRecoilParal[bin_no];
-  delete [] histRecoilParal;
-  delete hRecoilPerp;
-  delete hRecoilParalvsVBPt;
+  if(hRecoilParalvsVBPt){
+    int N = hRecoilParalvsVBPt->GetNbinsX();
+    for(int bin_no = 0; bin_no < N; ++bin_no)
+      delete histRecoilParal[bin_no];
+    delete [] histRecoilParal;
+    delete hRecoilPerp;
+    delete hRecoilParalvsVBPt;
+  }
 }
 
 void WPrimeUtil::setupZMETcorrection()
 {
-  string filename = "ZMET_data.root";
+  if(hRecoilParalvsVBPt) return;//if already set, get out
+
+  string filename = "UserCode/CMGWPrimeGroup/root_macros/ZMET_data.root";
   // open the Z data file with info about recoil
   TFile* File = TFile::Open(filename.c_str(), "READONLY");
   if(!File || File->IsZombie())
@@ -43,7 +46,6 @@ void WPrimeUtil::setupZMETcorrection()
       cerr << " Exiting... " << endl;
       abort();
     }
-
   TDirectoryFile * demo=(TDirectoryFile*)File->Get("pflow");
   hRecoilParalvsVBPt = (TH2D*)demo->Get("hMETParalvsVBPt");
   hRecoilParalvsVBPt->SetName("hRecoilParalvsVBPt");
@@ -52,13 +54,14 @@ void WPrimeUtil::setupZMETcorrection()
   
   
   setRecoilProjections();
+  
 }
 
 void WPrimeUtil::setRecoilProjections()
 {
   assert(hRecoilParalvsVBPt != 0);
   assert(histRecoilParal == 0);
-  int N = hRecoilParalvsVBPt->GetXaxis()->GetNbins();
+  int N = hRecoilParalvsVBPt->GetNbinsX();
   histRecoilParal = new TH1D *[N];
 
   for(int bin_no = 1; bin_no <= N; ++bin_no)

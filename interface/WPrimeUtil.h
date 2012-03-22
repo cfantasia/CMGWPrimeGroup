@@ -36,7 +36,7 @@ class WPrimeUtil
   // get input files (to be retrieved from samples_cross_sections.txt)
   void getInputFiles(std::vector<wprime::InputFile> & inputFiles, const int fileToRun);
 
-  inline void setApplyHadronicRecoilCorrection(bool flag){applyHadronicRecoilCorrection_ = flag;}
+  inline void setApplyHadronicRecoilCorrection(bool flag){applyHadronicRecoilCorrection_ = flag; if(flag) setupZMETcorrection();}
   inline void setHadronicMETcalculated(bool flag){hadronicMETcalculated_ = flag;}
 
   inline bool shouldApplyHadronicRecoilCorrection(){return applyHadronicRecoilCorrection_;}
