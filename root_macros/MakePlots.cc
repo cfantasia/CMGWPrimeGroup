@@ -1,5 +1,5 @@
 /* 
-   Usage: root -b -q 'MakePlots.cc+("input.root", "output.pdf", "options")'
+   Usage: root -b -q 'MakePlots.cc+("input.root", "output.pdf", "options", <lumiWanted>)'
    Options include:
    ""    = every plot after every cut, note some may be blank
    "final" = show me all plots but only after the last cut
@@ -64,10 +64,12 @@ std::map<std::string, std::string> SampleNames;
 bool debug_ = false;
 bool drawLowSig_ = false;
 float lumiUsed_ = 0.;
+float lumiWanted_ = -1;
+bool scaleLumi_ = false;
 bool paperMode_ = false;
 
 int main(int argc, char ** argv);
-void MakePlots(string inName, string outName, string opt="");
+void MakePlots(string inName, string outName, string opt="", float lumiWanted=-1);
 void DrawandSave(TFile* fin, std::string pdfName, std::string title, std::string bookmark, bool logy, bool eff, bool cum, TLine* line=NULL);
 TH1F* FillCum(TH1F* h);
 bool GetHistograms(TFile* fin, std::string title, bool eff, bool cum);
@@ -77,7 +79,7 @@ TH1F* GetValidHist(TFile* f);
 vector<string> GetListofCuts(TFile* f, TH1F* hist=NULL);
 
 void
-MakePlots(string inName, string outName, string opt){  
+MakePlots(string inName, string outName, string opt, float lumiWanted){  
   gErrorIgnoreLevel = kWarning;
 
   if(opt.find("debug") != string::npos) debug_ = true;
@@ -90,7 +92,10 @@ MakePlots(string inName, string outName, string opt){
   
   TFile *fin = TFile::Open(inName.c_str(), "read"); assert(fin);
   lumiUsed_ = GetLumiUsed(fin);
+  lumiWanted_ = lumiWanted > 0 ? lumiWanted : lumiUsed_;
+
   cout<<"Lumi Used is "<<lumiUsed_<<" inv pb\n";
+  cout<<"Lumi Wanted is "<<lumiWanted_<<" inv pb\n";
 
   SampleNames["data"]="Data";
   SampleNames["WJetsToLNu"]="W+Jets";
@@ -520,11 +525,11 @@ MakePlots(string inName, string outName, string opt){
       DrawandSave(fin,outName,"hWZ1e2muMass_ValidWZCand","Title: WZ 1e2mu Mass before Ht Cut",1,0,0);
       DrawandSave(fin,outName,"hWZ0e3muMass_ValidWZCand","Title: WZ 0e3mu Mass before Ht Cut",1,0,0);
 /*
-  DrawandSave(fin,outName,"hDiscriminant","Title: Disc ",1,0,0);
-  DrawandSave(fin,outName,"hDiscriminantFrac","Title: Disc Frac",1,0,0);
-  DrawandSave(fin,outName,"hDiscriminantAngle","Title: Disc Angle",1,0,0);
-  DrawandSave(fin,outName,"hDiscriminantReal","Title: Disc Real",1,0,0);
-  DrawandSave(fin,outName,"hDiscriminantImag","Title: Disc Imag",1,0,0);
+      DrawandSave(fin,outName,"hDiscriminant","Title: Disc ",1,0,0);
+      DrawandSave(fin,outName,"hDiscriminantFrac","Title: Disc Frac",1,0,0);
+      DrawandSave(fin,outName,"hDiscriminantAngle","Title: Disc Angle",1,0,0);
+      DrawandSave(fin,outName,"hDiscriminantReal","Title: Disc Real",1,0,0);
+      DrawandSave(fin,outName,"hDiscriminantImag","Title: Disc Imag",1,0,0);
 */     
     }
   }else if(inName.find("EWKWZ") != string::npos){
@@ -599,6 +604,8 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
       curSample.hist->SetLineStyle(curSample.style);
       curSample.hist->SetLineColor(curSample.line); 
 
+      if(samples_[i] != &Data) curSample.hist->Scale(lumiWanted_/lumiUsed_); //Don't scale data
+
       if(!eff){
         curSample.hist->SetFillColor(curSample.fill);
         if(cum){//Do you want a cumlative distrubution
@@ -608,8 +615,8 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
           curSample.hist->SetYTitle(newtitle.c_str());
         }
       }else{//Eff Histos
-        if     (i==1) curSample.hist->SetMarkerStyle(kOpenCircle);//Sig
-        else if(i==2) curSample.hist->SetMarkerColor(curSample.fill); //Bkg
+        if     (samples_[i] == &Sig) curSample.hist->SetMarkerStyle(kOpenCircle);//Sig
+        else if(samples_[i] == &Bkg) curSample.hist->SetMarkerColor(curSample.fill); //Bkg
         
         if(debug_){
           cout<<" Sample: "<<curSample.name<<endl;
@@ -729,7 +736,7 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
   latexLabel.SetTextFont(42);
   latexLabel.DrawLatex(0.33, 0.96, "CMS Preliminary 2011");
   latexLabel.DrawLatex(paperMode_ ? 0.20 : 0.25, 0.77, "#sqrt{s} = 7 TeV");
-  latexLabel.DrawLatex(paperMode_ ? 0.16 : 0.20, 0.85, Form("#intL dt = %.1f fb^{-1}",lumiUsed_/1000.));
+  latexLabel.DrawLatex(paperMode_ ? 0.16 : 0.20, 0.85, Form("#intL dt = %.1f fb^{-1}",lumiWanted_/1000.));
 
   if(debug_) cout<<"Creating Legend\n";
   float legMinX = paperMode_ ? 0.55 : 0.43;
@@ -758,7 +765,7 @@ Draw(string filename, string pdfName, string bookmark, bool logy, bool eff, TLin
   c1.RedrawAxis(); 
 
   c1.SaveAs(filename.c_str());
-  if(paperMode_){
+  if(1 || paperMode_){
     filename.replace(filename.find(".pdf"), 4, ".png"); 
     c1.SaveAs(filename.c_str());
   }
