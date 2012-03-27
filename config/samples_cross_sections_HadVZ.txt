@@ -1,13 +1,13 @@
 Top Level Dir = 
 integrated lumi = 4632 pb^-1
 
-#############
-##Summer 11##
-#############
+##########################
+####   Summer 11  ########
+##########################
 
-################
+##################
 ##Signal Samples##
-################
+##################
 
 samplename = Summer11-RSZZmmjj-750
 description = Summer11-RSZZmmjj-750
@@ -184,65 +184,12 @@ subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V390C-Summer11-WprimeWZlljj-1500.txt
 Nprod_evt = 30624
 
-#####################
-##Background Samples ##
-#####################
-
-samplename = Summer11_DYJetsToLL_PtZ100
-description = Summer11_DYJetsToLL_PtZ100
-x-section = 25.1 
-subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Summer11_DYJetsToLL_PtZ100.txt
-Nprod_evt = 1137280
-
-samplename = Summer11_TTJets
-description = Summer11_TTJets
-x-section = 157.5
-subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Summer11_TTJets.txt
-Nprod_evt = 3646584
-
-samplename = Summer11_WW
-description = Summer11_WW
-x-section = 3.783
-subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Summer11_WW.txt
-Nprod_evt = 1197558
-
-samplename = Summer11_WZ
-description = Summer11_WZ
-x-section = 1.144
-subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Summer11_WZ.txt
-Nprod_evt = 952332
-
-samplename = Summer11_ZZ
-description = Summer11_ZZ
-x-section = 0.5742
-subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Summer11_ZZ.txt
-Nprod_evt = 1013369
-
-samplename = Summer11_VGamma
-description = Summer11_VGamma
-x-section = 56.54
-subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Summer11_VGamma.txt
-Nprod_evt = 1067879
-
-samplename = Summer11_WJets_PtW100
-description = Summer11_WJets_PtW100
-x-section = 212.5
-subdir = dcap://osg-se.sprace.org.br/
-pathname = filelists_HadVZ/V370-Summer11_WJetsToLNu_PtW100.txt
-Nprod_evt = 6382667
-
-#############
-###Fall 11###
-#############
+##########################
+#####   Fall 11  #########
+##########################
 
 #####################
-##Signal Samples ##
+###Signal Samples ###
 #####################
 
 samplename = Fall11-WPrimeWZlljj_900
@@ -266,9 +213,9 @@ subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V390C-Fall11-RSZZeejj-M1000.txt
 Nprod_evt = 53232
 
-#####################
+#######################
 ##Background Samples ##
-#####################
+#######################
 
 #samplename = Fall11-DYJetsToLL_M50
 #description = Fall11-DYJetsToLL_M50
@@ -283,6 +230,7 @@ x-section = 25.1
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V390C-Fall11-DYJetsToLL_PtZ-100.txt
 Nprod_evt = 1117064
+splitInto = 20
 
 samplename = Fall11-TTJets
 description = Fall11-TTJets
@@ -290,6 +238,7 @@ x-section = 157.5
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V390C-Fall11-TTJets.txt
 Nprod_evt = 3463393
+splitInto = 20
 
 samplename = Fall11-WW
 description = Fall11-WW
@@ -297,6 +246,7 @@ x-section = 3.783
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V390C-Fall11-WW.txt
 Nprod_evt = 1168795
+splitInto = 10
 
 samplename = Fall11-WZ
 description = Fall11-WZ
@@ -304,6 +254,7 @@ x-section = 1.144
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V390C-Fall11-WZ.txt
 Nprod_evt = 912234
+splitInto = 10
 
 samplename = Fall11-ZZ
 description = Fall11-ZZ
@@ -311,6 +262,7 @@ x-section = 0.5742
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V390C-Fall11-ZZ.txt
 Nprod_evt = 1004365
+splitInto = 10
 
 samplename = Fall11-VGamma
 description = Fall11-VGamma
@@ -318,6 +270,7 @@ x-section = 56.54
 subdir = dcap://osg-se.sprace.org.br/
 pathname = filelists_HadVZ/V390C-Fall11-VGamma.txt
 Nprod_evt = 875523
+splitInto = 10
 
 samplename = Fall11-WJets_PtW100
 description = Fall11-WJets_PtW100
