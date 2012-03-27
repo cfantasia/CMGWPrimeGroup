@@ -4,7 +4,7 @@ def el_config(process) :
     # event content to include all electrons within |eta|<2.5 with pt>20
     process.selectedPatElectrons.cut = "pt > 20. & abs(eta) < 2.5"
     
-    process.selectedPatPFParticles.cut = "abs(pdgId())==11"
+    process.selectedPatPFParticles.cut = "( abs(pdgId())==11 || abs(pdgId())==22 || abs(pdgId())==211 ) & pt > 100. "
     process.out.outputCommands.append('keep *_selectedPatElectrons_*_*')
     
     # define filter with electron-pt above 100 GeV
