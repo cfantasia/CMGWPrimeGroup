@@ -243,7 +243,6 @@ void WprimeFitter::run()
 	{
 	  runPseudoExperiments(*sig_i, tracking);
 	  calculateZvalues(); 
-	  return;//!!!!remove this line
 	  continue;
 	}
 
@@ -548,11 +547,6 @@ void WprimeFitter::getLLR()
 void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model, 
 					RooAbsPdf & SigBgdPdf, RooRealVar &nsig)
 {
-  // RooMCStudy * mcs= new RooMCStudy(*model, *mt, FitModel(SigBgdPdf), 
-  //				   Binned(), Silence(), Extended(kTRUE), 
-  // 				   FitOptions(Range("mt_fit"),Extended(kTRUE),
-  //					      PrintEvalErrors(0)));
-
   Nevt[sig_i].Nsig = Nsig;
   Nevt[sig_i].Nbgd = Nbgd;
   
