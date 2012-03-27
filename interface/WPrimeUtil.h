@@ -128,7 +128,10 @@ class WPrimeUtil
     static int 
     FindPFCand(const T & lep, const std::vector<pat::PFParticle>& pfCands){
     for(unsigned i=0; i<pfCands.size(); ++i){
-      if(Match(lep,pfCands[i])) return i;
+      if(Match(lep,pfCands[i])) {
+	if( abs(pfCands[i].pdgId())==211 && i != 0){return -1; } // If PF algo identify electron as pion(which PF index==0), select it.
+	return i;
+      }
     }
     return -1;
   }
@@ -271,11 +274,20 @@ class WPrimeUtil
 template<class T1,class T2>
 static bool Match(const T1 & p1, const T2 & p2){
   float tolerance = 0.01;
-  if (p1.pdgId() == p2.pdgId() &&
-      fabs(p1.eta() - p2.eta()) < tolerance &&
-      fabs(reco::deltaPhi(p1.phi(),p2.phi())) < tolerance
-    )
-    return true;
+  if(fabs(p1.eta() - p2.eta()) < tolerance &&
+     fabs(reco::deltaPhi(p1.phi(),p2.phi())) < tolerance)
+    {
+      if ( abs(p1.pdgId()) == abs(p2.pdgId()) ) // gsf electron is matched PF electron not only same charged, also reversal case.
+	return true;
+      else if ( abs(p1.pdgId())== 11 && abs(p2.pdgId()) == 211 ){// In case that  PF can not identify electron, it is identified as pion.
+	return true;                                                                                            
+      }
+    }
+  //  if (p1.pdgId() == p2.pdgId() &&
+  //      fabs(p1.eta() - p2.eta()) < tolerance &&
+  //      fabs(reco::deltaPhi(p1.phi(),p2.phi())) < tolerance
+  //    )
+  //    return true;
   return false;
 }
 
