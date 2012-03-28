@@ -13,4 +13,4 @@ process.WprimeAnalyzer.LooseMuonType = "WZRelaxed"
 process.WprimeAnalyzer.TightMuonType = "WZTight"
 
 process.WprimeAnalyzer.minNLeptons = cms.untracked.uint32(2)
-process.WprimeAnalyzer.doSystematics = cms.untracked.bool(true)
+process.WprimeAnalyzer.doSystematics = cms.untracked.bool(True)

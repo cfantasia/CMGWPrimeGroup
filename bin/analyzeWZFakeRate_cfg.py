@@ -1,6 +1,9 @@
 from UserCode.CMGWPrimeGroup.commonWZ_cfg import *
 
+#process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_WZ.txt"
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_WZDilepton.txt"
+
+process.WprimeAnalyzer.doSystematics = cms.untracked.bool(True)
 
 ######Measure Fake rate of Muons######################
 if False:
@@ -30,4 +33,3 @@ process.WprimeAnalyzer.minMET = 30.
 process.WprimeAnalyzer.minMET = 30.
 process.WprimeAnalyzer.minNLeptons = 2
 process.WprimeAnalyzer.minNTightLeptons = cms.untracked.uint32(1)
-
