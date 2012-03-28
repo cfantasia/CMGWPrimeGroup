@@ -39,7 +39,8 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   
   wprimeUtil_ = new WPrimeUtil(genLabel_, pfCandsLabel_, sample_cross_sections);
   wprimeUtil_->setLumiWeights(MCPUDistFile, DataPUDistFile, MCPUDistHist, DataPUDistHist, puScale);
-  wprimeUtil_->setEventsToDebug(vEventsToDebug);
+  vEventsToDebug_ = vEventsToDebug;
+  //wprimeUtil_->setEventsToDebug(vEventsToDebug);
   assert(wprimeUtil_);
 
   wprimeUtil_->getInputFiles(inputFiles_, fileToRun);
@@ -604,6 +605,23 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
 
 void
 AnalyzerBase::defineHistoSet(const string& n, const string& t, 
+                             const string& xtitle, 
+                             int nxbins, float xmin, float xmax, 
+                             const string& ytitle,
+                             int nybins, float ymin, float ymax, 
+                             vector<TH2F*>& h, const TFileDirectory& d){
+  h.assign(NCuts_,NULL);
+  for(int i=0; i<NCuts_; ++i)
+    {
+      string name = n + "_" + CutNames_[i];
+      string title = t + " (After " + CutDescs_[i] + " Cut)"; 
+      defineOneHisto(name, title, xtitle, nxbins, xmin, xmax, 
+                     ytitle, nybins, ymin, ymax, h[i], d);
+    }
+}
+
+void
+AnalyzerBase::defineHistoSet(const string& n, const string& t, 
 			     const string& xtitle,
 			     int nbins, float xmin, float xmax, 
 			     const string& units,
@@ -647,6 +665,18 @@ void AnalyzerBase::createGenMtHist(const TFileDirectory & d, float Mass,
   // need a smart way to adjust the resolution histogram range based on Mass
   float xmin = Mass*1000 - 1300; float xmax = Mass*1000 + 300;
   defineOneHisto(name, title, xtitle, nbins, xmin, xmax, "GeV", put_here, d);
+}
+
+void AnalyzerBase::defineOneHisto(const string & name, const string & title,
+				  const string & xtitle, int nxbins,
+				  float xmin, float xmax,
+				  const string & ytitle, int nybins,
+				  float ymin, float ymax,
+          TH2F* & h, 
+				  const TFileDirectory & d)
+{
+  string title2 = title + ";" + xtitle + ";" + ytitle;
+  h = d.make<TH2F>(name.c_str(),title2.c_str(),nxbins,xmin,xmax,nybins,ymin,ymax);
 }
 
 void AnalyzerBase::defineOneHisto(const string & name, const string & title,
@@ -770,32 +800,45 @@ void AnalyzerBase::run()
     assert(it->Nact_evt <= it->Nprod_evt);
     if(reportPercent) reportAfter_ = fabs(it->Nact_evt * reportPercent);
 
-    for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){// loop over events
-      edm::EventBase const & event = ev;
-
-      // skip event if maximal number of events per input file is reached 
-      if(maxEvents_>0 &&  ievt > maxEvents_) break;
-      
-      // simple event counter
-      if(reportAfter_!=0 ? (ievt>0 && ievt%reportAfter_==0) : false) 
-        cout << " Processing event: " << ievt << " or " 
-             << 100.*ievt/it->Nact_evt << "% of input file #" << i_sample
-             << " (Total events processed: " << ievt_all 
-             << ", non-certified/skipped: " << ievt_skipped << ") " << endl;
-      
-      //skip event if not in JSON
-      if(useJSON_ && wprimeUtil_->runningOnData() &&
-         !jsonContainsEvent (jsonVector, event))
-      {
-        ++ievt_skipped;
-        continue;
+    if(vEventsToDebug_.size()){//If events are in this vector, only process those
+      cout<<" EventsToDebug has "<<vEventsToDebug_.size()<<" event(s), so only those events will be processed\n";
+      debug_ = true;
+      for(uint i=0; i<vEventsToDebug_.size(); ++i){
+        if(!ev.to(vEventsToDebug_[i])){//Didn't find debug event
+          cout<<" Didn't find debug event ( "<<vEventsToDebug_[i]<<" ) in this sample, skipping this event\n";
+          continue;
+        }
+        edm::EventBase const & event = ev;
+        eventLoop(event); //Analyze debug event
       }
-      else
-        ++ievt_all;
+    }else{
+      for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){// loop over events
+        edm::EventBase const & event = ev;
+
+        // skip event if maximal number of events per input file is reached 
+        if(maxEvents_>0 &&  ievt > maxEvents_) break;
       
-      setEventWeight(event); //PU Reweighting
-      eventLoop(event); //Analyze each vent
-    } // loop over events
+        // simple event counter
+        if(reportAfter_!=0 ? (ievt>0 && ievt%reportAfter_==0) : false) 
+          cout << " Processing event: " << ievt << " or " 
+               << 100.*ievt/it->Nact_evt << "% of input file #" << i_sample
+               << " (Total events processed: " << ievt_all 
+               << ", non-certified/skipped: " << ievt_skipped << ") " << endl;
+      
+        //skip event if not in JSON
+        if(useJSON_ && wprimeUtil_->runningOnData() &&
+           !jsonContainsEvent (jsonVector, event))
+        {
+          ++ievt_skipped;
+          continue;
+        }
+        else
+          ++ievt_all;
+      
+        setEventWeight(event); //PU Reweighting
+        eventLoop(event); //Analyze each event
+      } // loop over events
+    }
     endFile(it, outLogFile_);//Finish up with this input sample
     
   } // loop over input files

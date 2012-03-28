@@ -630,7 +630,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
   }//MC Only If
   */
-  if(debug_ && wprimeUtil_->DebugEvent(event)){
+  if(debug_){
     cout<<"This is a debug event\n";
     printPassingEvent(event);
     printDebugEvent();
