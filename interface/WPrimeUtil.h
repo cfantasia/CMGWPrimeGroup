@@ -46,7 +46,6 @@ class WPrimeUtil
   inline void setSampleWeight(float weight){sampleweight_ = weight;}
   inline void setCurrentSample(std::vector<wprime::InputFile>::iterator sample){ currentSample_ = sample;}
   inline void setWeight(float weight){weight_ = weight;}
-  inline void setEventsToDebug(const std::vector<edm::EventID>& vEvents){vEventsToDebug_ = vEvents;}
 
   inline std::string getSampleName() const{return samplename_;}
   inline float getSampleWeight() const{return sampleweight_;}
@@ -70,9 +69,6 @@ class WPrimeUtil
   // true if current file under processing is signal sample
   inline bool isSignalSample() const {return isSignalSample_;}
   inline void setIsSignalSample(bool flag){isSignalSample_ = flag;}
-
-  //Check if Run/Evt is in Debug list
-  bool DebugEvent(edm::EventBase const& event) const;
 
   // integrated luminosity in pb^-1
   inline float getLumi_ipb(){return lumi_ipb;}
@@ -379,7 +375,6 @@ private:
   bool runningOnData_;
   bool isSignalSample_;
   static bool warningShown_;
-  std::vector<edm::EventID> vEventsToDebug_;
 
   float lumi_ipb; // in pb^-1, to be retrieved from samples_cross_sections.txt
 

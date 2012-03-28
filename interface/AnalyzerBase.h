@@ -5,6 +5,7 @@
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
+#include "TH2.h"
 
 class AnalyzerBase{
 public:
@@ -32,9 +33,19 @@ public:
 			      float xmin, float xmax, 
 			      const std::string& units,
                                std::vector<TH1F*>& h, const TFileDirectory& d);
+  virtual void defineHistoSet(const std::string& n, const std::string& t, 
+			      const std::string& xtitle, int nxbins, 
+			      float xmin, float xmax, 
+			      const std::string& ytitle, int nybins, 
+			      float ymin, float ymax, 
+                              std::vector<TH2F*>& h, const TFileDirectory& d);
   void defineOneHisto(const std::string & name, const std::string & title, 
 		      const std::string & xtitle, int nbins, float xmin, float xmax,
 		      const std::string & units,TH1F* & h,const TFileDirectory & d);
+  void defineOneHisto(const std::string & name, const std::string & title, 
+		      const std::string & xtitle, int nxbins, float xmin, float xmax,
+          const std::string & ytitle, int nybins, float ymin, float ymax,
+		      TH2F* & h,const TFileDirectory & d);
 
   // mass format expected in <x>.<y> TeV, e.g. "1.2", corresponding to 1.2 TeV
   // channel could be "e", "mu", "ee", "mumu", etc
@@ -194,6 +205,8 @@ protected:  //These are available to derived classes
 
   bool jsonContainsEvent (const std::vector<edm::LuminosityBlockRange>&jsonVec,
                           const edm::EventBase &event);
+
+  std::vector<edm::EventID> vEventsToDebug_;
 
   void setEventWeight(edm::EventBase const & event);
 };

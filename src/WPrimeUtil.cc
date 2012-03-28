@@ -116,19 +116,18 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles, cons
         //This is now protected against
         //Default is not to split (splitInto = 1)
         vstring pathnames = new_file->pathnames;
-        size_t splitInto = (fileToRun == -1) ? 1 : new_file->splitInto;
+        size_t splitInto = (fileToRun == -1 || !pathnames.size()) ? 1 : std::min(pathnames.size(), (size_t) new_file->splitInto);
         size_t nPerFile = ceil((float) pathnames.size() / splitInto);
         string descrip = new_file->description;
-        if(splitInto > 1) 
+        if(splitInto > 1)
           cout<<"Trying to split file with "<<pathnames.size()<<" files into "
               <<splitInto<<" parts, with "<<nPerFile<<" files per part"<<endl;
         for(size_t i=0; i<splitInto; ++i){
           size_t first = i*nPerFile;
           size_t last  = std::min(first+nPerFile, pathnames.size());
-          if(first >= pathnames.size()) break;
           new_file->pathnames.assign(pathnames.begin()+first,
                                      pathnames.begin()+last);
-          if(splitInto > 1) new_file->description = descrip + Form(" (Part %lu)",i+1);
+          if(splitInto > 1) new_file->description = descrip + Form(" (Part %lu of %lu)",i+1,splitInto);
           // all info should now be logged in; check!
           new_file->checkFile();
           // if we made it here, everything looks good: 
@@ -497,17 +496,6 @@ TVector2 WPrimeUtil::getHadronicMET(const edm::EventBase & event)
   setHadronicMETcalculated(true);
   return hadronicMETcached;    
 
-}
-
-//Check if Run/Evt is in Debug list
-bool WPrimeUtil::DebugEvent(const edm::EventBase & event) const
-{
-  const edm::EventID & evtToCheck = event.id();
-  for(uint i=0; i<vEventsToDebug_.size(); ++i){
-    if(evtToCheck == vEventsToDebug_[i])
-      return true;
-  }
-  return false;
 }
 
 /////////////////////
