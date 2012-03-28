@@ -190,6 +190,8 @@ public:
 
   std::vector<TH1F*> hWenuCombRelIso, hWmnuCombRelIso;
 
+  std::vector<TH2F*> hEtaVsPt;
+
   TH1F *hDiscriminant, *hDiscriminantFrac, *hDiscriminantAngle, *hDiscriminantReal, *hDiscriminantImag,;
   TH1F* hVtxMatch;
   

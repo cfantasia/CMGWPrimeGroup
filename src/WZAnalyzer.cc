@@ -248,7 +248,7 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
       tEvts[i]->Branch("weight", &weight_);
     }
     
-  }else{
+  }else{//Systematics
     defineHistoSet("hZeeMassTT","Reconstructed MassTT of ZeeTT",
                    "M_{Z}^{ee,TT} (GeV)", 30, 60, 120, "GeV", hZeeMassTT,dir);
     defineHistoSet("hZeeMassTF","Reconstructed Mass of ZeeTF",
@@ -269,6 +269,11 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
                  "p_{T}^{Max e}", 50, 0, 1000., "GeV", hLeadElecPt,dir);
     defineHistoSet("hLeadMuonPt", "Leading Muon Pt",
                    "p_{T}^{Max #mu}", 50, 0, 1000., "GeV", hLeadMuonPt,dir);
+
+    //Eta-Pt 2D Plot
+    defineHistoSet("hEtaVsPt", "#eta Vs p_{T}",
+                   "p_{T}", 100, 0, 100., "#eta", 50, -2.5, 2.5, hEtaVsPt,dir);
+    
   }
 
 }//defineHistos
@@ -342,7 +347,7 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
     hWeight[index]->Fill(weight_/wprimeUtil_->getSampleWeight(), 1.);//Don't weight
     hL1FastJet[index]->Fill(*rhoFastJetH_, weight);
 
-    tEvts[index]->Fill();
+    if(index > 4) tEvts[index]->Fill();//trying to keep the file size down
   }else{//Systematics plots
     if(zCand_){
       if(zCand_.flavor() == PDG_ID_ELEC){
@@ -356,6 +361,12 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
     hLeadPt[index]->Fill(LeadPt_, weight);
     hLeadElecPt[index]->Fill(LeadElecPt_, weight);
     hLeadMuonPt[index]->Fill(LeadMuonPt_, weight);
+
+    if(wCand_.flavor() == PDG_ID_ELEC){
+      hEtaVsPt[index]->Fill(looseMuons_[0].pt(), looseMuons_[0].eta(), weight);
+    }else if(wCand_.flavor() == PDG_ID_MUON){
+      hEtaVsPt[index]->Fill(looseElectrons_[0].patEle().pt(), looseElectrons_[0].patEle().eta(), weight);
+    }
   }
 
 }//fillHistos
@@ -627,7 +638,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
   weight_ = wprimeUtil_->getWeight();
   if(!passCuts(weight_)) return;
-  if(wprimeUtil_->runningOnData()){
+  if(wprimeUtil_->runningOnData() && !doSystematics_){
     cout<<" The following data event passed All Cuts!!!\n";
     printPassingEvent(event);
     if(debug_) printEventLeptons();
