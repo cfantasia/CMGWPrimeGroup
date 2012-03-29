@@ -806,7 +806,8 @@ void WprimeFitter::modelResolutions()
     res_temp.fitTo(res_hist2, Range("resol_fit"), Verbose(-1), Save());
     //    res_temp.fitTo(res_hist2, Save());
     
-    RooPlot * xframe = dmt.frame(Title("delta W' transverse mass"));
+    string title2 = "delta W' transverse mass (" + string(desc[i]) +") ";
+    RooPlot * xframe = dmt.frame(Title(title2.c_str()));
     
     res_hist2.plotOn(xframe, Name("data"));
     res_temp.plotOn(xframe, Name("model"));
@@ -816,7 +817,7 @@ void WprimeFitter::modelResolutions()
     xframe->SetMaximum(10000);xframe->SetMinimum(0.1);
     new TCanvas();gPad->SetLogy();
     
-    //    xframe->Draw();
+    xframe->Draw();
     RooArgList pars(* res_temp.getParameters(RooArgSet(dmt) ) );
     
     float f_mean1 = ((RooRealVar*) pars.find("m1"))->getVal();
