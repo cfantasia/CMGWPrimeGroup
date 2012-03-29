@@ -83,7 +83,7 @@ class WPrimeUtil
   // return pointer to gen-particle with pdgId and mother pdgId_mother
   const reco::Candidate * getGenParticle(edm::EventBase const & event, int pdgId, int pdgId_mother); 
 
-  static void printEvent(edm::EventBase const & event);
+  static void printEvent(edm::EventBase const & event, ostream & out);
 
   static bool passTriggersCut(edm::EventBase const & event, std::string label,const std::vector<std::string>& triggerNames);
   static bool passTriggersCut(const pat::TriggerEvent & triggerEvent,const std::vector<std::string>& triggerNames);

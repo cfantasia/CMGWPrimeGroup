@@ -207,15 +207,6 @@ void AnalyzerBase::resetCounters(){
 }
 
 void AnalyzerBase::clearEvtVariables(){
-  allJets_.clear();
-  looseJets_.clear();
-  tightJets_.clear();
-  allElectrons_.clear();
-  looseElectrons_.clear();
-  tightElectrons_.clear();
-  allMuons_.clear();
-  looseMuons_.clear();
-  tightMuons_.clear();
 }
 
 const reco::Vertex& 
@@ -280,117 +271,39 @@ AnalyzerBase::sameVertex(const reco::Vertex& vtx, const reco::Candidate& p) cons
 /////printers//////////////
 void
 AnalyzerBase::printEventFull(edm::EventBase const & event) const{
-  WPrimeUtil::printEvent(event);
+  WPrimeUtil::printEvent(event, cout);
   WPrimeUtil::printPassingTriggers(*triggerEventH_,triggersToUse_);
   printEventDetails();
-  printEventLeptons();
 }
 
 void AnalyzerBase::printPassingEvent(edm::EventBase const & event){
-  printEventToFile(event);
-  WPrimeUtil::printEvent(event);
+  WPrimeUtil::printEvent(event, outCandEvtFile_);
+  WPrimeUtil::printEvent(event, cout);
   printEventDetails();
 }
 
 void AnalyzerBase::printDebugEvent() const{
   WPrimeUtil::printPassingTriggers(*triggerEventH_,triggersToUse_);
   printEventDetails();
-  printEventLeptons();
-  printLeptons();
-}
-
-void AnalyzerBase::printEventToFile(edm::EventBase const & event){
-  outCandEvtFile_<<event.id().run()<<":"
-             <<event.id().luminosityBlock()<<":"
-             <<event.id().event()<<endl;
 }
 
 void AnalyzerBase::printEventDetails() const{
-/*
-  if(zCand_){
-    cout<<" Z Flavor: "<<zCand_.flavor()
-        <<" Z Mass: "<<zCand_.mass()
-        <<" Z Eta: "<<zCand_.eta()
-        <<" Z Phi: "<<zCand_.phi()
-        <<endl;
-  }
-  if(wCand_){
-    cout<<" W Flavor: "<<wCand_.flavor()
-        <<" W MT: "<<wCand_.mt()
-        <<" pfMet et: "<<met_.et()
-        <<" pfMet phi: "<<met_.phi()
-        <<endl;
-  }
-  if(vCand_){
-    cout<<" V Flavor: "<<vCand_.flavor()
-        <<" V Mass: "<<vCand_.mass()
-        <<" V Eta: "<<vCand_.eta()
-        <<" V Phi: "<<vCand_.phi()
-        <<endl;
-  }
-*/
 }
 
-void
-AnalyzerBase::printEventLeptons() const{
-  cout<<"You shouldn't be seeing this! Implement your own.\n";
-}
 
 void
-AnalyzerBase::printLeptons() const{
-  printElectrons();
-  printMuons();
-  cout<<"----------------------\n";
-}
-
-void
-AnalyzerBase::printElectrons() const{
-  cout<<"----All Electrons: ( "<<allElectrons_.size()<<" )------\n";
-  for(uint i=0; i<allElectrons_.size(); ++i){
-    cout<<" ---  ";
-    if(WPrimeUtil::Contains(allElectrons_[i], looseElectrons_)) cout<<" Loose ";
-    if(WPrimeUtil::Contains(allElectrons_[i], tightElectrons_)) cout<<" Tight ";
-    cout<<"  ---\n";
-    printElectron(allElectrons_[i]);
-  }
-}
-
-void
-AnalyzerBase::printMuons() const{
-  cout<<"----All Muons: ( "<<allMuons_.size()<<" )------\n";
-  for(uint i=0; i<allMuons_.size(); ++i){
-    cout<<" ---  ";
-    if(WPrimeUtil::Contains(allMuons_[i], looseMuons_)) cout<<" Loose ";
-    if(WPrimeUtil::Contains(allMuons_[i], tightMuons_)) cout<<" Tight ";
-    cout<<"  ---\n";
-    printMuon(allMuons_[i]);
-  }
-}
-
-void
-AnalyzerBase::printJets() const{
-  cout<<"----All Jets: ( "<<allJets_.size()<<" )------\n";
-  for(uint i=0; i<allJets_.size(); ++i){
-    cout<<" ---  ";
-    if(WPrimeUtil::Contains(allJets_[i], looseJets_)) cout<<" Loose ";
-    cout<<"  ---\n";
-    printJet(allJets_[i]);
-  }
-}
-
-void
-AnalyzerBase::printElectron(const heep::Ele& elec) const{
+AnalyzerBase::print(const heep::Ele& elec) const{
   cout << setiosflags(ios::fixed) << setprecision(2);
   cout<<" Elec ScEt: "<<elec.et()<<endl; //ScEt
   if(!elec.isPatEle()){
     cout<<"Not a pat electron, why???\n";
     return;
   }
-  printElectron(elec.patEle());
+  print(elec.patEle());
 }
 
 void
-AnalyzerBase::printElectron(const pat::Electron& elec) const{
+AnalyzerBase::print(const pat::Electron& elec) const{
   cout << setiosflags(ios::fixed) << setprecision(2);
   cout<<" Elec Pt: "<<elec.pt()<<endl
       <<" Elec P4Pt: "<<elec.p4().Pt()<<endl
@@ -408,7 +321,7 @@ AnalyzerBase::printElectron(const pat::Electron& elec) const{
       <<" Elec EoverP: "<<elec.eSuperClusterOverP()<<endl;// E/P
 }
 
-void AnalyzerBase::printMuon(const TeVMuon& mu) const{
+void AnalyzerBase::print(const TeVMuon& mu) const{
   cout << setiosflags(ios::fixed) << setprecision(2);
   
   cout << " Muon eta = " << mu.eta() << "  phi = " << mu.phi() << endl;
@@ -422,7 +335,7 @@ void AnalyzerBase::printMuon(const TeVMuon& mu) const{
 }
 
 void
-AnalyzerBase::printJet(const pat::Jet& jet) const{
+AnalyzerBase::print(const pat::Jet& jet) const{
   cout << setiosflags(ios::fixed) << setprecision(2);
   cout<<" Jet Pt: "  <<jet.pt()<<endl
       <<" Jet Mass: " <<jet.mass()<<endl
@@ -798,6 +711,7 @@ void AnalyzerBase::run()
 
     beginFile(it);//Set up for input file
     assert(it->Nact_evt <= it->Nprod_evt);
+
     if(reportPercent) reportAfter_ = fabs(it->Nact_evt * reportPercent);
 
     if(vEventsToDebug_.size()){//If events are in this vector, only process those

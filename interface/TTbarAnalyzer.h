@@ -52,15 +52,6 @@ public:
 
 //methods for utilities
 
-  JetV looseBJets_, tightBJets_;
-
-  pat::Jet bCand1_;
-  pat::Jet bCand2_;
-  WCandidate wCand_;
-  XWLeptonic tCand_;
-  XWLeptonic tbCand_;
-  VZCandidate hadTop_;
-  pat::Jet wJet_;
 
 //methods for modifiers
 
@@ -121,11 +112,24 @@ public:
 
   //Handles
   edm::Handle<std::vector<reco::Vertex> > verticesH_;
+  JetVH patJetsH_;
 
 
 //////Chosen Vector Boson Candidates 
+
+  ElectronV allElectrons_, looseElectrons_, tightElectrons_;
+  MuonV allMuons_, looseMuons_, tightMuons_;
+  JetV looseJets_, looseBJets_, tightBJets_;
+  pat::MET met_;
+
+  pat::Jet bCand1_;
+  pat::Jet bCand2_;
+  WCandidate wCand_;
+  XWLeptonic tCand_;
   ZCandidate zCand_, vCand_;
   VZCandidate hadVZ_;
+  VZCandidate hadTop_;
+  pat::Jet wJet_;
 
   double gravMass_;
 

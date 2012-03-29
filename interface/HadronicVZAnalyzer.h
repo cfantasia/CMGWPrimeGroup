@@ -118,6 +118,11 @@ public:
 
 
 //////Chosen Vector Boson Candidates 
+  ElectronV allElectrons_, looseElectrons_, tightElectrons_;
+  MuonV allMuons_, looseMuons_, tightMuons_;
+  JetV  allJets_, looseJets_;
+  pat::MET met_;
+
   ZCandidate zCand_, vCand_;
   VZCandidate hadVZ_;
 

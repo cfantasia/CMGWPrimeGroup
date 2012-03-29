@@ -18,7 +18,6 @@ public:
 
   //methods for stuff to be done for each event
   void eventLoop(edm::EventBase const & event);
-  bool passCuts(const float& weight=1.);
   void clearEvtVariables();
   void fillHistos(const int& index, const float& weight=1.);
 
@@ -28,49 +27,33 @@ public:
   void printEventLeptons() const;
   
 //methods for utilities
-  int countZCands(ZCandV & Zs) const;
   void calcVVariables();
   void calcWVariables();
-  void calcWElecVariables();
-  void calcWMuonVariables();
   void calcVWVariables();
   void calcEventVariables();
 
   int   calcEvtType() const;
   float calcQ() const;
-  float calcGenVWInvMass() const;
-  bool inEE(const TeVMuon& mu) const;
-
-  float WLepPt() const;
-  float VLepPt(int idx) const;
-  
-  float ElecPU(const heep::Ele & e) const;
-  float MuonPU(const TeVMuon & m) const;
 
 //methods for modifiers
 
 //methods for the cuts
-  bool passValidVWCut() const;
-
-  bool passTriggerMatch(const heep::Ele& e1, const heep::Ele& e2) const;
-  bool passTriggerMatch(const TeVMuon& m1, const TeVMuon& m2) const;
-  bool passTriggerMatch(const pat::Electron& p, const float cut, const vstring& triggers) const;
-  bool passTriggerMatch(const TeVMuon& p, const float cut, const vstring& triggers) const;
-  bool passTriggerEmulation(const heep::Ele& elec, const float minPt=0.) const;
+  bool makeAndPassValidVCut();
+  bool makeAndPassValidWCut();
+  bool makeAndPassValidVWCut();
 
 //////////////////
 /////Variables////
 //////////////////
 
-  double rhoFastJet_;
-  std::vector<double> effectiveElecArea_;
-  std::vector<double> effectiveMuonArea_;
-
 ///My calculated qualities//////////////////
+  uint runNumber_, lumiNumber_, evtNumber_;
   float VWMass_;
-  float Vpt_;
-  float Wpt_;
+  float VMass_, Vpt_;
+  float WTransMass_, Wpt_;
   float Q_;
+  float MET_, METSig_;
+  uint NVtxs_;
   uint evtType_;
 
 // +++++++++++++++++++General Cut values
@@ -103,40 +86,40 @@ public:
 
 
 //////Chosen Candidates
+  ElectronV allElectrons_, looseElectrons_;
+  MuonV allMuons_, looseMuons_;
+  JetV  allJets_, looseJets_;
+  pat::MET met_;
+
+  NuAlgos nuAlgo_;
   ZCandidate vCand_;
   WCandidate wCand_;
   XWLeptonic vwCand_;
 
 // +++++++++++++++++++ Histogram Definitions
-  std::vector<TH1F*> hVWMass;
+  std::vector<TH1F*> hVWMass, hVWenuMass, hVWmnuMass;
 
   std::vector<TH1F*> hQ;
   std::vector<TH1F*> hVWTransMass;
   std::vector<TH1F*> hVWpt;
   std::vector<TH1F*> hEvtType, hEvtTypeP, hEvtTypeM;
 
-  std::vector<TH1F*> hVMass, hVeeMass, hVmmMass ;
-  std::vector<TH1F*> hVpt,hVeept,hVmmpt;
+  std::vector<TH1F*> hVMass;
+  std::vector<TH1F*> hVpt;
 
-  std::vector<TH1F*> hMET, hMETee, hMETmm;
+  std::vector<TH1F*> hMET, hMETenu, hMETmnu, hMETSig;
 
   std::vector<TH1F*> hWTransMass, hWenuTransMass, hWmnuTransMass;
-  std::vector<TH1F*> hWpt,hWptVee,hWptVmm;
+  std::vector<TH1F*> hWpt,hWenupt,hWmnupt;
   std::vector<TH1F*> hWQ, hWenuQ, hWmnuQ;
 
   std::vector<TH1F*> hNLElec;
   std::vector<TH1F*> hNLMuon;
-  std::vector<TH1F*> hNLLeps, hNLLepsVee, hNLLepsVmm;
-
-  std::vector<TH1F*> hNTElec;
-  std::vector<TH1F*> hNTMuon;
-  std::vector<TH1F*> hNTLeps;
+  std::vector<TH1F*> hNLLeps;
 
   std::vector<TH1F*> hNJets;
   std::vector<TH1F*> hNVtxs;
-
-  std::vector<TH1F*> hWenuCombRelIso, hWmnuCombRelIso;
-
+  std::vector<TH1F*> hWeight;
   TTree* tVWCand;
 };
 

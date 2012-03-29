@@ -268,7 +268,7 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   runNumber_ = event.id().run();
   lumiNumber_ = event.id().luminosityBlock();
   evtNumber_ = event.id().event();
-  if(debug_) WPrimeUtil::printEvent(event);
+  if(debug_) WPrimeUtil::printEvent(event, cout);
   
   weight_ = wprimeUtil_->getWeight();
 
@@ -416,7 +416,8 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
   }
 
   if(debug_){
-    printLeptons();
+    print(allElectrons_);
+    print(allMuons_);
     printf("    Contains: %i electron(s), %i muon(s)\n",
            (int)allElectrons_.size(), (int)allMuons_.size());
     printf("    Contains: %i loose electron(s), %i loose muon(s)\n",
@@ -791,9 +792,9 @@ HadronicVZAnalyzer::eventLoop(edm::EventBase const & event){
     printPassingEvent(event);
     if(1 || debug_){ 
       //printEventLeptons();
-      printElectrons();
-      printMuons();
-      printJets();
+      print(allElectrons_);
+      print(allMuons_);
+      print(allJets_);
     }
     cout<<" ------------------\n";
   }
@@ -852,7 +853,14 @@ void HadronicVZAnalyzer::printEventDetails() const{
 
 void
 HadronicVZAnalyzer::clearEvtVariables(){
-  AnalyzerBase::clearEvtVariables();
+  allJets_.clear();
+  looseJets_.clear();
+  allElectrons_.clear();
+  looseElectrons_.clear();
+  tightElectrons_.clear();
+  allMuons_.clear();
+  looseMuons_.clear();
+  tightMuons_.clear();
   zCand_ = ZCandidate();
   vCand_ = ZCandidate();
   hadVZ_ = VZCandidate();

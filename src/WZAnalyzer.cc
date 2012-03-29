@@ -530,7 +530,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
   }
 */  
-  if(debug_) WPrimeUtil::printEvent(event);
+  if(debug_) WPrimeUtil::printEvent(event, cout);
 
   // Preselection - skip events that don't look promising
   if (doPreselect_){
@@ -592,7 +592,8 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   if(looseElectrons_.size() + looseMuons_.size() == 0) return;
 
   if(debug_){
-    printLeptons();
+    print(allElectrons_);
+    print(allMuons_);
     printf("    Contains: %i loose electron(s), %i loose muon(s)\n",
            (int)looseElectrons_.size(), (int)looseMuons_.size());
     printf("    Contains: %i tight electron(s), %i tightmuon(s)\n",
@@ -686,7 +687,8 @@ void WZAnalyzer::printDebugEvent() const{
   WPrimeUtil::printPassingTriggers(*triggerEventH_,triggersToUse_);
   printEventDetails();
   printEventLeptons();
-  printLeptons();
+  print(allElectrons_);
+  print(allMuons_);
 }
 
 void WZAnalyzer::printEventDetails() const{
@@ -720,22 +722,22 @@ void
 WZAnalyzer::printEventLeptons() const{
   if     (zCand_.flavor() == PDG_ID_ELEC){
     cout<<"------- Electron 1 from Z -------\n";
-    printElectron(*zCand_.elec1());
+    print(*zCand_.elec1());
     cout<<"------- Electron 2 from Z -------\n";
-    printElectron(*zCand_.elec2());
+    print(*zCand_.elec2());
   }else if(zCand_.flavor() == PDG_ID_MUON){
     cout<<"------- Muon 1 from Z -------\n";
-    printMuon(*zCand_.muon1());
+    print(*zCand_.muon1());
     cout<<"------- Muon 2 from Z -------\n";
-    printMuon(*zCand_.muon2());
+    print(*zCand_.muon2());
   }
 
   if     (wCand_.flavor() == PDG_ID_ELEC){   
     cout<<"------- Electron from W -------\n";
-    printElectron(*wCand_.elec());
+    print(*wCand_.elec());
   }else if(wCand_.flavor() == PDG_ID_MUON){
     cout<<"------- Muon from W -------\n";
-    printMuon    (*wCand_.muon());
+    print(*wCand_.muon());
   }
 }
 
@@ -917,7 +919,13 @@ inline bool WZAnalyzer::inEE(const TeVMuon& mu) const{
 
 inline void
 WZAnalyzer::clearEvtVariables(){
-  AnalyzerBase::clearEvtVariables();
+  allJets_.clear();
+  allElectrons_.clear();
+  looseElectrons_.clear();
+  tightElectrons_.clear();
+  allMuons_.clear();
+  looseMuons_.clear();
+  tightMuons_.clear();
   met_ = pat::MET();
   zCand_ = ZCandidate();
   wCand_ = WCandidate();

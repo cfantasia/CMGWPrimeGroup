@@ -68,17 +68,24 @@ public:
   virtual void printEventFull(edm::EventBase const & event) const;
   virtual void printPassingEvent(edm::EventBase const & event);
   virtual void printDebugEvent() const;
-  virtual void printEventToFile(edm::EventBase const & event);
   virtual void printEventDetails() const;
-  virtual void printEventLeptons() const;
-  virtual void printLeptons() const;
-  virtual void printElectrons() const;
-  virtual void printMuons() const;
-  virtual void printJets() const;
-  virtual void printElectron(const pat::Electron& elec) const;
-  virtual void printElectron(const heep::Ele& elec) const;
-  virtual void printMuon(const TeVMuon& mu) const;
-  virtual void printJet(const pat::Jet& jet) const;
+
+  template<class T>
+    void print(const std::vector<T> & particles,
+               const std::vector<bool> & mask=std::vector<bool>()) const{
+    //Mask let's you ignore certain objects
+    bool useMask = mask.size() == particles.size(); 
+    std::cout<<"----There are "<<particles.size()<<" objects ------\n";
+    for(uint i=0; i<particles.size(); ++i){
+      if(useMask && !mask[i]) continue;
+      print(particles[i]);
+    }
+  }
+  
+  virtual void print(const pat::Electron& elec) const;
+  virtual void print(const heep::Ele& elec) const;
+  virtual void print(const TeVMuon& mu) const;
+  virtual void print(const pat::Jet& jet) const;
 
 
 ////////////////////////////
@@ -174,13 +181,6 @@ protected:  //These are available to derived classes
   PatMuonVH patMuonsH_;
   METVH metH_;
   PFCandidateVH pfCandidatesH_;
-
-//////Chosen Candidates
-  //These really should be done by each analysis
-  ElectronV allElectrons_, looseElectrons_, tightElectrons_;
-  MuonV allMuons_, looseMuons_, tightMuons_;
-  JetV  allJets_, looseJets_, tightJets_;
-  pat::MET met_;
 
   std::vector<unsigned> muon_reconstructors;
 

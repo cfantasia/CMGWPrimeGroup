@@ -350,10 +350,10 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
 //////////////////
 //print Functions/
 //////////////////
-void WPrimeUtil::printEvent(const edm::EventBase & event){
-  cout<<"run #: "<<event.id().run()
-      <<" lumi: "<<event.id().luminosityBlock()
-      <<" eventID: "<<event.id().event()<<endl;
+void WPrimeUtil::printEvent(const edm::EventBase & event, ostream & out){
+  out<<"run #: "<<event.id().run()
+     <<" lumi: "<<event.id().luminosityBlock()
+     <<" eventID: "<<event.id().event()<<endl;
 }
 
 //////////////////

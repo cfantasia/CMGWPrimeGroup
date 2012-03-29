@@ -150,6 +150,11 @@ public:
   edm::InputTag rhoFastJetLabel_;
 
 //////Chosen Candidates
+  ElectronV allElectrons_, looseElectrons_, tightElectrons_;
+  MuonV allMuons_, looseMuons_, tightMuons_;
+  JetV allJets_;
+  pat::MET met_;
+
   ZCandidate zCand_;
   WCandidate wCand_;
   XWLeptonic wzCand_;

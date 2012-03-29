@@ -122,6 +122,7 @@ ZCandidate getVCand2(const JetV & jets)
       maxPtPosition1 = i;
     }
   }
+  if(jets.size() == 1) return ZCandidate(jets[maxPtPosition1]);
   maxPt = -1.0;
   for (size_t i=0; i!= jets.size(); ++i) {
     if(i == maxPtPosition1) continue;

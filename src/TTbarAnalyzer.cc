@@ -176,7 +176,8 @@ TTbarAnalyzer::eventLoop(edm::EventBase const & event){
   evtNumber_ = event.id().event();
   if(debug_){
     cout<<" New event: ";
-    WPrimeUtil::printEvent(event);
+    //cout<<event<<endl;
+    WPrimeUtil::printEvent(event, cout);
   }
   weight_ = wprimeUtil_->getWeight();
 
@@ -234,7 +235,8 @@ TTbarAnalyzer::eventLoop(edm::EventBase const & event){
            (int)looseElectrons_.size(), (int)looseMuons_.size());
     printf("    Contains: %i tight electron(s), %i tightmuon(s)\n",
            (int)tightElectrons_.size(), (int)tightMuons_.size());
-    printLeptons();
+    print(allElectrons_);
+    print(allMuons_);
   }
 
 
@@ -275,23 +277,25 @@ TTbarAnalyzer::eventLoop(edm::EventBase const & event){
   ////Deal With Jets////
   //////////////////////
 
-  allJets_      = getProduct<vector<pat::Jet     > >(event, jetsLabel_);
-  if(allJets_.size() < 1){
+  event.getByLabel(jetsLabel_, patJetsH_);
+  const JetV & allJets  = *patJetsH_;
+  //allJets      = getProduct<vector<pat::Jet     > >(event, jetsLabel_);
+  if(allJets.size() < 1){
     if (debug_) 
       cout << "Not enough jets. Bad bad event, returning now..." << endl;
     return;
   }
   if(debug_)
     printf("    Contains: %i pat jet(s)\n",
-           (int)allJets_.size());
+           (int)allJets.size());
 
 
   // Loop over jets, and see if they pass the jet criteria
-  for (size_t i = 0; i < allJets_.size(); ++i) {
-    if (looseJet_(allJets_[i]) && !Overlap(allJets_[i], looseMuons_, 1.0, 2) && !Overlap(allJets_[i], looseElectrons_, 1.0, 2)){
-      looseJets_.push_back(allJets_[i]);
-      if(allJets_[i].bDiscriminator("simpleSecondaryVertexHighEffBJetTags") > 0.679){
-        looseBJets_.push_back(allJets_[i]);
+  for (size_t i = 0; i < allJets.size(); ++i) {
+    if (looseJet_(allJets[i]) && !Overlap(allJets[i], looseMuons_, 1.0, 2) && !Overlap(allJets[i], looseElectrons_, 1.0, 2)){
+      looseJets_.push_back(allJets[i]);
+      if(allJets[i].bDiscriminator("simpleSecondaryVertexHighEffBJetTags") > 0.679){
+        looseBJets_.push_back(allJets[i]);
       }
     }
   }
@@ -504,9 +508,9 @@ TTbarAnalyzer::eventLoop(edm::EventBase const & event){
     printPassingEvent(event);
     if(1 || debug_){ 
       //printEventLeptons();
-      printElectrons();
-      printMuons();
-      printJets();
+      print(allElectrons_);
+      print(allMuons_);
+      print(allJets);
     }
     cout<<" ------------------\n";
   }
@@ -565,7 +569,20 @@ void TTbarAnalyzer::printEventDetails() const{
 
 void
 TTbarAnalyzer::clearEvtVariables(){
-  AnalyzerBase::clearEvtVariables();
+  looseJets_.clear();
+  looseBJets_.clear();
+  tightBJets_.clear();
+  allElectrons_.clear();
+  looseElectrons_.clear();
+  allMuons_.clear();
+  looseMuons_.clear();
+  met_ = pat::MET();
+  bCand1_ = pat::Jet();
+  bCand2_ = pat::Jet();
+  wCand_ = WCandidate();
+  wJet_ = pat::Jet();
+  tCand_ = XWLeptonic();
+  hadTop_ = VZCandidate();
   zCand_ = ZCandidate();
   vCand_ = ZCandidate();
   hadVZ_ = VZCandidate();
@@ -580,9 +597,6 @@ TTbarAnalyzer::clearEvtVariables(){
   weight_ = 0;
   genMuons.clear();
   ak7GenJet.clear();
-  looseBJets_.clear();
-  wJet_ = pat::Jet();
-  hadTop_ = VZCandidate();
 
 }
 
