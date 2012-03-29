@@ -115,7 +115,10 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   FillNameMap();
 
   /////Data Samples
-  if(inName.find("WprimeWZ") != string::npos || inName.find("EWKWZ") != string::npos){
+  if(inName.find("WprimeWZ") != string::npos 
+     || inName.find("EWKWZ") != string::npos
+     || inName.find("HadVW") != string::npos 
+     || inName.find("WprimeTB") != string::npos){
     Data.push_back(Sample("data"));
   }else if(inName.find("HadVZ") != string::npos){
     vector<string> vData;
@@ -123,22 +126,18 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     vData.push_back("data_DoubleMu-Run2011A-May10ReReco-v1");
     vData.push_back("data_SingleMu-Run2011A-May10ReReco-v1");
     vData.push_back("data_DoubleElectron-Run2011A-May10ReReco-v1");
-    //vData.push_back("data_SingleElectron-Run2011A-May10ReReco-v1");
 
     vData.push_back("data_DoubleMu-Run2011A-PromptReco-v4");
     vData.push_back("data_SingleMu-Run2011A-PromptReco-v4");
     vData.push_back("data_DoubleElectron-Run2011A-PromptReco-v4");
-    //vData.push_back("data_SingleElectron-Run2011A-PromptReco-v4");
 
     vData.push_back("data_DoubleMu-Run2011A-05Aug2011-v1");
     vData.push_back("data_SingleMu-Run2011A-05Aug2011-v1");
     vData.push_back("data_DoubleElectron-Run2011A-05Aug2011-v1");
-    //vData.push_back("data_SingleElectron-Run2011A-05Aug2011-v1");
 
     vData.push_back("data_DoubleMu-Run2011A-PromptReco-v6");
     vData.push_back("data_SingleMu-Run2011A-PromptReco-v6");
     vData.push_back("data_DoubleElectron-Run2011A-PromptReco-v6");
-    //vData.push_back("data_SingleElectron-Run2011A-PromptReco-v6");
     
     vData.push_back("data_SingleMu-Run2011B-PromptReco-v1");
     vData.push_back("data_DoubleMu-Run2011B-PromptReco-v1");
@@ -188,7 +187,9 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
  
     Bkg.push_back(Sample("WZJetsTo3LNu"       , kOrange+3, 1, kOrange-2));
-  }else if(inName.find("HadVZ") != string::npos){
+  }else if(inName.find("HadVZ") != string::npos || 
+           inName.find("HadVW") != string::npos ||
+           inName.find("WprimeTB") != string::npos){
     vector<string> VV;
     VV.push_back("Fall11-ZZ");
     VV.push_back("Fall11-VGamma");
@@ -266,6 +267,13 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     //Sig.push_back(Sample("Summer11_RSZZmmjj_2000",     1, 1, 0));
     //Sig.push_back(Sample("Summer11_WprimeToWZTo2Q2L_M-500", kGray, 1, 0));
     //Sig.push_back(Sample("Summer11_WprimeToWZTo2Q2L_M-1000", kGray, 2, 0));
+  }else if(inName.find("HadVW") != string::npos){
+  }else if(inName.find("WprimeTB") != string::npos){
+    Sig.push_back(Sample("WprimeTB_M-800", 1, 1, 0));
+    Sig.push_back(Sample("WprimeTB_M-1000", kCyan, 1, 0));
+    Sig.push_back(Sample("WprimeTB_M-1200", kPink, 1, 0));
+    //Sig.push_back(Sample("WprimeTB_M-1500", 1, 1, 0));
+    Sig.push_back(Sample("WprimeTB_M-2000", kMagenta, 1, 0));
   }else{
     cerr<<" Don't know what you're trying to plot with input file. "
         <<inName<<endl;
@@ -386,6 +394,55 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
 
       variable.push_back("hNLJets");
       variable.push_back("hNLLeps");
+    }else if(inName.find("HadVW") != string::npos){
+      variable.push_back("hVWMass");
+      //Cory:variable.push_back("hVWenuMass");
+      //Cory:variable.push_back("hVWmnuMass");
+      variable.push_back("hQ");
+      variable.push_back("hVMass");
+      variable.push_back("hVpt");
+      variable.push_back("hMET");
+      //variable.push_back("hMETSig");//Cory
+      variable.push_back("hWTransMass");
+      variable.push_back("hWenuTransMass");
+      variable.push_back("hWmnuTransMass");
+      variable.push_back("hWpt");
+      variable.push_back("hWenupt");
+      variable.push_back("hWmupt");//Cory: typo, fix
+      variable.push_back("hNLLeps");
+      variable.push_back("hNJets");
+      variable.push_back("hNVtxs");
+      //variable.push_back("hWeight");
+    }else if(inName.find("WprimeTB") != string::npos){
+      variable.push_back("hTBMass");
+      variable.push_back("hTBenuMass");
+      variable.push_back("hTBmnuMass");
+      variable.push_back("hQ");
+      variable.push_back("hTMass");
+      variable.push_back("hTenuMass");
+      variable.push_back("hTmnuMass");
+      variable.push_back("hEvtType");
+      variable.push_back("hTpt");
+      variable.push_back("hMET");
+      variable.push_back("hMETSig");
+      variable.push_back("hWTransMass");
+      variable.push_back("hWenuTransMass");
+      variable.push_back("hWmnuTransMass");
+      variable.push_back("hWpt");
+      //variable.push_back("hWenupt");
+      //variable.push_back("hWmnupt");
+      variable.push_back("hB1Mass");
+      variable.push_back("hB1Disc");
+      variable.push_back("hB1pt");
+      variable.push_back("hB2Mass");
+      variable.push_back("hB2Disc");
+      variable.push_back("hB2pt");
+      variable.push_back("hMbl");
+      variable.push_back("hNLLeps");
+      variable.push_back("hNLJets");
+      variable.push_back("hNLBJets");
+      variable.push_back("hNTBJets");
+      variable.push_back("hWeight");
     }else if(inName.find("TTbar") != string::npos){
       variable.push_back("hTMass");
       variable.push_back("hT2Mass");
@@ -945,6 +1002,13 @@ int GetRebin(string title){
   if(title.find("hWZTransMass_") != string::npos) rebin = 2;
   if(title.find("hWZpt_") != string::npos) rebin = 2;
   
+  if(title.find("hTBMass_") != string::npos ||
+     title.find("hTBenuMass_") != string::npos ||
+     title.find("hTBmnuMass_") != string::npos) rebin = 5;
+  if(title.find("hVWMass_") != string::npos ||
+     title.find("hVWenuMass_") != string::npos ||
+     title.find("hVWmnuMass_") != string::npos) rebin = 5;
+
   return rebin;
 }
 
