@@ -197,6 +197,7 @@ void WprimeFitter::run()
       backgroundModeled_ = true;
     }
   
+  massPoints.clear();
   if(MassPoint_ < 0)
     {
       for(int i = 0; i != Nsignal_points; ++i)
