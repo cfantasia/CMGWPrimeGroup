@@ -722,7 +722,7 @@ void WprimeFitter::modelBackgroundOption1()
   xframe2->SetMaximum(10000); xframe2->SetMinimum(0.1);
   new TCanvas(); gPad->SetLogy();
   
-    xframe2->Draw();
+  xframe2->Draw();
   
   RooArgList pars(* bgd_tmp.getParameters(RooArgSet(*mt) ) );
   
