@@ -650,15 +650,15 @@ void WprimeFitter::calculateZvalues()
     counted_entries += LLR[sig_i]->GetBinContent(i);
     //    cout << " i = " << i << " Z = " << LLR[sig_i]->GetBinCenter(i) 
     // << " cumulative = " <<  counted_entries/total_entries << endl;
-    if(Zexpect_Minus2<0 && counted_entries/total_entries>0.022) 
+    if(Zexpect_Minus2<0 && counted_entries/total_entries>0.02275) 
       Zexpect_Minus2 = LLR[sig_i]->GetBinCenter(i);
-    if(Zexpect_Minus1<0 && counted_entries/total_entries>0.158) 
+    if(Zexpect_Minus1<0 && counted_entries/total_entries>0.15865) 
       Zexpect_Minus1 = LLR[sig_i]->GetBinCenter(i);
     if(Zexpect_0<0 && counted_entries/total_entries>0.5) 
       Zexpect_0 = LLR[sig_i]->GetBinCenter(i);
-    if(Zexpect_Plus1<0 && counted_entries/total_entries>0.841)
+    if(Zexpect_Plus1<0 && counted_entries/total_entries>0.84135)
       Zexpect_Plus1 = LLR[sig_i]->GetBinCenter(i);
-    if(Zexpect_Plus2<0 && counted_entries/total_entries>0.977)
+    if(Zexpect_Plus2<0 && counted_entries/total_entries>0.97725)
       Zexpect_Plus2 = LLR[sig_i]->GetBinCenter(i);
   }
   
