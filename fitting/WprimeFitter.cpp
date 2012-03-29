@@ -58,7 +58,7 @@ void WprimeFitter::init()
 
   pXMIN = min(fXMIN, bXMIN); pXMAX = fXMAX;
   XMIN = 0; XMAX = 2500;
-  rXMIN = -400; rXMAX = 400;
+  rXMIN = -600; rXMAX = 600;
 
   mt = new RooRealVar("Mt", "M_{T} GeV/c^{2}", pXMIN, pXMAX);
   mt->setRange("mt_fit", fXMIN, fXMAX);
@@ -806,8 +806,8 @@ void WprimeFitter::modelResolutions()
     TripleGauss res_temp("res_temp", "triple gauss", dmt, m1, s1,
 			 f1, m2, s2, f2, m3, s3);
     
-    //    res_temp.fitTo(res_hist2, Range(rXMIN, rXMAX), Verbose(-1), Save());
-    res_temp.fitTo(res_hist2, Range("resol_fit"), Verbose(-1), Save());
+    res_temp.fitTo(res_hist2, Range(rXMIN, rXMAX), Verbose(-1), Save());
+    //    res_temp.fitTo(res_hist2, Range("resol_fit"), Verbose(-1), Save()); <-- THIS DOES NOT WORK FOR SOME REASON
     //    res_temp.fitTo(res_hist2, Save());
     
     string title2 = "delta W' transverse mass (" + string(desc[i]) +") ";
