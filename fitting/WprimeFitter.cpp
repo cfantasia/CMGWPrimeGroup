@@ -1,5 +1,8 @@
 #include "WprimeFitter.hpp"
 #include <fstream>
+
+#include "TText.h"
+
 using namespace RooFit;
 
 const int Nsteps=4;
@@ -803,6 +806,7 @@ void WprimeFitter::modelResolutions()
     TripleGauss res_temp("res_temp", "triple gauss", dmt, m1, s1,
 			 f1, m2, s2, f2, m3, s3);
     
+    //    res_temp.fitTo(res_hist2, Range(rXMIN, rXMAX), Verbose(-1), Save());
     res_temp.fitTo(res_hist2, Range("resol_fit"), Verbose(-1), Save());
     //    res_temp.fitTo(res_hist2, Save());
     
@@ -811,8 +815,17 @@ void WprimeFitter::modelResolutions()
     
     res_hist2.plotOn(xframe, Name("data"));
     res_temp.plotOn(xframe, Name("model"));
-    cout << " Sample: " << desc[i] << " Resolution fit: chi2/ndof = " 
-	 << xframe->chiSquare("model", "data", 8) << endl;
+    double nchi2 = xframe->chiSquare("model", "data", 8);
+
+    char tmp[1024];
+    sprintf(tmp, " Resolution fit: chi2/ndof = %.1f", nchi2);
+    string chi2_text = string(tmp);
+    cout << " Sample: " << desc[i] << chi2_text << endl;
+
+    TText* txt = new TText(-600,4000,tmp) ;
+    txt->SetTextSize(0.04) ;
+    txt->SetTextColor(kRed) ;
+    xframe->addObject(txt) ;
     
     xframe->SetMaximum(10000);xframe->SetMinimum(0.1);
     new TCanvas();gPad->SetLogy();
