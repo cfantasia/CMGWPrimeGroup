@@ -91,7 +91,8 @@ class WprimeFitter{
   
   channel channel_;
   
-  TH1F * LLR[Nsignal_points];
+  TH1F * LLR[Nsignal_points]; // these correspond to ensemble of PEs generated for S+B
+  TH1F * LLR_bgdOnly[Nsignal_points]; // these correspond to ensemble of PEs generated for bgd-only
   TH1F * Nsig_h[Nsignal_points];
   TH1F * Nbgd_h[Nsignal_points];
   
@@ -136,6 +137,11 @@ class WprimeFitter{
   void modelResolutions();
   void getInputHistograms();
 
+  void calculateExpectedZvalues(int sig_i, ofstream & tracking);
+  void calculateExpectedLimits(int sig_i, ofstream & tracking);
+  void calculateObservedLimit(int sig_i, ofstream & tracking);
+  void calculateZvalues(int sig_i);
+
   // # of bins for signal, background histograms in ROOT file
   int Nbins; 
   // # of background events in full histogram range
@@ -166,16 +172,20 @@ class WprimeFitter{
   // for bgd-only ensemble of pseudo-experiments
   float Zexpect_0; 
   // correspond to +-1/2 sigma coverage points
-  float Zexpect_Minus1;
-  float Zexpect_Minus2;
-  float Zexpect_Plus1;
-  float Zexpect_Plus2;
+  float Zexpect_Minus1, Zexpect_Minus2, Zexpect_Plus1, Zexpect_Plus2;
+  // corresponds to expected limit and +-1/2 sigma coverage points
+  float observedLimit, medianExpLimit,
+    upper1sigLimit, lower1sigLimit, upper2sigLimit, lower2sigLimit;
 
   void initZvalues()
   {Zexpect_0 = Zexpect_Minus1 = Zexpect_Minus2 = Zexpect_Plus1 = Zexpect_Plus2
       = -1;}
 
-  void calculateZvalues();
+  void initLimits()
+  {
+    observedLimit = medianExpLimit =  upper1sigLimit = lower1sigLimit = 
+      upper2sigLimit = lower2sigLimit = -9999;
+  }
 
   // try adjusting scale-factor depending on cl_test value and step_i;
   // for step_i = 0 (1, 2), scale_factor is increased by 10 (1, 0.1);
@@ -185,12 +195,13 @@ class WprimeFitter{
   void getLLR();
   void initFit();
   void runPseudoExperiments(int sig_i, RooAbsPdf * model, 
-			    RooAbsPdf & SigBgdPdf, RooRealVar &nsig);
+			    RooAbsPdf & SigBgdPdf, RooRealVar &nsig,
+			    bool bgdOnly);
 
-  // if sig_i, method will calculate LLR for bgd-only ensemble
+  // if bdOnly=true, method will calculate LLR for bgd-only ensemble
   // otherwise, will calculate cl95 that corresponds to Zexpect and return
   // scale-factor (ie. x-sec(SSM)/scale-factor) for which this is achieved
-  float runPseudoExperiments(int sig_i, ofstream & tracking, float Zexpect=-1);
+  float runPseudoExperiments(int sig_i, ofstream & tracking, bool bgdOnly, float Zexpect=-1);
 
 };
 
