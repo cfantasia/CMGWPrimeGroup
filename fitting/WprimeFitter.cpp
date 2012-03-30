@@ -39,7 +39,8 @@ void WprimeFitter::init()
 
   for(int i = 0; i != Nsignal_points; ++i)
     {
-      LLR[i] = Nsig_h[i] = Nbgd_h[i] = sig_hist[i] = res_hist[i] = 0;
+      LLR[i] = LLR_bgdOnly[i] = Nsig_h[i] = Nbgd_h[i] = 
+	sig_hist[i] = res_hist[i] = 0;
       resolution[i] = 0;
       mean1[i] = mean2[i] = mean3[i] = 0;
       sigma1[i] = sigma2[i] = sigma3[i] = 0;
@@ -204,36 +205,28 @@ void WprimeFitter::run()
 	massPoints.push_back(i);
     }
   else
-    {
-      massPoints.push_back(0); // this is the bgd-only case
-      massPoints.push_back(MassPoint_);
-    }
-
+    massPoints.push_back(MassPoint_);
+    
   if(!runFits_)return;
-
   initFit();
   
   ofstream limits, tracking;
   string filename = "nLimit";
   string filename2 = "tracking";
-  if(MassPoint_ > 0)
-    {
-      filename += Form("_%.1f", WprimeMass[MassPoint_]/1000);
-      filename2 += Form("_%.1f", WprimeMass[MassPoint_]/1000);
-    }
-  if(channel_ == wprime_MuMET)
-    {
-      filename += "_MuMET.txt";
-      filename2 += "_MuMET.txt";
-    }
-  else  if(channel_ == wprime_ElMET)
-    {
-      filename += "_ElMET.txt";
-      filename2 += "_ElMET.txt";
-    }
+  if(MassPoint_ > 0){
+    filename += Form("_%.1f", WprimeMass[MassPoint_]/1000);
+    filename2 += Form("_%.1f", WprimeMass[MassPoint_]/1000);
+  }
+  if(channel_ == wprime_MuMET){
+    filename += "_MuMET.txt";
+    filename2 += "_MuMET.txt";
+  }
+  else if(channel_ == wprime_ElMET){
+    filename += "_ElMET.txt";
+    filename2 += "_ElMET.txt";
+  }
 
-  limits.open(filename.c_str());
-  tracking.open(filename2.c_str());
+  limits.open(filename.c_str()); tracking.open(filename2.c_str());
   limits << "Mass/F:Lumi/F:ObsLimit/F:ExpLimit/F:ExpLimitP1/F:ExpLimitM1/F:ExpLimitP2/F:ExpLimitM2/F\n";
   tracking << "Mass\t  Zexpect\tCL\tScaleFactor\n";
   
@@ -241,110 +234,14 @@ void WprimeFitter::run()
   for (It sig_i = massPoints.begin(); sig_i != massPoints.end(); ++sig_i)
     {// loop over mass points
 
-
-      // First, find the Z-values that corresponds to median & 1,2 sigma points
-      if(*sig_i == 0)
-	{
-	  runPseudoExperiments(*sig_i, tracking);
-	  calculateZvalues(); 
-	  continue;
-	}
-
-      // this is for sig_i != 0, where we calculate the 1-p_tail probability
-      // by asssuming a SSM x-section, but will not attempt to determine
-      // an exclusion limit on the cross-section
-      if(skipLimitCalculation_)
-	{
-	  runPseudoExperiments(*sig_i, tracking, Zexpect_0);
-	  continue;
-	}
-      // Then, find the expected limits
-      
-      const int NZMAX = 5;
-      float Zexp[NZMAX] = {Zexpect_0, Zexpect_Minus1, Zexpect_Minus2, 
-		       Zexpect_Plus1, Zexpect_Plus2};
-      float xsec_limit[NZMAX] = {-1};
-      
-      int NZmax = NZMAX;
-      if(findOnlyMedian_)NZmax = 1;
-      
-      float Z_observed = -9999, observed = -9999, median = -999, 
-	upper1sig = -999, lower1sig = -999, 
-	upper2sig = -9999, lower2sig = -9999;
-
-      for(int z = 0; z != NZmax; ++z)
-	{ // loop over Z-values
-	  cout << "\n Calculating CL95 limit for Z value # " << z << " out of "
-	       << NZmax << " possible values " << endl;
-	  float scale_factor = runPseudoExperiments(*sig_i, tracking, Zexp[z]);
-	  
-	  xsec_limit[z] = xsec[*sig_i]/scale_factor;
-	} // loop over Z-values
-
-      median = xsec_limit[0]; 
-      lower1sig = xsec_limit[1]; lower2sig = xsec_limit[2];
-      upper1sig = xsec_limit[3]; upper2sig = xsec_limit[4];
-
-      // Then, find the observed limits
-
-
-      // COPY + PASTE FROM runPseudoExperiments - NEED A BETTER WAY
-      const float mass_ = WprimeMass[*sig_i];
-      const float width_ = (4./3.)*(mass_/M_W)*G_W;
-      // signal mass and width
-      RooRealVar mass("Mass", "W' mass", mass_);//, 0, 10000);
-      RooRealVar width("Width", "W' width", width_);
-      
-      // signal modeling: JacobianRBW
-      JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
-  
-      RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
-			   sig_model, *(resolution[*sig_i]));
-      // COPY + PASTE FROM runPseudoExperiments - NEED A BETTER WAY
-
-      Double_t nChi2H0 = 0, nChi2H1 = 0, dChi2 = 0;
-      // method RooPlot::chiSquare returns chi2/(Nbins-NFITPARAM)
-      // (where Nbins: # of bins that corresponds to fitting range). Then:
-      // if nChi2H1 = chi2_H1/Nbins and nChi2H0 = chi2_H0/Nbins,
-      // delta-chi2 := chi2_H0 - chi2_H1 = (nChi2H0-nChi2H1)*Nbins
-      // where Nbins can be determined by calculating the reduced chi2 twice
-      // by varying the # of dof by one.
-      RooPlot* xframe_H1 = mt->frame(Range("mt_fit"), Title("Data transverse mass"));
-      RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
-      RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
-			  RooArgList(nsig, *nbgd));
-      SigBgdPdf.fitTo(*mt_DATA, Range("mt_fit"), Save());
-      mt_DATA->plotOn(xframe_H1, Name("data"));
-      SigBgdPdf.plotOn(xframe_H1, Name("sigbgd_fit"));
-      nChi2H1 = xframe_H1->chiSquare("sigbgd_fit", "data");
-      Double_t nChi2H1_b = xframe_H1->chiSquare("sigbgd_fit", "data", 1);
-
-      // function floor(x + 0.5) returns the closest integer to (float) x
-      int Nfit_bins = int (floor(nChi2H1_b/(nChi2H1_b - nChi2H1) + 0.5));
-
-      RooPlot* xframe_H0 = mt->frame(Range("mt_fit"), Title("Data transverse mass"));
-      BgdPdf->fitTo(*mt_DATA, Range("mt_fit"), Save());
-      mt_DATA->plotOn(xframe_H0, Name("data"));
-      BgdPdf->plotOn(xframe_H0, Name("bgd_fit"));
-      nChi2H0 = xframe_H0->chiSquare("bgd_fit", "data");
-      
-      cout << " Chi2H1 = " << nChi2H1*Nfit_bins 
-	   << " Chi2H0 = " << nChi2H0*Nfit_bins << endl;
-
-      dChi2 = nChi2H0*Nfit_bins - nChi2H1*Nfit_bins;
-      tracking << WprimeMass[*sig_i] << '\t' << nChi2H0*Nfit_bins << '\t' 
-	       << nChi2H1*Nfit_bins <<endl;
-      
-      Z_observed = dChi2 >= 0 ? sqrt(dChi2) : 0.;
-
-      float sf = runPseudoExperiments(*sig_i, tracking, Z_observed);
-      
-      observed = xsec[*sig_i]/sf;
+      calculateExpectedZvalues(*sig_i, tracking);
+      calculateExpectedLimits(*sig_i, tracking);
+      calculateObservedLimit(*sig_i, tracking);
 
       limits << WprimeMass[*sig_i] << '\t' << lumi_ipb_ << '\t' 
-	     << observed << '\t' << median 
-	     << '\t' << upper1sig << '\t' << lower1sig << '\t' << upper2sig 
-	     << '\t' << lower2sig << endl;
+	     << observedLimit << '\t' << medianExpLimit 
+	     << '\t' << upper1sigLimit << '\t' << lower1sigLimit << '\t' 
+	     << upper2sigLimit << '\t' << lower2sigLimit << endl;  
       
     } // loop over mass points
   
@@ -360,14 +257,105 @@ void WprimeFitter::run()
   cout << " Between " << bXMIN << " and " << pXMAX << " GeV = "
        << bgd_hist->Integral(bgd_hist->FindBin(bXMIN), bin_max) << endl;
   
-    if(skipLimitCalculation_)    getLLR();
+  if(skipLimitCalculation_)    getLLR();
 }
 
-// if sig_i==0, method will calculate LLR for bgd-only ensemble
+void WprimeFitter::calculateExpectedZvalues(int sig_i, ofstream & tracking)
+{
+  const bool bgdOnly = true;
+  runPseudoExperiments(sig_i, tracking, bgdOnly);
+  calculateZvalues(sig_i); 
+}
+
+void WprimeFitter::calculateExpectedLimits(int sig_i, ofstream & tracking)
+{
+  const int NZMAX = 5;
+  float Zexp[NZMAX] = {Zexpect_0, Zexpect_Minus1, Zexpect_Minus2, 
+		       Zexpect_Plus1, Zexpect_Plus2};
+  float xsec_limit[NZMAX] = {-1};
+  int NZmax = NZMAX;
+  if(findOnlyMedian_)NZmax = 1;
+
+  const bool bgdOnly = true;
+  initLimits();
+  for(int z = 0; z != NZmax; ++z)
+    { // loop over Z-values
+      cout << "\n Calculating CL95 limit for Z value # " << z << " out of "
+	   << NZmax << " possible values " << endl;
+      float scale_factor = runPseudoExperiments(sig_i, tracking, !bgdOnly, 
+						Zexp[z]);
+      
+      xsec_limit[z] = xsec[sig_i]/scale_factor;
+    } // loop over Z-values
+  
+  medianExpLimit = xsec_limit[0]; 
+  lower1sigLimit = xsec_limit[1]; lower2sigLimit = xsec_limit[2];
+  upper1sigLimit = xsec_limit[3]; upper2sigLimit = xsec_limit[4];
+}
+
+void WprimeFitter::calculateObservedLimit(int sig_i, ofstream & tracking)
+{
+  // COPY + PASTE FROM runPseudoExperiments - NEED A BETTER WAY
+  const float mass_ = WprimeMass[sig_i];
+  const float width_ = (4./3.)*(mass_/M_W)*G_W;
+  // signal mass and width
+  RooRealVar mass("Mass", "W' mass", mass_);//, 0, 10000);
+  RooRealVar width("Width", "W' width", width_);
+  
+  // signal modeling: JacobianRBW
+  JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
+  
+  RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
+		       sig_model, *(resolution[sig_i]));
+  // COPY + PASTE FROM runPseudoExperiments - NEED A BETTER WAY
+  
+  Double_t nChi2H0 = 0, nChi2H1 = 0, dChi2 = 0;
+  // method RooPlot::chiSquare returns chi2/(Nbins-NFITPARAM)
+  // (where Nbins: # of bins that corresponds to fitting range). Then:
+  // if nChi2H1 = chi2_H1/Nbins and nChi2H0 = chi2_H0/Nbins,
+  // delta-chi2 := chi2_H0 - chi2_H1 = (nChi2H0-nChi2H1)*Nbins
+  // where Nbins can be determined by calculating the reduced chi2 twice
+  // by varying the # of dof by one.
+  RooPlot* xframe_H1 = mt->frame(Range("mt_fit"), Title("Data transverse mass"));
+  RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
+  RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
+		      RooArgList(nsig, *nbgd));
+  SigBgdPdf.fitTo(*mt_DATA, Range("mt_fit"), Save());
+  mt_DATA->plotOn(xframe_H1, Name("data"));
+  SigBgdPdf.plotOn(xframe_H1, Name("sigbgd_fit"));
+  nChi2H1 = xframe_H1->chiSquare("sigbgd_fit", "data");
+  Double_t nChi2H1_b = xframe_H1->chiSquare("sigbgd_fit", "data", 1);
+  
+  // function floor(x + 0.5) returns the closest integer to (float) x
+  int Nfit_bins = int (floor(nChi2H1_b/(nChi2H1_b - nChi2H1) + 0.5));
+  
+  RooPlot* xframe_H0 = mt->frame(Range("mt_fit"), Title("Data transverse mass"));
+  BgdPdf->fitTo(*mt_DATA, Range("mt_fit"), Save());
+  mt_DATA->plotOn(xframe_H0, Name("data"));
+  BgdPdf->plotOn(xframe_H0, Name("bgd_fit"));
+  nChi2H0 = xframe_H0->chiSquare("bgd_fit", "data");
+  
+  cout << " Chi2H1 = " << nChi2H1*Nfit_bins 
+       << " Chi2H0 = " << nChi2H0*Nfit_bins << endl;
+  
+  dChi2 = nChi2H0*Nfit_bins - nChi2H1*Nfit_bins;
+  tracking << WprimeMass[sig_i] << '\t' << nChi2H0*Nfit_bins << '\t' 
+	   << nChi2H1*Nfit_bins <<endl;
+  
+  float Z_observed = dChi2 >= 0 ? sqrt(dChi2) : 0.;
+
+  const bool bgdOnly = true;
+  float sf = runPseudoExperiments(sig_i, tracking, !bgdOnly, Z_observed);
+  
+  observedLimit = xsec[sig_i]/sf;
+  
+}
+
+// if bgdOnly=true, method will calculate LLR for bgd-only ensemble
 // otherwise, will calculate cl95 that corresponds to Zexpect and return
 // scale-factor (ie. x-sec(SSM)/scale-factor) for which this is achieved
 float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
-					 float Zexpect)
+					 bool bgdOnly, float Zexpect)
 {      
   const float mass_ = WprimeMass[sig_i];
   const float width_ = (4./3.)*(mass_/M_W)*G_W;
@@ -385,7 +373,7 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
   //int steps = 0;   
   do{
     //steps ++;
-    if(sig_i == 0 || skipLimitCalculation_)
+    if(bgdOnly || skipLimitCalculation_)
       scale_factor = 1;
     else
       adjustScaleFactor(scale_factor, cl_test, step_i);
@@ -414,7 +402,7 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     }
 
 
-    RooAbsPdf * model = 0;
+    RooAbsPdf * modelHist = 0;
 	
     //make model
     TH1F * hSig = (TH1F*)sig_hist[sig_i]->Clone("hSig");
@@ -430,7 +418,7 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     // virtual SIG histogram is needed, because of MCStudy()
     //    RooHistPdf Model_inf("Model_inf","interference pdf",*mt, *mt_SigInt,0) ;
 
-    if(sig_i==0) Nsig=0;
+    if(bgdOnly) Nsig=0;
     RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
 
     //for Modeling
@@ -441,13 +429,13 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
     			RooArgList(nsig, *nbgd));
 
-    model = (RooAbsPdf*) &SigBgdhistPdf;
+    modelHist = (RooAbsPdf*) &SigBgdhistPdf;
 
     cout << "\n Will run PE ensemble for sample " << desc[sig_i] << 
       " and scale factor = " << scale_factor << endl;
-    runPseudoExperiments(sig_i, model, SigBgdPdf, nsig);
+    runPseudoExperiments(sig_i, modelHist, SigBgdPdf, nsig, bgdOnly);
     
-     if(sig_i == 0) break;
+    if(bgdOnly) break;
 
     assert(Zexpect >= 0);
 
@@ -549,7 +537,8 @@ void WprimeFitter::getLLR()
 }
 
 void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model, 
-					RooAbsPdf & SigBgdPdf, RooRealVar &nsig)
+					RooAbsPdf & SigBgdPdf, 
+					RooRealVar &nsig, bool bgdOnly)
 {
   Nevt[sig_i].Nsig = Nsig;
   Nevt[sig_i].Nbgd = Nbgd;
@@ -635,34 +624,39 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
       new TCanvas(); frame2->Draw();
     }
 
-  LLR[sig_i] = new TH1F(*z_sig);
-  Nsig_h[sig_i] = new TH1F(*nsig_h);
-  Nbgd_h[sig_i] = new TH1F(*nbgd_h);
+  if(bgdOnly)
+    LLR_bgdOnly[sig_i] = new TH1F(*z_sig);
+  else
+    {
+      LLR[sig_i] = new TH1F(*z_sig);
+      Nsig_h[sig_i] = new TH1F(*nsig_h);
+      Nbgd_h[sig_i] = new TH1F(*nbgd_h);
+    }
 }
 
-void WprimeFitter::calculateZvalues()
+void WprimeFitter::calculateZvalues(int sig_i)
 {
-  initZvalues();
-  const int sig_i = 0;
-  float counted_entries=0., total_entries=LLR[sig_i]->Integral();
+  initZvalues(); 
+  float counted_entries=0., total_entries=LLR_bgdOnly[sig_i]->Integral();
 
-  for(int i=1; i<=LLR[sig_i]->GetNbinsX(); ++i){
-    counted_entries += LLR[sig_i]->GetBinContent(i);
-    //    cout << " i = " << i << " Z = " << LLR[sig_i]->GetBinCenter(i) 
+  for(int i=1; i<=LLR_bgdOnly[sig_i]->GetNbinsX(); ++i){
+    counted_entries += LLR_bgdOnly[sig_i]->GetBinContent(i);
+    // cout << " i = " << i << " Z = " << LLR_bgdOnly[sig_i]->GetBinCenter(i) 
     // << " cumulative = " <<  counted_entries/total_entries << endl;
     if(Zexpect_Minus2<0 && counted_entries/total_entries>0.02275) 
-      Zexpect_Minus2 = LLR[sig_i]->GetBinCenter(i);
+      Zexpect_Minus2 = LLR_bgdOnly[sig_i]->GetBinCenter(i);
     if(Zexpect_Minus1<0 && counted_entries/total_entries>0.15865) 
-      Zexpect_Minus1 = LLR[sig_i]->GetBinCenter(i);
+      Zexpect_Minus1 = LLR_bgdOnly[sig_i]->GetBinCenter(i);
     if(Zexpect_0<0 && counted_entries/total_entries>0.5) 
-      Zexpect_0 = LLR[sig_i]->GetBinCenter(i);
+      Zexpect_0 = LLR_bgdOnly[sig_i]->GetBinCenter(i);
     if(Zexpect_Plus1<0 && counted_entries/total_entries>0.84135)
-      Zexpect_Plus1 = LLR[sig_i]->GetBinCenter(i);
+      Zexpect_Plus1 = LLR_bgdOnly[sig_i]->GetBinCenter(i);
     if(Zexpect_Plus2<0 && counted_entries/total_entries>0.97725)
-      Zexpect_Plus2 = LLR[sig_i]->GetBinCenter(i);
+      Zexpect_Plus2 = LLR_bgdOnly[sig_i]->GetBinCenter(i);
   }
   
-  cout << " Expected Z-values from LLR of MC background ensembles\n";
+  cout << " Expected Z-values from LLR of MC background ensembles for ";
+  cout << " mass point " << desc[sig_i] << endl;
   cout << "  Median = " << Zexpect_0 << endl;
   cout << " -1sigma = " << Zexpect_Minus1 << endl;
   cout << " +1sigma = " << Zexpect_Plus1 << endl;
