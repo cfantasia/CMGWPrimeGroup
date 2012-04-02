@@ -141,7 +141,7 @@ class WprimeFitter{
   void calculateExpectedLimits(int sig_i, ofstream & tracking);
   void calculateObservedLimit(int sig_i, ofstream & tracking);
   void calculateZvalues(int sig_i);
-
+  void getNsig(int sig_i, float scale_factor);
   // # of bins for signal, background histograms in ROOT file
   int Nbins; 
   // # of background events in full histogram range
