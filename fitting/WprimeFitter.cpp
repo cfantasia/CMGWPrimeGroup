@@ -574,8 +574,8 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   if(debugMe_)
     {
       cout << " Ntot = " << Ntot << endl;
-      cout << " Before lumi correction, dNtot = " << sqrt(Ntot) 
-	   << " after lumi correction, dNtot = " << dNtot << endl;
+      cout << " Without lumi uncertainty, dNtot = " << sqrt(Ntot) 
+	   << " with lumi uncertainty, dNtot = " << dNtot << endl;
     }
 
   
