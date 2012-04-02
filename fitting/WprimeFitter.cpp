@@ -748,13 +748,8 @@ void WprimeFitter::modelBackgroundOption1()
   TF1 * bgd_func = unNormPdf.asTF(RooArgList(*mt), pars);
 
   float rangeMin=fXMIN, rangeMax=fXMAX;
-  Double_t integ = bgd_func->Integral(rangeMax, rangeMin);
-  Double_t dinteg = bgd_func->IntegralError(rangeMin, rangeMax, 0, rf->covarianceMatrix().GetMatrixArray())/integ;
-
   cout << " Actual # of entries between [" << rangeMin << ", " << rangeMax 
        << "] = " << bgd_hist->Integral(bgd_hist->FindBin(rangeMin), bgd_hist->FindBin(rangeMax)) << endl;
-  cout << " Extrapolation between [" << rangeMin << ", " << rangeMax 
-       << "] = " << integ << " +- " << dinteg << endl;
   cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
   
 }
