@@ -260,6 +260,35 @@ void WprimeFitter::run()
   if(skipLimitCalculation_)    getLLR();
 }
 
+void WprimeFitter::getNsig(int sig_i, float scale_factor)
+{
+  // expected # of events given by sig_hist integral
+  // first correction is from T&P (eff_corr_TP_)
+  Nsig = sig_hist[sig_i]->Integral(0, Nbins+1);
+  
+  if(debugMe_){
+    cout << "\n Running with MC sample: " << desc[sig_i] 
+	 << " and scale factor = " << scale_factor << endl;
+    cout << " Nbgd = " << Nbgd << endl;
+    cout << " By assuming SSM cross-section, Nsig = " << Nsig << endl;
+  }
+
+  Nsig = Nsig/scale_factor;
+  if(debugMe_){
+    cout << " After scaling down by factor " << scale_factor 
+	 << ", Nsig = " << Nsig << endl;
+  }
+
+  // correct expected # of signal events according to 
+  // efficiency calculated from T&P
+  Nsig = Nsig * eff_corr_TP_;
+  if(debugMe_){
+    cout << " After correcting for T&P-calculated efficiency, Nsig = "
+	 << Nsig << endl;
+  }
+
+}
+
 void WprimeFitter::calculateExpectedZvalues(int sig_i, ofstream & tracking)
 {
   const bool bgdOnly = true;
@@ -369,6 +398,18 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
   RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
 		       sig_model, *(resolution[sig_i]));
   
+  //make signal model
+  TH1F * hSig = (TH1F*)sig_hist[sig_i]->Clone("hSig");
+  
+  mt_SIG = new RooDataHist("mt_SIG","Hist Siganl", *mt, Import(*hSig));
+  
+  RooHistPdf Model_s("Model_sb","Signal pdf",*mt, *mt_SIG,0) ;
+  RooHistPdf Model_b("Model_b","bgd only pdf",*mt, *mt_BGD,0) ;
+  // for interference sample
+  // intHistogram ->BG
+  // virtual SIG histogram is needed, because of MCStudy()
+  //    RooHistPdf Model_inf("Model_inf","interference pdf",*mt, *mt_SigInt,0) ;
+  
   int step_i=0; float cl_test = 1., scale_factor=1.; 
   //int steps = 0;   
   do{
@@ -378,49 +419,12 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     else
       adjustScaleFactor(scale_factor, cl_test, step_i);
 	
-    // expected # of events given by sig_hist integral
-    // first correction is from T&P (eff_corr_TP_)
-    Nsig = sig_hist[sig_i]->Integral(0, Nbins+1);
-
-    //    if(debugMe_){
-      cout << "\n Running with MC sample: " << desc[sig_i] 
-	   << " and scale factor = " << scale_factor << endl;
-      cout << " Nbgd = " << Nbgd << endl;
-      cout << " By assuming SSM cross-section, Nsig = " << Nsig << endl;
-      //    }
-    Nsig = Nsig/scale_factor;
-    //if(debugMe_){
-      cout << " After scaling down by factor " << scale_factor 
-	   << ", Nsig = " << Nsig << endl;
-      //}
-    // correct expected # of signal events according to 
-    // efficiency calculated from T&P
-    Nsig = Nsig * eff_corr_TP_;
-    if(debugMe_){
-      cout << " After correcting for T&P-calculated efficiency, Nsig = "
-	   << Nsig << endl;
-    }
-
-
-    RooAbsPdf * modelHist = 0;
-	
-    //make model
-    TH1F * hSig = (TH1F*)sig_hist[sig_i]->Clone("hSig");
-    
-    mt_SIG = new RooDataHist("mt_SIG","Hist Siganl", *mt, Import(*hSig));
-
-    RooHistPdf Model_s("Model_sb","Signal pdf",*mt, *mt_SIG,0) ;
-
-    RooHistPdf Model_b("Model_b","bgd only pdf",*mt, *mt_BGD,0) ;
-
-    // for interference sample
-    // intHistogram ->BG
-    // virtual SIG histogram is needed, because of MCStudy()
-    //    RooHistPdf Model_inf("Model_inf","interference pdf",*mt, *mt_SigInt,0) ;
-
     if(bgdOnly) Nsig=0;
+    else
+      getNsig(sig_i, scale_factor);
     RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
 
+    
     //for Modeling
     RooAddPdf SigBgdhistPdf("SigBgdPdf", "SigBgdPdf", RooArgList(Model_s,Model_b),
 			    RooArgList(nsig, *nbgd));
@@ -429,11 +433,9 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
     			RooArgList(nsig, *nbgd));
 
-    modelHist = (RooAbsPdf*) &SigBgdhistPdf;
-
     cout << "\n Will run PE ensemble for sample " << desc[sig_i] << 
       " and scale factor = " << scale_factor << endl;
-    runPseudoExperiments(sig_i, modelHist, SigBgdPdf, nsig, bgdOnly);
+    runPseudoExperiments(sig_i, &SigBgdhistPdf, SigBgdPdf, nsig, bgdOnly);
     
     if(bgdOnly) break;
 
@@ -452,8 +454,7 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     if(skipLimitCalculation_)break;
 
   }while(step_i != Nsteps-1 || cl_test > 0.95 ) ;
- 
-    
+  
   return scale_factor;
 }
 
@@ -657,10 +658,10 @@ void WprimeFitter::calculateZvalues(int sig_i)
   
   cout << " Expected Z-values from LLR of MC background ensembles for ";
   cout << " mass point " << desc[sig_i] << endl;
-  cout << "  Median = " << Zexpect_0 << endl;
-  cout << " -1sigma = " << Zexpect_Minus1 << endl;
-  cout << " +1sigma = " << Zexpect_Plus1 << endl;
   cout << " -2sigma = " << Zexpect_Minus2 << endl;
+  cout << " -1sigma = " << Zexpect_Minus1 << endl;
+  cout << "  Median = " << Zexpect_0 << endl;
+  cout << " +1sigma = " << Zexpect_Plus1 << endl;
   cout << " +2sigma = " << Zexpect_Plus2 << endl;
 
 }
