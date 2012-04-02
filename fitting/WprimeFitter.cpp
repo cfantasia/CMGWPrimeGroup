@@ -291,6 +291,7 @@ void WprimeFitter::getNsig(int sig_i, float scale_factor)
 
 void WprimeFitter::calculateExpectedZvalues(int sig_i, ofstream & tracking)
 {
+  cout << "\n Calculating expected Z values for bgd-only PEs " << endl;
   const bool bgdOnly = true;
   runPseudoExperiments(sig_i, tracking, bgdOnly);
   calculateZvalues(sig_i); 
@@ -309,7 +310,8 @@ void WprimeFitter::calculateExpectedLimits(int sig_i, ofstream & tracking)
   initLimits();
   for(int z = 0; z != NZmax; ++z)
     { // loop over Z-values
-      cout << "\n Calculating CL95 limit for Z value # " << z << " out of "
+      cout << "\n Calculating CL95 EXPECTED limit for Z value # " 
+	   << z << " out of "
 	   << NZmax << " possible values " << endl;
       float scale_factor = runPseudoExperiments(sig_i, tracking, !bgdOnly, 
 						Zexp[z]);
@@ -434,7 +436,7 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     			RooArgList(nsig, *nbgd));
 
     cout << "\n Will run PE ensemble for sample " << desc[sig_i] 
-	 << "bgdOnly flag = " << bgdOnly 
+	 << " bgdOnly flag = " << bgdOnly 
 	 << " and scale factor = " << scale_factor << endl;
     runPseudoExperiments(sig_i, &SigBgdhistPdf, SigBgdPdf, nsig, bgdOnly);
     
@@ -571,14 +573,6 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
     mcs->generateAndFit(NpseudoExp_); // model from histograms (Numerical)
 
 
-  if(debugMe_)
-    {
-      cout << " Ntot = " << Ntot << endl;
-      cout << " Without lumi uncertainty, dNtot = " << sqrt(Ntot) 
-	   << " with lumi uncertainty, dNtot = " << dNtot << endl;
-    }
-
-  
   if(0){
     //  if(debugMe_){
     //Find average number of entries above some threshold
@@ -613,6 +607,24 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
       cout << " oops, nbgd_h = " << nbgd_h << " for sig_i = " << sig_i << endl;
       abort();
     }
+
+  if(debugMe_)
+    {
+      cout << " Ntot = " << Ntot << endl;
+      cout << " Without lumi uncertainty, dNtot = " << sqrt(Ntot) 
+	   << " with lumi uncertainty, dNtot = " << dNtot << endl << endl;
+      cout << " PEs created by";
+      if(bgdOnly)
+	cout << " bgd-oly";
+      else
+	cout << " signal and bgd";
+      cout << " distributions " << endl;
+      
+      cout << " Input nsig = " << Nevt[sig_i].Nsig << ", Fit average nsig = "
+	   << nsig_h->GetMean() << " +- " << nsig_h->GetRMS() << endl;
+      cout << " Input nbgd = " << Nevt[sig_i].Nbgd << ", Fit average nbgd = "
+	   << nbgd_h->GetMean() << " +- " << nbgd_h->GetRMS() << endl;
+    } 
 
   if(debugMe_ && skipLimitCalculation_)
     {
