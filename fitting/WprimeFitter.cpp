@@ -433,8 +433,9 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
     RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
     			RooArgList(nsig, *nbgd));
 
-    cout << "\n Will run PE ensemble for sample " << desc[sig_i] << 
-      " and scale factor = " << scale_factor << endl;
+    cout << "\n Will run PE ensemble for sample " << desc[sig_i] 
+	 << "bgdOnly flag = " << bgdOnly 
+	 << " and scale factor = " << scale_factor << endl;
     runPseudoExperiments(sig_i, &SigBgdhistPdf, SigBgdPdf, nsig, bgdOnly);
     
     if(bgdOnly) break;
