@@ -743,10 +743,6 @@ void WprimeFitter::modelBackgroundOption1()
   
   BgdPdf = new RooBgdPdf("BgdPdf", "BgdPdf", *mt, *bb, *cc);
 
-  RooArgSet prodSet(bgd_tmp);
-  RooProduct unNormPdf("fitted Function", "fitted Function", prodSet);
-  TF1 * bgd_func = unNormPdf.asTF(RooArgList(*mt), pars);
-
   float rangeMin=fXMIN, rangeMax=fXMAX;
   cout << " Actual # of entries between [" << rangeMin << ", " << rangeMax 
        << "] = " << bgd_hist->Integral(bgd_hist->FindBin(rangeMin), bgd_hist->FindBin(rangeMax)) << endl;
