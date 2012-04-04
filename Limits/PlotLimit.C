@@ -5,6 +5,7 @@
 #include "TLatex.h"
 #include "TGraphAsymmErrors.h"
 #include "../root_macros/CMSStyle.C"
+#include "../root_macros/setTDR_modified.C"
 #include "consts.h"
 
 int GetEndPoints(int & start, int& end, Double_t* y, float line);
@@ -41,16 +42,18 @@ struct SignalSample{
 
 void
 PlotLimit(string inName){
-  gErrorIgnoreLevel = kWarning;
-  CMSstyle();
+  //gErrorIgnoreLevel = kWarning;
+  //CMSstyle();
+  setTDRStyle();
+  gROOT->ForceStyle();
 
   string outFile;
   vector<SignalSample> sigs;
   if(inName.find("WprimeWZ") != string::npos){
-    sigs.push_back(SignalSample("W'","xSec_WZ.dat",  "Mass:Xsec",  "", "\\sigma_{W'}", kBlack, 1, kGray));
-    sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{2}","xSec_TCWZ-sinchi1d2_v2.dat",  "Rho:Xsec",  "Rho>=150",  "\\sigma_{TC, sin(#chi)=#frac{1}{2}}", kRed, kDashed));
-    sigs.push_back(SignalSample("TC",                      "xSec_TCWZ-sinchi1d3_v3.dat",  "Rho:Xsec",  "Rho>=150",  "\\sigma_{TC}", kRed));
-    sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{4}","xSec_TCWZ-sinchi1d4_v2.dat",  "Rho:Xsec",  "Rho>=150",  "\\sigma_{TC, sin(#chi)=#frac{1}{4}}", kRed, 3));
+    sigs.push_back(SignalSample("W'","xSec_WZ.dat",  "Mass:Xsec",  "Mass>=200", "\\sigma_{W'}", kBlack, 1, kGray));
+    sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{2}","xSec_TCWZ-sinchi1d2.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{2}}", kRed, kDashed));
+    sigs.push_back(SignalSample("TC",                      "xSec_TCWZ-sinchi1d3.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{3}}", kRed));
+    sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{4}","xSec_TCWZ-sinchi1d4.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{4}}", kRed, 3));
     outFile = "limitVsMass_WZ.pdf";
   }else if(inName.find("HadVZ") != string::npos){
     sigs.push_back(SignalSample("W'","xSec_WprimeVZ.dat", "Mass:Xsec", "", "\\sigma_{W'}"));
@@ -71,14 +74,15 @@ PlotLimit(string inName){
   }
   TLatex latexLabel;
   latexLabel.SetNDC();
-  latexLabel.SetTextSize(0.06);
-  latexLabel.SetTextFont(132);
+  latexLabel.SetTextSize(0.05);
+  latexLabel.SetTextFont(42);
 
   //////Now Plot Limit vs Mass//////////////////////
   cout<<"Now Plot Limit vs Mass\n";
   TCanvas* c1 = new TCanvas("c1", "Exclusion Limit vs Mass");
-  TMultiGraph *mg = new TMultiGraph("mg", ";M_{W',#rho_{TC}} (GeV);\\sigma #upoint BR (pb)");
-  TLegend *leg = new TLegend(0.48, 0.65,0.48+0.42, 0.65+0.24,"");
+  TMultiGraph *mg = new TMultiGraph("mg", ";M_{W', #rho_{TC}} (GeV);\\sigma #upoint BR (pb)");
+  TLegend *leg = new TLegend(0.6, 0.43,0.9, 0.89,"");
+  //TLegend *leg = new TLegend(0.6, 0.63,0.9, 0.89,"");
   c1->SetLogy();
   int n=0;
   float* x; 
@@ -111,11 +115,9 @@ PlotLimit(string inName){
     g1Sigma->SetPoint(n+i,mass[n-i-1],ExpLimitM1[n-i-1]);
   }
   
-//      g2Sigma->SetFillStyle(4004);
-  g2Sigma->SetFillColor(kGreen);
+  g2Sigma->SetFillColor(kYellow);
   mg->Add(g2Sigma, "F");
-//      g1Sigma->SetFillStyle(4004);
-  g1Sigma->SetFillColor(kYellow);
+  g1Sigma->SetFillColor(kGreen);
   mg->Add(g1Sigma, "F");
   
   glumi->SetLineColor(kBlack);
@@ -162,7 +164,7 @@ PlotLimit(string inName){
     sigs[iSig].gXsec->SetLineStyle(sigs[iSig].lineStyle);
     if(drawBand) sigs[iSig].gXsec->SetFillColor(sigs[iSig].bandColor);
     mg->Add(sigs[iSig].gXsec,"C");
-    if( sigs[iSig].lineStyle == 1 )//Only have legend entry for main band
+    if( 1 || sigs[iSig].lineStyle == 1 )//Only have legend entry for main band
       leg->AddEntry(sigs[iSig].gXsec,sigs[iSig].legendString.c_str(), drawBand ? "LF" : "L");
 
     
@@ -183,24 +185,26 @@ PlotLimit(string inName){
     }
     cout<<sigs[iSig].name<<" Limits are ["<<lowLimit<<", "<<upLimit<<"]"<<endl;
     if(upLimit > 0. && sigs[iSig].lineStyle == 1){
-      //latexLabel.DrawLatex(0.20, 0.3-iSig*0.04, Form("#font[132]{Limit_{%s} = %.0f GeV}",sigs[iSig].name.c_str(),upLimit));
+      //latexLabel.DrawLatex(0.20, 0.3-iSig*0.04, Form("#font[42]{Limit_{%s} = %.0f GeV}",sigs[iSig].name.c_str(),upLimit));
       }  
   }
-  latexLabel.DrawLatex(0.41, 0.96, "CMS Preliminary 2011");
-  latexLabel.DrawLatex(0.22, 0.38, "#sqrt{s} = 7 TeV");
-  latexLabel.DrawLatex(0.19, 0.25, Form("#intL dt = %.1f fb^{-1}",lumi[0]/1000.));
+  latexLabel.DrawLatex(0.33, 0.96, "CMS Preliminary 2011");
+  latexLabel.DrawLatex(0.19, 0.30, "#sqrt{s} = 7 TeV");
+  latexLabel.DrawLatex(0.17, 0.20, Form("#intL dt = %.2f fb^{-1}",lumi[0]/1000.));
   
   //cout<<"Drawing legend"<<endl;
-  leg->SetTextSize(0.06);
+  leg->SetTextSize(0.05);
+  leg->SetTextFont(42);
   leg->SetBorderSize(0);
   leg->SetFillStyle(0);
-  leg->SetNColumns(2);
-  leg->SetColumnSeparation(0.05);
+  //leg->SetNColumns(2);
+  //leg->SetColumnSeparation(0.05);
   leg->Draw();
 
   cout<<"Saving as "<<outFile<<endl;
   c1->SaveAs(outFile.c_str());
   c1->SaveAs("limitVsMass_WZ.C");
+  c1->SaveAs("limitVsMass_WZ.png");
 
   return;
 }
