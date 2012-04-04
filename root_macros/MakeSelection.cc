@@ -1,5 +1,5 @@
 /* 
-   Usage: root -b -q 'MakeSelection.cc+("input.root", "options")'
+   Usage: root -b -l -q 'MakeSelection.cc+("input.root", "options")'
    Options include:
    "debug" = show debuging statements
    "hist" = use histograms instead of default trees to make cuts
@@ -42,7 +42,7 @@ struct Cut{
   Cut(string n,bool i=true,float c=0){name = n; isMin = i; cutVal = c;}
 };
 
-void MakeSelection(string inName, string opt="");
+void MakeSelection(string inName, string opt="", string outName="Selection_");
 void DrawSelection(TFile* fin, Cut& thisCut);
 bool Straddles(float a, float b, float num);
 
@@ -54,15 +54,18 @@ bool debug_ = false;
 bool useHists_ = false;
 bool useSig_ = true;
 string treeName = "tWZCand";
+string outName_;
 
 void
-MakeSelection(string inName, string opt){
+MakeSelection(string inName, string opt, string outName){
   gErrorIgnoreLevel = kWarning;
   CMSstyle();
 
   if(opt.find("debug") != string::npos) debug_ = true;
   if(opt.find("hist") != string::npos) useHists_ = true;
   if(opt.find("eff") != string::npos) useSig_ = false;
+
+  outName_ = outName;
 
   TFile *fin = TFile::Open(inName.c_str(), "read"); assert(fin);
 
@@ -76,16 +79,7 @@ MakeSelection(string inName, string opt){
     BkgSamples.push_back("WWTo2L2Nu");
     BkgSamples.push_back("TTJets");
     BkgSamples.push_back("DYJetsToLL");
-/*
-  BkgSamples.push_back("ZBB0JetsToLNu");
-  BkgSamples.push_back("ZBB1JetsToLNu");
-  BkgSamples.push_back("ZBB2JetsToLNu");
-  BkgSamples.push_back("ZBB3JetsToLNu");
-  BkgSamples.push_back("ZCC0JetsToLNu");
-  BkgSamples.push_back("ZCC1JetsToLNu");
-  BkgSamples.push_back("ZCC2JetsToLNu");
-  BkgSamples.push_back("ZCC3JetsToLNu");
-*/
+
     SigSamples.push_back("WprimeToWZTo3LNu_M-200");
     SigSamples.push_back("WprimeToWZTo3LNu_M-250");
     SigSamples.push_back("WprimeToWZTo3LNu_M-300");
@@ -101,15 +95,10 @@ MakeSelection(string inName, string opt){
     SigSamples.push_back("WprimeToWZTo3LNu_M-1300");
     SigSamples.push_back("WprimeToWZTo3LNu_M-1400");
     SigSamples.push_back("WprimeToWZTo3LNu_M-1500");
-    SigSamples.push_back("TC_WZ_300");
-    SigSamples.push_back("TC_WZ_400");
-    SigSamples.push_back("TC_WZ_500");
-    SigSamples.push_back("TC_WZ_600");
-    SigSamples.push_back("TC_WZ_700");
-    SigSamples.push_back("TC_WZ_800");
-    SigSamples.push_back("TC_WZ_900");
   
+    //Cuts.push_back(Cut("Ht+MET", true));
     Cuts.push_back(Cut("Ht", true));
+
     //Cuts.push_back(Cut("Zpt", true));
     //Cuts.push_back(Cut("Wpt", true));
 
@@ -148,6 +137,9 @@ MakeSelection(string inName, string opt){
     Cuts.push_back(Cut("Vpt", true));
 
     treeName = "tVZCand";
+  }else{
+    cout<<"Don't know what analysis this is for: "<<inName<<endl;
+    abort();
   }
 
   if(debug_) cout<<"Using "<<SigSamples.size()<<" signal samples\n"
@@ -163,7 +155,7 @@ MakeSelection(string inName, string opt){
     SigSample.clear();
     SigSample.push_back(SigSamples[i]);
     TCanvas c1;
-    c1.Print(Form("Selection_%s.pdf[", SigSample[0].c_str()), "pdf"); 
+    c1.Print(Form("%s%s.pdf[", outName_.c_str(), SigSample[0].c_str()), "pdf"); 
     
     for(uint j=0; j<Cuts.size(); ++j){
       DrawSelection(fin, Cuts[j]);
@@ -176,7 +168,7 @@ MakeSelection(string inName, string opt){
     }
     cout<<endl<<endl;
 
-    c1.Print(Form("Selection_%s.pdf]", SigSample[0].c_str()), "pdf"); 
+    c1.Print(Form("%s%s.pdf]", outName_.c_str(), SigSample[0].c_str()), "pdf"); 
   }
 }
 
@@ -283,24 +275,22 @@ DrawSelection(TFile* fin, Cut& thisCut){
   else             thisCut.cutVal = hSig.GetBinLowEdge(cutBinEff);
 
   if(debug_){
-    cout<<" For the significance cut, the sig eff is "
-        <<fsig[cutBinSig1]*100<<"\% and bkg eff is "<<fbkg[cutBinSig1]*100<<"\%"
-        <<fsig[cutBinSig2]*100<<"\% and bkg eff is "<<fbkg[cutBinSig2]*100<<"\%"
-        <<endl;
+    printf(" For the significance cut, the sig eff is %.1f%%  and bkg eff is %.1f%%  the sig eff is %.1f%%  and bkg eff is %.1f%%  \n",
+           fsig[cutBinSig1]*100, fbkg[cutBinSig1]*100, fsig[cutBinSig2]*100, fbkg[cutBinSig2]*100);
   }
-
+  
   //Draw Signal and Bkg dists
   TCanvas c1;
   hBkg.Draw();
-  c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
+  c1.Print(Form("%s%s.pdf",outName_.c_str(), SigSample[0].c_str()), "pdf");
   c1.Clear();
   hSig.Draw();
-  c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
+  c1.Print(Form("%s%s.pdf",outName_.c_str(), SigSample[0].c_str()), "pdf");
   c1.Clear();
   //THStack hs;
   //hs.Add(&hSig);
   //hs.Add(&hBkg);
-  //c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
+  //c1.Print(Form("%s%s.pdf",outName_.c_str(), SigSample[0].c_str()), "pdf");
   //c1.Clear();
 
   //c1.Divide(1,2);
@@ -347,8 +337,9 @@ DrawSelection(TFile* fin, Cut& thisCut){
   tCutSig2.DrawLatex(0.2, 0.65, Form("%s %.0f GeV (#frac{N_{S}}{#sqrt{N_{B}+#sigma^{2}_{sys,N_{B}}}})", cutResult.c_str(), hSig.GetBinLowEdge(cutBinSig2)));
   //tCutEff.DrawLatex(0.2, 0.55, Form("%s %.0f GeV (98%% Eff)", cutResult.c_str(), hSig.GetBinLowEdge(cutBinEff)));
 
+  c1.SetGrid();
   c1.SaveAs(Form("plots/%s_%sEff.pdf", SigSample[0].c_str(), thisCut.name.c_str()));
-  c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
+  c1.Print(Form("%s%s.pdf",outName_.c_str(), SigSample[0].c_str()), "pdf");
   c1.Clear();
 
   ////Plot Significance Option 1//////////////////////////
@@ -374,8 +365,9 @@ DrawSelection(TFile* fin, Cut& thisCut){
   tCutSig2.DrawLatex(0.2, 0.65, Form("%s %.0f GeV (#frac{N_{S}}{#sqrt{N_{B}+#sigma^{2}_{sys,N_{B}}}})", cutResult.c_str(), hSig.GetBinLowEdge(cutBinSig2)));
   tCutEff.DrawLatex(0.2, 0.55, Form("%s %.0f GeV (98 %% Eff)", cutResult.c_str(), hSig.GetBinLowEdge(cutBinEff)));
 
+  c1.SetGrid();
   c1.SaveAs(Form("plots/%s_%sSignificance1.pdf", SigSample[0].c_str(), thisCut.name.c_str()));
-  c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
+  c1.Print(Form("%s%s.pdf",outName_.c_str(), SigSample[0].c_str()), "pdf");
   c1.Clear();
 
   ////Plot Significance Option 2//////////////////////////
@@ -401,8 +393,9 @@ DrawSelection(TFile* fin, Cut& thisCut){
   tCutSig2.DrawLatex(0.2, 0.65, Form("%s %.0f GeV (#frac{N_{S}}{#sqrt{N_{B}+#sigma^{2}_{sys,N_{B}}}})", cutResult.c_str(), hSig.GetBinLowEdge(cutBinSig2)));
   tCutEff.DrawLatex(0.2, 0.55, Form("%s %.0f GeV (98 %% Eff)", cutResult.c_str(), hSig.GetBinLowEdge(cutBinEff)));
 
+  c1.SetGrid();
   c1.SaveAs(Form("plots/%s_%sSignificance2.pdf", SigSample[0].c_str(), thisCut.name.c_str()));
-  c1.Print(Form("Selection_%s.pdf",SigSample[0].c_str()), "pdf");
+  c1.Print(Form("%s%s.pdf",outName_.c_str(), SigSample[0].c_str()), "pdf");
   c1.Clear();
 
 }
