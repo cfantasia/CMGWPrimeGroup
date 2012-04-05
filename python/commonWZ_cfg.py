@@ -67,7 +67,7 @@ WprimeWZCuts = cms.vstring(
     "MET",
 
     "ValidWZCand",   
-    "Ht", 
+    "Lt", 
     )
 WZFakeElecCuts = cms.vstring(
     "NoCuts", 

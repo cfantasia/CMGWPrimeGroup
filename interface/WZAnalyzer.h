@@ -37,7 +37,7 @@ public:
   int   calcEvtType() const;
   float calcLeadPt(int type=0) const;
   float calcQ() const;
-  float calcHt() const;
+  float calcLt() const;
   float calcTriLepMass() const;
   float calcGenWZInvMass() const;
   bool inEE(const TeVMuon& mu) const;
@@ -53,7 +53,7 @@ public:
   bool passValidWCut(WCandidate& w);
   bool passValidZCut(ZCandidate& z);
   bool passValidWZCut(XWLeptonic& xw);
-  bool passHtCut() const;
+  bool passLtCut() const;
 
   bool passZLepPtCut() const;
   bool passZeePtCut() const;
@@ -88,7 +88,7 @@ public:
   float ZMass_;
   float Wpt_;
   float WTransMass_;
-  float Ht_;
+  float Lt_;
   float TriLepMass_;
   float Q_;
   float Discriminant_;
@@ -109,8 +109,8 @@ public:
   float minLeadPt_;
   float minMET_;
 
-// +++++++++++++++++++Ht Cuts
-  float minHt_;
+// +++++++++++++++++++Lt Cuts
+  float minLt_;
 
 // +++++++++++++++++++W Cuts
   float minDeltaR_;
@@ -167,7 +167,7 @@ public:
   std::vector<TH1F*> hQ;
   std::vector<TH1F*> hWZTransMass;
   std::vector<TH1F*> hWZpt;
-  std::vector<TH1F*> hHt;
+  std::vector<TH1F*> hLt;
   std::vector<TH1F*> hTriLepMass;
   std::vector<TH1F*> hEvtType, hEvtTypeP, hEvtTypeM;
   std::vector<TH1F*> hLeadPt, hLeadPtZee, hLeadPtZmm;
@@ -180,7 +180,7 @@ public:
   std::vector<TH1F*> hMET, hMETee, hMETmm, hMETSig;
 
   std::vector<TH1F*> hWTransMass, hWenuTransMass, hWmnuTransMass;
-  std::vector<TH1F*> hWpt;
+  std::vector<TH1F*> hWpt, hWenupt, hWmnupt;
   std::vector<TH1F*> hWQ;
   std::vector<TH1F*> hWTheta;
 

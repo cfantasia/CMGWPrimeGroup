@@ -24,8 +24,8 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
  
   minMET_ = cfg.getUntrackedParameter<double>("minMET", 0.);
 
-// +++++++++++++++++++Ht Cuts
-  minHt_ = cfg.getUntrackedParameter<double>("minHt", -1);
+// +++++++++++++++++++Lt Cuts
+  minLt_ = cfg.getUntrackedParameter<double>("minLt", -1);
 
 // +++++++++++++++++++W Cuts
   minWlepPt_ = cfg.getParameter<double>("minWlepPt");
@@ -81,7 +81,7 @@ void WZAnalyzer::setupCutOrder(){
   mFnPtrs["ZMass"] = boost::bind(&WZAnalyzer::passZMassCut, this, boost::cref(zCand_), boost::cref(minZmass_), boost::cref(maxZmass_));
   mFnPtrs["WTransMass"] = boost::bind(&WZAnalyzer::passWtransMassCut, this, boost::cref(wCand_), boost::cref(minWtransMass_));
   mFnPtrs["MET"] = boost::bind(&WZAnalyzer::passMinMETCut, this, boost::cref(met_), boost::cref(minMET_));
-  mFnPtrs["Ht"] = boost::bind(&WZAnalyzer::passHtCut, this);
+  mFnPtrs["Lt"] = boost::bind(&WZAnalyzer::passLtCut, this);
   mFnPtrs["Zpt"] = boost::bind(&WZAnalyzer::passZptCut, this, boost::cref(zCand_), boost::cref(minZpt_));
   mFnPtrs["Wpt"] = boost::bind(&WZAnalyzer::passWptCut, this, boost::cref(wCand_), boost::cref(minWpt_));
   mFnPtrs["AllCuts"] = boost::bind(&WZAnalyzer::passNoCut, this);
@@ -120,9 +120,9 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
     defineHistoSet("hWZpt", "Reconstructed WZ Transverse Momentum",
                    "p_{WZ}^{T} (GeV)", 50, 0, 500, "GeV", hWZpt,dir);
     
-//Ht Histos
-    defineHistoSet("hHt", "H_{T}", 
-                   "H_{T} #equiv #Sigma p_{T}^{Lep} (GeV)", 80, 0, 800, "GeV", hHt,dir);
+//Lt Histos
+    defineHistoSet("hLt", "L_{T}", 
+                   "L_{T} #equiv #Sigma p_{T}^{Lep} (GeV)", 80, 0, 800, "GeV", hLt,dir);
     defineHistoSet("hTriLepMass", "hTriLepMass",
                    "Trilepton Invariant Mass", 100, 0., 1000., "GeV", hTriLepMass, dir);
   
@@ -181,10 +181,14 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
 //Wpt Histos
     defineHistoSet("hWpt", "p_{T}^{W}", 
                    "p_{T}^{W} (GeV)", 50, 0, 1000, "GeV", hWpt,dir);
+    defineHistoSet("hWenupt", "p_{T}^{W#rightarrowe#nu}", 
+                   "p_{T}^{W#rightarrowe#nu} (GeV)", 50, 0, 1000, "GeV", hWenupt,dir);
+    defineHistoSet("hWmnupt", "p_{T}^{W#rightarrow#mu#nu}", 
+                   "p_{T}^{W#rightarrow#mu#nu} (GeV)", 50, 0, 1000, "GeV", hWmnupt,dir);
     
 //W Charge Histos
     defineHistoSet("hWQ", "Reconstructed Charge of W",
-                   "q_{W}", 3, -1, 1, "", hWQ,dir);
+                   "q_{W}", 2, -1.5, 1.5, "", hWQ,dir);
 
     defineHistoSet("hWenuCombRelIso", "Comb Rel Iso of W Electron",
                    "Electron Combined Relative Isolation", 20, 0, 0.2, "NONE", hWenuCombRelIso,dir);
@@ -234,7 +238,7 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
       tEvts[i]->Branch("Event", &evtNumber_);
       tEvts[i]->Branch("WZMass", &WZMass_);
       tEvts[i]->Branch("EvtType", &evtType_);
-      tEvts[i]->Branch("Ht", &Ht_);
+      tEvts[i]->Branch("Lt", &Lt_);
       tEvts[i]->Branch("Zpt", &Zpt_);
       tEvts[i]->Branch("ZMass", &ZMass_);
       tEvts[i]->Branch("Wpt", &Wpt_);
@@ -291,7 +295,7 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
       hQ[index]->Fill(Q_, weight); 
       hWZTransMass[index]->Fill(wzCand_().mt(), weight);
       hWZpt[index]->Fill(wzCand_().pt(), weight);
-      hHt[index]->Fill(Ht_, weight);
+      hLt[index]->Fill(Lt_, weight);
       hTriLepMass[index]->Fill(TriLepMass_, weight);
       hEvtType[index]->Fill(evtType_, weight);
       if     (wCand_.charge() > 0) hEvtTypeP[index]->Fill(evtType_, weight);
@@ -318,10 +322,12 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
       hWQ[index]->Fill(wCand_.charge(), weight);
       if      (wCand_.flavor() == PDG_ID_ELEC){
         hWenuTransMass[index]->Fill(wCand_.mt(), weight);
+        hWenupt[index]->Fill(wCand_.pt(), weight);
         const heep::Ele& e = *wCand_.elec();
         hWenuCombRelIso[index]->Fill(calcCombRelIso(e.patEle(), ElecPU(e)), weight);
       }else if (wCand_.flavor() == PDG_ID_MUON){
         hWmnuTransMass[index]->Fill(wCand_.mt(), weight);
+        hWmnupt[index]->Fill(wCand_.pt(), weight);
         const TeVMuon& m = *wCand_.muon();
         hWmnuCombRelIso[index]->Fill(m.combRelIsolation03(MuonPU(m)), weight);
       }
@@ -398,8 +404,8 @@ WZAnalyzer::calcZVariables(){
     if(WPrimeUtil::passTriggerMatch(looseMuons_[i], matchptcut, triggersToUse_))
       zMuonsMask[i] = true;
 
-//  if(debug_) printf("    Contains: %i z electron(s), %i z muon(s)\n",
-//                     (int)zElectronsMask.size(), (int)zMuonsMask.size());
+//  if(debug_) printf("    Contains: %lu z electron(s), %lu z muon(s)\n",
+//                     zElectronsMask.size(), zMuonsMask.size());
 
   matchptcut = 17.;
   ZCandV zeeCands = getZCands(looseElectrons_, maxZMassDiff_, false, zElectronsMask);
@@ -468,7 +474,7 @@ WZAnalyzer::calcZVariables(){
   ZMass_ = zCand_.mass();
 
   if(debug_){
-    printf("    Contains: %i Z candidate(s)\n", (int)zCandsAll.size());
+    printf("    Contains: %lu Z candidate(s)\n", zCandsAll.size());
     printEventLeptons();
     printEventDetails();
   }
@@ -506,11 +512,11 @@ void
 WZAnalyzer::calcEventVariables(){
   if (debug_) cout<<"In calc Event Variables\n";
   evtType_ = (zCand_ && wCand_) ? calcEvtType() : -999;
-  if(debug_) printf("evt Type: %i, Z Flav: %i, W Flav: %i\n", evtType_, (int)zCand_.flavor(), (int)wCand_.flavor());
+  if(debug_) printf("evt Type: %i, Z Flav: %i, W Flav: %i\n", evtType_, zCand_.flavor(), wCand_.flavor());
   LeadPt_ = calcLeadPt(); 
   LeadElecPt_ = calcLeadPt(PDG_ID_ELEC);
   LeadMuonPt_ = calcLeadPt(PDG_ID_MUON);
-  Ht_ = (zCand_ && wCand_) ? calcHt() : -999.;
+  Lt_ = (zCand_ && wCand_) ? calcLt() : -999.;
   TriLepMass_ = (zCand_ && wCand_) ? calcTriLepMass() : -999.;
 }
 
@@ -556,8 +562,8 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
                             patMuonsH_, muReconstructor_, allMuons_,
                             metH_, useAdjustedMET_, met_,
                             pfCandidatesH_);
-  if(debug_) printf("    Contains: %i electron(s), %i muon(s)\n",
-                          (int)allElectrons_.size(), (int)allMuons_.size());
+  if(debug_) printf("    Contains: %lu electron(s), %lu muon(s)\n",
+                          allElectrons_.size(), allMuons_.size());
 
   event.getByLabel(rhoFastJetLabel_, rhoFastJetH_);
 
@@ -594,10 +600,10 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   if(debug_){
     print(allElectrons_);
     print(allMuons_);
-    printf("    Contains: %i loose electron(s), %i loose muon(s)\n",
-           (int)looseElectrons_.size(), (int)looseMuons_.size());
-    printf("    Contains: %i tight electron(s), %i tightmuon(s)\n",
-           (int)tightElectrons_.size(), (int)tightMuons_.size());
+    printf("    Contains: %lu loose electron(s), %lu loose muon(s)\n",
+           looseElectrons_.size(), looseMuons_.size());
+    printf("    Contains: %lu tight electron(s), %lu tightmuon(s)\n",
+           tightElectrons_.size(), tightMuons_.size());
   }
 
   //get Jets
@@ -710,7 +716,7 @@ void WZAnalyzer::printEventDetails() const{
   if(zCand_ && wCand_ && WZMass_>0.){
     cout<<" WZ Mass: "<<WZMass_
         <<" Neu Pz: "<<wzCand_.neutrinoPz(wzAlgo_)
-        <<" Ht: "<<Ht_
+        <<" Lt: "<<Lt_
         <<" Zpt: "<<Zpt_
         <<" Wpt: "<<Wpt_
         <<endl;
@@ -854,13 +860,13 @@ bool WZAnalyzer::passTriggerEmulation(const heep::Ele& elec, const float minPt) 
   return false;
 }
 
-//Check Ht Properties
+//Check Lt Properties
 //-----------------------------------------------------------
-inline bool WZAnalyzer::passHtCut() const{
+inline bool WZAnalyzer::passLtCut() const{
 //-----------------------------------------------------------
-  if(debug_) cout<<"Check Ht Cuts"<<endl;
-  return Ht_ > minHt_;   
-}//--- passHtCut
+  if(debug_) cout<<"Check Lt Cuts"<<endl;
+  return Lt_ > minLt_;   
+}//--- passLtCut
 
 ///////////////////////////////////
 //Fake Rate Cuts
@@ -890,11 +896,11 @@ bool WZAnalyzer::passFakeLeptonProbeCut() const{
 
 ///////////////////////////////////
 
-//calc Ht
+//calc Lt
 //-----------------------------------------------------------
-inline float WZAnalyzer::calcHt() const{
+inline float WZAnalyzer::calcLt() const{
   return wCand_.daughter(0)->pt() + zCand_.daughter(0)->pt() + zCand_.daughter(1)->pt();
-}//--- calcHt
+}//--- calcLt
 
 inline float WZAnalyzer::calcTriLepMass() const{
   return (zCand_.daughter(0)->p4() +
@@ -935,7 +941,7 @@ WZAnalyzer::clearEvtVariables(){
   LeadElecPt_ = -999;
   LeadMuonPt_ = -999;
   WZMass_ = -999;
-  Ht_= -999;
+  Lt_= -999;
   TriLepMass_ = -999;
   Zpt_ = -999;
   ZMass_ = -999;
