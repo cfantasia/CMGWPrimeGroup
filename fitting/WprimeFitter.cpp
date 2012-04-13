@@ -257,7 +257,7 @@ void WprimeFitter::run()
   cout << " Between " << bXMIN << " and " << pXMAX << " GeV = "
        << bgd_hist->Integral(bgd_hist->FindBin(bXMIN), bin_max) << endl;
   
-  if(skipLimitCalculation_)    getLLR();
+  if(skipLimitCalculation_ && massPoints.size() == 1)    getLLR();
 }
 
 void WprimeFitter::getNsig(int sig_i, float scale_factor)
@@ -351,7 +351,7 @@ void WprimeFitter::calculateObservedLimit(int sig_i, ofstream & tracking)
   RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
   RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
 		      RooArgList(nsig, *nbgd));
-  SigBgdPdf.fitTo(*mt_DATA, Range("mt_fit"), Save());
+  RooFitResult * rf_h1 = SigBgdPdf.fitTo(*mt_DATA, Range("mt_fit"), Save());
   mt_DATA->plotOn(xframe_H1, Name("data"));
   SigBgdPdf.plotOn(xframe_H1, Name("sigbgd_fit"));
   nChi2H1 = xframe_H1->chiSquare("sigbgd_fit", "data");
@@ -361,13 +361,19 @@ void WprimeFitter::calculateObservedLimit(int sig_i, ofstream & tracking)
   int Nfit_bins = int (floor(nChi2H1_b/(nChi2H1_b - nChi2H1) + 0.5));
   
   RooPlot* xframe_H0 = mt->frame(Range("mt_fit"), Title("Data transverse mass"));
-  BgdPdf->fitTo(*mt_DATA, Range("mt_fit"), Save());
+  RooFitResult * rf_h0 = BgdPdf->fitTo(*mt_DATA, Range("mt_fit"), Save());
   mt_DATA->plotOn(xframe_H0, Name("data"));
   BgdPdf->plotOn(xframe_H0, Name("bgd_fit"));
   nChi2H0 = xframe_H0->chiSquare("bgd_fit", "data");
   
+  cout << " ************************************************* " << endl;
   cout << " Chi2H1 = " << nChi2H1*Nfit_bins 
        << " Chi2H0 = " << nChi2H0*Nfit_bins << endl;
+  cout << " 2*LL-H1 = " << 2*rf_h1->minNll();
+  cout << " 2*LL-H0 = " << 2*rf_h0->minNll() << endl << endl;
+  cout << " Delta-Chi2 = " << nChi2H0*Nfit_bins - nChi2H1*Nfit_bins << endl;
+  cout << " 2*Delta-LL = " << 2*(rf_h0->minNll() - rf_h1->minNll()) << endl;
+  cout << " ************************************************* " << endl;
   
   dChi2 = nChi2H0*Nfit_bins - nChi2H1*Nfit_bins;
   tracking << WprimeMass[sig_i] << '\t' << nChi2H0*Nfit_bins << '\t' 
@@ -463,11 +469,6 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
 
 void WprimeFitter::getLLR()
 {
-  // starting from largest mass point, as it corresponds to largest LLR values
-  // this makes sure all LLR histograms will be visible
-  
-  bool showPlot = true;
-  
   TLegend * lg = new TLegend(0.32, 0.595, 0.573, 0.896);
   lg->SetTextSize(0.04);
   lg->SetBorderSize(0);
@@ -478,26 +479,18 @@ void WprimeFitter::getLLR()
     { // loop over mass points
       LLR[*sig_i]->SetLineColor(color[*sig_i]);
       float cl = -999;
-      //            cout<< " Sample # " << *sig_i << ": " << desc[*sig_i]; 
-      if(showPlot)
-	{
-	  if(*sig_i == Nsignal_points-1)
-	    {	    
-	      new TCanvas(); gPad->SetLogy();
-	      LLR[*sig_i]->GetXaxis()->SetTitle("LLR");
-	      LLR[*sig_i]->SetMaximum(3000); LLR[*sig_i]->SetMinimum(0.1); 
-	      LLR[*sig_i]->Draw("hist");
-	    }
-	  else
-	    {
-	      LLR[*sig_i]->Draw("hist same");
-	    }
+
+      new TCanvas(); gPad->SetLogy();
+      LLR[*sig_i]->GetXaxis()->SetTitle("LLR");
+      LLR[*sig_i]->SetMaximum(3000); LLR[*sig_i]->SetMinimum(0.1); 
+      LLR[*sig_i]->Draw("hist");
+    
+      LLR_bgdOnly[*sig_i]->SetLineColor(kBlack);
+      LLR_bgdOnly[*sig_i]->Draw("hist same");
 	  
-	  lg->AddEntry(LLR[*sig_i], desc[*sig_i].c_str());
-	}
-      // show every second plot; canvas gets crowded otherwise
-      showPlot = !showPlot; 
-      
+      lg->AddEntry(LLR[*sig_i], desc[*sig_i].c_str());
+      lg->AddEntry(LLR_bgdOnly[*sig_i], "SM");
+
       cout<< " Sample # " << *sig_i << ": " << desc[*sig_i]; 
       
       int bin = LLR[*sig_i]->FindBin(Zexpect_0);
