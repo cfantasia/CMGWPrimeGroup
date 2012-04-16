@@ -19,15 +19,15 @@ void fit_wprime_singleMassPoint(int MassPoint, int chan)
   else
     {cout << " Don't understand chan = " << chan << endl; abort();}
 
-  a->setNpseudoExperiments(1000);
+  a->setNpseudoExperiments(10);
   // integer corresponds to 1...Nsignal_points index
   if(MassPoint > 0)
     a->doOneMassPointOnly(MassPoint); 
 
-  a->skipLimitCalculation(false);
+  a->skipLimitCalculation(true);
   a->doRunFits(true);
-  a->debugMe(false);
-  a->findOnlyMedian(false);
+  a->debugMe(true);
+  a->findOnlyMedian(true);
   
   /* method WprimeFitter::run() loops over all mass points listed in 
      wprimeFitter_signalDescription.h; for each mass point it 
