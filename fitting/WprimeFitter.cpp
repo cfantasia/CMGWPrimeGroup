@@ -340,46 +340,24 @@ void WprimeFitter::calculateObservedLimit(int sig_i, ofstream & tracking)
 		       sig_model, *(resolution[sig_i]));
   // COPY + PASTE FROM runPseudoExperiments - NEED A BETTER WAY
   
-  Double_t nChi2H0 = 0, nChi2H1 = 0, dChi2 = 0;
-  // method RooPlot::chiSquare returns chi2/(Nbins-NFITPARAM)
-  // (where Nbins: # of bins that corresponds to fitting range). Then:
-  // if nChi2H1 = chi2_H1/Nbins and nChi2H0 = chi2_H0/Nbins,
-  // delta-chi2 := chi2_H0 - chi2_H1 = (nChi2H0-nChi2H1)*Nbins
-  // where Nbins can be determined by calculating the reduced chi2 twice
-  // by varying the # of dof by one.
-  RooPlot* xframe_H1 = mt->frame(Range("mt_fit"), Title("Data transverse mass"));
   RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
   RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
 		      RooArgList(nsig, *nbgd));
   RooFitResult * rf_h1 = SigBgdPdf.fitTo(*mt_DATA, Range("mt_fit"), Save());
-  mt_DATA->plotOn(xframe_H1, Name("data"));
-  SigBgdPdf.plotOn(xframe_H1, Name("sigbgd_fit"));
-  nChi2H1 = xframe_H1->chiSquare("sigbgd_fit", "data");
-  Double_t nChi2H1_b = xframe_H1->chiSquare("sigbgd_fit", "data", 1);
-  
-  // function floor(x + 0.5) returns the closest integer to (float) x
-  int Nfit_bins = int (floor(nChi2H1_b/(nChi2H1_b - nChi2H1) + 0.5));
-  
-  RooPlot* xframe_H0 = mt->frame(Range("mt_fit"), Title("Data transverse mass"));
   RooFitResult * rf_h0 = BgdPdf->fitTo(*mt_DATA, Range("mt_fit"), Save());
-  mt_DATA->plotOn(xframe_H0, Name("data"));
-  BgdPdf->plotOn(xframe_H0, Name("bgd_fit"));
-  nChi2H0 = xframe_H0->chiSquare("bgd_fit", "data");
-  
+  double dLL = rf_h0->minNll() - rf_h1->minNll();
+  float Z_observed = dLL >= 0 ? sqrt(2*dLL) : -sqrt(-2*dLL);
   cout << " ************************************************* " << endl;
-  cout << " Chi2H1 = " << nChi2H1*Nfit_bins 
-       << " Chi2H0 = " << nChi2H0*Nfit_bins << endl;
-  cout << " 2*LL-H1 = " << 2*rf_h1->minNll();
-  cout << " 2*LL-H0 = " << 2*rf_h0->minNll() << endl << endl;
-  cout << " Delta-Chi2 = " << nChi2H0*Nfit_bins - nChi2H1*Nfit_bins << endl;
-  cout << " 2*Delta-LL = " << 2*(rf_h0->minNll() - rf_h1->minNll()) << endl;
+  cout << " 2*logLike(H1) = " << 2*rf_h1->minNll();
+  cout << "\n 2*logLike(H0)= " << 2*rf_h0->minNll() << endl << endl;
+  cout << " 2*Delta-LL = " << dLL << endl;
+  cout << " Z_observed = " << Z_observed << endl;
   cout << " ************************************************* " << endl;
   
-  dChi2 = nChi2H0*Nfit_bins - nChi2H1*Nfit_bins;
-  tracking << WprimeMass[sig_i] << '\t' << nChi2H0*Nfit_bins << '\t' 
-	   << nChi2H1*Nfit_bins <<endl;
+  tracking << WprimeMass[sig_i] << '\t' << 2*rf_h0->minNll() << '\t' 
+	   << 2*rf_h1->minNll() <<endl;
   
-  float Z_observed = dChi2 >= 0 ? sqrt(dChi2) : 0.;
+
 
   const bool bgdOnly = true;
   float sf = runPseudoExperiments(sig_i, tracking, !bgdOnly, Z_observed);
