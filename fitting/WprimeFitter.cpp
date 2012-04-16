@@ -349,6 +349,7 @@ void WprimeFitter::calculateObservedLimit(int sig_i, ofstream & tracking)
   double dLL = rf_h0->minNll() - rf_h1->minNll();
   float Z_observed = dLL >= 0 ? sqrt(2*dLL) : -sqrt(-2*dLL);
   cout << " ************************************************* " << endl;
+  cout << " Fit results for data distribution: " << endl;
   cout << " 2*logLike(H1) = " << 2*rf_h1->minNll();
   cout << "\n 2*logLike(H0)= " << 2*rf_h0->minNll() << endl << endl;
   cout << " 2*Delta-LL = " << dLL << endl;
