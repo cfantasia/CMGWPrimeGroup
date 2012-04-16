@@ -1,4 +1,5 @@
 #include "WprimeFitter.hpp"
+#include "RooDLLSignificanceMCSModule2.h"
 #include <fstream>
 
 #include "TText.h"
@@ -527,7 +528,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
 			 FitOptions(Range("mt_fit"),Extended(kTRUE),
 				    PrintEvalErrors(0)));
   
-  RooDLLSignificanceMCSModule sigModule(nsig,0);
+  RooDLLSignificanceMCSModule2 sigModule(nsig,0);
   mcs->addModule(sigModule);
   
   
