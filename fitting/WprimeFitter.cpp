@@ -562,9 +562,13 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   }
   
   // Make some plots
-  TH1F* z_sig = (TH1F*) mcs->fitParDataSet().createHistogram("significance_nullhypo_nsig", 5000);
+  TH1F* z_sig = (TH1F*) mcs->fitParDataSet().createHistogram("significance_nullhypo_nsig");
+  TH1F* nll0 = (TH1F*) mcs->fitParDataSet().createHistogram("nll_nullhypo_nsig");
+  TH1F* nll1 = (TH1F*) mcs->fitParDataSet().createHistogram("nll_H1_nsig");
+  TH1F* dll = (TH1F*) mcs->fitParDataSet().createHistogram("dll_nullhypo_nsig");
   TH1F * nsig_h = (TH1F*) mcs->fitParDataSet().createHistogram("nsig");
   TH1F * nbgd_h = (TH1F*) mcs->fitParDataSet().createHistogram("nbgd");
+
   if(!z_sig)
     {
       cout << " oops, z_sig = " << z_sig << " for sig_i = " << sig_i << endl;
@@ -578,6 +582,21 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   if(!nbgd_h)
     {
       cout << " oops, nbgd_h = " << nbgd_h << " for sig_i = " << sig_i << endl;
+      abort();
+    }
+  if(!nll0)
+    {
+      cout << " oops, nll0 = " << nll0 << " for sig_i = " << sig_i << endl;
+      abort();
+    }
+  if(!nll1)
+    {
+      cout << " oops, nll1 = " << nll1 << " for sig_i = " << sig_i << endl;
+      abort();
+    }
+  if(!dll)
+    {
+      cout << " oops, dll = " << dll << " for sig_i = " << sig_i << endl;
       abort();
     }
 
@@ -609,7 +628,15 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
       title = "Distribution of N_{bgd} pull value " + desc[sig_i];
       frame2->SetTitle(title.c_str());
       new TCanvas(); frame2->Draw();
-    }
+      title = "Distribution of z_{sig} value " + desc[sig_i];
+      new TCanvas(title.c_str()); z_sig->Draw();
+      title = "Distribution of LL(H0) value " + desc[sig_i];
+      new TCanvas(title.c_str()); nll0->Draw();
+      title = "Distribution of LL(H1) value " + desc[sig_i];
+      new TCanvas(title.c_str()); nll1->Draw();
+      title = "Distribution of #DeltaLL value " + desc[sig_i];
+      new TCanvas(title.c_str()); dll->Draw();
+   }
 
   if(bgdOnly)
     LLR_bgdOnly[sig_i] = new TH1F(*z_sig);
