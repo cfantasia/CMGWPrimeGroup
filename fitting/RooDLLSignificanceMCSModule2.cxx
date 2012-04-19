@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Project: RooFit                                                           *
  * Package: RooFitCore                                                       *
- * @(#)root/roofitcore:$Id: RooDLLSignificanceMCSModule.cxx 26174 2008-11-13 08:25:25Z wouter $
+ * @(#)root/roofitcore:$Id: RooDLLSignificanceMCSModule2.cxx,v 1.1 2012/04/16 14:41:13 cleonido Exp $
  * Authors:                                                                  *
  *   WV, Wouter Verkerke, UC Santa Barbara, verkerke@slac.stanford.edu       *
  *   DK, David Kirkby,    UC Irvine,         dkirkby@uci.edu                 *
@@ -56,9 +56,9 @@ ClassImp(RooDLLSignificanceMCSModule2)
 RooDLLSignificanceMCSModule2::RooDLLSignificanceMCSModule2(const RooRealVar& param, Double_t nullHypoValue) : 
   RooAbsMCStudyModule(Form("RooDLLSignificanceMCSModule2_%s",param.GetName()),Form("RooDLLSignificanceMCSModule2_%s",param.GetName())),
   _parName(param.GetName()), 
-  _data(0), _nll0h(0), _dll0h(0), _sig0h(0), _nullValue(nullHypoValue),
-  _chi2H0(0), _ndofH0(0), _chi2redH0(0), _probH0(0),
-  _chi2H1(0), _ndofH1(0), _chi2redH1(0), _probH1(0)
+  _data(0), _nll0h(0), _nll1h(0), _dllh(0), _sig0h(0), _nullValue(nullHypoValue)
+  //  _chi2H0(0), _ndofH0(0), _chi2redH0(0), _probH0(0),
+  // _chi2H1(0), _ndofH1(0), _chi2redH1(0), _probH1(0)
 {
   // Constructor of module with parameter to be interpreted as nSignal and the value of the
   // null hypothesis for nSignal (usually zero)
@@ -70,9 +70,9 @@ RooDLLSignificanceMCSModule2::RooDLLSignificanceMCSModule2(const RooRealVar& par
 RooDLLSignificanceMCSModule2::RooDLLSignificanceMCSModule2(const char* parName, Double_t nullHypoValue) :
   RooAbsMCStudyModule(Form("RooDLLSignificanceMCSModule2_%s",parName),Form("RooDLLSignificanceMCSModule2_%s",parName)),
   _parName(parName), 
-  _data(0), _nll0h(0), _dll0h(0), _sig0h(0), _nullValue(nullHypoValue),
-  _chi2H0(0), _ndofH0(0), _chi2redH0(0), _probH0(0),
-  _chi2H1(0), _ndofH1(0), _chi2redH1(0), _probH1(0)
+  _data(0), _nll0h(0), _nll1h(0), _dllh(0), _sig0h(0), _nullValue(nullHypoValue)
+  //  _chi2H0(0), _ndofH0(0), _chi2redH0(0), _probH0(0),
+  // _chi2H1(0), _ndofH1(0), _chi2redH1(0), _probH1(0)
 {
   // Constructor of module with parameter name to be interpreted as nSignal and the value of the
   // null hypothesis for nSignal (usually zero)
@@ -84,9 +84,9 @@ RooDLLSignificanceMCSModule2::RooDLLSignificanceMCSModule2(const char* parName, 
 RooDLLSignificanceMCSModule2::RooDLLSignificanceMCSModule2(const RooDLLSignificanceMCSModule2& other) : 
   RooAbsMCStudyModule(other), 
   _parName(other._parName),
-  _data(0), _nll0h(0), _dll0h(0), _sig0h(0), _nullValue(other._nullValue),
-  _chi2H0(0), _ndofH0(0), _chi2redH0(0), _probH0(0),
-  _chi2H1(0), _ndofH1(0), _chi2redH1(0), _probH1(0)
+  _data(0), _nll0h(0), _nll1h(0), _dllh(0), _sig0h(0), _nullValue(other._nullValue)
+  //  _chi2H0(0), _ndofH0(0), _chi2redH0(0), _probH0(0),
+  // _chi2H1(0), _ndofH1(0), _chi2redH1(0), _probH1(0)
 {
   // Copy constructor
 }
@@ -101,8 +101,11 @@ RooDLLSignificanceMCSModule2:: ~RooDLLSignificanceMCSModule2()
   if (_nll0h) {
     delete _nll0h ;
   }    
-  if (_dll0h) {
-    delete _dll0h ;
+  if (_nll1h) {
+    delete _nll1h ;
+  }    
+  if (_dllh) {
+    delete _dllh ;
   }    
   if (_sig0h) {
     delete _sig0h ;
@@ -110,6 +113,7 @@ RooDLLSignificanceMCSModule2:: ~RooDLLSignificanceMCSModule2()
   if (_data) {
     delete _data ;
   }
+  /*
   if (_chi2H0) {
     delete _chi2H0 ;
   }
@@ -134,6 +138,7 @@ RooDLLSignificanceMCSModule2:: ~RooDLLSignificanceMCSModule2()
   if (_probH1) {
     delete _probH1 ;
   }
+  */
 }
 
 
@@ -153,18 +158,21 @@ Bool_t RooDLLSignificanceMCSModule2::initializeInstance()
   TString nll0hName = Form("nll_nullhypo_%s",_parName.c_str()) ;
   TString nll0hTitle = Form("-log(L) with null hypothesis for param %s",_parName.c_str()) ;
   _nll0h = new RooRealVar(nll0hName.Data(),nll0hTitle.Data(),0) ;
+  TString nll1hName = Form("nll_H1_%s",_parName.c_str()) ;
+  TString nll1hTitle = Form("-log(L) with H1 hypothesis for param %s",_parName.c_str()) ;
+  _nll1h = new RooRealVar(nll1hName.Data(),nll1hTitle.Data(),0) ;
 
   // Construct variable that holds -log(L) fit with null hypothesis for given parameter
-  TString dll0hName = Form("dll_nullhypo_%s",_parName.c_str()) ;
-  TString dll0hTitle = Form("-log(L) difference w.r.t null hypo for param %s",_parName.c_str()) ;
-  _dll0h = new RooRealVar(dll0hName.Data(),dll0hTitle.Data(),0) ;
+  TString dllhName = Form("dll_nullhypo_%s",_parName.c_str()) ;
+  TString dllhTitle = Form("-log(L) difference w.r.t null hypo for param %s",_parName.c_str()) ;
+  _dllh = new RooRealVar(dllhName.Data(),dllhTitle.Data(),0) ;
 
   // Construct variable that holds significance corresponding to delta(-log(L)) w.r.t to null hypothesis for given parameter
   TString sig0hName = Form("significance_nullhypo_%s",_parName.c_str()) ;
   TString sig0hTitle = Form("Gaussian signficiance of Delta(-log(L)) w.r.t null hypo for param %s",_parName.c_str()) ;
   _sig0h = new RooRealVar(sig0hName.Data(),sig0hTitle.Data(),-10,100) ;
 
-  // Construct variable that holds -log(L) fit with null hypothesis for given parameter
+  /*
   _chi2H0     = new RooRealVar("chi2H0","chi^2 for H0",0) ;
   _ndofH0     = new RooRealVar("ndofH0","number of degrees of freedom for H0",0) ;   
   _chi2redH0  = new RooRealVar("chi2redH0","reduced chi^2 for H0",0) ; 
@@ -173,10 +181,13 @@ Bool_t RooDLLSignificanceMCSModule2::initializeInstance()
   _ndofH1     = new RooRealVar("ndofH1","number of degrees of freedom for H1",0) ;   
   _chi2redH1  = new RooRealVar("chi2redH1","reduced chi^2 for H1",0) ; 
   _probH1     = new RooRealVar("probH1","prob(chi2H1,ndofH1)",0) ;
+  */
+
+  // Construct variable that holds -log(L) fit with null hypothesis for given parameter
   frnull      = new RooFitResult("frnull","Fit result for H0");
 
   // Create new dataset to be merged with RooMCStudy::fitParDataSet
-  _data = new RooDataSet("DeltaLLSigData","Additional data for Delta(-log(L)) study",RooArgSet(*_nll0h,*_dll0h,*_sig0h,*_chi2redH0,*_probH0,*_chi2redH1,*_probH1)) ;
+  _data = new RooDataSet("DeltaLLSigData","Additional data for Delta(-log(L)) study",RooArgSet(*_nll0h,*_nll1h, *_dllh,*_sig0h)) ;
   //did not include *_chi2H0,*_ndofH0,*_chi2H1,*_ndofH1,*frnull due to space constraints with RooArgSet
   return kTRUE ;
 }
@@ -219,6 +230,7 @@ Bool_t RooDLLSignificanceMCSModule2::processAfterFit(Int_t /*sampleNum*/)
     binnedData = ((RooDataSet*)data)->binnedClone() ;
   }
 
+  /*
   RooChi2Var chi2VarH1("chi2VarH1","chi2VarH1",*fitModel(),*binnedData,RooFit::Extended(extendedGen()),RooFit::DataError(RooAbsData::SumW2)) ;
 
   RooArgSet* floatParsH1 = (RooArgSet*) fitParams()->selectByAttrib("Constant",kFALSE) ;  
@@ -227,6 +239,7 @@ Bool_t RooDLLSignificanceMCSModule2::processAfterFit(Int_t /*sampleNum*/)
   _ndofH1->setVal(binnedData->numEntries()-floatParsH1->getSize()-1) ; 
   _chi2redH1->setVal(_chi2H1->getVal()/_ndofH1->getVal()) ;
   _probH1->setVal(TMath::Prob(_chi2H1->getVal(),static_cast<int>(_ndofH1->getVal()))) ;
+  */
 
   // Save likelihood from nominal fit, fix chosen parameter to its
   // null hypothesis value and rerun fit Save difference in likelihood
@@ -238,6 +251,7 @@ Bool_t RooDLLSignificanceMCSModule2::processAfterFit(Int_t /*sampleNum*/)
   frnull = refit() ;
 
   //Now repeat chi2 calculatation for H0 before continuing the likelihood calculations
+  /*
   RooChi2Var chi2VarH0("chi2VarH0","chi2VarH0",*fitModel(),*binnedData,RooFit::Extended(extendedGen()),RooFit::DataError(RooAbsData::SumW2)) ;
 
   RooArgSet* floatParsH0 = (RooArgSet*) fitParams()->selectByAttrib("Constant",kFALSE) ;  
@@ -246,25 +260,26 @@ Bool_t RooDLLSignificanceMCSModule2::processAfterFit(Int_t /*sampleNum*/)
   _ndofH0->setVal(binnedData->numEntries()-floatParsH0->getSize()-1) ; 
   _chi2redH0->setVal(_chi2H0->getVal()/_ndofH0->getVal()) ;
   _probH0->setVal(TMath::Prob(_chi2H0->getVal(),static_cast<int>(_ndofH0->getVal()))) ;
+  */
 
   if (deleteData) {
     delete binnedData ;
   }
-  delete floatParsH1 ;
-  delete floatParsH0 ;
+  //  delete floatParsH1 ;
+  // delete floatParsH0 ;
 
   //continue likelihood step
   par->setConstant(kFALSE) ;
   
   _nll0h->setVal(frnull->minNll()) ;
-
+  _nll1h->setVal(nllVar()->getVal());
   Double_t deltaLL = (frnull->minNll() - nllVar()->getVal()) ;
   Double_t signif = deltaLL>0 ? sqrt(2*deltaLL) : -sqrt(-2*deltaLL) ;
   _sig0h->setVal(signif) ;
-  _dll0h->setVal(deltaLL) ;
+  _dllh->setVal(deltaLL) ;
 
 
-  _data->add(RooArgSet(*_nll0h,*_dll0h,*_sig0h,*_chi2redH0,*_probH0,*_chi2redH1,*_probH1)) ;
+  _data->add(RooArgSet(*_nll0h,*_nll1h,*_dllh,*_sig0h)) ;
 
   return kTRUE ;
 }
