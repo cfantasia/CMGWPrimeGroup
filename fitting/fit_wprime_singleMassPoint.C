@@ -19,7 +19,7 @@ void fit_wprime_singleMassPoint(int MassPoint, int chan)
   else
     {cout << " Don't understand chan = " << chan << endl; abort();}
 
-  a->setNpseudoExperiments(10);
+  a->setNpseudoExperiments(1000);
   // integer corresponds to 1...Nsignal_points index
   if(MassPoint > 0)
     a->doOneMassPointOnly(MassPoint); 
