@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Project: RooFit                                                           *
  * Package: RooFitCore                                                       *
- * @(#)root/roofitcore:$Id: RooDLLSignificanceMCSModule2.cxx,v 1.1 2012/04/16 14:41:13 cleonido Exp $
+ * @(#)root/roofitcore:$Id: RooDLLSignificanceMCSModule2.cxx,v 1.2 2012/04/19 15:33:29 cleonido Exp $
  * Authors:                                                                  *
  *   WV, Wouter Verkerke, UC Santa Barbara, verkerke@slac.stanford.edu       *
  *   DK, David Kirkby,    UC Irvine,         dkirkby@uci.edu                 *
@@ -172,6 +172,8 @@ Bool_t RooDLLSignificanceMCSModule2::initializeInstance()
   TString sig0hTitle = Form("Gaussian signficiance of Delta(-log(L)) w.r.t null hypo for param %s",_parName.c_str()) ;
   _sig0h = new RooRealVar(sig0hName.Data(),sig0hTitle.Data(),-10,100) ;
 
+  _nbgdH0 = new RooRealVar("nbgd_H0","nbgd from fit under H0",0);
+
   /*
   _chi2H0     = new RooRealVar("chi2H0","chi^2 for H0",0) ;
   _ndofH0     = new RooRealVar("ndofH0","number of degrees of freedom for H0",0) ;   
@@ -187,7 +189,7 @@ Bool_t RooDLLSignificanceMCSModule2::initializeInstance()
   frnull      = new RooFitResult("frnull","Fit result for H0");
 
   // Create new dataset to be merged with RooMCStudy::fitParDataSet
-  _data = new RooDataSet("DeltaLLSigData","Additional data for Delta(-log(L)) study",RooArgSet(*_nll0h,*_nll1h, *_dllh,*_sig0h)) ;
+  _data = new RooDataSet("DeltaLLSigData","Additional data for Delta(-log(L)) study",RooArgSet(*_nll0h,*_nll1h, *_dllh,*_sig0h,*_nbgdH0)) ;
   //did not include *_chi2H0,*_ndofH0,*_chi2H1,*_ndofH1,*frnull due to space constraints with RooArgSet
   return kTRUE ;
 }
@@ -277,9 +279,11 @@ Bool_t RooDLLSignificanceMCSModule2::processAfterFit(Int_t /*sampleNum*/)
   Double_t signif = deltaLL>0 ? sqrt(2*deltaLL) : -sqrt(-2*deltaLL) ;
   _sig0h->setVal(signif) ;
   _dllh->setVal(deltaLL) ;
+  _nbgdH0->setVal( ((RooRealVar*)(frnull->floatParsFinal().at(frnull->floatParsFinal().index("nbgd"))))->getVal() ) ;
+  //_nbgdH0->setVal(0) ;
 
 
-  _data->add(RooArgSet(*_nll0h,*_nll1h,*_dllh,*_sig0h)) ;
+  _data->add(RooArgSet(*_nll0h,*_nll1h,*_dllh,*_sig0h,*_nbgdH0)) ;
 
   return kTRUE ;
 }

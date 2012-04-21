@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Project: RooFit                                                           *
  * Package: RooFitCore                                                       *
- *    File: $Id: RooDLLSignificanceMCSModule2.h,v 1.1 2012/04/16 14:41:08 cleonido Exp $
+ *    File: $Id: RooDLLSignificanceMCSModule2.h,v 1.2 2012/04/19 15:33:03 cleonido Exp $
  * Authors:                                                                  *
  *   WV, Wouter Verkerke, UC Santa Barbara, verkerke@slac.stanford.edu       *
  *   DK, David Kirkby,    UC Irvine,         dkirkby@uci.edu                 *
@@ -49,6 +49,7 @@ class RooDLLSignificanceMCSModule2 : public RooAbsMCStudyModule {
   RooRealVar* _dllh ;    // Container variable for delta NLL 
   RooRealVar* _sig0h ;    // Container variable for NLL result with signal
   Double_t    _nullValue ;  // Numeric value of Nsignal parameter representing the null hypothesis
+  RooRealVar* _nbgdH0 ;  // nbgd from fit when nsig=0
 
   /*
   RooRealVar* _chi2H0 ;    // Chi^2 of function w.r.t. data for H0
