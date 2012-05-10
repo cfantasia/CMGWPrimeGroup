@@ -10,7 +10,7 @@ fi
 
 # Definitions
 RELEASE_VERSION=CMSSW_4_2_8_patch7
-WORKING_AREA=V390
+WORKING_AREA=V395
 # end definitions
 
 export RELEASE_VERSION WORKING_AREA
@@ -40,7 +40,7 @@ cvs -Q co -r V03-03-07 RecoLuminosity/LumiDB
 cvs -Q co -r V00-01-03 StatisticalTools/RooStatsRoutines
 cvs -Q co -r B4_2_X_cbern_eNoVeto_18Jan12 CommonTools/ParticleFlow
 cvs -Q co -r V03-09-18 PhysicsTools/PatUtils
-cvs -Q co -r V00-03-90 UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-03-95 UserCode/CMGWPrimeGroup
 #cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e  "\n************************************************************"

@@ -1,3 +1,41 @@
+11-May-12 (Cory, Christos, Flavia, Phil), V00-03-95
+=============================================
+Limits:
+o swapped band colors, goodbye Brazil
+
+Fitting:
+o add modified RooFit module
+o changes related to a plot comparing H0 and H1 fits
+o code resuffling
+o proper init of massPoints vector at beginning of run() method
+o add chi2/Ndof for Mt resolution function on canvas
+o Fixed problem with limits
+o using some flags more appropriate for debugging for now
+
+Base Analyzer:
+o fixed splitting
+o speed ups
+o dont open ZMet file unless needed
+o dont declare variables in base class to avoid duplicates
+o moved struct to util.h
+
+VZ:
+o Comment JES for regular jobs
+
+TTbar:
+o Added ttbar analyzer for VZ studies
+
+WZ:
+o HT renamed to LT
+o added 2d fake rate plot
+o new plots
+
+Utilities:
+o Added options for looking at subchannels, pulls
+o added opt to scale mc to given lumi
+o Added TTbar plotter
+o added more outputs, debugging, options
+
 21-FEB-12 (Christos, Flavia, Phil), V00-03-90
 =============================================
 General improvements
