@@ -1,3 +1,10 @@
+15-May-12 (Cory), V00-04-00
+=============================================
+o Updated to 525
+o Fixes needed for updated compiler
+o Removed TeV Muon hack as it is now included
+o Welcoming Thiago and J+Met Analysis
+
 11-May-12 (Cory, Christos, Flavia, Phil), V00-03-95
 =============================================
 Limits:

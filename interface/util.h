@@ -617,7 +617,7 @@ public:
 
 template<class T1, class T2>
   bool Overlap(const T1 & p, const std::vector<T2>& vec, const float minDR=0.01, const size_t maxToCheck=0 ){
-  uint max = maxToCheck == 0 ? vec.size() : min(vec.size(), maxToCheck);
+  uint max = maxToCheck == 0 ? vec.size() : std::min(vec.size(), maxToCheck);
   for(uint i=0; i<max; ++i){
     if(reco::deltaR(p, vec[i]) < minDR) return true;
   }

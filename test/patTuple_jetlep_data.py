@@ -25,7 +25,8 @@ process.p.replace(process.pfNoPileUpIso, process.pfNoPileUpIso*process.newAK7PF)
 process.patJetsAK7PF.jetSource = cms.InputTag("newAK7PF")
 
 process.source.fileNames = [
-    '/store/data/Run2011A/SingleMu/AOD/May10ReReco-v1/0004//A425E61C-4C7D-E011-A21D-0017A4771028.root'
+    '/store/data/Run2012A/DoubleMu/AOD/PromptReco-v1/000/193/541/FEBCE8A1-7499-E111-8A06-0025901D626C.root'
+#    '/store/data/Run2011A/SingleMu/AOD/May10ReReco-v1/0004//A425E61C-4C7D-E011-A21D-0017A4771028.root'
 #    '/store/data/Run2011A/DoubleMu/AOD/PromptReco-v6/000/173/659/E2C7E831-B8CD-E011-9CA2-BCAEC5329725.root'
 #    '/store/data/Run2011A/DoubleElectron/AOD/PromptReco-v6/000/173/659/4645CC17-B8CD-E011-8BA0-001D09F2906A.root'
 #    'file:/data/fladias/425_data_test.root' 

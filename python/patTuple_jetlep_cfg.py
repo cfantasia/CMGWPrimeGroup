@@ -98,4 +98,3 @@ def jetlep_config(process, reportEveryNum=100, maxEvents=-1) :
     process.out.outputCommands.append('keep *_kt6PFJets_rho_PAT')
     
 
-#print process.patDefaultSequence

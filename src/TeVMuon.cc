@@ -19,19 +19,13 @@ TeVMuon::getTrack(const unsigned muReconstructor) const{
     return innerTrack();
   case kTPFMS:
     return tpfmsMuon();
-  case kCOCKTAIL:
-    return cocktailMuon();
   case kPICKY:
     return pickyMuon();
-  case kTEV:
-    return defaultTeVMuon();
-  case kDYT:
-    return dytMuon();
   case kSTANDALONE:
     return standAloneMuon();
   }
   std::cout<<"Failed to find a track requested\n";
-  return defaultTeVMuon();
+  return globalTrack();
 }
 
 void TeVMuon::printTrackerInfo() const

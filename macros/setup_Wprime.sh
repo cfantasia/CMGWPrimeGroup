@@ -9,8 +9,8 @@ exit
 fi
 
 # Definitions
-RELEASE_VERSION=CMSSW_4_2_8_patch7
-WORKING_AREA=V395
+RELEASE_VERSION=CMSSW_5_2_5
+WORKING_AREA=V400
 # end definitions
 
 export RELEASE_VERSION WORKING_AREA
@@ -23,39 +23,16 @@ echo -e  "******************************************"
 #setup new working area
 mkdir $WORKING_AREA
 cd $WORKING_AREA
-export SCRAM_ARCH=slc5_amd64_gcc434
+export SCRAM_ARCH=slc5_amd64_gcc462
 scramv1 p CMSSW $RELEASE_VERSION
 cd $RELEASE_VERSION/src
 
 echo -e  "\n**************************"
 echo -e  " Checking out the code..."
 echo -e  "**************************"
-#cvs -Q co -r $RELEASE_VERSION DataFormats/PatCandidates
-#cvs -Q co -r $RELEASE_VERSION PhysicsTools/PatAlgos
-cvs -Q co -r V06-04-19-04 DataFormats/PatCandidates
-cvs -Q co -r V08-06-54 PhysicsTools/PatAlgos
-cvs -Q co -r V00-07-00 -d SHarper/HEEPAnalyzer UserCode/SHarper/HEEPAnalyzer 
-cvs -Q co -r V08-03-12 PhysicsTools/Utilities
-cvs -Q co -r V03-03-07 RecoLuminosity/LumiDB
-cvs -Q co -r V00-01-03 StatisticalTools/RooStatsRoutines
-cvs -Q co -r B4_2_X_cbern_eNoVeto_18Jan12 CommonTools/ParticleFlow
-cvs -Q co -r V03-09-18 PhysicsTools/PatUtils
-cvs -Q co -r V00-03-95 UserCode/CMGWPrimeGroup
+cvs -Q co -r V00-08-01 -d SHarper/HEEPAnalyzer UserCode/SHarper/HEEPAnalyzer 
+cvs -Q co -r V00-04-00 UserCode/CMGWPrimeGroup
 #cvs -Q co UserCode/CMGWPrimeGroup
-
-echo -e  "\n************************************************************"
-echo -e  " Hack PAT Muon content to include high-pt reconstructors..."
-echo -e  "************************************************************"
-mv DataFormats/PatCandidates/interface/Muon.h DataFormats/PatCandidates/interface/Muon.h_original
-cp UserCode/CMGWPrimeGroup/PAT_hack/Muon.h DataFormats/PatCandidates/interface/
-mv DataFormats/PatCandidates/src/Muon.cc DataFormats/PatCandidates/src/Muon.cc_original
-cp UserCode/CMGWPrimeGroup/PAT_hack/Muon.cc DataFormats/PatCandidates/src/
-mv PhysicsTools/PatAlgos/plugins/PATMuonProducer.h PhysicsTools/PatAlgos/plugins/PATMuonProducer.h_original
-cp UserCode/CMGWPrimeGroup/PAT_hack/PATMuonProducer.h PhysicsTools/PatAlgos/plugins/
-mv PhysicsTools/PatAlgos/plugins/PATMuonProducer.cc PhysicsTools/PatAlgos/plugins/PATMuonProducer.cc_original
-cp UserCode/CMGWPrimeGroup/PAT_hack/PATMuonProducer.cc PhysicsTools/PatAlgos/plugins/
-mv PhysicsTools/PatAlgos/python/producersLayer1/muonProducer_cfi.py PhysicsTools/PatAlgos/python/producersLayer1/muonProducer_cfi.py_original
-cp UserCode/CMGWPrimeGroup/PAT_hack/muonProducer_cfi.py PhysicsTools/PatAlgos/python/producersLayer1/
 
 echo -e "\n************************"
 echo -e " Done. Now will compile"
@@ -73,6 +50,3 @@ echo -e " Done compiling UserCode/CMGWPrimeGroup"
 echo -e " Now making symbolic link to example config file"
 echo -e "*************************************************"
 echo -e " \n"
-ln -s UserCode/CMGWPrimeGroup/test/patTuple_mumet_data.py .
-ln -s UserCode/CMGWPrimeGroup/test/patTuple_elmet_data.py .
-ln -s UserCode/CMGWPrimeGroup/root_macros/ZMET_data.root .
