@@ -116,18 +116,18 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles, cons
         //This is now protected against
         //Default is not to split (splitInto = 1)
         vstring pathnames = new_file->pathnames;
-        size_t splitInto = (fileToRun == -1 || !pathnames.size()) ? 1 : std::min(pathnames.size(), (size_t) new_file->splitInto);
-        size_t nPerFile = ceil((float) pathnames.size() / splitInto);
+        new_file->splitInto = (fileToRun == -1 || !pathnames.size()) ? 1 : std::min(pathnames.size(), (size_t) new_file->splitInto);
+        size_t nPerFile = ceil((float) pathnames.size() / new_file->splitInto);
         string descrip = new_file->description;
-        if(splitInto > 1)
+        if(new_file->splitInto > 1)
           cout<<"Trying to split file with "<<pathnames.size()<<" files into "
-              <<splitInto<<" parts, with "<<nPerFile<<" files per part"<<endl;
-        for(size_t i=0; i<splitInto; ++i){
-          size_t first = i*nPerFile;
-          size_t last  = std::min(first+nPerFile, pathnames.size());
+              <<new_file->splitInto<<" parts, with "<<nPerFile<<" files per part"<<endl;
+        for(int i=0; i<new_file->splitInto; ++i){
+          int first = i*nPerFile;
+          int last  = std::min(first+nPerFile, pathnames.size());
           new_file->pathnames.assign(pathnames.begin()+first,
                                      pathnames.begin()+last);
-          if(splitInto > 1) new_file->description = descrip + Form(" (Part %lu of %lu)",i+1,splitInto);
+          if(new_file->splitInto > 1) new_file->description = descrip + Form(" (Part %i of %i)",i+1,new_file->splitInto);
           // all info should now be logged in; check!
           new_file->checkFile();
           // if we made it here, everything looks good: 

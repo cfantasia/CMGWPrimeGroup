@@ -20,7 +20,9 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   maxNumZs_ = cfg.getParameter<uint>("maxNumZs");
   minLeadPt_ = cfg.getParameter<double>("minLeadPt");
   minNLeptons_ = cfg.getUntrackedParameter<uint>("minNLeptons", 0);
+  maxNVLLeptons_ = cfg.getUntrackedParameter<uint>("maxNVLLeptons", 999);
   minNTightLeptons_ = cfg.getUntrackedParameter<uint>("minNTightLeptons", 0);
+  maxNJets_ = cfg.getUntrackedParameter<uint>("maxNJets", 999);
  
   minMET_ = cfg.getUntrackedParameter<double>("minMET", 0.);
 
@@ -47,21 +49,31 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
 
   //Selectors
   Pset eSelectorPset = cfg.getParameter<Pset>("electronSelectors");
+  string vlElectronType = cfg.getUntrackedParameter<string>("VLElectronType", "wp95");
+  if(debug_) cout<<"Using "<<vlElectronType<<" for vl electrons "<<endl;
+  vlElectron_ = ElectronSelector(eSelectorPset, vlElectronType);
   string looseElectronType = cfg.getUntrackedParameter<string>("LooseElectronType", "wp95");
-  string tightElectronType = cfg.getUntrackedParameter<string>("TightElectronType", "wp95");
+  if(debug_) cout<<"Using "<<looseElectronType<<" for loose electrons "<<endl;
   looseElectron_ = ElectronSelector(eSelectorPset, looseElectronType);
+  string tightElectronType = cfg.getUntrackedParameter<string>("TightElectronType", "wp95");
+  if(debug_) cout<<"Using "<<tightElectronType<<" for tight electrons "<<endl;
   tightElectron_ = ElectronSelector(eSelectorPset, tightElectronType);
-  if(debug_) cout<<"Using "<<looseElectronType<<" for loose electrons and "
-                  <<tightElectronType<<" for tight electrons\n";
 
   Pset mSelectorPset = cfg.getParameter<Pset>("muonSelectors");
+  string vlMuonType = cfg.getUntrackedParameter<string>("VLMuonType", "exotica");
+  if(debug_) cout<<"Using "<<vlMuonType<<" for vl muons"<<endl;
+  vlMuon_ = MuonSelector(mSelectorPset, vlMuonType);
   string looseMuonType = cfg.getUntrackedParameter<string>("LooseMuonType", "exotica");
-  string tightMuonType = cfg.getUntrackedParameter<string>("TightMuonType", "exotica");
+  if(debug_) cout<<"Using "<<looseMuonType<<" for loose muons"<<endl;
   looseMuon_ = MuonSelector(mSelectorPset, looseMuonType);
+  string tightMuonType = cfg.getUntrackedParameter<string>("TightMuonType", "exotica");
+  if(debug_) cout<<"Using "<<tightMuonType<<" for tight muons"<<endl;
   tightMuon_ = MuonSelector(mSelectorPset, tightMuonType);
-  if(debug_) cout<<"Using "<<looseMuonType<<" for loose muons and "
-                  <<tightMuonType<<" for tight muons\n";
 
+  Pset jSelectorPset = cfg.getParameter<Pset>("jetSelectors");
+  string looseJetType = cfg.getUntrackedParameter<string>("LooseJetType", "Base");
+  if(debug_) cout<<"Using "<<looseJetType<<" for jets\n";
+  looseJet_ = JetSelector(jSelectorPset, looseJetType);
 }
 
 WZAnalyzer::~WZAnalyzer(){
@@ -72,6 +84,8 @@ void WZAnalyzer::setupCutOrder(){
   mFnPtrs["NoCuts"] = boost::bind(&WZAnalyzer::passNoCut, this);
   mFnPtrs["HLT"] = boost::bind(&WZAnalyzer::passTriggersCut, this);
   mFnPtrs["MinNLeptons"] = boost::bind(&WZAnalyzer::passMinNLeptonsCut, this, boost::cref(looseElectrons_), boost::cref(looseMuons_), boost::cref(minNLeptons_));
+  mFnPtrs["MaxNJets"] = boost::bind(&WZAnalyzer::passMaxNJetsCut, this, boost::cref(looseJets_), boost::cref(maxNJets_));
+  mFnPtrs["MaxNVLLeptons"] = boost::bind(&WZAnalyzer::passMaxNLeptonsCut, this, boost::cref(vlElectrons_), boost::cref(vlMuons_), boost::cref(maxNVLLeptons_));
   mFnPtrs["MinNTightLeptons"] = boost::bind(&WZAnalyzer::passMinNLeptonsCut, this, boost::cref(tightElectrons_), boost::cref(tightMuons_), boost::cref(minNTightLeptons_));
   mFnPtrs["ValidW"] = boost::bind(&WZAnalyzer::passValidWCut, this, boost::ref(wCand_));
   mFnPtrs["ValidZ"] = boost::bind(&WZAnalyzer::passValidZCut, this, boost::ref(zCand_));
@@ -87,6 +101,8 @@ void WZAnalyzer::setupCutOrder(){
   mFnPtrs["AllCuts"] = boost::bind(&WZAnalyzer::passNoCut, this);
 
   mFnPtrs["WLepTight"] = boost::bind(&WZAnalyzer::passWLepTightCut, this);
+  mFnPtrs["ZLep1Tight"] = boost::bind(&WZAnalyzer::passZLepTightCut, this, true);
+  mFnPtrs["ZLep2Tight"] = boost::bind(&WZAnalyzer::passZLepTightCut, this, false);
   mFnPtrs["WFlavorElec"] = boost::bind(&WZAnalyzer::passWFlavorElecCut, this);
   mFnPtrs["WFlavorMuon"] = boost::bind(&WZAnalyzer::passWFlavorMuonCut, this);
   mFnPtrs["FakeEvt"] = boost::bind(&WZAnalyzer::passFakeEvtCut, this);
@@ -102,14 +118,14 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
   if(!doSystematics_){
     defineHistoSet("hWZMass", "Reconstructed WZ Invariant Mass",
                    "M_{WZ} (GeV)", 250, 0, 2500, "GeV", hWZMass,dir);
-    defineHistoSet("hWZ3e0muMass", "Reconstructed WZ(3e0#mu) Invariant Mass",
-                   "M_{WZ}^{3e0#mu} (GeV)", 250, 0, 2500, "GeV", hWZ3e0muMass,dir);
-    defineHistoSet("hWZ2e1muMass", "Reconstructed WZ(2e1#mu) Invariant Mass",
-                   "M_{WZ}^{2e1#mu} (GeV)", 250, 0, 2500, "GeV", hWZ2e1muMass,dir);
-    defineHistoSet("hWZ1e2muMass", "Reconstructed WZ(1e2#mu) Invariant Mass",
-                   "M_{WZ}^{1e2#mu} (GeV)", 250, 0, 2500, "GeV", hWZ1e2muMass,dir);
-    defineHistoSet("hWZ0e3muMass", "Reconstructed WZ(0e3#mu) Invariant Mass",
-                   "M_{WZ}^{0e3#mu} (GeV)", 250, 0, 2500, "GeV", hWZ0e3muMass,dir);
+    defineHistoSet("hWZ3e0mMass", "Reconstructed WZ(3e0#mu) Invariant Mass",
+                   "M_{WZ}^{3e0#mu} (GeV)", 250, 0, 2500, "GeV", hWZ3e0mMass,dir);
+    defineHistoSet("hWZ2e1mMass", "Reconstructed WZ(2e1#mu) Invariant Mass",
+                   "M_{WZ}^{2e1#mu} (GeV)", 250, 0, 2500, "GeV", hWZ2e1mMass,dir);
+    defineHistoSet("hWZ1e2mMass", "Reconstructed WZ(1e2#mu) Invariant Mass",
+                   "M_{WZ}^{1e2#mu} (GeV)", 250, 0, 2500, "GeV", hWZ1e2mMass,dir);
+    defineHistoSet("hWZ0e3mMass", "Reconstructed WZ(0e3#mu) Invariant Mass",
+                   "M_{WZ}^{0e3#mu} (GeV)", 250, 0, 2500, "GeV", hWZ0e3mMass,dir);
   
 //Q=M_{WZ} - M_W - M_Z
     defineHistoSet("hQ", "Q=M_{WZ} - M_{W} - M_{Z}",
@@ -152,6 +168,14 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
                    "M_{Z}^{ee} (GeV)", 30, 60, 120, "GeV", hZeeMass,dir);
     defineHistoSet("hZmmMass","Reconstructed Mass of Z#mu#mu",
                    "M_{Z}^{#mu#mu} (GeV)", 30, 60, 120, "GeV", hZmmMass,dir);
+    defineHistoSet("hZ3e0mMass","Reconstructed Mass of Z (3e0#mu)",
+                   "M_{Z}^{3e0#mu} (GeV)", 30, 60, 120, "GeV", hZ3e0mMass,dir);
+    defineHistoSet("hZ2e1mMass","Reconstructed Mass of Z (2e1#mu)",
+                   "M_{Z}^{2e1#mu} (GeV)", 30, 60, 120, "GeV", hZ2e1mMass,dir);
+    defineHistoSet("hZ1e2mMass","Reconstructed Mass of Z (1e2#mu)",
+                   "M_{Z}^{1e2#mu} (GeV)", 30, 60, 120, "GeV", hZ1e2mMass,dir);
+    defineHistoSet("hZ0e3mMass","Reconstructed Mass of Z (0e3#mu)",
+                   "M_{Z}^{0e3#mu} (GeV)", 30, 60, 120, "GeV", hZ0e3mMass,dir);
     
 //Zpt Histos
     defineHistoSet("hZpt", "p_{T}^{Z}", 
@@ -160,6 +184,7 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
                    "p_{T}^{Z#rightarrowee} (GeV)", 50, 0, 1000, "GeV", hZeept,dir);
     defineHistoSet("hZmmpt", "p_{T}^{Z#rightarrow#mu#mu}", 
                    "p_{T}^{Z#rightarrow#mu#mu} (GeV)", 50, 0, 1000, "GeV", hZmmpt,dir);
+
 //MET Histos
     defineHistoSet("hMET", "MET",
                    "#slash{E}_{T} (GeV)", 50, 0, 500, "GeV", hMET,dir);
@@ -167,6 +192,14 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
                    "#slash{E}_{T}^{ee} (GeV)", 50, 0, 500, "GeV", hMETee,dir);
     defineHistoSet("hMETmm", "MET",
                    "#slash{E}_{T}^{#mu#mu} (GeV)", 50, 0, 500, "GeV", hMETmm,dir);
+    defineHistoSet("hMET3e0m", "MET (3e0#mu)",
+                   "#slash{E}_{T}^{3e0#mu} (GeV)", 50, 0, 500, "GeV", hMET3e0m,dir);
+    defineHistoSet("hMET2e1m", "MET (2e1#mu)",
+                   "#slash{E}_{T}^{2e1#mu} (GeV)", 50, 0, 500, "GeV", hMET2e1m,dir);
+    defineHistoSet("hMET1e2m", "MET (1e2#mu)",
+                   "#slash{E}_{T}^{1e2#mu} (GeV)", 50, 0, 500, "GeV", hMET1e2m,dir);
+    defineHistoSet("hMET0e3m", "MET (0e3#mu)",
+                   "#slash{E}_{T}^{0e3#mu} (GeV)", 50, 0, 500, "GeV", hMET0e3m,dir);
     defineHistoSet("hMETSig", "MET Significance",
                    "#slash{E}_{T}^{Signif}", 50, 0, 500, "NONE", hMETSig,dir);
     
@@ -177,6 +210,14 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
                    "M_{T}^{W#rightarrowe#nu} (GeV)", 40, 0, 200, "GeV", hWenuTransMass,dir);
     defineHistoSet("hWmnuTransMass", "Reconstructed TransverseMass of W#mu\\nu",
                    "M_{T}^{W#rightarrow#mu#nu} (GeV)", 40, 0, 200, "GeV", hWmnuTransMass,dir);
+    defineHistoSet("hW3e0mTransMass", "Reconstructed TransverseMass of W (3e0#mu)",
+                   "M_{T}^{W (3e0#mu)} (GeV)", 40, 0, 200, "GeV", hW3e0mTransMass,dir);
+    defineHistoSet("hW2e1mTransMass", "Reconstructed TransverseMass of W (2e1#mu)",
+                   "M_{T}^{W (2e1#mu)} (GeV)", 40, 0, 200, "GeV", hW2e1mTransMass,dir);
+    defineHistoSet("hW1e2mTransMass", "Reconstructed TransverseMass of W (1e2#mu)",
+                   "M_{T}^{W (1e2#mu)} (GeV)", 40, 0, 200, "GeV", hW1e2mTransMass,dir);
+    defineHistoSet("hW0e3mTransMass", "Reconstructed TransverseMass of W (0e3#mu)",
+                   "M_{T}^{W (0e3#mu)} (GeV)", 40, 0, 200, "GeV", hW0e3mTransMass,dir);
     
 //Wpt Histos
     defineHistoSet("hWpt", "p_{T}^{W}", 
@@ -189,6 +230,10 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
 //W Charge Histos
     defineHistoSet("hWQ", "Reconstructed Charge of W",
                    "q_{W}", 2, -1.5, 1.5, "", hWQ,dir);
+    defineHistoSet("hWenuQ", "Reconstructed Charge of W#rightarrowe#nu",
+                   "q_{W#rightarrowe#nu}", 2, -1.5, 1.5, "", hWenuQ,dir);
+    defineHistoSet("hWmnuQ", "Reconstructed Charge of W#rightarrow#mu#nu",
+                   "q_{W#rightarrow#mu#nu}", 2, -1.5, 1.5, "", hWmnuQ,dir);
 
     defineHistoSet("hWenuCombRelIso", "Comb Rel Iso of W Electron",
                    "Electron Combined Relative Isolation", 20, 0, 0.2, "NONE", hWenuCombRelIso,dir);
@@ -209,17 +254,7 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
     defineHistoSet("hNTLeps", "Number of Tight Leptons in Event",
                    "N_{Lep}^{Tight}", 10, 0, 10, "NONE", hNTLeps,dir);
     
-    defineHistoSet("hNJets", "Number of Jets in Event",
-                   "N_{Jets}", 15, 0, 15, "NONE", hNJets,dir);
-    
-    defineHistoSet("hNVtxs", "Number of Vertexs in Event",
-                   "N_{Vtx}", 50, 0, 50, "NONE", hNVtxs,dir);
-
-    defineHistoSet("hWeight", "PU Weight",
-                   "Weight", 40, 0, 2, "NONE", hWeight,dir);
-    defineHistoSet("hL1FastJet", "L1 Fast Jet Correction",
-                   "#rho", 50, 0, 25, "NONE", hL1FastJet,dir);
-    
+  
     
     hDiscriminant = dir.make<TH1F>("hDiscriminant","disc", 1e4, -1e9, 1e9);
     hDiscriminantFrac = dir.make<TH1F>("hDiscriminantFrac","Disc Frac", 1e4, -1e6, 1e6);
@@ -250,9 +285,16 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
       tEvts[i]->Branch("TriLepMass", &TriLepMass_);
       tEvts[i]->Branch("NVtxs", &NVtxs_);
       tEvts[i]->Branch("weight", &weight_);
+      tEvts[i]->Branch("ZLep1Pt", &ZLep1Pt_);
+      tEvts[i]->Branch("ZLep1Eta", &ZLep1Eta_);
+      tEvts[i]->Branch("ZLep2Pt", &ZLep2Pt_);
+      tEvts[i]->Branch("ZLep2Eta", &ZLep2Eta_);
+      tEvts[i]->Branch("WLepPt", &WLepPt_);
+      tEvts[i]->Branch("WLepEta", &WLepEta_);
     }
     
   }else{//Systematics
+    //Z Mass for Tag and Probe Eff Calc
     defineHistoSet("hZeeMassTT","Reconstructed MassTT of ZeeTT",
                    "M_{Z}^{ee,TT} (GeV)", 30, 60, 120, "GeV", hZeeMassTT,dir);
     defineHistoSet("hZeeMassTF","Reconstructed Mass of ZeeTF",
@@ -261,7 +303,24 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
                    "M_{Z}^{#mu#mu,TT} (GeV)", 30, 60, 120, "GeV", hZmmMassTT,dir);
     defineHistoSet("hZmmMassTF","Reconstructed Mass of Z#mu#muTF",
                    "M_{Z}^{#mu#mu,TF} (GeV)", 30, 60, 120, "GeV", hZmmMassTF,dir);
+
+    //2D ZMass plots
+    defineHistoSet("hPtVsZeeBarrelMassTT","Reconstructed Mass of p_{T}^{e Barrel} vs ZeeTT",
+                   "M_{Z}^{ee,TT} (GeV)", 30, 60, 120, "p_{T}^{e}", 100, 0, 100., hPtVsZeeBarrelMassTT,dir);
+    defineHistoSet("hPtVsZeeBarrelMassTF","Reconstructed Mass of p_{T}^{e Barrel} vs ZeeTF",
+                   "M_{Z}^{ee,TF} (GeV)", 30, 60, 120, "p_{T}^{e}", 100, 0, 100., hPtVsZeeBarrelMassTF,dir);
+    defineHistoSet("hPtVsZeeEndCapMassTT","Reconstructed Mass of p_{T}^{e EndCap} vs ZeeTT",
+                   "M_{Z}^{ee,TT} (GeV)", 30, 60, 120, "p_{T}^{e}", 100, 0, 100., hPtVsZeeEndCapMassTT,dir);
+    defineHistoSet("hPtVsZeeEndCapMassTF","Reconstructed Mass of p_{T}^{e EndCap} vs ZeeTF",
+                   "M_{Z}^{ee,TF} (GeV)", 30, 60, 120, "p_{T}^{e}", 100, 0, 100., hPtVsZeeEndCapMassTF,dir);
+    defineHistoSet("hPtVsZmmMassTT","Reconstructed Mass of p_{T}^{#mu} vs Z#mu#muTT",
+                   "M_{Z}^{#mu#mu,TT} (GeV)", 30, 60, 120, "p_{T}^{#mu}", 100, 0, 100., hPtVsZmmMassTT,dir);
+    defineHistoSet("hPtVsZmmMassTF","Reconstructed Mass of p_{T}^{#mu} vs Z#mu#muTF",
+                   "M_{Z}^{#mu#mu,TF} (GeV)", 30, 60, 120, "p_{T}^{#mu}", 100, 0, 100., hPtVsZmmMassTF,dir);
+
     
+    defineHistoSet("hWTransMass", "Reconstructed Transverse Mass of W",
+                   "M_{T}^{W} (GeV)", 40, 0, 200, "GeV", hWTransMass,dir);
     //Lead Lepton Pt
     defineHistoSet("hLeadPt", "Leading Lepton Pt",
                    "p_{T}^{Max}", 50, 0, 1000., "GeV", hLeadPt,dir);
@@ -274,11 +333,38 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
     defineHistoSet("hLeadMuonPt", "Leading Muon Pt",
                    "p_{T}^{Max #mu}", 50, 0, 1000., "GeV", hLeadMuonPt,dir);
 
-    //Eta-Pt 2D Plot
-    defineHistoSet("hEtaVsPt", "#eta Vs p_{T}",
-                   "p_{T}", 100, 0, 100., "#eta", 50, -2.5, 2.5, hEtaVsPt,dir);
     
-  }
+  }//end of systematic histos
+  //Eta-Pt 2D Plot
+  defineHistoSet("hEtaVsPt", "#eta Vs p_{T}",
+                 "p_{T}", 100, 0, 100., "#eta", 50, -2.5, 2.5, hEtaVsPt,dir);
+  defineHistoSet("hEtaVsPtElec", "#eta Vs p_{T}",
+                 "p_{T}^{e}", 100, 0, 100., "#eta", 50, -2.5, 2.5, hEtaVsPtElec,dir);
+  defineHistoSet("hEtaVsPtMuon", "#eta Vs p_{T}",
+                 "p_{T}^{#mu}", 100, 0, 100., "#eta", 50, -2.5, 2.5, hEtaVsPtMuon,dir);
+  defineHistoSet("hEtaVsPt3e0m", "#eta Vs p_{T}",
+                 "p_{T}^{3e0#mu}", 100, 0, 100., "#eta", 50, -2.5, 2.5, hEtaVsPt3e0m,dir);
+  defineHistoSet("hEtaVsPt2e1m", "#eta Vs p_{T}",
+                 "p_{T}^{2e1#mu}", 100, 0, 100., "#eta", 50, -2.5, 2.5, hEtaVsPt2e1m,dir);
+  defineHistoSet("hEtaVsPt1e2m", "#eta Vs p_{T}",
+                 "p_{T}^{1e2#mu}", 100, 0, 100., "#eta", 50, -2.5, 2.5, hEtaVsPt1e2m,dir);
+  defineHistoSet("hEtaVsPt0e3m", "#eta Vs p_{T}",
+                 "p_{T}^{0e3#mu}", 100, 0, 100., "#eta", 50, -2.5, 2.5, hEtaVsPt0e3m,dir);
+
+  defineHistoSet("hNJets", "Number of Jets in Event",
+                 "N_{Jets}", 15, 0, 15, "NONE", hNJets,dir);
+  
+  defineHistoSet("hNVtxs", "Number of Vertexs in Event",
+                 "N_{Vtx}", 50, 0, 50, "NONE", hNVtxs,dir);
+  defineHistoSet("hNVtxsZee", "Number of Vertexs in Event Z#rightarrowee",
+                 "N_{Vtx}^{Z#rightarrowee}", 50, 0, 50, "NONE", hNVtxsZee,dir);
+  defineHistoSet("hNVtxsZmm", "Number of Vertexs in Event Z#rightarrow#mu#mu",
+                 "N_{Vtx}^{Z#rightarrow#mu#mu}", 50, 0, 50, "NONE", hNVtxsZmm,dir);
+  
+  defineHistoSet("hWeight", "PU Weight",
+                 "Weight", 40, 0, 2, "NONE", hWeight,dir);
+  defineHistoSet("hL1FastJet", "L1 Fast Jet Correction",
+                 "#rho", 50, 0, 25, "NONE", hL1FastJet,dir);
 
 }//defineHistos
 
@@ -288,10 +374,35 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
   if(!doSystematics_){
     if(wCand_ && zCand_){
       hWZMass[index]->Fill(WZMass_, weight);
-      if     (evtType_ == 0) hWZ3e0muMass[index]->Fill(WZMass_, weight);
-      else if(evtType_ == 1) hWZ2e1muMass[index]->Fill(WZMass_, weight);
-      else if(evtType_ == 2) hWZ1e2muMass[index]->Fill(WZMass_, weight);
-      else if(evtType_ == 3) hWZ0e3muMass[index]->Fill(WZMass_, weight);
+      if     (evtType_ == 0){
+        hWZ3e0mMass[index]->Fill(WZMass_, weight);
+        hZ3e0mMass[index]->Fill(ZMass_, weight);
+        hW3e0mTransMass[index]->Fill(wCand_.mt(), weight);
+        hMET3e0m[index]->Fill(MET_, weight);
+        const heep::Ele& e = *wCand_.elec();
+        hEtaVsPt3e0m[index]->Fill(e.patEle().pt(), e.patEle().eta(), weight);
+      }else if(evtType_ == 1){ 
+        hWZ2e1mMass[index]->Fill(WZMass_, weight);
+        hZ2e1mMass[index]->Fill(ZMass_, weight);
+        hW2e1mTransMass[index]->Fill(wCand_.mt(), weight);
+        hMET2e1m[index]->Fill(MET_, weight);
+        const TeVMuon& m = *wCand_.muon();
+        hEtaVsPt2e1m[index]->Fill(m.pt(), m.eta(), weight);
+      }else if(evtType_ == 2){ 
+        hWZ1e2mMass[index]->Fill(WZMass_, weight);
+        hZ1e2mMass[index]->Fill(ZMass_, weight);
+        hW1e2mTransMass[index]->Fill(wCand_.mt(), weight);
+        hMET1e2m[index]->Fill(MET_, weight);
+        const heep::Ele& e = *wCand_.elec();
+        hEtaVsPt1e2m[index]->Fill(e.patEle().pt(), e.patEle().eta(), weight);
+      }else if(evtType_ == 3){ 
+        hWZ0e3mMass[index]->Fill(WZMass_, weight);
+        hZ0e3mMass[index]->Fill(ZMass_, weight);
+        hW0e3mTransMass[index]->Fill(wCand_.mt(), weight);
+        hMET0e3m[index]->Fill(MET_, weight);
+        const TeVMuon& m = *wCand_.muon();
+        hEtaVsPt0e3m[index]->Fill(m.pt(), m.eta(), weight);
+      }
       hQ[index]->Fill(Q_, weight); 
       hWZTransMass[index]->Fill(wzCand_().mt(), weight);
       hWZpt[index]->Fill(wzCand_().pt(), weight);
@@ -309,11 +420,13 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
         hZeept[index]->Fill(Zpt_, weight);
         hMETee[index]->Fill(MET_, weight);
         hLeadPtZee[index]->Fill(LeadPt_, weight);
+        hNVtxsZee[index]->Fill((*verticesH_).size(), weight);
       }else if (zCand_.flavor() == PDG_ID_MUON){
         hZmmMass[index]->Fill(ZMass_, weight);
         hMETmm[index]->Fill(MET_, weight);
         hZmmpt[index]->Fill(Zpt_, weight);
         hLeadPtZmm[index]->Fill(LeadPt_, weight);
+        hNVtxsZmm[index]->Fill((*verticesH_).size(), weight);
       }
     }
     if(wCand_){
@@ -323,11 +436,13 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
       if      (wCand_.flavor() == PDG_ID_ELEC){
         hWenuTransMass[index]->Fill(wCand_.mt(), weight);
         hWenupt[index]->Fill(wCand_.pt(), weight);
+        hWenuQ[index]->Fill(wCand_.charge(), weight);
         const heep::Ele& e = *wCand_.elec();
         hWenuCombRelIso[index]->Fill(calcCombRelIso(e.patEle(), ElecPU(e)), weight);
       }else if (wCand_.flavor() == PDG_ID_MUON){
         hWmnuTransMass[index]->Fill(wCand_.mt(), weight);
         hWmnupt[index]->Fill(wCand_.pt(), weight);
+        hWmnuQ[index]->Fill(wCand_.charge(), weight);
         const TeVMuon& m = *wCand_.muon();
         hWmnuCombRelIso[index]->Fill(m.combRelIsolation03(MuonPU(m)), weight);
       }
@@ -348,32 +463,86 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
     hNTMuon[index]->Fill(tightMuons_    .size(), weight);
     hNTLeps[index]->Fill(tightElectrons_.size()+tightMuons_.size(), weight);
     
-    hNJets[index]->Fill((*patJetsH_).size(), weight);
-    hNVtxs[index]->Fill((*verticesH_).size(), weight);
-    hWeight[index]->Fill(weight_/wprimeUtil_->getSampleWeight(), 1.);//Don't weight
-    hL1FastJet[index]->Fill(*rhoFastJetH_, weight);
-
+    if(wCand_.flavor() == PDG_ID_ELEC){
+      const heep::Ele& e = *wCand_.elec();
+      hEtaVsPt[index]->Fill(e.patEle().pt(), e.patEle().eta(), weight);
+      hEtaVsPtElec[index]->Fill(e.patEle().pt(), e.patEle().eta(), weight);
+    }else if(wCand_.flavor() == PDG_ID_MUON){
+      const TeVMuon& m = *wCand_.muon();
+      hEtaVsPt[index]->Fill(m.pt(), m.eta(), weight);
+      hEtaVsPtMuon[index]->Fill(m.pt(), m.eta(), weight);
+    }
+    
     if(index > 4) tEvts[index]->Fill();//trying to keep the file size down
   }else{//Systematics plots
     if(zCand_){
       if(zCand_.flavor() == PDG_ID_ELEC){
-        if(TT) hZeeMassTT[index]->Fill(ZMass_, weight);
-        if(TF) hZeeMassTF[index]->Fill(ZMass_, weight);
+        if(TT){//Probe passed
+          hZeeMassTT[index]->Fill(ZMass_, weight);
+          if(zCand_.elec1()->patEle().isEB()){
+            hPtVsZeeBarrelMassTT[index]->Fill(ZMass_, zCand_.daughter(0)->pt(), weight);
+          }else{
+            hPtVsZeeEndCapMassTT[index]->Fill(ZMass_, zCand_.daughter(0)->pt(), weight);
+          }
+          if(zCand_.elec2()->patEle().isEB()){
+            hPtVsZeeBarrelMassTT[index]->Fill(ZMass_, zCand_.daughter(1)->pt(), weight);
+          }else{
+            hPtVsZeeEndCapMassTT[index]->Fill(ZMass_, zCand_.daughter(1)->pt(), weight);
+          }
+        }//TT
+        if(TF || FT){//Probe failed 
+          hZeeMassTF[index]->Fill(ZMass_, weight);
+          if(FT){//Probe is daughter 0
+            if(zCand_.elec1()->patEle().isEB()){
+              hPtVsZeeBarrelMassTF[index]->Fill(ZMass_, zCand_.daughter(0)->pt(), weight);
+            }else{
+              hPtVsZeeEndCapMassTF[index]->Fill(ZMass_, zCand_.daughter(0)->pt(), weight);
+            }
+          }
+          if(TF){//Probe is daughter 1
+            if(zCand_.elec2()->patEle().isEB()){
+              hPtVsZeeBarrelMassTF[index]->Fill(ZMass_, zCand_.daughter(1)->pt(), weight);
+            }else{
+              hPtVsZeeEndCapMassTF[index]->Fill(ZMass_, zCand_.daughter(1)->pt(), weight);
+            }
+          }
+        }//TF || FT
       }else if(zCand_.flavor() == PDG_ID_MUON){
-        if(TT) hZmmMassTT[index]->Fill(ZMass_, weight);
-        if(TF) hZmmMassTF[index]->Fill(ZMass_, weight);
-      }
-    }
+        if(TT){//Probe passed
+          hZmmMassTT[index]->Fill(ZMass_, weight);
+          hPtVsZmmMassTT[index]->Fill(ZMass_, zCand_.daughter(0)->pt(), weight/2);
+          hPtVsZmmMassTT[index]->Fill(ZMass_, zCand_.daughter(1)->pt(), weight/2);
+        }
+        if(TF || FT){//Probe failed
+          hZmmMassTF[index]->Fill(ZMass_, weight);
+          if(FT){//Probe is daughter 0 
+            hPtVsZmmMassTF[index]->Fill(ZMass_, zCand_.daughter(0)->pt(), weight);
+          }
+          if(TF){//Probe is daughter 1
+            hPtVsZmmMassTF[index]->Fill(ZMass_, zCand_.daughter(1)->pt(), weight);
+          }
+        }//TF || FT
+      }//Z lep flavor
+    }//valid Z
     hLeadPt[index]->Fill(LeadPt_, weight);
     hLeadElecPt[index]->Fill(LeadElecPt_, weight);
     hLeadMuonPt[index]->Fill(LeadMuonPt_, weight);
 
-    if(wCand_.flavor() == PDG_ID_ELEC){
+    hNJets[index]->Fill(looseJets_.size(), weight);
+    hNVtxs[index]->Fill((*verticesH_).size(), weight);
+    hWeight[index]->Fill(weight_/wprimeUtil_->getSampleWeight(), 1.);//Don't weight
+    hL1FastJet[index]->Fill(*rhoFastJetH_, weight);
+
+    hWTransMass[index]->Fill(wCand_.mt(), weight);
+    if(wCand_.flavor() == PDG_ID_ELEC){//remember to take the opposite
       hEtaVsPt[index]->Fill(looseMuons_[0].pt(), looseMuons_[0].eta(), weight);
+      hEtaVsPtMuon[index]->Fill(looseMuons_[0].pt(), looseMuons_[0].eta(), weight);
     }else if(wCand_.flavor() == PDG_ID_MUON){
       hEtaVsPt[index]->Fill(looseElectrons_[0].patEle().pt(), looseElectrons_[0].patEle().eta(), weight);
+      hEtaVsPtElec[index]->Fill(looseElectrons_[0].patEle().pt(), looseElectrons_[0].patEle().eta(), weight);
     }
   }
+
 
 }//fillHistos
 
@@ -463,8 +632,9 @@ WZAnalyzer::calcZVariables(){
           if(!tight2 && WPrimeUtil::Match(tightMuons_[i], *zCand_.daughter(1))) tight2 = true;
         } 
       }
-      TT = tight1 && tight2;
-      TF = (tight1 && !tight2) || (!tight1 && tight2);
+      TT =   tight1 &&  tight2;
+      TF = ( tight1 && !tight2);
+      FT = (!tight1 &&  tight2);
     }
   }
   zCandsAll.insert(zCandsAll.begin(), zCand_);
@@ -472,9 +642,17 @@ WZAnalyzer::calcZVariables(){
   numZs_ = countZCands(zCandsAll); 
   Zpt_ = zCand_.pt();
   ZMass_ = zCand_.mass();
-
+  if(zCand_){
+    ZLep1Pt_ = zCand_.daughter(0)->pt();
+    ZLep1Eta_ = zCand_.daughter(0)->eta();
+    ZLep2Pt_ = zCand_.daughter(1)->pt();
+    ZLep2Eta_ = zCand_.daughter(1)->eta();
+  }
   if(debug_){
     printf("    Contains: %lu Z candidate(s)\n", zCandsAll.size());
+    for (uint i=0; i<zCandsAll.size(); ++i){
+      printf("Cand: %u Flavor: %i Mass: %.2f\n", i, zCandsAll[i].flavor(), zCandsAll[i].mass());
+    }
     printEventLeptons();
     printEventDetails();
   }
@@ -486,6 +664,10 @@ WZAnalyzer::calcWVariables(){
   wCand_ = getWCand(tightElectrons_, tightMuons_, met_, zCand_, minDeltaR_);
   Wpt_ = wCand_.pt();
   WTransMass_ = wCand_.mt();
+  if(wCand_){
+    WLepPt_ = wCand_.daughter(0)->pt();
+    WLepEta_ = wCand_.daughter(0)->eta();
+  }
   if(debug_){
     printf("    Contains: %i tight W candidate(s)\n", (bool)wCand_);
     printEventLeptons(); 
@@ -536,7 +718,9 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
   }
 */  
-  if(debug_) WPrimeUtil::printEvent(event, cout);
+  if(debug_){
+    WPrimeUtil::printEvent(event, cout);
+  }
 
   // Preselection - skip events that don't look promising
   if (doPreselect_){
@@ -580,6 +764,9 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
     if(Overlap(allElectrons_[i].patEle(), *patMuonsH_.product(), 0.01)) continue;
     const float pu = ElecPU(allElectrons_[i]);
+    if (doSystematics_ && vlElectron_(allElectrons_[i].patEle(), pu))
+      vlElectrons_.push_back(allElectrons_[i]);
+
     if (looseElectron_(allElectrons_[i].patEle(), pu))
       looseElectrons_.push_back(allElectrons_[i]);
 
@@ -589,6 +776,9 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
   for (size_t i = 0; i < allMuons_.size(); i++) {
     const float pu = MuonPU(allMuons_[i]);
+    if (doSystematics_ && vlMuon_(allMuons_[i], pu))
+      vlMuons_.push_back(allMuons_[i]);
+
     if (looseMuon_(allMuons_[i], pu))
       looseMuons_.push_back(allMuons_[i]);
 
@@ -602,15 +792,24 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     print(allMuons_);
     printf("    Contains: %lu loose electron(s), %lu loose muon(s)\n",
            looseElectrons_.size(), looseMuons_.size());
+    if(doSystematics_)
+      printf("    Contains: %lu vl electron(s), %lu vl muon(s)\n",
+             vlElectrons_.size(), vlMuons_.size());
     printf("    Contains: %lu tight electron(s), %lu tightmuon(s)\n",
            tightElectrons_.size(), tightMuons_.size());
   }
 
   //get Jets
   event.getByLabel(jetsLabel_, patJetsH_);
+  const JetV & allJets  = *patJetsH_;
+  for (size_t i = 0; i < allJets.size(); i++) {
+    if (looseJet_(allJets[i]) && !Overlap(allJets[i], looseMuons_, 1.0) && !Overlap(allJets[i], looseElectrons_, 1.0))
+      looseJets_.push_back(allJets[i]);
+  }
 
   //get Trigger 
   event.getByLabel(hltEventLabel_, triggerEventH_);
+  if(debug_) printDebugEvent();
 
   //get Vertex
   event.getByLabel(vertexLabel_, verticesH_);
@@ -637,11 +836,6 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     }
   }//MC Only If
   */
-  if(debug_){
-    cout<<"This is a debug event\n";
-    printPassingEvent(event);
-    printDebugEvent();
-  }
 
   weight_ = wprimeUtil_->getWeight();
   if(!passCuts(weight_)) return;
@@ -774,6 +968,17 @@ inline bool WZAnalyzer::passWLepTightCut() const{
     return WPrimeUtil::Contains(e.patEle(), tightElectrons_);
   }else if(wCand_.flavor() == PDG_ID_MUON){
     const TeVMuon & m = *wCand_.muon();
+    return WPrimeUtil::Contains(m, tightMuons_);
+}
+  return false;
+}
+
+inline bool WZAnalyzer::passZLepTightCut(bool firstDaughter) const{
+  if(zCand_.flavor() == PDG_ID_ELEC){
+    const heep::Ele & e = firstDaughter ? *zCand_.elec1() : *zCand_.elec2();
+    return WPrimeUtil::Contains(e.patEle(), tightElectrons_);
+  }else if(zCand_.flavor() == PDG_ID_MUON){
+    const TeVMuon & m = firstDaughter ? *zCand_.muon1() : *zCand_.muon2();
     return WPrimeUtil::Contains(m, tightMuons_);
 }
   return false;
@@ -925,12 +1130,12 @@ inline bool WZAnalyzer::inEE(const TeVMuon& mu) const{
 
 inline void
 WZAnalyzer::clearEvtVariables(){
-  allJets_.clear();
+  looseJets_.clear();
   allElectrons_.clear();
-  looseElectrons_.clear();
+  looseElectrons_.clear(); vlElectrons_.clear();
   tightElectrons_.clear();
   allMuons_.clear();
-  looseMuons_.clear();
+  looseMuons_.clear(); vlMuons_.clear();
   tightMuons_.clear();
   met_ = pat::MET();
   zCand_ = ZCandidate();
@@ -949,13 +1154,14 @@ WZAnalyzer::clearEvtVariables(){
   WTransMass_ = -999;
   Q_ = -999;
   Discriminant_ = 0;
-  TT = TF = false;
+  TT = TF = FT = false;
   runNumber_ = 0;
   lumiNumber_ = 0;
   evtNumber_ = 0;
   MET_ = 0;
   METSig_ = 0;
   NVtxs_ = 0;
+  ZLep1Pt_ = ZLep1Eta_ = ZLep2Pt_ = ZLep2Eta_ = WLepPt_ = WLepEta_ = 0;
   weight_ = 0;
 }
 

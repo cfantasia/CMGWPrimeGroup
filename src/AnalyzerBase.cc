@@ -391,6 +391,11 @@ AnalyzerBase::passMinNJetsCut(const JetV& jets, const float & cut) const{
 }
 
 inline bool
+AnalyzerBase::passMaxNJetsCut(const JetV& jets, const float & cut) const{
+  return jets.size() <= cut;
+}
+
+inline bool
 AnalyzerBase::passMinMETCut(const pat::MET & met, const float& cut) const{
   return met.et() > cut;
 }
@@ -488,7 +493,7 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
   //Save Important File Info//////////
   title = "Info for Sample " + fi->samplename + " ( " + fi->description + " )";
   TH1F* hFileInfo = NULL; 
-  hFileInfo = dir.make<TH1F>("hFileInfo",title.c_str(),8,0,8);
+  hFileInfo = dir.make<TH1F>("hFileInfo",title.c_str(),9,0,9);
   hFileInfo->GetXaxis()->SetBinLabel  (1, "#intL dt (pb^{-1})");
   hFileInfo->SetBinContent(1, wprimeUtil_->getLumi_ipb());
   hFileInfo->GetXaxis()->SetBinLabel  (2, "#sigma (pb)");
@@ -496,15 +501,17 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
   hFileInfo->GetXaxis()->SetBinLabel  (3, "Number of Events Produced");
   hFileInfo->SetBinContent(3, fi->Nprod_evt);
   hFileInfo->GetXaxis()->SetBinLabel  (4, "Number of Events in root Files");
-  hFileInfo->SetBinContent(4, fi->Nact_evt);
+  hFileInfo->SetBinContent(4, fi->Nact_evt);//Number of events found in this job
   hFileInfo->GetXaxis()->SetBinLabel  (5, "Sample Weight");
   hFileInfo->SetBinContent(5, fi->weight);
   hFileInfo->GetXaxis()->SetBinLabel  (6, "Number of root files");
-  hFileInfo->SetBinContent(6, fi->pathnames.size());
+  hFileInfo->SetBinContent(6, fi->pathnames.size());//Number of input root files in this job
   hFileInfo->GetXaxis()->SetBinLabel  (7, "Signal Mass");
   hFileInfo->SetBinContent(7, fi->signalMass);
   hFileInfo->GetXaxis()->SetBinLabel  (8, "Number of Files Merged");
-  hFileInfo->SetBinContent(8, 1);
+  hFileInfo->SetBinContent(8, 1);//This is 1 for all samples and is incremented by hadd
+  hFileInfo->GetXaxis()->SetBinLabel  (9, "Number of SubSamples");
+  hFileInfo->SetBinContent(9, fi->splitInto);//# of jobs sample is split into
   
   defineHistos(dir);
   if(wprimeUtil_->isSignalSample())

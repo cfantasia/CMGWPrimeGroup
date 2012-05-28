@@ -1,4 +1,5 @@
-//Usage: root -b -q 'Est_Zjets.C+(file, useElec, useData)'
+//Usage: root -b -l -q 'Est_Zjets.C+(file, useElec, useData)'
+//eg:  root -b -l -q 'Est_Zjets.C+("../../../WZEffRate.root", 0, 1)'
 
 #include <vector>
 #include "THStack.h"
@@ -7,7 +8,7 @@
 #include "../Limits/consts.h"
 
 void
-Est_Zjets(string infile, bool useElec, bool useData=true){  
+Est_Zjets(string infile, bool useElec, bool useData=true, int etaMode=-1, float minpt=-1, float maxpt=9e9){  
   TFile *f = TFile::Open(infile.c_str(), "read"); assert(f);
 
   vector<string> allsamples;
@@ -25,30 +26,58 @@ Est_Zjets(string infile, bool useElec, bool useData=true){
   }
   TH1F* allTThist=NULL;
   TH1F* allTFhist=NULL;
-  if(useElec){
-    allTThist = get_sum_of_hists(f, allsamples,"hZeeMassTT_AllCuts");
-    allTFhist = get_sum_of_hists(f, allsamples,"hZeeMassTF_AllCuts");
+
+  string histTTName, histTFName;
+
+  if(etaMode == -1){
+    if(useElec){
+      allTThist = get_sum_of_hists(f, allsamples,"hZeeMassTT_AllCuts");
+      allTFhist = get_sum_of_hists(f, allsamples,"hZeeMassTF_AllCuts");
+    }else{
+      allTThist = get_sum_of_hists(f, allsamples,"hZmmMassTT_AllCuts");
+      allTFhist = get_sum_of_hists(f, allsamples,"hZmmMassTF_AllCuts");
+    }
   }else{
-    allTThist = get_sum_of_hists(f, allsamples,"hZmmMassTT_AllCuts");
-    allTFhist = get_sum_of_hists(f, allsamples,"hZmmMassTF_AllCuts");
+    if(useElec){
+      histTTName = etaMode ? "hPtVsZeeBarrelMassTT" : "hPtVsZeeEndCapMassTT";
+      histTFName = etaMode ? "hPtVsZeeBarrelMassTF" : "hPtVsZeeEndCapMassTF";
+    }else{
+      histTTName = "hPtVsZmmMassTT";
+      histTFName = "hPtVsZmmMassTF";
+    }
+    histTTName += "_AllCuts";
+    histTFName += "_AllCuts";
+
+    TH2F* histTT = get_sum_of_hists2D(f, allsamples, histTTName, 0);
+    TH2F* histTF = get_sum_of_hists2D(f, allsamples, histTFName, 0);
+
+    int yminbin,ymaxbin;
+    yminbin = histTT->GetYaxis()->FindBin(minpt);
+    ymaxbin = histTT->GetYaxis()->FindBin(maxpt)-1;
+        
+    allTThist = (TH1F*) histTT->ProjectionX("histTT", yminbin, ymaxbin, "e");
+    allTFhist = (TH1F*) histTF->ProjectionX("histTF", yminbin, ymaxbin, "e");
+
+    allTThist->Scale(0.5);//Hack bc I forgot to weight TT events by half
   }
+
 
   TF1* linearTT = new TF1("linearTT", fline, FitWind_low, FitWind_high, 2);
   TF1* linearTF = new TF1("linearTF", fline, FitWind_low, FitWind_high, 2);
 
-  cout<<"Fitting Background TT"<<endl;
+  if(0) cout<<"Fitting Background TT"<<endl;
   TCanvas* c1 = new TCanvas("c1", "Z Mass TT");
   reject = true;
-  allTThist->Fit(linearTT, "MRELL");
+  allTThist->Fit(linearTT, "MRELLQ");
   reject = false;
   double       B_TT = linearTT->Integral     (ZWind_low,ZWind_high);
   double sigma_B_TT = linearTT->IntegralError(ZWind_low,ZWind_high);
   c1->Print(Form("Eff_TT_useElec%i_useData%i.pdf", useElec, useData));
 
-  cout<<"Fitting Background TF"<<endl;
+  if(0) cout<<"Fitting Background TF"<<endl;
   TCanvas* c2 = new TCanvas("c2", "Z Mass TF");
   reject = true;
-  allTFhist->Fit(linearTF, "MRELL");
+  allTFhist->Fit(linearTF, "MRELLQ");
   reject = false;
   double       B_TF = linearTF->Integral     (ZWind_low,ZWind_high);
   double sigma_B_TF = linearTF->IntegralError(ZWind_low,ZWind_high);
@@ -83,14 +112,14 @@ Est_Zjets(string infile, bool useElec, bool useData=true){
   else        cout<<"Muons";
   if(useData) cout<<" from Data"<<endl;
   else        cout<<" from MC"<<endl;
+  if(etaMode != -1) cout<<"etaMode="<<etaMode<<" from pt="<<minpt<<"->"<<maxpt<<endl;
   cout<<"  Bkg TT:"<<B_TT<<" +/- " <<sigma_B_TT<<endl
       <<"  Bkg TF:"<<B_TF<<" +/- " <<sigma_B_TF<<endl
       <<"  Tot TT:"<<N_TT<<" +/- " <<sigma_N_TT<<endl
       <<"  Tot TF:"<<N_TF<<" +/- " <<sigma_N_TF<<endl
       <<"  Sig TT:"<<S_TT<<endl
-      <<"  Sig TF:"<<S_TF<<endl
-      <<"  e_tight:"<<e_tight<<" +/- " <<sigma_e<<endl
-      <<endl;
+      <<"  Sig TF:"<<S_TF<<endl;
+  printf("  e_tight: %.4f  +/- %.4f\n", e_tight,sigma_e);
 
   //N_loose and N_tight are only observables
   //N_loose = N_lep + N_jet

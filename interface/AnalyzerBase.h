@@ -102,6 +102,7 @@ public:
   virtual bool passMinNLeptonsCut(const ElectronV& electrons, const MuonV& muons, const float & cut) const;
   virtual bool passMaxNLeptonsCut(const ElectronV& electrons, const MuonV& muons, const float & cut) const;
   virtual bool passMinNJetsCut(const JetV& jets, const float & cut) const;
+  virtual bool passMaxNJetsCut(const JetV& jets, const float & cut) const;
 
   virtual bool passMinMETCut(const pat::MET & met, const float& cut) const;
   virtual bool passMinPtCut(const reco::Candidate& cand, const float& cut) const;
