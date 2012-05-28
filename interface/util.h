@@ -484,6 +484,7 @@ public:
     loadFromPset<double>(params, "maxDxy", true);
     loadFromPset<double>(params, "maxIso", true);
     loadFromPset<double>(params, "maxIso03", true);
+    loadFromPset<double>(params, "maxPFIso", true);
     loadFromPset<int>(params, "minIsGlobal", true);
     loadFromPset<int>(params, "minIsTracker", true);
     loadFromPset<int>(params, "minNMatches", true);
@@ -509,6 +510,7 @@ public:
     setpassCut("maxDxy", fabs(p.dB()), bitmask);
     setpassCut("maxIso", p.combRelIsolation(), bitmask);
     setpassCut("maxIso03", p.combRelIsolation03(pu), bitmask);
+    setpassCut("maxPFIso", p.combRelPFIsolation(), bitmask);
     setpassCut("minIsGlobal", p.isGlobalMuon(), bitmask);
     setpassCut("minIsTracker", p.isTrackerMuon(), bitmask);
     setpassCut("minNMatches", p.numberOfMatches(), bitmask);

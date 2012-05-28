@@ -46,6 +46,7 @@ class TeVMuon : public pat::Muon{
   //computes the combined rel isolation value
   float combRelIsolation() const;
   float combRelIsolation03(const float offset) const;
+  float combRelPFIsolation() const;
   
 //////////////////////////////
 ///TeV Cut Functions//////////
@@ -144,6 +145,13 @@ inline float TeVMuon::combRelIsolation() const
 
 inline float TeVMuon::combRelIsolation03(const float offset) const{
   return (isolationR03().emEt + isolationR03().hadEt + isolationR03().sumPt - offset)
+    / pt();
+}
+
+//computes the combined rel isolation value
+inline float TeVMuon::combRelPFIsolation() const
+{
+  return ( chargedHadronIso() + neutralHadronIso() + photonIso() ) 
     / pt();
 }
 

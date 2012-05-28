@@ -17,6 +17,18 @@ muonSelectors = cms.PSet(
        minNMuonHits = cms.untracked.int32(1),
        minNMatches = cms.untracked.int32(2),
     ),
+    PFIso = cms.PSet(
+       minPt = cms.untracked.double(10.),
+       maxEta = cms.untracked.double(2.4),
+       minIsGlobal = cms.untracked.int32(1),
+       maxDxy = cms.untracked.double(0.2),
+       maxNormalizedChi2 = cms.untracked.double(10.0),
+       minNPixelHits = cms.untracked.int32(1),
+       minNMuonHits = cms.untracked.int32(1),
+       minNTrackerLayers = cms.untracked.int32(9),
+       minNMatches = cms.untracked.int32(2),
+       #maxPFIso = cms.untracked.double(???),#Added below in clones
+    ),
     WZLoose = cms.PSet(),
     WZRelaxed = cms.PSet(),
     WZTight = cms.PSet(),
@@ -36,6 +48,7 @@ muonSelectors = cms.PSet(
 #       minTrackerValidFrac = cms.untracked.double(),
     ),
     )
+###WprimeWZ
 muonSelectors.WZLoose = muonSelectors.VBTF.clone(
     minPt = 10.,
     maxIso03 = cms.untracked.double(0.15)
@@ -47,6 +60,19 @@ muonSelectors.WZTight = muonSelectors.VBTF.clone(
     minPt = 20.,
     maxIso03 = cms.untracked.double(0.1)
     )
+###EWKWZ
+muonSelectors.EWKWZLoose = muonSelectors.PFIso.clone(
+    minPt = 10.,
+    maxPFIso = cms.untracked.double(0.2)
+    )
+muonSelectors.EWKWZRelaxed = muonSelectors.PFIso.clone(
+    minPt = 20.
+    )
+muonSelectors.EWKWZTight = muonSelectors.PFIso.clone(
+    minPt = 20.,
+    maxPFIso = cms.untracked.double(0.12)
+    )
+###HadVZ
 muonSelectors.HadVZLoose = muonSelectors.exotica.clone(
     minPt = cms.untracked.double(20.),
 #    maxIso03 = cms.untracked.double(0.1)
@@ -135,6 +161,10 @@ jetSelectors = cms.PSet(
        minCHF = cms.untracked.double(0.0),
        maxCEF = cms.untracked.double(0.99),
        minCMult = cms.untracked.int32(0),
+       ),
+    Pat = cms.PSet(
+       minPt = cms.untracked.double(30.),
+       maxEta = cms.untracked.double(3.0),
        ),
     )
 
