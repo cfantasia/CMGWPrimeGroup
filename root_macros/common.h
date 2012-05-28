@@ -32,6 +32,17 @@ struct Value{
     return o;
   }
 
+  Value operator+( const Value &rhs ) const{
+    Value result = *this;     // Make a copy of myself.  Same as Value result(*this);
+    result += rhs;            // Use += to add other to the copy.
+    return result;
+  }
+  Value & operator+=(const Value &rhs) {
+    val += rhs.val;
+    err = sqrt(pow(err,2) + pow(rhs.err,2));
+    return *this;
+  }
+
 };
 
 TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
@@ -65,6 +76,44 @@ TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
       
     }
     if(j==0) hall = (TH1F*)hist->Clone("hall");
+    else     hall->Add(hist);
+
+  }
+  hall->Scale(weight);
+  return hall;
+}
+
+TH2F* get_sum_of_hists2D(TFile* f, const std::vector<std::string> & samples,
+                         const std::string& objName, int rebinme=0, float weight=1.){
+  TH2F* hall=NULL;
+  const int dim = samples.size();
+  if(dim == 0) return NULL;
+
+  for (unsigned j=0; j != samples.size(); ++j) {
+    std::string histname = samples[j] + "/" + objName;
+    TH2F* h = (TH2F*)f->Get(histname.c_str());
+    if(h == NULL){
+      std::cout<<"Failed Getting "<<histname<<std::endl;
+      abort();
+    }
+    TH2F* hist = (TH2F*)h->Clone("hist");
+
+
+    if(!hist->GetSumw2N()) hist->Sumw2();
+    if (rebinme){
+      float binwidth = hist->GetBinWidth(1);
+      std::string oldbin = Form("Events / %.0f", binwidth);
+      std::string newbin = Form("Events / %.0f", binwidth*rebinme);
+
+      hist->Rebin(rebinme);
+
+      std::string title = hist->GetYaxis()->GetTitle();
+      std::string::size_type pos = title.find(oldbin);
+      title.replace( pos, oldbin.size(), newbin );
+      hist->SetYTitle(title.c_str());
+      
+    }
+    if(j==0) hall = (TH2F*)hist->Clone("hall");
     else     hall->Add(hist);
 
   }
@@ -122,6 +171,19 @@ GetLumiUsed(TFile* f){
   bool valid = hLumi;
   if(!hLumi) std::cout<<" Failed getting hLumi"<<std::endl;
   return valid ? hLumi->GetBinContent(1) / hLumi->GetBinContent(2) : -1;
+}
+
+float
+GetSampleInfo(TH1F* h, std::string binName){
+  TAxis* axis = h->GetXaxis();
+  int bin = axis->FindBin(binName.c_str());
+  float value = h->GetBinContent(bin);
+  //Most parameters are not to be added (so average)
+  if(binName.find("Number of Events in root Files") == std::string::npos){
+    int nMerged = h->GetBinContent(axis->FindBin("Number of Files Merged"));
+    value /= nMerged;
+  }
+  return value;
 }
 
 #endif//#define _common_h_
