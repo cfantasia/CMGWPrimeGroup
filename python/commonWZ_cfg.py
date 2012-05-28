@@ -53,7 +53,9 @@ EWKWZCuts = cms.vstring(
     
     "MET",
 
-    "AllCuts")
+    "ZLep1Tight",
+    "ZLep2Tight",
+    )
 WprimeWZCuts = cms.vstring(
     "NoCuts", 
     "MinNLeptons",
@@ -71,6 +73,7 @@ WprimeWZCuts = cms.vstring(
     )
 WZFakeElecCuts = cms.vstring(
     "NoCuts", 
+    "MaxNVLLeptons",
     "MinNLeptons",
     "MinNTightLeptons",
     "FakeEvt",
@@ -80,12 +83,14 @@ WZFakeElecCuts = cms.vstring(
     "WFlavorMuon",
     
     "WTransMass",
+    "MaxNJets",
     "MET",
     
     "FakeLepProbe",
     )
 WZFakeMuonCuts = cms.vstring(
     "NoCuts", 
+    "MaxNVLLeptons",
     "MinNLeptons",
     "MinNTightLeptons",
     "FakeEvt",
@@ -95,6 +100,7 @@ WZFakeMuonCuts = cms.vstring(
     "WFlavorElec",
     
     "WTransMass",
+    "MaxNJets",
     "MET",
     
     "FakeLepProbe",
@@ -109,7 +115,7 @@ process.WprimeAnalyzer.LooseElectronType = cms.untracked.string("WZLoose")
 process.WprimeAnalyzer.TightElectronType = cms.untracked.string("WZTight")
 process.WprimeAnalyzer.LooseMuonType = cms.untracked.string("WZLoose")
 process.WprimeAnalyzer.TightMuonType = cms.untracked.string("WZTight")
-process.WprimeAnalyzer.LooseJetType = cms.untracked.string("Base")
+process.WprimeAnalyzer.LooseJetType = cms.untracked.string("Pat")
 
 ####Triggers
 DoubleTriggers = cms.vstring(
@@ -129,6 +135,9 @@ SingleElecTriggers = cms.vstring( 'HLT_Ele17_SW_L1R',  # from 2010 data
                                   'HLT_Ele52_CaloIdVT_TrkIdT_v*',                  #1e33 unprescaled
                                   'HLT_Ele65_CaloIdVT_TrkIdT_v*',                  #3e33 unprescaled
                                   'HLT_Ele80_CaloIdVT_TrkIdT_v*',
+                                  'HLT_Ele27_WP80_v*',
+                                  'HLT_Ele27_WP80_PFMET_MT50_v*',
+                                  'HLT_Ele80_CaloIdVT_TrkIdT_v*',
                                   )
 
 SingleMuonTriggers = cms.vstring(    'HLT_Mu15_v*',
@@ -141,6 +150,12 @@ SingleMuonTriggers = cms.vstring(    'HLT_Mu15_v*',
                                      'HLT_Mu30_v*',
                                      'HLT_Mu40_v*',         # 2.5e33 unprescaled
                                      'HLT_Mu40_eta2p1_v*',
+                                     'HLT_IsoMu15_v*',
+                                     'HLT_IsoMu17_v*',
+                                     'HLT_IsoMu24_v*',
+                                     'HLT_IsoMu30_v*',
+                                     'HLT_IsoMu40_v*',
+                                     'HLT_IsoMu24_eta2p1_v*',
                                      )
 process.WprimeAnalyzer.triggersToUse = DoubleTriggers
 
