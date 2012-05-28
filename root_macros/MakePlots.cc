@@ -55,6 +55,9 @@ struct Sample{
   }
 };
 
+enum Mode {kEWKWZ, kWprimeWZ, kHadVZ, kWprimeTB, kWprimeVW, kTTbar, kWZFakeRate};
+Mode mode_;
+
 std::vector< std::vector<Sample>* > samples_;
 std::vector<Sample> Data;
 std::vector<Sample> Bkg;
@@ -109,18 +112,32 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   lumiUsed_ = GetLumiUsed(fin);
   lumiWanted_ = lumiWanted > 0 ? lumiWanted : lumiUsed_;
 
-  cout<<"Lumi Used is "<<lumiUsed_<<" inv pb\n";
+  cout<<"Lumi Used was "<<lumiUsed_<<" inv pb\n";
   cout<<"Lumi Wanted is "<<lumiWanted_<<" inv pb\n";
 
   FillNameMap();
 
+  //Determine what analysis this is
+  if     (inName.find("EWKWZ") != string::npos) mode_ = kEWKWZ;
+  else if(inName.find("WprimeWZ") != string::npos) mode_ = kWprimeWZ;
+  else if(inName.find("WprimeVW") != string::npos) mode_ = kWprimeVW;
+  else if(inName.find("WprimeTB") != string::npos) mode_ = kWprimeTB;
+  else if(inName.find("HadVZ") != string::npos) mode_ = kHadVZ;
+  else if(inName.find("TTbar") != string::npos) mode_ = kTTbar;
+  else if(inName.find("WZFakeRate") != string::npos) mode_ = kWZFakeRate;
+  else{
+    cerr<<" Don't know what you're trying to plot with input file. "
+        <<inName<<endl;
+    abort();
+  }
+  if(debug_) cout<<"Mode is determined to be "<<mode_<<endl;
+
   /////Data Samples
-  if(inName.find("WprimeWZ") != string::npos 
-     || inName.find("EWKWZ") != string::npos
-     || inName.find("HadVW") != string::npos 
-     || inName.find("WprimeTB") != string::npos){
+  if(mode_ == kWprimeWZ || mode_ == kEWKWZ ||
+     mode_ == kWprimeVW || mode_ == kWprimeTB ||
+     mode_ == kWZFakeRate){
     Data.push_back(Sample("data"));
-  }else if(inName.find("HadVZ") != string::npos){
+  }else if(mode_ == kHadVZ){
     vector<string> vData;
 
     vData.push_back("data_DoubleMu-Run2011A-May10ReReco-v1");
@@ -144,7 +161,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     vData.push_back("data_DoubleElectron-Run2011B-PromptReco-v1");
     
     Data.push_back(Sample("data", vData, 1, 0, 0));     
-  }else if(inName.find("TTbar") != string::npos){
+  }else if(mode_ == kTTbar){
     vector<string> vData;
 
     vData.push_back("data-DiLeptonJet-V360B-SingleMu-Run2011A-May10ReReco-v1.txt");
@@ -168,18 +185,19 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     
   /////Background Samples
 
-  if(inName.find("WprimeWZ") != string::npos || inName.find("EWKWZ") != string::npos){
-    //Bkg.push_back(Sample("WJetsToLNu", kOrange+6, 1, kOrange+10));
-
-    //Bkg.push_back(Sample("ZZ", kOrange+3, 1, kOrange+10));
-    //Bkg.push_back(Sample("GVJets", kOrange+3, 1, kOrange+10));
-    //Bkg.push_back(Sample("WWTo2L2Nu", kOrange+3, 1, kOrange+10));
-    vector<string> VV;
-    VV.push_back("ZZ");
-    VV.push_back("GVJets");
-    VV.push_back("WWTo2L2Nu");
-    Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
-    
+  if(mode_ == kWprimeWZ || mode_ == kEWKWZ || mode_ == kWZFakeRate){
+    if(mode_ == kWZFakeRate){
+      Bkg.push_back(Sample("WJetsToLNu", kOrange+6, 1, kOrange+0));
+      Bkg.push_back(Sample("ZZ", kOrange+3, 1, kOrange+2));
+      Bkg.push_back(Sample("GVJets", kOrange+3, 1, kOrange+5));
+      Bkg.push_back(Sample("WWTo2L2Nu", kOrange+3, 1, kOrange+10));
+    }else{
+      vector<string> VV;
+      VV.push_back("ZZ");
+      VV.push_back("GVJets");
+      VV.push_back("WWTo2L2Nu");
+      Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
+    }
     Bkg.push_back(Sample("TTJets"  , kViolet+4, 1, kViolet+2));
     
     vector<string> ZJets; 
@@ -187,9 +205,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
  
     Bkg.push_back(Sample("WZJetsTo3LNu"       , kOrange+3, 1, kOrange-2));
-  }else if(inName.find("HadVZ") != string::npos || 
-           inName.find("HadVW") != string::npos ||
-           inName.find("WprimeTB") != string::npos){
+  }else if(mode_ == kHadVZ || mode_ == kWprimeVW || mode_ == kWprimeTB){
     vector<string> VV;
     VV.push_back("Fall11-ZZ");
     VV.push_back("Fall11-VGamma");
@@ -203,7 +219,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     ZJets.push_back("Fall11-DYJetsToLL_PtZ100");
     Bkg.push_back(Sample("ZJets", ZJets, kRed-7, 1, kRed-7));
     
-  }else if(inName.find("TTbar") != string::npos){
+  }else if(mode_ == kTTbar){
     Bkg.push_back(Sample("TTJets_TuneZ2_7TeV-madgraph-tauola"  , kBlue-7, 1, kBlue-7));
     Bkg.push_back(Sample("WJetsToLNu_TuneZ2_7TeV-madgraph-tauola", kRed-7, 1, kRed-7));
 
@@ -212,7 +228,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
 
   /////Signal Samples
 
-  if(inName.find("WprimeWZ") != string::npos){
+  if(mode_ == kWprimeWZ){
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-200", kBlue, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-250", kRed, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-300", kGreen, 1, 0));
@@ -227,7 +243,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     //Sig.push_back(Sample("TC_WZ_300",     1, 1, kBlue));
     //Sig.push_back(Sample("TC_WZ_400",     1, 1, kBlue));
     //Sig.push_back(Sample("TC_WZ_500",     1, 1, kRed));
-  }else if(inName.find("HadVZ") != string::npos){
+  }else if(mode_ == kHadVZ){
     vector<string> RS750;
     RS750.push_back("Summer11_RSZZeejj_750");
     RS750.push_back("Summer11_RSZZmmjj_750");
@@ -267,17 +283,13 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     //Sig.push_back(Sample("Summer11_RSZZmmjj_2000",     1, 1, 0));
     //Sig.push_back(Sample("Summer11_WprimeToWZTo2Q2L_M-500", kGray, 1, 0));
     //Sig.push_back(Sample("Summer11_WprimeToWZTo2Q2L_M-1000", kGray, 2, 0));
-  }else if(inName.find("HadVW") != string::npos){
-  }else if(inName.find("WprimeTB") != string::npos){
+  }else if(mode_ == kWprimeVW){
+  }else if(mode_ == kWprimeTB){
     Sig.push_back(Sample("WprimeTB_M-800", 1, 1, 0));
     Sig.push_back(Sample("WprimeTB_M-1000", kCyan, 1, 0));
     Sig.push_back(Sample("WprimeTB_M-1200", kPink, 1, 0));
     //Sig.push_back(Sample("WprimeTB_M-1500", 1, 1, 0));
     Sig.push_back(Sample("WprimeTB_M-2000", kMagenta, 1, 0));
-  }else{
-    cerr<<" Don't know what you're trying to plot with input file. "
-        <<inName<<endl;
-    abort();
   }
   CheckSamples(fin,Sig);
 
@@ -297,22 +309,25 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   vector<string> variable; 
 
   //These variables will be plotted after each cut always
-  if(inName.find("WprimeWZ") != string::npos){
+  if(mode_ == kWprimeWZ){
     variable.push_back("hWZMass");
-  }else if(inName.find("EWKWZ") != string::npos){
+  }else if(mode_ == kEWKWZ){
     variable.push_back("hZMass");
     variable.push_back("hWTransMass");
     variable.push_back("hMET");
-  }else if(inName.find("HadVZ") != string::npos){
+  }else if(mode_ == kHadVZ){
     variable.push_back("hVZMass");
     variable.push_back("hVZeeMass");
     variable.push_back("hVZmmMass");
+  }else if(mode_ == kWZFakeRate){
+    variable.push_back("hNJets");
+    variable.push_back("hWTransMass");
   }
 
   //These variables will be plotted after each cut unless you say "show"
   //They are cross checks but not critical to be shown
   if(opt.find("show") == string::npos){
-    if(inName.find("WprimeWZ") != string::npos){
+    if(mode_ == kWprimeWZ){
       variable.push_back("hWZ3e0muMass");
       variable.push_back("hWZ2e1muMass");
       variable.push_back("hWZ1e2muMass");
@@ -367,7 +382,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       variable.push_back("hTriLepMass");
       variable.push_back("hL1FastJet");
 
-    }else if(inName.find("EWKWZ") != string::npos){
+    }else if(mode_ == kEWKWZ){
       variable.push_back("hEvtType");          
       variable.push_back("hEvtTypeP");          
       variable.push_back("hEvtTypeM");          
@@ -376,10 +391,14 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       variable.push_back("hZeeMass");      
       variable.push_back("hZmmMass");  
 
+      variable.push_back("hWTransMass");
+      variable.push_back("hWenuTransMass");
+      variable.push_back("hWmnuTransMass");
+
       variable.push_back("hNJets");
       variable.push_back("hNVtxs");
       variable.push_back("hNLLeps");
-    }else if(inName.find("HadVZ") != string::npos){
+    }else if(mode_ == kHadVZ){
       variable.push_back("hVZpt");
 
       variable.push_back("hZMass");
@@ -394,7 +413,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
 
       variable.push_back("hNLJets");
       variable.push_back("hNLLeps");
-    }else if(inName.find("HadVW") != string::npos){
+    }else if(mode_ == kWprimeVW){
       variable.push_back("hVWMass");
       //Cory:variable.push_back("hVWenuMass");
       //Cory:variable.push_back("hVWmnuMass");
@@ -413,7 +432,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       variable.push_back("hNJets");
       variable.push_back("hNVtxs");
       //variable.push_back("hWeight");
-    }else if(inName.find("WprimeTB") != string::npos){
+    }else if(mode_ == kWprimeTB){
       variable.push_back("hTBMass");
       variable.push_back("hTBenuMass");
       variable.push_back("hTBmnuMass");
@@ -443,7 +462,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       variable.push_back("hNLBJets");
       variable.push_back("hNTBJets");
       variable.push_back("hWeight");
-    }else if(inName.find("TTbar") != string::npos){
+    }else if(mode_ == kTTbar){
       variable.push_back("hTMass");
       variable.push_back("hT2Mass");
 
@@ -467,8 +486,8 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   if(opt.find("show") == string::npos){
     //This is the # of evts after each cut (stacked)
     DrawandSave(fin,outName,efftitle[0],"Title: "+efftitle[0], 1, 0);
-    //This is the # of evts after each cut
-    DrawandSave(fin,outName,efftitle[0],"Title: "+efftitle[0], 1, 1);
+    //This is the # of evts after each cut (buggy)
+    //DrawandSave(fin,outName,efftitle[0],"Title: "+efftitle[0], 1, 1);
   }
 
   //Determine where to start showing plots
@@ -485,22 +504,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       string title = variable[i] + "_" + Cuts[j];
       string bkmark = "Title: " + title;
 
-      bool log = 1;
-      DrawandSave(fin,outName,title,bkmark,log,0,0);
-
-      if(opt.find("show") != string::npos) 
-        DrawandSave(fin,outName,title,bkmark,log,0,1);
-
-    }
-  }
-
-  //Make plots for multiple cut stages
-  for(uint i=0;i<variable.size();++i){
-    for(uint j=begin;j<Cuts.size();++j){
-      string title = variable[i] + "_" + Cuts[j];
-      string bkmark = "Title: " + title;
-
-      bool log = 1;
+      bool log = 0;
       DrawandSave(fin,outName,title,bkmark,log,0,0);
 
       if(opt.find("show") != string::npos) 
@@ -510,7 +514,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   }
 
   //Make plots for a single cut
-  if(inName.find("WprimeWZ") != string::npos){
+  if(mode_ == kWprimeWZ){
     if(opt.find("show") == string::npos) {
       DrawandSave(fin,outName,"hZeeMass_Ht","Title: Z Mass After Ht Zee",0);
       DrawandSave(fin,outName,"hZmmMass_Ht","Title: Z Mass After Ht Zmm",0);
@@ -527,7 +531,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       DrawandSave(fin,outName,"hWenuTransMass_ValidW","Title: W TMass After Valid Wen",1);
       DrawandSave(fin,outName,"hWmnuTransMass_ValidW","Title: W TMass After Valid Wmu",1);
 
-//Adding bunch of MET plots
+      //Adding bunch of MET plots
       DrawandSave(fin,outName,"hMET_ValidW","Title: MET After Valid W",1);
       DrawandSave(fin,outName,"hMETee_ValidW","Title: MET After Valid W (zee)",1);
       DrawandSave(fin,outName,"hMETmm_ValidW","Title: MET After Valid W (Zmm)",1);
@@ -543,7 +547,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       DrawandSave(fin,outName,"hMET_ValidW","Title: MET After Valid W",0,0,1);
       DrawandSave(fin,outName,"hMETee_ValidW","Title: MET After Valid W (zee)",0,0,1);
       DrawandSave(fin,outName,"hMETmm_ValidW","Title: MET After Valid W (Zmm)",0,0,1);
-//End MET
+      //End MET
 
       DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Cumlative Ht before Ht Cut",1,0,1);
 
@@ -582,8 +586,54 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       WZMassChannels.push_back("hWZ0e3muMass_ValidWZCand");
       DrawandSave(fin,outName,WZMassChannels,"Title: WZ Mass By Channel",1);
     }
-  }else if(inName.find("EWKWZ") != string::npos){
-  }else if(inName.find("HadVZ") != string::npos){
+  }else if(mode_ == kEWKWZ){
+      vector<string> NVtxs2Channels;
+      NVtxs2Channels.push_back("hNVtxsZee_ValidZ");
+      NVtxs2Channels.push_back("hNVtxsZmm_ValidZ");
+      DrawandSave(fin,outName,NVtxs2Channels,"Title: NVtx By Channel",0);
+
+      vector<string> ZMass2Channels_ValidZ;
+      ZMass2Channels_ValidZ.push_back("hZeeMass_ValidZ");
+      ZMass2Channels_ValidZ.push_back("hZmmMass_ValidZ");
+      DrawandSave(fin,outName,ZMass2Channels_ValidZ,"Title: Z Mass By Channel After Valid Z",0);
+
+      vector<string> ZMass2Channels;
+      ZMass2Channels.push_back("hZeeMass_ValidW");
+      ZMass2Channels.push_back("hZmmMass_ValidW");
+      DrawandSave(fin,outName,ZMass2Channels,"Title: Z Mass 2 By Channel",0);
+
+      vector<string> ZMass4Channels;
+      ZMass4Channels.push_back("hZ3e0mMass_ValidW");
+      ZMass4Channels.push_back("hZ2e1mMass_ValidW");
+      ZMass4Channels.push_back("hZ1e2mMass_ValidW");
+      ZMass4Channels.push_back("hZ0e3mMass_ValidW");
+      DrawandSave(fin,outName,ZMass4Channels,"Title: Z Mass By 4 Channels",0);
+
+      vector<string> MET2Channels;
+      MET2Channels.push_back("hMETee_ValidW");
+      MET2Channels.push_back("hMETmm_ValidW");
+      DrawandSave(fin,outName,MET2Channels,"Title: MET By 2 Channel",0);
+
+      vector<string> MET4Channels;
+      MET4Channels.push_back("hMET3e0m_ValidW");
+      MET4Channels.push_back("hMET2e1m_ValidW");
+      MET4Channels.push_back("hMET1e2m_ValidW");
+      MET4Channels.push_back("hMET0e3m_ValidW");
+      DrawandSave(fin,outName,MET4Channels,"Title: MET By 4 Channel",0, 0, 0, 0);
+
+      vector<string> WTMass2Channels;
+      WTMass2Channels.push_back("hWenuTransMass_ValidW");
+      WTMass2Channels.push_back("hWmnuTransMass_ValidW");
+      DrawandSave(fin,outName,WTMass2Channels,"Title: W TransMass By 2 Channel",0);
+
+      vector<string> WTMass4Channels;
+      WTMass4Channels.push_back("hW3e0mTransMass_ValidW");
+      WTMass4Channels.push_back("hW2e1mTransMass_ValidW");
+      WTMass4Channels.push_back("hW1e2mTransMass_ValidW");
+      WTMass4Channels.push_back("hW0e3mTransMass_ValidW");
+      DrawandSave(fin,outName,WTMass4Channels,"Title: W TransMass By 4 Channel",0);
+
+  }else if(mode_ == kHadVZ){
     if(opt.find("show") == string::npos) {
       DrawandSave(fin,outName,"h_bestmass","Title: Best Mass",1);
       DrawandSave(fin,outName,"heeVMass_ValidV","Title: Leading Jet Mass",1);
@@ -625,7 +675,8 @@ DrawandSave(TFile* fin, string pdfName, vstring title, string bookmark, bool log
   if(!logy) filename += "_Linear"; 
   if(cum)  filename += "_Cumlative";
   filename += ".pdf";
-  if(debug_) cout<<"In DrawandSave with filename "<<filename<<endl;
+  if(debug_) cout<<"In DrawandSave with filename "<<filename
+                 <<" and "<<title.size()<<" sub plots"<<endl;
   
   TCanvas* canvas = new TCanvas();
   int nsubplots = title.size();
@@ -771,8 +822,22 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
       if(debug_) cout<<"i: "<<i<<" j:"<<j<<endl;
       Sample& curSample = samples_[i]->at(j);//Let's make this easy
 
-      curSample.hist = get_sum_of_hists(fin, curSample.names, title, rebin);
-      if(!validHist && curSample.hist->Integral() > 0)
+      ///Add ability to use Data Driven Methods instead of MC//////
+      vector<string> names = curSample.names;
+      if(0 && mode_ == kEWKWZ){
+        if(title.find("hMET3e0m_ValidW") != string::npos ||
+           title.find("hMET2e1m_ValidW") != string::npos ||
+           title.find("hMET1e2m_ValidW") != string::npos ||
+           title.find("hMET0e3m_ValidW") != string::npos ){
+          //loop over names and replace MC dir with Data driven
+          replace (names.begin(), names.end(), (string)"DYJetsToLL", (string)"DYJetsToLL-DataDriven");
+          //don't change title for other MC/data
+        }
+      }
+      ///////////
+
+      curSample.hist = get_sum_of_hists(fin, names, title, rebin);
+      if(!validHist && curSample.hist->Integral() > 0)//Only count filled histos
         validHist = true;
       curSample.hist->SetLineStyle(curSample.style);
       curSample.hist->SetLineColor(curSample.line); 
@@ -803,6 +868,7 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
       }
     }
   }
+  if(debug_) cout<<" validHist = "<<validHist<<endl;
   return validHist;
 }
 
@@ -812,11 +878,20 @@ CheckSamples(TFile* fin, vector<Sample> & sample){
   for(size_t i=0; i<sample.size(); ++i){
     for(size_t j=0; j<sample[i].names.size(); ++j){
       if(debug_) cout<<"Checking key "<<sample[i].names[j]<<endl;
+      //Check if folder exists
       if(!fin->GetKey((sample[i].names[j]).c_str() )){
         cout<<"Didn't find "<<sample[i].names[j]<<". Removing."<<endl;
         sample.erase(sample.begin()+i);
         i--;
       }
+      continue;///////Cory: FIXXXXX
+      //Check if all subjobs finished
+      TH1F* hInfo = (TH1F*) fin->Get(Form("%s/hFileInfo", sample[i].names[j].c_str()));
+      assert(hInfo);
+      int nJobsTotal = GetSampleInfo(hInfo, "Number of SubSamples");
+      int nJobsDone  = GetSampleInfo(hInfo, "Number of Files Merged");
+      if(nJobsDone != nJobsTotal) printf("Only %i of %i jobs finished for %s",
+                                         nJobsDone, nJobsTotal, sample[i].names[j].c_str());
     }
   }
 }
@@ -871,6 +946,15 @@ ChangeAxisRange(const string & filename, TAxis* xaxis){
       filename.find("hWZ0e3muMass_") != string::npos ||
       filename.find("hWZMass_") != string::npos){
     xaxis->SetRangeUser(0,1500);
+    //hpull->SetAxisRange( -3., 3., "Y");
+  }else if (filename.find("hMET_") != string::npos ||
+            filename.find("hMETee_") != string::npos ||
+            filename.find("hMETmm_") != string::npos ||
+            filename.find("hMET3e0m_") != string::npos ||
+            filename.find("hMET2e1m_") != string::npos ||
+            filename.find("hMET1e2m_") != string::npos ||
+            filename.find("hMET0e3m_") != string::npos){
+    xaxis->SetRangeUser(0,300);
     //hpull->SetAxisRange( -3., 3., "Y");
   }
 }
@@ -1022,6 +1106,8 @@ FillNameMap(){
   SampleNames["ZZTo4L_TuneZ2"]="ZZ\\rightarrow4l";
   SampleNames["PhotonVJets"]="V\\gamma";
   SampleNames["VV"]="ZZ/Z#gamma";//"VV";
+  SampleNames["GVJets"]="V#gamma";//"VV";
+  SampleNames["ZZ"]="ZZ";//"VV";
   SampleNames["DYJetsToLL"]="DY+Jets\\rightarrow2l";
   SampleNames["Fall11-DYJetsToLL"]="DY+Jets\\rightarrow2l";
   SampleNames["ZJets"]="Z+Jets";
