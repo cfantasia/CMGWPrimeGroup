@@ -1,4 +1,5 @@
-//Usage: root -b -q 'printNEvts.C+(file, evtType)'
+//Usage: root -b -l -q 'printNEvts.C+(file, evtType)'
+//eg: root -b -l -q 'printNEvts.C+("../../../EWKWZ.root", -1)'
 
 #include <vector>
 #include "THStack.h"
@@ -12,12 +13,12 @@ printNEvts(string infile, int evtType=-1){
 
   vector<pair<vector<string>, string> > Samples;
 
-  if(infile.find("WprimeWZ") != string::npos){
+  if(infile.find("WprimeWZ") != string::npos  || infile.find("EWKWZ") != string::npos){
     Samples.push_back(make_pair(vector<string>(1,"DYJetsToLL"),"$Z+jets$"));
     Samples.push_back(make_pair(vector<string>(1,"TTJets"), "$t\\bar{t}$"));
     Samples.push_back(make_pair(vector<string>(1,"ZZ"), "$ZZ$"));
     Samples.push_back(make_pair(vector<string>(1,"GVJets"), "$V\\gamma$"));
-    Samples.push_back(make_pair(vector<string>(1,"WJetsToLNu"), "$W+jets$"));
+    //Samples.push_back(make_pair(vector<string>(1,"WJetsToLNu"), "$W+jets$"));
     Samples.push_back(make_pair(vector<string>(1,"WWTo2L2Nu"), "$WW$"));
     Samples.push_back(make_pair(vector<string>(1,"WZJetsTo3LNu"), "$WZ$"));
   }else if(infile.find("HadVZ") != string::npos){
@@ -69,7 +70,7 @@ printNEvts(string infile, int evtType=-1){
   Samples.push_back(make_pair(vector<string>(), "BREAK"));//Print hline
 
   //signal
-  if(infile.find("WprimeWZ") != string::npos || infile.find("EWKWZ") != string::npos){
+  if(infile.find("WprimeWZ") != string::npos){
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-200"), "200"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-250"), "250"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-300"), "300"));
@@ -142,7 +143,8 @@ printNEvts(string infile, int evtType=-1){
     }
     levels.push_back(make_pair("ValidW", "W Selection"));
     levels.push_back(make_pair("MET", "\\MET"));
-    //levels.push_back(make_pair("ValidWZCand", "WZ"));
+    levels.push_back(make_pair("ZLep1Tight", "TT"));
+    levels.push_back(make_pair("ZLep2Tight", "TTT"));
   }else if(infile.find("HadVZ") != string::npos){
     if(evtType == -1){
     }
