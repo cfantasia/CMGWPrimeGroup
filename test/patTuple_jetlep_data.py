@@ -9,7 +9,8 @@ removeMCMatching(process, ['All'])
 jetlep_config(process, 1000, 100)
 
 
-addHLTFilter(process, 'HLT', "singlemu")
+addHLTFilter(process, 'HLT', "off")#For initial testing
+#addHLTFilter(process, 'HLT', "singlemu")
 #addHLTFilter(process, 'HLT', "singleelectron")
 #addHLTFilter(process, 'HLT', "doublemu")
 #addHLTFilter(process, 'HLT', "doubleelectron")
