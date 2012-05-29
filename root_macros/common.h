@@ -22,7 +22,7 @@ struct Value{
       Value temp(val);
       return temp.findPrecision()+nExtra-1;//-1 is since we always print 1 sig fig
     }else if(err == 0) return 0;
-    return max(-1*floor(log10(err)), 0.); 
+    return max(-1*floor(log10(err)), (float)0.); 
   }
 
   friend std::ostream& operator << (std::ostream &o, const Value & v){
@@ -176,11 +176,16 @@ GetLumiUsed(TFile* f){
 float
 GetSampleInfo(TH1F* h, std::string binName){
   TAxis* axis = h->GetXaxis();
-  int bin = axis->FindBin(binName.c_str());
+  int bin = axis->FindBin(binName.c_str()); 
+  if(bin == 0) std::cout<<"Didn't find bin with name "<<binName<<std::endl;
+  //printf("bin named %s is bin number %i\n", binName.c_str(), bin);
   float value = h->GetBinContent(bin);
+  //printf("value: %f \n", value);
   //Most parameters are not to be added (so average)
-  if(binName.find("Number of Events in root Files") == std::string::npos){
+  if(binName.find("Number of Events in root Files") == std::string::npos &&
+     binName.find("Number of Files Merged")         == std::string::npos ){
     int nMerged = h->GetBinContent(axis->FindBin("Number of Files Merged"));
+    //printf("value: %f and nMerged: %i\n", value, nMerged);
     value /= nMerged;
   }
   return value;
