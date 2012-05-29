@@ -12,4 +12,4 @@ def mc_config(process, cms):
     )
 )
 
-    process.GlobalTag.globaltag = 'START42_V17::All'
+    process.GlobalTag.globaltag = 'START52_V9::All'
