@@ -24,13 +24,15 @@ singleElectronPaths = [
 doubleElectronPaths = [
     'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
     'HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v*',#early version, MC
-    'HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*'
+    'HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*',
+    'HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_v6',
+    'HLT_DoubleEle33_CaloIdT_v9',
     ]
 
 
 def addHLTFilter(process, hltProcess='HLT', mode='mc'):
     "Add HLT filter used to keep datasets orthogonal."
-    if mode == 'mc' or mode == 'allmueg':
+    if mode == 'mc' or mode == 'allmueg' or mode == 'off':
         ## Give hltFilter a dummy producer (so it always passes).
         ## This will be removed anyway in configureFilters.
         process.hltFilter = cms.EDProducer("EventCountProducer")
