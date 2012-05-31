@@ -37,6 +37,7 @@ using namespace std;
 struct Sample{
   std::string name;
   std::vector<std::string> names;
+  std::vector<float> weights;
   int line;
   int style;
   int fill;
@@ -45,13 +46,13 @@ struct Sample{
     line = 0; style = 0; fill=0; hist=NULL;
   }
   Sample(std::string n){
-    name = n; names.push_back(n); line = 1; style = 0; fill = 0; hist=NULL;
+    name = n; names.push_back(n); weights.push_back(1.); line = 1; style = 0; fill = 0; hist=NULL; 
   }
   Sample(std::string n, int l, int s, int f){
-    name = n; names.push_back(n); line = l; style = s; fill = f; hist=NULL;
+    name = n; names.push_back(n); weights.push_back(1.); line = l; style = s; fill = f; hist=NULL;
   }
   Sample(std::string n, std::vector<std::string> ns, int l, int s, int f){
-    name = n; names = ns; line = l; style = s; fill = f; hist=NULL;
+    name = n; names = ns; weights.assign(names.size(), 1.); line = l; style = s; fill = f; hist=NULL;
   }
 };
 
@@ -73,8 +74,8 @@ bool paperMode_ = false;
 
 typedef std::vector<std::string> vstring;
 
-int main(int argc, char ** argv);
-void MakePlots(string inName, string outName, string opt="", float lumiWanted=-1);
+//int main(int argc, char ** argv);
+void MakePlots(string inName, string outName="", string opt="", float lumiWanted=-1);
 void DrawandSave(TFile* fin, std::string pdfName, std::string title, std::string bookmark, bool logy=1, bool eff=0, bool cum=0, bool pull=0, TLine* line=NULL);
 void DrawandSave(TFile* fin, std::string pdfName, vstring title, std::string bookmark, bool logy=1, bool eff=0, bool cum=0, bool pull=1, TLine* line=NULL);
 TH1F* FillCum(TH1F* h);
@@ -108,6 +109,13 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   }
   gROOT->ForceStyle();
   
+  if(outName.empty()){
+    size_t found = inName.find_last_of("/\\");
+    outName = inName.substr(found+1);
+    outName.replace(outName.find(".root"), 5, ".pdf"); 
+    cout<<"Using output file "<<outName<<endl;
+  }
+
   TFile *fin = TFile::Open(inName.c_str(), "read"); assert(fin);
   lumiUsed_ = GetLumiUsed(fin);
   lumiWanted_ = lumiWanted > 0 ? lumiWanted : lumiUsed_;
@@ -188,7 +196,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   if(mode_ == kWprimeWZ || mode_ == kEWKWZ || mode_ == kWZFakeRate){
     if(mode_ == kWZFakeRate){
       Bkg.push_back(Sample("WJetsToLNu", kOrange+6, 1, kOrange+0));
-      Bkg.push_back(Sample("ZZ", kOrange+3, 1, kOrange+2));
+      Bkg.push_back(Sample("ZZ", kGreen+3, 1, kGreen+2));
       Bkg.push_back(Sample("GVJets", kOrange+3, 1, kOrange+5));
       Bkg.push_back(Sample("WWTo2L2Nu", kOrange+3, 1, kOrange+10));
     }else{
@@ -322,6 +330,9 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   }else if(mode_ == kWZFakeRate){
     variable.push_back("hNJets");
     variable.push_back("hWTransMass");
+    variable.push_back("hDeltaPhiWJet");
+    variable.push_back("hLeadElecPt");
+    variable.push_back("hLeadMuonPt");
   }
 
   //These variables will be plotted after each cut unless you say "show"
@@ -478,7 +489,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     }
   }
 
-  TCanvas c1; 
+  TCanvas c1;
   c1.Print(Form("%s[", outName.c_str()), "pdf"); //Open .pdf
 
   //Plot the # of Evts plot
@@ -836,14 +847,14 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
       }
       ///////////
 
-      curSample.hist = get_sum_of_hists(fin, names, title, rebin);
+      curSample.hist = get_sum_of_hists(fin, names, title, rebin, curSample.weights);
       if(!validHist && curSample.hist->Integral() > 0)//Only count filled histos
         validHist = true;
       curSample.hist->SetLineStyle(curSample.style);
       curSample.hist->SetLineColor(curSample.line); 
 
       if(samples_[i] != &Data) curSample.hist->Scale(lumiWanted_/lumiUsed_); //Don't scale data
-
+      
       if(!eff){
         curSample.hist->SetFillColor(curSample.fill);
         if(cum){//Do you want a cumlative distrubution
@@ -879,19 +890,22 @@ CheckSamples(TFile* fin, vector<Sample> & sample){
     for(size_t j=0; j<sample[i].names.size(); ++j){
       if(debug_) cout<<"Checking key "<<sample[i].names[j]<<endl;
       //Check if folder exists
-      if(!fin->GetKey((sample[i].names[j]).c_str() )){
-        cout<<"Didn't find "<<sample[i].names[j]<<". Removing."<<endl;
+      TH1F* hInfo = (TH1F*) fin->Get(Form("%s/hFileInfo", sample[i].names[j].c_str()));
+      if(!fin->GetKey((sample[i].names[j]).c_str() ) || !hInfo){
+        if(hInfo) cout<<"Didn't find folder: "<<sample[i].names[j]<<". Removing."<<endl;
+        else      cout<<"Didn't find hFileInfo for sample "<<sample[i].names[j]<<". Removing."<<endl;
         sample.erase(sample.begin()+i);
         i--;
+        continue;
       }
-      continue;///////Cory: FIXXXXX
       //Check if all subjobs finished
-      TH1F* hInfo = (TH1F*) fin->Get(Form("%s/hFileInfo", sample[i].names[j].c_str()));
-      assert(hInfo);
       int nJobsTotal = GetSampleInfo(hInfo, "Number of SubSamples");
       int nJobsDone  = GetSampleInfo(hInfo, "Number of Files Merged");
-      if(nJobsDone != nJobsTotal) printf("Only %i of %i jobs finished for %s",
+      if(nJobsTotal == 0) continue;//Cory: Didn't record this so skip for now.  Delete soon (2012-05-31)
+      if(nJobsDone != nJobsTotal) printf(" Only %i of %i jobs finished for %s.  Scaling to compensate\n",
                                          nJobsDone, nJobsTotal, sample[i].names[j].c_str());
+      //Scale sample to compensate for missing jobs
+      sample[i].weights[j] = (float) nJobsTotal / nJobsDone;
     }
   }
 }
@@ -956,7 +970,14 @@ ChangeAxisRange(const string & filename, TAxis* xaxis){
             filename.find("hMET0e3m_") != string::npos){
     xaxis->SetRangeUser(0,300);
     //hpull->SetAxisRange( -3., 3., "Y");
+  }else if (filename.find("hLeadMuonPt_") != string::npos ||
+            filename.find("hLeadElecPt_") != string::npos){
+    xaxis->SetRangeUser(0,200);
+    //hpull->SetAxisRange( -3., 3., "Y");
   }
+
+  
+
 }
 
 TH1F*
@@ -995,7 +1016,7 @@ GetDataStack(string title){
 
 THStack*
 GetBkgStack(string title){
-  if(debug_) cout<<"Creating Bkg Stack\n";
+  if(debug_) cout<<"Creating Bkg Stack with title: "<<title<<endl;
   THStack* sBkg = new THStack("sBkg",title.c_str());
   
   for(uint i=0; i<Bkg.size(); i++){
@@ -1006,7 +1027,7 @@ GetBkgStack(string title){
 
 vector<THStack*>
 GetSigStacks(string title, THStack* sBkg){
-  if(debug_) cout<<"Creating Sig Stack\n";
+  if(debug_) cout<<"Creating Sig Stack with title: "<<title<<endl;
   vector<THStack*> sSigs(Sig.size(),NULL);
   for(uint isig=0; isig<Sig.size(); ++isig){
     sSigs[isig] = (THStack*) sBkg->Clone();
@@ -1144,7 +1165,7 @@ FillNameMap(){
   SampleNames["Summer11_WprimeToWZTo2Q2L_M-500"]="W' 500";
   SampleNames["Summer11_WprimeToWZTo2Q2L_M-1000"]="W' 1000";
 }
-
+/*
 int 
 main(int argc, char ** argv){
   if(argc > 4){
@@ -1155,4 +1176,4 @@ main(int argc, char ** argv){
 
   return 0;
 }
-
+*/

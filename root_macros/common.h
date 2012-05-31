@@ -22,7 +22,7 @@ struct Value{
       Value temp(val);
       return temp.findPrecision()+nExtra-1;//-1 is since we always print 1 sig fig
     }else if(err == 0) return 0;
-    return max(-1*floor(log10(err)), (float)0.); 
+    return std::max(-1*floor(log10(err)), 0.); 
   }
 
   friend std::ostream& operator << (std::ostream &o, const Value & v){
@@ -46,7 +46,14 @@ struct Value{
 };
 
 TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
-                       const std::string& objName, int rebinme=0, float weight=1.){
+                       const std::string& objName, int rebinme, float weight){
+  vector<float> weights(samples.size(), weight);
+  return get_sum_of_hists(f, samples, objName, rebinme, weight);
+                        
+}
+
+TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
+                       const std::string& objName, int rebinme=0, const std::vector<float> & weights=std::vector<float>()){
   TH1F* hall=NULL;
   const int dim = samples.size();
   if(dim == 0) return NULL;
@@ -68,6 +75,7 @@ TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
       std::string newbin = Form("Events / %.0f", binwidth*rebinme);
 
       hist->Rebin(rebinme);
+      if(weights.size() == samples.size()) hist->Scale(weights[j]);
 
       std::string title = hist->GetYaxis()->GetTitle();
       std::string::size_type pos = title.find(oldbin);
@@ -79,7 +87,6 @@ TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
     else     hall->Add(hist);
 
   }
-  hall->Scale(weight);
   return hall;
 }
 
