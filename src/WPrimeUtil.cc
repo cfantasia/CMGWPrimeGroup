@@ -118,6 +118,7 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles, cons
         vstring pathnames = new_file->pathnames;
         new_file->splitInto = (fileToRun == -1 || !pathnames.size()) ? 1 : std::min(pathnames.size(), (size_t) new_file->splitInto);
         size_t nPerFile = ceil((float) pathnames.size() / new_file->splitInto);
+        new_file->splitInto = ceil((float) pathnames.size() / nPerFile);//Make sure we need all the jobs
         string descrip = new_file->description;
         if(new_file->splitInto > 1)
           cout<<"Trying to split file with "<<pathnames.size()<<" files into "
