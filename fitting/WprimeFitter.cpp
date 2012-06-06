@@ -339,6 +339,8 @@ void WprimeFitter::calculateObservedLimit(int sig_i, ofstream & tracking)
   
   RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
 		       sig_model, *(resolution[sig_i]));
+  SigPdf.setBufferFraction(0.6);
+
   // COPY + PASTE FROM runPseudoExperiments - NEED A BETTER WAY
   
   RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
@@ -385,7 +387,8 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
   
   RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
 		       sig_model, *(resolution[sig_i]));
-  
+  SigPdf.setBufferFraction(0.6);
+
   //make signal model
   TH1F * hSig = (TH1F*)sig_hist[sig_i]->Clone("hSig");
   
@@ -525,9 +528,9 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
   Nevt[sig_i].Ntot = Nsig+Nbgd;      
 
   RooMCStudy * mcs = new RooMCStudy(*model, *mt, FitModel(SigBgdPdf),
-			 Binned(), Silence(), Extended(kTRUE), 
-			 FitOptions(Range("mt_fit"),Extended(kTRUE),
-				    PrintEvalErrors(0)));
+				    Silence(), Extended(kTRUE), //Binned(), 
+				    FitOptions(Range("mt_fit"),Extended(kTRUE),
+					       PrintEvalErrors(0)));
   
   RooDLLSignificanceMCSModule2 sigModule(nsig,0);
   mcs->addModule(sigModule);
@@ -553,6 +556,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
     JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
     RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
 			 sig_model, *(resolution[sig_i]));
+    SigPdf.setBufferFraction(0.6);
     RooRealVar nsigH0("nsigH0", "# of signal events from H0 fit", 0);
     RooRealVar nsigH1("nsigH1", "# of signal events from H1 fit", 
 		      mcs->fitParams(0)->getRealValue("nsig"));
