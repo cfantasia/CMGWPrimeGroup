@@ -22,7 +22,7 @@ struct Value{
       Value temp(val);
       return temp.findPrecision()+nExtra-1;//-1 is since we always print 1 sig fig
     }else if(err == 0) return 0;
-    return std::max(-1*floor(log10(err)), 0.); 
+    return std::max(-1.*floor(log10(err)), 0.); 
   }
 
   friend std::ostream& operator << (std::ostream &o, const Value & v){
