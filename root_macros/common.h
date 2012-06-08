@@ -12,10 +12,15 @@ struct Value{
   float val;
   float err;
 
-  Value():val(1),err(1){}//Let's not mess up log10
+  Value():val(0),err(0){}//Let's not mess up log10
   Value(float v):val(v),err(v){}
-  Value(float v, float e):val(v),err(e){}
-  
+  Value(float v, float e):val(v),err(e){
+    if(e < 0.) err = sqrt(val);
+  }
+  Value(Value v, float f){
+    val = v.val;
+    err = f < 0. ? sqrt(val) : f;
+  }
   int findPrecision() const{
     if(err < 0.){
       int nExtra = abs((int)err);
@@ -40,6 +45,16 @@ struct Value{
   Value & operator+=(const Value &rhs) {
     val += rhs.val;
     err = sqrt(pow(err,2) + pow(rhs.err,2));
+    return *this;
+  }
+  Value operator-( const Value &rhs ) const{
+    Value result = *this;     // Make a copy of myself.  Same as Value result(*this);
+    result -= rhs;            // Use -= to add other to the copy.
+    return result;
+  }
+  Value & operator-=(const Value &rhs) {
+    val -= rhs.val;
+    err = sqrt(pow(err,2) + pow(rhs.err,2));//Cory: Wrong.  What should it be?
     return *this;
   }
 
@@ -75,7 +90,6 @@ TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
       std::string newbin = Form("Events / %.0f", binwidth*rebinme);
 
       hist->Rebin(rebinme);
-      if(weights.size() == samples.size()) hist->Scale(weights[j]);
 
       std::string title = hist->GetYaxis()->GetTitle();
       std::string::size_type pos = title.find(oldbin);
@@ -83,6 +97,9 @@ TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
       hist->SetYTitle(title.c_str());
       
     }
+    //if(weights.size() == samples.size()) printf("scaling %s by %.2f!!!\n", samples[j].c_str(), weights[j]);
+    if(weights.size() == samples.size()) hist->Scale(weights[j]);
+
     if(j==0) hall = (TH1F*)hist->Clone("hall");
     else     hall->Add(hist);
 
