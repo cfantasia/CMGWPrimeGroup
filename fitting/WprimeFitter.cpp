@@ -60,7 +60,10 @@ void WprimeFitter::init()
 
   pXMIN = min(fXMIN, bXMIN); pXMAX = fXMAX;
   XMIN = 0; XMAX = 2500;
-  rXMIN = -600; rXMAX = 600;
+  if(channel_ == wprime_MuMET)
+    {rXMIN = -600; rXMAX = 600;}
+  else if (channel_ == wprime_ElMET)
+    {rXMIN = -800; rXMAX = 800;}
 
   mt = new RooRealVar("Mt", "M_{T} GeV/c^{2}", pXMIN, pXMAX);
   mt->setRange("mt_fit", fXMIN, fXMAX);
@@ -557,25 +560,27 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
     RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
 			 sig_model, *(resolution[sig_i]));
     SigPdf.setBufferFraction(0.6);
-    RooRealVar nsigH0("nsigH0", "# of signal events from H0 fit", 0);
-    RooRealVar nsigH1("nsigH1", "# of signal events from H1 fit", 
-		      mcs->fitParams(0)->getRealValue("nsig"));
-    RooRealVar nbgdH0("nbgdH0", "# of background events from H0 fit", 
-		      mcs->fitParams(0)->getRealValue("nbgd_H0"));
-    RooRealVar nbgdH1("nbgdH1", "# of background events from H1 fit", 
-		      mcs->fitParams(0)->getRealValue("nbgd"));
-    RooAddPdf SigBgdPdfH0("SigBgdPdfH0", "SigBgdPdfH0", RooArgList(SigPdf,*BgdPdf),
-			  RooArgList(nsigH0, nbgdH0));
-    RooAddPdf SigBgdPdfH1("SigBgdPdfH1", "SigBgdPdfH1", RooArgList(SigPdf,*BgdPdf),
-			  RooArgList(nsigH1, nbgdH1));
 
-    RooPlot* xframe3 = mt->frame(Range("mt_fit"), Title("Transverse mass with H0 and H1 fits for PE #0"));
-    model->plotOn(xframe3, Name("model"));
-    SigBgdPdfH0.plotOn(xframe3, Name("fitH0"));
-    SigBgdPdfH1.plotOn(xframe3, Name("fitH1"));
-    //xframe3->SetMaximum(10000); xframe3->SetMinimum(0.1);
-    new TCanvas(); gPad->SetLogy();
-    xframe3->Draw();
+    for(int pe_num=0; pe_num<10; pe_num++){
+      RooRealVar nsigH0("nsigH0", "# of signal events from H0 fit", 0);
+      RooRealVar nsigH1("nsigH1", "# of signal events from H1 fit", 
+			mcs->fitParams(0)->getRealValue("nsig"));
+      RooRealVar nbgdH0("nbgdH0", "# of background events from H0 fit", 
+			mcs->fitParams(0)->getRealValue("nbgd_H0"));
+      RooRealVar nbgdH1("nbgdH1", "# of background events from H1 fit", 
+			mcs->fitParams(0)->getRealValue("nbgd"));
+      RooAddPdf SigBgdPdfH0("SigBgdPdfH0", "SigBgdPdfH0", RooArgList(SigPdf,*BgdPdf),
+			    RooArgList(nsigH0, nbgdH0));
+      RooAddPdf SigBgdPdfH1("SigBgdPdfH1", "SigBgdPdfH1", RooArgList(SigPdf,*BgdPdf),
+			    RooArgList(nsigH1, nbgdH1));
+      RooPlot* xframe3 = mt->frame(Range("mt_fit"), Title("Transverse mass with H0 and H1 fits for PE #0"));
+      model->plotOn(xframe3, Name("model"));
+      SigBgdPdfH0.plotOn(xframe3, Name("fitH0"));
+      SigBgdPdfH1.plotOn(xframe3, Name("fitH1"));
+      //xframe3->SetMaximum(10000); xframe3->SetMinimum(0.1);
+      new TCanvas(); gPad->SetLogy();
+      xframe3->Draw();
+    }
   }
 
 
