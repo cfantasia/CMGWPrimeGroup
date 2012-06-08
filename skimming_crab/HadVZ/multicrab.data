@@ -37,6 +37,8 @@ CMSSW.lumi_mask=../../JSON/Cert_190456-194479_8TeV_PromptReco_Collisions12_JSON.
 ##   Run2012B Prompt 1  ##
 ##########################
 
+###########  json_194480-194912_DCSonly.txt
+
 [DiLeptonJet-V400B-SingleMu-Run2012B-PromptReco-v1-DCSOnly-194480-194912]
 CMSSW.datasetpath=/SingleMu/Run2012B-PromptReco-v1/AOD
 CMSSW.pset=../../test/patTuple_jetlep_data.py
@@ -57,4 +59,26 @@ CMSSW.datasetpath=/DoublePhotonHighPt/Run2012B-PromptReco-v1/AOD
 CMSSW.pset=../../test/patTuple_jetlep_data.py
 CMSSW.lumi_mask=../../JSON/json_194480-194912_DCSonly.txt
 
+
+################ json_194913-195776_DCSonly.txt
+
+[DiLeptonJet-V400B-SingleMu-Run2012B-PromptReco-v1-DCSOnly-194913-195776]
+CMSSW.datasetpath=/SingleMu/Run2012B-PromptReco-v1/AOD
+CMSSW.pset=../../test/patTuple_jetlep_data.py
+CMSSW.lumi_mask=../../JSON/json_194913-195776_DCSonly.txt
+
+[DiLeptonJet-V400B-DoubleMu-Run2012B-PromptReco-v1-DCSOnly-194913-195776]
+CMSSW.datasetpath=/DoubleMu/Run2012B-PromptReco-v1/AOD
+CMSSW.pset=../../test/patTuple_jetlep_data.py
+CMSSW.lumi_mask=../../JSON/json_194913-195776_DCSonly.txt
+
+[DiLeptonJet-V400B-DoubleElectron-Run2012B-PromptReco-v1-DCSOnly-194913-195776]
+CMSSW.datasetpath=/DoubleElectron/Run2012B-PromptReco-v1/AOD
+CMSSW.pset=../../test/patTuple_jetlep_data.py
+CMSSW.lumi_mask=../../JSON/json_194913-195776_DCSonly.txt
+
+[DiLeptonJet-V400B-DoublePhotonHighPt-Run2012B-PromptReco-v1-DCSOnly-194913-195776]
+CMSSW.datasetpath=/DoublePhotonHighPt/Run2012B-PromptReco-v1/AOD
+CMSSW.pset=../../test/patTuple_jetlep_data.py
+CMSSW.lumi_mask=../../JSON/json_194913-195776_DCSonly.txt
 
