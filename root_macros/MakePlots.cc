@@ -38,6 +38,7 @@ struct Sample{
   std::string name;
   std::vector<std::string> names;
   std::vector<float> weights;
+  std::vector<float> lumiUsed;
   int line;
   int style;
   int fill;
@@ -45,14 +46,23 @@ struct Sample{
   Sample(){
     line = 0; style = 0; fill=0; hist=NULL;
   }
-  Sample(std::string n){
-    name = n; names.push_back(n); weights.push_back(1.); line = 1; style = 0; fill = 0; hist=NULL; 
+  Sample(std::string n, float scale=1.){
+    name = n; names.push_back(n); 
+    weights.push_back(scale); lumiUsed.push_back(0.);
+    line = 1; style = 0; fill = 0; hist=NULL; 
   }
-  Sample(std::string n, int l, int s, int f){
-    name = n; names.push_back(n); weights.push_back(1.); line = l; style = s; fill = f; hist=NULL;
+  Sample(std::string n, int l, int s, int f, float scale=1.){
+    name = n; names.push_back(n); 
+    weights.push_back(scale); lumiUsed.push_back(0.); 
+    line = l; style = s; fill = f; hist=NULL;
   }
-  Sample(std::string n, std::vector<std::string> ns, int l, int s, int f){
-    name = n; names = ns; weights.assign(names.size(), 1.); line = l; style = s; fill = f; hist=NULL;
+  Sample(std::string n, std::vector<std::string> ns, int l, int s, int f, float scale=1.){
+    name = n; names = ns; 
+    weights.assign(names.size(), scale); lumiUsed.assign(names.size(), 0.); 
+    line = l; style = s; fill = f; hist=NULL;
+  }
+  void init(){
+    line = 0; style = 0; fill=0; hist=NULL;
   }
 };
 
@@ -81,6 +91,7 @@ void DrawandSave(TFile* fin, std::string pdfName, vstring title, std::string boo
 TH1F* FillCum(TH1F* h);
 bool GetHistograms(TFile* fin, std::string title, bool eff=0, bool cum=0);
 void CheckSamples(TFile* fin, std::vector<Sample> & sample);
+void ScaleSampleLumi(std::vector<Sample> & sample);
 TH1F* GetValidHist(TFile* f);
 vector<string> GetListofCuts(TFile* f, TH1F* hist=NULL);
 void ChangeAxisRange(const string & filename, TAxis* xaxis);
@@ -117,14 +128,6 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   }
 
   TFile *fin = TFile::Open(inName.c_str(), "read"); assert(fin);
-  lumiUsed_ = GetLumiUsed(fin);
-  lumiWanted_ = lumiWanted > 0 ? lumiWanted : lumiUsed_;
-
-  cout<<"Lumi Used was "<<lumiUsed_<<" inv pb\n";
-  cout<<"Lumi Wanted is "<<lumiWanted_<<" inv pb\n";
-
-  FillNameMap();
-
   //Determine what analysis this is
   if     (inName.find("EWKWZ") != string::npos) mode_ = kEWKWZ;
   else if(inName.find("WprimeWZ") != string::npos) mode_ = kWprimeWZ;
@@ -301,6 +304,17 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   }
   CheckSamples(fin,Sig);
 
+  //cout<<"New method for lumi is "<<lumiUsed_<<endl;
+  //lumiUsed_ = GetLumiUsed(fin);//Replace by per sample lumi
+  lumiWanted_ = lumiWanted > 0 ? lumiWanted : lumiUsed_;
+  ScaleSampleLumi(Sig);
+  ScaleSampleLumi(Bkg);
+
+  cout<<"Lumi Used was "<<lumiUsed_<<" inv pb\n";
+  cout<<"Lumi Wanted is "<<lumiWanted_<<" inv pb\n";
+
+  FillNameMap();
+
   //Put all the samples into a single structure
   samples_.push_back(&Data);
   samples_.push_back(&Sig);
@@ -331,6 +345,9 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     variable.push_back("hNJets");
     variable.push_back("hWTransMass");
     variable.push_back("hDeltaPhiWJet");
+    variable.push_back("hDeltaPhiLepJet");
+    variable.push_back("hDeltaRLepJet");
+    variable.push_back("hMET");
     variable.push_back("hLeadElecPt");
     variable.push_back("hLeadMuonPt");
   }
@@ -788,7 +805,8 @@ DrawandSave(TFile* fin, string pdfName, vstring title, string bookmark, bool log
     vector<THStack*> & sSigs = vsSig[0];
 
     Double_t max = sBkg->GetMaximum();
-    sBkg->Draw("nostack");
+    sBkg->Draw("nostack"); 
+
     for(uint isig=0; isig<Sig.size(); ++isig){
       max = TMath::Max(max, sSigs[isig]->GetMaximum());
       sSigs[isig]->Draw("nostack same");
@@ -853,7 +871,7 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
       curSample.hist->SetLineStyle(curSample.style);
       curSample.hist->SetLineColor(curSample.line); 
 
-      if(samples_[i] != &Data) curSample.hist->Scale(lumiWanted_/lumiUsed_); //Don't scale data
+      //if(samples_[i] != &Data) curSample.hist->Scale(lumiWanted_/lumiUsed_); //Don't scale data
       
       if(!eff){
         curSample.hist->SetFillColor(curSample.fill);
@@ -884,31 +902,68 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
 }
 
 void
-CheckSamples(TFile* fin, vector<Sample> & sample){
+CheckSamples(TFile* fin, vector<Sample> & samples){
   if(debug_) cout<<"Checking sample "<<endl;
-  for(size_t i=0; i<sample.size(); ++i){
-    for(size_t j=0; j<sample[i].names.size(); ++j){
-      if(debug_) cout<<"Checking key "<<sample[i].names[j]<<endl;
+  for(size_t i=0; i<samples.size(); ++i){
+    Sample & sample = samples[i];
+    for(size_t j=0; j<sample.names.size(); ++j){
+      string & name = sample.names[j];
+      float & sampleLumiUsed = sample.lumiUsed[j];
+
+      if(debug_) cout<<"Checking key "<<name<<endl;
+      TH1F* hInfo = (TH1F*) fin->Get(Form("%s/hFileInfo", name.c_str()));
       //Check if folder exists
-      TH1F* hInfo = (TH1F*) fin->Get(Form("%s/hFileInfo", sample[i].names[j].c_str()));
-      if(!fin->GetKey((sample[i].names[j]).c_str() ) || !hInfo){
-        if(hInfo) cout<<"Didn't find folder: "<<sample[i].names[j]<<". Removing."<<endl;
-        else      cout<<"Didn't find hFileInfo for sample "<<sample[i].names[j]<<". Removing."<<endl;
-        sample.erase(sample.begin()+i);
-        i--;
+      if(!fin->GetKey((name).c_str() ) || !hInfo){
+        if(!fin->GetKey((name).c_str() )) 
+          cout<<"Didn't find folder: "<<name<<". Removing."<<endl;
+        else
+          cout<<"Didn't find hFileInfo for sample "<<name<<". Removing."<<endl;
+        sample.names.erase(sample.names.begin()+j);
+        j--;
+        if(sample.names.size() == 0 ){//Sample is now empty
+          samples.erase(samples.begin()+i);
+          i--;
+        }
         continue;
       }
+
+      sampleLumiUsed = GetSampleInfo(hInfo, "#intL dt (pb^{-1})");
+      lumiUsed_ = max(lumiUsed_, sampleLumiUsed);//Cory: can't use lumi wanted here, not determined yet
+
       //Check if all subjobs finished
       int nJobsTotal = GetSampleInfo(hInfo, "Number of SubSamples");
       int nJobsDone  = GetSampleInfo(hInfo, "Number of Files Merged");
-      if(nJobsTotal == 0) continue;//Cory: Didn't record this so skip for now.  Delete soon (2012-05-31)
-      if(nJobsDone != nJobsTotal) printf(" Only %i of %i jobs finished for %s.  Scaling to compensate\n",
-                                         nJobsDone, nJobsTotal, sample[i].names[j].c_str());
+      if(nJobsTotal == 0){
+        printf("Not trying to scale sample %s because I couldn't find bin \"Number of SubSamples\"\n", name.c_str());
+        continue;//Cory: Didn't record this so skip for now.  Delete soon (2012-05-31)
+      }
+      if(nJobsDone != nJobsTotal){
+        if(nJobsDone < nJobsTotal ) printf(" Only %i of %i jobs finished for %s.  Scaling to compensate\n",
+                                          nJobsDone, nJobsTotal, name.c_str());
+      }
       //Scale sample to compensate for missing jobs
-      sample[i].weights[j] = (float) nJobsTotal / nJobsDone;
+      sample.weights[j] *= (float) nJobsTotal / nJobsDone;
+      if(debug_) cout<<"Scaling set to "<<sample.weights[j]<<endl;
+
+    }//subsample loop
+  }//sample loop
+}
+
+void
+ScaleSampleLumi(vector<Sample> & samples){
+  if(debug_) cout<<"Scaling sample lumi "<<endl;
+  for(size_t i=0; i<samples.size(); ++i){
+    Sample & sample = samples[i];
+    for(size_t j=0; j<sample.names.size(); ++j){
+      string & name = sample.names[j];
+
+      //Scale by lumi
+      sample.weights[j] *= lumiWanted_ / sample.lumiUsed[j];//Cory: should i do something diff for data
+      if(debug_) printf("Scaling sample %s by %.2f to equalize lumi\n", name.c_str(), lumiWanted_ / sample.lumiUsed[j]);
     }
   }
 }
+
 
 TH1F* GetValidHist(TFile* f){
   string name;
@@ -973,7 +1028,6 @@ ChangeAxisRange(const string & filename, TAxis* xaxis){
   }else if (filename.find("hLeadMuonPt_") != string::npos ||
             filename.find("hLeadElecPt_") != string::npos){
     xaxis->SetRangeUser(0,200);
-    //hpull->SetAxisRange( -3., 3., "Y");
   }
 
   
@@ -1073,10 +1127,12 @@ DrawLegend(TH1F* hData, bool eff){//Cory: is this a problem?
   
   if(Data.size()) legend->AddEntry(hData, "Data", "PE");
   for(unsigned int i=0; i<Bkg.size(); ++i){
-    legend->AddEntry(Bkg[i].hist,SampleNames[Bkg[i].name].c_str(), eff ? "P" : "F");
+    string legName = SampleNames.find(Bkg[i].name) != SampleNames.end() ? SampleNames[Bkg[i].name] : Bkg[i].name;
+    legend->AddEntry(Bkg[i].hist,legName.c_str(), eff ? "P" : "F");
   }
   for(unsigned int i=0; i<Sig.size(); ++i){
-    legend->AddEntry(Sig[i].hist,SampleNames[Sig[i].name].c_str(), eff ? "P" : "FL");
+    string legName = SampleNames.find(Sig[i].name) != SampleNames.end() ? SampleNames[Sig[i].name] : Sig[i].name;
+    legend->AddEntry(Sig[i].hist,legName.c_str(), eff ? "P" : "FL");
   }
  
   legend->SetTextSize(0.05);
@@ -1113,6 +1169,9 @@ int GetRebin(string title){
   if(title.find("hVWMass_") != string::npos ||
      title.find("hVWenuMass_") != string::npos ||
      title.find("hVWmnuMass_") != string::npos) rebin = 5;
+  if(title.find("hDeltaPhiWJet_") != string::npos ||
+     title.find("hDeltaPhiLepJet_") != string::npos) rebin = 4;
+  if(title.find("hDeltaRLepJet_") != string::npos) rebin = 5;
 
   return rebin;
 }
