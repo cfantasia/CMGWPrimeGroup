@@ -52,7 +52,7 @@ class WprimeFitter{
   void doRunFits(bool flag){runFits_ = flag;}
   void doOneMassPointOnly(int MassPoint)
   {
-    assert(MassPoint > 0 && MassPoint < Nsignal_points);
+    assert(MassPoint >= 0 && MassPoint < Nsignal_points);
     MassPoint_ = MassPoint;
   }
 
