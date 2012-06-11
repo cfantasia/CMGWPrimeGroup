@@ -59,18 +59,30 @@ void WprimeFitter::init()
   if(fXMIN < bXMIN)fXMIN = bXMIN;
 
   pXMIN = min(fXMIN, bXMIN); pXMAX = fXMAX;
-  XMIN = 0; XMAX = 2500;
-  if(channel_ == wprime_MuMET)
-    {rXMIN = -600; rXMAX = 600;}
-  else if (channel_ == wprime_ElMET)
-    {rXMIN = -800; rXMAX = 800;}
+  rXMIN_const = -800; rXMAX_const = 800;
+  if(channel_ == wprime_MuMET){
+    for(int i=1; i<Nsignal_points; ++i){
+      rXMIN[i] = rXMIN_const; rXMAX[i] = rXMAX_const;
+    }
+    rXMIN[0]=-500; rXMAX[0]=500;
+  }
+  else if (channel_ == wprime_ElMET){
+    rXMIN[0]=rXMIN[2]=rXMIN[3]=rXMIN[4]=rXMIN[7]=rXMIN[9]=rXMIN[13]=rXMIN_const;
+    rXMAX[0]=rXMAX[2]=rXMAX[3]=rXMAX[4]=rXMAX[7]=rXMAX[9]=rXMAX[13]=rXMAX_const;
+    rXMIN[1]=rXMIN[8]=rXMIN[14]=rXMIN[15]=rXMIN[16]=-600;
+    rXMAX[1]=rXMAX[8]=rXMAX[14]=rXMAX[15]=rXMAX[16]=600;
+    rXMIN[6]=-500;
+    rXMAX[6]=500;
+    rXMIN[5]=rXMIN[10]=rXMIN[11]=rXMIN[12]=-500; //still needs improvement
+    rXMAX[5]=rXMAX[10]=rXMAX[11]=rXMAX[12]=500;  //still needs improvement
+  }
 
   mt = new RooRealVar("Mt", "M_{T} GeV/c^{2}", pXMIN, pXMAX);
   mt->setRange("mt_fit", fXMIN, fXMAX);
   mt->setRange("mt_bgdfit", bXMIN, bXMAX);
   mt->setRange("mt_plot", pXMIN, pXMAX);
   mt->setRange("mt_full", XMIN, XMAX);
-  mt->setRange("resol_fit", rXMIN, rXMAX);
+  mt->setRange("resol_fit", rXMIN_const, rXMAX_const);
   mt->setBins(10000, "fft");
   
   switch(channel_)
@@ -844,7 +856,7 @@ void WprimeFitter::modelResolutions()
     TripleGauss res_temp("res_temp", "triple gauss", dmt, m1, s1,
 			 f1, m2, s2, f2, m3, s3);
     
-    res_temp.fitTo(res_hist2, Range(rXMIN, rXMAX), Verbose(-1), Save());
+    res_temp.fitTo(res_hist2, Range(rXMIN[i], rXMAX[i]), Verbose(-1), Save());
     //    res_temp.fitTo(res_hist2, Range("resol_fit"), Verbose(-1), Save()); <-- THIS DOES NOT WORK FOR SOME REASON
     //    res_temp.fitTo(res_hist2, Save());
     

@@ -117,7 +117,8 @@ class WprimeFitter{
   // full range
   float XMIN; float XMAX;
   // fitting range for resolution function
-  float rXMIN; float rXMAX;
+  float rXMIN_const; float rXMAX_const;
+  float rXMIN[Nsignal_points]; float rXMAX[Nsignal_points];
 
   RooRealVar * mt;
 
