@@ -61,10 +61,10 @@ void WprimeFitter::init()
   pXMIN = min(fXMIN, bXMIN); pXMAX = fXMAX;
   rXMIN_const = -800; rXMAX_const = 800;
   if(channel_ == wprime_MuMET){
+    rXMIN[0]=-500; rXMAX[0]=500;
     for(int i=1; i<Nsignal_points; ++i){
       rXMIN[i] = rXMIN_const; rXMAX[i] = rXMAX_const;
     }
-    rXMIN[0]=-500; rXMAX[0]=500;
   }
   else if (channel_ == wprime_ElMET){
     rXMIN[0]=rXMIN[2]=rXMIN[3]=rXMIN[4]=rXMIN[7]=rXMIN[9]=rXMIN[13]=rXMIN_const;
@@ -426,8 +426,13 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
       adjustScaleFactor(scale_factor, cl_test, step_i);
 	
     if(bgdOnly) Nsig=0;
-    else
+    else{
       getNsig(sig_i, scale_factor);
+      if(0){ //This is to see sig-only fits
+	Nbgd=0;
+	nbgd = new RooRealVar("nbgd","number of background events,",0,0,100000);
+      }
+    }
     RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
 
     
@@ -565,31 +570,101 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
 
   if(debugMe_){
     const float mass_ = WprimeMass[sig_i];
-    const float width_ = (4./3.)*(mass_/M_W)*G_W;
+    const float width_ = (4./3.)*(mass_/M_W)*G_W*1.0;
     RooRealVar mass("Mass", "W' mass", mass_);//, 0, 10000);
     RooRealVar width("Width", "W' width", width_);
+    RooRealVar width1("Width", "W' width", width_*1.5);
+    RooRealVar width2("Width", "W' width", width_*2.0);
+    RooRealVar width3("Width", "W' width", width_*2.5);
+    RooRealVar width4("Width", "W' width", width_*3.0);
     JacobianRBWPdf sig_model("sig", "Signal", *mt, mass, width);
     RooFFTConvPdf SigPdf("SigPdf","JacobianRBW X resolution", *mt, 
 			 sig_model, *(resolution[sig_i]));
     SigPdf.setBufferFraction(0.6);
-
+    JacobianRBWPdf sig_model1("sig1", "Signal", *mt, mass, width1);
+    RooFFTConvPdf SigPdf1("SigPdf1","JacobianRBW X resolution", *mt, 
+			 sig_model1, *(resolution[sig_i]));
+    SigPdf1.setBufferFraction(0.6);
+    JacobianRBWPdf sig_model2("sig2", "Signal", *mt, mass, width2);
+    RooFFTConvPdf SigPdf2("SigPdf2","JacobianRBW X resolution", *mt, 
+			 sig_model2, *(resolution[sig_i]));
+    SigPdf2.setBufferFraction(0.6);
+    JacobianRBWPdf sig_model3("sig3", "Signal", *mt, mass, width3);
+    RooFFTConvPdf SigPdf3("SigPdf3","JacobianRBW X resolution", *mt, 
+			 sig_model3, *(resolution[sig_i]));
+    SigPdf3.setBufferFraction(0.6);
+    JacobianRBWPdf sig_model4("sig4", "Signal", *mt, mass, width4);
+    RooFFTConvPdf SigPdf4("SigPdf4","JacobianRBW X resolution", *mt, 
+			 sig_model4, *(resolution[sig_i]));
+    SigPdf4.setBufferFraction(0.6);
+    
     for(int pe_num=0; pe_num<10; pe_num++){
       RooRealVar nsigH0("nsigH0", "# of signal events from H0 fit", 0);
-      RooRealVar nsigH1("nsigH1", "# of signal events from H1 fit", 
-			mcs->fitParams(0)->getRealValue("nsig"));
+                      //mcs->fitParams(pe_num)->getRealValue("nsig_H0"));
+      RooRealVar nsigH1("nsigH1", "# of signal events from H1 fit",
+			mcs->fitParams(pe_num)->getRealValue("nsig"));
+      RooRealVar nsig_gen("nsig_gen", "# of signal events generated",
+			  mcs->fitParams(pe_num)->getRealValue("nsig_gen"));
       RooRealVar nbgdH0("nbgdH0", "# of background events from H0 fit", 
-			mcs->fitParams(0)->getRealValue("nbgd_H0"));
+			mcs->fitParams(pe_num)->getRealValue("nbgd_H0"));
       RooRealVar nbgdH1("nbgdH1", "# of background events from H1 fit", 
-			mcs->fitParams(0)->getRealValue("nbgd"));
+			mcs->fitParams(pe_num)->getRealValue("nbgd"));
+      RooRealVar nbgd_gen("nbgd_gen", "# of background events generated", 
+			  mcs->fitParams(pe_num)->getRealValue("nbgd_gen"));
       RooAddPdf SigBgdPdfH0("SigBgdPdfH0", "SigBgdPdfH0", RooArgList(SigPdf,*BgdPdf),
 			    RooArgList(nsigH0, nbgdH0));
       RooAddPdf SigBgdPdfH1("SigBgdPdfH1", "SigBgdPdfH1", RooArgList(SigPdf,*BgdPdf),
 			    RooArgList(nsigH1, nbgdH1));
-      RooPlot* xframe3 = mt->frame(Range("mt_fit"), Title("Transverse mass with H0 and H1 fits for PE #0"));
-      model->plotOn(xframe3, Name("model"));
-      SigBgdPdfH0.plotOn(xframe3, Name("fitH0"));
-      SigBgdPdfH1.plotOn(xframe3, Name("fitH1"));
-      //xframe3->SetMaximum(10000); xframe3->SetMinimum(0.1);
+      RooAddPdf SigBgdPdf_gen("SigBgdPdf_gen", "SigBgdPdf_gen", RooArgList(SigPdf,*BgdPdf),
+			      RooArgList(nsig_gen, nbgd_gen));
+      RooAbsData *data0 = (RooAbsData*)mcs->genData(pe_num);
+      RooRealVar nsig1("nsig1", "# of signal events", Nsig, 0, 10000000);
+      RooRealVar nsig2("nsig2", "# of signal events", Nsig, 0, 10000000);
+      RooRealVar nsig3("nsig3", "# of signal events", Nsig, 0, 10000000);
+      RooRealVar nsig4("nsig4", "# of signal events", Nsig, 0, 10000000);
+      RooRealVar nbgd1("nbgd1", "# of background events", Nbgd, 0, 10000000);
+      RooRealVar nbgd2("nbgd2", "# of background events", Nbgd, 0, 10000000);
+      RooRealVar nbgd3("nbgd3", "# of background events", Nbgd, 0, 10000000);
+      RooRealVar nbgd4("nbgd4", "# of background events", Nbgd, 0, 10000000);
+      RooAddPdf SigBgdPdf1("SigBgdPdf1", "SigBgdPdf1", RooArgList(SigPdf1,*BgdPdf),
+			   RooArgList(nsig1, nbgd1));
+      RooAddPdf SigBgdPdf2("SigBgdPdf2", "SigBgdPdf2", RooArgList(SigPdf2,*BgdPdf),
+			   RooArgList(nsig2, nbgd2));
+      RooAddPdf SigBgdPdf3("SigBgdPdf3", "SigBgdPdf3", RooArgList(SigPdf3,*BgdPdf),
+			   RooArgList(nsig3, nbgd3));
+      RooAddPdf SigBgdPdf4("SigBgdPdf4", "SigBgdPdf4", RooArgList(SigPdf4,*BgdPdf),
+			   RooArgList(nsig4, nbgd4));
+      SigBgdPdf1.fitTo(*data0, Range("mt_fit"), Save());
+      SigBgdPdf2.fitTo(*data0, Range("mt_fit"), Save());
+      SigBgdPdf3.fitTo(*data0, Range("mt_fit"), Save());
+      SigBgdPdf4.fitTo(*data0, Range("mt_fit"), Save());
+
+      char test_title[1024];
+      sprintf(test_title, "Transverse mass with H0 and H1 fits for PE %i", pe_num);
+
+      RooPlot* xframe3 = mt->frame(Range("mt_fit"), Title(test_title));
+      //SigBgdPdf_gen.plotOn(xframe3, Name("model"), LineColor(1), LineWidth(6));
+      data0->plotOn(xframe3, Name("data"));
+      SigBgdPdfH0.plotOn(xframe3, Name("fitH0"), LineColor(2), LineWidth(3));
+      SigBgdPdfH1.plotOn(xframe3, Name("fitH1"), LineColor(3), LineWidth(3));
+      //SigBgdPdf1.plotOn(xframe3, Name("fit1"), LineColor(4), LineWidth(3));
+      //SigBgdPdf2.plotOn(xframe3, Name("fit2"), LineColor(5), LineWidth(3));
+      //SigBgdPdf3.plotOn(xframe3, Name("fit3"), LineColor(6), LineWidth(3));
+      //SigBgdPdf4.plotOn(xframe3, Name("fit4"), LineColor(7), LineWidth(3));
+
+      double nchi2 = xframe3->chiSquare("fitH1", "data", 8);
+      double nchi2_1 = xframe3->chiSquare("fit1", "data", 8);
+      double nchi2_2 = xframe3->chiSquare("fit2", "data", 8);
+      double nchi2_3 = xframe3->chiSquare("fit3", "data", 8);
+      double nchi2_4 = xframe3->chiSquare("fit4", "data", 8);
+      char tmp[1024];
+      sprintf(tmp, " 1.0: chi2/ndof = %.1f\n 1.5: chi2/ndof = %.1f\n 2.0: chi2/ndof = %.1f\n 2.5: chi2/ndof = %.1f\n 3.0: chi2/ndof = %.1f\n", nchi2, nchi2_1, nchi2_2, nchi2_3, nchi2_4);
+      cout<<"\n"<<tmp<<"\n";
+      string chi2_text = string(tmp);
+      TText* txt = new TText(-600,4000,tmp) ;
+      txt->SetTextSize(0.04) ;
+      txt->SetTextColor(kRed) ;
+      //xframe3->addObject(txt) ;
       new TCanvas(); gPad->SetLogy();
       xframe3->Draw();
     }
