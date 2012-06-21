@@ -73,8 +73,8 @@ void WprimeFitter::init()
     rXMAX[1]=rXMAX[8]=rXMAX[14]=rXMAX[15]=rXMAX[16]=600;
     rXMIN[6]=-500;
     rXMAX[6]=500;
-    rXMIN[5]=rXMIN[10]=rXMIN[11]=rXMIN[12]=-500; //still needs improvement
-    rXMAX[5]=rXMAX[10]=rXMAX[11]=rXMAX[12]=500;  //still needs improvement
+    rXMIN[5]=rXMIN[10]=rXMIN[11]=rXMIN[12]=-600;
+    rXMAX[5]=rXMAX[10]=rXMAX[11]=rXMAX[12]=600;
   }
 
   mt = new RooRealVar("Mt", "M_{T} GeV/c^{2}", pXMIN, pXMAX);
@@ -920,12 +920,12 @@ void WprimeFitter::modelResolutions()
     string title = res_hist[i]->GetTitle();
     RooDataHist res_hist2("res_hist2",title.c_str(),dmt, Import(*res_hist[i]));
     
-    RooRealVar m1("m1", "m1", 0, -10000, 10000);
-    RooRealVar s1("s1", "s1", 30, -100000, 100000);
-    RooRealVar m2("m2", "m2", 0, -10000, 10000);
-    RooRealVar s2("s2", "s2", 100, -100000, 100000);
-    RooRealVar m3("m3", "m3", 0, -10000, 10000);
-    RooRealVar s3("s3", "s3", 200, -100000, 100000);
+    RooRealVar m1("m1", "m1", 0, -1000, 1000);
+    RooRealVar s1("s1", "s1", 30, -1000, 1000);
+    RooRealVar m2("m2", "m2", 0, -1000, 1000);
+    RooRealVar s2("s2", "s2", 100, -1000, 1000);
+    RooRealVar m3("m3", "m3", 0, -1000, 1000);
+    RooRealVar s3("s3", "s3", 200, -1000, 1000);
     RooRealVar f1("f1", "fraction of 1st gaussian", 0.3, 0.0, 1.0);
     RooRealVar f2("f2", "fraction of 2nd gaussian", 0.3, 0.0, 1.0);
     TripleGauss res_temp("res_temp", "triple gauss", dmt, m1, s1,
