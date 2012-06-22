@@ -59,6 +59,7 @@ void WprimeFitter::init()
   if(fXMIN < bXMIN)fXMIN = bXMIN;
 
   pXMIN = min(fXMIN, bXMIN); pXMAX = fXMAX;
+  XMIN = 0; XMAX = 2500;
   rXMIN_const = -800; rXMAX_const = 800;
   if(channel_ == wprime_MuMET){
     rXMIN[0]=-500; rXMAX[0]=500;
@@ -167,6 +168,7 @@ void WprimeFitter::getInputHistograms()
       abort();
     }
   lumi_ipb_ = lumi->GetBinContent(1);
+  lumi_ipb_ = 4982.; //corredcted lumi value
   cout << " Distributions correspond to integrated luminosity = " 
        << lumi_ipb_ << " ipb " << endl;
   
@@ -659,7 +661,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
       double nchi2_4 = xframe3->chiSquare("fit4", "data", 8);
       char tmp[1024];
       sprintf(tmp, " 1.0: chi2/ndof = %.1f\n 1.5: chi2/ndof = %.1f\n 2.0: chi2/ndof = %.1f\n 2.5: chi2/ndof = %.1f\n 3.0: chi2/ndof = %.1f\n", nchi2, nchi2_1, nchi2_2, nchi2_3, nchi2_4);
-      cout<<"\n"<<tmp<<"\n";
+      //cout<<"\n"<<tmp<<"\n";
       string chi2_text = string(tmp);
       TText* txt = new TText(-600,4000,tmp) ;
       txt->SetTextSize(0.04) ;
