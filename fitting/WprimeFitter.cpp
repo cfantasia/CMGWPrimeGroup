@@ -37,6 +37,7 @@ void WprimeFitter::init()
   backgroundModeled_ = findOnlyMedian_ = debugMe_ = 
     skipLimitCalculation_ = false;
   MassPoint_ = -1;
+  Nsig = 0;
 
   for(int i = 0; i != Nsignal_points; ++i)
     {
@@ -168,10 +169,12 @@ void WprimeFitter::getInputHistograms()
       abort();
     }
   lumi_ipb_ = lumi->GetBinContent(1);
+  float lumi_ipb_old = lumi_ipb_;
   lumi_ipb_ = 4982.; //corredcted lumi value
+  bgd_hist->Scale(lumi_ipb_/lumi_ipb_old);
   cout << " Distributions correspond to integrated luminosity = " 
        << lumi_ipb_ << " ipb " << endl;
-  
+
 }
 
 WprimeFitter::~WprimeFitter()
@@ -363,8 +366,11 @@ void WprimeFitter::calculateObservedLimit(int sig_i, ofstream & tracking)
   RooRealVar nsig("nsig", "# of signal events", Nsig, 0, 10000000);
   RooAddPdf SigBgdPdf("SigBgdPdf", "SigBgdPdf", RooArgList(SigPdf,*BgdPdf),
 		      RooArgList(nsig, *nbgd));
+  RooRealVar nsig_h0("nsig", "# of signal events", 0);
+  RooAddPdf SigBgdPdf_h0("SigBgdPdf_h0", "SigBgdPdf_h0", RooArgList(SigPdf,*BgdPdf),
+			 RooArgList(nsig_h0, *nbgd));  
+  RooFitResult * rf_h0 = SigBgdPdf_h0.fitTo(*mt_DATA, Range("mt_fit"), Save());
   RooFitResult * rf_h1 = SigBgdPdf.fitTo(*mt_DATA, Range("mt_fit"), Save());
-  RooFitResult * rf_h0 = BgdPdf->fitTo(*mt_DATA, Range("mt_fit"), Save());
   double dLL = rf_h0->minNll() - rf_h1->minNll();
   float Z_observed = dLL >= 0 ? sqrt(2*dLL) : -sqrt(-2*dLL);
   cout << " ************************************************* " << endl;
@@ -600,7 +606,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
 			 sig_model4, *(resolution[sig_i]));
     SigPdf4.setBufferFraction(0.6);
     
-    for(int pe_num=0; pe_num<10; pe_num++){
+    for(int pe_num=0; pe_num<10 && pe_num<NpseudoExp_; pe_num++){
       RooRealVar nsigH0("nsigH0", "# of signal events from H0 fit", 0);
                       //mcs->fitParams(pe_num)->getRealValue("nsig_H0"));
       RooRealVar nsigH1("nsigH1", "# of signal events from H1 fit",
@@ -734,7 +740,7 @@ void WprimeFitter::runPseudoExperiments(int sig_i, RooAbsPdf * model,
 	   << " with lumi uncertainty, dNtot = " << dNtot << endl << endl;
       cout << " PEs created by";
       if(bgdOnly)
-	cout << " bgd-oly";
+	cout << " bgd-only";
       else
 	cout << " signal and bgd";
       cout << " distributions " << endl;
