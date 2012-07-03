@@ -830,7 +830,7 @@ void WprimeFitter::modelBackground()
   // better to use region down to bXMIN if possible (220 may be too low)
   if(bXMIN < xmax)xmin = bXMIN; 
   assert(xmin < xmax);
-  float xmin = 200; float xmax = 500;//hard-coded to compare with 2011 paper
+  xmin = 200; xmax = 500;//hard-coded to compare with 2011 paper
 
   double Nbgdsideband  
     = bgd_hist ->Integral( bgd_hist->FindBin(xmin),bgd_hist->FindBin(xmax) );
