@@ -373,6 +373,9 @@ void WprimeFitter::calculateObservedLimit(int sig_i, ofstream & tracking)
   RooFitResult * rf_h1 = SigBgdPdf.fitTo(*mt_DATA, Range("mt_fit"), Save());
   double dLL = rf_h0->minNll() - rf_h1->minNll();
   float Z_observed = dLL >= 0 ? sqrt(2*dLL) : -sqrt(-2*dLL);
+  //if Z_observed is negative due to rounding, make it zero so the assert doesn't fail
+  if(Z_observed < 0 && -1.*dLL/rf_h1->minNll() < 0.0001)
+    Z_observed = 0.;
   cout << " ************************************************* " << endl;
   cout << " Fit results for data distribution: " << endl;
   cout << " 2*logLike(H1) = " << 2*rf_h1->minNll();
@@ -827,6 +830,7 @@ void WprimeFitter::modelBackground()
   // better to use region down to bXMIN if possible (220 may be too low)
   if(bXMIN < xmax)xmin = bXMIN; 
   assert(xmin < xmax);
+  float xmin = 200; float xmax = 500;//hard-coded to compare with 2011 paper
 
   double Nbgdsideband  
     = bgd_hist ->Integral( bgd_hist->FindBin(xmin),bgd_hist->FindBin(xmax) );
