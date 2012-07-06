@@ -434,7 +434,7 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
   //int steps = 0;   
   do{
     //steps ++;
-    scale_factor_old = scale_factor; cl_test_old = cl_test;
+    if(cl_test > 0.95){ scale_factor_old = scale_factor; cl_test_old = cl_test; }
 
     if(bgdOnly || skipLimitCalculation_)
       scale_factor = 1;
