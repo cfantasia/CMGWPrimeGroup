@@ -172,6 +172,8 @@ void WprimeFitter::getInputHistograms()
   float lumi_ipb_old = lumi_ipb_;
   lumi_ipb_ = 4982.; //corredcted lumi value
   bgd_hist->Scale(lumi_ipb_/lumi_ipb_old);
+  for(int sig_i = 0; sig_i != Nsignal_points; ++sig_i)
+    sig_hist[sig_i]->Scale(lumi_ipb_/lumi_ipb_old);
   cout << " Distributions correspond to integrated luminosity = " 
        << lumi_ipb_ << " ipb " << endl;
 
@@ -428,9 +430,12 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
   //    RooHistPdf Model_inf("Model_inf","interference pdf",*mt, *mt_SigInt,0) ;
   
   int step_i=0; float cl_test = 1., scale_factor=1.; 
+  float scale_factor_old = 1., cl_test_old = 1.;
   //int steps = 0;   
   do{
     //steps ++;
+    scale_factor_old = scale_factor; cl_test_old = cl_test;
+
     if(bgdOnly || skipLimitCalculation_)
       scale_factor = 1;
     else
@@ -475,6 +480,20 @@ float WprimeFitter::runPseudoExperiments(int sig_i, ofstream & tracking,
 	     << scale_factor << endl;
 
     if(skipLimitCalculation_)break;
+
+    if(cl_test < 0.95){
+      float slope = (cl_test-cl_test_old)/(scale_factor-scale_factor_old);
+      float new_sf = (0.95-0.5*(cl_test+cl_test_old-slope*(scale_factor+scale_factor_old)))/slope;
+      bool qexit = 0;
+      if(scale_factor > 1100 && step_i == 0) qexit=1;
+      else if(scale_factor > 100 && step_i == 1) qexit=1;
+      else if(scale_factor > 10 && step_i == 2) qexit=1;
+      else if(step_i == 3) qexit=1;
+      if(qexit){
+        scale_factor = new_sf;
+        break;
+      }
+    }
 
   }while(step_i != Nsteps-1 || cl_test > 0.95 ) ;
   
