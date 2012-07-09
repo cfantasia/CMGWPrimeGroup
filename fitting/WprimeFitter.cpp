@@ -236,7 +236,7 @@ void WprimeFitter::run()
   ofstream limits, tracking;
   string filename = "nLimit";
   string filename2 = "tracking";
-  if(MassPoint_ > 0){
+  if(MassPoint_ >= 0){
     filename += Form("_%.1f", WprimeMass[MassPoint_]/1000);
     filename2 += Form("_%.1f", WprimeMass[MassPoint_]/1000);
   }
