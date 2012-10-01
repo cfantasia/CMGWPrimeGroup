@@ -666,7 +666,7 @@ WZAnalyzer::calcZVariables(){
   matchptcut = 8.;
   vector<bool> zMuonsMask(looseZMuons_.size(), false);
   for (size_t i=0; i < looseZMuons_.size(); i++)
-    if(WPrimeUtil::passTriggerMatch(looseZMuons_[i], matchptcut, triggersToUse_))
+    if(1 || WPrimeUtil::passTriggerMatch(looseZMuons_[i], matchptcut, triggersToUse_))
       zMuonsMask[i] = true;
 
 //  if(debug_) printf("    Contains: %lu z electron(s), %lu z muon(s)\n",
@@ -690,7 +690,8 @@ WZAnalyzer::calcZVariables(){
   for (ZCandV::iterator i = zmmCands.begin(); i != zmmCands.end(); ++i){
     const TeVMuon& m1 = *i->muon1();
     const TeVMuon& m2 = *i->muon2();
-    if(!WPrimeUtil::passTriggerMatch(m1, matchptcut, triggersToUse_) &&
+    if(0 && 
+       !WPrimeUtil::passTriggerMatch(m1, matchptcut, triggersToUse_) &&
        !WPrimeUtil::passTriggerMatch(m2, matchptcut, triggersToUse_)){
       zmmCands.erase(i);
       i--;
@@ -722,6 +723,7 @@ WZAnalyzer::calcZVariables(){
 
     ZCandV zeeCandsAll = getZCands(looseZElectrons_, maxZMassDiff_, false);
     ZCandV zmmCandsAll = getZCands(looseZMuons_    , maxZMassDiff_, false);
+    if(debug_) printf("    Contains: %lu Zee candidate(s) and %lu Zmm candidate(s)\n", zeeCandsAll.size(), zmmCandsAll.size());
 
     zCandsAll.insert(zCandsAll.end(), zeeCandsAll.begin(), zeeCandsAll.end());
     zCandsAll.insert(zCandsAll.end(), zmmCandsAll.begin(), zmmCandsAll.end());
