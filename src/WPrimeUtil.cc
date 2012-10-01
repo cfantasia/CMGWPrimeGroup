@@ -148,10 +148,7 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles, cons
 void WPrimeUtil::setLumiWeights(const string & MCFile, const string & DataFile,
                                 const string & MCHist, const string & DataHist,
                                 const float & puScale){
-  LumiWeights3D_ = edm::Lumi3DReWeighting(MCFile, DataFile, MCHist, DataHist);
-  LumiWeights3D_.weight3D_init( puScale );
   LumiWeights_ = edm::LumiReWeighting(MCFile, DataFile, MCHist, DataHist);
-  //LumiWeights_.weight3D_init("UserCode/CMGWPrimeGroup/root_macros/Weight3D.root");
 }
 
 int WPrimeUtil::getPU1BX(const std::vector< PileupSummaryInfo > & PupInfo){
@@ -168,42 +165,16 @@ float WPrimeUtil::getPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInf
   return LumiWeights_.weight(getPU1BX(PupInfo));
 }
 
-/////////////////////////////////////////////////
-////Average Over In-time & out-of-time PU////////
-/////////////////////////////////////////////////
-float WPrimeUtil::getPUWeight3BX(const edm::EventBase & event, const std::string& label){
-  std::vector< PileupSummaryInfo > PupInfo = getProduct<std::vector< PileupSummaryInfo > >(event, label);   
-  return getPUWeight3BX(PupInfo);
-}
-
-float WPrimeUtil::getPU3BX(const std::vector< PileupSummaryInfo > & PupInfo){
-  std::vector<PileupSummaryInfo>::const_iterator PVI;
-  float sum_nvtx = 0;
-  for(PVI = PupInfo.begin(); PVI != PupInfo.end(); ++PVI) {
-    float npv = PVI->getPU_NumInteractions();
-    sum_nvtx += float(npv);
+float WPrimeUtil::getPUWeightTrue(const std::vector< PileupSummaryInfo > & PupInfo){
+  std::vector<PileupSummaryInfo>::const_iterator PVI;                       
+  for(PVI = PupInfo.begin(); PVI != PupInfo.end(); ++PVI) {               
+    if(PVI->getBunchCrossing() == 0){//Only care about in time PU for now 
+      float Tnpv = PVI->getTrueNumInteractions();
+      return LumiWeights_.weight( Tnpv );
+    }
   }
-  return sum_nvtx/3.;//+1, 0, -1 BX
+  return 0;
 }
-
-float WPrimeUtil::getPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo){
-  return LumiWeights_.weight3BX( getPU3BX(PupInfo) );
-}
-
-////////////
-float WPrimeUtil::getPUWeight3D(const std::vector< PileupSummaryInfo > & PupInfo){
-  std::vector<PileupSummaryInfo>::const_iterator PVI;
-  int nm1 = -1; int n0 = -1; int np1 = -1;
-  for(PVI = PupInfo.begin(); PVI != PupInfo.end(); ++PVI) {
-    int BX = PVI->getBunchCrossing();
-    
-    if     (BX == -1) nm1 = PVI->getPU_NumInteractions();
-    else if(BX ==  0)  n0 = PVI->getPU_NumInteractions();
-    else if(BX ==  1) np1 = PVI->getPU_NumInteractions();
-  }
-  return LumiWeights3D_.weight3D( nm1,n0,np1);
-}
-////////////
 
 void WPrimeUtil::CheckStream(const ofstream& stream, const std::string & s){
   if(!stream) { 
@@ -305,12 +276,12 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
           infile>>fname;
           if(fname != ""){
             cout<<" filename: "<<fname.c_str()<<endl;
-	    in_file->pathnames.push_back(top_level_dir + in_file->subdir+ "/" + fname);
+	    in_file->pathnames.push_back(top_level_dir + in_file->subdir + fname);
           }
         }
         infile.close();
       }else{
-        string pathname = top_level_dir + in_file->subdir + "/" + input;
+        string pathname = top_level_dir + in_file->subdir + input;
 	in_file->pathnames.push_back(pathname);
       }
       cout << " Input file: " << in_file->samplename;
