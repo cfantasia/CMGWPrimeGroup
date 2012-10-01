@@ -51,13 +51,9 @@ class WPrimeUtil
   inline float getSampleWeight() const{return sampleweight_;}
   inline float getWeight() const{return weight_;}
   inline float getLumiWeight   (const int   & nInt){ return LumiWeights_.weight   (nInt);}
-  inline float getLumiWeight3BX(const float & nInt){ return LumiWeights_.weight3BX(nInt);}
   int   getPU1BX(const std::vector< PileupSummaryInfo > & PupInfo);
   float getPUWeight1BX(const std::vector< PileupSummaryInfo > & PupInfo);
-  float getPUWeight3BX(edm::EventBase const & event, const std::string& label);
-  float getPU3BX(const std::vector< PileupSummaryInfo > & PupInfo);
-  float getPUWeight3BX(const std::vector< PileupSummaryInfo > & PupInfo);
-  float getPUWeight3D(const std::vector< PileupSummaryInfo > & PupInfo);
+  float getPUWeightTrue(const std::vector< PileupSummaryInfo > & PupInfo);
 
   static void getEff(float & eff, float & deff,float Num,float Denom);
 
@@ -382,7 +378,6 @@ private:
   edm::Handle<reco::GenParticleCollection> genParticles;
   
   edm::LumiReWeighting LumiWeights_;
-  edm::Lumi3DReWeighting LumiWeights3D_;
   
 };
 

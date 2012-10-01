@@ -326,16 +326,18 @@ AnalyzerBase::print(const pat::Electron& elec) const{
 
 void AnalyzerBase::print(const TeVMuon& mu) const{
   cout << setiosflags(ios::fixed) << setprecision(2);
-  
-  cout << " Muon eta = " << mu.eta() << "  phi = " << mu.phi() << endl;
-
-  typedef std::vector<unsigned>::const_iterator It;
-  for(It it = muon_reconstructors.begin(); it != muon_reconstructors.end(); ++it)
-    mu.printPtInfo(*it);
-  
-  mu.printTrackerInfo();
+  reco::TrackRef gm = mu.globalTrack();
+  cout<<" Muon Pt: "  <<mu.pt()<<endl
+      <<" Muon Charge: "<<mu.charge()<<endl
+      <<" Muon Eta: " <<mu.eta()<<endl
+      <<" Muon Phi: " <<mu.phi()<<endl
+      <<" Muon Dxy: " <<mu.dB()<<endl //Dxy
+      <<" Muon NormX2: "<<gm->normalizedChi2()<<endl //NormX2
+      <<" Muon NPix: "  <<gm->hitPattern().numberOfValidPixelHits()<<endl //Npixhit
+      <<" Muon NTrk: "  <<gm->hitPattern().numberOfValidTrackerHits()<<endl //Ntrk hit
+      <<" Muon NMatches: "<<mu.numberOfMatches()<<endl //MuonStations
+      <<" Muon Hits: "  <<gm->hitPattern().numberOfValidMuonHits()<<endl; //Muon Hits
   cout<<" Muon pfIso: "<<mu.combRelPFIsolation()<<endl;
-
 }
 
 void
@@ -787,8 +789,7 @@ void AnalyzerBase::setEventWeight(edm::EventBase const & event)
   }else{
     event.getByLabel(pileupLabel_, PupH_);
     //float PU_Weight = wprimeUtil_->getPUWeight1BX(*PupH_);//In time only
-    //float PU_Weight = wprimeUtil_->getPUWeight3BX(*PupH_);//Average, in time and of of time
-    float PU_Weight = wprimeUtil_->getPUWeight3D(*PupH_);//3D Matrix
+    float PU_Weight = wprimeUtil_->getPUWeightTrue(*PupH_);//Truth
     wprimeUtil_->setWeight(wprimeUtil_->getSampleWeight() * PU_Weight);
   }
 }

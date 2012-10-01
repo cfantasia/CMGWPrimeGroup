@@ -151,8 +151,10 @@ inline float TeVMuon::combRelIsolation03(const float offset) const{
 //computes the combined rel isolation value
 inline float TeVMuon::combRelPFIsolation() const
 {
-  return ( chargedHadronIso() + std::max(neutralHadronIso() + photonIso() - 0.5 * userFloat("deltaBeta"), 0.)) 
-    / pt();
+  const reco::MuonPFIsolation & iso = pfIsolationR04();
+  return (iso.sumChargedHadronPt + std::max(0.,iso.sumNeutralHadronEt+iso.sumPhotonEt-0.5*iso.sumPUPt)) / pt();
+  //return ( chargedHadronIso() + neutralHadronIso() + photonIso() ) 
+  /// pt();
 }
 
 //////////////////////////////
