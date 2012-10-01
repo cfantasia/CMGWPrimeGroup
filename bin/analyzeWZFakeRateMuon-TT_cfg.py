@@ -12,16 +12,22 @@ process.WprimeAnalyzer.candEvtFile = "WZFakeRateMuon-TT.evt"
 process.WprimeAnalyzer.triggersToUse = SingleElecTriggers
 process.WprimeAnalyzer.Cuts = WZFakeMuonCuts
 
-process.WprimeAnalyzer.VLElectronType = cms.untracked.string("WZLoose")
-process.WprimeAnalyzer.LooseElectronType = "WZLoose"
-process.WprimeAnalyzer.TightElectronType = "WZTight"
-process.WprimeAnalyzer.VLMuonType = cms.untracked.string("EWKWZLoose")
-process.WprimeAnalyzer.LooseMuonType = "EWKWZLoose"
-process.WprimeAnalyzer.TightMuonType = "EWKWZTight"
+process.WprimeAnalyzer.ExtraElectronType = cms.untracked.string("WZLoose")
+process.WprimeAnalyzer.LooseZElectronType = "WZRelaxed95"
+process.WprimeAnalyzer.TightZElectronType = "WZLoose"
+process.WprimeAnalyzer.LooseWElectronType = "WZLoose"#Doesn't matter
+process.WprimeAnalyzer.TightWElectronType = "WZTightPt20"
+
+process.WprimeAnalyzer.ExtraMuonType = cms.untracked.string("EWKWZLoose")
+process.WprimeAnalyzer.LooseZMuonType = "EWKWZRelaxed"
+process.WprimeAnalyzer.TightZMuonType = "EWKWZLoose"
+process.WprimeAnalyzer.LooseWMuonType = "EWKWZLoose"#Doesn't matter
+process.WprimeAnalyzer.TightWMuonType = "EWKWZTightPt20"
 
 process.WprimeAnalyzer.met = "patMETsPFType1"
 
 ###Cuts
+process.WprimeAnalyzer.minWleptPt = 20.
 process.WprimeAnalyzer.minWtransMass = 30.
 process.WprimeAnalyzer.minMET = 30.
 process.WprimeAnalyzer.maxNVLLeptons = cms.untracked.uint32(2) #This is for Very loose leptons
