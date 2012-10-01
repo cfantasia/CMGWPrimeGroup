@@ -1,5 +1,5 @@
 /* 
-   Usage: root -b -q 'MakePlots.cc+("input.root", "output.pdf", "options", <lumiWanted>)'
+   Usage: root -b -l -q 'MakePlots.cc+("input.root", "output.pdf", "options", <lumiWanted>)'
    Options include:
    ""    = every plot after every cut, note some may be blank
    "final" = show me all plots but only after the last cut
@@ -147,7 +147,8 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   if(mode_ == kWprimeWZ || mode_ == kEWKWZ ||
      mode_ == kWprimeVW || mode_ == kWprimeTB ||
      mode_ == kWZFakeRate){
-    Data.push_back(Sample("data"));
+    //Data.push_back(Sample("data"));
+    Data.push_back(Sample("WZJetsTo3LNu"));
   }else if(mode_ == kHadVZ){
     vector<string> vData;
 
@@ -199,7 +200,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   if(mode_ == kWprimeWZ || mode_ == kEWKWZ || mode_ == kWZFakeRate){
     vector<string> ZJets; 
     ZJets.push_back("DYJetsToLL");
-    Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
+    //Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
     
     if(mode_ == kWZFakeRate || mode_ == kEWKWZ){
       //Bkg.push_back(Sample("WJetsToLNu", kOrange+6, 1, kOrange+0));
@@ -211,7 +212,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       VV.push_back("ZZ");
       VV.push_back("GVJets");
       VV.push_back("WWTo2L2Nu");
-      Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
+      //Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
     }
     //Cory: removed for mm Bkg.push_back(Sample("TTJets"  , kViolet+4, 1, kViolet+2));
     
@@ -240,7 +241,8 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   /////Signal Samples
 
   if(mode_ == kWprimeWZ){
-    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-200", kBlue, 1, 0));
+    Sig.push_back(Sample("WprimeToWZTo3LNu_M-200", kBlue, 1, 0));
+    Sig.push_back(Sample("WprimeToWZTo3LNu_M-1900", kRed, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-250", kRed, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-300", kGreen, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-400", 1, 1, 0));
@@ -357,15 +359,15 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   //They are cross checks but not critical to be shown
   if(opt.find("show") == string::npos){
     if(mode_ == kWprimeWZ){
-      variable.push_back("hWZ3e0muMass");
-      variable.push_back("hWZ2e1muMass");
-      variable.push_back("hWZ1e2muMass");
-      variable.push_back("hWZ0e3muMass");
+      variable.push_back("hWZ3e0mMass");
+      variable.push_back("hWZ2e1mMass");
+      variable.push_back("hWZ1e2mMass");
+      variable.push_back("hWZ0e3mMass");
       
       variable.push_back("hWZTransMass");
       variable.push_back("hWZpt");
     
-      variable.push_back("hHt");
+      variable.push_back("hLt");
       variable.push_back("hQ");       
 
       variable.push_back("hZMass");
@@ -545,8 +547,8 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   //Make plots for a single cut
   if(mode_ == kWprimeWZ){
     if(opt.find("show") == string::npos) {
-      DrawandSave(fin,outName,"hZeeMass_Ht","Title: Z Mass After Ht Zee",0);
-      DrawandSave(fin,outName,"hZmmMass_Ht","Title: Z Mass After Ht Zmm",0);
+      DrawandSave(fin,outName,"hZeeMass_Lt","Title: Z Mass After Lt Zee",0);
+      DrawandSave(fin,outName,"hZmmMass_Lt","Title: Z Mass After Lt Zmm",0);
 
       DrawandSave(fin,outName,"hZMass_ValidZ","Title: Z Mass After Valid Z",1);
       DrawandSave(fin,outName,"hZeeMass_ValidZ","Title: Z Mass After Valid Zee",1);
@@ -578,12 +580,12 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       DrawandSave(fin,outName,"hMETmm_ValidW","Title: MET After Valid W (Zmm)",0,0,1);
       //End MET
 
-      DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Cumlative Ht before Ht Cut",1,0,1);
+      DrawandSave(fin,outName,"hLt_ValidWZCand","Title: Cumlative Lt before Lt Cut",1,0,1);
 
-      DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",1);
-      DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Ht Cut",1,0,1);
-      DrawandSave(fin,outName,"hWZMass_Ht","Title: WZ Mass After Ht Cut ",1,0,0);
-      DrawandSave(fin,outName,"hWZMass_Ht","Title: WZ Mass After Ht Cut (Cumlative) ",1,0,1);
+      DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Lt Cut",1);
+      DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Lt Cut",1,0,1);
+      DrawandSave(fin,outName,"hWZMass_Lt","Title: WZ Mass After Lt Cut ",1,0,0);
+      DrawandSave(fin,outName,"hWZMass_Lt","Title: WZ Mass After Lt Cut (Cumlative) ",1,0,1);
 
       ////////////////
       DrawandSave(fin,outName,"hNLLeps_ValidWZCand","Title: NLepAfter Valid WZ",1);
@@ -593,14 +595,14 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       DrawandSave(fin,outName,"hNVtxs_ValidWZCand","Title: NVtx After Valid WZ",1);
       DrawandSave(fin,outName,"hLeadPt_ValidWZCand","Title: Lead Pt After Valid WZ",1);
 
-      DrawandSave(fin,outName,"hHt_ValidWZCand","Title: Ht After Valid WZ",1);
+      DrawandSave(fin,outName,"hLt_ValidWZCand","Title: Lt After Valid WZ",1);
       DrawandSave(fin,outName,"hZpt_ValidWZCand","Title: Zpt After Valid WZ",1);
       DrawandSave(fin,outName,"hWpt_ValidWZCand","Title: Wpt After Valid WZ",1);
       
-      DrawandSave(fin,outName,"hWZ3e0muMass_ValidWZCand","Title: WZ 3e0mu Mass before Ht Cut",1,0,0);
-      DrawandSave(fin,outName,"hWZ2e1muMass_ValidWZCand","Title: WZ 2e1mu Mass before Ht Cut",1,0,0);
-      DrawandSave(fin,outName,"hWZ1e2muMass_ValidWZCand","Title: WZ 1e2mu Mass before Ht Cut",1,0,0);
-      DrawandSave(fin,outName,"hWZ0e3muMass_ValidWZCand","Title: WZ 0e3mu Mass before Ht Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZ3e0mMass_ValidWZCand","Title: WZ 3e0mu Mass before Lt Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZ2e1mMass_ValidWZCand","Title: WZ 2e1mu Mass before Lt Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZ1e2mMass_ValidWZCand","Title: WZ 1e2mu Mass before Lt Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZ0e3mMass_ValidWZCand","Title: WZ 0e3mu Mass before Lt Cut",1,0,0);
 /*
       DrawandSave(fin,outName,"hDiscriminant","Title: Disc ",1,0,0);
       DrawandSave(fin,outName,"hDiscriminantFrac","Title: Disc Frac",1,0,0);
@@ -609,10 +611,10 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       DrawandSave(fin,outName,"hDiscriminantImag","Title: Disc Imag",1,0,0);
 */     
       vector<string> WZMassChannels;
-      WZMassChannels.push_back("hWZ3e0muMass_ValidWZCand");
-      WZMassChannels.push_back("hWZ2e1muMass_ValidWZCand");
-      WZMassChannels.push_back("hWZ1e2muMass_ValidWZCand");
-      WZMassChannels.push_back("hWZ0e3muMass_ValidWZCand");
+      WZMassChannels.push_back("hWZ3e0mMass_ValidWZCand");
+      WZMassChannels.push_back("hWZ2e1mMass_ValidWZCand");
+      WZMassChannels.push_back("hWZ1e2mMass_ValidWZCand");
+      WZMassChannels.push_back("hWZ0e3mMass_ValidWZCand");
       DrawandSave(fin,outName,WZMassChannels,"Title: WZ Mass By Channel",1);
     }
   }else if(mode_ == kEWKWZ){
@@ -1168,7 +1170,7 @@ GetTitle(){
   vector<Sample> & samples = Data.size() ? Data : Bkg;
   if(0) title = samples[0].hist->GetTitle();
   title += ";"; 
-  //if(filename.find("hHt_") != string::npos) title += "H_{T} #equiv #Sigma p_{T}^{Lep} (GeV)";
+  //if(filename.find("hLt_") != string::npos) title += "H_{T} #equiv #Sigma p_{T}^{Lep} (GeV)";
   title += samples[0].hist->GetXaxis()->GetTitle();
   title += ";";
   title += samples[0].hist->GetYaxis()->GetTitle();
@@ -1231,7 +1233,7 @@ int GetRebin(string title){
   if(title.find("mmVMass") != string::npos) rebin = 3;
 
   if(title.find("hMET_") != string::npos) rebin = 1;
-  if(title.find("hHt_") != string::npos) rebin = 1;
+  if(title.find("hLt_") != string::npos) rebin = 1;
   if(title.find("hWZTransMass_") != string::npos) rebin = 2;
   if(title.find("hWZpt_") != string::npos) rebin = 2;
   
