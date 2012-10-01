@@ -62,12 +62,15 @@ public:
   bool passWLepPtCut() const;
   bool passWLepIsoCut() const;
 
-  bool passWLepTightCut() const;
-  bool passZLepTightCut(bool firstDaughter) const;
+  bool passWLepTightCut();
+  bool passZLepTightCut(bool firstDaughter);
+  bool passZLepNOTTightCut(bool firstDaughter);
   bool passWFlavorElecCut() const;
   bool passWFlavorMuonCut() const;
   bool passFakeEvtCut() const;
-  bool passFakeLeptonProbeCut() const;
+  bool passMaxWtransMassCut(const WCandidate& w, const float& cut) const;
+  bool passMaxDeltaWtransMassCut(const float& cut) const;
+  bool passFakeLeptonProbeCut();
 
   bool passTriggerEmulation(const heep::Ele& elec, const float minPt=0.) const;
 
@@ -78,17 +81,18 @@ public:
   std::vector<double> effectiveElecArea_;
   std::vector<double> effectiveMuonArea_;
   
-  bool doSystematics_;
+  bool doSystematics_, doMatrix_;
 
 ///My calculated qualities//////////////////
-  int runNumber_;
-  int lumiNumber_;
-  int evtNumber_;
+  uint runNumber_;
+  uint lumiNumber_;
+  uint evtNumber_;
   float WZMass_;
   float Zpt_;
   float ZMass_;
   float Wpt_;
   float WTransMass_;
+  float WCharge_;
   float Lt_;
   float TriLepMass_;
   float Q_;
@@ -101,7 +105,8 @@ public:
   float LeadPt_;
   float LeadElecPt_;
   float LeadMuonPt_;
-  bool TT, TF, FT;
+  bool TT, TF, FT, FF;
+  int ZTightCode_, WTightCode_;
   float ZLep1Pt_, ZLep1Eta_, ZLep2Pt_, ZLep2Eta_, WLepPt_, WLepEta_;
 
 // +++++++++++++++++++General Cut values
@@ -133,8 +138,8 @@ public:
   float minZmmPt2_;
 
   //Selectors
-  ElectronSelector looseElectron_, vlElectron_, tightElectron_;
-  MuonSelector looseMuon_, vlMuon_, tightMuon_;
+  ElectronSelector extraElectron_, looseZElectron_, tightZElectron_, looseWElectron_, tightWElectron_;
+  MuonSelector     extraMuon_, looseZMuon_, tightZMuon_, looseWMuon_, tightWMuon_;
   JetSelector looseJet_;
 
   //Handles
@@ -150,8 +155,8 @@ public:
   edm::InputTag rhoFastJetLabel_;
 
 //////Chosen Candidates
-  ElectronV allElectrons_, looseElectrons_, vlElectrons_, tightElectrons_;
-  MuonV allMuons_, looseMuons_, vlMuons_, tightMuons_;
+  ElectronV allElectrons_, extraElectrons_, looseZElectrons_, tightZElectrons_, looseWElectrons_, tightWElectrons_;
+  MuonV     allMuons_, extraMuons_, looseZMuons_, tightZMuons_, looseWMuons_, tightWMuons_;
   JetV looseJets_;
   pat::MET met_;
 
@@ -175,13 +180,13 @@ public:
 
   std::vector<TH1F*> hZMass, hZeeMass, hZmmMass, hZ3e0mMass, hZ2e1mMass, hZ1e2mMass, hZ0e3mMass;
   std::vector<TH1F*> hZeeMassTT, hZeeMassTF, hZmmMassTT, hZmmMassTF;
-  std::vector<TH1F*> hZpt,hZeept,hZmmpt;
+  std::vector<TH1F*> hZpt,hZeept,hZmmpt, hZ3e0mpt, hZ2e1mpt, hZ1e2mpt, hZ0e3mpt;
 
-  std::vector<TH1F*> hMET, hMETee, hMETmm, hMET3e0m, hMET2e1m, hMET1e2m, hMET0e3m, hMETSig;
+  std::vector<TH1F*> hMET, hMETee, hMETmm, hMET3e0m, hMET2e1m, hMET1e2m, hMET0e3m, hMETSig, hMETPhi;
 
   std::vector<TH1F*> hWTransMass, hWenuTransMass, hWmnuTransMass, hW3e0mTransMass, hW2e1mTransMass, hW1e2mTransMass, hW0e3mTransMass;
-  std::vector<TH1F*> hWpt, hWenupt, hWmnupt;
-  std::vector<TH1F*> hWQ, hWenuQ, hWmnuQ;
+  std::vector<TH1F*> hWpt, hWenupt, hWmnupt, hW3e0mpt, hW2e1mpt, hW1e2mpt, hW0e3mpt;
+  std::vector<TH1F*> hWQ, hWenuQ, hWmnuQ, hW3e0mQ, hW2e1mQ, hW1e2mQ, hW0e3mQ;
   std::vector<TH1F*> hWTheta;
 
   std::vector<TH1F*> hNLElec, hNLMuon, hNLLeps;
@@ -195,12 +200,14 @@ public:
 
   std::vector<TH1F*> hWenuCombRelIso, hWmnuCombRelIso;
 
+  std::vector<TH1F*> hDeltaPhiWJet, hDeltaPhiLepJet, hDeltaRLepJet, hDeltaWMT;
+
   std::vector<TH2F*> hEtaVsPt, hEtaVsPtElec, hEtaVsPtMuon, hEtaVsPt3e0m, hEtaVsPt2e1m, hEtaVsPt1e2m, hEtaVsPt0e3m;
   std::vector<TH2F*> hPtVsZeeBarrelMassTT,hPtVsZeeBarrelMassTF,hPtVsZeeEndCapMassTT,hPtVsZeeEndCapMassTF,hPtVsZmmMassTT,hPtVsZmmMassTF;
 
   TH1F *hDiscriminant, *hDiscriminantFrac, *hDiscriminantAngle, *hDiscriminantReal, *hDiscriminantImag,;
   TH1F* hVtxMatch;
-  
+
   std::vector<TTree*> tEvts;
 
 };

@@ -1,4 +1,4 @@
-//Usage: root -b -l -q 'printNEvts.C+(file, evtType)'
+//Usage: root -b -l -q 'printNEvts.C+(file, mode)'
 //eg: root -b -l -q 'printNEvts.C+("../../../EWKWZ.root", -1)'
 
 #include <vector>
@@ -7,8 +7,26 @@
 #include "TLine.h"
 #include "../Limits/consts.h"
 
+struct Channel{
+  string name;
+  vector<int> sub;//subchannels
+  Channel(){}
+  Channel(string n, int s1=-9999, int s2=-999, int s3=-999, int s4=-999){
+    name = n; 
+    if(s1 != -999) sub.push_back(s1);
+    if(s2 != -999) sub.push_back(s2);
+    if(s3 != -999) sub.push_back(s3);
+    if(s4 != -999) sub.push_back(s4);
+  }
+//  Channel(string n, int[] arr){
+//    name = n; 
+//    sub = vector<int> (arr, arr + sizeof(arr) / sizeof(arr[0]) );
+//  }
+
+};
+
 void
-printNEvts(string infile, int evtType=-1){  
+printNEvts(string infile, int mode=-1){  
   TFile *f = TFile::Open(infile.c_str(), "read"); assert(f);
 
   vector<pair<vector<string>, string> > Samples;
@@ -40,7 +58,7 @@ printNEvts(string infile, int evtType=-1){
     }
   }
   Samples.push_back(make_pair(vector<string>(), "BREAK"));//Print hline
-  Samples.push_back(make_pair(bkg, "Total Background"));
+  Samples.push_back(make_pair(bkg, infile.find("EWKWZ") != string::npos ? "Total MC" : "Total Background"));
   Samples.push_back(make_pair(vector<string>(), "BREAK"));//Print hline
 
   vector<string> Data;
@@ -67,10 +85,10 @@ printNEvts(string infile, int evtType=-1){
     Data.push_back("data_DoubleElectron-Run2011B-PromptReco-v1");
   } 
   Samples.push_back(make_pair(Data, "Data"));
-  Samples.push_back(make_pair(vector<string>(), "BREAK"));//Print hline
 
   //signal
   if(infile.find("WprimeWZ") != string::npos){
+    Samples.push_back(make_pair(vector<string>(), "BREAK"));//Print hline
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-200"), "200"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-250"), "250"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-300"), "300"));
@@ -87,6 +105,7 @@ printNEvts(string infile, int evtType=-1){
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-1400"), "1400"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-1500"), "1500"));
   }else if(infile.find("HadVZ") != string::npos){
+    Samples.push_back(make_pair(vector<string>(), "BREAK"));//Print hline
     vector<string> RS750;
     RS750.push_back("Summer11_RSZZeejj_750");
     RS750.push_back("Summer11_RSZZmmjj_750");
@@ -135,56 +154,143 @@ printNEvts(string infile, int evtType=-1){
 
   //////////////////////////////
 
+  vector<Channel> evtTypes;
   vector<pair<string, string> > levels;
   if(infile.find("WprimeWZ") != string::npos || infile.find("EWKWZ") != string::npos){
-    if(evtType == -1){
+    if(mode == -1){
+      evtTypes.push_back(Channel("All Channels", 0,1,2,3));
       levels.push_back(make_pair("MinNLeptons", "Preselection"));
       levels.push_back(make_pair("ValidZ", "Z Selection"));
+      levels.push_back(make_pair("ValidW", "W Selection"));
+      levels.push_back(make_pair("MET", "\\MET"));
+    }else if(mode == -2){
+      evtTypes.push_back(Channel("ee", 0,1));
+      evtTypes.push_back(Channel("\\mu\\mu", 2,3));
+      levels.push_back(make_pair("ValidZ", "Z Selection"));
+    }else{
+      evtTypes.push_back(Channel("3e", 0));
+      evtTypes.push_back(Channel("2e1\\mu", 1));
+      evtTypes.push_back(Channel("1e2\\mu", 2));
+      evtTypes.push_back(Channel("3\\mu", 3));
+      levels.push_back(make_pair("ValidW", "W Selection"));
+      levels.push_back(make_pair("MET", "\\MET"));
     }
-    levels.push_back(make_pair("ValidW", "W Selection"));
-    levels.push_back(make_pair("MET", "\\MET"));
-    levels.push_back(make_pair("ZLep1Tight", "TT"));
-    levels.push_back(make_pair("ZLep2Tight", "TTT"));
   }else if(infile.find("HadVZ") != string::npos){
-    if(evtType == -1){
+    if(mode == -1){
+      evtTypes.push_back(Channel("All Channels", 0,2));
+    }else{
+      evtTypes.push_back(Channel("ee", 0));
+      evtTypes.push_back(Channel("\\mu\\mu", 2));
     }
     levels.push_back(make_pair("Zpt", "Z Selection"));
     levels.push_back(make_pair("VMass", "V Selection"));
   }  
 
-  cout<<" Sample ";
-  for(unsigned level=0; level<levels.size(); ++level) cout<<" & "<<levels[level].second;
+  cout<<"\\begin{table}[!h]"<<endl;
+  //%Cory: Updated DATE
+  //cout<"\\begin{small}"<<endl;
+  cout<<"\\centering"<<endl;
+  cout<<"\\begin{tabular}{|c||*{"<<levels.size()*evtTypes.size()<<"}{c|}} \\hline"<<endl;
+
+  if(mode == -1){
+    cout<<"Sample ";
+  }else{//don't do if doing all channels
+    cout<<"\\multirow{2}{*}{Sample} ";
+    for(unsigned level=0; level<levels.size(); ++level){
+      cout<<" & \\multicolumn{"<<evtTypes.size()<<"}{c|}{$"<<levels[level].second<<"$}";//Print Cut Names
+    }
+    cout<<" \\\\ "<<endl;
+    cout<<" \\cline{2-"<<levels.size()*evtTypes.size()+1<<"}"<<endl;
+  }
+  for(unsigned level=0; level<levels.size(); ++level){
+    for(unsigned channel=0; channel<evtTypes.size(); ++channel){//multi col
+      cout<<" & "<<evtTypes[channel].name;//Print cut names
+    }
+  }
   cout<<" \\\\ \\hline"<<endl;
 
   for(unsigned i=0; i<Samples.size(); ++i){
+    if(Samples[i].second.find("Data") == string::npos) continue;//Cory: test only data
+
     if(Samples[i].second == "BREAK"){
       cout<<" \\hline"<<endl;
       continue;
     }
 
-    cout<<Samples[i].second;
-
+    cout<<Samples[i].second;//Print Sample names
+    
     for(unsigned level=0; level<levels.size(); ++level){
-      string hName;
-      int bin = -1;
-      if(evtType == -1){
-        hName = "hNumEvts";
-      }else{
-        hName = "hEvtType_" + levels[level].first;
-      }
-      TH1F* hist = get_sum_of_hists(f, Samples[i].first, hName.c_str());
-      if(evtType == -1){
-        bin = hist->GetXaxis()->FindBin(levels[level].first.c_str());
-      }else{
-        bin = hist->FindBin(evtType);
-      }
-      float tot = hist->GetBinContent(bin);
-      float sigma = hist->GetBinError(bin);
-      
-      //cout<<" & "<<std::fixed << std::setprecision(1)<<tot<<" $\\pm$ "<<sigma;
-      cout<<" & "<<Value(tot,sigma);
-      if(Samples[i].second.find("ata") == string::npos) cout<<" $\\pm$ "<<Value(sigma);
+      for(unsigned channel=0; channel<evtTypes.size(); ++channel){
+        float tot(0), sigma(0);
+        /*
+        //Use trees
+        string tName = "tEvts_" + levels[level].first;
+        string cuts = "(weight)*(ZMass > 71.188)*(ZMass < 111.188)";
+        int nbins = evtTypes[channel].sub.size();
+        for(int ibin=0; ibin<nbins; ++ibin){
+          cuts += Form("*(EvtType == %i)", evtTypes[channel].sub[ibin]);
+        }
+        //cout<<"Cuts are "<<cuts<<endl;
+        TTree* tree = getTree(f, Samples[i].first, tName); assert (tree || !(std::cerr << "Failed getting : " << tName << endl));
+        Value val = GetNEvtsAndError(tree, cuts);
+        float tot = val.val;
+        float sigma = val.err;
+        */
+
+        if(mode == -1 && 0){
+          //Use EvtType Histos
+          string hName = "hEvtType_" + levels[level].first;//Cory: Should be modified to also look at + and - Ws only
+          //hName = "hEvtTypeP_" + levels[level].first;//Cory: Should be modified to also look at + and - Ws only
+          //hName = "hEvtTypeM_" + levels[level].first;//Cory: Should be modified to also look at + and - Ws only
+
+          TH1F* hist = get_sum_of_hists(f, Samples[i].first, hName);
+        
+          int nbins = evtTypes[channel].sub.size();
+          for(int ibin=0; ibin<nbins; ++ibin){
+            int bin = hist->FindBin(evtTypes[channel].sub[ibin]);
+            if(bin == hist->GetNbinsX()+1) cout<<"\n\nUsing an overflow bin\n\n";
+            tot += hist->GetBinContent(bin);///////Cory: is this right?, += or =?
+            sigma = AddInQuad(hist->GetBinError(bin), sigma);
+          }//binOfffset
+        }else{
+          //Use Zmass by channel histos
+          int nbins = evtTypes[channel].sub.size();
+          for(int ibin=0; ibin<nbins; ++ibin){
+            int & a = evtTypes[channel].sub[ibin];
+            string hName;
+            if(levels[level].second == "Preselection"){
+              if(mode == -1 && ibin > 0) break;//Don't double count
+              hName = "hMET_" + levels[level].first;//Cory: Should be modified to also look at + and - Ws only
+            }else if(levels[level].second == "Z Selection"){
+              if(mode == -1 && ibin > 0) break;//Don't double count
+              if(mode == -2 && ibin%2==1 ) break;//Don't double count
+              if(mode == -1){
+                hName = "hZMass_" + levels[level].first;
+              }else{
+                if(a < 1.5) hName = "hZeeMass_" + levels[level].first;
+                else        hName = "hZmmMass_" + levels[level].first;
+              }
+            }else{
+              hName = Form("hZ%ie%imMass_",3-a,a) + levels[level].first;
+            }
+            TH1F* hist = get_sum_of_hists(f, Samples[i].first, hName);
+            //cout<<"Hname is "<<hName<<endl;
+            int bin1 = 0;//hist->FindBin(0);
+            int bin2 = hist->GetNbinsX()+1;
+            double t(0),s(0);
+            t = hist->IntegralAndError(bin1, bin2, s);
+
+            tot += t;
+            sigma = AddInQuad(s, sigma);
+          }//binOfffset
+        }
+        
+        cout<<" & "<<Value(tot,sigma);
+        if(Samples[i].second.find("Data") == string::npos) cout<<" $\\pm$ "<<Value(sigma);//Only print error for MC
+      }//loop over evtTypes
     }//loop over cuts
     cout<<" \\\\ \\hline"<<endl;
   }//loop over samples
+  cout<<"\\end{tabular}"<<endl;
+  cout<<"\\end{table}"<<endl;
 }

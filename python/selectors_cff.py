@@ -25,7 +25,8 @@ muonSelectors = cms.PSet(
        maxNormalizedChi2 = cms.untracked.double(10.0),
        minNPixelHits = cms.untracked.int32(1),
        minNMuonHits = cms.untracked.int32(1),
-       minNTrackerLayers = cms.untracked.int32(9),
+       #minNTrackerLayers = cms.untracked.int32(9),#not using for now
+       minNTrackerHits = cms.untracked.int32(11),
        minNMatches = cms.untracked.int32(2),
        #maxPFIso = cms.untracked.double(???),#Added below in clones
     ),
@@ -54,24 +55,36 @@ muonSelectors.WZLoose = muonSelectors.VBTF.clone(
     maxIso03 = cms.untracked.double(0.15)
     )
 muonSelectors.WZRelaxed = muonSelectors.VBTF.clone(
+    minPt = 10.,
+    )
+muonSelectors.WZRelaxedPt20 = muonSelectors.VBTF.clone(
     minPt = 20.
     )
 muonSelectors.WZTight = muonSelectors.VBTF.clone(
+    minPt = 10.,
+    maxIso03 = cms.untracked.double(0.1)
+    )
+muonSelectors.WZTightPt20 = muonSelectors.VBTF.clone(
     minPt = 20.,
     maxIso03 = cms.untracked.double(0.1)
     )
 ###EWKWZ
 muonSelectors.EWKWZLoose = muonSelectors.PFIso.clone(
-    minPt = 10.,
     maxPFIso = cms.untracked.double(0.2)
     )
 muonSelectors.EWKWZRelaxed = muonSelectors.PFIso.clone(
+    )
+muonSelectors.EWKWZRelaxedPt20 = muonSelectors.PFIso.clone(
     minPt = 20.
     )
 muonSelectors.EWKWZTight = muonSelectors.PFIso.clone(
+    maxPFIso = cms.untracked.double(0.12)
+    )
+muonSelectors.EWKWZTightPt20 = muonSelectors.PFIso.clone(
     minPt = 20.,
     maxPFIso = cms.untracked.double(0.12)
     )
+
 ###HadVZ
 muonSelectors.HadVZLoose = muonSelectors.exotica.clone(
     minPt = cms.untracked.double(20.),
@@ -105,13 +118,31 @@ cutsEEDeltaEta = [0.011, 0.011, 0.007, 0.006, 0.005, 0.004]
 
 electronSelectors = cms.PSet(
     WZLoose = cms.PSet(),
-    WZRelaxed = cms.PSet(),
+    WZRelaxed95 = cms.PSet(),
+    WZRelaxed80 = cms.PSet(),
     WZTight = cms.PSet(),
     exotica = cms.PSet(),
+    mva = cms.PSet(
+       joint = cms.PSet(
+          minPt = cms.untracked.double(10.),
+          minpassMVAPresel = cms.untracked.int32(1),
+          minpassMVATrig = cms.untracked.int32(1),
+          #maxPFIso = cms.untracked.double(???),#Added below in clones
+       ),
+       barrel = cms.PSet(
+       ),
+       endcap = cms.PSet(
+       ),
+    ),
+    EWKWZLoose = cms.PSet(),
+    EWKWZTight = cms.PSet(),
     )
 
 for i, s in enumerate(["wp95", "wp90", "wp85", "wp80", "wp70", "wp60"]):
     pset = cms.PSet(
+        joint = cms.PSet(
+           minPt = cms.untracked.double(10.),
+        ),
         barrel = cms.PSet(
            maxMissingHits = cms.untracked.int32(cutsMissingHits[i]),
            minConv = cms.untracked.double(cutsConvDist[i]),#Hack bc we need an OR of these two cuts below
@@ -132,21 +163,40 @@ for i, s in enumerate(["wp95", "wp90", "wp85", "wp80", "wp70", "wp60"]):
     setattr(electronSelectors, s, pset)
     
 electronSelectors.WZLoose = electronSelectors.wp95.clone()
-electronSelectors.WZLoose.barrel.minPt = cms.untracked.double(10.)
-electronSelectors.WZLoose.endcap.minPt = cms.untracked.double(10.)
 
-electronSelectors.WZRelaxed = electronSelectors.wp80.clone()
-electronSelectors.WZRelaxed.barrel.minPt = cms.untracked.double(20.)
-electronSelectors.WZRelaxed.endcap.minPt = cms.untracked.double(20.)
-electronSelectors.WZRelaxed.barrel.maxCombRelIso = cms.untracked.double(999999999.)
-electronSelectors.WZRelaxed.endcap.maxCombRelIso = cms.untracked.double(999999999.)
-#electronSelectors.WZRelaxed.barrel.remove(maxCombRelIso)
-#electronSelectors.WZRelaxed.endcap.remove(maxCombRelIso)
+electronSelectors.WZRelaxed95 = electronSelectors.wp95.clone()
+electronSelectors.WZRelaxed95.barrel.maxCombRelIso = cms.untracked.double(999999999.)
+electronSelectors.WZRelaxed95.endcap.maxCombRelIso = cms.untracked.double(999999999.)
+
+electronSelectors.WZRelaxed80 = electronSelectors.wp80.clone()
+electronSelectors.WZRelaxed80.barrel.maxCombRelIso = cms.untracked.double(999999999.)
+electronSelectors.WZRelaxed80.endcap.maxCombRelIso = cms.untracked.double(999999999.)
+
+electronSelectors.WZRelaxed80Pt20 = electronSelectors.wp80.clone()
+electronSelectors.WZRelaxed80Pt20.joint.minPt = cms.untracked.double(20.)
+electronSelectors.WZRelaxed80Pt20.barrel.maxCombRelIso = cms.untracked.double(999999999.)
+electronSelectors.WZRelaxed80Pt20.endcap.maxCombRelIso = cms.untracked.double(999999999.)
 
 electronSelectors.WZTight = electronSelectors.wp80.clone()
-electronSelectors.WZTight.barrel.minPt = cms.untracked.double(20.)
-electronSelectors.WZTight.endcap.minPt = cms.untracked.double(20.)
 
+electronSelectors.WZTightPt20 = electronSelectors.wp80.clone()
+electronSelectors.WZTightPt20.joint.minPt = cms.untracked.double(20.)
+
+##EWKWZ
+electronSelectors.EWKWZLoose = electronSelectors.mva.clone()
+electronSelectors.EWKWZLoose.joint.maxPFIso = cms.untracked.double(0.1)
+
+electronSelectors.EWKWZRelaxed = electronSelectors.mva.clone()
+
+electronSelectors.EWKWZRelaxedPt20 = electronSelectors.mva.clone()
+electronSelectors.EWKWZRelaxedPt20.joint.minPt = 20.
+
+electronSelectors.EWKWZTight = electronSelectors.mva.clone()
+electronSelectors.EWKWZTight.joint.maxPFIso = cms.untracked.double(0.1)
+
+electronSelectors.EWKWZTightPt20 = electronSelectors.mva.clone()
+electronSelectors.EWKWZTightPt20.joint.minPt = 20.
+electronSelectors.EWKWZTightPt20.joint.maxPFIso = cms.untracked.double(0.1)
 
 ####################
 #####  Jets  #######

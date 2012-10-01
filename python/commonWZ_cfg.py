@@ -52,9 +52,6 @@ EWKWZCuts = cms.vstring(
     "ValidW",    
     
     "MET",
-
-    "ZLep1Tight",
-    "ZLep2Tight",
     )
 WprimeWZCuts = cms.vstring(
     "NoCuts", 
@@ -83,8 +80,10 @@ WZFakeElecCuts = cms.vstring(
     "WFlavorMuon",
     
     "WTransMass",
-    "MaxNJets",
+    "MaxWTransMass",
+#    "MaxNJets",
     "MET",
+    "MaxDeltaWTransMass",
     
     "FakeLepProbe",
     )
@@ -100,8 +99,10 @@ WZFakeMuonCuts = cms.vstring(
     "WFlavorElec",
     
     "WTransMass",
-    "MaxNJets",
+    "MaxWTransMass",
+#    "MaxNJets",
     "MET",
+    "MaxDeltaWTransMass",
     
     "FakeLepProbe",
     )
@@ -111,10 +112,14 @@ WZEffCuts = cms.vstring(
     "ValidZ", 
     "AllCuts")
 
-process.WprimeAnalyzer.LooseElectronType = cms.untracked.string("WZLoose")
-process.WprimeAnalyzer.TightElectronType = cms.untracked.string("WZTight")
-process.WprimeAnalyzer.LooseMuonType = cms.untracked.string("WZLoose")
-process.WprimeAnalyzer.TightMuonType = cms.untracked.string("WZTight")
+process.WprimeAnalyzer.LooseZElectronType = cms.untracked.string("WZLoose")
+process.WprimeAnalyzer.TightZElectronType = cms.untracked.string("WZTight")
+process.WprimeAnalyzer.LooseWElectronType = cms.untracked.string("WZLoose")
+process.WprimeAnalyzer.TightWElectronType = cms.untracked.string("WZTight")
+process.WprimeAnalyzer.LooseZMuonType = cms.untracked.string("WZLoose")
+process.WprimeAnalyzer.TightZMuonType = cms.untracked.string("WZTight")
+process.WprimeAnalyzer.LooseWMuonType = cms.untracked.string("WZLoose")
+process.WprimeAnalyzer.TightWMuonType = cms.untracked.string("WZTight")
 process.WprimeAnalyzer.LooseJetType = cms.untracked.string("Pat")
 
 ####Triggers
@@ -168,6 +173,7 @@ process.WprimeAnalyzer.minLeadPt = cms.double(35.)
 process.WprimeAnalyzer.minMET = cms.untracked.double(30.)
 
 # +++++++++++++++++++W Cuts
+process.WprimeAnalyzer.minWleptPt = cms.untracked.double(0.)
 process.WprimeAnalyzer.minWtransMass = cms.untracked.double(0.)#Cory: Removed cut
 process.WprimeAnalyzer.minWlepPt = cms.double(20.)
 

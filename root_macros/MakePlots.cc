@@ -197,8 +197,12 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   /////Background Samples
 
   if(mode_ == kWprimeWZ || mode_ == kEWKWZ || mode_ == kWZFakeRate){
-    if(mode_ == kWZFakeRate){
-      Bkg.push_back(Sample("WJetsToLNu", kOrange+6, 1, kOrange+0));
+    vector<string> ZJets; 
+    ZJets.push_back("DYJetsToLL");
+    Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
+    
+    if(mode_ == kWZFakeRate || mode_ == kEWKWZ){
+      //Bkg.push_back(Sample("WJetsToLNu", kOrange+6, 1, kOrange+0));
       Bkg.push_back(Sample("ZZ", kGreen+3, 1, kGreen+2));
       Bkg.push_back(Sample("GVJets", kOrange+3, 1, kOrange+5));
       Bkg.push_back(Sample("WWTo2L2Nu", kOrange+3, 1, kOrange+10));
@@ -209,12 +213,8 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       VV.push_back("WWTo2L2Nu");
       Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
     }
-    Bkg.push_back(Sample("TTJets"  , kViolet+4, 1, kViolet+2));
+    //Cory: removed for mm Bkg.push_back(Sample("TTJets"  , kViolet+4, 1, kViolet+2));
     
-    vector<string> ZJets; 
-    ZJets.push_back("DYJetsToLL");
-    Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
- 
     Bkg.push_back(Sample("WZJetsTo3LNu"       , kOrange+3, 1, kOrange-2));
   }else if(mode_ == kHadVZ || mode_ == kWprimeVW || mode_ == kWprimeTB){
     vector<string> VV;
@@ -344,6 +344,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   }else if(mode_ == kWZFakeRate){
     variable.push_back("hNJets");
     variable.push_back("hWTransMass");
+    variable.push_back("hDeltaWMT");
     variable.push_back("hDeltaPhiWJet");
     variable.push_back("hDeltaPhiLepJet");
     variable.push_back("hDeltaRLepJet");
@@ -661,6 +662,14 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       WTMass4Channels.push_back("hW0e3mTransMass_ValidW");
       DrawandSave(fin,outName,WTMass4Channels,"Title: W TransMass By 4 Channel",0);
 
+      //DrawandSave(fin,outName,"TREEWLepPtCUTSweight*(ZTightCode==3)*(MET<20)*(WTransMass<20.)*(EvtType==2)*(abs(WLepEta)<=1.5)","Title: Obj Faking Barrel Elec Pt Loose",0);
+      //DrawandSave(fin,outName,"TREEWLepPtCUTSweight*(ZTightCode==3)*(WTightCode==1)*(MET<20)*(WTransMass<20.)*(EvtType==2)*(abs(WLepEta)<=1.5)","Title: Obj Faking Barrel Elec Pt Tight",0);
+      //DrawandSave(fin,outName,"TREEWLepPtCUTSweight*(ZTightCode==3)*(MET<20)*(WTransMass<20.)*(EvtType==2)*(abs(WLepEta)>1.5)","Title: Obj Faking Endcap Elec Pt Loose",0);
+      //DrawandSave(fin,outName,"TREEWLepPtCUTSweight*(ZTightCode==3)*(WTightCode==1)*(MET<20)*(WTransMass<20.)*(EvtType==2)*(abs(WLepEta)>1.5)","Title: Obj Faking Endcap Elec Pt Tight",0);
+      //DrawandSave(fin,outName,"TREEWLepPtCUTSweight*(ZTightCode==3)*(MET<20)*(WTransMass<20.)*(EvtType==1)","Title: Obj Faking Muon Pt Loose",0);
+      //DrawandSave(fin,outName,"TREEWLepPtCUTSweight*(ZTightCode==3)*(WTightCode==1)*(MET<20)*(WTransMass<20.)*(EvtType==1)","Title: Obj Faking Muon Pt Tight",0);
+      
+
   }else if(mode_ == kHadVZ){
     if(opt.find("show") == string::npos) {
       DrawandSave(fin,outName,"h_bestmass","Title: Best Mass",1);
@@ -847,31 +856,91 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
 
   bool validHist = false;//If none of the histograms are filled ,don't draw it
   for(unsigned int i=0; i<samples_.size(); ++i){//Loop over Data, Bkg, Sig
-    for(unsigned int j=0; j<samples_[i]->size(); ++j){
+    vector<Sample> & samples = *samples_[i];
+    for(unsigned int j=0; j<samples.size(); ++j){
       if(debug_) cout<<"i: "<<i<<" j:"<<j<<endl;
-      Sample& curSample = samples_[i]->at(j);//Let's make this easy
+      Sample& curSample = samples.at(j);//Let's make this easy
 
       ///Add ability to use Data Driven Methods instead of MC//////
       vector<string> names = curSample.names;
-      if(0 && mode_ == kEWKWZ){
-        if(title.find("hMET3e0m_ValidW") != string::npos ||
+      if(1 && mode_ == kEWKWZ){
+        if(title.find("hMET3e0m_ValidW") != string::npos ||//met
            title.find("hMET2e1m_ValidW") != string::npos ||
            title.find("hMET1e2m_ValidW") != string::npos ||
-           title.find("hMET0e3m_ValidW") != string::npos ){
+           title.find("hMET0e3m_ValidW") != string::npos ||
+
+           title.find("hWpt3e0m_ValidW") != string::npos ||//Wpt
+           title.find("hWpt2e1m_ValidW") != string::npos ||
+           title.find("hWpt1e2m_ValidW") != string::npos ||
+           title.find("hWpt0e3m_ValidW") != string::npos ||
+
+           title.find("hZMass3e0m_ValidW") != string::npos ||//zmass
+           title.find("hZMass2e1m_ValidW") != string::npos ||
+           title.find("hZMass1e2m_ValidW") != string::npos ||
+           title.find("hZMass0e3m_ValidW") != string::npos ||
+
+           title.find("hWTransMass3e0m_ValidW") != string::npos ||//wmt
+           title.find("hWTransMass2e1m_ValidW") != string::npos ||
+           title.find("hWTransMass1e2m_ValidW") != string::npos ||
+           title.find("hWTransMass0e3m_ValidW") != string::npos ||
+
+           title.find("hZpt3e0m_ValidW") != string::npos ||//zpt
+           title.find("hZpt2e1m_ValidW") != string::npos ||
+           title.find("hZpt1e2m_ValidW") != string::npos ||
+           title.find("hZpt0e3m_ValidW") != string::npos ){
           //loop over names and replace MC dir with Data driven
           replace (names.begin(), names.end(), (string)"DYJetsToLL", (string)"DYJetsToLL-DataDriven");
-          //don't change title for other MC/data
-        }
-      }
-      ///////////
+          //curSample.name = "DataDrivenBkg";
 
-      curSample.hist = get_sum_of_hists(fin, names, title, rebin, curSample.weights);
+          //remove ttbar
+//           for(int p=0; p<(int)names.size(); ++p){
+//             cout<<" p="<<p<<endl;
+//             cout<<" names is "<<names[p]<<endl;
+//             if(names[p].compare("TTJets") == 0){
+//               curSample.names.erase(curSample.names.begin()+p);
+//               p--;
+//               if(curSample.names.size() == 0 ){//Sample is now empty
+//                 samples.erase(samples.begin()+j);
+//                 j--;
+//               }
+//               continue;
+//             }
+//           }//p loop
+          //don't change title for other MC/data
+        }//j loop
+      }//i loop
+
+      ///////////
+      if(title.find("TREE") == string::npos){
+        //cout<<"title is "<<title<<endl;
+        curSample.hist = get_sum_of_hists(fin, names, title, rebin, curSample.weights);
+      }else{//Get Histograms from Trees///
+        curSample.hist = new TH1F("a", "", 10, 0, 50);
+        string newtitle = title;
+        newtitle.replace(newtitle.find("TREE"), 4, "");
+        size_t pos = newtitle.find("CUTS");
+        string var = newtitle.substr(0, pos);
+        string cuts = newtitle.substr(pos);
+        cuts.replace(cuts.find("CUTS"), 4, "");
+        //cout<<" pos: "<<pos
+        //<<" var: "<<var
+        //<<" cuts: "<<cuts
+        //<<endl;
+        
+        string obj = "tEvts_ValidW";
+        TTree* t = getTree(fin, names, "tEvts_ValidW"); assert(t); 
+        get_sum_of_hists(fin, names, obj, var, cuts, *curSample.hist, curSample.weights);
+        assert(curSample.hist);
+      }
+      /////
       if(!validHist && curSample.hist->Integral() > 0)//Only count filled histos
         validHist = true;
       curSample.hist->SetLineStyle(curSample.style);
       curSample.hist->SetLineColor(curSample.line); 
 
       //if(samples_[i] != &Data) curSample.hist->Scale(lumiWanted_/lumiUsed_); //Don't scale data
+
+
       
       if(!eff){
         curSample.hist->SetFillColor(curSample.fill);
@@ -909,6 +978,7 @@ CheckSamples(TFile* fin, vector<Sample> & samples){
     for(size_t j=0; j<sample.names.size(); ++j){
       string & name = sample.names[j];
       float & sampleLumiUsed = sample.lumiUsed[j];
+      cout<<" looking at sample "<<name<<endl;
 
       if(debug_) cout<<"Checking key "<<name<<endl;
       TH1F* hInfo = (TH1F*) fin->Get(Form("%s/hFileInfo", name.c_str()));
@@ -940,9 +1010,11 @@ CheckSamples(TFile* fin, vector<Sample> & samples){
       if(nJobsDone != nJobsTotal){
         if(nJobsDone < nJobsTotal ) printf(" Only %i of %i jobs finished for %s.  Scaling to compensate\n",
                                           nJobsDone, nJobsTotal, name.c_str());
+        else printf("Job totals for %s don't match (%i expected, see %i) and you're combined different job types so the results are junk\n",
+                    name.c_str(), nJobsTotal, nJobsDone);
       }
-      //Scale sample to compensate for missing jobs
-      sample.weights[j] *= (float) nJobsTotal / nJobsDone;
+      //Scale sample to compensate for missing jobs (except data)
+      if(&samples != &Data) sample.weights[j] *= (float) nJobsTotal / nJobsDone;
       if(debug_) cout<<"Scaling set to "<<sample.weights[j]<<endl;
 
     }//subsample loop

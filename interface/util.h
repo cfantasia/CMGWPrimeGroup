@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 
+#include "DataFormats/RecoCandidate/interface/IsoDepositVetos.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
@@ -185,6 +186,11 @@ const float NOCUT = 9e9;
 struct closestToZMass {
   bool operator() (const reco::Candidate & a, const reco::Candidate & b) {
     return fabs(ZMASS - a.mass()) < fabs(ZMASS - b.mass());
+  }
+};
+struct closestToWTMass {
+  bool operator() (const reco::Candidate & a, const reco::Candidate & b) {
+    return fabs(WMASS - a.mt()) < fabs(WMASS - b.mt());
   }
 };
 struct closestToVMass {
@@ -368,6 +374,11 @@ class MinMaxSelector : public Selector<T> {
     if(!params.exists(param)){
       shouldset = false;//If you don't list it, I'll ignore it
       std::cout<<" You didn't specify param "<<param<<", so it will be ignored\n";
+    }else{
+      std::cout<<" Param: "<<param;
+      if(this->cutOnMin(param)) std::cout<<" >= ";
+      else                      std::cout<<" <= ";
+      std::cout<<val<<std::endl;
     }
     this->push_back(param, val);
     this->set(param, shouldset);
@@ -397,9 +408,13 @@ public:
     loadFromPset<double>(params, "maxDeltaPhi", true);
     loadFromPset<double>(params, "maxCombRelIso", true);
     loadFromPset<int>(params, "maxMissingHits", true);
+    loadFromPset<int>(params, "minpassMVAPresel", true);
+    loadFromPset<int>(params, "minpassMVATrig", true);
+    loadFromPset<double>(params, "maxPFIso", true);
 
     bitmask = getBitTemplate();
   }
+
   virtual bool operator()(const pat::Electron & p, pat::strbitset & ret) {
     bool val = (*this)(p,0.);
     ret = bitmask;
@@ -417,6 +432,12 @@ public:
     setpassCut("maxCombRelIso",calcCombRelIso(p, pu), bitmask);
     setpassCut("maxMissingHits", 
                p.gsfTrack()->trackerExpectedHitsInner().numberOfHits(), bitmask);
+    setpassCut("minpassMVAPresel", p.userInt("passPreselMVA2011"), bitmask);
+    setpassCut("minpassMVATrig", p.userInt("BDT_MVA_HWW2011_Trig_pass"), bitmask);
+
+    //if(ignoreCut("maxPFIso") || (pfIso(p,pu) < (p.isEE() && p.pt()<20.) ? 0.070 : cut("maxPFIso", double()))) passCut(bitmask, "maxPFIso");
+    if(ignoreCut("maxPFIso") || (pfIso(p,pu) < (p.isEE() ? 0.09 : 0.13))) passCut(bitmask, "maxPFIso");
+
     setIgnored(bitmask);
     return (bool) bitmask;
   }
@@ -441,9 +462,36 @@ public:
     setIgnored(bitmask);
     return (bool) bitmask;
   }
+  
+  float pfIso(const pat::Electron & p, const float & pu) const{
+    return (p.userFloat("pfChargedHadrons04")+std::max((float)0., p.userFloat("pfNeutralHadrons04")+p.userFloat("pfPhotons04")-pu))/ p.pt();
+    
+    //return (std::max(p.userFloat("pfIsoNeutral04")+p.userFloat("pfIsoPhotons04")-pu,(float)0.) + p.userFloat("pfIsoCharged04") ) / p.pt();
+
+    const pat::IsoDeposit * pfChargedDep = p.isoDeposit(pat::PfChargedHadronIso);
+    const pat::IsoDeposit * pfNeutralDep = p.isoDeposit(pat::PfNeutralHadronIso);
+    const pat::IsoDeposit * pfPhotonDep  = p.isoDeposit(pat::PfGammaIso);
+    reco::isodeposit::Direction dir = reco::isodeposit::Direction(p.eta(),p.phi());
+
+    reco::IsoDeposit::AbsVetos vetosCharged;
+    reco::IsoDeposit::AbsVetos vetosNeutral;
+    reco::IsoDeposit::AbsVetos vetosPhoton;
+    reco::isodeposit::ConeVeto v1( dir, 0.01 );
+    reco::isodeposit::ConeVeto v2( dir, 0.07 );
+    reco::isodeposit::RectangularEtaPhiVeto v3(dir,-0.025,0.025,-0.5,0.5);
+
+    vetosCharged.push_back(&v1);
+    vetosNeutral.push_back(&v2);
+    vetosPhoton.push_back(&v3);
+
+    float  isovalue_charged = pfChargedDep->sumWithin(0.4,vetosCharged);
+    float  isovalue_neutral = pfNeutralDep->sumWithin(0.4,vetosNeutral);
+    float  isovalue_photon = pfPhotonDep->sumWithin(0.4,vetosPhoton);
+
+    return (std::max(isovalue_neutral+isovalue_photon-pu,(float)0.) + isovalue_charged ) / p.pt();
+  }
+
 };
-
-
 
 /// A wrapper to handle the barrel/endcap split for electrons
 class ElectronSelector {
@@ -451,8 +499,20 @@ class ElectronSelector {
   ElectronSelector() {}
   ElectronSelector(Pset pset, std::string selectorName) {
     Pset const params = pset.getParameter<Pset>(selectorName);
-    barrelSelector_ = ElectronSelectorBase(params.getParameter<Pset>("barrel"));
-    endcapSelector_ = ElectronSelectorBase(params.getParameter<Pset>("endcap"));
+    //I want to combine psets, does this work
+    ElectronSelectorBase jointSelector = ElectronSelectorBase(params.getParameter<Pset>("joint"));
+    Pset jointPSet = params.getParameter<Pset>("joint");
+    Pset barrelPSet = params.getParameter<Pset>("barrel");
+    Pset endcapPSet = params.getParameter<Pset>("endcap");
+    std::vector<std::string> jointParameterNames = jointPSet.getParameterNames();
+    for ( std::vector<std::string>::iterator iter = jointParameterNames.begin();
+          iter != jointParameterNames.end(); iter ++ ) {
+      barrelPSet.copyFrom(jointPSet, (*iter));
+      endcapPSet.copyFrom(jointPSet, (*iter));
+    }
+
+    barrelSelector_ = ElectronSelectorBase(barrelPSet);
+    endcapSelector_ = ElectronSelectorBase(endcapPSet);
   }
   bool operator()(const pat::Electron & p, const float pu=0.) {
     if     (p.isEB()) return barrelSelector_(p, pu);
@@ -520,12 +580,18 @@ public:
     if(!global.isNull()){
       const reco::HitPattern& gtHP = global->hitPattern();
       setpassCut("maxNormalizedChi2", global->normalizedChi2(), bitmask);
-      setpassCut("minNTrackerHits", gtHP.numberOfValidTrackerHits(), bitmask);
-      setpassCut("minNPixelHits", gtHP.numberOfValidPixelHits(), bitmask);
       setpassCut("minNMuonHits", gtHP.numberOfValidMuonHits(), bitmask);
-      setpassCut("minNTrackerLayers", gtHP.trackerLayersWithMeasurement(), bitmask);
       setpassCut("minTrackerValidFrac", global->validFraction(), bitmask);
     }
+
+    reco::TrackRef inner = p.innerTrack();
+    if(!inner.isNull()){
+      const reco::HitPattern& inHP = inner->hitPattern();
+      setpassCut("minNTrackerHits", inHP.numberOfValidTrackerHits(), bitmask);
+      setpassCut("minNPixelHits", inHP.numberOfValidPixelHits(), bitmask);
+      setpassCut("minNTrackerLayers", inHP.trackerLayersWithMeasurement(), bitmask);
+    }
+
     setIgnored(bitmask);
     return (bool) bitmask;
   }

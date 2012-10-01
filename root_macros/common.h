@@ -11,17 +11,25 @@
 struct Value{
   float val;
   float err;
+  bool printErr;
+  int forcePrecision;
 
-  Value():val(0),err(0){}//Let's not mess up log10
-  Value(float v):val(v),err(v){}
-  Value(float v, float e):val(v),err(e){
+  Value():val(0),err(0),printErr(false), forcePrecision(0){}//Let's not mess up log10
+  Value(float v):val(v),err(v),printErr(false), forcePrecision(0){}
+  Value(float v, float e, bool b=false):val(v),err(e),printErr(b), forcePrecision(0){
     if(e < 0.) err = sqrt(val);
   }
   Value(Value v, float f){
     val = v.val;
     err = f < 0. ? sqrt(val) : f;
+    printErr = v.printErr;
+    forcePrecision = v.forcePrecision;
+  }
+  void setPrintErr(bool b){
+    printErr = b;
   }
   int findPrecision() const{
+    if(forcePrecision) return forcePrecision;
     if(err < 0.){
       int nExtra = abs((int)err);
       Value temp(val);
@@ -33,6 +41,7 @@ struct Value{
   friend std::ostream& operator << (std::ostream &o, const Value & v){
     ios_base::fmtflags flags = o.flags();//Get Current config
     o<<setiosflags(ios::fixed) << setprecision(v.findPrecision())<<v.val;
+    if(v.printErr) o<<" +/- "<<v.err;
     o.flags(flags);//Reset config
     return o;
   }
@@ -54,7 +63,7 @@ struct Value{
   }
   Value & operator-=(const Value &rhs) {
     val -= rhs.val;
-    err = sqrt(pow(err,2) + pow(rhs.err,2));//Cory: Wrong.  What should it be?
+    err = sqrt(pow(err,2) - pow(rhs.err,2));//Cory: Wrong?  What should it be?
     return *this;
   }
 
@@ -213,6 +222,44 @@ GetSampleInfo(TH1F* h, std::string binName){
     value /= nMerged;
   }
   return value;
+}
+
+Value
+GetNEvtsAndError(TTree* tree, const string & cuts){
+  tree->Draw("weight", cuts.c_str(), "goff");
+  int n = tree->GetSelectedRows();
+  TH1F hist("hist", "Dummy Hist", 1, 0, 10);
+  hist.Sumw2();
+  for(int ientry=0; ientry<n; ++ientry){
+    float weight = tree->GetW()[ientry];
+    hist.Fill(1, weight);
+    //printf("weight is %.3f\n", weight);
+  }
+  //printf("new: %.2f old: %.2f\n", hist.GetBinError(1), sqrt(hist.GetBinContent(1)));
+  return Value(hist.GetBinContent(1), hist.GetBinError(1));
+}
+
+float
+GetNEvts(TTree* tree, const string & cuts){
+  Value val = GetNEvtsAndError(tree, cuts);
+  return val.val;
+}
+
+TTree* getTree(TFile* f, const vector<string> & samples, const string & tName){
+  gROOT->cd();
+  TList list;
+  for(unsigned i=0; i<samples.size(); ++i){
+    TTree* t = (TTree*) f->Get(Form("%s/%s",samples[i].c_str(), tName.c_str()));
+    if(!t)  cout<<f->GetName()<<" "<<samples[i]<<" "<<tName<<endl;
+    assert(t);
+    list.Add(t);
+  }
+  return TTree::MergeTrees(&list);
+}
+
+TTree* getTree(TFile* f, const string & sample, const string & tName){
+  const vector<string> samples(1, sample);
+  return getTree(f, samples, tName);
 }
 
 #endif//#define _common_h_

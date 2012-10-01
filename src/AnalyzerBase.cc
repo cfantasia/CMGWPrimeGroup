@@ -318,7 +318,10 @@ AnalyzerBase::print(const pat::Electron& elec) const{
       <<" Elec dPhi: "<<elec.deltaPhiSuperClusterTrackAtVtx()<<endl //DeltaPhi
       <<" Elec dEta: "<<elec.deltaEtaSuperClusterTrackAtVtx()<<endl //DeltaEta
       <<" Elec HoverE: "<<elec.hadronicOverEm()<<endl// H/E
-      <<" Elec EoverP: "<<elec.eSuperClusterOverP()<<endl;// E/P
+      <<" Elec EoverP: "<<elec.eSuperClusterOverP()<<endl// E/P
+      <<" PassMVAPresel: "<<elec.userInt("passPreselMVA2011")<<endl
+      <<" PassMVATrig: "<<elec.userInt("BDT_MVA_HWW2011_Trig_pass")<<endl
+      <<" pfIso: "<<(std::max(elec.userFloat("pfIsoNeutral04")+elec.userFloat("pfIsoPhotons04")-1.*elec.userFloat("pfAEff04"),0.) + elec.userFloat("pfIsoCharged04") ) / elec.pt()<<endl;
 }
 
 void AnalyzerBase::print(const TeVMuon& mu) const{
@@ -331,6 +334,7 @@ void AnalyzerBase::print(const TeVMuon& mu) const{
     mu.printPtInfo(*it);
   
   mu.printTrackerInfo();
+  cout<<" Muon pfIso: "<<mu.combRelPFIsolation()<<endl;
 
 }
 

@@ -120,7 +120,7 @@ void WPrimeUtil::getInputFiles(std::vector<wprime::InputFile> & inputFiles, cons
         size_t nPerFile = ceil((float) pathnames.size() / new_file->splitInto);
         new_file->splitInto = ceil((float) pathnames.size() / nPerFile);//Make sure we need all the jobs
         string descrip = new_file->description;
-        if(new_file->splitInto > 1)
+        if(new_file->splitInto > 1 || pathnames.size() > 1)
           cout<<"Trying to split file with "<<pathnames.size()<<" files into "
               <<new_file->splitInto<<" parts, with "<<nPerFile<<" files per part"<<endl;
         for(int i=0; i<new_file->splitInto; ++i){
@@ -388,9 +388,10 @@ WPrimeUtil::FoundAndpassed(const pat::TriggerEvent & triggerEvent,const pat::Tri
 }
 
 const bool ignoreL1prescale = true;
+const bool allowPrescaled   = false;
 inline bool
 WPrimeUtil::passed(const pat::TriggerEvent & triggerEvent, const pat::TriggerPath& path){
-  return (path.wasAccept() && path.prescale() == 1 && (ignoreL1prescale || MaxL1Prescale(triggerEvent,path)==1) );
+  return (path.wasAccept() && (allowPrescaled || path.prescale() == 1) && (ignoreL1prescale || MaxL1Prescale(triggerEvent,path)==1) );
 }
 
 inline unsigned

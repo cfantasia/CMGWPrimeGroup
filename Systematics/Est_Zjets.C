@@ -8,7 +8,7 @@
 #include "../Limits/consts.h"
 
 void
-Est_Zjets(string infile, bool useElec, bool useData=true, int etaMode=-1, float minpt=-1, float maxpt=9e9){  
+Est_Zjets(string infile, bool useElec, bool useData=true, int useBarrel=-1, float minpt=-1, float maxpt=9e9){  
   TFile *f = TFile::Open(infile.c_str(), "read"); assert(f);
 
   vector<string> allsamples;
@@ -29,7 +29,7 @@ Est_Zjets(string infile, bool useElec, bool useData=true, int etaMode=-1, float 
 
   string histTTName, histTFName;
 
-  if(etaMode == -1){
+  if(useBarrel == -1){
     if(useElec){
       allTThist = get_sum_of_hists(f, allsamples,"hZeeMassTT_AllCuts");
       allTFhist = get_sum_of_hists(f, allsamples,"hZeeMassTF_AllCuts");
@@ -39,8 +39,8 @@ Est_Zjets(string infile, bool useElec, bool useData=true, int etaMode=-1, float 
     }
   }else{
     if(useElec){
-      histTTName = etaMode ? "hPtVsZeeBarrelMassTT" : "hPtVsZeeEndCapMassTT";
-      histTFName = etaMode ? "hPtVsZeeBarrelMassTF" : "hPtVsZeeEndCapMassTF";
+      histTTName = useBarrel ? "hPtVsZeeBarrelMassTT" : "hPtVsZeeEndCapMassTT";
+      histTFName = useBarrel ? "hPtVsZeeBarrelMassTF" : "hPtVsZeeEndCapMassTF";
     }else{
       histTTName = "hPtVsZmmMassTT";
       histTFName = "hPtVsZmmMassTF";
@@ -58,7 +58,7 @@ Est_Zjets(string infile, bool useElec, bool useData=true, int etaMode=-1, float 
     allTThist = (TH1F*) histTT->ProjectionX("histTT", yminbin, ymaxbin, "e");
     allTFhist = (TH1F*) histTF->ProjectionX("histTF", yminbin, ymaxbin, "e");
 
-    allTThist->Scale(0.5);//Hack bc I forgot to weight TT events by half
+    //allTThist->Scale(0.5);//Hack bc I forgot to weight TT events by half (still needed?)
   }
 
 
@@ -107,12 +107,12 @@ Est_Zjets(string infile, bool useElec, bool useData=true, int etaMode=-1, float 
   double term2 = 4 * pow(S_TT,2) * sigma2_TF;
   double sigma_e = sqrt(term1 + term2) / (denom*denom);
 
-  cout<<"\n\nUsing ";
+  cout<<"=============\nUsing ";
   if(useElec) cout<<"Electrons";
   else        cout<<"Muons";
   if(useData) cout<<" from Data"<<endl;
   else        cout<<" from MC"<<endl;
-  if(etaMode != -1) cout<<"etaMode="<<etaMode<<" from pt="<<minpt<<"->"<<maxpt<<endl;
+  if(useBarrel != -1) cout<<"useBarrel="<<useBarrel<<" from pt="<<minpt<<"->"<<maxpt<<endl;
   cout<<"  Bkg TT:"<<B_TT<<" +/- " <<sigma_B_TT<<endl
       <<"  Bkg TF:"<<B_TF<<" +/- " <<sigma_B_TF<<endl
       <<"  Tot TT:"<<N_TT<<" +/- " <<sigma_N_TT<<endl

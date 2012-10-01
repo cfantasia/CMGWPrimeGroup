@@ -380,6 +380,7 @@ ZCandV getZCands(const ElectronV & electrons, const MuonV & muons,
                  const std::vector<bool> & eMask=std::vector<bool>(), 
                  const std::vector<bool> & mMask=std::vector<bool>());
 
+enum { kLeadPt, kBestMT};
 template<class L>
 WCandV getWCandidates(const std::vector<L> & leptons, const pat::MET & met){
   WCandV wCands;
@@ -410,7 +411,8 @@ WCandidate getWCand(const ElectronV & electrons,
                     const MuonV & muons, 
                     const pat::MET & met,
                     const ZCandidate & zCand,
-                    double minDeltaR = 0.);
+                    double minDeltaR = 0.,
+                    int mode=kLeadPt);
 ZCandidate getVCand(const JetV & jets, const int mode=0);
 ZCandidate getVCand2(const JetV & jets);
 

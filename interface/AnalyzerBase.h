@@ -79,6 +79,7 @@ public:
     for(uint i=0; i<particles.size(); ++i){
       if(useMask && !mask[i]) continue;
       print(particles[i]);
+      std::cout<<"   ------------   \n";
     }
   }
   

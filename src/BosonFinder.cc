@@ -140,7 +140,8 @@ WCandidate getWCand(const ElectronV & electrons,
                     const MuonV & muons, 
                     const pat::MET & met,
                     const ZCandidate & zCand,
-                    double minDeltaR)
+                    double minDeltaR,
+                    int sortMode)
 {
   vector<WCandidate> wCands;
   
@@ -164,7 +165,8 @@ WCandidate getWCand(const ElectronV & electrons,
       wCands.push_back(WCandidate(* i, met));
     }
 
-  sort(wCands.begin(), wCands.end(), highestPtLepton());
+  if(sortMode == kLeadPt) sort(wCands.begin(), wCands.end(), highestPtLepton());
+  if(sortMode == kBestMT) sort(wCands.begin(), wCands.end(), closestToWTMass());
 
   if (wCands.size()) return wCands[0];
 
