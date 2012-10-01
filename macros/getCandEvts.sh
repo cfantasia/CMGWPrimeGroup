@@ -10,7 +10,7 @@ do
   LUMI=${LUMI##*:}
 #  echo Run:Lumi  ${RUN}:${LUMI}
 
-  for ERA in \
+for ERA in \
       Run2011A-May10ReReco-v1 \
       Run2011A-PromptReco-v4 \
       Run2011A-05Aug2011-v1 \
@@ -22,7 +22,8 @@ do
       do
       
       DATASET=/${PD}/${ERA}/AOD
-      
+      echo "Looking in $DATASET"
+
       LIST=`dbs search --query="find file where run=${RUN} and lumi=${LUMI} and dataset=${DATASET}" | grep .root`
       NFILE=`echo $LIST | wc -w`
       if [ "$NFILE" -ge "1" ]; then
