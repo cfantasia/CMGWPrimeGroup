@@ -115,9 +115,19 @@ PlotLimit(string inName){
     g1Sigma->SetPoint(n+i,mass[n-i-1],ExpLimitM1[n-i-1]);
   }
   
+<<<<<<< PlotLimit.C
+//      g2Sigma->SetFillStyle(4004);
   g2Sigma->SetFillColor(kYellow);
+=======
+  g2Sigma->SetFillColor(kYellow);
+>>>>>>> 1.6
   mg->Add(g2Sigma, "F");
+<<<<<<< PlotLimit.C
+//      g1Sigma->SetFillStyle(4004);
   g1Sigma->SetFillColor(kGreen);
+=======
+  g1Sigma->SetFillColor(kGreen);
+>>>>>>> 1.6
   mg->Add(g1Sigma, "F");
   
   glumi->SetLineColor(kBlack);
