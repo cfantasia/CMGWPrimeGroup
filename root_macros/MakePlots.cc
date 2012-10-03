@@ -81,6 +81,7 @@ float lumiUsed_ = 0.;
 float lumiWanted_ = -1;
 bool scaleLumi_ = false;
 bool paperMode_ = false;
+bool identifyPlot_ = false;
 
 typedef std::vector<std::string> vstring;
 
@@ -112,6 +113,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   if(opt.find("debug") != string::npos) debug_ = true;
   if(opt.find("lowSig") != string::npos) drawLowSig_ = true;
   if(opt.find("paper") != string::npos) paperMode_ = true;
+  if(opt.find("identify") != string::npos) identifyPlot_ = true;
 
   if(paperMode_) setTDRStyle();
   else{
@@ -147,8 +149,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   if(mode_ == kWprimeWZ || mode_ == kEWKWZ ||
      mode_ == kWprimeVW || mode_ == kWprimeTB ||
      mode_ == kWZFakeRate){
-    //Data.push_back(Sample("data"));
-    Data.push_back(Sample("WZJetsTo3LNu"));
+    Data.push_back(Sample("data"));
   }else if(mode_ == kHadVZ){
     vector<string> vData;
 
@@ -243,6 +244,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   if(mode_ == kWprimeWZ){
     Sig.push_back(Sample("WprimeToWZTo3LNu_M-200", kBlue, 1, 0));
     Sig.push_back(Sample("WprimeToWZTo3LNu_M-1900", kRed, 1, 0));
+    Sig.push_back(Sample("WprimeToWZTo3LNu_M-1900-MyGen", kGreen, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-250", kRed, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-300", kGreen, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-400", 1, 1, 0));
@@ -535,7 +537,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       string title = variable[i] + "_" + Cuts[j];
       string bkmark = "Title: " + title;
 
-      bool log = 0;
+      bool log = 1;
       DrawandSave(fin,outName,title,bkmark,log,0,0);
 
       if(opt.find("show") != string::npos) 
@@ -789,7 +791,7 @@ DrawandSave(TFile* fin, string pdfName, vstring title, string bookmark, bool log
         DrawLegend(hData, 0);
 
       }
-      
+
       if(debug_) cout<<" max is "<<max<<" for logy = "<<logy<<endl;
       sBkg->SetMaximum(logy ? 100*max : 1.5*max);
       sBkg->SetMinimum(logy ? 0.5 : 0.);
@@ -1168,9 +1170,8 @@ string
 GetTitle(){
   string title;
   vector<Sample> & samples = Data.size() ? Data : Bkg;
-  if(0) title = samples[0].hist->GetTitle();
+  if(identifyPlot_) title = samples[0].hist->GetTitle();
   title += ";"; 
-  //if(filename.find("hLt_") != string::npos) title += "H_{T} #equiv #Sigma p_{T}^{Lep} (GeV)";
   title += samples[0].hist->GetXaxis()->GetTitle();
   title += ";";
   title += samples[0].hist->GetYaxis()->GetTitle();
@@ -1186,8 +1187,8 @@ DrawLabels(){
   latexLabel.SetNDC();
   latexLabel.SetTextSize(0.05);
   latexLabel.SetTextFont(42);
-  latexLabel.DrawLatex(0.33, 0.96, "CMS Preliminary 2011");
-  latexLabel.DrawLatex(paperMode_ ? 0.20 : 0.25, 0.77, "#sqrt{s} = 7 TeV");
+  latexLabel.DrawLatex(0.33, 0.96, "CMS Preliminary 2012");
+  latexLabel.DrawLatex(paperMode_ ? 0.20 : 0.25, 0.77, "#sqrt{s} = 8 TeV");
   latexLabel.DrawLatex(paperMode_ ? 0.16 : 0.20, 0.85, Form("#intL dt = %.1f fb^{-1}",lumiWanted_/1000.));
 }
 
@@ -1221,10 +1222,10 @@ DrawLegend(TH1F* hData, bool eff){//Cory: is this a problem?
 int GetRebin(string title){
   int rebin = 0;
   if(title.find("WZMass") != string::npos || 
-     title.find("WZ3e0muMass") != string::npos ||
-     title.find("WZ2e1muMass") != string::npos ||
-     title.find("WZ1e2muMass") != string::npos ||
-     title.find("WZ0e3muMass") != string::npos) rebin = 5;
+     title.find("WZ3e0mMass") != string::npos ||
+     title.find("WZ2e1mMass") != string::npos ||
+     title.find("WZ1e2mMass") != string::npos ||
+     title.find("WZ0e3mMass") != string::npos) rebin = 5;
   if(title.find("VZMass") != string::npos ||
      title.find("VZeeMass") != string::npos ||
      title.find("VZmmMass") != string::npos) rebin = 2;
