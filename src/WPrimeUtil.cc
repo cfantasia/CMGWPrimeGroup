@@ -296,6 +296,19 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
       return;
     }
 
+  i = new_line.find("k-factor = ");
+  if(i != string::npos)
+    {
+      if(in_file->x_sect < 0){
+        cout<<" Please place k factor below x-sec"<<endl;
+        abort();
+      }
+      double kfactor = atof(new_line.substr(11, new_line.length() - 11).c_str());
+      cout<<"Using k-factor of "<<kfactor<<endl;
+      in_file->x_sect *= kfactor;
+      return;
+    }
+
   i = new_line.find("signalMass = ");
   if(i != string::npos)
     {
