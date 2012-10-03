@@ -3,7 +3,6 @@ from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 #process.WprimeAnalyzer.maxEvents   = 500
 #process.WprimeAnalyzer.debug = True
 
-process.WprimeAnalyzer.debug = False
 process.WprimeAnalyzer.reportAfter = -5
 process.WprimeAnalyzer.runWZAnalysis    = True
 process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_WZ.txt"
@@ -22,8 +21,8 @@ process.WprimeAnalyzer.eventCounters = cms.vstring(
 process.WprimeAnalyzer.puScale = 1.08
 
 ## input specific for this analyzer
-process.WprimeAnalyzer.muons = 'userPatMuons'
-process.WprimeAnalyzer.electrons = 'userPatElectrons'
+process.WprimeAnalyzer.muons = 'selectedPatMuons'
+process.WprimeAnalyzer.electrons = 'selectedPatElectrons'
 process.WprimeAnalyzer.met   = 'patMETsPF'
 process.WprimeAnalyzer.particleFlow = 'selectedPatPFParticles'
 process.WprimeAnalyzer.genParticles = 'prunedGenParticles'
@@ -37,8 +36,6 @@ process.WprimeAnalyzer.maxZMassDiff = cms.double(999999.)
 
 process.WprimeAnalyzer.effectiveElecArea = cms.vdouble(0.0997,0.1123)#Not using Recommended PI*0.3*0.3
 process.WprimeAnalyzer.effectiveMuonArea = cms.vdouble(0.1057,0.0769)
-
-process.WprimeAnalyzer.MCPUDistHist = cms.string('Fall11Dist')
 
 ###Analysis Cuts
 EWKWZCuts = cms.vstring(
