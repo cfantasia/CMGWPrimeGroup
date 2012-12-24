@@ -11,14 +11,16 @@ do
 #  echo Run:Lumi  ${RUN}:${LUMI}
 
 for ERA in \
-      Run2011A-May10ReReco-v1 \
-      Run2011A-PromptReco-v4 \
-      Run2011A-05Aug2011-v1 \
-      Run2011A-PromptReco-v6 \
-      Run2011B-PromptReco-v1 
+      Run2012A-13Jul2012-v1 \
+    Run2012A-recover-06Aug2012-v1\
+    Run2012B-13Jul2012-v4 \
+    Run2012B-13Jul2012-v1 \
+    Run2012C-24Aug2012-v1 \
+    Run2012C-PromptReco-v2 \
+    Run2012D-PromptReco-v1
     do
     for PD in \
-        DoubleMu DoubleElectron SingleMu SingleElectron
+        DoubleMu #DoubleElectron SingleMu SingleElectron
       do
       
       DATASET=/${PD}/${ERA}/AOD

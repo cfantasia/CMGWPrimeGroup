@@ -88,7 +88,7 @@ public:
   uint lumiNumber_;
   uint evtNumber_;
   float WZMass_;
-  float Zpt_;
+  float Zpt_, ZDr_;
   float ZMass_;
   float Wpt_;
   float WTransMass_;
@@ -181,6 +181,8 @@ public:
   std::vector<TH1F*> hZMass, hZeeMass, hZmmMass, hZ3e0mMass, hZ2e1mMass, hZ1e2mMass, hZ0e3mMass;
   std::vector<TH1F*> hZeeMassTT, hZeeMassTF, hZmmMassTT, hZmmMassTF;
   std::vector<TH1F*> hZpt,hZeept,hZmmpt, hZ3e0mpt, hZ2e1mpt, hZ1e2mpt, hZ0e3mpt;
+  std::vector<TH1F*> hZeeDr,hZmmDr;
+
 
   std::vector<TH1F*> hMET, hMETee, hMETmm, hMET3e0m, hMET2e1m, hMET1e2m, hMET0e3m, hMETSig, hMETPhi;
 

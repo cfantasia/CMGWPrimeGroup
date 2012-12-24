@@ -51,9 +51,9 @@ PlotLimit(string inName){
   vector<SignalSample> sigs;
   if(inName.find("WprimeWZ") != string::npos){
     sigs.push_back(SignalSample("W'","xSec_WZ.dat",  "Mass:Xsec",  "Mass>=200", "\\sigma_{W'}", kBlack, 1, kGray));
-    sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{2}","xSec_TCWZ-sinchi1d2.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{2}}", kRed, kDashed));
-    sigs.push_back(SignalSample("TC",                      "xSec_TCWZ-sinchi1d3.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{3}}", kRed));
-    sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{4}","xSec_TCWZ-sinchi1d4.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{4}}", kRed, 3));
+    //sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{2}","xSec_TCWZ-sinchi1d2.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{2}}", kRed, kDashed));
+    //sigs.push_back(SignalSample("TC",                      "xSec_TCWZ-sinchi1d3.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{3}}", kRed));
+    //sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{4}","xSec_TCWZ-sinchi1d4.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{4}}", kRed, 3));
     outFile = "limitVsMass_WZ.pdf";
   }else if(inName.find("HadVZ") != string::npos){
     sigs.push_back(SignalSample("W'","xSec_WprimeVZ.dat", "Mass:Xsec", "", "\\sigma_{W'}"));
@@ -115,19 +115,9 @@ PlotLimit(string inName){
     g1Sigma->SetPoint(n+i,mass[n-i-1],ExpLimitM1[n-i-1]);
   }
   
-<<<<<<< PlotLimit.C
-//      g2Sigma->SetFillStyle(4004);
   g2Sigma->SetFillColor(kYellow);
-=======
-  g2Sigma->SetFillColor(kYellow);
->>>>>>> 1.6
   mg->Add(g2Sigma, "F");
-<<<<<<< PlotLimit.C
-//      g1Sigma->SetFillStyle(4004);
   g1Sigma->SetFillColor(kGreen);
-=======
-  g1Sigma->SetFillColor(kGreen);
->>>>>>> 1.6
   mg->Add(g1Sigma, "F");
   
   glumi->SetLineColor(kBlack);
@@ -198,8 +188,8 @@ PlotLimit(string inName){
       //latexLabel.DrawLatex(0.20, 0.3-iSig*0.04, Form("#font[42]{Limit_{%s} = %.0f GeV}",sigs[iSig].name.c_str(),upLimit));
       }  
   }
-  latexLabel.DrawLatex(0.33, 0.96, "CMS Preliminary 2011");
-  latexLabel.DrawLatex(0.19, 0.30, "#sqrt{s} = 7 TeV");
+  latexLabel.DrawLatex(0.33, 0.96, "CMS Preliminary 2012");
+  latexLabel.DrawLatex(0.19, 0.30, "#sqrt{s} = 8 TeV");
   latexLabel.DrawLatex(0.17, 0.20, Form("#intL dt = %.2f fb^{-1}",lumi[0]/1000.));
   
   //cout<<"Drawing legend"<<endl;

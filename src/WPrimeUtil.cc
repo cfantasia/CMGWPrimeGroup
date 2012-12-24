@@ -173,6 +173,8 @@ float WPrimeUtil::getPUWeightTrue(const std::vector< PileupSummaryInfo > & PupIn
       return LumiWeights_.weight( Tnpv );
     }
   }
+  cout<<" Didn't find the in-time bunch crossing, probably should quit"<<endl;
+  abort();
   return 0;
 }
 
@@ -265,12 +267,15 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
     {
       string input = new_line.substr(11, new_line.length() - 11);
       size_t j = new_line.find(".txt");
-      if(j != string::npos){
+      if(j != string::npos){//pathname is actually a list of files
         cout<<"Using input file "<<input<<endl;
         ifstream infile;
         input = "UserCode/CMGWPrimeGroup/config/" + input;
         infile.open (input.c_str(), ifstream::in);
-        
+        if(!infile.is_open()){
+          cout<<" File does not exist...quitting"<<endl;
+          abort();
+        }
         while (infile.good()){
           string fname;
           infile>>fname;

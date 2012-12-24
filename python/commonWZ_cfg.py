@@ -1,6 +1,6 @@
 from UserCode.CMGWPrimeGroup.commonWprime_cfg import *
 
-#process.WprimeAnalyzer.maxEvents   = 500
+#process.WprimeAnalyzer.maxEvents   = 100
 #process.WprimeAnalyzer.debug = True
 
 process.WprimeAnalyzer.reportAfter = -5
@@ -11,14 +11,14 @@ process.WprimeAnalyzer.doRecoilCorrectionForW = False
 process.WprimeAnalyzer.useAdjustedMET = False
 process.WprimeAnalyzer.muonReconstructor = 7
 
-process.WprimeAnalyzer.useJSON = False
+process.WprimeAnalyzer.useJSON = True
 process.WprimeAnalyzer.countGenEvts = False
 process.WprimeAnalyzer.eventCounters = cms.vstring(
     'nEventsTotal',
     'nEventsHLT',
     'nEventsFiltered',
     'nEventsPat')
-process.WprimeAnalyzer.puScale = 1.08
+#process.WprimeAnalyzer.puScale = 1.08
 
 ## input specific for this analyzer
 process.WprimeAnalyzer.muons = 'selectedPatMuons'
@@ -62,7 +62,7 @@ WprimeWZCuts = cms.vstring(
     
     "MET",
 
-    "ValidWZCand",   
+#    "ValidWZCand",   
     "Lt", 
     )
 WZFakeElecCuts = cms.vstring(
@@ -109,14 +109,14 @@ WZEffCuts = cms.vstring(
     "ValidZ", 
     "AllCuts")
 
-process.WprimeAnalyzer.LooseZElectronType = cms.untracked.string("WZLoose")
-process.WprimeAnalyzer.TightZElectronType = cms.untracked.string("WZTight")
-process.WprimeAnalyzer.LooseWElectronType = cms.untracked.string("WZLoose")
-process.WprimeAnalyzer.TightWElectronType = cms.untracked.string("WZTight")
-process.WprimeAnalyzer.LooseZMuonType = cms.untracked.string("WZLoose")
-process.WprimeAnalyzer.TightZMuonType = cms.untracked.string("WZTight")
-process.WprimeAnalyzer.LooseWMuonType = cms.untracked.string("WZLoose")
-process.WprimeAnalyzer.TightWMuonType = cms.untracked.string("WZTight")
+process.WprimeAnalyzer.LooseZElectronType = cms.untracked.string("EWKWZLoose")
+process.WprimeAnalyzer.TightZElectronType = cms.untracked.string("EWKWZTight")
+process.WprimeAnalyzer.LooseWElectronType = cms.untracked.string("EWKWZLoose")
+process.WprimeAnalyzer.TightWElectronType = cms.untracked.string("EWKWZTight")
+process.WprimeAnalyzer.LooseZMuonType = cms.untracked.string("EWKWZLoose")
+process.WprimeAnalyzer.TightZMuonType = cms.untracked.string("EWKWZTight")
+process.WprimeAnalyzer.LooseWMuonType = cms.untracked.string("EWKWZLoose")
+process.WprimeAnalyzer.TightWMuonType = cms.untracked.string("EWKWZTight")
 process.WprimeAnalyzer.LooseJetType = cms.untracked.string("Pat")
 
 ####Triggers

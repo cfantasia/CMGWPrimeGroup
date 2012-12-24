@@ -17,7 +17,7 @@ struct Value{
   Value():val(0),err(0),printErr(false), forcePrecision(0){}//Let's not mess up log10
   Value(float v):val(v),err(v),printErr(false), forcePrecision(0){}
   Value(float v, float e, bool b=false):val(v),err(e),printErr(b), forcePrecision(0){
-    if(e < 0.) err = sqrt(val);
+    //if(e < 0.) err = sqrt(val);
   }
   Value(Value v, float f){
     val = v.val;
@@ -185,6 +185,7 @@ void get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
   hist.Sumw2();
   for(unsigned j=0; j<samples.size(); ++j){
     std::string fullName = samples[j] + "/" + objName; 
+    //printf("Looking for %s\n", fullName.c_str());
     TTree* tree = (TTree*) f->Get(fullName.c_str()); assert(tree != NULL);
     tree->Draw(Form("weight:%s",variable.c_str()), cuts.c_str(), "goff");
     int n = tree->GetSelectedRows();

@@ -42,6 +42,8 @@ class TeVMuon : public pat::Muon{
 
   // computes the tracker-based relative isolation value
   float trkRelIsolation() const;
+  float trkCorRelIsolation(const float & cor) const;
+
 
   //computes the combined rel isolation value
   float combRelIsolation() const;
@@ -136,11 +138,18 @@ inline float TeVMuon::trkRelIsolation() const
   return trackIso()/pt();
 }
 
+inline float TeVMuon::trkCorRelIsolation(const float & cor) const
+{
+  const reco::MuonIsolation& muonIso = isolationR03();
+  return (muonIso.sumPt + cor) / pt();
+  
+  //double correctionDetIsol = dR > 0.3 ? 0 : (-otherMu.innerTrack()->pt() / pt());
+}
+
 //computes the combined rel isolation value
 inline float TeVMuon::combRelIsolation() const
 {
-  return ( ecalIso() + hcalIso() + trackIso() ) 
-    / pt();
+  return ( ecalIso() + hcalIso() + trackIso() ) / pt();
 }
 
 inline float TeVMuon::combRelIsolation03(const float offset) const{

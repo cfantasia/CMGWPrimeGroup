@@ -21,7 +21,7 @@
 #include "TMath.h"
 
 #include "../root_macros/common.h"
-const float sLumiFrac = 0.045;
+const float sLumiFrac = 0.044;
 
 vector<string>
 SampleName(float code){
@@ -56,6 +56,16 @@ SampleName(float code){
     name.push_back( "WprimeToWZTo3LNu_M-1400"); 
   }else if(code == 15){
     name.push_back( "WprimeToWZTo3LNu_M-1500"); 
+  }else if(code == 16){
+    name.push_back( "WprimeToWZTo3LNu_M-1600"); 
+  }else if(code == 17){
+    name.push_back( "WprimeToWZTo3LNu_M-1700"); 
+  }else if(code == 18){
+    name.push_back( "WprimeToWZTo3LNu_M-1800"); 
+  }else if(code == 19){
+    name.push_back( "WprimeToWZTo3LNu_M-1900"); 
+  }else if(code == 20){
+    name.push_back( "WprimeToWZTo3LNu_M-2000"); 
   }else if(code == 103){
     name.push_back( "TC_WZ_300"); 
   }else if(code == 104){
@@ -129,6 +139,8 @@ SysErr(string sample){
   if(!sample.find("WprimeToWZTo3LNu_M-1300")) return 0.026;
   if(!sample.find("WprimeToWZTo3LNu_M-1400")) return 0.024;
   if(!sample.find("WprimeToWZTo3LNu_M-1500")) return 0.034;
+  if(!sample.find("WprimeToWZTo3LNu_M-")) return 0.034;
+  else printf("Didn't find sample name %s\n", sample.c_str());
   return 0;
 }
 

@@ -2,6 +2,7 @@
 #define _AnalyzerBase_h_
 
 #include "UserCode/CMGWPrimeGroup/interface/util.h"
+#include "UserCode/CMGWPrimeGroup/interface/selectors.h"
 #include "UserCode/CMGWPrimeGroup/interface/WPrimeUtil.h"
 #include "UserCode/CMGWPrimeGroup/interface/BosonFinder.h"
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon.h"
@@ -71,7 +72,7 @@ public:
   virtual void printEventDetails() const;
 
   template<class T>
-    void print(const std::vector<T> & particles,
+    void print(const std::vector<T> & particles, 
                const std::vector<bool> & mask=std::vector<bool>()) const{
     //Mask let's you ignore certain objects
     bool useMask = mask.size() == particles.size(); 

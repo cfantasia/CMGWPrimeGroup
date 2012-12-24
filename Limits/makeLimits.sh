@@ -1,35 +1,31 @@
 #!/bin/bash
 
-source ../../../StatisticalTools/RooStatsRoutines/setup/cmslpc_standalone_setup.sh
+#source ../../../StatisticalTools/RooStatsRoutines/setup/cmslpc_standalone_setup.sh
+export ROOT_INCLUDE=${ROOTSYS}/include
 
-for windFracTenths in -1
-  do
-  Ones=$(($windFracTenths / 10))
-  Tenths=$(($windFracTenths - $Ones*10))
-  windFrac=$Ones"p"$Tenths
-  echo "Using $windFrac as half window size"
+root -b -l -q -n 'ExpectedEvts.C+("../../../WprimeWZ.root","cutValues.wz.dat",-1, "scaleMC")' > ExpectedEvts.log 
 
-#  root -b -q 'ExpectedEvts.C+("../../../old-2011-12-24-MET30/WprimeWZ.root","cutValues.wz.dat",'${windFracTenths}', "scaleMC")' > ExpectedEvts.log 
-  root -b -q -n 'ExpectedEvts.C+("../../../WprimeWZ.root","cutValues.wz.dat",'${windFracTenths}', "scaleMC")' > ExpectedEvts.log 
-#  root -b -q -n 'ExpectedEvts.C+("../../../old-2011-11-11/HadVZAnalyzer.root","cutValues.VZ.dat",'${windFracTenths}', "")' > ExpectedEvts.log 
+if [ ! -e nEvents.txt ]; then
+    exit 1
+fi
 
-  echo "Done with counting events"
+echo "Done with counting events"
 
-  #/afs/hep.wisc.edu/cern/.root/root_v5.30.00.Linux-slc5_amd64-gcc4.3/bin/root -b -q -n 'CalcLimit.C+(1)' > CalcLimit.log
-  root -b -q -n 'CalcLimit.C+(1)' > CalcLimit.log #CLs
-  #root -b -q -n 'CalcLimit.C+(0)' > CalcLimit.log #Bay
+root -b -l -q -n 'CalcLimit.C(1)' > CalcLimit.log #CLs
+#root -b -l -q -n 'CalcLimit.C(0)' > CalcLimit.log #Bay
 
-  echo "Done with calculating limits"
+echo "Done with calculating limits"
 
-  root -b -q -n 'PlotLimit.C+("WprimeWZ")' #For W'
-  root -b -q -n 'PlotLimit2D.C+' #For TC
-#  root -b -q -n 'PlotLimit.C+("HadVZ")' #For VZ
-  
-  echo "Done with Plotting limits"
+root -b -l -q -n 'PlotLimit.C+("WprimeWZ")' #For W'
+root -b -l -q -n 'PlotLimit2D.C+' #For TC
+#root -b -l -q -n 'PlotLimit.C+("HadVZ")' #For VZ
+root -b -l -q plotExclusion.C  
 
-  Dir=windFrac${windFrac}
-  if [ ! -d "$Dir" ]; then
+echo "Done with Plotting limits"
+
+Dir=LatestNumbers
+if [ ! -d "$Dir" ]; then
     mkdir $Dir
-  fi
-  mv *.txt *.log *.pdf $Dir/
-done
+fi
+mv *.txt *.log *.pdf $Dir/
+

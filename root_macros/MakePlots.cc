@@ -201,7 +201,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   if(mode_ == kWprimeWZ || mode_ == kEWKWZ || mode_ == kWZFakeRate){
     vector<string> ZJets; 
     ZJets.push_back("DYJetsToLL");
-    //Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
+    Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
     
     if(mode_ == kWZFakeRate || mode_ == kEWKWZ){
       //Bkg.push_back(Sample("WJetsToLNu", kOrange+6, 1, kOrange+0));
@@ -212,10 +212,10 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       vector<string> VV;
       VV.push_back("ZZ");
       VV.push_back("GVJets");
-      VV.push_back("WWTo2L2Nu");
-      //Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
+      //VV.push_back("WWTo2L2Nu");
+      Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
     }
-    //Cory: removed for mm Bkg.push_back(Sample("TTJets"  , kViolet+4, 1, kViolet+2));
+    Bkg.push_back(Sample("TTJets"  , kViolet+4, 1, kViolet+2));
     
     Bkg.push_back(Sample("WZJetsTo3LNu"       , kOrange+3, 1, kOrange-2));
   }else if(mode_ == kHadVZ || mode_ == kWprimeVW || mode_ == kWprimeTB){
@@ -243,8 +243,11 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
 
   if(mode_ == kWprimeWZ){
     Sig.push_back(Sample("WprimeToWZTo3LNu_M-200", kBlue, 1, 0));
-    Sig.push_back(Sample("WprimeToWZTo3LNu_M-1900", kRed, 1, 0));
-    Sig.push_back(Sample("WprimeToWZTo3LNu_M-1900-MyGen", kGreen, 1, 0));
+    Sig.push_back(Sample("WprimeToWZTo3LNu_M-500", kRed, 1, 0));
+    Sig.push_back(Sample("WprimeToWZTo3LNu_M-1000", kGreen, 1, 0));
+    Sig.push_back(Sample("WprimeToWZTo3LNu_M-1500", kOrange, 1, 0));
+    Sig.push_back(Sample("WprimeToWZTo3LNu_M-2000", kCyan, 1, 0));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-1900-MyGen", kGreen, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-250", kRed, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-300", kGreen, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-400", 1, 1, 0));
@@ -385,11 +388,16 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       variable.push_back("hWmnuTransMass");
 
       variable.push_back("hWpt");
+      variable.push_back("hWenupt");
+      variable.push_back("hWmnupt");
 
       variable.push_back("hMET");
       variable.push_back("hMETSig");
       variable.push_back("hMETee");
       variable.push_back("hMETmm");
+
+      variable.push_back("hZeeDr");
+      variable.push_back("hZmmDr");
 
       variable.push_back("hEvtType");
       variable.push_back("hEvtTypeP");
@@ -405,6 +413,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       variable.push_back("hNJets");
 
       variable.push_back("hNVtxs");
+      variable.push_back("hWeight");
 
       variable.push_back("hNLLeps");
 
@@ -582,29 +591,29 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       DrawandSave(fin,outName,"hMETmm_ValidW","Title: MET After Valid W (Zmm)",0,0,1);
       //End MET
 
-      DrawandSave(fin,outName,"hLt_ValidWZCand","Title: Cumlative Lt before Lt Cut",1,0,1);
+      DrawandSave(fin,outName,"hLt_MET","Title: Cumlative Lt before Lt Cut",1,0,1);
 
-      DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Lt Cut",1);
-      DrawandSave(fin,outName,"hWZMass_ValidWZCand","Title: WZ Mass before Lt Cut",1,0,1);
+      DrawandSave(fin,outName,"hWZMass_MET","Title: WZ Mass before Lt Cut",1);
+      DrawandSave(fin,outName,"hWZMass_MET","Title: WZ Mass before Lt Cut",1,0,1);
       DrawandSave(fin,outName,"hWZMass_Lt","Title: WZ Mass After Lt Cut ",1,0,0);
       DrawandSave(fin,outName,"hWZMass_Lt","Title: WZ Mass After Lt Cut (Cumlative) ",1,0,1);
 
       ////////////////
-      DrawandSave(fin,outName,"hNLLeps_ValidWZCand","Title: NLepAfter Valid WZ",1);
-      DrawandSave(fin,outName,"hNJets_ValidWZCand","Title: NJet After Valid WZ",1);
-      DrawandSave(fin,outName,"hZeept_ValidWZCand","Title: ZeePt After Valid WZ",1);
-      DrawandSave(fin,outName,"hZmmpt_ValidWZCand","Title: ZmmPt After Valid WZ",1);
-      DrawandSave(fin,outName,"hNVtxs_ValidWZCand","Title: NVtx After Valid WZ",1);
-      DrawandSave(fin,outName,"hLeadPt_ValidWZCand","Title: Lead Pt After Valid WZ",1);
+      DrawandSave(fin,outName,"hNLLeps_MET","Title: NLepAfter MET",1);
+      DrawandSave(fin,outName,"hNJets_MET","Title: NJet After MET",1);
+      DrawandSave(fin,outName,"hZeept_MET","Title: ZeePt After MET",1);
+      DrawandSave(fin,outName,"hZmmpt_MET","Title: ZmmPt After MET",1);
+      DrawandSave(fin,outName,"hNVtxs_MET","Title: NVtx After MET",1);
+      DrawandSave(fin,outName,"hLeadPt_MET","Title: Lead Pt After MET",1);
 
-      DrawandSave(fin,outName,"hLt_ValidWZCand","Title: Lt After Valid WZ",1);
-      DrawandSave(fin,outName,"hZpt_ValidWZCand","Title: Zpt After Valid WZ",1);
-      DrawandSave(fin,outName,"hWpt_ValidWZCand","Title: Wpt After Valid WZ",1);
+      DrawandSave(fin,outName,"hLt_MET","Title: Lt After MET",1);
+      DrawandSave(fin,outName,"hZpt_MET","Title: Zpt After MET",1);
+      DrawandSave(fin,outName,"hWpt_MET","Title: Wpt After MET",1);
       
-      DrawandSave(fin,outName,"hWZ3e0mMass_ValidWZCand","Title: WZ 3e0mu Mass before Lt Cut",1,0,0);
-      DrawandSave(fin,outName,"hWZ2e1mMass_ValidWZCand","Title: WZ 2e1mu Mass before Lt Cut",1,0,0);
-      DrawandSave(fin,outName,"hWZ1e2mMass_ValidWZCand","Title: WZ 1e2mu Mass before Lt Cut",1,0,0);
-      DrawandSave(fin,outName,"hWZ0e3mMass_ValidWZCand","Title: WZ 0e3mu Mass before Lt Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZ3e0mMass_MET","Title: WZ 3e0mu Mass before Lt Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZ2e1mMass_MET","Title: WZ 2e1mu Mass before Lt Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZ1e2mMass_MET","Title: WZ 1e2mu Mass before Lt Cut",1,0,0);
+      DrawandSave(fin,outName,"hWZ0e3mMass_MET","Title: WZ 0e3mu Mass before Lt Cut",1,0,0);
 /*
       DrawandSave(fin,outName,"hDiscriminant","Title: Disc ",1,0,0);
       DrawandSave(fin,outName,"hDiscriminantFrac","Title: Disc Frac",1,0,0);
@@ -613,11 +622,14 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       DrawandSave(fin,outName,"hDiscriminantImag","Title: Disc Imag",1,0,0);
 */     
       vector<string> WZMassChannels;
-      WZMassChannels.push_back("hWZ3e0mMass_ValidWZCand");
-      WZMassChannels.push_back("hWZ2e1mMass_ValidWZCand");
-      WZMassChannels.push_back("hWZ1e2mMass_ValidWZCand");
-      WZMassChannels.push_back("hWZ0e3mMass_ValidWZCand");
-      DrawandSave(fin,outName,WZMassChannels,"Title: WZ Mass By Channel",1);
+      WZMassChannels.push_back("hWZ3e0mMass_MET");
+      WZMassChannels.push_back("hWZ2e1mMass_MET");
+      WZMassChannels.push_back("hWZ1e2mMass_MET");
+      WZMassChannels.push_back("hWZ0e3mMass_MET");
+      //DrawandSave(fin,outName,WZMassChannels,"Title: WZ Mass By Channel",1);
+      DrawandSave(fin,outName,WZMassChannels,"Title: WZ Mass By Channel",1,0,0,0);
+      //DrawandSave(fin,outName,WZMassChannels,"Title: WZ Mass By Channel",0);
+      //DrawandSave(fin,outName,WZMassChannels,"Title: WZ Mass By Channel",0,0,0,0);
     }
   }else if(mode_ == kEWKWZ){
       vector<string> NVtxs2Channels;
@@ -1103,7 +1115,10 @@ ChangeAxisRange(const string & filename, TAxis* xaxis){
     //hpull->SetAxisRange( -3., 3., "Y");
   }else if (filename.find("hLeadMuonPt_") != string::npos ||
             filename.find("hLeadElecPt_") != string::npos){
-    xaxis->SetRangeUser(0,200);
+    xaxis->SetRangeUser(0,500);
+  }else if (filename.find("hZMass_") != string::npos ||
+            filename.find("hZMass_") != string::npos){
+    xaxis->SetRangeUser(70,110);
   }
 
   
@@ -1285,6 +1300,17 @@ FillNameMap(){
   SampleNames["WprimeToWZTo3LNu_M-700"]="W' (700 GeV)";
   SampleNames["WprimeToWZTo3LNu_M-800"]="W' (800 GeV)";
   SampleNames["WprimeToWZTo3LNu_M-900"]="W' (900 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1000"]="W' (1000 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1100"]="W' (1100 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1200"]="W' (1200 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1300"]="W' (1300 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1400"]="W' (1400 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1500"]="W' (1500 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1600"]="W' (1600 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1700"]="W' (1700 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1800"]="W' (1800 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1900"]="W' (1900 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-2000"]="W' (2000 GeV)";
   SampleNames["TC225"]="\\rho_{TC} 225";
   SampleNames["TC_WZ_300"]="\\rho_{TC} 300";
   SampleNames["TC_WZ_400"]="\\rho_{TC} 400";

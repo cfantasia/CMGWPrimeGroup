@@ -29,7 +29,7 @@ if [ "$#" -gt 0 ]; then #if given, use that
         lastSkimmedRun=${1}
     fi
 else #Default last run number
-    lastSkimmedRun=0
+    lastSkimmedRun=190450
 fi
 
 #Grab latest dcs only from afs
@@ -41,6 +41,6 @@ lastAvailableRun=$lastRunReturn
 newJSON="../JSON/json_${lastSkimmedRun}-${lastAvailableRun}_DCSonly.txt"
 
 #remove older runs from latest dcs
-./jsonrunsel.py $lastSkimmedRun 999999 $oldJSON $newJSON
+./jsonrunsel.py $lastSkimmedRun 999999 $oldJSON $newJSON > /dev/null
 
 echo "Output file is $newJSON which covers runs $lastSkimmedRun to ${lastAvailableRun}"

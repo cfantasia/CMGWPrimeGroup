@@ -7,14 +7,17 @@ root -b -q -n CalcLimit.C+
 #include "consts.h"
 #include "TROOT.h"
 #include "TSystem.h"
-#include "../../../StatisticalTools/RooStatsRoutines/root/roostats_cl95.C"
+//#include "../../../StatisticalTools/RooStatsRoutines/root/roostats_cl95.C"
+
+using namespace RooFit;
 
 void
 CalcLimit(bool useCLs=true, string inName="nEvents.txt", string outName="nLimit.txt"){
   gErrorIgnoreLevel = kWarning;
-//  gSystem->SetIncludePath( "-I$ROOFITSYS/include" );
-  gSystem->SetIncludePath( "-I/afs/hep.wisc.edu/cern/.root/root_v5.30.00.Linux-slc5_amd64-gcc4.3/include/RooStats" );
-//  gROOT->ProcessLine(".L ../../../StatisticalTools/RooStatsRoutines/root/roostats_cl95.C+");
+  gSystem->SetIncludePath( "-I$ROOFITSYS/include" );
+  gSystem->Load("libRooFit");
+//  gSystem->SetIncludePath( "-I/afs/hep.wisc.edu/cern/.root/root_v5.30.00.Linux-slc5_amd64-gcc4.3/include/RooStats" );
+  gROOT->ProcessLine(".L ../../../StatisticalTools/RooStatsRoutines/root/roostats_cl95.C+");
   
   string outfile(outName.c_str());
   ofstream out(outfile.c_str());
@@ -67,6 +70,7 @@ CalcLimit(bool useCLs=true, string inName="nEvents.txt", string outName="nLimit.
     if(useCLs){////CLs Limits
       //Does not work for bayesian, only works with cls    
       LimitResult limit = roostats_limit(lumi, sLumi, Eff, sEff, BkgEvts, sBkgEvts, DataEvts, false, 0, "cls", "", 12345);
+      cout<<"\nCompleted Limit Calc\n";
       obs_limit = limit.GetObservedLimit();
       exp_limit = limit.GetExpectedLimit();
       exp_up    = limit.GetOneSigmaHighRange();
@@ -99,14 +103,21 @@ CalcLimit(bool useCLs=true, string inName="nEvents.txt", string outName="nLimit.
        <<DataEvts<<"\t"
        <<setprecision(4)
        <<BkgEvts<<"\t"
-       <<sBkgEvts<<"\t"
-//       <<setprecision(4)
-       <<Value(obs_limit,-4)<<"\t"
-       <<Value(exp_limit,-4)<<"\t"
-       <<Value(exp_up,-4)<<"\t"
-       <<Value(exp_down,-4)<<"\t"
-       <<Value(exp_2up,-4)<<"\t"
-       <<Value(exp_2down,-4)
+       <<sBkgEvts<<"\t";
+//    out<<Value(obs_limit,-4)<<"\t"
+//       <<Value(exp_limit,-4)<<"\t"
+//       <<Value(exp_up,-4)<<"\t"
+//       <<Value(exp_down,-4)<<"\t"
+//       <<Value(exp_2up,-4)<<"\t"
+//       <<Value(exp_2down,-4)
+//       <<endl;
+    out<<setprecision(8)
+       <<obs_limit<<"\t"
+       <<exp_limit<<"\t"
+       <<exp_up<<"\t"
+       <<exp_down<<"\t"
+       <<exp_2up<<"\t"
+       <<exp_2down
        <<endl;
   }
   

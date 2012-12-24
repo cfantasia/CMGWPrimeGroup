@@ -1,53 +1,50 @@
 #!/bin/bash
 
-#Up to run 163869: 0.215 inv fb
-#Up to run 167913: 1.141 inv fb 
-#Up to run 172619: 1.507 inv fb
-#Up to run 173692: 2.160 inv fb
-#Up to run 176023: 2.301 inv fb
-#Up to run 176309: 2.510 inv fb
-#Up to run 177053: 2.915 inv fb
-#Up to run 177515: 3.193 inv fb
-#Up to run 178078: 3.537 inv fb
-#Up to run 178677: 3.965 inv fb
-#Up to run 179431: 4.264 inv fb
 #Up to run 180252: 4.632 inv fb
 
-JSON_Run2011A_May10=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions11/7TeV/Reprocessing/Cert_160404-163869_7TeV_May10ReReco_Collisions11_JSON_v3.txt
-MIN_Run2011A_May10=160404
-MAX_Run2011A_May10=163869
-./jsonrunsel.py $MIN_Run2011A_May10   $MAX_Run2011A_May10   $JSON_Run2011A_May10   Run2011A_May10.json
+PROMPTJSON=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/Prompt/Cert_190456-207898_8TeV_PromptReco_Collisions12_JSON.txt
 
-JSON_Run2011A_Prompt4=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions11/7TeV/Prompt/Cert_160404-180252_7TeV_PromptReco_Collisions11_JSON.txt
-MIN_Run2011A_Prompt4=165088
-MAX_Run2011A_Prompt4=167913
-./jsonrunsel.py $MIN_Run2011A_Prompt4 $MAX_Run2011A_Prompt4 $JSON_Run2011A_Prompt4 Run2011A_Prompt4.json
+MINRUN=190456
+MAXRUN=193621
+INPUTJSON=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/Reprocessing/Cert_190456-196531_8TeV_13Jul2012ReReco_Collisions12_JSON_v2.txt
+./jsonrunsel.py $MINRUN $MAXRUN $INPUTJSON JSON_Run2012A-13Jul2012.json
+  
+MINRUN=190782
+MAXRUN=190949
+INPUTJSON=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/Reprocessing/Cert_190782-190949_8TeV_06Aug2012ReReco_Collisions12_JSON.txt
+./jsonrunsel.py $MINRUN $MAXRUN $INPUTJSON JSON_Run2012A-06Aug2012ReReco.json
 
-JSON_Run2011A_Aug05=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions11/7TeV/Reprocessing/Cert_170249-172619_7TeV_ReReco5Aug_Collisions11_JSON_v3.txt 
-MIN_Run2011A_Aug05=170249
-MAX_Run2011A_Aug05=172619
-./jsonrunsel.py $MIN_Run2011A_Aug05   $MAX_Run2011A_Aug05   $JSON_Run2011A_Aug05   Run2011A_Aug05.json
+MINRUN=193833
+MAXRUN=196531
+INPUTJSON=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/Reprocessing/Cert_190456-196531_8TeV_13Jul2012ReReco_Collisions12_JSON_v2.txt
+./jsonrunsel.py $MINRUN $MAXRUN $INPUTJSON Run2012B-13Jul2012.json
 
-JSON_Run2011A_Prompt6=$JSON_Run2011A_Prompt4
-MIN_Run2011A_Prompt6=172620
-MAX_Run2011A_Prompt6=173692
-./jsonrunsel.py $MIN_Run2011A_Prompt6 $MAX_Run2011A_Prompt6 $JSON_Run2011A_Prompt6 Run2011A_Prompt6.json
+MINRUN=198022
+MAXRUN=198913
+INPUTJSON=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/Reprocessing/Cert_198022-198523_8TeV_24Aug2012ReReco_Collisions12_JSON.txt
+./jsonrunsel.py $MINRUN $MAXRUN $INPUTJSON Run2012C-ReReco.json
+  
+MINRUN=198934
+MAXRUN=203746
+INPUTJSON=${PROMPTJSON}
+./jsonrunsel.py $MINRUN $MAXRUN $INPUTJSON Run2012C-PromptReco-v2.json
 
-JSON_Run2011B_Prompt1=$JSON_Run2011A_Prompt4
-MIN_Run2011B_Prompt1=175832
-MAX_Run2011B_Prompt1=999999
-./jsonrunsel.py $MIN_Run2011B_Prompt1 $MAX_Run2011B_Prompt1 $JSON_Run2011B_Prompt1 Run2011B_Prompt1.json
+MINRUN=203768 
+MAXRUN=207898
+INPUTJSON=${PROMPTJSON}
+./jsonrunsel.py $MINRUN $MAXRUN $INPUTJSON Run2012D-PromptReco-v1.json
+
+###################
 
 rm -f final.json
 
-compareJSON.py --or Run2011A_May10.json Run2011A_Prompt4.json finalA.json
-compareJSON.py --or Run2011A_Aug05.json finalA.json finalB.json
-compareJSON.py --or Run2011A_Prompt6.json finalB.json finalC.json
-compareJSON.py --or Run2011B_Prompt1.json finalC.json finalD.json
+compareJSON.py --or JSON_Run2012A-13Jul2012.json JSON_Run2012A-06Aug2012ReReco.json finalA.json
+compareJSON.py --or Run2012B-13Jul2012.json      finalA.json finalB.json
+compareJSON.py --or Run2012C-ReReco.json         finalB.json finalC.json
+compareJSON.py --or Run2012C-PromptReco-v2.json  finalC.json finalD.json
+compareJSON.py --or Run2012D-PromptReco-v1.json  finalD.json final.json
 
-cp finalD.json final.json
+lumiCalc2.py -i final.json -b stable overview
 
-rm finalA.json finalB.json finalC.json finalD.json
-
-lumiCalc2.py -i final.json -norm pp7TeV -b stable overview
-
+#now make pu dist
+#json_190456_207898_analysis.txt

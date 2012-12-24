@@ -61,13 +61,13 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     BkgSamples.push_back("WZJetsTo3LNu"); 
     BkgSamples.push_back("DYJetsToLL"); 
     BkgSamples.push_back("GVJets");  
-    BkgSamples.push_back("WWTo2L2Nu"); 
-    BkgSamples.push_back("WJetsToLNu"); 
+    //BkgSamples.push_back("WWTo2L2Nu"); 
+    //BkgSamples.push_back("WJetsToLNu"); 
 
     dataSamples.push_back("data");
 
-    paramString += ":HtCut:ZptCut:WptCut:WZKFactor:ZJets:sZJets";
-    treeName = "tEvts_ValidWZCand";
+    paramString += ":LtCut:ZptCut:WptCut:WZKFactor:ZJets:sZJets";
+    treeName = "tEvts_MET";
     histName = "hWZMass_AllCuts";
     varName = "WZMass";
   }else if(inName.find("HadVZ") != string::npos){
@@ -148,11 +148,11 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
 
     string cuts;
     if(inName.find("WprimeWZ") != string::npos){ 
-      const double minHt  = tEvts->GetVal(treeIdx++)[isample];
+      const double minLt  = tEvts->GetVal(treeIdx++)[isample];
       const double minZpt = tEvts->GetVal(treeIdx++)[isample];
       const double minWpt = tEvts->GetVal(treeIdx++)[isample];
-      cuts = Form("(WZMass > %.0f && WZMass < %.0f && Ht > %.0f && Zpt > %.0f && Wpt > %.0f)*weight",
-                  minWindow, maxWindow, minHt, minZpt, minWpt);
+      cuts = Form("(WZMass > %.0f && WZMass < %.0f && Lt > %.0f && Zpt > %.0f && Wpt > %.0f)*weight",
+                  minWindow, maxWindow, minLt, minZpt, minWpt);
 
       if(scaleMC_){
         float wZee = 0.960;

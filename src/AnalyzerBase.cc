@@ -319,9 +319,16 @@ AnalyzerBase::print(const pat::Electron& elec) const{
       <<" Elec dEta: "<<elec.deltaEtaSuperClusterTrackAtVtx()<<endl //DeltaEta
       <<" Elec HoverE: "<<elec.hadronicOverEm()<<endl// H/E
       <<" Elec EoverP: "<<elec.eSuperClusterOverP()<<endl// E/P
+      <<" Elec dxy: "<<elec.gsfTrack()->dxy()<<endl
       <<" PassMVAPresel: "<<elec.userInt("passPreselMVA2011")<<endl
       <<" PassMVATrig: "<<elec.userInt("BDT_MVA_HWW2011_Trig_pass")<<endl
-      <<" pfIso: "<<(std::max(elec.userFloat("pfIsoNeutral04")+elec.userFloat("pfIsoPhotons04")-1.*elec.userFloat("pfAEff04"),0.) + elec.userFloat("pfIsoCharged04") ) / elec.pt()<<endl;
+      <<" E2x5/E5x5: "<<elec.e2x5Max() / elec.e5x5()
+      <<" E1x5/E5x5: "<<elec.e1x5() / elec.e5x5()<<endl
+      <<" Depth1: "<<elec.dr03EcalRecHitSumEt() + elec.dr03HcalDepth1TowerSumEt()<<endl
+      <<" ECal Driven: "<<elec.ecalDrivenSeed()<<endl
+      <<" Track Iso: "<<elec.dr03TkSumPt()<<endl
+      <<" 2012 pfIso: "<<(elec.chargedHadronIso() + std::max(0., elec.neutralHadronIso() + elec.photonIso()-0.5*elec.puChargedHadronIso())) / elec.pt()
+      <<" user pfIso: "<<(std::max(elec.userFloat("pfIsoNeutral04")+elec.userFloat("pfIsoPhotons04")-1.*elec.userFloat("pfAEff04"),0.) + elec.userFloat("pfIsoCharged04") ) / elec.pt()<<endl;
 }
 
 void AnalyzerBase::print(const TeVMuon& mu) const{
@@ -337,7 +344,11 @@ void AnalyzerBase::print(const TeVMuon& mu) const{
       <<" Muon NTrk: "  <<gm->hitPattern().numberOfValidTrackerHits()<<endl //Ntrk hit
       <<" Muon NMatches: "<<mu.numberOfMatches()<<endl //MuonStations
       <<" Muon Hits: "  <<gm->hitPattern().numberOfValidMuonHits()<<endl; //Muon Hits
-  cout<<" Muon pfIso: "<<mu.combRelPFIsolation()<<endl;
+  cout<<" Muon charged had: "<<mu.chargedHadronIso()
+      <<" Muon Neutral Had: "<<mu.neutralHadronIso()
+      <<" Muon Photon Had: "<<mu.photonIso()
+      <<" Muon PUCharged: "<<mu.puChargedHadronIso()
+      <<"Muon pfIso: "<<mu.combRelPFIsolation()<<endl;
 }
 
 void
@@ -378,7 +389,7 @@ inline bool AnalyzerBase::passNoCut() const{
 }
 
 inline bool AnalyzerBase::passTriggersCut() const{
-  return WPrimeUtil::passTriggersCut(*triggerEventH_,triggersToUse_);
+  return true;//WPrimeUtil::passTriggersCut(*triggerEventH_,triggersToUse_);
 }//--- passTriggersCut
 
 inline bool
@@ -506,11 +517,11 @@ void AnalyzerBase::beginFile(std::vector<wprime::InputFile>::iterator fi){
   hFileInfo->SetBinContent(2, fi->x_sect);
   hFileInfo->GetXaxis()->SetBinLabel  (3, "Number of Events Produced");
   hFileInfo->SetBinContent(3, fi->Nprod_evt);
-  hFileInfo->GetXaxis()->SetBinLabel  (4, "Number of Events in root Files");
+  hFileInfo->GetXaxis()->SetBinLabel  (4, "Number of Events in Pat Files");
   hFileInfo->SetBinContent(4, fi->Nact_evt);//Number of events found in this job
   hFileInfo->GetXaxis()->SetBinLabel  (5, "Sample Weight");
   hFileInfo->SetBinContent(5, fi->weight);
-  hFileInfo->GetXaxis()->SetBinLabel  (6, "Number of root files");
+  hFileInfo->GetXaxis()->SetBinLabel  (6, "Number of Pat Files");
   hFileInfo->SetBinContent(6, fi->pathnames.size());//Number of input root files in this job
   hFileInfo->GetXaxis()->SetBinLabel  (7, "Signal Mass");
   hFileInfo->SetBinContent(7, fi->signalMass);
@@ -707,7 +718,7 @@ void AnalyzerBase::run()
   unsigned i_sample = 1;
   float reportPercent = reportAfter_<0 ? reportAfter_/100. : 0;
   vector<wprime::InputFile>::iterator it;
-
+  
   //Loop Over input files
   for(it = inputFiles_.begin(); it != inputFiles_.end(); ++it, ++i_sample){
     int ievt=0;//Evts checked in this input file  
@@ -716,17 +727,23 @@ void AnalyzerBase::run()
     fwlite::ChainEvent ev(it->pathnames);
     it->Nact_evt = ev.size();
     cout<<" Done." << endl;
-  
+    
     cout << " Opened sample " << it->samplename << " with " << it->Nact_evt
          << " events (Input file #" << i_sample << " out of " << inputFiles_.size()
          << " samples) " << endl << endl;   
     cout << std::fixed << std::setprecision(2);
-
+    
     beginFile(it);//Set up for input file
     assert(it->Nact_evt <= it->Nprod_evt);
-
+    
+    if(it->Nact_evt == 0){
+      cout<<" Found no events in these root files.  Please check"<<endl;
+      endFile(it, outLogFile_);//Finish up with this input sample
+      continue;
+    }
+    
     if(reportPercent) reportAfter_ = fabs(it->Nact_evt * reportPercent);
-
+    
     if(vEventsToDebug_.size()){//If events are in this vector, only process those
       cout<<" EventsToDebug has "<<vEventsToDebug_.size()<<" event(s), so only those events will be processed\n";
       debug_ = true;
@@ -765,7 +782,7 @@ void AnalyzerBase::run()
         setEventWeight(event); //PU Reweighting
         eventLoop(event); //Analyze each event
       } // loop over events
-    }
+    }//Debug if
     endFile(it, outLogFile_);//Finish up with this input sample
     
   } // loop over input files

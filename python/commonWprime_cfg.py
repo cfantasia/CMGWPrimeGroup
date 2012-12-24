@@ -6,8 +6,8 @@ from SHarper.HEEPAnalyzer.HEEPSelectionCuts_cfi import heepBarrelCuts, heepEndca
 from SHarper.HEEPAnalyzer.WP80SelectionCuts_cfi import wp80BarrelCuts, wp80EndcapCuts
 
 process = cms.Process("WPrimeAnalysis")
-# get JSON file correctly parsed
-goldenJSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_190456-194479_8TeV_PromptReco_Collisions12_JSON.txt'
+# get JSON file correctly parsed 
+goldenJSONfile = 'UserCode/CMGWPrimeGroup/JSON/json_190456_207898_analysis.txt'
 dcsJSONfile = 'UserCode/CMGWPrimeGroup/JSON/json_190456-194912.txt'
 MuonPhysJSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-180252_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt'
 goldenJSONList = LumiList.LumiList (filename = goldenJSONfile).getCMSSWString().split(',')
@@ -83,6 +83,8 @@ process.WprimeAnalyzer = cms.PSet(
     #PileUp Inputs
     MCPUDistFile = cms.string('UserCode/CMGWPrimeGroup/pileup/MCPUDist.root'),
     MCPUDistHist = cms.string('Summer12Dist'),
+#    DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/pileup/MCPUDist.root'),
+#    DataPUDistHist = cms.string('Summer12Dist'),
     DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/pileup/DataPileupHistogram.root'),
     DataPUDistHist = cms.string('pileup'),
     puScale = cms.double(1.0),
