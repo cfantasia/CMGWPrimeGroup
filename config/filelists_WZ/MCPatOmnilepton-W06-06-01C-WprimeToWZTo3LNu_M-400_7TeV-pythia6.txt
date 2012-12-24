@@ -1,1 +1,0 @@
-/store/user/jklukas/MC-W06-06-01C/WprimeToWZTo3LNu_M-400_7TeV-pythia6/MCPatOmnilepton-WprimeToWZTo3LNu_M-400_7TeV-pythia6/patTuple_cfg-B8C69C8D-AB91-E011-B080-00215E21D972.root
