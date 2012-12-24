@@ -136,3 +136,19 @@ same file.
 If the filename given for a sample ends in .txt, it will be read in as a list of root files to be analyzed.
 
 A subdirectory can be specified for all root files for a given sample.
+
+==================
+=== How to Tag ===
+==================
+
+1) Commit updated files 
+
+2) Update documentation
+ -UserCode/CMGWPrimeGroup/doc/README.txt
+ -UserCode/CMGWPrimeGroup/doc/history_version.txt
+
+3) Update installation script
+ -UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
+
+4) Tag the package
+cvs rtag <THETAGNAME> UserCode/CMGWPrimeGroup
