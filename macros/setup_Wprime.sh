@@ -9,8 +9,8 @@ exit
 fi
 
 # Definitions
-RELEASE_VERSION=CMSSW_5_2_5
-WORKING_AREA=V400
+RELEASE_VERSION=CMSSW_5_3_7_patch4
+WORKING_AREA=V405
 # end definitions
 
 export RELEASE_VERSION WORKING_AREA
@@ -30,8 +30,22 @@ cd $RELEASE_VERSION/src
 echo -e  "\n**************************"
 echo -e  " Checking out the code..."
 echo -e  "**************************"
+cvs co -r V00-00-13 RecoMET/METFilters
+# For CSC Beam Halo filter
+cvs co -r V00-00-08 RecoMET/METAnalyzers
+# For the HBHE filter
+# For 52x release, please check out the following branch since it fixes a compiling issue
+# cvs co -r BV00-03-20_HBHEfor52X CommonTools/RecoAlgos
+cvs co -r V00-03-23 CommonTools/RecoAlgos
+# Additional packages for the tracking POG filters
+cvs co -r V01-00-11-01 DPGAnalysis/Skims
+cvs co -r V00-11-17 DPGAnalysis/SiStripTools
+cvs co -r V00-00-08 DataFormats/TrackerCommon
+cvs co -r V01-09-05 RecoLocalTracker/SubCollectionProducers
+#Sam's package for HEEP
 cvs -Q co -r V00-08-01 -d SHarper/HEEPAnalyzer UserCode/SHarper/HEEPAnalyzer 
-cvs -Q co -r V00-04-00 UserCode/CMGWPrimeGroup
+#Common Wprime Group Package
+cvs -Q co -r V00-04-05 UserCode/CMGWPrimeGroup
 #cvs -Q co UserCode/CMGWPrimeGroup
 
 echo -e "\n************************"

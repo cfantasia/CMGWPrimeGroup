@@ -1,3 +1,10 @@
+24-Dec-12 (Cory), V00-04-05
+=============================================
+o Updated to 537patch4
+o Fixes needed for updated compiler
+o Updated for latest TeV muon algo
+o Added latest common filters
+
 15-May-12 (Cory), V00-04-00
 =============================================
 o Updated to 525
