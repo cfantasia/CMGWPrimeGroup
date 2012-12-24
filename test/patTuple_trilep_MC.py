@@ -4,12 +4,14 @@ from UserCode.CMGWPrimeGroup.patTuple_mc_cfg import *
 
 # 2nd argument: message-logger frequency
 # 3rd argument: # of events to process
-trilep_config(process, 100, 10)
+trilep_config(process, 100, 200, False)
 mc_config(process, cms)
 
 process.source.fileNames = [
-    '/store/mc/Summer12_DR53X/WprimeToWZToLLLNu_M-1900_TuneZ2star_8TeV-pythia6-tauola/AODSIM/PU_S10_START53_V7A-v1/0000/320D6545-18ED-E111-97B1-0017A4770828.root'
+    '/store/user/fantasia/53X/WprimeToWZToLLLNu_M_1000_TuneZ2star_8TeV_pythia6_tauola/WprimeToWZToLLLNu_M_1000_TuneZ2star_8TeV_pythia6_tauola_AODSIM_Run10.root'
+#    '/store/mc/Summer12_DR53X/WprimeToWZToLLLNu_M-1900_TuneZ2star_8TeV-pythia6-tauola/AODSIM/PU_S10_START53_V7A-v1/0000/320D6545-18ED-E111-97B1-0017A4770828.root'
     ] 
 
 #process.out.outputCommands.append('keep *_*_*_*')
 
+#print process.p

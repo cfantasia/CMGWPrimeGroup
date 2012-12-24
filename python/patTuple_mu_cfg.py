@@ -2,6 +2,9 @@ from UserCode.CMGWPrimeGroup.patTuple_common_cfg import *
 
 def mu_config(process) :
 
+    process.patMuons.embedTrack = True
+    process.patMuons.embedPFCandidate = True
+
     # event content to include all muons within |eta|<2.4 with pt>20
     process.selectedPatMuons.cut = "pt > 20. & abs(eta) < 2.4"
 

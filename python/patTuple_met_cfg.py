@@ -17,5 +17,9 @@ def met_config(process) :
     process.pfMETSeq = cms.Sequence(process.pfMETSelector*
                                     process.pfMETCounter
                                     )
+
     process.out.outputCommands.append('keep *_patMETsPF_*_*')
+    process.out.outputCommands.append('keep *_pfMet_*_*')
+    process.out.outputCommands.append('keep *_pfType1CorrectedMet_*_*')
+    process.out.outputCommands.append('keep *_pfType1p2CorrectedMet_*_*')
     

@@ -16,6 +16,8 @@ doubleMuonPaths = [
     'HLT_Mu13_Mu8_v*', #1e33 unprescaled
     'HLT_Mu17_Mu8_v*' #3e33 unprescaled
     'HLT_Mu17_TkMu8_v*', #2011B
+    'HLT_Mu22_TkMu8_v*', #2012 single l1 seeded
+    'HLT_Mu22_TkMu22_v*', #2012
     ]
 
 singleElectronPaths = [
@@ -25,8 +27,8 @@ doubleElectronPaths = [
     'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*',
     'HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v*',#early version, MC
     'HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*',
-    'HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_v6',
-    'HLT_DoubleEle33_CaloIdT_v9',
+    'HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_v*',
+    'HLT_DoubleEle33_CaloIdT_v*',
     ]
 
 

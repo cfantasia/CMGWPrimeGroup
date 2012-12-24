@@ -1,13 +1,12 @@
 from UserCode.CMGWPrimeGroup.patTuple_trilep_cfg import *
 from UserCode.CMGWPrimeGroup.patTuple_trigger_cfg import *
 
-## remove MC matching from the default sequence when running on data
-removeMCMatching(process, ['All'])
-
 # 2nd argument: message-logger frequency
 # 3rd argument: # of events to process
-trilep_config(process, 100, -1)
+trilep_config(process, 100, 100, True)
 
+## remove MC matching from the default sequence when running on data
+#removeMCMatching(process, ['All'])
 
 addHLTFilter(process, 'HLT', "off")#For initial testing
 #addHLTFilter(process, 'HLT', "singlemu")
@@ -24,3 +23,4 @@ process.source.fileNames = [
 
 #process.out.outputCommands.append('keep *_*_*_*')
 
+#print process.p

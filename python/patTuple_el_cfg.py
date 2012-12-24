@@ -1,6 +1,9 @@
 from UserCode.CMGWPrimeGroup.patTuple_common_cfg import *
 
 def el_config(process) :
+
+    process.patElectrons.embedPFCandidate = True
+
     # event content to include all electrons within |eta|<2.5 with pt>20
     process.selectedPatElectrons.cut = "pt > 20. & abs(eta) < 2.5"
     
