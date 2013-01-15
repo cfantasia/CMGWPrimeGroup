@@ -389,7 +389,7 @@ inline bool AnalyzerBase::passNoCut() const{
 }
 
 inline bool AnalyzerBase::passTriggersCut() const{
-  return true;//WPrimeUtil::passTriggersCut(*triggerEventH_,triggersToUse_);
+  return WPrimeUtil::passTriggersCut(*triggerEventH_,triggersToUse_);
 }//--- passTriggersCut
 
 inline bool
@@ -624,7 +624,7 @@ void AnalyzerBase::defineOneHisto(const string & name, const string & title,
 {
   float binWidth = (xmax-xmin)/nbins;
   string title2 = title + ";" + xtitle + ";Events";
-  if(units.compare("NONE"))
+  if(units.compare("NONE"))//Want bin size
     title2 += Form(" / %.0f ",binWidth) + units;
   h = d.make<TH1F>(name.c_str(),title2.c_str(),nbins,xmin,xmax);
 }
