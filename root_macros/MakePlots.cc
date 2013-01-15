@@ -373,6 +373,10 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       variable.push_back("hWZpt");
     
       variable.push_back("hLt");
+      variable.push_back("hLt3e0m");
+      variable.push_back("hLt2e1m");
+      variable.push_back("hLt1e2m");
+      variable.push_back("hLt0e3m");
       variable.push_back("hQ");       
 
       variable.push_back("hZMass");
@@ -382,19 +386,35 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       variable.push_back("hZpt");
       variable.push_back("hZeept");
       variable.push_back("hZmmpt");
+      variable.push_back("hZ3e0mpt");
+      variable.push_back("hZ2e1mpt");
+      variable.push_back("hZ1e2mpt");
+      variable.push_back("hZ0e3mpt");
 
       variable.push_back("hWTransMass");
       variable.push_back("hWenuTransMass");
       variable.push_back("hWmnuTransMass");
+      variable.push_back("hW3e0mTransMass");
+      variable.push_back("hW2e1mTransMass");
+      variable.push_back("hW1e2mTransMass");
+      variable.push_back("hW0e3mTransMass");
 
       variable.push_back("hWpt");
       variable.push_back("hWenupt");
       variable.push_back("hWmnupt");
+      variable.push_back("hW3e0mpt");
+      variable.push_back("hW2e1mpt");
+      variable.push_back("hW1e2mpt");
+      variable.push_back("hW0e3mpt");
 
       variable.push_back("hMET");
       variable.push_back("hMETSig");
       variable.push_back("hMETee");
       variable.push_back("hMETmm");
+      variable.push_back("hMET3e0m");
+      variable.push_back("hMET2e1m");
+      variable.push_back("hMET1e2m");
+      variable.push_back("hMET0e3m");
 
       variable.push_back("hZeeDr");
       variable.push_back("hZmmDr");
