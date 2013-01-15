@@ -1,5 +1,12 @@
 #!/bin/bash
-Ver="07-02-01"
+
+if [ "$#" -ge 1 ]; then
+    Ver=$1
+else
+    Ver="07-03-00"
+fi
+
+echo Checking Directory $Ver
 #Base=/hdfs/store/user/jklukas
 Base=/pnfs/cms/WAX/11/store/user/fantasia/53X
 #Base=~/nobackup/42X/filelists
