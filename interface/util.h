@@ -68,7 +68,8 @@ typedef std::vector<heep::Ele > ElectronV;
 typedef std::vector<TeVMuon  > MuonV;
 
 typedef std::vector<pat::Jet     > JetV;
-typedef std::vector<pat::MET     > METV;
+//typedef std::vector<pat::MET     > METV;
+typedef std::vector<reco::PFMET   > METV;
 typedef std::vector<reco::Track  > TrackV;
 typedef std::vector<edm::InputTag> VInputTag;
 typedef std::vector<reco::Candidate> CandV;
@@ -172,6 +173,8 @@ const int PDG_ID_ELEC = 11;
 const int PDG_ID_ELECNEU = 12;
 const int PDG_ID_MUON = 13;
 const int PDG_ID_MUONNEU = 14;
+const int PDG_ID_TAU = 15;
+const int PDG_ID_TAUNEU = 16;
 
 const int PDG_ID_W = 24;
 const int PDG_ID_Z = 23;
