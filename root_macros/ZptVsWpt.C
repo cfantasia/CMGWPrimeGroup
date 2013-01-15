@@ -45,7 +45,7 @@ void ZptVsWpt(){
   float minZpt = 0;
   float minWpt = 0;
 
-  const string SignalName = "WprimeToWZTo3LNu_M-1000-MyGen";
+  const string SignalName = "WprimeToWZTo3LNu_M-1000";
   const string cuts = Form("(WZMass > %.0f && WZMass < %.0f && Lt > %.0f && Zpt > %.0f && Wpt > %.0f)*weight",
                            minWindow, maxWindow, minLt, minZpt, minWpt); 
   cout<<"Cuts are "<<cuts<<endl;
@@ -60,9 +60,10 @@ void ZptVsWpt(){
   vector<TH2D> hWZMassVsLt(samples.size(),TH2D("hWZMassVsLt", ";L_{T} (GeV);M_{WZ} (GeV)", 5000, 0, 1000, 5000, 0, 1500));
   vector<TH2D> hWZMassVsMeff(samples.size(),TH2D("hWZMassVsMeff", ";M_{eff} (GeV);M_{WZ} (GeV)", 5000, 0, 1500, 5000, 0, 1500));
   vector<TH2D> hWZMassVsZDr(samples.size(),TH2D("hWZMassVsZDr", ";#Delta_{R}^{ll} (GeV);M_{WZ} (GeV)", 500, 0, 5, 5000, 0, 1500));
+  vector<TH2D> hZptVsZDr(samples.size(),TH2D("hZptVsZDr", ";#Delta_{R}^{ll} (GeV);p_{T}^{Z} (GeV)", 500, 0, 5, 250, 0, 750));
   vector<TH2D> hZmassVsWTMass(samples.size(),TH2D("hZmassVsWTMass", ";M_{Z} (GeV);M_{W}^{T} (GeV)", 60, 60, 120, 100, 0, 100));
 
-  TCanvas c[5]; for(int i=0; i<5;  ++i) c[i].Divide(2,1);
+  TCanvas c[6]; for(int i=0; i<6;  ++i) c[i].Divide(2,1);
   TLegend legend(0.0,0.02,0.40,0.11,"");
 	legend.SetBorderSize(0);
   legend.SetFillStyle(0);
@@ -98,6 +99,7 @@ void ZptVsWpt(){
     get_sum_of_hists(fin, names, "tEvts_MET", "Lt:WZMass", NoLtcuts, hWZMassVsLt[i]);
     get_sum_of_hists(fin, names, "tEvts_MET", "Lt+MET:WZMass", NoLtcuts, hWZMassVsMeff[i]);
     get_sum_of_hists(fin, names, "tEvts_MET", "ZDr:WZMass", NoLtcuts, hWZMassVsZDr[i]);
+    get_sum_of_hists(fin, names, "tEvts_MET", "ZDr:Zpt", NoLtcuts, hZptVsZDr[i]);
     get_sum_of_hists(fin, names, "tEvts_MET", "ZMass:WTransMass", NoLtcuts, hZmassVsWTMass[i]);
     
     cout<<" and # of X bins is "<<hWZMassVsLt[i].GetNbinsX()<<endl; 
@@ -122,6 +124,10 @@ void ZptVsWpt(){
     hWZMassVsZDr[i].SetFillColor(color);
     hWZMassVsZDr[i].SetMarkerSize(0.5);
 
+    hZptVsZDr[i].SetMarkerColor(color);
+    hZptVsZDr[i].SetFillColor(color);
+    hZptVsZDr[i].SetMarkerSize(0.5);
+
     hZmassVsWTMass[i].SetMarkerColor(color);
     hZmassVsWTMass[i].SetFillColor(color);
     hZmassVsWTMass[i].SetMarkerSize(0.5);
@@ -131,6 +137,7 @@ void ZptVsWpt(){
       hWZMassVsLt[i].SetMarkerSize(0.6);
       hWZMassVsMeff[i].SetMarkerSize(0.6);
       hWZMassVsZDr[i].SetMarkerSize(0.6);
+      hZptVsZDr[i].SetMarkerSize(0.6);
       hZmassVsWTMass[i].SetMarkerSize(0.6);
     }
 
@@ -139,6 +146,7 @@ void ZptVsWpt(){
       hWZMassVsLt[i].SetMarkerSize(0.4);
       hWZMassVsMeff[i].SetMarkerSize(0.4);
       hWZMassVsZDr[i].SetMarkerSize(0.4);
+      hZptVsZDr[i].SetMarkerSize(0.4);
       hZmassVsWTMass[i].SetMarkerSize(0.4);
     }
 
@@ -170,9 +178,14 @@ void ZptVsWpt(){
       c[3].cd(2); hWZMassVsZDr[i].Draw(opt.c_str());
     }             
 
-    c[4].cd(1); hZmassVsWTMass[i].Draw(opt.c_str());
+    c[4].cd(1); hZptVsZDr[i].Draw(opt.c_str());
     if(samples[i] != "Sig"){
-      c[4].cd(2); hZmassVsWTMass[i].Draw(opt.c_str());
+      c[4].cd(2); hZptVsZDr[i].Draw(opt.c_str());
+    }             
+
+    c[5].cd(1); hZmassVsWTMass[i].Draw(opt.c_str());
+    if(samples[i] != "Sig"){
+      c[5].cd(2); hZmassVsWTMass[i].Draw(opt.c_str());
     }             
   }
   c[0].cd();
@@ -196,6 +209,10 @@ void ZptVsWpt(){
 
   cout<<"Pad 5\n";
   c[4].cd();
+  legend.Draw();
+
+  cout<<"Pad 6\n";
+  c[5].cd();
   legend.Draw();
 /*
   cout<<"Adding Lines\n";
@@ -275,7 +292,10 @@ void ZptVsWpt(){
   c[3].SaveAs("WZMassVsZDr.png");
 
   cout<<"Saving 4\n";
-  c[4].SaveAs("ZmassVsWTMass.png");
+  c[4].SaveAs("ZptVsZDr.png");
+
+  cout<<"Saving 5\n";
+  c[5].SaveAs("ZmassVsWTMass.png");
 }
 
 //  LocalWords:  str
