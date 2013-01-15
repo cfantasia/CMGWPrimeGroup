@@ -24,7 +24,7 @@ TeVMuon::getTrack(const unsigned muReconstructor) const{
   case kSTANDALONE:
     return standAloneMuon();
   }
-  std::cout<<"Failed to find a track requested\n";
+  std::cout<<"Failed to find a track requested ("<<algo_desc_long[muReconstructor]<<")\n";
   return globalTrack();
 }
 
