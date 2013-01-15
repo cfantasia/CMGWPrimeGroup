@@ -1,4 +1,4 @@
-#include "common.h"
+#include "../root_macros/common.h"
 #include "TGraphErrors.h"
 #include "TMath.h"
 #include <fstream>
