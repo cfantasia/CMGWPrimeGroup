@@ -1,0 +1,4 @@
+/store/user/fantasia/53X/DataPatTrilepton-W07-02-01-DoubleElectron-Run2012A-recover-06Aug2012-v1/patTuple_3_1_KY1.root
+/store/user/fantasia/53X/DataPatTrilepton-W07-02-01-DoubleElectron-Run2012A-recover-06Aug2012-v1/patTuple_1_1_957.root
+/store/user/fantasia/53X/DataPatTrilepton-W07-02-01-DoubleElectron-Run2012A-recover-06Aug2012-v1/patTuple_2_1_UlC.root
+/store/user/fantasia/53X/DataPatTrilepton-W07-02-01-DoubleElectron-Run2012A-recover-06Aug2012-v1/patTuple_4_1_WbE.root

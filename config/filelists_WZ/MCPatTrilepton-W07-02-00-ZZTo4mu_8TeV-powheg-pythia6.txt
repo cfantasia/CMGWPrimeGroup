@@ -1,0 +1,10 @@
+/store/user/fantasia/53X/MCPatTrilepton-W07-02-00-ZZTo4mu_8TeV-powheg-pythia6/patTuple_2_1_kbe.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-02-00-ZZTo4mu_8TeV-powheg-pythia6/patTuple_8_1_0X1.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-02-00-ZZTo4mu_8TeV-powheg-pythia6/patTuple_7_1_j8F.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-02-00-ZZTo4mu_8TeV-powheg-pythia6/patTuple_1_2_uNC.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-02-00-ZZTo4mu_8TeV-powheg-pythia6/patTuple_5_1_t1Q.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-02-00-ZZTo4mu_8TeV-powheg-pythia6/patTuple_4_1_RBA.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-02-00-ZZTo4mu_8TeV-powheg-pythia6/patTuple_3_1_oNR.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-02-00-ZZTo4mu_8TeV-powheg-pythia6/patTuple_10_1_9fh.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-02-00-ZZTo4mu_8TeV-powheg-pythia6/patTuple_6_1_lQV.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-02-00-ZZTo4mu_8TeV-powheg-pythia6/patTuple_9_1_kLR.root
