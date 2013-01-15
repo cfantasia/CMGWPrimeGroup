@@ -931,7 +931,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   }
 
   for (size_t i = 0; i < allMuons_.size(); i++) {
-    pat::Muon & p = allMuons_[i];
+    TeVMuon & p = allMuons_[i];
     if(muScaleFactor_) p.setP4(muScaleFactor_*p.p4());
 
     //const float pu = MuonPU(p);
