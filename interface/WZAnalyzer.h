@@ -81,7 +81,8 @@ public:
   std::vector<double> effectiveElecArea_;
   std::vector<double> effectiveMuonArea_;
   
-  bool doSystematics_, doMatrix_;
+  bool doSystematics_, doMatrix_, removeTauEvents_;
+  float elScaleFactor_, muScaleFactor_;
 
 ///My calculated qualities//////////////////
   uint runNumber_;
@@ -97,8 +98,7 @@ public:
   float TriLepMass_;
   float Q_;
   float Discriminant_;
-  float MET_;
-  float METSig_;
+  float MET_, METPhi_, METSig_;
   uint evtType_;
   uint numZs_; 
   uint NVtxs_;
@@ -107,7 +107,9 @@ public:
   float LeadMuonPt_;
   bool TT, TF, FT, FF;
   int ZTightCode_, WTightCode_;
-  float ZLep1Pt_, ZLep1Eta_, ZLep2Pt_, ZLep2Eta_, WLepPt_, WLepEta_;
+  float ZLep1Pt_, ZLep1Eta_, ZLep1Phi_, ZLep2Pt_, ZLep2Eta_, ZLep2Phi_, WLepPt_, WLepEta_, WLepPhi_;
+  float ZLep1PtGen_, ZLep1EtaGen_, ZLep1PhiGen_, ZLep2PtGen_, ZLep2EtaGen_, ZLep2PhiGen_;
+  float WLepPtGen_, WLepEtaGen_, WLepPhiGen_, WNeuPtGen_, WNeuEtaGen_, WNeuPhiGen_;
 
 // +++++++++++++++++++General Cut values
   uint minNLeptons_, maxNVLLeptons_, maxNJets_;
@@ -172,7 +174,7 @@ public:
   std::vector<TH1F*> hQ;
   std::vector<TH1F*> hWZTransMass;
   std::vector<TH1F*> hWZpt;
-  std::vector<TH1F*> hLt;
+  std::vector<TH1F*> hLt,hLtee,hLtmm,hLt3e0m,hLt2e1m,hLt1e2m,hLt0e3m;
   std::vector<TH1F*> hTriLepMass;
   std::vector<TH1F*> hEvtType, hEvtTypeP, hEvtTypeM;
   std::vector<TH1F*> hLeadPt, hLeadPtZee, hLeadPtZmm;

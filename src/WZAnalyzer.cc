@@ -11,7 +11,9 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   wzAlgo_ = (NuAlgos)cfg.getUntrackedParameter<int>("NuAlgo", kMinPz);
   doSystematics_ = cfg.getUntrackedParameter<bool>("doSystematics", false);
   doMatrix_ = cfg.getUntrackedParameter<bool>("doMatrix", false);
-
+  removeTauEvents_ = cfg.getUntrackedParameter<bool>("removeTauEvents", false);
+  elScaleFactor_ = cfg.getParameter<double>("elScaleFactor");
+  muScaleFactor_ = cfg.getParameter<double>("muScaleFactor");
 
   rhoFastJetLabel_ = cfg.getParameter<edm::InputTag>("rhoFastJet");
   effectiveElecArea_ = cfg.getParameter<vector<double> >("effectiveElecArea");
@@ -167,6 +169,18 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
 //Lt Histos
     defineHistoSet("hLt", "L_{T}", 
                    "L_{T} #equiv #Sigma p_{T}^{Lep} (GeV)", 80, 0, 800, "GeV", hLt,dir);
+    defineHistoSet("hLtee", "L_{T}^{Z#rightarrowee)", 
+                   "L_{T}^{Z#rightarrowee) #equiv #Sigma p_{T}^{Lep} (GeV)", 80, 0, 800, "GeV", hLtee,dir);
+    defineHistoSet("hLtmm", "L_{T}^{Z#rightarrow#mu#mu}", 
+                   "L_{T}^{Z#rightarrow#mu#mu} #equiv #Sigma p_{T}^{Lep} (GeV)", 80, 0, 800, "GeV", hLtmm,dir);
+    defineHistoSet("hLt3e0m", "L_{T}^{3e0#mu}", 
+                   "L_{T}^{3e0#mu} #equiv #Sigma p_{T}^{Lep} (GeV)", 80, 0, 800, "GeV", hLt3e0m,dir);
+    defineHistoSet("hLt2e1m", "L_{T}^{2e1#mu}", 
+                   "L_{T}^{2e1#mu} #equiv #Sigma p_{T}^{Lep} (GeV)", 80, 0, 800, "GeV", hLt2e1m,dir);
+    defineHistoSet("hLt1e2m", "L_{T}^{1e2#mu}", 
+                   "L_{T}^{1e2#mu} #equiv #Sigma p_{T}^{Lep} (GeV)", 80, 0, 800, "GeV", hLt1e2m,dir);
+    defineHistoSet("hLt0e3m", "L_{T}^{0e3#mu}", 
+                   "L_{T}^{0e3#mu} #equiv #Sigma p_{T}^{Lep} (GeV)", 80, 0, 800, "GeV", hLt0e3m,dir);
     defineHistoSet("hTriLepMass", "hTriLepMass",
                    "Trilepton Invariant Mass", 100, 0., 1000., "GeV", hTriLepMass, dir);
   
@@ -242,9 +256,9 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
     defineHistoSet("hMET0e3m", "MET (0e3#mu)",
                    "#slash{E}_{T}^{0e3#mu} (GeV)", 50, 0, 500, "GeV", hMET0e3m,dir);
     defineHistoSet("hMETSig", "MET Significance",
-                   "#slash{E}_{T}^{Signif}", 50, 0, 500, "NONE", hMETSig,dir);
+                   "#slash{E}_{T}^{Signif}", 50, 0, 500, "", hMETSig,dir);
     defineHistoSet("hMETPhi", "MET #Phi",
-                   "#slash{E}_{T}^{#Phi}", 140, -7., 7., "NONE", hMETPhi,dir);
+                   "#slash{E}_{T}^{#Phi}", 140, -7., 7., "", hMETPhi,dir);
     
 //W Trans Mass Histos
     defineHistoSet("hWTransMass", "Reconstructed Transverse Mass of W",
@@ -295,9 +309,9 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
                    "q_{W (0e3#mu)}", 2, -1.5, 1.5, "", hW0e3mQ,dir);
 
     defineHistoSet("hWenuCombRelIso", "Comb Rel Iso of W Electron",
-                   "Electron Combined Relative Isolation", 20, 0, 0.2, "NONE", hWenuCombRelIso,dir);
+                   "Electron Combined Relative Isolation", 20, 0, 0.2, "", hWenuCombRelIso,dir);
     defineHistoSet("hWmnuCombRelIso", "Comb Rel Iso of W Muon",
-                   "Muon Combined Relative Isolation", 20, 0, 0.2, "NONE", hWmnuCombRelIso,dir);
+                   "Muon Combined Relative Isolation", 20, 0, 0.2, "", hWmnuCombRelIso,dir);
     
     defineHistoSet("hNLElec", "Number of Loose Electrons in Event",
                    "N_{e}^{Loose}", 10, 0, 10, "NONE", hNLElec,dir);
@@ -340,6 +354,7 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
       tEvts[i]->Branch("WTransMass", &WTransMass_);
       tEvts[i]->Branch("WCharge", &WCharge_);
       tEvts[i]->Branch("MET", &MET_);
+      tEvts[i]->Branch("METPhi", &METPhi_);
       tEvts[i]->Branch("METSig", &METSig_);
       tEvts[i]->Branch("Discriminant", &Discriminant_);
       tEvts[i]->Branch("Q", &Q_);
@@ -348,10 +363,25 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
       tEvts[i]->Branch("weight", &weight_);
       tEvts[i]->Branch("ZLep1Pt", &ZLep1Pt_);
       tEvts[i]->Branch("ZLep1Eta", &ZLep1Eta_);
+      tEvts[i]->Branch("ZLep1Phi", &ZLep1Phi_);
       tEvts[i]->Branch("ZLep2Pt", &ZLep2Pt_);
       tEvts[i]->Branch("ZLep2Eta", &ZLep2Eta_);
+      tEvts[i]->Branch("ZLep2Phi", &ZLep2Phi_);
       tEvts[i]->Branch("WLepPt", &WLepPt_);
       tEvts[i]->Branch("WLepEta", &WLepEta_);
+      tEvts[i]->Branch("WLepPhi", &WLepPhi_);
+      tEvts[i]->Branch("ZLep1PtGen", &ZLep1PtGen_);
+      tEvts[i]->Branch("ZLep1EtaGen", &ZLep1EtaGen_);
+      tEvts[i]->Branch("ZLep1PhiGen", &ZLep1PhiGen_);
+      tEvts[i]->Branch("ZLep2PtGen", &ZLep2PtGen_);
+      tEvts[i]->Branch("ZLep2EtaGen", &ZLep2EtaGen_);
+      tEvts[i]->Branch("ZLep2PhiGen", &ZLep2PhiGen_);
+      tEvts[i]->Branch("WLepPtGen", &WLepPtGen_);
+      tEvts[i]->Branch("WLepEtaGen", &WLepEtaGen_);
+      tEvts[i]->Branch("WLepPhiGen", &WLepPhiGen_);
+      tEvts[i]->Branch("WNeuPtGen", &WNeuPtGen_);
+      tEvts[i]->Branch("WNeuEtaGen", &WNeuEtaGen_);
+      tEvts[i]->Branch("WNeuPhiGen", &WNeuPhiGen_);
       tEvts[i]->Branch("ZTightCode", &ZTightCode_);
       tEvts[i]->Branch("WTightCode", &WTightCode_);
     }
@@ -438,9 +468,9 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
                  "N_{Vtx}^{Z#rightarrow#mu#mu}", 50, 0, 50, "NONE", hNVtxsZmm,dir);
   
   defineHistoSet("hWeight", "PU Weight",
-                 "Weight", 40, 0, 2, "NONE", hWeight,dir);
+                 "Weight", 40, 0, 2, "", hWeight,dir);
   defineHistoSet("hL1FastJet", "L1 Fast Jet Correction",
-                 "#rho", 50, 0, 50, "NONE", hL1FastJet,dir);
+                 "#rho", 50, 0, 50, "", hL1FastJet,dir);
 
 
 }//defineHistos
@@ -458,6 +488,7 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
         hZ3e0mpt[index]->Fill(Zpt_, weight);
         hW3e0mpt[index]->Fill(Wpt_, weight);
         hW3e0mQ[index]->Fill(WCharge_, weight);  
+        hLt3e0m[index]->Fill(Lt_, weight);
         hMET3e0m[index]->Fill(MET_, weight);
         const heep::Ele& e = *wCand_.elec();
         hEtaVsPt3e0m[index]->Fill(e.patEle().pt(), e.patEle().eta(), weight);
@@ -465,6 +496,7 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
         hWZ2e1mMass[index]->Fill(WZMass_, weight);
         hZ2e1mMass[index]->Fill(ZMass_, weight);
         hW2e1mTransMass[index]->Fill(wCand_.mt(), weight);
+        hLt2e1m[index]->Fill(Lt_, weight);
         hMET2e1m[index]->Fill(MET_, weight);
         hZ2e1mpt[index]->Fill(Zpt_, weight);
         hW2e1mpt[index]->Fill(Wpt_, weight);
@@ -475,6 +507,7 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
         hWZ1e2mMass[index]->Fill(WZMass_, weight);
         hZ1e2mMass[index]->Fill(ZMass_, weight);
         hW1e2mTransMass[index]->Fill(wCand_.mt(), weight);
+        hLt1e2m[index]->Fill(Lt_, weight);
         hMET1e2m[index]->Fill(MET_, weight);
         hZ1e2mpt[index]->Fill(Zpt_, weight);
         hW1e2mpt[index]->Fill(Wpt_, weight);
@@ -485,6 +518,7 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
         hWZ0e3mMass[index]->Fill(WZMass_, weight);
         hZ0e3mMass[index]->Fill(ZMass_, weight);
         hW0e3mTransMass[index]->Fill(wCand_.mt(), weight);
+        hLt0e3m[index]->Fill(Lt_, weight);
         hMET0e3m[index]->Fill(MET_, weight);
         hZ0e3mpt[index]->Fill(Zpt_, weight);
         hW0e3mpt[index]->Fill(Wpt_, weight);
@@ -742,10 +776,12 @@ WZAnalyzer::calcZVariables(){
   ZMass_ = zCand_.mass();
   if(zCand_){
     ZDr_ = deltaR(*zCand_.daughter(0), *zCand_.daughter(1));
-    ZLep1Pt_ = zCand_.daughter(0)->pt();
+    ZLep1Pt_  = zCand_.daughter(0)->pt();
     ZLep1Eta_ = zCand_.daughter(0)->eta();
-    ZLep2Pt_ = zCand_.daughter(1)->pt();
+    ZLep1Phi_ = zCand_.daughter(0)->phi();
+    ZLep2Pt_  = zCand_.daughter(1)->pt();
     ZLep2Eta_ = zCand_.daughter(1)->eta();
+    ZLep2Phi_ = zCand_.daughter(1)->phi();
   }
   if(debug_){
     printf("    Contains: %lu Z candidate(s)\n", zCandsAll.size());
@@ -770,8 +806,9 @@ WZAnalyzer::calcWVariables(){
   WTransMass_ = wCand_.mt();
   WCharge_ = wCand_.charge();
   if(wCand_){
-    WLepPt_ = wCand_.daughter(0)->pt();
+    WLepPt_  = wCand_.daughter(0)->pt();
     WLepEta_ = wCand_.daughter(0)->eta();
+    WLepPhi_ = wCand_.daughter(0)->phi();
   }
   if(debug_){
     printf("    Contains: %i tight W candidate(s)\n", (bool)wCand_);
@@ -828,6 +865,17 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     WPrimeUtil::printEvent(event, cout);
   }
 
+  if(removeTauEvents_ && !wprimeUtil_->runningOnData()){//Don't do this for data
+    GenParticleV genParticles = getProduct<GenParticleV>(event, "prunedGenParticles");
+      for (size_t i = 0; i < genParticles.size(); i++){
+        if (abs(genParticles[i].pdgId()) == PDG_ID_TAU ||
+            abs(genParticles[i].pdgId()) == PDG_ID_TAUNEU){
+          if(debug_) cout<<"Removing Tau event."<<endl;
+          return;
+        }
+      }
+  }//Remove Tau Events
+ 
   // get leptons
   event.getByLabel(electronsLabel_,patElectronsH_);
   event.getByLabel(muonsLabel_,patMuonsH_);
@@ -852,62 +900,62 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
 
   if(debug_) cout<<"num of vertices is "<<verticesH_->size()<<endl;
   const reco::Vertex & primaryVertex =  verticesH_.isValid() && !verticesH_->empty() ? verticesH_->at(0) : reco::Vertex();
-
-/*
-  if(verticesH_.isValid() && !verticesH_->empty()){
-    cout<<"Good PV"<<endl;
-  }else{
-    cout<<"Bad PV!!!!\n";
-  }
-
-  if(!primaryVertex.isFake() && primaryVertex.ndof() > 4 && abs(primaryVertex.z()) <= 24 && primaryVertex.position().rho() < 2){
-    cout<<"Really good PV\n";
-   }
-*/
+  if(!verticesH_.isValid() || verticesH_->empty()) cout<<" No valid PV"<<endl;
 
   // Make vectors of leptons passing various criteria
   for (size_t i = 0; i < allElectrons_.size(); i++) {
-    if(Overlap(allElectrons_[i].patEle(), *patMuonsH_.product(), 0.01)) continue;
-    const float pu = (*rhoFastJetH_);//*allElectrons_[i].patEle().userFloat("pfAEff04");//ElecPU(allElectrons_[i]);
-    if (extraElectron_(allElectrons_[i].patEle(), pu, primaryVertex))
+    if(elScaleFactor_){
+      pat::Electron newEl = allElectrons_[i].patEle();
+      newEl.setP4(elScaleFactor_*newEl.p4()); 
+      allElectrons_[i] = heep::Ele(newEl);
+    }
+    const pat::Electron & p = allElectrons_[i].patEle();
+    if(Overlap(p, *patMuonsH_.product(), 0.01)) continue;
+
+    const float pu = (*rhoFastJetH_);//*p.userFloat("pfAEff04");//ElecPU(allElectrons_[i]);
+
+    if (extraElectron_(p, pu, primaryVertex))
       extraElectrons_.push_back(allElectrons_[i]);
 
-    if (looseZElectron_(allElectrons_[i].patEle(), pu, primaryVertex))
+    if (looseZElectron_(p, pu, primaryVertex))
       looseZElectrons_.push_back(allElectrons_[i]);
 
-    if (tightZElectron_(allElectrons_[i].patEle(), pu, primaryVertex))
+    if (tightZElectron_(p, pu, primaryVertex))
       tightZElectrons_.push_back(allElectrons_[i]);
 
-    if (looseWElectron_(allElectrons_[i].patEle(), pu, primaryVertex))
+    if (looseWElectron_(p, pu, primaryVertex))
       looseWElectrons_.push_back(allElectrons_[i]);
 
-    if (tightWElectron_(allElectrons_[i].patEle(), pu, primaryVertex))
+    if (tightWElectron_(p, pu, primaryVertex))
       tightWElectrons_.push_back(allElectrons_[i]);
   }
 
   for (size_t i = 0; i < allMuons_.size(); i++) {
-    //const float pu = MuonPU(allMuons_[i]);
+    pat::Muon & p = allMuons_[i];
+    if(muScaleFactor_) p.setP4(muScaleFactor_*p.p4());
+
+    //const float pu = MuonPU(p);
     float pu = 0;
     for (size_t j = 0; j < allMuons_.size(); j++) {
       if(i == j) continue;
-      if(deltaR(allMuons_[i], allMuons_[j]) < 0.3) pu -= allMuons_[j].pt(); 
+      if(deltaR(p, allMuons_[j]) < 0.3) pu -= allMuons_[j].pt(); 
     }
 
     if(debug_) cout<<"muon number "<<i<<" has pu "<<pu<<endl;
-    if (extraMuon_(allMuons_[i], pu, primaryVertex))
-      extraMuons_.push_back(allMuons_[i]);
+    if (extraMuon_(p, pu, primaryVertex))
+      extraMuons_.push_back(p);
 
-    if (looseZMuon_(allMuons_[i], pu, primaryVertex))
-      looseZMuons_.push_back(allMuons_[i]);
+    if (looseZMuon_(p, pu, primaryVertex))
+      looseZMuons_.push_back(p);
 
-    if (tightZMuon_(allMuons_[i], pu, primaryVertex))
-      tightZMuons_.push_back(allMuons_[i]);
+    if (tightZMuon_(p, pu, primaryVertex))
+      tightZMuons_.push_back(p);
 
-    if (looseWMuon_(allMuons_[i], pu, primaryVertex))
-      looseWMuons_.push_back(allMuons_[i]);
+    if (looseWMuon_(p, pu, primaryVertex))
+      looseWMuons_.push_back(p);
 
-    if (tightWMuon_(allMuons_[i], pu, primaryVertex))
-      tightWMuons_.push_back(allMuons_[i]);
+    if (tightWMuon_(p, pu, primaryVertex))
+      tightWMuons_.push_back(p);
   }
 
   if(debug_){
@@ -953,27 +1001,44 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   if(debug_) printDebugEvent();
 
   MET_ = met_.et();
+  METPhi_ = met_.phi();
   METSig_ = met_.significance();
   NVtxs_ = (*verticesH_).size();
 
-  /*
+
   if(!wprimeUtil_->runningOnData()){//Don't do this for data
-    if(debug_){
-      GenParticleV genParticles = getProduct<GenParticleV>(event, "genParticles");
-      const reco::Candidate * genZ = 0;
-      const reco::Candidate * genW = 0;
-      for (size_t i = 0; i < genParticles.size(); i++){
-        if (abs(genParticles[i].pdgId()) == PDG_ID_Z){
-          genZ = & genParticles[i];
-          cout<<"Mass of gen Z is "<<genZ->mass()<<endl;
-        }else if (abs(genParticles[i].pdgId()) == PDG_ID_W){ 
-          genW = & genParticles[i];
-        cout<<"Mass of gen W is "<<genW->mass()<<endl;
+    GenParticleV genParticles = getProduct<GenParticleV>(event, genLabel_);
+    for (size_t i = 0; i < genParticles.size(); i++){
+      const reco::Candidate * gen = &genParticles[i];
+      if(gen->status() != 3) continue; //I think this is before fsr
+      int pdgid = abs(gen->pdgId());
+      if(pdgid == PDG_ID_ELEC || pdgid == PDG_ID_MUON ||
+         pdgid == PDG_ID_ELECNEU || pdgid == PDG_ID_MUONNEU){
+        if(debug_) cout<<"Found particle with pdgid, status, pt = "<<gen->pdgId()<<", "<<gen->status()<<", "<<gen->pt()<<endl;
+        const reco::Candidate * genMother = findMother(gen);
+        if(!genMother) continue;
+        if(debug_) cout<<"Found mother with pdgid, status, pt = "<<genMother->pdgId()<<", "<<genMother->status()<<", "<<genMother->pt()<<endl;
+        if      (abs(genMother->pdgId()) == PDG_ID_Z && gen->charge() > 0){
+          ZLep1PtGen_  = gen->pt();
+          ZLep1EtaGen_ = gen->eta();
+          ZLep1PhiGen_ = gen->phi();
+        }else if(abs(genMother->pdgId()) == PDG_ID_Z && gen->charge() < 0){
+          ZLep2PtGen_  = gen->pt();
+          ZLep2EtaGen_ = gen->eta();
+          ZLep2PhiGen_ = gen->phi();
+        }else if(abs(genMother->pdgId()) == PDG_ID_W && gen->charge() != 0){
+          WLepPtGen_  = gen->pt();
+          WLepEtaGen_ = gen->eta();
+          WLepPhiGen_ = gen->phi();
+        }else if(abs(genMother->pdgId()) == PDG_ID_W && gen->charge() == 0){
+          WNeuPtGen_  = gen->pt();
+          WNeuEtaGen_ = gen->eta();
+          WNeuPhiGen_ = gen->phi();
         }
       }
     }
   }//MC Only If
-  */
+  
 
   weight_ = wprimeUtil_->getWeight();
   if(!passCuts(weight_)) return;
@@ -1329,10 +1394,12 @@ WZAnalyzer::clearEvtVariables(){
   runNumber_ = 0;
   lumiNumber_ = 0;
   evtNumber_ = 0;
-  MET_ = 0;
+  MET_ = METPhi_ = 0;
   METSig_ = 0;
   NVtxs_ = 0;
-  ZLep1Pt_ = ZLep1Eta_ = ZLep2Pt_ = ZLep2Eta_ = WLepPt_ = WLepEta_ = 0;
+  ZLep1Pt_ = ZLep1Eta_ = ZLep1Phi_ = ZLep2Pt_ = ZLep2Eta_ = ZLep2Phi_ = WLepPt_ = WLepEta_ = WLepPhi_ = 0;
+  ZLep1PtGen_ = ZLep1EtaGen_ = ZLep1PhiGen_ = ZLep2PtGen_ = ZLep2EtaGen_ = ZLep2PhiGen_ = 0.;
+  WLepPtGen_ = WLepEtaGen_ = WLepPhiGen_ = WNeuPtGen_ = WNeuEtaGen_ = WNeuPhiGen_ =0;
   weight_ = 0;
 }
 
