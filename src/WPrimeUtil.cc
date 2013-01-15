@@ -309,8 +309,8 @@ void WPrimeUtil::parseLine(const string & new_line, wprime::InputFile * in_file)
         abort();
       }
       double kfactor = atof(new_line.substr(11, new_line.length() - 11).c_str());
-      cout<<"Using k-factor of "<<kfactor<<endl;
       in_file->x_sect *= kfactor;
+      cout<<"Using k-factor of "<<kfactor<<" for a NLO xsec of "<<in_file->x_sect<<" pb"<<endl;
       return;
     }
 
