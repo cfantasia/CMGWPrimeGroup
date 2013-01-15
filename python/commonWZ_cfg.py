@@ -23,13 +23,13 @@ process.WprimeAnalyzer.eventCounters = cms.vstring(
 ## input specific for this analyzer
 process.WprimeAnalyzer.muons = 'selectedPatMuons'
 process.WprimeAnalyzer.electrons = 'selectedPatElectrons'
-process.WprimeAnalyzer.met   = 'patMETsPF'
+process.WprimeAnalyzer.met   = "pfType1CorrectedMet"
 process.WprimeAnalyzer.particleFlow = 'selectedPatPFParticles'
 process.WprimeAnalyzer.genParticles = 'prunedGenParticles'
 process.WprimeAnalyzer.hltEventTag = 'patTriggerEvent'
 process.WprimeAnalyzer.rhoFastJet = cms.InputTag('kt6PFJets:rho')
 
-process.WprimeAnalyzer.preselect = False
+process.WprimeAnalyzer.preselect = True
 
 process.WprimeAnalyzer.minDeltaR = cms.double(0.)
 process.WprimeAnalyzer.maxZMassDiff = cms.double(999999.)
@@ -124,9 +124,15 @@ DoubleTriggers = cms.vstring(
     'HLT_DoubleMu7_v*',
     'HLT_Mu13_Mu8_v*', #1e33 unprescaled
     'HLT_Mu17_Mu8_v*', #3e33 unprescaled
+    'HLT_Mu17_TkMu8_v*', #2011B
+    'HLT_Mu22_TkMu8_v*', #2012 single l1 seeded
+    'HLT_Mu22_TkMu22_v*', #2012
 
+    'HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v*', #2011A
     'HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v*',#MC
     'HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v*'#Data
+    'HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_v*',
+    'HLT_DoubleEle33_CaloIdT_v*',
     
     )
 SingleElecTriggers = cms.vstring( 'HLT_Ele17_SW_L1R',  # from 2010 data
@@ -162,6 +168,9 @@ SingleMuonTriggers = cms.vstring(    'HLT_Mu15_v*',
 process.WprimeAnalyzer.triggersToUse = DoubleTriggers
 
 ####################
+process.WprimeAnalyzer.removeTauEvents = cms.untracked.bool(True)
+process.WprimeAnalyzer.elScaleFactor = cms.double(0.)
+process.WprimeAnalyzer.muScaleFactor = cms.double(0.)
 
 # +++++++++++++++++++General Cut values
 process.WprimeAnalyzer.maxNumZs = cms.uint32(1)
@@ -178,11 +187,11 @@ process.WprimeAnalyzer.cutWenuWPRelIsoMask = cms.int32(2)#Cory: Iso only
 process.WprimeAnalyzer.cutElecWPTightType = cms.string("simpleEleId80relIso")
 
 # +++++++++++++++++++Z Cuts
-process.WprimeAnalyzer.minZeePt1 =  cms.double(20.)
-process.WprimeAnalyzer.minZeePt2 =  cms.double(10.)
-process.WprimeAnalyzer.minZmmPt1 =  cms.double(20.)
+process.WprimeAnalyzer.minZeePt1 =  cms.double(35.)
+process.WprimeAnalyzer.minZeePt2 =  cms.double(35.)
+process.WprimeAnalyzer.minZmmPt1 =  cms.double(25.)
 process.WprimeAnalyzer.minZmmPt2 =  cms.double(10.)
 
-process.WprimeAnalyzer.minZmass =  cms.untracked.double(60.)
-process.WprimeAnalyzer.maxZmass =  cms.untracked.double(120.)
+process.WprimeAnalyzer.minZmass =  cms.untracked.double( 71.188)
+process.WprimeAnalyzer.maxZmass =  cms.untracked.double(111.188)
 

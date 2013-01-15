@@ -36,8 +36,8 @@ else:
 
     process.WprimeAnalyzer.LooseZMuonType = cms.untracked.string("EWKWZLoose")
     process.WprimeAnalyzer.TightZMuonType = cms.untracked.string("EWKWZTight")
-    process.WprimeAnalyzer.LooseWMuonType = cms.untracked.string("EWKWZLoose")
-    process.WprimeAnalyzer.TightWMuonType = cms.untracked.string("EWKWZTight")
+    process.WprimeAnalyzer.LooseWMuonType = cms.untracked.string("EWKWZLoosePt20")
+    process.WprimeAnalyzer.TightWMuonType = cms.untracked.string("EWKWZTightPt20")
 
 
 

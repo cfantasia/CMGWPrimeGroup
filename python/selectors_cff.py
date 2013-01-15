@@ -20,8 +20,9 @@ muonSelectors = cms.PSet(
     PFIso = cms.PSet(
        minPt = cms.untracked.double(10.),
        maxEta = cms.untracked.double(2.4),
-       minIsGlobal = cms.untracked.int32(1),
-       minIsPF = cms.untracked.int32(1),
+       minIsGblOrTrk = cms.untracked.int32(1),
+#       minIsGlobal = cms.untracked.int32(1),
+#       minIsPF = cms.untracked.int32(1),
        maxDxy = cms.untracked.double(0.2),
        maxDz = cms.untracked.double(0.5),
 #       maxNormalizedChi2 = cms.untracked.double(10.0),
@@ -75,11 +76,12 @@ muonSelectors.EWKWZRelaxedPt20 = muonSelectors.EWKWZRelaxed.clone(
     )
 muonSelectors.EWKWZLoose = muonSelectors.EWKWZRelaxed.clone(
     maxPFIso = cms.untracked.double(0.2)
-#    maxTrkCorIso = cms.untracked.double(0.1)
+    )
+muonSelectors.EWKWZLoosePt20 = muonSelectors.EWKWZLoose.clone(
+    minPt = 20.,
     )
 muonSelectors.EWKWZTight = muonSelectors.EWKWZRelaxed.clone(
     maxPFIso = cms.untracked.double(0.12)
-#    maxTrkCorIso = cms.untracked.double(0.05)
     )
 muonSelectors.EWKWZTightPt20 = muonSelectors.EWKWZTight.clone(
     minPt = 20.,
@@ -170,7 +172,8 @@ electronSelectors = cms.PSet(
            maxDeltaEta = cms.untracked.double(0.007),
            maxHoverE = cms.untracked.double(0.12),
            maxd0 = cms.untracked.double(0.02),
-           #maxdz = cms.untracked.double(0.2),
+           #maxdz = cms.untracked.double(200.),
+           #maxdz = cms.untracked.double(0.2),#proper cut
            maxfabsdiffEp = cms.untracked.double(0.05),
            maxPFIso = cms.untracked.double(0.15),          
        ),
@@ -182,7 +185,8 @@ electronSelectors = cms.PSet(
            maxDeltaEta = cms.untracked.double(0.009),
            maxHoverE = cms.untracked.double(0.10),
            maxd0 = cms.untracked.double(0.02),
-           #maxdz = cms.untracked.double(0.2),
+           #maxdz = cms.untracked.double(200.),
+           #maxdz = cms.untracked.double(0.2),#proper cut
            maxfabsdiffEp = cms.untracked.double(0.05),
            maxPFIso = cms.untracked.double(0.15),
        ),

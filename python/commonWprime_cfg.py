@@ -83,8 +83,6 @@ process.WprimeAnalyzer = cms.PSet(
     #PileUp Inputs
     MCPUDistFile = cms.string('UserCode/CMGWPrimeGroup/pileup/MCPUDist.root'),
     MCPUDistHist = cms.string('Summer12Dist'),
-#    DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/pileup/MCPUDist.root'),
-#    DataPUDistHist = cms.string('Summer12Dist'),
     DataPUDistFile = cms.string('UserCode/CMGWPrimeGroup/pileup/DataPileupHistogram.root'),
     DataPUDistHist = cms.string('pileup'),
     puScale = cms.double(1.0),
