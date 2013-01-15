@@ -138,6 +138,7 @@ MuonSelector::MuonSelector(Pset pset, std::string selectorName) {
   loadFromPset<double>(params, "maxPFIso", true);
   loadFromPset<int>(params, "minIsGlobal", true);
   loadFromPset<int>(params, "minIsTracker", true);
+  loadFromPset<int>(params, "minIsGblOrTrk", true);
   loadFromPset<int>(params, "minIsPF", true);
   loadFromPset<int>(params, "minNMatches", true);
   loadFromPset<int>(params, "minNMatchedStations", true);
@@ -166,6 +167,7 @@ bool MuonSelector::operator()(const TeVMuon & p, const float pu, const reco::Ver
   setpassCut("maxPFIso", p.combRelPFIsolation(), bitmask);
   setpassCut("minIsGlobal", p.isGlobalMuon(), bitmask);
   setpassCut("minIsTracker", p.isTrackerMuon(), bitmask);
+  setpassCut("minIsGblOrTrk", p.isGlobalMuon() || p.isTrackerMuon(), bitmask);
   setpassCut("minIsPF", p.isPFMuon(), bitmask);
   setpassCut("minNMatches", p.numberOfMatches(), bitmask);
   setpassCut("minNMatchedStations", p.numberOfMatchedStations(), bitmask);
