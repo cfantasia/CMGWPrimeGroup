@@ -1,6 +1,7 @@
 #ifndef _common_h_
 #define _common_h_
 
+#include "TROOT.h"
 #include "TFile.h"
 #include "TH1F.h"
 #include "TH2F.h"
@@ -225,27 +226,8 @@ GetSampleInfo(TH1F* h, std::string binName){
   return value;
 }
 
-Value
-GetNEvtsAndError(TTree* tree, const string & cuts){
-  tree->Draw("weight", cuts.c_str(), "goff");
-  int n = tree->GetSelectedRows();
-  TH1F hist("hist", "Dummy Hist", 1, 0, 10);
-  hist.Sumw2();
-  for(int ientry=0; ientry<n; ++ientry){
-    float weight = tree->GetW()[ientry];
-    hist.Fill(1, weight);
-    //printf("weight is %.3f\n", weight);
-  }
-  //printf("new: %.2f old: %.2f\n", hist.GetBinError(1), sqrt(hist.GetBinContent(1)));
-  return Value(hist.GetBinContent(1), hist.GetBinError(1));
-}
 
-float
-GetNEvts(TTree* tree, const string & cuts){
-  Value val = GetNEvtsAndError(tree, cuts);
-  return val.val;
-}
-
+////////////
 TTree* getTree(TFile* f, const vector<string> & samples, const string & tName){
   gROOT->cd();
   TList list;
@@ -261,6 +243,60 @@ TTree* getTree(TFile* f, const vector<string> & samples, const string & tName){
 TTree* getTree(TFile* f, const string & sample, const string & tName){
   const vector<string> samples(1, sample);
   return getTree(f, samples, tName);
+}
+
+//////////////////
+Value
+GetNEvtsAndError(TTree* tree, const string & cuts){
+  tree->Draw("weight", cuts.c_str(), "goff");
+  int n = tree->GetSelectedRows();
+  if(n>0 && tree->GetW() == NULL) abort();
+  TH1F hist("hist", "Dummy Hist", 1, 0, 10);
+  hist.Sumw2();
+  for(int ientry=0; ientry<n; ++ientry){
+    float weight = tree->GetW()[ientry];
+    hist.Fill(1, weight);
+    //printf("weight is %.3f\n", weight);
+  }
+  //printf("new: %.2f old: %.2f\n", hist.GetBinError(1), sqrt(hist.GetBinContent(1)));
+  //printf("val: %.4f err: %.4f\n", hist.GetBinContent(1), hist.GetBinError(1));
+  return Value(hist.GetBinContent(1), hist.GetBinError(1));
+}
+
+Value
+GetNEvtsAndError(TFile* f, const vector<string> & samples, const string & tName, const string & cuts){
+  TTree* t = getTree(f, samples, tName);
+  return GetNEvtsAndError(t, cuts);
+}
+
+Value
+GetNEvtsAndError(TFile* f, const string & sample, const string & tName, const string & cuts){
+  const vector<string> samples(1, sample);
+  return GetNEvtsAndError(f, samples, tName, cuts);
+}
+
+float
+GetNEvts(TTree* tree, const string & cuts){
+  Value val = GetNEvtsAndError(tree, cuts); 
+  return val.val;
+}
+
+float
+GetNEvts(TFile* f, const vector<string> & samples, const string & tName, const string & cuts){
+  TTree* t = getTree(f, samples, tName);
+  assert(t);
+  return GetNEvts(t, cuts);
+}
+
+float
+GetNEvts(TFile* f, const string & sample, const string & tName, const string & cuts){
+  const vector<string> samples(1, sample);
+  return GetNEvts(f, samples, tName, cuts);
+}
+
+float 
+roundToNearest(float value, int mark){ //Cool trick
+  return round(value/mark)*mark;
 }
 
 #endif//#define _common_h_
