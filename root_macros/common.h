@@ -299,4 +299,22 @@ roundToNearest(float value, int mark){ //Cool trick
   return round(value/mark)*mark;
 }
 
+///WprimeWZ Specific Stuff
+float WindowWidth(float mass){
+  return max(50., 0.5*mass - 100);
+}
+
+float LtCut(float mass){
+  return min(400., 0.6*mass - 50.);
+}
+
+string 
+AnalysisCuts(float mass){
+    float winWidth = WindowWidth(mass);
+    float minMass = mass - winWidth/2.;
+    float maxMass = mass + winWidth/2.;
+    float minLt   = LtCut(mass);
+    return Form("WZMass > %.0f && WZMass < %.0f && Lt > %.0f", minMass, maxMass, minLt);
+}
+
 #endif//#define _common_h_
