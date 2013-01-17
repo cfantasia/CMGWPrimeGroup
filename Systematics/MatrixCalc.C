@@ -6,14 +6,16 @@
 #include "THStack.h"
 
 /*
-struct Rates: Eff and Fake Rate plus errors
-struct MatrixResult: Output of MM
-struct MatrixYields: Number of TTT, TTF, ... events
-struct MatrixRates: Rates for W and Z leptons
-struct MatrixContainer: MatrixYields + MatrixRates
-struct MatrixVariable: How to bin a variable for MM
+  struct Rates: Eff and Fake Rate plus errors
+  struct MatrixResult: Output of MM
+  struct MatrixYields: Number of TTT, TTF, ... events
+  struct MatrixRates: Rates for W and Z leptons
+  struct MatrixContainer: MatrixYields + MatrixRates
+  struct MatrixVariable: How to bin a variable for MM
 */
 
+const bool useMyEff  = true;
+const bool useMyFake = false;//true;
 
 using namespace std;
 
@@ -78,7 +80,7 @@ struct MatrixYields{
   Value vTTT, vTTF, vTFT, vTFF, vFTT, vFTF, vFFT, vFFF;
   MatrixYields():vTTT(), vTTF(), vTFT(), vTFF(), vFTT(), vFTF(), vFFT(), vFFF(){}
   MatrixYields(Value ttt, Value ttf, Value tft, Value tff,
-           Value ftt, Value ftf, Value fft, Value fff):
+               Value ftt, Value ftf, Value fft, Value fff):
     vTTT(ttt), vTTF(ttf), vTFT(tft), vTFF(tff), 
     vFTT(ftt), vFTF(ftf), vFFT(fft), vFFF(fff){}
   MatrixYields operator+( const MatrixYields &rhs ) const{
@@ -87,14 +89,14 @@ struct MatrixYields{
     return result;
   }
   MatrixYields & operator+=(const MatrixYields &rhs) {
-        vTTT   += rhs.vTTT;
-        vTTF   += rhs.vTTF;
-        vTFT   += rhs.vTFT;
-        vTFF   += rhs.vTFF;
-        vFTT   += rhs.vFTT;
-        vFTF   += rhs.vFTF;
-        vFFT   += rhs.vFFT;
-        vFFF   += rhs.vFFF;
+    vTTT   += rhs.vTTT;
+    vTTF   += rhs.vTTF;
+    vTFT   += rhs.vTFT;
+    vTFF   += rhs.vTFF;
+    vFTT   += rhs.vFTT;
+    vFTF   += rhs.vFTF;
+    vFFT   += rhs.vFFT;
+    vFFF   += rhs.vFFF;
     return *this;
   }
 
@@ -143,16 +145,19 @@ struct MatrixVariable{
   TH1F* hist;
   MatrixVariable(string v, int nb, float m):
     variable(v), nbins(nb), min(0), max(m), hist(NULL){
+    hist = new TH1F(v.c_str(), v.c_str(), nbins, min, max);
     setBins();
   }
   MatrixVariable(string v, int nb, float minimum, float maximum):
     variable(v), nbins(nb), min(minimum), max(maximum), hist(NULL){
+    hist = new TH1F(v.c_str(), v.c_str(), nbins, min, max);
     setBins();
   }
   MatrixVariable(string v, string file, string histo):
     variable(v){
-    TFile* f = new TFile(file.c_str(), "read");
+    TFile* f = new TFile(file.c_str(), "read"); assert(f);
     hist = (TH1F*)f->Get(histo.c_str());
+    //cout<<"getting hist "<<histo<<" from file "<<file<<endl;
     assert(hist);
     nbins = hist->GetNbinsX();
     min = hist->GetXaxis()->GetXmin();
@@ -175,7 +180,7 @@ double FindNEvts(TFile* f, vector<string>& samples, string hName, double pt1, do
 double GetNEvts(TH2F* h, double xmin, double ymin, double xmax, double ymax, float& err);
 
 Value FindE(double pt, double eta, bool isElec, bool isW, bool isMC);
-Value FindP(double pt, double eta, bool isElec, bool isW, bool isMC, bool isSystematics);
+Value FindP(double pt, double eta, bool isElec, bool isW, bool isMC, bool isSystematics=false);
 
 void MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannel=true);
 MatrixResult CalcMatrix2x2(const double eTight, const  double Delta_eTight,
@@ -200,6 +205,10 @@ PrintLatexTable(const Value vTTT[], const Value vTTF[], const Value vTFT[], cons
                 const MatrixResult result[], const string & sample);
 void
 PrintLatexTable(const MatrixYields vByChan[], const MatrixResult result[], const string & sample);
+void PrintLatexTable(const MatrixContainer container[], const string & sample);
+
+
+void PrintRateTable(bool printEff, bool isElec, bool isMC);
 
 MatrixRates
 GetRates(int channel, float wpt, float weta, float z1pt, float z1eta, float z2pt, float z2eta, bool isMC, bool doSystematics);
@@ -215,27 +224,17 @@ void WriteHisto(const MatrixVariable & var, const MatrixContainer containerBin[]
 void MatrixCalc(bool useEWK=true, bool doSystematics=false){
   cout<<"useEWK: "<<useEWK<<" doSystematics: "<<doSystematics<<endl;
 
-  string tightfilename;
-  string loosefilename;
-  string ttfilename, tttfilename;
-  string ttFilename, tfFilename, ftFilename, ffFilename;
+  string tightfilename, loosefilename;
   
   if(useEWK){
     tightfilename = "../../../EWKWZ.root";
     loosefilename = "../../../EWKWZMatrix.root";
-    ttFilename = "../../../EWKWZ.root";
-    tfFilename = "../../../EWKWZ-TF.root";
-    ftFilename = "../../../EWKWZ-FT.root";
-    ffFilename = "../../../EWKWZ-FF.root";
   }else{
     tightfilename = "../../../WprimeWZ.root";
     loosefilename = "../../../WprimeWZMatrix.root";
   }
 
-  TFile *fTT = TFile::Open(ttFilename.c_str(), "read"); assert(fTT);
-  TFile *fTF = TFile::Open(tfFilename.c_str(), "read"); assert(fTF);
-  TFile *fFT = TFile::Open(ftFilename.c_str(), "read"); assert(fFT);
-  TFile *fFF = TFile::Open(ffFilename.c_str(), "read"); assert(fFF);
+  TFile *fMatrix = TFile::Open(loosefilename.c_str(), "read"); assert(fMatrix);
 
   vector<string> vBkg, vMC, samples;
 
@@ -252,10 +251,11 @@ void MatrixCalc(bool useEWK=true, bool doSystematics=false){
 
   if(useEWK) vMC.push_back("WZJetsTo3LNu");
 
-  samples = vMC;
-  if(!useEWK) samples.push_back("BKG");
-  samples.push_back("MC");
-  if(!useEWK) samples.push_back("EXO");
+//Cory: commenting to only show data
+//  samples = vMC;
+//  if(!useEWK) samples.push_back("BKG");
+//  samples.push_back("MC");
+//  if(!useEWK) samples.push_back("EXO");
   samples.push_back("data");
 
   cout << setiosflags(ios::fixed) << setprecision(2);
@@ -274,21 +274,45 @@ void MatrixCalc(bool useEWK=true, bool doSystematics=false){
       bool isMC = (samples[i] != "data");
       cout<<" Doing MM for sample "<<samples[i]<<"( MC= "<<isMC<<" )"<<endl;
 
-      TTree* tValidW = getTree(fFF, names, "tEvts_ValidW"); assert(tValidW);
-      TTree* tF = getTree(fFF, names, "tEvts_MET"); assert(tF);
+      TTree* tValidW = getTree(fMatrix, names, "tEvts_ValidW"); assert(tValidW);
+      TTree* tF = getTree(fMatrix, names, "tEvts_MET"); assert(tF);
     
       //By Bin
       Analyze(tF, MatrixVariable("", 1, 1), samples[i], isMC, doSystematics, 50);
-      Analyze(tF, MatrixVariable("MET", 3, 80., 350.), samples[i], isMC, doSystematics, 0);
-      Analyze(tF, MatrixVariable("Zpt", 3, 80., 350.), samples[i], isMC, doSystematics, 0);
+      //Analyze(tF, MatrixVariable("MET", 3, 80., 350.), samples[i], isMC, doSystematics, 0);
+      //Analyze(tF, MatrixVariable("Zpt", 3, 80., 350.), samples[i], isMC, doSystematics, 0);
       Analyze(tF, MatrixVariable("WCharge", 2, -2, 2), samples[i], isMC, doSystematics, 0);
-      //Analyze(tF, MatrixVariable("WLepEta", 2, -2, 2), samples[i], isMC, doSystematics, 0);
-      Analyze(tValidW, MatrixVariable("MET", "../../../EWKWZ-FF.root", "data/hMET_ValidW"), samples[i], isMC, doSystematics, 0);
-      Analyze(tF, MatrixVariable("Zpt", "../../../EWKWZ-FF.root", "data/hZpt_MET"), samples[i], isMC, doSystematics, 0);
-      Analyze(tF, MatrixVariable("Wpt", "../../../EWKWZ-FF.root", "data/hWpt_MET"), samples[i], isMC, doSystematics, 0);
-      Analyze(tF, MatrixVariable("ZMass", "../../../EWKWZ-FF.root", "data/hZMass_MET"), samples[i], isMC, doSystematics, 0);
-      Analyze(tF, MatrixVariable("WTransMass", "../../../EWKWZ-FF.root", "data/hWTransMass_MET"), samples[i], isMC, doSystematics, 0);
+      Analyze(tValidW, MatrixVariable("MET", "../../../EWKWZMatrix.root", "data/hMET_ValidW"), samples[i], isMC, doSystematics, 0);
+      Analyze(tF, MatrixVariable("Zpt", "../../../EWKWZMatrix.root", "data/hZpt_MET"), samples[i], isMC, doSystematics, 0);
+      Analyze(tF, MatrixVariable("Wpt", "../../../EWKWZMatrix.root", "data/hWpt_MET"), samples[i], isMC, doSystematics, 0);
+      Analyze(tF, MatrixVariable("ZMass", "../../../EWKWZMatrix.root", "data/hZMass_MET"), samples[i], isMC, doSystematics, 0);
+      Analyze(tF, MatrixVariable("WTransMass", "../../../EWKWZMatrix.root", "data/hWTransMass_MET"), samples[i], isMC, doSystematics, 0);
+      Analyze(tF, MatrixVariable("WLepPt", 30, 0, 300), samples[i], isMC, doSystematics, 0);
+      Analyze(tF, MatrixVariable("NJets", "../../../EWKWZMatrix.root", "data/hNJets_MET"), samples[i], isMC, doSystematics, 0);
 
+      if(0){
+        for(int ch=3; ch<4; ++ch){
+          for(int wcode=0; wcode<2; ++wcode){
+            for(int zcode=0; zcode<4; ++zcode){
+              cout<<"=======Ch: "<<ch<<" W Tight: "<<wcode<<" Z Tight: "<<zcode<<" ======="<<endl;
+              tF->Draw("Run:Lumi:Event", Form("WTightCode==%i && ZTightCode==%i && EvtType==%i",wcode,zcode,ch), "para goff");
+              int n = tF->GetSelectedRows();
+              //loop over tree
+              for(int ientry=0; ientry<n; ++ientry){
+                int idx = 0;
+                uint run    = round(tF->GetVal(idx++)[ientry]);
+                uint lumi   = round(tF->GetVal(idx++)[ientry]);
+                uint event  = round(tF->GetVal(idx++)[ientry]);
+                cout<<"run: "<<run<<" lumi: "<<lumi<<" event: "<<event<<endl;
+              }
+            }
+          }
+        }
+      }//print event lists?
+      //tF->Draw("Run:Lumi:Event", Form("Event==1238207696"), "para goff");
+      //int n = tF->GetSelectedRows();
+      //cout<<"Found "<<n<<" events"<<endl;
+      
     }//sample loop
   }else{//not EWK
     TFile *fTight = TFile::Open(tightfilename.c_str(), "read"); assert(fTight);
@@ -401,24 +425,24 @@ MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannels){
 
   cout<<" For 3e\n";
   MatrixResult result2x23e = CalcMatrix2x2(eElec, SeElec,
-                                              pElec, SpElec, 
-                                              e3Loose, Se3Loose,
-                                              e3Tight, Se3Tight);
+                                           pElec, SpElec, 
+                                           e3Loose, Se3Loose,
+                                           e3Tight, Se3Tight);
   cout<<" For 2e\n";
   MatrixResult result2x22e = CalcMatrix2x2(eMuon, SeMuon,
-                                              pMuon, SpMuon, 
-                                              e2Loose, Se2Loose,
-                                              e2Tight, Se2Tight);
+                                           pMuon, SpMuon, 
+                                           e2Loose, Se2Loose,
+                                           e2Tight, Se2Tight);
   cout<<" For 1e\n";
   MatrixResult result2x21e = CalcMatrix2x2(eElec, SeElec,
-                                              pElec, SpElec, 
-                                              e1Loose, Se1Loose,
-                                              e1Tight, Se1Tight);
+                                           pElec, SpElec, 
+                                           e1Loose, Se1Loose,
+                                           e1Tight, Se1Tight);
   cout<<" For 0e\n";
   MatrixResult result2x20e = CalcMatrix2x2(eMuon, SeMuon,
-                                              pMuon, SpMuon, 
-                                              e0Loose, Se0Loose,
-                                              e0Tight, Se0Tight);
+                                           pMuon, SpMuon, 
+                                           e0Loose, Se0Loose,
+                                           e0Tight, Se0Tight);
 
   MatrixResult result2x2ByChan;
   result2x2ByChan.NGood = result2x23e.NGood
@@ -432,14 +456,14 @@ MatrixMethod(const TH1F *hLoose, const TH1F *hTight, bool allChannels){
     result2x20e.NBad;
 
   result2x2ByChan.DeltaNGood = sqrt(result2x23e.DeltaNGood*result2x23e.DeltaNGood +
-                               result2x22e.DeltaNGood*result2x22e.DeltaNGood +
-                               result2x21e.DeltaNGood*result2x21e.DeltaNGood +
-                               result2x20e.DeltaNGood*result2x20e.DeltaNGood);
+                                    result2x22e.DeltaNGood*result2x22e.DeltaNGood +
+                                    result2x21e.DeltaNGood*result2x21e.DeltaNGood +
+                                    result2x20e.DeltaNGood*result2x20e.DeltaNGood);
 
   result2x2ByChan.DeltaNBad = sqrt(result2x23e.DeltaNBad*result2x23e.DeltaNBad +
-                               result2x22e.DeltaNBad*result2x22e.DeltaNBad +
-                               result2x21e.DeltaNBad*result2x21e.DeltaNBad +
-                               result2x20e.DeltaNBad*result2x20e.DeltaNBad);
+                                   result2x22e.DeltaNBad*result2x22e.DeltaNBad +
+                                   result2x21e.DeltaNBad*result2x21e.DeltaNBad +
+                                   result2x20e.DeltaNBad*result2x20e.DeltaNBad);
 
   cout<<" & Tight nLep +- error & Tight nJet +- error "<<endl
       <<" & "<<Value(result2x2ByChan.NGood,result2x2ByChan.DeltaNGood)
@@ -461,75 +485,75 @@ CalcMatrix2x2(const double eTight, const  double Delta_eTight,
               const double pFake, const double Delta_pFake, 
               const double Nl, const double Delta_Nl,
               const double Nt, const double Delta_Nt){
-    MatrixResult result2x2;
+  MatrixResult result2x2;
 
-    double N1 = Nl - Nt;//number of failed events
-    double N2 = Nt;
+  double N1 = Nl - Nt;//number of failed events
+  double N2 = Nt;
 
-    double dN1 = TMath::Sqrt(N1);//Vuko's improvement
-    //double dN1 = TMath::Sqrt(Delta_Nl*Delta_Nl + Delta_Nt*Delta_Nt);  
-    double dN2 = Delta_Nt;
+  double dN1 = TMath::Sqrt(N1);//Vuko's improvement
+  //double dN1 = TMath::Sqrt(Delta_Nl*Delta_Nl + Delta_Nt*Delta_Nt);  
+  double dN2 = Delta_Nt;
     
 
-    double Nlep = (Nt - pFake*Nl)/(eTight - pFake);
-    double Njet = (eTight*Nl - Nt)/(eTight - pFake);
-    //cout << "Loose: N_lep: " << Nlep << " and: N_jet: " << Njet << endl;
+  double Nlep = (Nt - pFake*Nl)/(eTight - pFake);
+  double Njet = (eTight*Nl - Nt)/(eTight - pFake);
+  //cout << "Loose: N_lep: " << Nlep << " and: N_jet: " << Njet << endl;
   
-    result2x2.NGood = eTight*Nlep;
-    result2x2.NBad = pFake*Njet;
+  result2x2.NGood = eTight*Nlep;
+  result2x2.NBad = pFake*Njet;
     
-    //cout << "Tight: N_lep: " << NGood << " and: N_jet: " << NBad << endl;  
+  //cout << "Tight: N_lep: " << NGood << " and: N_jet: " << NBad << endl;  
     
-    //errors
+  //errors
     
-    double dNlep_desig = (pFake*(pFake*(N1+N2)-N2))/((eTight-pFake)*(eTight-pFake));
+  double dNlep_desig = (pFake*(pFake*(N1+N2)-N2))/((eTight-pFake)*(eTight-pFake));
     
-    double dNlep_deqcd = (eTight*(N2-eTight*(N1+N2)))/((eTight-pFake)*(eTight-pFake));   
+  double dNlep_deqcd = (eTight*(N2-eTight*(N1+N2)))/((eTight-pFake)*(eTight-pFake));   
     
-    double dNlep_dN1 = (-eTight*pFake)/(eTight-pFake);
+  double dNlep_dN1 = (-eTight*pFake)/(eTight-pFake);
     
-    double dNlep_dN2 = (eTight*(1-pFake))/(eTight-pFake);
+  double dNlep_dN2 = (eTight*(1-pFake))/(eTight-pFake);
 
 
-    double dNjet_desig =  (pFake*(N2-pFake*(N1+N2)))/((eTight-pFake)*(eTight-pFake)); 
+  double dNjet_desig =  (pFake*(N2-pFake*(N1+N2)))/((eTight-pFake)*(eTight-pFake)); 
 
-    double dNjet_deqcd = (eTight*(eTight*(N1+N2)-N2))/((eTight-pFake)*(eTight-pFake));
+  double dNjet_deqcd = (eTight*(eTight*(N1+N2)-N2))/((eTight-pFake)*(eTight-pFake));
 
-    double dNjet_dN1 = (pFake*eTight)/(eTight-pFake);
+  double dNjet_dN1 = (pFake*eTight)/(eTight-pFake);
 
-    double dNjet_dN2 = (pFake*(eTight-1))/(eTight-pFake);
+  double dNjet_dN2 = (pFake*(eTight-1))/(eTight-pFake);
 
 
-    result2x2.DeltaNGood = TMath::Sqrt((dNlep_desig*dNlep_desig * Delta_eTight*Delta_eTight) + 
+  result2x2.DeltaNGood = TMath::Sqrt((dNlep_desig*dNlep_desig * Delta_eTight*Delta_eTight) + 
                                      (dNlep_deqcd*dNlep_deqcd * Delta_pFake *Delta_pFake ) + 
                                      (dNlep_dN1  *dNlep_dN1   * dN1         *dN1         ) + 
                                      (dNlep_dN2  *dNlep_dN2   * dN2         *dN2         )); 
 
-    result2x2.DeltaNBad = TMath::Sqrt((dNjet_desig*dNjet_desig * Delta_eTight*Delta_eTight) + 
-                                     (dNjet_deqcd*dNjet_deqcd * Delta_pFake *Delta_pFake ) +
-                                     (dNjet_dN1  *dNjet_dN1   * dN1         *dN1         ) +
-                                     (dNjet_dN2  *dNjet_dN2   * dN2         *dN2         ));
+  result2x2.DeltaNBad = TMath::Sqrt((dNjet_desig*dNjet_desig * Delta_eTight*Delta_eTight) + 
+                                    (dNjet_deqcd*dNjet_deqcd * Delta_pFake *Delta_pFake ) +
+                                    (dNjet_dN1  *dNjet_dN1   * dN1         *dN1         ) +
+                                    (dNjet_dN2  *dNjet_dN2   * dN2         *dN2         ));
   
-    //cout << "Error on tNlep: " << DeltaNGood << " Total: " << NGood << " +- " << DeltaNGood << endl;
+  //cout << "Error on tNlep: " << DeltaNGood << " Total: " << NGood << " +- " << DeltaNGood << endl;
 
-    //cout << "Error on tNjet: " << DeltaNBad << " Total: " << NBad << " +- " << DeltaNBad << endl;
+  //cout << "Error on tNjet: " << DeltaNBad << " Total: " << NBad << " +- " << DeltaNBad << endl;
 /*
-    cout<<"Debug Result2x2s are: \n"
-        <<"e: "<<eTight*100<<" +/- "<<Delta_eTight*100<<"%" 
-        <<" p: "<<pFake*100<<" +/- "<<Delta_pFake*100<<"%"
-        <<endl
-        <<"nLoose: "<<Nl<<" +/- "<<Delta_Nl
-        <<" nTight: "<<Nt<<" +/- "<<Delta_Nt
-        <<" ratio: "<<Nt/Nl*100<<"%"
-        <<endl
-        <<"Loose nLep: "<<Nlep
-        <<" Loose nJet: "<<Njet
-        <<endl
-        <<"Tight nLep: "<<result2x2.NGood<<" +/- "<<result2x2.DeltaNGood
-        <<" Tight nJet: "<<result2x2.NBad<<" +/- "<<result2x2.DeltaNBad
-        <<endl;
+  cout<<"Debug Result2x2s are: \n"
+  <<"e: "<<eTight*100<<" +/- "<<Delta_eTight*100<<"%" 
+  <<" p: "<<pFake*100<<" +/- "<<Delta_pFake*100<<"%"
+  <<endl
+  <<"nLoose: "<<Nl<<" +/- "<<Delta_Nl
+  <<" nTight: "<<Nt<<" +/- "<<Delta_Nt
+  <<" ratio: "<<Nt/Nl*100<<"%"
+  <<endl
+  <<"Loose nLep: "<<Nlep
+  <<" Loose nJet: "<<Njet
+  <<endl
+  <<"Tight nLep: "<<result2x2.NGood<<" +/- "<<result2x2.DeltaNGood
+  <<" Tight nJet: "<<result2x2.NBad<<" +/- "<<result2x2.DeltaNBad
+  <<endl;
 */
-    return result2x2;
+  return result2x2;
 }
 
 MatrixResult
@@ -631,14 +655,14 @@ MatrixResult CalcMatrix8x8(const Rates & wRates, const Rates & z1Rates, const Ra
   double preFactor = e1 * e2 * e3 * DenomInv;//Now include z lepton eff
 /*
   double base = (   Nttt*(1 - p1)*(1 - p2)*(1 - p3)
-                  - Nttf*(1 - p1)*(1 - p2)*(    p3)
-                  - Ntft*(1 - p1)*(    p2)*(1 - p3)
-                  + Ntff*(1 - p1)*(    p2)*(    p3)    
-                  - Nftt*(    p1)*(1 - p2)*(1 - p3)
-                  + Nftf*(    p1)*(1 - p2)*(    p3)
-                  + Nfft*(    p1)*(    p2)*(1 - p3)
-                  - Nfff*(    p1)*(    p2)*(    p3)
-    );
+  - Nttf*(1 - p1)*(1 - p2)*(    p3)
+  - Ntft*(1 - p1)*(    p2)*(1 - p3)
+  + Ntff*(1 - p1)*(    p2)*(    p3)    
+  - Nftt*(    p1)*(1 - p2)*(1 - p3)
+  + Nftf*(    p1)*(1 - p2)*(    p3)
+  + Nfft*(    p1)*(    p2)*(1 - p3)
+  - Nfff*(    p1)*(    p2)*(    p3)
+  );
 */
   //The pattern is l->factor of p
   //               j->factor of e
@@ -721,7 +745,7 @@ MatrixResult CalcMatrix8x8(const Rates & wRates, const Rates & z1Rates, const Ra
                        + Nfff*(    e1)*(    e2)*(    e3)     );
 
   double Nl_test = base_Nlll + base_Nllj + base_Nljl + base_Nljj +
-                   base_Njll + base_Njlj + base_Njjl + base_Njjj;
+    base_Njll + base_Njlj + base_Njjl + base_Njjj;
   Nl_test *= DenomInv;
   //assert(fabs(Nl_test - Nl) < 0.001);//Cory
 
@@ -846,15 +870,48 @@ MatrixResult CalcMatrix8x8(const Rates & wRates, const Rates & z1Rates, const Ra
 }
 
 void
+PrintLatexTable(const MatrixContainer container[], const string & sample){
+  cout<<"\\begin{table}[tbh] \\begin{center}"<<endl;
+  cout<<"\\begin{tabular}{c|cccc} \\hline"<<endl;
+  cout<<"             &  $3e$     & $2e1\\mu$   &  $ 2\\mu 1e$     &    $3\\mu$   \\\\  \\hline"<<endl;
+  cout<<"$\\epsilon_1 \\epsilon_2 \\epsilon_3 n_{\\ell \\ell \\ell} $          &  "
+      <<container[0].result.NGood<<" $\\pm$ "<<container[0].result.DeltaNGood<<" &  "
+      <<container[1].result.NGood<<" $\\pm$ "<<container[1].result.DeltaNGood<<" &  "
+      <<container[2].result.NGood<<" $\\pm$ "<<container[2].result.DeltaNGood<<" &  "
+      <<container[3].result.NGood<<" $\\pm$ "<<container[3].result.DeltaNGood<<"   \\\\ \\hline  "<<endl
+      <<"$N_{TTT} - \\epsilon_1 \\epsilon_2 \\epsilon_3 n_{\\ell \\ell \\ell} $          &  "
+      <<container[0].result.NBad<<" $\\pm$ "<<container[0].result.DeltaNBad<<" &  "
+      <<container[1].result.NBad<<" $\\pm$ "<<container[1].result.DeltaNBad<<" &  "
+      <<container[2].result.NBad<<" $\\pm$ "<<container[2].result.DeltaNBad<<" &  "
+      <<container[3].result.NBad<<" $\\pm$ "<<container[3].result.DeltaNBad<<"   \\\\ \\hline  "<<endl;
+  cout<<"$N_{TTT} $  &   "<<container[0].yield.vTTT<<"  &   "<<container[1].yield.vTTT<<"  &   "<<container[2].yield.vTTT<<"   &   "<<container[3].yield.vTTT<<"   \\\\ "<<endl;
+  cout<<"$N_{TTF} $  &   "<<container[0].yield.vTTF<<"  &   "<<container[1].yield.vTTF<<"  &   "<<container[2].yield.vTTF<<"   &   "<<container[3].yield.vTTF<<"   \\\\ "<<endl;
+  cout<<"$N_{TFT} $  &   "<<container[0].yield.vTFT<<"  &   "<<container[1].yield.vTFT<<"  &   "<<container[2].yield.vTFT<<"   &   "<<container[3].yield.vTFT<<"   \\\\ "<<endl;
+  cout<<"$N_{TFF} $  &   "<<container[0].yield.vTFF<<"  &   "<<container[1].yield.vTFF<<"  &   "<<container[2].yield.vTFF<<"   &   "<<container[3].yield.vTFF<<"   \\\\ "<<endl;
+  cout<<"$N_{FTT} $  &   "<<container[0].yield.vFTT<<"  &   "<<container[1].yield.vFTT<<"  &   "<<container[2].yield.vFTT<<"   &   "<<container[3].yield.vFTT<<"   \\\\ "<<endl;
+  cout<<"$N_{FTF} $  &   "<<container[0].yield.vFTF<<"  &   "<<container[1].yield.vFTF<<"  &   "<<container[2].yield.vFTF<<"   &   "<<container[3].yield.vFTF<<"   \\\\ "<<endl;
+  cout<<"$N_{FFT} $  &   "<<container[0].yield.vFFT<<"  &   "<<container[1].yield.vFFT<<"  &   "<<container[2].yield.vFFT<<"   &   "<<container[3].yield.vFFT<<"   \\\\ "<<endl;
+  cout<<"$N_{FFF} $  &   "<<container[0].yield.vFFF<<"  &   "<<container[1].yield.vFFF<<"  &   "<<container[2].yield.vFFF<<"   &   "<<container[3].yield.vFFF<<"   \\\\ "<<endl;
+  cout<<"\\hline \n \\end{tabular}"<<endl;
+  cout<<"\\caption{Yields from "<<sample<<"}"<<endl;
+  cout<<"\\label{tab:MM-"<<sample<<"}"<<endl;
+  cout<<"\\end{center} \\end{table}"<<endl;
+}
+
+void
 PrintLatexTable(const MatrixYields vByChan[], const MatrixResult result[], const string & sample){
-  cout<<"\\begin{table}[tbh]\n\\begin{center}"<<endl;
+  cout<<"\\begin{table}[tbh] \\begin{center}"<<endl;
   cout<<"\\begin{tabular}{c|cccc} \\hline \\hline"<<endl;
   cout<<"             &  $3e$     & $2e1\\mu$   &  $ 2\\mu 1e$     &    $3\\mu$   \\\\  \\hline"<<endl;
   cout<<"$\\epsilon_1 \\epsilon_2 \\epsilon_3 n_{\\ell \\ell \\ell} $          &  "
       <<result[0].NGood<<" $\\pm$ "<<result[0].DeltaNGood<<" &  "
       <<result[1].NGood<<" $\\pm$ "<<result[1].DeltaNGood<<" &  "
       <<result[2].NGood<<" $\\pm$ "<<result[2].DeltaNGood<<" &  "
-      <<result[3].NGood<<" $\\pm$ "<<result[3].DeltaNGood<<"   \\\\ \\hline  "<<endl;
+      <<result[3].NGood<<" $\\pm$ "<<result[3].DeltaNGood<<"   \\\\ \\hline  "<<endl
+      <<result[0].NBad<<" $\\pm$ "<<result[0].DeltaNBad<<" &  "
+      <<result[1].NBad<<" $\\pm$ "<<result[1].DeltaNBad<<" &  "
+      <<result[2].NBad<<" $\\pm$ "<<result[2].DeltaNBad<<" &  "
+      <<result[3].NBad<<" $\\pm$ "<<result[3].DeltaNBad<<"   \\\\ \\hline  "<<endl;
   cout<<"$N_{TTT} $  &   "<<vByChan[0].vTTT<<"  &   "<<vByChan[1].vTTT<<"  &   "<<vByChan[2].vTTT<<"   &   "<<vByChan[3].vTTT<<"   \\\\ \\hline"<<endl;
   cout<<"$N_{TTF} $  &   "<<vByChan[0].vTTF<<"  &   "<<vByChan[1].vTTF<<"  &   "<<vByChan[2].vTTF<<"   &   "<<vByChan[3].vTTF<<"   \\\\ \\hline"<<endl;
   cout<<"$N_{TFT} $  &   "<<vByChan[0].vTFT<<"  &   "<<vByChan[1].vTFT<<"  &   "<<vByChan[2].vTFT<<"   &   "<<vByChan[3].vTFT<<"   \\\\ \\hline"<<endl;
@@ -865,9 +922,8 @@ PrintLatexTable(const MatrixYields vByChan[], const MatrixResult result[], const
   cout<<"$N_{FFF} $  &   "<<vByChan[0].vFFF<<"  &   "<<vByChan[1].vFFF<<"  &   "<<vByChan[2].vFFF<<"   &   "<<vByChan[3].vFFF<<"   \\\\ \\hline"<<endl;
   cout<<"\\hline \n \\end{tabular}"<<endl;
   cout<<"\\caption{Yields from "<<sample<<"}"<<endl;
-  cout<<"\\label{tab:mmm-"<<sample<<"}"<<endl;
-  cout<<"\\end{center}"<<endl;
-  cout<<"\\end{table}"<<endl;
+  cout<<"\\label{tab:MM-"<<sample<<"}"<<endl;
+  cout<<"\\end{center} \\end{table}"<<endl;
 }
 
 void
@@ -950,7 +1006,7 @@ FindE(double pt, double eta, bool isElec, bool isW, bool isMC){
   if(isMC){
     if(isW){//For W use T Values
       if(isElec){
-        if(eta > 1.5){//EndCap
+        if(fabs(eta) > 1.479){//EndCap
           if(pt > 50) return Value(0.9651,0.0007);
           if(pt > 30) return Value(0.9321,0.0003);
           if(pt > 25) return Value(0.8913,0.0014);
@@ -969,7 +1025,7 @@ FindE(double pt, double eta, bool isElec, bool isW, bool isMC){
       }
     }else{//For Z use TT values
       if(isElec){
-        if(eta > 1.5){//EndCap
+        if(fabs(eta) > 1.479){//EndCap
           if(pt > 50) return Value(0.9914,0.0004);
           if(pt > 30) return Value(0.9784,0.0002);
           if(pt > 25) return Value(0.9599,0.0008);  
@@ -991,50 +1047,38 @@ FindE(double pt, double eta, bool isElec, bool isW, bool isMC){
       }
     }
   }else{//Data
-    if(isW){//For W use T Values
-      if(isElec){
-        if(eta > 1.5){//EndCap
-          if(pt > 50) return Value(0.9662,0.0008);
-          if(pt > 30) return Value(0.9357,0.0004);
-          if(pt > 25) return Value(0.8977,0.0016);
-          else        return Value(0.8772,0.0023);
-        }else{//Barrel
-          if(pt > 50) return Value(0.9814,0.0003);
-          if(pt > 30) return Value(0.9645,0.0002);
-          if(pt > 25) return Value(0.9379,0.0008);
-          else        return Value(0.9267,0.0013);
+    if(isElec){
+      if(useMyEff){//My values
+        if(fabs(eta) > 1.479){//EndCap 
+          if(pt > 50) return Value(0.9387,0.0011);
+          if(pt > 30) return Value(0.8980,0.0005);
+          if(pt > 25) return Value(0.8406,0.0020);
+          if(pt > 20) return Value(0.8058,0.0026);
+          else        return Value(0.6048,0.0053);
+        }else{
+          if(pt > 50) return Value(0.9736,0.0004);
+          if(pt > 30) return Value(0.9572,0.0002);
+          if(pt > 25) return Value(0.9244,0.0009);
+          if(pt > 20) return Value(0.9031,0.0014);
+          else        return Value(0.8145,0.0033);
         }
-      }else{//Muons
-        if(pt > 50) return Value(0.9724,0.0004);
-        if(pt > 30) return Value(0.9282,0.0002);
-        if(pt > 25) return Value(0.8539,0.0011);
-        else        return Value(0.8014,0.0016);
+      }else{//Group II
+        return Value(1.,0.); //Cory: This is to test other groups numbers
       }
-    }else{//For Z use TT values
-      if(isElec){
-        if(eta > 1.5){//EndCap
-          if(pt > 50) return Value(0.9940,0.0005);
-          if(pt > 30) return Value(0.9812,0.0002);
-          if(pt > 25) return Value(0.9690,0.0010);
-          if(pt > 20) return Value(0.9618,0.0014);
-          else        return Value(0.9430,0.0028);
-        }else{//Barrel
-          if(pt > 50) return Value(0.9981,0.0002);
-          if(pt > 30) return Value(0.9950,0.0001);
-          if(pt > 25) return Value(0.9904,0.0004);
-          if(pt > 20) return Value(0.9918,0.0007);
-          else        return Value(0.9891,0.0016);
-        }
-      }else{//Muons
-        if(pt > 50) return Value(0.9928,0.0002);
-        if(pt > 30) return Value(0.9804,0.0002);
-        if(pt > 25) return Value(0.9599,0.0009);
-        if(pt > 20) return Value(0.9330,0.0014);
-        else        return Value(0.8868,0.0027);
+    }else{//Muons
+      if(useMyEff){//My Values
+        if(pt > 50) return Value(0.9792,0.0004);
+        if(pt > 30) return Value(0.9489,0.0002);
+        if(pt > 25) return Value(0.9059,0.0009);
+        if(pt > 20) return Value(0.8670,0.0015);
+        else        return Value(0.7778,0.0024);
+      }else{//Group II
+        return Value(1.,0.); //Cory: This is to test other groups numbers
       }
     }
   }
 }
+
 
 double
 FindPRatio(double pt, double eta, bool isElec, bool isW){
@@ -1047,80 +1091,103 @@ Value
 FindP(double pt, double eta, bool isElec, bool isW, bool isMC, bool doSystematic){
   if(doSystematic){//Use Wjets Fake Rates
     double R = FindPRatio(pt,eta,isElec,isW);
-    if(isW){//T Values
-      if      (isElec && eta >  1.5){//Elec Endcap
-        if(pt > 15) return Value(R*0.1265, 0.0691); //channel 2, pt  15 eta 1.5, (mean, err)= (0.1265, 0.0691) (4.38 / 34.66) +0.0741 -0.0641
-        if(pt > 10) return Value(R*0.0774, 0.0383); //channel 2, pt  10 eta 1.5, (mean, err)= (0.0774, 0.0383) (5.40 / 69.79) +0.0409 -0.0357
-      }else if(isElec && eta <= 1.5){//Elec Barrel
-        if(pt > 15) return Value(R*0.0323, 0.0231); //channel 2, pt  15 eta 0.0, (mean, err)= (0.0323, 0.0231) (2.70 / 83.81) +0.0226 -0.0237
-        if(pt > 10) return Value(R*0.0985, 0.0222); //channel 2, pt  10 eta 0.0, (mean, err)= (0.0985, 0.0222) (21.52 / 218.53) +0.0221 -0.0223
-      }else{//Muons
-        if(pt > 15) return Value(R*0.0094, 0.0120); //channel 1, pt  15 eta 0.0, (mean, err)= (0.0094, 0.0120) (1.21 / 129.09) +0.0159 -0.0080
-        if(pt > 10) return Value(R*0.0316, 0.0094); //channel 1, pt  10 eta 0.0, (mean, err)= (0.0316, 0.0094) (13.66 / 432.65) +0.0091 -0.0096
-      }
-    }else{//Z
-      if      (isElec && eta >  1.5){//Elec Endcap
-        if(pt > 15) return Value(R*0.1501, 0.0390); //channel 2, pt  15 eta 1.5, (mean, err)= (0.1501, 0.0390) (15.65 / 104.21) +0.0369 -0.0410
-        if(pt > 10) return Value(R*0.1886, 0.0274); //channel 2, pt  10 eta 1.5, (mean, err)= (0.1886, 0.0274) (44.32 / 235.04) +0.0275 -0.0273
-      }else if(isElec && eta <= 1.5){//Elec Barrel
-        if(pt > 15) return Value(R*0.0797, 0.0144); //channel 2, pt  15 eta 0.0, (mean, err)= (0.0797, 0.0144) (33.15 / 415.91) +0.0153 -0.0135
-        if(pt > 10) return Value(R*0.1116, 0.0098); //channel 2, pt  10 eta 0.0, (mean, err)= (0.1116, 0.0098) (124.66 / 1116.67) +0.0096 -0.0100
-      }else{//Muons
-        if(pt > 15) return Value(R*0.0236, 0.0155); //channel 1, pt  15 eta 0.0, (mean, err)= (0.0236, 0.0155) (2.97 / 125.97) +0.0130 -0.0179
-        if(pt > 10) return Value(R*0.0585, 0.0124); //channel 1, pt  10 eta 0.0, (mean, err)= (0.0585, 0.0124) (24.69 / 421.79) +0.0121 -0.0128
-      }
+    if      (isElec && fabs(eta) >  1.479){//Elec Endcap
+      if(pt > 15) return Value(R*0.1501, 0.0390); //channel 2, pt  15 eta 1.5, (mean, err)= (0.1501, 0.0390) (15.65 / 104.21) +0.0369 -0.0410
+      if(pt > 10) return Value(R*0.1886, 0.0274); //channel 2, pt  10 eta 1.5, (mean, err)= (0.1886, 0.0274) (44.32 / 235.04) +0.0275 -0.0273
+    }else if(isElec && fabs(eta) <= 1.479){//Elec Barrel
+      if(pt > 15) return Value(R*0.0797, 0.0144); //channel 2, pt  15 eta 0.0, (mean, err)= (0.0797, 0.0144) (33.15 / 415.91) +0.0153 -0.0135
+      if(pt > 10) return Value(R*0.1116, 0.0098); //channel 2, pt  10 eta 0.0, (mean, err)= (0.1116, 0.0098) (124.66 / 1116.67) +0.0096 -0.0100
+    }else{//Muons
+      if(pt > 15) return Value(R*0.0236, 0.0155); //channel 1, pt  15 eta 0.0, (mean, err)= (0.0236, 0.0155) (2.97 / 125.97) +0.0130 -0.0179
+      if(pt > 10) return Value(R*0.0585, 0.0124); //channel 1, pt  10 eta 0.0, (mean, err)= (0.0585, 0.0124) (24.69 / 421.79) +0.0121 -0.0128
     }
   }//end ifSystematic
   if(isMC){
-    if(isW){//T Values
-      if      (isElec && eta >  1.5){//Elec Endcap
-        if(pt > 15) return Value(0.1264, 0.0672); //channel 2, pt  15 eta 1.5, (mean, err)= (0.1264, 0.0672) (4.52 / 35.77) +0.0687 -0.0658
-        if(pt > 10) return Value(0.0760, 0.0368); //channel 2, pt  10 eta 1.5, (mean, err)= (0.0760, 0.0368) (5.50 / 72.40) +0.0375 -0.0361
-      }else if(isElec && eta <= 1.5){//Elec Barrel
-        if(pt > 15) return Value(0.0381, 0.0263); //channel 2, pt  15 eta 0.0, (mean, err)= (0.0381, 0.0263) (3.23 / 84.90) +0.0310 -0.0217
-        if(pt > 10) return Value(0.1049, 0.0227); //channel 2, pt  10 eta 0.0, (mean, err)= (0.1049, 0.0227) (23.22 / 221.27) +0.0238 -0.0216
-      }else{//Muons
-        if(pt > 15) return Value(0.0148, 0.0118); //channel 1, pt  15 eta 0.0, (mean, err)= (0.0148, 0.0118) (1.95 / 131.70) +0.0101 -0.0135
-        if(pt > 10) return Value(0.0329, 0.0095); //channel 1, pt  10 eta 0.0, (mean, err)= (0.0329, 0.0095) (14.50 / 440.86) +0.0096 -0.0094
-      }
-    }else{//Z
-      if      (isElec && eta >  1.5){//Elec Endcap
-        if(pt > 15) return Value(0.1734, 0.0402); //channel 2, pt  15 eta 1.5, (mean, err)= (0.1734, 0.0402) (18.86 / 108.77) +0.0369 -0.0435
-        if(pt > 10) return Value(0.1870, 0.0271); //channel 2, pt  10 eta 1.5, (mean, err)= (0.1870, 0.0271) (44.54 / 238.22) +0.0264 -0.0278
-      }else if(isElec && eta <= 1.5){//Elec Barrel
-        if(pt > 15) return Value(0.0825, 0.0145); //channel 2, pt  15 eta 0.0, (mean, err)= (0.0825, 0.0145) (34.58 / 419.15) +0.0142 -0.0147
-        if(pt > 10) return Value(0.1141, 0.0098); //channel 2, pt  10 eta 0.0, (mean, err)= (0.1141, 0.0098) (128.67 / 1127.30) +0.0096 -0.0100
-      }else{//Muons
-        if(pt > 15) return Value(0.0300, 0.0174); //channel 1, pt  15 eta 0.0, (mean, err)= (0.0300, 0.0174) (3.86 / 128.54) +0.0156 -0.0193
-        if(pt > 10) return Value(0.0602, 0.0125); //channel 1, pt  10 eta 0.0, (mean, err)= (0.0602, 0.0125) (25.80 / 428.93) +0.0118 -0.0131
-      }
+    if      (isElec && fabs(eta) >  1.479){//Elec Endcap
+      if(pt > 15) return Value(0.1734, 0.0402); //channel 2, pt  15 eta 1.5, (mean, err)= (0.1734, 0.0402) (18.86 / 108.77) +0.0369 -0.0435
+      if(pt > 10) return Value(0.1870, 0.0271); //channel 2, pt  10 eta 1.5, (mean, err)= (0.1870, 0.0271) (44.54 / 238.22) +0.0264 -0.0278
+    }else if(isElec && fabs(eta) <= 1.479){//Elec Barrel
+      if(pt > 15) return Value(0.0825, 0.0145); //channel 2, pt  15 eta 0.0, (mean, err)= (0.0825, 0.0145) (34.58 / 419.15) +0.0142 -0.0147
+      if(pt > 10) return Value(0.1141, 0.0098); //channel 2, pt  10 eta 0.0, (mean, err)= (0.1141, 0.0098) (128.67 / 1127.30) +0.0096 -0.0100
+    }else{//Muons
+      if(pt > 15) return Value(0.0300, 0.0174); //channel 1, pt  15 eta 0.0, (mean, err)= (0.0300, 0.0174) (3.86 / 128.54) +0.0156 -0.0193
+      if(pt > 10) return Value(0.0602, 0.0125); //channel 1, pt  10 eta 0.0, (mean, err)= (0.0602, 0.0125) (25.80 / 428.93) +0.0118 -0.0131
     }
   }else{//Data
-    if(isW){//T Values
-      if      (isElec && eta >  1.5){//Elec Endcap
-        if(pt > 15) return Value(0.1212, 0.0710); //channel 2, pt  15 eta 1.5, (mean, err)= (0.1212, 0.0710) (4.00 / 33.00) +0.0851 -0.0569
-        if(pt > 10) return Value(0.2609, 0.0594); //channel 2, pt  10 eta 1.5, (mean, err)= (0.2609, 0.0594) (18.00 / 69.00) +0.0633 -0.0555@@No Effect@@@@@@@@@@
-      }else if(isElec && eta <= 1.5){//Elec Barrel
-        //if(pt > 15) return Value(0.0381, 0.0346); //channel 2, pt  15 eta 0.0, (mean, err)= (0.0870, 0.0346) (8.00 / 92.00) +0.0399 -0.0294@@@@@@@Changed
-        if(pt > 15) return Value(0.0870, 0.0346); //channel 2, pt  15 eta 0.0, (mean, err)= (0.0870, 0.0346) (8.00 / 92.00) +0.0399 -0.0294@@@@@@@
-        if(pt > 10) return Value(0.1211, 0.0222); //channel 2, pt  10 eta 0.0, (mean, err)= (0.1211, 0.0222) (31.00 / 256.00) +0.0238 -0.0206
-      }else{//Muons
-        if(pt > 15) return Value(0.0234, 0.0174); //channel 1, pt  15 eta 0.0, (mean, err)= (0.0234, 0.0174) (3.00 / 128.00) +0.0222 -0.0127
-        if(pt > 10) return Value(0.0396, 0.0102); //channel 1, pt  10 eta 0.0, (mean, err)= (0.0396, 0.0102) (18.00 / 454.00) +0.0114 -0.0091
+    if(isElec){//These cam from min jet cut of 35 GeV
+      if(useMyFake){
+        if(fabs(eta) < 1.479){//barrel
+          return Value(0.1379, 0.0500);//Remove pt binning bc of low stats
+          if(pt > 25) return Value(0.2174, 0.1050); //channel 2, pt  25 eta 0.0, (mean, err)= (0.2174, 0.1050) (5.00 / 23.00) +0.1198 -0.0901
+          if(pt > 15) return Value(0.1207, 0.0509); //channel 2, pt  15 eta 0.0, (mean, err)= (0.1207, 0.0509) (7.00 / 58.00) +0.0587 -0.0432
+          if(pt > 10) return Value(0.1290, 0.0398); //channel 2, pt  10 eta 0.0, (mean, err)= (0.1290, 0.0398) (12.00 / 93.00) +0.0444 -0.0353
+        }else{
+          return Value(0.0810, 0.0500);//Remove pt binning bc of low stats
+          if(pt > 25) return Value(0.1538, 0.1329); //channel 2, pt  25 eta 1.5, (mean, err)= (0.1538, 0.1329) (2.00 / 13.00) +0.1673 -0.0984
+          if(pt > 15) return Value(0.0323, 0.0483); //channel 2, pt  15 eta 1.5, (mean, err)= (0.0323, 0.0483) (1.00 / 31.00) +0.0700 -0.0266
+          if(pt > 10) return Value(0.1000, 0.0706); //channel 2, pt  10 eta 1.5, (mean, err)= (0.1000, 0.0706) (3.00 / 30.00) +0.0874 -0.0537
+        }
+      }else{//Group II
+        if(fabs(eta) < 1.0){
+          if(pt > 30) return Value(0.085,0.017);
+          if(pt > 25) return Value(0.085,0.012);
+          if(pt > 20) return Value(0.085,0.009);
+          if(pt > 15) return Value(0.057,0.009);
+          else        return Value(0.066,0.015);
+        }else if(fabs(eta) < 1.479){
+          if(pt > 30) return Value(0.059,0.019);
+          if(pt > 25) return Value(0.067,0.015);
+          if(pt > 20) return Value(0.064,0.011);
+          if(pt > 15) return Value(0.054,0.010);
+          else        return Value(0.040,0.012);
+        }else if(fabs(eta) < 2.0){
+          if(pt > 30) return Value(0.072,0.019);
+          if(pt > 25) return Value(0.052,0.012);
+          if(pt > 20) return Value(0.057,0.010);
+          if(pt > 15) return Value(0.018,0.007);
+          else        return Value(0.016,0.009);
+        }else if(fabs(eta) < 2.5){
+          if(pt > 30) return Value(0.068,0.021);
+          if(pt > 25) return Value(0.070,0.015);
+          if(pt > 20) return Value(0.046,0.009);
+          if(pt > 15) return Value(0.041,0.013);
+          else        return Value(0.023,0.013);
+        }
       }
-    }else{//Z
-      if      (isElec && eta >  1.5){//Elec Endcap
-        if(pt > 15) return Value(0.1961, 0.0438); //channel 2, pt  15 eta 1.5, (mean, err)= (0.1961, 0.0438) (20.00 / 102.00) +0.0471 -0.0405
-        if(pt > 10) return Value(0.2672, 0.0310); //channel 2, pt  10 eta 1.5, (mean, err)= (0.2672, 0.0310) (62.00 / 232.00) +0.0321 -0.0299@@@@@@@@@ Little Effect
-      }else if(isElec && eta <= 1.5){//Elec Barrel
-        if(pt > 15) return Value(0.1208, 0.0177); //channel 2, pt  15 eta 0.0, (mean, err)= (0.1208, 0.0177) (47.00 / 389.00) +0.0188 -0.0167@@@@@@Little Effect
-        if(pt > 10) return Value(0.1333, 0.0112); //channel 2, pt  10 eta 0.0, (mean, err)= (0.1333, 0.0112) (132.00 / 990.00) +0.0116 -0.0109
-      }else{//Muons
-        if(pt > 15) return Value(0.0345, 0.0213); //channel 1, pt  15 eta 0.0, (mean, err)= (0.0345, 0.0213) (4.00 / 116.00) +0.0263 -0.0164
-        if(pt > 10) return Value(0.0789, 0.0143); //channel 1, pt  10 eta 0.0, (mean, err)= (0.0789, 0.0143) (33.00 / 418.00) +0.0154 -0.0132
+    }else{//Muons
+      if(useMyFake){//Use my values
+        if(pt > 25) return Value(0.0588, 0.0549); //channel 1, pt  25 eta 0.0, (mean, err)= (0.0588, 0.0549) (2.00 / 34.00) +0.0720 -0.0378
+        if(pt > 15) return Value(0.0753, 0.0326); //channel 1, pt  15 eta 0.0, (mean, err)= (0.0753, 0.0326) (7.00 / 93.00) +0.0380 -0.0272
+        if(pt > 10) return Value(0.1429, 0.0274); //channel 1, pt  10 eta 0.0, (mean, err)= (0.1429, 0.0274) (28.00 / 196.00) +0.0294 -0.0254
+      }else{//Group II
+        if(fabs(eta) < 1.0){
+          if(pt > 30) return Value(0.034,0.007);
+          if(pt > 25) return Value(0.008,0.004);
+          if(pt > 20) return Value(0.011,0.001);
+          if(pt > 15) return Value(0.010,0.001);
+          else        return Value(0.016,0.001);
+        }else if(fabs(eta) < 1.479){
+          if(pt > 30) return Value(0.017,0.002);
+          if(pt > 25) return Value(0.009,0.002);
+          if(pt > 20) return Value(0.015,0.002);
+          if(pt > 15) return Value(0.029,0.013);
+          else        return Value(0.050,0.012);
+        }else if(fabs(eta) < 2.0){
+          if(pt > 30) return Value(0.026,0.002);
+          if(pt > 25) return Value(0.016,0.003);
+          if(pt > 20) return Value(0.025,0.003);
+          if(pt > 15) return Value(0.062,0.022);
+          else        return Value(0.057,0.015);
+        }else if(fabs(eta) < 2.5){
+          if(pt > 30) return Value(0.022,0.004);
+          if(pt > 25) return Value(0.023,0.006);
+          if(pt > 20) return Value(0.031,0.006);
+          if(pt > 15) return Value(0.001,0.001);
+          else        return Value(0.052,0.023);
+        }
       }
-    }
-  }
+    }//end muons
+  }//end data
   abort();
   return Value();
 }
@@ -1222,7 +1289,15 @@ Analyze(TTree* tree, const vector<MatrixVariable> & variables, const string & sa
       }//channel loop
     }//bin loop
 
-    if(verbose > 1) PrintLatexTable(var, containerBins, sample, printNBad);
+    if(verbose > 10){
+      PrintRateTable(true,  true,  isMC);
+      PrintRateTable(false, true,  isMC);
+      PrintRateTable(true,  false,  isMC);
+      PrintRateTable(false, false,  isMC);
+    }
+    //if(verbose > 1) PrintLatexTable(var, containerBins, sample, printNBad);
+    if(verbose > 1) PrintLatexTable(container, sample);
+
     if(var.hist) WriteHisto(var, containerBins);
     
     //if(var.variable.empty()) PrintLatexTable(vByChan, result8x8ByChan, samples[i]);
@@ -1239,7 +1314,7 @@ Analyze(TTree* tree, const vector<MatrixVariable> & variables, const string & sa
 
 void
 PrintLatexTable(const MatrixVariable & var, const MatrixContainer containerBin[][NChannels], const string & sample, const bool & printNBad){
-  cout<<"\\begin{table}[tbh]\n\\begin{center}"<<endl;
+  cout<<"\\begin{table}[tbh] \\begin{center}"<<endl;
   cout<<"\\begin{tabular}{c|cccc} \\hline \\hline"<<endl;
   cout<<"   "<<var.variable<<"          &  $3e$     & $2e1\\mu$   &  $ 2\\mu 1e$     &    $3\\mu$   \\\\  \\hline"<<endl;
   for(int iBin=0; iBin<var.nbins-1; ++iBin){
@@ -1262,11 +1337,13 @@ PrintLatexTable(const MatrixVariable & var, const MatrixContainer containerBin[]
 void
 WriteHisto(const MatrixVariable & var, const MatrixContainer containerBin[][NChannels]){
   //cout<<"writing histos for "<<var.hist->GetName()<<endl;
-  if(var.variable.empty() || !var.hist){
-    cout<<"aborting with "<<var.variable<<endl;
+  if(var.variable.empty()) return;
+  if(!var.hist){
+    cout<<"aborting with variable = "<<var.variable
+        <<"because no hist"<<endl;
     abort();
   }
-  TFile* fMM = new TFile("DataDrivenHistos.root", "update");//????really?
+  TFile* fMM = new TFile("DataDrivenHistos.root", "update");
   if(!fMM->GetKey("DYJetsToLL-DataDriven"))
     fMM->mkdir("DYJetsToLL-DataDriven");//change
   fMM->cd("DYJetsToLL-DataDriven");//change
@@ -1274,7 +1351,9 @@ WriteHisto(const MatrixVariable & var, const MatrixContainer containerBin[][NCha
   TH1F* hResult[NChannels] = {NULL};
   for(int channel=0; channel<NChannels; ++channel){
     string histName = var.hist->GetName();
-    histName.replace(histName.find("_"), 1, Form("%ie%im_", NChannels-1-channel, channel)); 
+    string chString = Form("%ie%im_", NChannels-1-channel, channel);
+    if(histName.find("_") == string::npos) histName += chString;
+    else histName.replace(histName.find("_"), 1, chString.c_str()); 
     hResult[channel] = (TH1F*) var.hist->Clone(histName.c_str());
     hResult[channel]->Reset();
     for(int iBin=0; iBin<var.nbins-1; ++iBin){
@@ -1287,6 +1366,46 @@ WriteHisto(const MatrixVariable & var, const MatrixContainer containerBin[][NCha
   }
   fMM->Save();
   fMM->Close();
+  //cout<<" done writing histos for "<<var.hist->GetName()<<endl;
 }  
 
 
+bool 
+CheckDataEvent(float run, float event){
+  bool shouldRemove = false;
+  return shouldRemove;
+}
+
+
+void
+PrintRateTable(bool printEff, bool isElec, bool isMC){
+  float pt [] = {10., 15., 20., 25., 30., 9999}; const int npt  = 5;
+  float eta[] = {0., 1., 1.479, 2., 2.5}; const int neta  = 4;
+
+  cout<<"\\begin{table}[tbh] \\begin{center}"<<endl;
+  cout<<"\\begin{tabular}{c|*{"<<neta<<"}{|c}} \\hline"<<endl;
+  //.."\\begin{tabular}{|c||*{"<<levels.size()*evtTypes.size()<<"}{c|}}
+
+  for(int iEta=0; iEta<neta; ++iEta){
+    printf(" & %.3f $< |\\eta| \\leq$ %.3f",eta[iEta], eta[iEta+1]);
+  }
+  cout<<" \\\\  \\hline"<<endl;
+  for(int iPt=0; iPt<npt; ++iPt){
+    printf(" %.0f $< p_{T} \\leq$ %.0f",pt[iPt], pt[iPt+1]);
+    for(int iEta=0; iEta<neta; ++iEta){
+      const Rates rates(FindE( pt[iPt]+1.,  eta[iEta]+0.01, isElec, true , isMC),
+                        FindP( pt[iPt]+1.,  eta[iEta]+0.01, isElec, true , isMC));
+        
+      if(printEff) printf(" & %.4f $\\pm$ %.4f", rates.Reff, rates.Delta_Reff);
+      else         printf(" & %.4f $\\pm$ %.4f", rates.Rfake, rates.Delta_Rfake);
+    }
+    cout<<"  \\\\"<<endl;
+  }//pt loop
+
+  cout<<"\\hline \n \\end{tabular}"<<endl;
+  printf("\\caption{%s %s Rate binned in $p_{T}$ and $\\eta$}\n", 
+         isElec ? "Electron" : "Muon",
+         printEff ? " Efficiency" : " Fake");
+  cout<<"\\label{tab:fakeRates}"<<endl;
+  cout<<"\\end{center} \\end{table}"<<endl;
+}
