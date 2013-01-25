@@ -8,6 +8,7 @@
 #include "TTree.h"
 #include <iomanip>
 #include <iostream>
+#include "TLegend.h"
 
 struct Value{
   float val;
@@ -294,9 +295,27 @@ GetNEvts(TFile* f, const string & sample, const string & tName, const string & c
   return GetNEvts(f, samples, tName, cuts);
 }
 
+Value
+ShiftErr(const Value & orig, const Value & mod){
+  Value ret;
+  ret.val = fabs(1. - (mod.val / orig.val));
+  ret.err = (mod.val / orig.val) * sqrt(pow(mod.err/mod.val,2) + pow(orig.err/orig.val,2));
+  return ret;
+}
+
 float 
 roundToNearest(float value, int mark){ //Cool trick
   return round(value/mark)*mark;
+}
+
+void
+prepLegend(TLegend* leg){
+  leg->SetTextSize(0.05);
+  leg->SetTextFont(42);
+  leg->SetBorderSize(0);
+  leg->SetFillStyle(0);
+  //leg->SetNColumns(2);
+  //leg->SetColumnSeparation(0.05);
 }
 
 ///WprimeWZ Specific Stuff
