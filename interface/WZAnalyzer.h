@@ -81,7 +81,7 @@ public:
   std::vector<double> effectiveElecArea_;
   std::vector<double> effectiveMuonArea_;
   
-  bool doSystematics_, doMatrix_, removeTauEvents_;
+  bool doSystematics_, doMatrix_, removeTauEvents_, adjustMETPhi_;
   float elScaleFactor_, muScaleFactor_;
 
 ///My calculated qualities//////////////////

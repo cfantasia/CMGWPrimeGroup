@@ -8,12 +8,20 @@ WZAnalyzer::WZAnalyzer(const edm::ParameterSet & cfg, int fileToRun) :
   setupCutOrder();
   if(debug_) printf("Using %i cuts\n",NCuts_);
 
-  wzAlgo_ = (NuAlgos)cfg.getUntrackedParameter<int>("NuAlgo", kMinPz);
+  wzAlgo_ = (NuAlgos)cfg.getUntrackedParameter<int>("NuAlgo", kMinPz); 
   doSystematics_ = cfg.getUntrackedParameter<bool>("doSystematics", false);
   doMatrix_ = cfg.getUntrackedParameter<bool>("doMatrix", false);
   removeTauEvents_ = cfg.getUntrackedParameter<bool>("removeTauEvents", false);
+  adjustMETPhi_ = cfg.getUntrackedParameter<bool>("adjustMETPhi", false);
   elScaleFactor_ = cfg.getParameter<double>("elScaleFactor");
   muScaleFactor_ = cfg.getParameter<double>("muScaleFactor");
+  cout<<"WZ Algo: "<<wzAlgo_<<endl
+      <<"doSystematics:"<<doSystematics_<<endl
+      <<"doMatrix:"<<doMatrix_<<endl
+      <<"removeTauEvents:"<<removeTauEvents_<<endl
+      <<"adjustMETPhi:"<<adjustMETPhi_<<endl
+      <<"elScaleFactor:"<<elScaleFactor_<<endl
+      <<"muScaleFactor:"<<muScaleFactor_<<endl;
 
   rhoFastJetLabel_ = cfg.getParameter<edm::InputTag>("rhoFastJet");
   effectiveElecArea_ = cfg.getParameter<vector<double> >("effectiveElecArea");
@@ -258,7 +266,7 @@ void WZAnalyzer::defineHistos(const TFileDirectory & dir){
     defineHistoSet("hMETSig", "MET Significance",
                    "#slash{E}_{T}^{Signif}", 50, 0, 500, "", hMETSig,dir);
     defineHistoSet("hMETPhi", "MET #Phi",
-                   "#slash{E}_{T}^{#Phi}", 140, -7., 7., "", hMETPhi,dir);
+                   "#slash{E}_{T}^{#Phi}", 70, -3.5, 3.5, "", hMETPhi,dir);
     
 //W Trans Mass Histos
     defineHistoSet("hWTransMass", "Reconstructed Transverse Mass of W",
@@ -571,7 +579,8 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
         hWmnupt[index]->Fill(wCand_.pt(), weight);
         hWmnuQ[index]->Fill(wCand_.charge(), weight);
         const TeVMuon& m = *wCand_.muon();
-        hWmnuCombRelIso[index]->Fill(m.combRelIsolation03(MuonPU(m)), weight);
+        hWmnuCombRelIso[index]->Fill(m.combRelPFIsolation(MuonPU(m)), weight);
+        //hWmnuCombRelIso[index]->Fill(m.combRelIsolation03(MuonPU(m)), weight);
         hEtaVsPt[index]->Fill(m.pt(), m.eta(), weight);
         hEtaVsPtMuon[index]->Fill(m.pt(), m.eta(), weight);
       }
@@ -886,6 +895,47 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
                             patMuonsH_, muReconstructor_, allMuons_,
                             metH_, useAdjustedMET_, met_,
                             pfCandidatesH_);
+  
+  //get Vertex
+  event.getByLabel(vertexLabel_, verticesH_);
+
+  if(debug_) cout<<"num of vertices is "<<verticesH_->size()<<endl;
+  const reco::Vertex & primaryVertex =  verticesH_.isValid() && !verticesH_->empty() ? verticesH_->at(0) : reco::Vertex();
+  if(!verticesH_.isValid() || verticesH_->empty()) cout<<" No valid PV"<<endl;
+
+  if(adjustMETPhi_){//Correct for met phi shift
+    TVector2 subtract; 
+    int Nvtx = 0;
+    for(unsigned ivtx=0; ivtx<verticesH_->size(); ++ivtx){
+      if(verticesH_.isValid() && 
+         verticesH_->at(ivtx).ndof() >= 4 && 
+         verticesH_->at(ivtx).chi2() > 0 && 
+         verticesH_->at(ivtx).tracksSize() > 0 && 
+         fabs(verticesH_->at(ivtx).z()) < 24 && 
+         fabs(verticesH_->at(ivtx).position().Rho()) < 2.)  Nvtx++;
+
+      if(debug_) cout<<"checking vertix "<<ivtx<<endl;
+    }
+    if(debug_) cout<<"Found "<<Nvtx<<" vertices for met phi shift"<<endl;
+    if(wprimeUtil_->runningOnData()){
+      subtract.Set(+3.54233e-01 + 2.65299e-01*Nvtx,
+                   +1.88923e-01 - 1.66425e-01*Nvtx);
+      //pfMEtSysShiftCorrParameters_2012runAvsNvtx_data = cms.PSet(
+      //  px = cms.string("+3.54233e-01 + 2.65299e-01*Nvtx"),
+      //  py = cms.string("+1.88923e-01 - 1.66425e-01*Nvtx")
+    }else{//MC
+      subtract.Set(-2.99576e-02 - 6.61932e-02*Nvtx,
+                   +3.70819e-01 - 1.48617e-01*Nvtx);
+      //pfMEtSysShiftCorrParameters_2012runAvsNvtx_mc = cms.PSet(
+      //  px = cms.string("-2.99576e-02 - 6.61932e-02*Nvtx"),
+      //  py = cms.string("+3.70819e-01 - 1.48617e-01*Nvtx")
+    }
+    TVector2 newmet(met_.px()-subtract.Px(), met_.py()-subtract.Py());
+    if(debug_) cout<<"Before shifting phi:"<<met_.p4()<<endl;
+    met_.setP4(LorentzVector(newmet.Px(), newmet.Py(), 0., newmet.Mod()));
+    if(debug_) cout<<"After shifting phi:"<<met_.p4()<<endl;
+  }
+
   event.getByLabel(rhoFastJetLabel_, rhoFastJetH_);
   if(debug_){
     cout<<" rho = "<<(*rhoFastJetH_)<<endl;
@@ -895,17 +945,14 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     print(allMuons_);
   }
 
-  //get Vertex
-  event.getByLabel(vertexLabel_, verticesH_);
-
-  if(debug_) cout<<"num of vertices is "<<verticesH_->size()<<endl;
-  const reco::Vertex & primaryVertex =  verticesH_.isValid() && !verticesH_->empty() ? verticesH_->at(0) : reco::Vertex();
-  if(!verticesH_.isValid() || verticesH_->empty()) cout<<" No valid PV"<<endl;
-
   // Make vectors of leptons passing various criteria
+
+  PatElectronV scaledPatElectrons;  
+  if(elScaleFactor_) scaledPatElectrons = *patElectronsH_;
+    
   for (size_t i = 0; i < allElectrons_.size(); i++) {
     if(elScaleFactor_){
-      pat::Electron newEl = allElectrons_[i].patEle();
+      pat::Electron & newEl = scaledPatElectrons[i];
       newEl.setP4(elScaleFactor_*newEl.p4()); 
       allElectrons_[i] = heep::Ele(newEl);
     }
@@ -934,14 +981,9 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     TeVMuon & p = allMuons_[i];
     if(muScaleFactor_) p.setP4(muScaleFactor_*p.p4());
 
-    //const float pu = MuonPU(p);
-    float pu = 0;
-    for (size_t j = 0; j < allMuons_.size(); j++) {
-      if(i == j) continue;
-      if(deltaR(p, allMuons_[j]) < 0.3) pu -= allMuons_[j].pt(); 
-    }
-
+    const float pu = MuonPU(p);
     if(debug_) cout<<"muon number "<<i<<" has pu "<<pu<<endl;
+
     if (extraMuon_(p, pu, primaryVertex))
       extraMuons_.push_back(p);
 
@@ -1409,7 +1451,14 @@ inline float
 }
 
 inline float
-  WZAnalyzer::MuonPU(const TeVMuon & m) const{
-  return (*rhoFastJetH_)*effectiveMuonArea_[inEE(m)];
+WZAnalyzer::MuonPU(const TeVMuon & m) const{
+  //return (*rhoFastJetH_)*effectiveMuonArea_[inEE(m)];
+  return 0.;//Cory: Please take this out!!!
+    float pu = 0;
+    for (size_t j = 0; j < allMuons_.size(); j++) {
+      if(areIdentical(m, allMuons_[j])) continue;//same muon
+      if(deltaR(m, allMuons_[j]) < 0.4) pu += allMuons_[j].pt(); 
+    }
+    return pu;
 }
 
