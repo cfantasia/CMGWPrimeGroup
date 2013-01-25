@@ -3,8 +3,6 @@
 #include "TMath.h"
 #include <fstream>
 
-float WindowWidth(float mass);
-float LtCut(float mass);
 TGraphErrors* MakeSigEffGraph   (TFile* fIn, const string & moreCuts);
 TGraphErrors* MakeSigEffErrGraph(TFile* fIn, const string & moreCuts);
 void PrintSysErrors(const string & name, const string & type, TGraph* gSig, TGraph* gBkg, const float mass, const int nbkg, ofstream & fout);
@@ -27,18 +25,20 @@ makeLimitCard(string inName, int mass){
 
   TGraph* gxsec = new TGraph("../Limits/xSec_WZ.dat", "%lg %lg");
 
-  TGraph* gSigMETRes   = new TGraph("../Systematics/SysSigMETRes.dat"  , "%lg %lg");
-  TGraph* gSigMETScale = new TGraph("../Systematics/SysSigMETScale.dat", "%lg %lg");
-  TGraph* gSigPU       = new TGraph("../Systematics/SysSigPU.dat"      , "%lg %lg");
-  TGraph* gSigMuPtSc   = new TGraph("../Systematics/SysSigMuPtSc.dat"  , "%lg %lg");
-  TGraph* gSigElEnSc   = new TGraph("../Systematics/SysSigElEnSc.dat"  , "%lg %lg");
-  TGraph* gSigPDF      = new TGraph("../Systematics/SysSigPDF.dat"     , "%lg %lg");
+  TGraph* gSigMETRes   = new TGraph("../Systematics/SysSigMETRes.dat"   , "%lg %lg");
+  TGraph* gSigMETScale = new TGraph("../Systematics/SysSigMETScale.dat" , "%lg %lg");
+  TGraph* gSigPU       = new TGraph("../Systematics/SysSigPU.dat"       , "%lg %lg");
+  TGraph* gSigMuPtRes  = new TGraph("../Systematics/SysSigMuPtRes.dat"  , "%lg %lg");
+  TGraph* gSigMuPtScale= new TGraph("../Systematics/SysSigMuPtScale.dat", "%lg %lg");
+  TGraph* gSigElEnScale= new TGraph("../Systematics/SysSigElEnScale.dat", "%lg %lg");
+  TGraph* gSigPDF      = new TGraph("../Systematics/SysSigPDF.dat"      , "%lg %lg");
 
   TGraph* gBkgMETRes   = new TGraph("../Systematics/SysBkgMETRes.dat"  , "%lg %lg");
   TGraph* gBkgMETScale = new TGraph("../Systematics/SysBkgMETScale.dat", "%lg %lg");
   TGraph* gBkgPU       = new TGraph("../Systematics/SysBkgPU.dat"      , "%lg %lg");
-  TGraph* gBkgMuPtSc   = new TGraph("../Systematics/SysBkgMuPtSc.dat"  , "%lg %lg");
-  TGraph* gBkgElEnSc   = new TGraph("../Systematics/SysBkgElEnSc.dat"  , "%lg %lg");
+  TGraph* gBkgMuPtRes  = new TGraph("../Systematics/SysBkgMuPtRes.dat" , "%lg %lg");
+  TGraph* gBkgMuPtScale= new TGraph("../Systematics/SysBkgMuPtScale.dat", "%lg %lg");
+  TGraph* gBkgElEnScale= new TGraph("../Systematics/SysBkgElEnScale.dat", "%lg %lg");
   TGraph* gBkgPDF      = new TGraph("../Systematics/SysBkgPDF.dat"     , "%lg %lg");
 
   //Make Sig Eff Graph
@@ -65,12 +65,12 @@ makeLimitCard(string inName, int mass){
     cout << "Cannot open file " << outfile << endl; 
     abort();
   } 
-  float winWidth = WindowWidth(mass);
-  float minMass = mass - winWidth/2.;
-  float maxMass = mass + winWidth/2.;
-  float minLt   = LtCut(mass);
+  //float winWidth = WindowWidth(mass);
+  //float minMass = mass - winWidth/2.;
+  //float maxMass = mass + winWidth/2.;
+  //float minLt   = LtCut(mass);
     
-  string analysisCuts = Form("WZMass > %.0f && WZMass < %.0f && Lt > %.0f", minMass, maxMass, minLt);
+  string analysisCuts = AnalysisCuts(mass);//Form("WZMass > %.0f && WZMass < %.0f && Lt > %.0f", minMass, maxMass, minLt);
   fout<<"# Cuts are "<<analysisCuts<<" for mass="<<mass<<endl;
     
   for(int ch=0; ch<nch; ch++){
@@ -177,8 +177,9 @@ makeLimitCard(string inName, int mass){
   PrintSysErrors("METRes"  , "lnN", gSigMETRes  , gBkgMETRes  , mass, samples.size(),fout);
   PrintSysErrors("METScale", "lnN", gSigMETScale, gBkgMETScale, mass, samples.size(),fout);
   PrintSysErrors("PU"      , "lnN", gSigPU      , gBkgPU      , mass, samples.size(),fout);
-  PrintSysErrors("MuPtSc"  , "lnN", gSigMuPtSc  , gBkgMuPtSc  , mass, samples.size(),fout);
-  PrintSysErrors("ElEnSc"  , "lnN", gSigElEnSc  , gBkgElEnSc  , mass, samples.size(),fout);
+  PrintSysErrors("MuPtRes" , "lnN", gSigMuPtRes , gBkgMuPtRes , mass, samples.size(),fout);
+  PrintSysErrors("MuPtScale", "lnN", gSigMuPtScale, gBkgMuPtScale, mass, samples.size(),fout);
+  PrintSysErrors("ElEnScale", "lnN", gSigElEnScale, gBkgElEnScale, mass, samples.size(),fout);
   PrintSysErrors("PDF"     , "lnN", gSigPDF     , gBkgPDF     , mass, samples.size(),fout);
 
   fout.close(); 
@@ -249,13 +250,5 @@ MakeSigEffErrGraph(TFile* fIn, const string & moreCuts){
     g->SetPoint(  i, mass, statEff);
   }
   return g;
-}
-
-float WindowWidth(float mass){
-  return max(50., 0.5*mass - 100);
-}
-
-float LtCut(float mass){
-  return min(400., 0.6*mass - 50.);
 }
 
