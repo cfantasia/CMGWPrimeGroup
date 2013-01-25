@@ -19,15 +19,17 @@ muonSelectors = cms.PSet(
     ),
     PFIso = cms.PSet(
        minPt = cms.untracked.double(10.),
-       maxEta = cms.untracked.double(2.4),
+       maxEta = cms.untracked.double(2.2),
+#       maxEta = cms.untracked.double(2.4),
        minIsGblOrTrk = cms.untracked.int32(1),
-#       minIsGlobal = cms.untracked.int32(1),
-#       minIsPF = cms.untracked.int32(1),
+       minIsGlobal = cms.untracked.int32(1), #Cory: Remove for highpt
+##       minIsPF = cms.untracked.int32(1),
        maxDxy = cms.untracked.double(0.2),
        maxDz = cms.untracked.double(0.5),
-#       maxNormalizedChi2 = cms.untracked.double(10.0),
+       maxNormalizedChi2 = cms.untracked.double(10.0), #Cory: Remove for highpt
+       maxRelPtErr = cms.untracked.double(0.3),
        minNPixelHits = cms.untracked.int32(1),
-       minNMuonHits = cms.untracked.int32(1),
+       minNMuonHits = cms.untracked.int32(1), #Cory: This causes problems at high pt
        minNTrackerLayers = cms.untracked.int32(6),
        #minNTrackerLayers = cms.untracked.int32(9),
        #minNTrackerHits = cms.untracked.int32(11),
@@ -191,10 +193,10 @@ electronSelectors = cms.PSet(
            maxPFIso = cms.untracked.double(0.15),
        ),
     ),
-
+    CiC2012LoosePt20 = cms.PSet(),
     CiC2012Medium = cms.PSet(
        joint = cms.PSet(
-          minPt = cms.untracked.double(20.),
+          minPt = cms.untracked.double(10.),
        ),
        barrel = cms.PSet(
            maxMissingHits = cms.untracked.int32(1),
@@ -221,6 +223,7 @@ electronSelectors = cms.PSet(
            maxPFIso = cms.untracked.double(0.15),
        ),
     ),
+    CiC2012MediumPt20 = cms.PSet(),
     )
 
 for i, s in enumerate(["wp95", "wp90", "wp85", "wp80", "wp70", "wp60"]):
@@ -283,6 +286,12 @@ electronSelectors.EWKWZTightPt20 = electronSelectors.mva.clone()
 electronSelectors.EWKWZTightPt20.joint.minPt = 20.
 electronSelectors.EWKWZTightPt20.joint.maxPFIso = cms.untracked.double(0.1)
 
+#CiC2012
+electronSelectors.CiC2012LoosePt20 = electronSelectors.CiC2012Loose.clone()
+electronSelectors.CiC2012LoosePt20.joint.minPt = 20.
+    
+electronSelectors.CiC2012MediumPt20 = electronSelectors.CiC2012Medium.clone()
+electronSelectors.CiC2012MediumPt20.joint.minPt = 20.
 
 ##Exotica
 electronSelectors.exoticaPt20 = electronSelectors.exotica.clone()

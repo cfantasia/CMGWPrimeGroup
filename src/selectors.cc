@@ -148,6 +148,7 @@ MuonSelector::MuonSelector(Pset pset, std::string selectorName) {
   loadFromPset<int>(params, "minNMuonHits", true);
   loadFromPset<int>(params, "minNTrackerLayers", true);
   loadFromPset<double>(params, "minTrackerValidFrac", true);
+  loadFromPset<double>(params, "maxRelPtErr", true);
 
   bitmask = getBitTemplate();
 }
@@ -164,7 +165,7 @@ bool MuonSelector::operator()(const TeVMuon & p, const float pu, const reco::Ver
   setpassCut("maxIso", p.combRelIsolation(), bitmask);
   setpassCut("maxIso03", p.combRelIsolation03(pu), bitmask);
   setpassCut("maxTrkCorIso", p.trkCorRelIsolation(pu), bitmask);
-  setpassCut("maxPFIso", p.combRelPFIsolation(), bitmask);
+  setpassCut("maxPFIso", p.combRelPFIsolation(pu), bitmask);
   setpassCut("minIsGlobal", p.isGlobalMuon(), bitmask);
   setpassCut("minIsTracker", p.isTrackerMuon(), bitmask);
   setpassCut("minIsGblOrTrk", p.isGlobalMuon() || p.isTrackerMuon(), bitmask);
@@ -172,29 +173,49 @@ bool MuonSelector::operator()(const TeVMuon & p, const float pu, const reco::Ver
   setpassCut("minNMatches", p.numberOfMatches(), bitmask);
   setpassCut("minNMatchedStations", p.numberOfMatchedStations(), bitmask);
     
-    reco::TrackRef global = p.globalTrack();
-    if(!global.isNull()){
-      const reco::HitPattern& gtHP = global->hitPattern();
-      setpassCut("maxNormalizedChi2", global->normalizedChi2(), bitmask);
-      setpassCut("minNMuonHits", gtHP.numberOfValidMuonHits(), bitmask);
-      setpassCut("minTrackerValidFrac", global->validFraction(), bitmask);
-      //delete below
-      //setpassCut("minNTrackerHits", gtHP.numberOfValidTrackerHits(), bitmask);
-      //setpassCut("minNPixelHits", gtHP.numberOfValidPixelHits(), bitmask);
-      //setpassCut("minNTrackerLayers", gtHP.trackerLayersWithMeasurement(), bitmask);
-      setpassCut("maxDz",  fabs(p.muonBestTrack()->dz(vtx.position())), bitmask);
+  reco::TrackRef global = p.globalTrack();
+  if(!global.isNull()){
+    const reco::HitPattern& gtHP = global->hitPattern();
+    setpassCut("maxNormalizedChi2", global->normalizedChi2(), bitmask);
+    setpassCut("minNMuonHits", gtHP.numberOfValidMuonHits(), bitmask);
+    setpassCut("minTrackerValidFrac", global->validFraction(), bitmask);
+  }
+  
+  reco::TrackRef inner = p.innerTrack();
+  if(!inner.isNull()){
+    const reco::HitPattern& inHP = inner->hitPattern();
+    setpassCut("minNTrackerHits", inHP.numberOfValidTrackerHits(), bitmask);
+    setpassCut("minNPixelHits", inHP.numberOfValidPixelHits(), bitmask);
+    setpassCut("minNTrackerLayers", inHP.trackerLayersWithMeasurement(), bitmask);
+  }
+  
+  reco::TrackRef best = p.muonBestTrack();
+  if(!best.isNull()){
+    setpassCut("maxNormalizedChi2", best->normalizedChi2(), bitmask);
+    setpassCut("minTrackerValidFrac", best->validFraction(), bitmask);
+    setpassCut("maxRelPtErr", best->ptError()/best->pt(), bitmask);
+    setpassCut("maxDz",  fabs(best->dz(vtx.position())), bitmask);
+    
+    const reco::HitPattern& btHP = best->hitPattern();
+    setpassCut("minNMuonHits", btHP.numberOfValidMuonHits(), bitmask);
+    setpassCut("minNTrackerHits", btHP.numberOfValidTrackerHits(), bitmask);
+    setpassCut("minNPixelHits", btHP.numberOfValidPixelHits(), bitmask);
+    setpassCut("minNTrackerLayers", btHP.trackerLayersWithMeasurement(), bitmask);
+/*//Cory: Please take this out
+    if(!p.isGlobalMuon()){
+      setpassCut("maxNormalizedChi2", best->normalizedChi2(), bitmask);
+      setpassCut("minNMuonHits", btHP.numberOfValidMuonHits(), bitmask);
+      setpassCut("minTrackerValidFrac", best->validFraction(), bitmask);
     }
 
-    reco::TrackRef inner = p.innerTrack();
-    if(!inner.isNull()){
-      const reco::HitPattern& inHP = inner->hitPattern();
-      setpassCut("minNTrackerHits", inHP.numberOfValidTrackerHits(), bitmask);
-      setpassCut("minNPixelHits", inHP.numberOfValidPixelHits(), bitmask);
-      setpassCut("minNTrackerLayers", inHP.trackerLayersWithMeasurement(), bitmask);
-      //setpassCut("maxDz",  fabs(p.innerTrack()->dxy(vtx.position())), bitmask);
+    if(!p.isTrackerMuon()){
+      setpassCut("minNTrackerHits", btHP.numberOfValidTrackerHits(), bitmask);
+      setpassCut("minNPixelHits", btHP.numberOfValidPixelHits(), bitmask);
+      setpassCut("minNTrackerLayers", btHP.trackerLayersWithMeasurement(), bitmask);
     }
-
-
+*/
+  }
+    
   setIgnored(bitmask);
   return (bool) bitmask;
 }

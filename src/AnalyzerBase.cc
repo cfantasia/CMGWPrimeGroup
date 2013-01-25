@@ -94,7 +94,7 @@ AnalyzerBase::AnalyzerBase(const edm::ParameterSet & cfg, int fileToRun){
   vertexLabel_ = cfg.getParameter<edm::InputTag>("vertexTag");
 
   muReconstructor_ = cfg.getParameter<int>("muonReconstructor");
-  if(debug_) cout<<"Using muon algo "<<algo_desc_long[muReconstructor_]<<endl;
+  cout<<"Using muon algo "<<algo_desc_long[muReconstructor_]<<endl;
   assert(muReconstructor_ < Num_MuTeVtrkAlgos);
 
   useAdjustedMET_ = cfg.getParameter<bool>("useAdjustedMET");
@@ -624,8 +624,10 @@ void AnalyzerBase::defineOneHisto(const string & name, const string & title,
 {
   float binWidth = (xmax-xmin)/nbins;
   string title2 = title + ";" + xtitle + ";Events";
-  if(units.compare("NONE"))//Want bin size
-    title2 += Form(" / %.0f ",binWidth) + units;
+  if(units.compare("NONE")){//Want bin size
+    if(binWidth < 1) title2 += Form(" / %.2f ",binWidth) + units;
+    else             title2 += Form(" / %.0f ",binWidth) + units;
+  }
   h = d.make<TH1F>(name.c_str(),title2.c_str(),nbins,xmin,xmax);
 }
 
