@@ -9,7 +9,8 @@ process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_WZ.txt"
 
 process.WprimeAnalyzer.doRecoilCorrectionForW = False
 process.WprimeAnalyzer.useAdjustedMET = False
-process.WprimeAnalyzer.muonReconstructor = 7
+process.WprimeAnalyzer.muonReconstructor = 7 #kPat
+#process.WprimeAnalyzer.muonReconstructor = 3 #kCocktail
 
 process.WprimeAnalyzer.useJSON = True
 process.WprimeAnalyzer.countGenEvts = False
@@ -168,7 +169,8 @@ SingleMuonTriggers = cms.vstring(    'HLT_Mu15_v*',
 process.WprimeAnalyzer.triggersToUse = DoubleTriggers
 
 ####################
-process.WprimeAnalyzer.removeTauEvents = cms.untracked.bool(True)
+#process.WprimeAnalyzer.removeTauEvents = cms.untracked.bool(True)
+process.WprimeAnalyzer.adjustMETPhi = cms.untracked.bool(True)
 process.WprimeAnalyzer.elScaleFactor = cms.double(0.)
 process.WprimeAnalyzer.muScaleFactor = cms.double(0.)
 
