@@ -167,6 +167,8 @@ public:
     if(!X.mass() || !W) return;
     if(!setP4Solns(X.p4(), W.daughter(0)->p4(), W.daughter(1)->p4())) 
       initialize_();
+    sumet_ = SumET(X) + SumET(W);
+    calcMT();
   }
 
   template<class T>
@@ -177,6 +179,8 @@ public:
     p4_[1] = X.p4() + XW.p4_[1];
     neutrinoPz_ = XW.neutrinoPz_;
     soln_ = XW.soln_;
+    sumet_ = XW.sumet_ + SumET(X);
+    calcMT();
   }
   
   inline double neutrinoPz(const NuAlgos& type) const{
@@ -193,6 +197,14 @@ public:
 
   inline const LorentzVector & operator ()(const NuAlgos& type=kMinPz) const{
     return p4(type);
+  }
+
+  double mt() const{
+    return mt_;
+  }
+
+  double sumet() const{
+    return sumet_;
   }
 
   double discriminant() const{
@@ -216,6 +228,7 @@ protected:
   std::vector<double> neutrinoPz_;
   std::vector<LorentzVector> p4_;
   std::vector<bool> soln_;
+  double sumet_, mt_;
   double discriminant_;
   double discriminantFrac_;
   double discriminantAngle_;
@@ -226,6 +239,7 @@ protected:
     neutrinoPz_ = std::vector<double>(2, 0.);
     p4_ = std::vector<LorentzVector>(2, LorentzVector());
     soln_ = std::vector<bool>(kNuAlgos, false);
+    sumet_ = mt_ = 0.;
   }
 
   bool setNuSolns(const LorentzVector & wLep, const LorentzVector & met){
@@ -314,7 +328,23 @@ protected:
     }
     return true;
   }
+
+  template<class T>
+    double SumET(const T & t){
+    return t.pt();
+  }
   
+  double SumET(const reco::CompositeCandidate & p){
+    double sumet = 0.;
+    for(unsigned i=0; i<p.numberOfDaughters(); ++i) sumet += p.daughter(i)->pt();
+    return sumet;
+  }
+
+  void
+    calcMT(){
+    mt_ = sqrt( sumet_*sumet_ - p4_[0].Perp2() );//pt is same for both solutions
+  }
+
 };
 
 class VZCandidate : public reco::CompositeCandidate{
