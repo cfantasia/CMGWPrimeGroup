@@ -17,7 +17,9 @@
 
 #include "../root_macros/common.h"
 
-float NEvtsCorMET(TTree* tEvts, int seed);
+void CalcMETSys(TFile* fIn, const string & name, const int mass, ofstream & fRes, ofstream & fScale);
+Value NEvtsCorMET(TTree* tEvts, int seed, const string & moreCuts);
+Value ShiftErr(const Value & orig, const Value & mod);
 
 
 void
@@ -31,81 +33,76 @@ calcRecoilSys(){
 
 //Then it is filled to TVector2 containing the transversal components.
 //Same is done for reconstructed W and Z
+  TFile *fIn = TFile::Open("../../../WprimeWZ.root", "read"); assert(fIn);
+
   ofstream fSigRes("SysSigMETRes.dat");
   ofstream fSigScale("SysSigMETScale.dat");
-  ofstream fBkgRes("SysBkgMETRes.dat");
-  ofstream fBkgScale("SysBkgMETScale.dat");
   fSigRes  << setiosflags(ios::fixed) << setprecision(4) << setiosflags(ios::left);
   fSigRes<<"Mass/F:SysErr/F"<<endl;
   fSigScale  << setiosflags(ios::fixed) << setprecision(4) << setiosflags(ios::left);
   fSigScale<<"Mass/F:SysErr/F"<<endl;
+  for(int mass=200; mass<=2000; mass+=100){
+    CalcMETSys(fIn, Form("WprimeToWZTo3LNu_M-%i", mass), mass, fSigRes, fSigScale);
+  }
+
+  ofstream fBkgRes("SysBkgMETRes.dat");
+  ofstream fBkgScale("SysBkgMETScale.dat");
   fBkgRes  << setiosflags(ios::fixed) << setprecision(4) << setiosflags(ios::left);
   fBkgRes<<"Mass/F:SysErr/F"<<endl;
   fBkgScale  << setiosflags(ios::fixed) << setprecision(4) << setiosflags(ios::left);
   fBkgScale<<"Mass/F:SysErr/F"<<endl;
+  for(int mass=200; mass<=2000; mass+=100){
+    CalcMETSys(fIn, "WZJetsTo3LNu", mass, fBkgRes, fBkgScale);
+  }
 
-  vector<string> names;
-  for(int mass=200; mass<=2000; mass+=100) names.push_back(Form("WprimeToWZTo3LNu_M-%i", mass));
-  names.push_back("WZJetsTo3LNu");
+}
 
-  TFile *fIn = TFile::Open("../../../WprimeWZ.root", "read"); assert(fIn);
+void
+CalcMETSys(TFile* fIn, const string & name, const int mass, ofstream & fRes, ofstream & fScale){
+  string cuts = AnalysisCuts(mass);
 
-  for(int iname=0; iname<(int)names.size(); ++iname){
-    const string & name = names[iname];
-
-    ofstream & fRes   = (name.find("Wprime") == string::npos) ? fBkgRes : fSigRes;
-    ofstream & fScale = (name.find("Wprime") == string::npos) ? fBkgScale : fSigScale;
-
-    float mass = (name.find("M-") == string::npos) ? 0 : atof(name.substr(name.find("M-")+2).c_str());
-    //cout<<"read mass of "<<mass<<" from "<<inputFile<<endl;
-
-    //get number of base events 
+    //get number of base events
     TTree* tMET = getTree(fIn, name, "tEvts_MET"); assert(tMET);
-    float nEvtsUncorMET = 0;
-    tMET->Draw("MET", "weight", "para goff");
-    double n = tMET->GetSelectedRows(); 
-    for(int ievt=0; ievt<n; ++ievt){
-      float weight = tMET->GetW()[ievt];
-      nEvtsUncorMET += weight;
-    }
-    cout<<"For "<<name<<" found "<<nEvtsUncorMET<<" events passing uncorrected met "<<endl;
+    Value vEvtsUncorMET = GetNEvtsAndError(tMET, Form("weight*(%s)", cuts.c_str()));
+    cout<<"For "<<name<<" found "<<vEvtsUncorMET<<" events passing uncorrected met "<<endl;
 
     //Now count number of mod met events
     TTree* tValidW = getTree(fIn, name, "tEvts_ValidW"); assert(tValidW);
 
     //get number of scaled met events
-    float nEvtsScaledMET = NEvtsCorMET(tValidW, 0);
+    Value vEvtsScaledMET = NEvtsCorMET(tValidW, 0, cuts);
+    Value vDiffScaledMET = ShiftErr(vEvtsUncorMET, vEvtsScaledMET);
     cout<<" Error taken on "<<name<<" due to met scale is "
-        <<fabs(nEvtsScaledMET - nEvtsUncorMET) / nEvtsUncorMET
-        <<endl;
-
+        <<vDiffScaledMET<<" with nevts="<<vEvtsScaledMET<<endl;
+    
     //get number of smeared met events
     TH1F hNEvts("hNEvts", "Yield due to various smearing seeds", 100, 0, 100.);
     hNEvts.StatOverflows(kTRUE);
     for(int seed=1; seed<=1000; ++seed){
-      float nEvtsSmearedMET = NEvtsCorMET(tValidW, seed);
-      hNEvts.Fill(nEvtsSmearedMET);
+      Value vEvtsSmearedMET = NEvtsCorMET(tValidW, seed, cuts);
+      hNEvts.Fill(vEvtsSmearedMET.val);
     }
-
-    printf(" Error taken on %s due to met smearing is %.4f with mean = %.4f and gaus=%.4f\n", name.c_str(), hNEvts.GetRMS()/hNEvts.GetMean(), hNEvts.GetMean(), hNEvts.GetRMS());
+    Value vEvtsSmearedMET(hNEvts.GetMean()+hNEvts.GetRMS(), hNEvts.GetRMSError());
+    Value vDiffSmearedMET = ShiftErr(vEvtsUncorMET, vEvtsSmearedMET);
+    printf(" Error taken on %s due to met smearing is %.4f with mean = %.4f and gaus=%.4f\n", name.c_str(), vDiffSmearedMET.val, hNEvts.GetMean(), hNEvts.GetRMS());
 
     //Print Line for Latex Table
-    printf("  %s & %.2f%% & %.2f%% \\\\\n", name.c_str(), fabs(nEvtsScaledMET - nEvtsUncorMET) / nEvtsUncorMET*100, hNEvts.GetRMS()/hNEvts.GetMean()*100);//Latex Line
+    printf("  %s & %.2f%% & %.2f%% \\\\\n", name.c_str(), 
+           vDiffScaledMET.val*100, vDiffSmearedMET.val*100);//Latex Line
     
     //print sys file for limits
-    fScale<<mass<<"\t"<<fabs(nEvtsScaledMET - nEvtsUncorMET) / nEvtsUncorMET<<endl;
-    fRes  <<mass<<"\t"<<hNEvts.GetRMS()/hNEvts.GetMean()<<endl;
-    
-  }
+    fScale<<mass<<"\t"<<vDiffScaledMET.val<<"\t"<<vDiffScaledMET.err<<endl;
+    fRes  <<mass<<"\t"<<vDiffSmearedMET.val<<"\t"<<vDiffSmearedMET.err<<endl;
 }
 
-float
-NEvtsCorMET(TTree* tEvts, int seed){
+Value
+NEvtsCorMET(TTree* tEvts, int seed, const string & moreCuts){
+  TH1F hist("hist", "Dummy Hist", 1, 0, 10);
+  hist.Sumw2();
   //cout<<" Seed is "<<seed<<endl;
-  tEvts->Draw("ZLep1PtGen:ZLep1PhiGen:ZLep2PtGen:ZLep2PhiGen:WLepPtGen:WLepPhiGen:WNeuPtGen:WNeuPhiGen:MET:METPhi", "weight", "para goff");
+  tEvts->Draw("ZLep1PtGen:ZLep1PhiGen:ZLep2PtGen:ZLep2PhiGen:WLepPtGen:WLepPhiGen:WNeuPtGen:WNeuPhiGen:ZLep1Pt:ZLep1Phi:ZLep2Pt:ZLep2Phi:WLepPt:WLepPhi:MET:METPhi", Form("weight*(%s)", moreCuts.c_str()), "para goff");
   double n = tEvts->GetSelectedRows(); 
   //if(1) cout<<"Found "<<n<<" input gen events "<<endl;
-  float NEvts = 0;
   for(int ievt=0; ievt<n; ++ievt){
     int treeIdx = 0;
     const double ZLep1PtGen  = tEvts->GetVal(treeIdx++)[ievt];
@@ -116,12 +113,21 @@ NEvtsCorMET(TTree* tEvts, int seed){
     const double WLepPhiGen  = tEvts->GetVal(treeIdx++)[ievt];
     const double WNeuPtGen   = tEvts->GetVal(treeIdx++)[ievt];
     const double WNeuPhiGen  = tEvts->GetVal(treeIdx++)[ievt];
+    
+    const double ZLep1Pt  = tEvts->GetVal(treeIdx++)[ievt];
+    const double ZLep1Phi = tEvts->GetVal(treeIdx++)[ievt];
+    const double ZLep2Pt  = tEvts->GetVal(treeIdx++)[ievt];
+    const double ZLep2Phi = tEvts->GetVal(treeIdx++)[ievt];
+    const double WLepPt   = tEvts->GetVal(treeIdx++)[ievt];
+    const double WLepPhi  = tEvts->GetVal(treeIdx++)[ievt];
+    const double MET   = tEvts->GetVal(treeIdx++)[ievt];
+    const double METPhi  = tEvts->GetVal(treeIdx++)[ievt];
     const float weight       = tEvts->GetW()[ievt];
 
     if(ZLep1PtGen == 0 || 
        ZLep2PtGen == 0 ||
        WLepPtGen  == 0){
-      cout<<"Skipping event b/c not 3 leptons"<<endl;
+      //cout<<"Skipping event b/c not 3 leptons"<<endl;
       continue;
     }
     
@@ -131,14 +137,20 @@ NEvtsCorMET(TTree* tEvts, int seed){
     }
 
     TVector2 zLep1, zLep2, wLep, met;
-    zLep1.SetMagPhi(ZLep1PtGen, ZLep1PhiGen);
-    zLep2.SetMagPhi(ZLep2PtGen, ZLep2PhiGen);
-    wLep.SetMagPhi(WLepPtGen, WLepPhiGen);
-    met.SetMagPhi(WNeuPtGen, WNeuPhiGen);
+    zLep1.SetMagPhi(ZLep1Pt, ZLep1Phi);
+    zLep2.SetMagPhi(ZLep2Pt, ZLep2Phi);
+    wLep.SetMagPhi(WLepPt, WLepPhi);
+    met.SetMagPhi(MET, METPhi);
+    TVector2 zrec = zLep1 + zLep2;
+    TVector2 wrec = wLep + met;
 
-    TVector2 zrec( zLep1.Px() + zLep2.Px(), zLep1.Py() + zLep2.Py());
-    TVector2 wrec(  wLep.Px() +   met.Px(),  wLep.Py() +   met.Py());
-    TVector2 wz_gen = zrec + wrec;
+
+    TVector2 zLep1Gen, zLep2Gen, wLepGen, wNeuGen;
+    zLep1Gen.SetMagPhi(ZLep1PtGen, ZLep1PhiGen);
+    zLep2Gen.SetMagPhi(ZLep2PtGen, ZLep2PhiGen);
+    wLepGen.SetMagPhi(WLepPtGen, WLepPhiGen);
+    wNeuGen.SetMagPhi(WNeuPtGen, WNeuPhiGen);
+    TVector2 wz_gen = zLep1Gen + zLep2Gen + wLepGen + wNeuGen;
 
     //TVector2 zrec( z.Px(), z.Py());
     //TVector2 wrec( w.Px(), w.Py());
@@ -180,14 +192,14 @@ NEvtsCorMET(TTree* tEvts, int seed){
 
     double Met_modified = sqrt( pow(Met_Px_corr,2) + pow(Met_Py_corr,2) );
 
-    if(Met_modified > 30.) NEvts += weight;
+    if(Met_modified > 30.) hist.Fill(1, weight);
 
 //  cout<<" Orig met: "<<MET
 //      <<" Corr met: "<<Met_modified
 //      <<endl;
   }//loop over nevts
-  //cout<<" Number of events passing modified met is "<<NEvts<<endl;
-  return NEvts;
+  //cout<<" Number of events passing modified met is "<<hist.GetBinContent(1)<<endl;
+  return Value(hist.GetBinContent(1), hist.GetBinError(1));
 /*
 //For scaling, it is enough to calculate yield difference after cutting
 //on modified and non-modified MET to get uncertainty effect (on either
@@ -211,3 +223,5 @@ NEvtsCorMET(TTree* tEvts, int seed){
 //   Let me know if you need more information about this.. :)
 */  
 }
+
+
