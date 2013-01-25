@@ -1,0 +1,6 @@
+# Counting experiment with multiple channels
+# Wprime with 4 channels
+imax 4  number of channels
+jmax 5  number of backgrounds ('*' = automatic)
+kmax 18  number of nuisance parameters (sources of systematical uncertainties)
+------------
