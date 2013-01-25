@@ -48,12 +48,13 @@ void EffVsMass(){
     
     //get tree from file
     TTree* t = getTree(fin, name, "tEvts_MET"); assert(t);
+    string analysisCuts = AnalysisCuts(mass);
 
     for(int ch=0; ch<4; ++ch){
       float tot = sample_tot / 4;
       float pass = 0;
 
-      t->Draw("WZMass", Form("weight*(EvtType == %i)",ch), "goff");
+      t->Draw("WZMass", Form("weight*(EvtType == %i)*(%s)",ch, analysisCuts.c_str()), "goff");
       int n = t->GetSelectedRows();
       for(int ientry=0; ientry<n; ++ientry){
         float weight = t->GetW()[ientry];
@@ -100,4 +101,5 @@ void EffVsMass(){
   latexLabel.DrawLatex(0.21, 0.85, "#sqrt{s} = 8 TeV");
 
   c1->SaveAs("EffVsMass.png");
+  c1->SaveAs("EffVsMass.pdf");
 }
