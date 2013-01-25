@@ -316,6 +316,8 @@ description = DoublePhotonHighPt-Run2012D-PromptReco-v1
 pathname = filelists_WZ/DataPatTrilepton-W07-03-00-DoublePhotonHighPt-Run2012D-PromptReco-v1.txt
 splitInto = 2
 
+DONE
+
 #### Double Electron #####
 
 samplename = data-DoubleElectron
