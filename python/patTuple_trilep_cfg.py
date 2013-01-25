@@ -70,4 +70,5 @@ def trilep_config(process, reportEveryNum=100, maxEvents=-1, runOnData=False) :
     
     process.patJetCorrFactors.rho = cms.InputTag("kt6PFJetsPFlow", "rho")
     process.out.outputCommands.append('keep *_kt6PFJets_rho_PAT')
+    process.out.outputCommands.append('keep *_kt6PFJets_rho_RECO')
     
