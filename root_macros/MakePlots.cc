@@ -199,10 +199,6 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   /////Background Samples
 
   if(mode_ == kWprimeWZ || mode_ == kEWKWZ || mode_ == kWZFakeRate){
-    vector<string> ZJets; 
-    ZJets.push_back("DYJetsToLL");
-    Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
-    
     if(mode_ == kWZFakeRate || mode_ == kEWKWZ){
       //Bkg.push_back(Sample("WJetsToLNu", kOrange+6, 1, kOrange+0));
       Bkg.push_back(Sample("ZZ", kGreen+3, 1, kGreen+2));
@@ -216,6 +212,10 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       Bkg.push_back(Sample("VV", VV, kOrange+3, 1, kOrange+3));
     }
     Bkg.push_back(Sample("TTJets"  , kViolet+4, 1, kViolet+2));
+
+    vector<string> ZJets; 
+    ZJets.push_back("DYJetsToLL");
+    Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
     
     Bkg.push_back(Sample("WZJetsTo3LNu"       , kOrange+3, 1, kOrange-2));
   }else if(mode_ == kHadVZ || mode_ == kWprimeVW || mode_ == kWprimeTB){
@@ -369,8 +369,8 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       variable.push_back("hWZ1e2mMass");
       variable.push_back("hWZ0e3mMass");
       
-      variable.push_back("hWZTransMass");
-      variable.push_back("hWZpt");
+      //variable.push_back("hWZTransMass");
+      //variable.push_back("hWZpt");
     
       variable.push_back("hLt");
       variable.push_back("hLt3e0m");
@@ -409,6 +409,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
 
       variable.push_back("hMET");
       variable.push_back("hMETSig");
+      variable.push_back("hMETPhi");
       variable.push_back("hMETee");
       variable.push_back("hMETmm");
       variable.push_back("hMET3e0m");
@@ -433,6 +434,8 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       variable.push_back("hNJets");
 
       variable.push_back("hNVtxs");
+      variable.push_back("hNVtxsZee");
+      variable.push_back("hNVtxsZmm");
       variable.push_back("hWeight");
 
       variable.push_back("hNLLeps");
@@ -650,6 +653,35 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       DrawandSave(fin,outName,WZMassChannels,"Title: WZ Mass By Channel",1,0,0,0);
       //DrawandSave(fin,outName,WZMassChannels,"Title: WZ Mass By Channel",0);
       //DrawandSave(fin,outName,WZMassChannels,"Title: WZ Mass By Channel",0,0,0,0);
+
+      vector<string> LtChannels;//Lt
+      LtChannels.push_back("hLt3e0m_MET");
+      LtChannels.push_back("hLt2e1m_MET");
+      LtChannels.push_back("hLt1e2m_MET");
+      LtChannels.push_back("hLt0e3m_MET");
+      DrawandSave(fin,outName,LtChannels,"Title: Lt  By Channel",1,0,0,0);
+
+      vector<string> METChannels;//MET
+      METChannels.push_back("hMET3e0m_ValidW");
+      METChannels.push_back("hMET2e1m_ValidW");
+      METChannels.push_back("hMET1e2m_ValidW");
+      METChannels.push_back("hMET0e3m_ValidW");
+      DrawandSave(fin,outName,METChannels,"Title: MET By Channel",1,0,0,0);
+
+      vector<string> WTMass4Channels;
+      WTMass4Channels.push_back("hW3e0mTransMass_MET");
+      WTMass4Channels.push_back("hW2e1mTransMass_MET");
+      WTMass4Channels.push_back("hW1e2mTransMass_MET");
+      WTMass4Channels.push_back("hW0e3mTransMass_MET");
+      DrawandSave(fin,outName,WTMass4Channels,"Title: W TransMass By 4 Channel",1,0,0,0);
+
+      vector<string> ZMass4Channels;
+      ZMass4Channels.push_back("hZ3e0mMass_MET");
+      ZMass4Channels.push_back("hZ2e1mMass_MET");
+      ZMass4Channels.push_back("hZ1e2mMass_MET");
+      ZMass4Channels.push_back("hZ0e3mMass_MET");
+      DrawandSave(fin,outName,ZMass4Channels,"Title: Z Mass By 4 Channels",1,0,0,0);
+
     }
   }else if(mode_ == kEWKWZ){
       vector<string> NVtxs2Channels;
@@ -762,7 +794,7 @@ DrawandSave(TFile* fin, string pdfName, vstring title, string bookmark, bool log
     //Cory: do the subplots here
     int ny = sqrt(nsubplots);//truncate to int
     int nx = nsubplots / ny;
-    canvas->Divide(nx,ny);
+    canvas->Divide(nx,ny, 0.0001, 0.0001);
     
     for(int i=0; i<nsubplots; ++i){
       if(!GetHistograms(fin, title[i], eff, cum)) return;
@@ -947,7 +979,7 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
       }//i loop
 
       ///////////
-      if(title.find("TREE") == string::npos){
+      if(title.find("TREE") == string::npos){//Didn't find TREE in title
         //cout<<"title is "<<title<<endl;
         curSample.hist = get_sum_of_hists(fin, names, title, rebin, curSample.weights);
       }else{//Get Histograms from Trees///
@@ -1046,7 +1078,7 @@ CheckSamples(TFile* fin, vector<Sample> & samples){
       if(nJobsDone != nJobsTotal){
         if(nJobsDone < nJobsTotal ) printf(" Only %i of %i jobs finished for %s.  Scaling to compensate\n",
                                           nJobsDone, nJobsTotal, name.c_str());
-        else printf("Job totals for %s don't match (%i expected, see %i) and you're combined different job types so the results are junk\n",
+        else printf("Job totals for %s don't match (%i expected, see %i) and you're combined different job types so can't scale\n",
                     name.c_str(), nJobsTotal, nJobsDone);
       }
       //Scale sample to compensate for missing jobs (except data)
@@ -1122,8 +1154,10 @@ ChangeAxisRange(const string & filename, TAxis* xaxis){
       filename.find("hWZ1e2muMass_") != string::npos ||
       filename.find("hWZ0e3muMass_") != string::npos ||
       filename.find("hWZMass_") != string::npos){
-    xaxis->SetRangeUser(0,1500);
+    xaxis->SetRangeUser(0,1500); return;
     //hpull->SetAxisRange( -3., 3., "Y");
+  }else if (filename.find("hMETPhi_") != string::npos){
+    xaxis->SetRangeUser(-3.5,3.5); return;
   }else if (filename.find("hMET_") != string::npos ||
             filename.find("hMETee_") != string::npos ||
             filename.find("hMETmm_") != string::npos ||
@@ -1131,7 +1165,7 @@ ChangeAxisRange(const string & filename, TAxis* xaxis){
             filename.find("hMET2e1m_") != string::npos ||
             filename.find("hMET1e2m_") != string::npos ||
             filename.find("hMET0e3m_") != string::npos){
-    xaxis->SetRangeUser(0,300);
+    xaxis->SetRangeUser(0,300);//Cory: Change this to 500
     //hpull->SetAxisRange( -3., 3., "Y");
   }else if (filename.find("hLeadMuonPt_") != string::npos ||
             filename.find("hLeadElecPt_") != string::npos){
@@ -1261,10 +1295,18 @@ int GetRebin(string title){
      title.find("WZ2e1mMass") != string::npos ||
      title.find("WZ1e2mMass") != string::npos ||
      title.find("WZ0e3mMass") != string::npos) rebin = 5;
+  if(title.find("hLt_") != string::npos || 
+     title.find("hLt3e0m_") != string::npos ||
+     title.find("hLt2e1m_") != string::npos ||
+     title.find("hLt1e2m_") != string::npos ||
+     title.find("hLt0e3m_") != string::npos) return 2;
+  //if(title.find("TransMass_") != string::npos) return 2;
+  if(title.find("hMETPhi_") != string::npos) return 2;
+
   if(title.find("VZMass") != string::npos ||
      title.find("VZeeMass") != string::npos ||
      title.find("VZmmMass") != string::npos) rebin = 2;
-
+  
   if(title.find("eeVMass") != string::npos) rebin = 3;
   if(title.find("mmVMass") != string::npos) rebin = 3;
 
