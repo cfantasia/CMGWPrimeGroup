@@ -1,8 +1,8 @@
 from UserCode.CMGWPrimeGroup.commonWZ_cfg import *
 
-process.WprimeAnalyzer.outputFile  = "WprimeWZ.root"
-process.WprimeAnalyzer.logFile     = "WprimeWZ.dat"
-process.WprimeAnalyzer.candEvtFile = "WprimeWZ.evt"
+process.WprimeAnalyzer.outputFile  = "WprimeWZPUSys.root"
+process.WprimeAnalyzer.logFile     = "WprimeWZPUSys.dat"
+process.WprimeAnalyzer.candEvtFile = "WprimeWZPUSys.evt"
 
 process.WprimeAnalyzer.Cuts = WprimeWZCuts
 
@@ -45,3 +45,6 @@ else:
 process.WprimeAnalyzer.minLt = cms.untracked.double(290.) #W'600 Cut
 process.WprimeAnalyzer.minZpt =  cms.untracked.double(0.)
 process.WprimeAnalyzer.minWpt = cms.untracked.double(0.)
+
+# +++++++++++++++++++Options
+process.WprimeAnalyzer.DataPUDistFile = 'UserCode/CMGWPrimeGroup/pileup/DataPileupHistogram-73p5mb.root'
