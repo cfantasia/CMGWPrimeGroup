@@ -2,6 +2,7 @@
 #define _TeVMuon_h_
 
 #include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/MuonReco/interface/MuonCocktails.h"
 #include "TLorentzVector.h"
 
 #include "UserCode/CMGWPrimeGroup/interface/TeVMuon_tracking.h"
@@ -27,6 +28,7 @@ class TeVMuon : public pat::Muon{
   const bool isValid(const unsigned muReconstructor) const;
   const TLorentzVector getPatP4() const;
   const reco::TrackRef getTrack(const unsigned muReconstructor) const;
+  reco::TrackRef muonBestTrack() const;
   const TLorentzVector getTrkLorentzVector(const reco::TrackRef trk) const;
 
   //const TLorentzVector P4() const;
@@ -48,7 +50,7 @@ class TeVMuon : public pat::Muon{
   //computes the combined rel isolation value
   float combRelIsolation() const;
   float combRelIsolation03(const float offset) const;
-  float combRelPFIsolation() const;
+  float combRelPFIsolation(const float offset=0.) const;
   
 //////////////////////////////
 ///TeV Cut Functions//////////
@@ -158,12 +160,11 @@ inline float TeVMuon::combRelIsolation03(const float offset) const{
 }
 
 //computes the combined rel isolation value
-inline float TeVMuon::combRelPFIsolation() const
+inline float TeVMuon::combRelPFIsolation(const float offset) const
 {
+  //printf("offset for this muon is %.4f\n", offset);
   const reco::MuonPFIsolation & iso = pfIsolationR04();
-  return (iso.sumChargedHadronPt + std::max(0.,iso.sumNeutralHadronEt+iso.sumPhotonEt-0.5*iso.sumPUPt)) / pt();
-  //return ( chargedHadronIso() + neutralHadronIso() + photonIso() ) 
-  /// pt();
+  return std::max(0., iso.sumChargedHadronPt + std::max(0.,iso.sumNeutralHadronEt+iso.sumPhotonEt-0.5*iso.sumPUPt) - offset) / pt();
 }
 
 //////////////////////////////

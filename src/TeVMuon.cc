@@ -23,9 +23,15 @@ TeVMuon::getTrack(const unsigned muReconstructor) const{
     return pickyMuon();
   case kSTANDALONE:
     return standAloneMuon();
+  case kCOCKTAIL:
+    return (muon::tevOptimized(*this, 200, 17., 40., 0.25)).first;
   }
   std::cout<<"Failed to find a track requested ("<<algo_desc_long[muReconstructor]<<")\n";
   return globalTrack();
+}
+
+reco::TrackRef TeVMuon::muonBestTrack() const{
+  return muReconstructor_ == kCOCKTAIL ? getTrack(kCOCKTAIL) : Muon::muonBestTrack();
 }
 
 void TeVMuon::printTrackerInfo() const
