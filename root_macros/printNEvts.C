@@ -37,7 +37,7 @@ printNEvts(string infile, int mode=-1){
     Samples.push_back(make_pair(vector<string>(1,"ZZ"), "$ZZ$"));
     Samples.push_back(make_pair(vector<string>(1,"GVJets"), "$V\\gamma$"));
     //Samples.push_back(make_pair(vector<string>(1,"WJetsToLNu"), "$W+jets$"));
-    Samples.push_back(make_pair(vector<string>(1,"WWTo2L2Nu"), "$WW$"));
+    //Samples.push_back(make_pair(vector<string>(1,"WWTo2L2Nu"), "$WW$"));
     Samples.push_back(make_pair(vector<string>(1,"WZJetsTo3LNu"), "$WZ$"));
   }else if(infile.find("HadVZ") != string::npos){
     Samples.push_back(make_pair(vector<string>(1,"Summer11_DYJetsToLL_PtZ100"),"$Z+jets$"));
@@ -90,7 +90,7 @@ printNEvts(string infile, int mode=-1){
   if(infile.find("WprimeWZ") != string::npos){
     Samples.push_back(make_pair(vector<string>(), "BREAK"));//Print hline
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-200"), "200"));
-    Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-250"), "250"));
+    //Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-250"), "250"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-300"), "300"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-400"), "400"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-500"), "500"));
@@ -104,6 +104,11 @@ printNEvts(string infile, int mode=-1){
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-1300"), "1300"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-1400"), "1400"));
     Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-1500"), "1500"));
+    Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-1600"), "1600"));
+    Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-1700"), "1700"));
+    Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-1800"), "1800"));
+    Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-1900"), "1900"));
+    Samples.push_back(make_pair(vector<string>(1, "WprimeToWZTo3LNu_M-2000"), "2000"));
   }else if(infile.find("HadVZ") != string::npos){
     Samples.push_back(make_pair(vector<string>(), "BREAK"));//Print hline
     vector<string> RS750;
@@ -165,13 +170,13 @@ printNEvts(string infile, int mode=-1){
       levels.push_back(make_pair("MET", "\\MET"));
     }else if(mode == -2){
       evtTypes.push_back(Channel("ee", 0,1));
-      evtTypes.push_back(Channel("\\mu\\mu", 2,3));
+      evtTypes.push_back(Channel("$\\mu\\mu$", 2,3));
       levels.push_back(make_pair("ValidZ", "Z Selection"));
     }else{
       evtTypes.push_back(Channel("3e", 0));
-      evtTypes.push_back(Channel("2e1\\mu", 1));
-      evtTypes.push_back(Channel("1e2\\mu", 2));
-      evtTypes.push_back(Channel("3\\mu", 3));
+      evtTypes.push_back(Channel("2e1$\\mu$", 1));
+      evtTypes.push_back(Channel("1e2$\\mu$", 2));
+      evtTypes.push_back(Channel("3$\\mu$", 3));
       levels.push_back(make_pair("ValidW", "W Selection"));
       levels.push_back(make_pair("MET", "\\MET"));
     }
@@ -180,7 +185,7 @@ printNEvts(string infile, int mode=-1){
       evtTypes.push_back(Channel("All Channels", 0,2));
     }else{
       evtTypes.push_back(Channel("ee", 0));
-      evtTypes.push_back(Channel("\\mu\\mu", 2));
+      evtTypes.push_back(Channel("$\\mu$$\\mu$", 2));
     }
     levels.push_back(make_pair("Zpt", "Z Selection"));
     levels.push_back(make_pair("VMass", "V Selection"));
@@ -194,6 +199,10 @@ printNEvts(string infile, int mode=-1){
 
   if(mode == -1){
     cout<<"Sample ";
+    for(unsigned level=0; level<levels.size(); ++level){
+      cout<<" & "<<levels[level].second;//Print cut names
+    }
+    cout<<" \\\\ "<<endl;
   }else{//don't do if doing all channels
     cout<<"\\multirow{2}{*}{Sample} ";
     for(unsigned level=0; level<levels.size(); ++level){
@@ -201,16 +210,16 @@ printNEvts(string infile, int mode=-1){
     }
     cout<<" \\\\ "<<endl;
     cout<<" \\cline{2-"<<levels.size()*evtTypes.size()+1<<"}"<<endl;
-  }
-  for(unsigned level=0; level<levels.size(); ++level){
-    for(unsigned channel=0; channel<evtTypes.size(); ++channel){//multi col
-      cout<<" & "<<evtTypes[channel].name;//Print cut names
+    for(unsigned level=0; level<levels.size(); ++level){
+      for(unsigned channel=0; channel<evtTypes.size(); ++channel){//multi col
+        cout<<" & "<<evtTypes[channel].name;//Print cut names
+      }
     }
   }
   cout<<" \\\\ \\hline"<<endl;
 
   for(unsigned i=0; i<Samples.size(); ++i){
-    if(Samples[i].second.find("Data") == string::npos) continue;//Cory: test only data
+    //if(Samples[i].second.find("Data") == string::npos) continue;//Cory: test only data
 
     if(Samples[i].second == "BREAK"){
       cout<<" \\hline"<<endl;
