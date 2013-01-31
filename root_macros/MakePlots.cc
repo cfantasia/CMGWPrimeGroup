@@ -1076,13 +1076,16 @@ CheckSamples(TFile* fin, vector<Sample> & samples){
         continue;//Cory: Didn't record this so skip for now.  Delete soon (2012-05-31)
       }
       if(nJobsDone != nJobsTotal){
-        if(nJobsDone < nJobsTotal ) printf(" Only %i of %i jobs finished for %s.  Scaling to compensate\n",
-                                          nJobsDone, nJobsTotal, name.c_str());
-        else printf("Job totals for %s don't match (%i expected, see %i) and you're combined different job types so can't scale\n",
-                    name.c_str(), nJobsTotal, nJobsDone);
+        if(nJobsDone < nJobsTotal ){
+          printf(" Only %i of %i jobs finished for %s.  Scaling to compensate\n",
+                 nJobsDone, nJobsTotal, name.c_str());
+          //Scale sample to compensate for missing jobs (except data)
+          if(&samples != &Data) sample.weights[j] *= (float) nJobsTotal / nJobsDone;
+        }else{
+          printf("Job totals for %s don't match (%i expected, see %i) and you're combined different job types so can't scale\n",
+                 name.c_str(), nJobsTotal, nJobsDone);
+        }
       }
-      //Scale sample to compensate for missing jobs (except data)
-      if(&samples != &Data) sample.weights[j] *= (float) nJobsTotal / nJobsDone;
       if(debug_) cout<<"Scaling set to "<<sample.weights[j]<<endl;
 
     }//subsample loop
