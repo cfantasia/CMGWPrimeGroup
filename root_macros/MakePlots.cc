@@ -690,28 +690,25 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       ZMass4Channels.push_back("hZ0e3mMass_MET");
       DrawandSave(fin,outName,ZMass4Channels,"Title: Z Mass By 4 Channels",1,0,0,0);
 
-      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==0)NBINS30MIN-3MAX3OBJtEvts_ValidW","Title: W Wlepton Eta ch 0 After W",0);
-      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==1)NBINS30MIN-3MAX3OBJtEvts_ValidW","Title: W Wlepton Eta ch 1 After W",0);
-      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==2)NBINS30MIN-3MAX3OBJtEvts_ValidW","Title: W Wlepton Eta ch 2 After W",0);
-      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==3)NBINS30MIN-3MAX3OBJtEvts_ValidW","Title: W Wlepton Eta ch 3 After W",0);
+      DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS30_MIN-3_MAX3_OBJtEvts_ValidW","Title: W Wlepton Eta ch 0 After W",0);
+      DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS30_MIN-3_MAX3_OBJtEvts_ValidW","Title: W Wlepton Eta ch 1 After W",0);
+      DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS30_MIN-3_MAX3_OBJtEvts_ValidW","Title: W Wlepton Eta ch 2 After W",0);
+      DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS30_MIN-3_MAX3_OBJtEvts_ValidW","Title: W Wlepton Eta ch 3 After W",0);
 
-      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==0)NBINS30MIN-3MAX3OBJtEvts_MET","Title: W Wlepton Eta ch 0 After MET",0);
-      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==1)NBINS30MIN-3MAX3OBJtEvts_MET","Title: W Wlepton Eta ch 1 After MET",0);
-      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==2)NBINS30MIN-3MAX3OBJtEvts_MET","Title: W Wlepton Eta ch 2 After MET",0);
-      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==3)NBINS30MIN-3MAX3OBJtEvts_MET","Title: W Wlepton Eta ch 3 After MET",0);
+      DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{3e#0mu};Events_CUTSweight*(EvtType==0)_NBINS30_MIN-3_MAX3_OBJtEvts_MET","Title: W Wlepton Eta ch 0 After MET",0);
+      DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{2e#1mu};Events_CUTSweight*(EvtType==1)_NBINS30_MIN-3_MAX3_OBJtEvts_MET","Title: W Wlepton Eta ch 1 After MET",0);
+      DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{1e#2mu};Events_CUTSweight*(EvtType==2)_NBINS30_MIN-3_MAX3_OBJtEvts_MET","Title: W Wlepton Eta ch 2 After MET",0);
+      DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{0e#3mu};Events_CUTSweight*(EvtType==3)_NBINS30_MIN-3_MAX3_OBJtEvts_MET","Title: W Wlepton Eta ch 3 After MET",0);
 
-      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==0)NBINS30MIN0MAX30OBJtEvts_ValidW","Title: Number of Vertices ch 0 After ValidW",0);
-      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==1)NBINS30MIN0MAX30OBJtEvts_ValidW","Title: Number of Vertices ch 1 After ValidW",0);
-      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==2)NBINS30MIN0MAX30OBJtEvts_ValidW","Title: Number of Vertices ch 2 After ValidW",0);
-      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==3)NBINS30MIN0MAX30OBJtEvts_ValidW","Title: Number of Vertices ch 3 After ValidW",0);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS30_MIN0_MAX30_OBJtEvts_ValidW","Title: Number of Vertices ch 0 After ValidW",0);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS30_MIN0_MAX30_OBJtEvts_ValidW","Title: Number of Vertices ch 1 After ValidW",0);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS30_MIN0_MAX30_OBJtEvts_ValidW","Title: Number of Vertices ch 2 After ValidW",0);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS30_MIN0_MAX30_OBJtEvts_ValidW","Title: Number of Vertices ch 3 After ValidW",0);
 
-      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==0)NBINS30MIN0MAX30OBJtEvts_MET","Title: Number of Vertices ch 0 After MET",0);
-      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==1)NBINS30MIN0MAX30OBJtEvts_MET","Title: Number of Vertices ch 1 After MET",0);
-      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==2)NBINS30MIN0MAX30OBJtEvts_MET","Title: Number of Vertices ch 2 After MET",0);
-      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==3)NBINS30MIN0MAX30OBJtEvts_MET","Title: Number of Vertices ch 3 After MET",0);
-
-      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==3)NBINS1MIN0MAX30OBJtEvts_ValidW","Title: Number of Vertices ch 3 After W",0);
-      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==3)NBINS1MIN0MAX30OBJtEvts_MET","Title: Number of Vertices ch 3 After MET",0);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS30_MIN0_MAX30_OBJtEvts_MET","Title: Number of Vertices ch 0 After MET",0);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS30_MIN0_MAX30_OBJtEvts_MET","Title: Number of Vertices ch 1 After MET",0);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS30_MIN0_MAX30_OBJtEvts_MET","Title: Number of Vertices ch 2 After MET",0);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS30_MIN0_MAX30_OBJtEvts_MET","Title: Number of Vertices ch 3 After MET",0);
 
     }
   }else if(mode_ == kEWKWZ){
@@ -1016,17 +1013,19 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
       }else{//Get Histograms from Trees///
         //Expects...TREEVariableCUTSEvtType==1OBJtEvts_ValidW
         size_t start, end;
-        start = title.find("TREE") + 4; end = title.find("CUTS"); 
+        start = title.find("TREE") + 4; end = title.find("_LABEL"); 
         string var  = title.substr(start, end-start);
-        start = end + 4; end = title.find("NBINS"); 
+        start = end + 6; end = title.find("_CUTS"); 
+        string label  = title.substr(start, end-start);
+        start = end + 5; end = title.find("_NBINS"); 
         string cuts = title.substr(start, end-start);
-        start = end + 5; end = title.find("MIN");
+        start = end + 6; end = title.find("_MIN");
         int nbins = atoi(title.substr(start, end-start).c_str());
-        start = end + 3; end = title.find("MAX");
+        start = end + 4; end = title.find("_MAX");
         float min = atof(title.substr(start, end-start).c_str());
-        start = end + 3; end = title.find("OBJ");
+        start = end + 4; end = title.find("_OBJ");
         float max = atof(title.substr(start, end-start).c_str());
-        start = end + 3; end = string::npos;
+        start = end + 4; end = string::npos;
         string obj = title.substr(start, end-start).c_str();
         if(1 || debug_){
           cout<<" var: "<<var
@@ -1036,7 +1035,7 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
               <<" max: "<<max
               <<endl;
         }
-        curSample.hist = new TH1F((curSample.name+title).c_str(), "", nbins, min, max);
+        curSample.hist = new TH1F((curSample.name+title).c_str(), label.c_str(), nbins, min, max);
         
         //string obj = "tEvts_ValidW";
         get_sum_of_hists(fin, names, obj, var, cuts, *curSample.hist, curSample.weights);
