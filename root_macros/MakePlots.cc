@@ -82,6 +82,7 @@ float lumiWanted_ = -1;
 bool scaleLumi_ = false;
 bool paperMode_ = false;
 bool identifyPlot_ = false;
+bool useDataDrive_ = false;
 
 typedef std::vector<std::string> vstring;
 
@@ -114,6 +115,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   if(opt.find("lowSig") != string::npos) drawLowSig_ = true;
   if(opt.find("paper") != string::npos) paperMode_ = true;
   if(opt.find("identify") != string::npos) identifyPlot_ = true;
+  if(opt.find("useDataDriven") != string::npos) useDataDrive_ = true;
 
   if(paperMode_) setTDRStyle();
   else{
@@ -242,7 +244,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   /////Signal Samples
 
   if(mode_ == kWprimeWZ){
-    Sig.push_back(Sample("WprimeToWZTo3LNu_M-200", kBlue, 1, 0));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-200", kBlue, 1, 0));
     Sig.push_back(Sample("WprimeToWZTo3LNu_M-500", kRed, 1, 0));
     Sig.push_back(Sample("WprimeToWZTo3LNu_M-1000", kGreen, 1, 0));
     Sig.push_back(Sample("WprimeToWZTo3LNu_M-1500", kOrange, 1, 0));
@@ -592,6 +594,12 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       DrawandSave(fin,outName,"hZeeMass_ValidZ","Title: Z Mass After Valid Zee",0);
       DrawandSave(fin,outName,"hZmmMass_ValidZ","Title: Z Mass After Valid Zmm",0);
 
+      DrawandSave(fin,outName,"hZMass_ValidW","Title: Z Mass After Valid W",1);
+      DrawandSave(fin,outName,"hZ3e0mMass_ValidW","Title: Z Mass After Valid W 3e0m",0);
+      DrawandSave(fin,outName,"hZ2e1mMass_ValidW","Title: Z Mass After Valid W 2e1m",0);
+      DrawandSave(fin,outName,"hZ1e2mMass_ValidW","Title: Z Mass After Valid W 1e2m",0);
+      DrawandSave(fin,outName,"hZ0e3mMass_ValidW","Title: Z Mass After Valid W 0e3m",0);
+
       DrawandSave(fin,outName,"hWTransMass_ValidW","Title: W TMass After Valid W",1);
       DrawandSave(fin,outName,"hWenuTransMass_ValidW","Title: W TMass After Valid Wen",1);
       DrawandSave(fin,outName,"hWmnuTransMass_ValidW","Title: W TMass After Valid Wmu",1);
@@ -681,6 +689,29 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       ZMass4Channels.push_back("hZ1e2mMass_MET");
       ZMass4Channels.push_back("hZ0e3mMass_MET");
       DrawandSave(fin,outName,ZMass4Channels,"Title: Z Mass By 4 Channels",1,0,0,0);
+
+      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==0)NBINS30MIN-3MAX3OBJtEvts_ValidW","Title: W Wlepton Eta ch 0 After W",0);
+      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==1)NBINS30MIN-3MAX3OBJtEvts_ValidW","Title: W Wlepton Eta ch 1 After W",0);
+      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==2)NBINS30MIN-3MAX3OBJtEvts_ValidW","Title: W Wlepton Eta ch 2 After W",0);
+      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==3)NBINS30MIN-3MAX3OBJtEvts_ValidW","Title: W Wlepton Eta ch 3 After W",0);
+
+      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==0)NBINS30MIN-3MAX3OBJtEvts_MET","Title: W Wlepton Eta ch 0 After MET",0);
+      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==1)NBINS30MIN-3MAX3OBJtEvts_MET","Title: W Wlepton Eta ch 1 After MET",0);
+      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==2)NBINS30MIN-3MAX3OBJtEvts_MET","Title: W Wlepton Eta ch 2 After MET",0);
+      DrawandSave(fin,outName,"TREEWLepEtaCUTSweight*(EvtType==3)NBINS30MIN-3MAX3OBJtEvts_MET","Title: W Wlepton Eta ch 3 After MET",0);
+
+      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==0)NBINS30MIN0MAX30OBJtEvts_ValidW","Title: Number of Vertices ch 0 After ValidW",0);
+      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==1)NBINS30MIN0MAX30OBJtEvts_ValidW","Title: Number of Vertices ch 1 After ValidW",0);
+      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==2)NBINS30MIN0MAX30OBJtEvts_ValidW","Title: Number of Vertices ch 2 After ValidW",0);
+      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==3)NBINS30MIN0MAX30OBJtEvts_ValidW","Title: Number of Vertices ch 3 After ValidW",0);
+
+      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==0)NBINS30MIN0MAX30OBJtEvts_MET","Title: Number of Vertices ch 0 After MET",0);
+      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==1)NBINS30MIN0MAX30OBJtEvts_MET","Title: Number of Vertices ch 1 After MET",0);
+      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==2)NBINS30MIN0MAX30OBJtEvts_MET","Title: Number of Vertices ch 2 After MET",0);
+      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==3)NBINS30MIN0MAX30OBJtEvts_MET","Title: Number of Vertices ch 3 After MET",0);
+
+      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==3)NBINS1MIN0MAX30OBJtEvts_ValidW","Title: Number of Vertices ch 3 After W",0);
+      DrawandSave(fin,outName,"TREENVtxsCUTSweight*(EvtType==3)NBINS1MIN0MAX30OBJtEvts_MET","Title: Number of Vertices ch 3 After MET",0);
 
     }
   }else if(mode_ == kEWKWZ){
@@ -931,7 +962,7 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
 
       ///Add ability to use Data Driven Methods instead of MC//////
       vector<string> names = curSample.names;
-      if(1 && mode_ == kEWKWZ){
+      if(useDataDrive_ && mode_ == kEWKWZ){
         if(title.find("hMET3e0m_ValidW") != string::npos ||//met
            title.find("hMET2e1m_ValidW") != string::npos ||
            title.find("hMET1e2m_ValidW") != string::npos ||
@@ -983,20 +1014,31 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
         //cout<<"title is "<<title<<endl;
         curSample.hist = get_sum_of_hists(fin, names, title, rebin, curSample.weights);
       }else{//Get Histograms from Trees///
-        curSample.hist = new TH1F("a", "", 10, 0, 50);
-        string newtitle = title;
-        newtitle.replace(newtitle.find("TREE"), 4, "");
-        size_t pos = newtitle.find("CUTS");
-        string var = newtitle.substr(0, pos);
-        string cuts = newtitle.substr(pos);
-        cuts.replace(cuts.find("CUTS"), 4, "");
-        //cout<<" pos: "<<pos
-        //<<" var: "<<var
-        //<<" cuts: "<<cuts
-        //<<endl;
+        //Expects...TREEVariableCUTSEvtType==1OBJtEvts_ValidW
+        size_t start, end;
+        start = title.find("TREE") + 4; end = title.find("CUTS"); 
+        string var  = title.substr(start, end-start);
+        start = end + 4; end = title.find("NBINS"); 
+        string cuts = title.substr(start, end-start);
+        start = end + 5; end = title.find("MIN");
+        int nbins = atoi(title.substr(start, end-start).c_str());
+        start = end + 3; end = title.find("MAX");
+        float min = atof(title.substr(start, end-start).c_str());
+        start = end + 3; end = title.find("OBJ");
+        float max = atof(title.substr(start, end-start).c_str());
+        start = end + 3; end = string::npos;
+        string obj = title.substr(start, end-start).c_str();
+        if(1 || debug_){
+          cout<<" var: "<<var
+              <<" cuts: "<<cuts
+              <<" nbins: "<<nbins
+              <<" min: "<<min
+              <<" max: "<<max
+              <<endl;
+        }
+        curSample.hist = new TH1F((curSample.name+title).c_str(), "", nbins, min, max);
         
-        string obj = "tEvts_ValidW";
-        TTree* t = getTree(fin, names, "tEvts_ValidW"); assert(t); 
+        //string obj = "tEvts_ValidW";
         get_sum_of_hists(fin, names, obj, var, cuts, *curSample.hist, curSample.weights);
         assert(curSample.hist);
       }
@@ -1356,26 +1398,26 @@ FillNameMap(){
   SampleNames["ZCC3JetsToLNu"]="Z+3Jets\\rightarrowcc";
   SampleNames["WZ"]="WZ";
   SampleNames["WZJetsTo3LNu"]="WZ";//\\rightarrow3l\\nu";
-  SampleNames["WprimeToWZTo3LNu_M-200"]="W' (200 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-200"]="W' (0.2 TeV)";
   SampleNames["WprimeToWZTo3LNu_M-250"]="W' (250 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-300"]="W' (300 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-400"]="W' (400 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-500"]="W' (500 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-600"]="W' (600 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-700"]="W' (700 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-800"]="W' (800 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-900"]="W' (900 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-1000"]="W' (1000 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-1100"]="W' (1100 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-1200"]="W' (1200 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-1300"]="W' (1300 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-1400"]="W' (1400 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-1500"]="W' (1500 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-1600"]="W' (1600 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-1700"]="W' (1700 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-1800"]="W' (1800 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-1900"]="W' (1900 GeV)";
-  SampleNames["WprimeToWZTo3LNu_M-2000"]="W' (2000 GeV)";
+  SampleNames["WprimeToWZTo3LNu_M-300"]="W' (0.3 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-400"]="W' (0.4 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-500"]="W' (0.5 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-600"]="W' (0.6 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-700"]="W' (0.7 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-800"]="W' (0.8 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-900"]="W' (0.9 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1000"]="W' (1.0 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1100"]="W' (1.1 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1200"]="W' (1.2 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1300"]="W' (1.3 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1400"]="W' (1.4 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1500"]="W' (1.5 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1600"]="W' (1.6 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1700"]="W' (1.7 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1800"]="W' (1.8 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-1900"]="W' (1.9 TeV)";
+  SampleNames["WprimeToWZTo3LNu_M-2000"]="W' (2.0 TeV)";
   SampleNames["TC225"]="\\rho_{TC} 225";
   SampleNames["TC_WZ_300"]="\\rho_{TC} 300";
   SampleNames["TC_WZ_400"]="\\rho_{TC} 400";
