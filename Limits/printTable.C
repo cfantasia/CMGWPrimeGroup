@@ -22,7 +22,7 @@ printTable(int mode){
   //Cuts File
   TTree* tCuts = new TTree("tCuts", "Cuts");
   tCuts->ReadFile("cutValues.wz.dat");
-  tCuts->Draw("SignalCode:Mass:minWindow:maxWindow:HtCut", "", "para goff");
+  tCuts->Draw("SignalCode:Mass:minWindow:maxWindow:LtCut", "", "para goff");
   float nCuts = tCuts->GetSelectedRows(); 
   
   //# of Events File
@@ -41,7 +41,7 @@ printTable(int mode){
   switch(mode){
 
   case 0:
-    cout<<"Mass point Window NBkgMC eSig NSig Data Exp. Limit Obs. Limit"<<endl;
+    cout<<"Mass point & Window & NBkgMC & Data & NSig & eSig & Exp. Limit & Obs. Limit \\\\"<<endl;
 
     //loop over signals:
     for(int iLims=0; iLims<nLims; ++iLims){
@@ -90,7 +90,8 @@ printTable(int mode){
     break;
 
   case 1:
-    cout<<"\n\n ----After Ht Cut Table (remember to use noWind option!!!!---------------\n\n";
+    cout<<"\n\n ----After Lt Cut Table (remember to use noWind option!!!!---------------\n\n";
+    cout<<"Mass point & $L_{T}^{Min}$ & NBkgMC & Data & NSig \\\\"<<endl;
   
     //loop over signals:
     for(int iEvts=0; iEvts<nEvts; ++iEvts){
@@ -100,7 +101,7 @@ printTable(int mode){
       const Double_t  mass = tCuts->GetVal(1)[iCuts];
       const Double_t  minWind = tCuts->GetVal(2)[iCuts];
       const Double_t  maxWind = tCuts->GetVal(3)[iCuts];
-      const Double_t  minHt   = tCuts->GetVal(4)[iCuts];
+      const Double_t  minLt   = tCuts->GetVal(4)[iCuts];
       const Double_t  DataEvts = tEvts->GetVal(1)[iCuts];
       const Double_t     MCEvts = tEvts->GetVal(2)[iCuts];
       const Double_t statMCEvts = tEvts->GetVal(3)[iCuts];
@@ -111,7 +112,7 @@ printTable(int mode){
 
       cout<<setiosflags(ios::fixed) << setprecision(0)
           <<"W' "<<mass<<" & "
-          <<minHt<<" & "
+          <<minLt<<" & "
           <<setiosflags(ios::fixed) << setprecision(1)
         //<<BkgEvts<<" $\\pm$ "<<statBkgEvts<<" & "
           <<Value(BkgEvts,statBkgEvts)<<" $\\pm$ "<<Value(statBkgEvts)<<" & "

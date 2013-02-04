@@ -23,7 +23,7 @@ root -b -l -q plotExclusion.C
 
 echo "Done with Plotting limits"
 
-Dir=LatestNumbers
+Dir=LatestNumbers-`date +%Y-%m-%d`
 if [ ! -d "$Dir" ]; then
     mkdir $Dir
 fi

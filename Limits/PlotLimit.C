@@ -41,7 +41,7 @@ struct SignalSample{
 };
 
 void
-PlotLimit(string inName){
+PlotLimit(string inName, string inFile="nLimit.txt"){
   //gErrorIgnoreLevel = kWarning;
   //CMSstyle();
   setTDRStyle();
@@ -50,7 +50,7 @@ PlotLimit(string inName){
   string outFile;
   vector<SignalSample> sigs;
   if(inName.find("WprimeWZ") != string::npos){
-    sigs.push_back(SignalSample("W'","xSec_WZ.dat",  "Mass:Xsec",  "Mass>=200", "\\sigma_{W'}", kBlack, 1, kGray));
+    sigs.push_back(SignalSample("W'","xSec_WZ.dat",  "Mass:Xsec",  "Mass>=172", "\\sigma_{W'}", kBlack, 1, kGray));
     //sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{2}","xSec_TCWZ-sinchi1d2.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{2}}", kRed, kDashed));
     //sigs.push_back(SignalSample("TC",                      "xSec_TCWZ-sinchi1d3.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{3}}", kRed));
     //sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{4}","xSec_TCWZ-sinchi1d4.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{4}}", kRed, 3));
@@ -66,7 +66,7 @@ PlotLimit(string inName){
 
   ////Load Trees////////
   TTree* tLimit = new TTree("tLimit", "Limits");
-  tLimit->ReadFile("nLimit.txt");
+  tLimit->ReadFile(inFile.c_str());
 
   for(unsigned iSig=0; iSig<sigs.size(); ++iSig){
     sigs[iSig].tXsec = new TTree("tXsec", "Signal Cross Sections");
@@ -86,7 +86,7 @@ PlotLimit(string inName){
   c1->SetLogy();
   int n=0;
   float* x; 
-  float* y, *yl, *yh;
+  float* y;
   
   TGraph *glumi;
   TGraph *g1Sigma, *g2Sigma;
@@ -106,6 +106,7 @@ PlotLimit(string inName){
   const Double_t* ExpLimitM2 = tLimit->GetVal(treeIdx++);
   
   glumi = new TGraph(n, mass, ExpLimit);
+  glumi->Sort();
   g2Sigma = new TGraph(2*n);
   g1Sigma = new TGraph(2*n);
   for (int i=0;i<n;i++) {
@@ -140,7 +141,6 @@ PlotLimit(string inName){
     sigs[iSig].tXsec->Draw( sigs[iSig].massString.c_str(), sigs[iSig].cutString.c_str(), "goff");
     n = sigs[iSig].tXsec->GetSelectedRows(); assert(n);
     x = new float[n]; y = new float[n];
-    yl = new float[n]; yh = new float[n];
     sigs[iSig].gXsecBand = new TGraph(2*n);
     float* sxSec = new float[n];
     for(int i=0; i<n; ++i){
@@ -160,6 +160,7 @@ PlotLimit(string inName){
     }
 
     sigs[iSig].gXsec = new TGraph(n, x, y);
+    sigs[iSig].gXsec->Sort();
     sigs[iSig].gXsec->SetLineColor(sigs[iSig].lineColor);
     sigs[iSig].gXsec->SetLineStyle(sigs[iSig].lineStyle);
     if(drawBand) sigs[iSig].gXsec->SetFillColor(sigs[iSig].bandColor);
@@ -172,22 +173,31 @@ PlotLimit(string inName){
   }
 
   cout<<"Drawing multigraph"<<endl;
-  mg->SetMinimum(0.0001);
+  mg->SetMinimum(0.00001);
   mg->Draw("a");
 
   for(unsigned iSig=0; iSig<sigs.size(); ++iSig){
-    float lowLimit(-1), upLimit(-1);
-    lowLimit = FindLimit(sigs[iSig].gXsec, gData, false); 
-    upLimit = FindLimit(sigs[iSig].gXsec, gData, true); 
-    if(0){//round limit
-      int roundToNearest = 10;//Cool trick
-      upLimit = round(upLimit/roundToNearest)*roundToNearest; 
+    float lowObsLimit(-1), upObsLimit(-1);
+    lowObsLimit = FindLimit(sigs[iSig].gXsec, gData, false); 
+    upObsLimit  = FindLimit(sigs[iSig].gXsec, gData, true); 
+    if(0){
+      lowObsLimit = roundToNearest(lowObsLimit, 10);
+      upObsLimit = roundToNearest(upObsLimit, 10);
     }
-    cout<<sigs[iSig].name<<" Limits are ["<<lowLimit<<", "<<upLimit<<"]"<<endl;
-    if(upLimit > 0. && sigs[iSig].lineStyle == 1){
-      //latexLabel.DrawLatex(0.20, 0.3-iSig*0.04, Form("#font[42]{Limit_{%s} = %.0f GeV}",sigs[iSig].name.c_str(),upLimit));
-      }  
+    cout<<sigs[iSig].name<<" Obs Limits are ["<<lowObsLimit<<", "<<upObsLimit<<"]"<<endl;
+    if(upObsLimit > 0. && sigs[iSig].lineStyle == 1){
+      //latexLabel.DrawLatex(0.20, 0.3-iSig*0.04, Form("#font[42]{Limit_{%s} = %.0f GeV}",sigs[iSig].name.c_str(),upObsLimit));
+    }  
+    float lowExpLimit(-1), upExpLimit(-1);
+    lowExpLimit = FindLimit(sigs[iSig].gXsec, glumi, false); 
+    upExpLimit  = FindLimit(sigs[iSig].gXsec, glumi, true); 
+    if(0){
+      lowExpLimit = roundToNearest(lowExpLimit, 10);
+      upExpLimit = roundToNearest(upExpLimit, 10);
+    }
+    cout<<sigs[iSig].name<<" Exp Limits are ["<<lowExpLimit<<", "<<upExpLimit<<"]"<<endl;
   }
+
   latexLabel.DrawLatex(0.33, 0.96, "CMS Preliminary 2012");
   latexLabel.DrawLatex(0.19, 0.30, "#sqrt{s} = 8 TeV");
   latexLabel.DrawLatex(0.17, 0.20, Form("#intL dt = %.2f fb^{-1}",lumi[0]/1000.));
@@ -233,14 +243,14 @@ FindLimit(const TGraph* xsec, const TGraph* limit, const bool findUpper){
   float upper = max(xsec->GetX()[xsec->GetN()-1], limit->GetX()[limit->GetN()-1]);
   const float INC = 1;
   for(float mass=upper; mass>=lower; mass-=INC){
-    if(xsec->Eval(mass) > limit->Eval(mass)){
+    if(xsec->Eval(mass, 0, "S") > limit->Eval(mass, 0, "S")){
       upLimit = mass+1;
       break;
     }
   }
   if(findUpper) return upLimit;
   for(float mass=upLimit-1; mass>=lower; mass-=INC){
-    if(xsec->Eval(mass) < limit->Eval(mass)) return mass+1;
+    if(xsec->Eval(mass, 0, "S") < limit->Eval(mass, 0, "S")) return mass+1;
   }
   
 

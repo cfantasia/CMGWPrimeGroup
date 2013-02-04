@@ -37,6 +37,10 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
      <<"statMCEvts/F:"
      <<"sysMCEvts/F:"
      <<"sMCEvts/F:"
+     <<"SigEvts/F:"
+     <<"statSigEvts/F:"
+     <<"sysSigEvts/F:"
+     <<"sSigEvts/F:"
      <<"BkgEvts/F:"
      <<"statBkgEvts/F:"
      <<"sysBkgEvts/F:"
@@ -48,7 +52,7 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
      <<endl;
   out  << setiosflags(ios::fixed) << setprecision(4);
 
-  vector<string> BkgSamples; 
+  vector<string> BkgSamples, tblSamples; 
   vector<string> dataSamples;
 
   vector<float> BkgWeights; 
@@ -63,6 +67,11 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     BkgSamples.push_back("GVJets");  
     //BkgSamples.push_back("WWTo2L2Nu"); 
     //BkgSamples.push_back("WJetsToLNu"); 
+
+    tblSamples.push_back("TTJets");
+    //tblSamples.push_back("GVJets");
+    tblSamples.push_back("ZZ");
+    tblSamples.push_back("WZJetsTo3LNu");
 
     dataSamples.push_back("data");
 
@@ -116,17 +125,15 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
   double lumi = GetLumiUsed(f);
        
   if(printTbl_){
-    cout<<" Mass & Window";
+    cout<<" Mass ";
+    if(!noWind_) cout<<"& Window";
     for(unsigned iBkg=0; iBkg<BkgSamples.size(); ++iBkg){
-      if(inName.find("WprimeWZ") != string::npos){
-        if(BkgSamples[iBkg].find("TTJets") != string::npos ||
-           BkgSamples[iBkg].find("ZZ") != string::npos ||
-           BkgSamples[iBkg].find("WZJetsTo3LNu") != string::npos ){
+      for(unsigned iTbl=0; iTbl<tblSamples.size(); ++iTbl){
+        if(BkgSamples[iBkg] == tblSamples[iTbl])
           cout<<" & "<<BkgSamples[iBkg];
-        }
       }
     }
-    cout<<" & Total"<<endl;
+    cout<<" & Total & Data & $N_{Sig}$ \\\\"<<endl;
   }
 
   tEvts->Draw(paramString.c_str(), "", "para goff");
@@ -248,8 +255,9 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     double statBkgEvts = 0.;
     double nBkgEvts = bkghist->IntegralAndError(minBin, maxBin,statBkgEvts);
 
+    double statSigEvts = sqrt(statMCEvts*statMCEvts - statBkgEvts*statBkgEvts);
     double nSigEvts = nMCEvts - nBkgEvts;
-    
+
     double DataEvts = datahist->Integral(minBin, maxBin);
 
     if(inName.find("WprimeWZ") != string::npos){ 
@@ -280,9 +288,10 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     double nGenWeighted = lumi*xsec;
     double     Eff = nSigEvts / nGenWeighted;
     double statEff = TMath::Sqrt(Eff * (1-Eff)/nGen); 
-
+    //cout<<" mass: "<<mass<<" nSig:"<<nSigEvts<<" nGenWeighted:"<<nGenWeighted<<" eff:"<<Eff<<" TESTnSigEvts:"<<TESTnSigEvts<<endl;
     //Add in systematic errors for signal only (bkg now below)
     double sysMCEvts  = nSigEvts*SysErr(SignalNames[0]);
+    double sysSigEvts = nSigEvts*SysErr(SignalNames[0]);
     double sysBkgEvts = 0.;
     double sysEff     = Eff*SysErr(SignalNames[0]);
 
@@ -303,14 +312,11 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
       double sPerHist = 0;
       double nPerHist = perhist->IntegralAndError(minBin, maxBin, sPerHist);
       if(printTbl_){
-             if(inName.find("WprimeWZ") != string::npos){
-        if(BkgSamples[iBkg].find("TTJets") != string::npos ||
-           BkgSamples[iBkg].find("ZZ") != string::npos ||
-           BkgSamples[iBkg].find("WZJetsTo3LNu") != string::npos ){
+        for(unsigned iTbl=0; iTbl<tblSamples.size(); ++iTbl){
+          if(BkgSamples[iBkg] == tblSamples[iTbl])
+            cout<<" & "<<Value(nPerHist, sPerHist)<<" $\\pm$ "<<Value(sPerHist);
           //cout<<" & "<<std::fixed << std::setprecision(1)<<nPerHist<<" $\\pm$ "<<sPerHist;
-          cout<<" & "<<Value(nPerHist,sPerHist)<<" $\\pm$ "<<Value(sPerHist);
         }
-      }
       }
 
       if(debug_) cout<<BkgSamples[iBkg]<<": # of Evts in Mass Window is "<<nPerHist<<" per "<<lumi<<" inv pb "<<endl;
@@ -325,17 +331,15 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
     }
 
     double sMCEvts    = AddInQuad(  statMCEvts,   sysMCEvts);
+    double sSigEvts   = AddInQuad( statSigEvts,  sysSigEvts);
     double sBkgEvts   = AddInQuad( statBkgEvts,  sysBkgEvts);
     double sEff       = AddInQuad(statEff,      sysEff);
 
     if(printTbl_){ 
       cout<<" & "<<Value(nBkgEvts,statBkgEvts)<<" $\\pm$ "<<Value(statBkgEvts);
       //cout<<" & "<<std::fixed << std::setprecision(1)<<nBkgEvts<<" $\\pm$ "<<statBkgEvts;
-      if(!noWind_){
-        cout<<" & "<<(int)DataEvts;
-        float statSigEvts = sqrt(statMCEvts*statMCEvts - statBkgEvts*statBkgEvts);
-        cout<<" & "<<Value(nSigEvts,statSigEvts)<<" $\\pm$ "<<Value(statSigEvts);
-      }
+      cout<<" & "<<(int)DataEvts;
+      cout<<" & "<<Value(nSigEvts,statSigEvts)<<" $\\pm$ "<<Value(statSigEvts);
       cout<<" \\\\ \\hline"<<endl;
     }
 
@@ -350,6 +354,10 @@ ExpectedEvts(string inName, string config, int windFracTenths=-1, string opt="")
        <<setw(8)<<  statMCEvts<<"  "
        <<setw(8)<<   sysMCEvts<<"  "
        <<setw(8)<<     sMCEvts<<"  "
+       <<setw(8)<<    nSigEvts<<"  "
+       <<setw(8)<< statSigEvts<<"  "
+       <<setw(8)<<  sysSigEvts<<"  "
+       <<setw(8)<<    sSigEvts<<"  "
        <<setw(8)<<    nBkgEvts<<"  "
        <<setw(8)<< statBkgEvts<<"  "
        <<setw(8)<<  sysBkgEvts<<"  "
