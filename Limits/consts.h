@@ -121,6 +121,8 @@ SampleName(float code){
 
 float
 SysErr(string sample){
+  if(!sample.find("TTJets")) return 0.;//None needed for now
+  if(!sample.find("DYJetsToLL")) return 0.;//None needed for now
   if(!sample.find("GV")) return 0.13;
   if(!sample.find("ZZ")) return 0.075;
   if(!sample.find("WZ")) return sqrt(0.17*0.17+0.10*0.10);
@@ -140,7 +142,7 @@ SysErr(string sample){
   if(!sample.find("WprimeToWZTo3LNu_M-1400")) return 0.024;
   if(!sample.find("WprimeToWZTo3LNu_M-1500")) return 0.034;
   if(!sample.find("WprimeToWZTo3LNu_M-")) return 0.034;
-  else printf("Didn't find sample name %s\n", sample.c_str());
+  else printf("Didn't find sample name %s for Systematic Error, setting to 0.\n", sample.c_str());
   return 0;
 }
 
