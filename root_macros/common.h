@@ -328,12 +328,21 @@ float LtCut(float mass){
 }
 
 string 
-AnalysisCuts(float mass){
-    float winWidth = WindowWidth(mass);
+AnalysisCuts(float mass, float LtOffset=0., float WindOffset=0.){
+    float winWidth = WindowWidth(mass) + WindOffset;
     float minMass = mass - winWidth/2.;
     float maxMass = mass + winWidth/2.;
-    float minLt   = LtCut(mass);
+    float minLt   = LtCut(mass) + LtOffset;
     return Form("WZMass > %.0f && WZMass < %.0f && Lt > %.0f", minMass, maxMass, minLt);
+}
+
+string bin(int ch){
+  if(ch == 0) return "eee";
+  if(ch == 1) return "eem";
+  if(ch == 2) return "mme";
+  if(ch == 3) return "mmm";
+  else abort();
+  return "";
 }
 
 #endif//#define _common_h_
