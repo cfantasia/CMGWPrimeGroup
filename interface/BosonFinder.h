@@ -394,6 +394,21 @@ ZCandV ZCands(const std::vector<L> & leptons, const std::vector<bool> & mask){
 }
 
 template<class L>
+ZCandV ZCandsAsym(const std::vector<L> & leptons1, const std::vector<L> & leptons2){
+  ZCandV zCands;
+  for (size_t i = 0; i < leptons1.size(); i++){
+    //if(useMask1 && !mask1[i]) continue;
+    for (size_t j = 0; j < leptons2.size(); j++){
+      //if(useMask2 && !mask2[j]) continue;
+      if(areIdentical(leptons1[i], leptons2[j])) continue;
+      if (leptons1[i].charge() != leptons2[j].charge())  // get opposite-charge pairs of leptons
+        zCands.push_back(ZCandidate(leptons1[i], leptons2[j]));
+    }
+  }
+  return zCands;
+}
+
+template<class L>
 ZCandV getZCands(const std::vector<L> & leptons, float maxMassDiff = ZMASS, bool rmOverlap=true, const std::vector<bool> & mask=std::vector<bool>())
 {
   ZCandV zCands = ZCands(leptons, mask);
