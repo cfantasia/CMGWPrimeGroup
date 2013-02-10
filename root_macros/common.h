@@ -70,12 +70,17 @@ struct Value{
   }
 
 };
-
+/*
+TH1F* get_sum_of_hists(TFile* f, const std::string & sample,
+                       const std::string& objName, int rebinme, float weight){
+  const std::vector<std::string> samples(1, sample);
+  return get_sum_of_hists(f, samples, objName, rebinme, weight);
+}
+*/
 TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
                        const std::string& objName, int rebinme, float weight){
-  vector<float> weights(samples.size(), weight);
+  std::vector<float> weights(samples.size(), weight);
   return get_sum_of_hists(f, samples, objName, rebinme, weight);
-                        
 }
 
 TH1F* get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
@@ -199,6 +204,14 @@ void get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
     }
     delete tree;
   }
+}
+
+
+void get_sum_of_hists(TFile* f, const std::string & sample,
+                      const std::string& objName, const std::string& variable,
+                      const std::string& cuts, TH1F & hist){
+  const std::vector<string> samples(1, sample);
+  get_sum_of_hists(f, samples, objName, variable, cuts, hist);
 }
 
 float
