@@ -108,7 +108,7 @@ WZEffCuts = cms.vstring(
     "NoCuts", 
     "MinNLeptons",
     "ValidZ", 
-    "AllCuts")
+    )
 
 process.WprimeAnalyzer.LooseZElectronType = cms.untracked.string("EWKWZLoose")
 process.WprimeAnalyzer.TightZElectronType = cms.untracked.string("EWKWZTight")
