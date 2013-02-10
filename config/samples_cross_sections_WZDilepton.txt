@@ -1,6 +1,72 @@
-#Top Level Dir = dcache:/pnfs/cms/WAX/11
-Top Level Dir = root://cmsxrootd.hep.wisc.edu/
-integrated lumi = 4980 pb^-1
+Top Level Dir = dcache:/pnfs/cms/WAX/11
+#Top Level Dir = root://cmsxrootd.hep.wisc.edu/
+integrated lumi = 18258 pb^-1
+
+################
+##   Data     ##
+################
+
+#### Run2012A-13Jul2012 ########
+samplename = data
+description = DoubleMu-Run2012A-13Jul2012-v1
+pathname = filelists_WZ/DataPatDilepton-W07-03-03-DoubleMu-Run2012A-13Jul2012-v1.txt
+
+samplename = data
+description = Photon-Run2012A-13Jul2012-v1
+pathname = filelists_WZ/DataPatDilepton-W07-03-03-Photon-Run2012A-13Jul2012-v1.txt
+
+######Run2012A-recover-06Aug2012######
+samplename = data
+description = DoubleMu-Run2012A-recover-06Aug2012-v1
+pathname = filelists_WZ/DataPatDilepton-W07-03-03-DoubleMu-Run2012A-recover-06Aug2012-v1.txt
+
+samplename = data
+description = Photon-Run2012A-recover-06Aug2012-v1
+pathname = filelists_WZ/DataPatDilepton-W07-03-03-Photon-Run2012A-recover-06Aug2012-v1.txt
+
+########Run2012B-13Jul2012############
+samplename = data
+description = DoubleMu-Run2012B-13Jul2012-v4
+pathname = filelists_WZ/DataPatDilepton-W07-03-03-DoubleMu-Run2012B-13Jul2012-v4.txt
+splitInto = 2
+
+samplename = data
+description = DoublePhotonHighPt-Run2012B-13Jul2012-v1
+pathname = filelists_WZ/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012B-13Jul2012-v1.txt
+splitInto = 2
+
+##########Run2012C-24Aug2012##########
+samplename = data
+description = DoubleMu-Run2012C-24Aug2012-v1
+pathname = filelists_WZ/DataPatDilepton-W07-03-03-DoubleMu-Run2012C-24Aug2012-v1.txt
+
+samplename = data
+description = DoublePhotonHighPt-Run2012C-24Aug2012-v1
+pathname = filelists_WZ/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1.txt
+
+#######Run2012C-PromptReco############
+samplename = data
+description = DoubleMu-Run2012C-PromptReco-v2
+pathname = filelists_WZ/DataPatDilepton-W07-03-03-DoubleMu-Run2012C-PromptReco-v2.txt
+splitInto = 3
+
+samplename = data
+description = DoublePhotonHighPt-Run2012C-PromptReco-v2
+pathname = filelists_WZ/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-PromptReco-v2.txt
+splitInto = 3
+
+#######Run2012D-PromptReco#####
+samplename = data
+description = DoubleMu-Run2012D-PromptReco-v1
+pathname = filelists_WZ/DataPatDilepton-W07-03-03-DoubleMu-Run2012D-PromptReco-v1.txt
+splitInto = 2
+
+samplename = data
+description = DoublePhotonHighPt-Run2012D-PromptReco-v1
+pathname = filelists_WZ/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012D-PromptReco-v1.txt
+splitInto = 2
+
+DONE
 
 ########################
 ## Background Samples ##

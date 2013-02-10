@@ -318,6 +318,78 @@ splitInto = 2
 
 DONE
 
+###TESTING
+
+samplename = TTJets-Inclusive
+description = TTJets_TuneZ2_8TeV-madgraph-tauola
+x-section = 136.3
+k-factor = 1.66
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-TTJets_MassiveBinDECAY_TuneZ2star_8TeV-madgraph-tauola.txt
+Nprod_evt = 6923750
+splitInto = 5
+
+samplename = WGamma
+description = WGToLNuG_8TeV-madgraph
+x-section = 461.6
+k-factor = 1.
+Nprod_evt = 4802358
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WGToLNuG_8TeV-madgraph.txt
+
+samplename = ZZJetsTo2L2Nu
+description = ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola
+x-section = 0.28
+#k-factor = UNKNOWN
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola.txt
+Nprod_evt = 954911
+
+samplename = ZZJetsTo4L
+description = ZZJetsTo4L_TuneZ2star_8TeV-madgraph-tauola
+x-section = 0.1296
+#k-factor = UNKNOWN
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-ZZJetsTo4L_TuneZ2star_8TeV-madgraph-tauola.txt
+Nprod_evt = 4807893
+
+samplename = DY1JetsToLL
+description = DY1JetsToLL_M-50_TuneZ2Star_8TeV-madgraph
+x-section = 561.0
+k-factor = 1.23
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-DY1JetsToLL_M-50_TuneZ2Star_8TeV-madgraph.txt
+Nprod_evt = 24045248
+splitInto = 7
+
+samplename = DY2JetsToLL
+description = DY2JetsToLL_M-50_TuneZ2Star_8TeV-madgraph
+x-section = 181.0
+k-factor = 1.23
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-DY2JetsToLL_M-50_TuneZ2Star_8TeV-madgraph.txt
+Nprod_evt = 21852156
+splitInto = 2
+
+samplename = DY3JetsToLL
+description = DY3JetsToLL_M-50_TuneZ2Star_8TeV-madgraph
+x-section = 51.1
+k-factor = 1.23
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-DY3JetsToLL_M-50_TuneZ2Star_8TeV-madgraph.txt
+Nprod_evt = 21852156
+splitInto = 10
+
+samplename = WWJetTo2L2Nu
+description = WWJetTo2L2Nu_8TeV-powheg-pythia6
+x-section = 5.3845
+k-factor = 1.
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WWJetTo2L2Nu_8TeV-powheg-pythia6.txt
+Nprod_evt = 999864
+
+#samplename = ZZ1Jets
+#description = ZZ1Jets_madgraph_8TeV_Private 
+#x-section = 0.5
+##k-factor = UNKNOWN
+#pathname = filelists_WZ/MCPatTrilepton-W07-03-01-ZZ1Jets_madgraph_8TeV_Private.txt
+#Nprod_evt = 102506
+#splitInto = 3
+
+DONE
+
 #### Double Electron #####
 
 samplename = data-DoubleElectron
