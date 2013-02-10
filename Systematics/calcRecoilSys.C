@@ -17,6 +17,8 @@
 
 #include "../root_macros/common.h"
 
+const int nch = 4;
+
 void CalcMETSys(TFile* fIn, const string & name, const int mass, ofstream & fRes, ofstream & fScale);
 Value NEvtsCorMET(TTree* tEvts, int seed, const string & moreCuts);
 Value ShiftErr(const Value & orig, const Value & mod);
@@ -59,8 +61,13 @@ calcRecoilSys(){
 
 void
 CalcMETSys(TFile* fIn, const string & name, const int mass, ofstream & fRes, ofstream & fScale){
-  string cuts = AnalysisCuts(mass);
+  string analyiscuts = AnalysisCuts(mass);
 
+  cout<<name;
+  fScale<<mass;
+  fRes  <<mass;
+  for(int ch=0; ch<nch; ++ch){
+    string cuts = analyiscuts + Form(" && EvtType == %i", ch);
     //get number of base events
     TTree* tMET = getTree(fIn, name, "tEvts_MET"); assert(tMET);
     Value vEvtsUncorMET = GetNEvtsAndError(tMET, Form("weight*(%s)", cuts.c_str()));
@@ -68,7 +75,7 @@ CalcMETSys(TFile* fIn, const string & name, const int mass, ofstream & fRes, ofs
 
     //Now count number of mod met events
     TTree* tValidW = getTree(fIn, name, "tEvts_ValidW"); assert(tValidW);
-
+    
     //get number of scaled met events
     Value vEvtsScaledMET = NEvtsCorMET(tValidW, 0, cuts);
     Value vDiffScaledMET = ShiftErr(vEvtsUncorMET, vEvtsScaledMET);
@@ -87,12 +94,15 @@ CalcMETSys(TFile* fIn, const string & name, const int mass, ofstream & fRes, ofs
     printf(" Error taken on %s due to met smearing is %.4f with mean = %.4f and gaus=%.4f\n", name.c_str(), vDiffSmearedMET.val, hNEvts.GetMean(), hNEvts.GetRMS());
 
     //Print Line for Latex Table
-    printf("  %s & %.2f%% & %.2f%% \\\\\n", name.c_str(), 
-           vDiffScaledMET.val*100, vDiffSmearedMET.val*100);//Latex Line
+    printf(" & %.2f%% & %.2f%% ", vDiffScaledMET.val*100, vDiffSmearedMET.val*100);//Latex Line
     
     //print sys file for limits
-    fScale<<mass<<"\t"<<vDiffScaledMET.val<<"\t"<<vDiffScaledMET.err<<endl;
-    fRes  <<mass<<"\t"<<vDiffSmearedMET.val<<"\t"<<vDiffSmearedMET.err<<endl;
+    fScale<<"\t"<<vDiffScaledMET.val<<"\t"<<vDiffScaledMET.err;
+    fRes  <<"\t"<<vDiffSmearedMET.val<<"\t"<<vDiffSmearedMET.err;
+  }//ch loop
+  printf("\\\\\n");
+  fScale<<endl;
+  fRes  <<endl;
 }
 
 Value

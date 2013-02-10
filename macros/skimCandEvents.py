@@ -24,7 +24,8 @@ process.source = cms.Source("PoolSource",
 
 process.load("Configuration.EventContent.EventContent_cff")
 process.hltPoolOutput = cms.OutputModule("PoolOutputModule",
-    fileName = cms.untracked.string('file:candEvts.root')
+    fileName = cms.untracked.string('file:candEvts.root'),
+    overrideInputFileSplitLevels=cms.untracked.bool(True)
 )
 process.HLTOutput = cms.EndPath( process.hltPoolOutput)
 

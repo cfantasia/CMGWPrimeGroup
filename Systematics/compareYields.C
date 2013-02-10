@@ -3,6 +3,7 @@
 #include <fstream>
 #include "../root_macros/common.h"
 
+const int nch = 4;
 void
 compareYields(const string origName, const string modName, const string outName){
   TFile *fOrig = TFile::Open(origName.c_str(), "read"); assert(fOrig);
@@ -26,18 +27,28 @@ compareYields(const string origName, const string modName, const string outName)
   } 
 
   for(int mass=200; mass<=2000; mass+=100){
-    string cuts = Form("weight*(%s)", AnalysisCuts(mass).c_str());
     string sample = "WZJetsTo3LNu";
-    float origYield = GetNEvts(fOrig, sample, "tEvts_MET", cuts);
-    float modYield  = GetNEvts(fMod , sample, "tEvts_MET", cuts);
-    fSig<<mass<<"\t"<<fabs(modYield - origYield) / origYield<<endl;
+    fBkg<<mass;
+    for(int ch=0; ch<nch; ++ch){
+      string cuts = Form("weight*(%s)*(EvtType == %i)", AnalysisCuts(mass).c_str(), ch);
+      Value origYield = GetNEvtsAndError(fOrig, sample, "tEvts_MET", cuts);
+      Value  modYield = GetNEvtsAndError(fMod , sample, "tEvts_MET", cuts);
+      Value sys = ShiftErr(origYield, modYield);
+      fBkg<<"\t"<<sys.val<<" "<<sys.err;
+    }
+    fBkg<<endl;
   }
 
   for(int mass=200; mass<=2000; mass+=100){
-    string cuts = Form("weight*(%s)", AnalysisCuts(mass).c_str());
     string sample = Form("WprimeToWZTo3LNu_M-%i", mass);
-    float origYield = GetNEvts(fOrig, sample, "tEvts_MET", cuts);
-    float modYield  = GetNEvts(fMod , sample, "tEvts_MET", cuts);
-    fBkg<<mass<<"\t"<<fabs(modYield - origYield) / origYield<<endl;
+    fSig<<mass;
+    for(int ch=0; ch<nch; ++ch){
+      string cuts = Form("weight*(%s)*(EvtType == %i)", AnalysisCuts(mass).c_str(), ch);
+      Value origYield = GetNEvtsAndError(fOrig, sample, "tEvts_MET", cuts);
+      Value  modYield = GetNEvtsAndError(fMod , sample, "tEvts_MET", cuts);
+      Value sys = ShiftErr(origYield, modYield);
+      fSig<<"\t"<<sys.val<<" "<<sys.err;
+    }
+    fSig<<endl;
   }
 }
