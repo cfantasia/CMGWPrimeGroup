@@ -15,6 +15,7 @@ ElectronSelectorBase::ElectronSelectorBase(Pset const params) {
   loadFromPset<int>(params, "minIsEcalDriven", true);
   loadFromPset<int>(params, "minPassEX5overE55", true);
   loadFromPset<int>(params, "minPassEMHadDepth1Iso", true);
+  loadFromPset<int>(params, "maxIsGap", true);
   loadFromPset<double>(params, "maxPFIso", true);
   loadFromPset<double>(params, "maxHoverE", true);
   loadFromPset<double>(params, "maxd0", true);
@@ -49,9 +50,11 @@ bool ElectronSelectorBase::operator()(const pat::Electron & p, const float pu, c
   setpassCut("maxHoverE", p.hadronicOverEm(), bitmask);
   setpassCut("maxd0", fabs(p.dB()), bitmask);
   //setpassCut("maxd0", fabs(p.gsfTrack()->dxy(vtx.position())), bitmask);
-  setpassCut("maxdz", fabs(p.gsfTrack()->dz (vtx.position())), bitmask);
+  //setpassCut("maxdz", fabs(p.gsfTrack()->dz (vtx)), bitmask);
+  setpassCut("maxdz", fabs(p.gsfTrack()->dz (p.vertex())), bitmask);
   setpassCut("maxfabsdiffEp", fabs(1.0/p.ecalEnergy() - p.eSuperClusterOverP()/p.ecalEnergy()), bitmask);
 
+  setpassCut("maxIsGap", p.isEBEEGap(), bitmask);
   setpassCut("minIsEcalDriven", p.ecalDrivenSeed(), bitmask);
   setpassCut("maxTrackIso", p.dr03TkSumPt(), bitmask);
   if(ignoreCut("minPassEX5overE55") || (p.e2x5Max()  > p.e5x5()*0.94 || p.e1x5() > p.e5x5()*0.83)) passCut(bitmask, "minPassEX5overE55"); 
@@ -86,7 +89,11 @@ bool ElectronSelectorBase::operator()(const heep::Ele & p, const float pu) {
 }
   
 float ElectronSelectorBase::pfIso(const pat::Electron & p, const float & pu) const{
-  return (p.chargedHadronIso() + std::max(0., p.neutralHadronIso() + p.photonIso()-0.5*p.puChargedHadronIso())) / p.pt();
+  //Effective Area Correction
+  //isocorr = PFChargedIso (PFNoPU) + max(PFIso(.+NH) - rho * Aeff(.+NH), 0.)
+  return (p.chargedHadronIso() + std::max(0., p.neutralHadronIso() + p.photonIso() - (double)pu)) / p.pt();
+  //deltaBeta Correction
+  //return (p.chargedHadronIso() + std::max(0., p.neutralHadronIso() + p.photonIso()-0.5*p.puChargedHadronIso())) / p.pt();
 }
 
 /// A wrapper to handle the barrel/endcap split for electrons
@@ -172,7 +179,7 @@ bool MuonSelector::operator()(const TeVMuon & p, const float pu, const reco::Ver
   setpassCut("minIsPF", p.isPFMuon(), bitmask);
   setpassCut("minNMatches", p.numberOfMatches(), bitmask);
   setpassCut("minNMatchedStations", p.numberOfMatchedStations(), bitmask);
-    
+  
   reco::TrackRef global = p.globalTrack();
   if(!global.isNull()){
     const reco::HitPattern& gtHP = global->hitPattern();
@@ -201,7 +208,7 @@ bool MuonSelector::operator()(const TeVMuon & p, const float pu, const reco::Ver
     setpassCut("minNTrackerHits", btHP.numberOfValidTrackerHits(), bitmask);
     setpassCut("minNPixelHits", btHP.numberOfValidPixelHits(), bitmask);
     setpassCut("minNTrackerLayers", btHP.trackerLayersWithMeasurement(), bitmask);
-/*//Cory: Please take this out
+
     if(!p.isGlobalMuon()){
       setpassCut("maxNormalizedChi2", best->normalizedChi2(), bitmask);
       setpassCut("minNMuonHits", btHP.numberOfValidMuonHits(), bitmask);
@@ -213,7 +220,6 @@ bool MuonSelector::operator()(const TeVMuon & p, const float pu, const reco::Ver
       setpassCut("minNPixelHits", btHP.numberOfValidPixelHits(), bitmask);
       setpassCut("minNTrackerLayers", btHP.trackerLayersWithMeasurement(), bitmask);
     }
-*/
   }
     
   setIgnored(bitmask);
