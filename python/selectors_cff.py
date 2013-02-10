@@ -19,17 +19,16 @@ muonSelectors = cms.PSet(
     ),
     PFIso = cms.PSet(
        minPt = cms.untracked.double(10.),
-       maxEta = cms.untracked.double(2.2),
-#       maxEta = cms.untracked.double(2.4),
+       maxEta = cms.untracked.double(2.4),
        minIsGblOrTrk = cms.untracked.int32(1),
-       minIsGlobal = cms.untracked.int32(1), #Cory: Remove for highpt
+#       minIsGlobal = cms.untracked.int32(1), #Cory: Remove for highpt
 ##       minIsPF = cms.untracked.int32(1),
        maxDxy = cms.untracked.double(0.2),
        maxDz = cms.untracked.double(0.5),
-       maxNormalizedChi2 = cms.untracked.double(10.0), #Cory: Remove for highpt
+#       maxNormalizedChi2 = cms.untracked.double(10.0), #Cory: Remove for highpt
        maxRelPtErr = cms.untracked.double(0.3),
        minNPixelHits = cms.untracked.int32(1),
-       minNMuonHits = cms.untracked.int32(1), #Cory: This causes problems at high pt
+#       minNMuonHits = cms.untracked.int32(1), #Cory: This causes problems at high pt
        minNTrackerLayers = cms.untracked.int32(6),
        #minNTrackerLayers = cms.untracked.int32(9),
        #minNTrackerHits = cms.untracked.int32(11),
@@ -162,9 +161,10 @@ electronSelectors = cms.PSet(
     EWKWZLoose = cms.PSet(),
     EWKWZTight = cms.PSet(),
 
-    CiC2012Loose = cms.PSet(
+    CiC2012Relaxed = cms.PSet(
        joint = cms.PSet(
           minPt = cms.untracked.double(10.),
+          maxIsGap = cms.untracked.int32(0),
        ),
        barrel = cms.PSet(
            maxMissingHits = cms.untracked.int32(1),
@@ -174,8 +174,36 @@ electronSelectors = cms.PSet(
            maxDeltaEta = cms.untracked.double(0.007),
            maxHoverE = cms.untracked.double(0.12),
            maxd0 = cms.untracked.double(0.02),
-           #maxdz = cms.untracked.double(200.),
-           #maxdz = cms.untracked.double(0.2),#proper cut
+           maxdz = cms.untracked.double(0.2),
+           maxfabsdiffEp = cms.untracked.double(0.05),
+       ),
+       endcap = cms.PSet(
+           maxMissingHits = cms.untracked.int32(1),
+           minVtxFitProb = cms.untracked.double(1e-6),
+           maxSigmaIEtaIEta = cms.untracked.double(0.03),
+           maxDeltaPhi = cms.untracked.double(0.10),
+           maxDeltaEta = cms.untracked.double(0.009),
+           maxHoverE = cms.untracked.double(0.10),
+           maxd0 = cms.untracked.double(0.02),
+           maxdz = cms.untracked.double(0.2),
+           maxfabsdiffEp = cms.untracked.double(0.05),
+       ),
+    ),
+
+    CiC2012Loose = cms.PSet(
+       joint = cms.PSet(
+          minPt = cms.untracked.double(10.),
+          maxIsGap = cms.untracked.int32(0),
+       ),
+       barrel = cms.PSet(
+           maxMissingHits = cms.untracked.int32(1),
+           minVtxFitProb = cms.untracked.double(1e-6),
+           maxSigmaIEtaIEta = cms.untracked.double(0.01),
+           maxDeltaPhi = cms.untracked.double(0.15),
+           maxDeltaEta = cms.untracked.double(0.007),
+           maxHoverE = cms.untracked.double(0.12),
+           maxd0 = cms.untracked.double(0.02),
+           maxdz = cms.untracked.double(0.2),
            maxfabsdiffEp = cms.untracked.double(0.05),
            maxPFIso = cms.untracked.double(0.15),          
        ),
@@ -187,8 +215,7 @@ electronSelectors = cms.PSet(
            maxDeltaEta = cms.untracked.double(0.009),
            maxHoverE = cms.untracked.double(0.10),
            maxd0 = cms.untracked.double(0.02),
-           #maxdz = cms.untracked.double(200.),
-           #maxdz = cms.untracked.double(0.2),#proper cut
+           maxdz = cms.untracked.double(0.2),
            maxfabsdiffEp = cms.untracked.double(0.05),
            maxPFIso = cms.untracked.double(0.15),
        ),
@@ -197,6 +224,7 @@ electronSelectors = cms.PSet(
     CiC2012Medium = cms.PSet(
        joint = cms.PSet(
           minPt = cms.untracked.double(10.),
+          maxIsGap = cms.untracked.int32(0),
        ),
        barrel = cms.PSet(
            maxMissingHits = cms.untracked.int32(1),
@@ -206,7 +234,7 @@ electronSelectors = cms.PSet(
            maxDeltaEta = cms.untracked.double(0.004),
            maxHoverE = cms.untracked.double(0.12),
            maxd0 = cms.untracked.double(0.02),
-           #maxdz = cms.untracked.double(0.1),
+           maxdz = cms.untracked.double(0.1),
            maxfabsdiffEp = cms.untracked.double(0.05),
            maxPFIso = cms.untracked.double(0.15),          
        ),
@@ -218,7 +246,7 @@ electronSelectors = cms.PSet(
            maxDeltaEta = cms.untracked.double(0.007),
            maxHoverE = cms.untracked.double(0.10),
            maxd0 = cms.untracked.double(0.02),
-           #maxdz = cms.untracked.double(0.1),
+           maxdz = cms.untracked.double(0.1),
            maxfabsdiffEp = cms.untracked.double(0.05),
            maxPFIso = cms.untracked.double(0.15),
        ),
