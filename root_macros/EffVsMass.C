@@ -1,4 +1,5 @@
-//Usage: root -b -l -q EffVsMass.C+
+//Usage: root -b -l -q 'EffVsMass.C+(string inName, int applyAnalysisCuts)'
+//e.g. : root -b -l -q 'EffVsMass.C+("../../../WprimeWZ.root", 1)'
 
 #include <iostream>
 #include <iomanip>
@@ -19,13 +20,13 @@
 
 using namespace std;
 
-void EffVsMass(){
+void EffVsMass(string inName, int applyAnalysisCuts){
 
   gErrorIgnoreLevel = kWarning;
   CMSstyle();
   gStyle->SetOptStat(0);
 
-  TFile *fin = TFile::Open("../../../WprimeWZ.root", "read"); assert(fin);
+  TFile *fin = TFile::Open(inName.c_str(), "read"); assert(fin);
   TGraphAsymmErrors* g[4];
   for(int ch=0; ch<4; ++ch){
     g[ch] = new TGraphAsymmErrors();
@@ -48,13 +49,13 @@ void EffVsMass(){
     
     //get tree from file
     TTree* t = getTree(fin, name, "tEvts_MET"); assert(t);
-    string analysisCuts = AnalysisCuts(mass);
+    string analysisCuts = applyAnalysisCuts ? (applyAnalysisCuts == 1 ? Form("Lt > %.0f", LtCut(mass)) : AnalysisCuts(mass)) : "1";
 
     for(int ch=0; ch<4; ++ch){
       float tot = sample_tot / 4;
       float pass = 0;
 
-      t->Draw("WZMass", Form("weight*(EvtType == %i)*(%s)",ch, analysisCuts.c_str()), "goff");
+      float pass_alt = t->Draw("WZMass", Form("weight*(EvtType == %i)*(%s)",ch, analysisCuts.c_str()), "goff");
       int n = t->GetSelectedRows();
       for(int ientry=0; ientry<n; ++ientry){
         float weight = t->GetW()[ientry];
@@ -69,7 +70,7 @@ void EffVsMass(){
       
       errDown = std::max(errDown, (float) 0.);
       float err = (errUp + errDown)/2;
-      printf(" %s %ie%i\\mu &  %4.2f & %4.2f & %.2f \\pm %.2f\\%% \\\\\n", name.c_str(), 3-ch, ch, tot, pass, mean*100, err*100);
+      printf(" %s %ie%i\\mu &  %4.2f & %4.2f or %4.2f & %.2f \\pm %.2f\\%% \\\\\n", name.c_str(), 3-ch, ch, tot, pass, pass_alt, mean*100, err*100);
 
       g[ch]->SetPoint(ipoint, mass, mean);
       g[ch]->SetPointError(ipoint, 0., 0., errDown, errUp);
@@ -100,6 +101,6 @@ void EffVsMass(){
   latexLabel.DrawLatex(0.33, 0.96, "CMS Simulation 2012");
   latexLabel.DrawLatex(0.21, 0.85, "#sqrt{s} = 8 TeV");
 
-  c1->SaveAs("EffVsMass.png");
-  c1->SaveAs("EffVsMass.pdf");
+  string outName = applyAnalysisCuts ? (applyAnalysisCuts==1 ? "EffVsMass_LtCut.png" : "EffVsMass_AnalysisCuts.png") : "EffVsMass.png";
+  c1->SaveAs(outName.c_str());
 }
