@@ -234,6 +234,11 @@ struct highestJetPt {
   }
 };
 
+inline bool areIdentical(const heep::Ele & a, const heep::Ele & b)
+{
+  return areIdentical(a.patEle(), b.patEle());
+}
+
 template<class C, class D>
 inline bool areIdentical(const C & p1, const D & p2)
 {
