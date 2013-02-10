@@ -36,9 +36,10 @@ reco::TrackRef TeVMuon::muonBestTrack() const{
 
 void TeVMuon::printTrackerInfo() const
 {
+  if(innerTrack().isNull()) return;
   std::cout << " trk_hits = " << innerTrack()->hitPattern().numberOfValidHits()
-       << ", trk_layers = " << innerTrack()->hitPattern().trackerLayersWithMeasurement()
-	 << ", trk_validFraction = " << innerTrack()->validFraction()
+            << ", trk_layers = " << innerTrack()->hitPattern().trackerLayersWithMeasurement()
+            << ", trk_validFraction = " << innerTrack()->validFraction()
 	    << std::endl;
     
 }
