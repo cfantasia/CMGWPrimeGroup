@@ -1,9 +1,21 @@
 from UserCode.CMGWPrimeGroup.patTuple_trilep_cfg import *
 from UserCode.CMGWPrimeGroup.patTuple_trigger_cfg import *
 
+
 # 2nd argument: message-logger frequency
 # 3rd argument: # of events to process
 trilep_config(process, 100, 100, True)
+
+
+from FWCore.ParameterSet.VarParsing import VarParsing
+options = VarParsing('analysis')
+options.register ('globalTag',
+                  "DONOTEXIST::All",
+                  VarParsing.multiplicity.singleton, # singleton or list
+                  VarParsing.varType.string,          # string, int, or float
+                  "GlobalTag")
+options.parseArguments()
+process.GlobalTag.globaltag = options.globalTag
 
 ## remove MC matching from the default sequence when running on data
 #removeMCMatching(process, ['All'])
@@ -24,3 +36,5 @@ process.source.fileNames = [
 #process.out.outputCommands.append('keep *_*_*_*')
 
 #print process.p
+
+print process.GlobalTag.globaltag
