@@ -73,10 +73,17 @@ public:
 
   template<class T>
     void print(const std::vector<T> & particles, 
+               const std::vector<bool> & mask) const{
+    print(particles, "objects", mask);
+    
+  }
+
+  template<class T>
+    void print(const std::vector<T> & particles, const std::string & name="objects",
                const std::vector<bool> & mask=std::vector<bool>()) const{
     //Mask let's you ignore certain objects
     bool useMask = mask.size() == particles.size(); 
-    std::cout<<"----There are "<<particles.size()<<" objects ------\n";
+    std::cout<<"----There are "<<particles.size()<<" "<<name<<" ------\n";
     for(uint i=0; i<particles.size(); ++i){
       if(useMask && !mask[i]) continue;
       print(particles[i]);
