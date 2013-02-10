@@ -55,6 +55,8 @@ void ZptVsWpt(){
   Make2DPlot("WZMassVsLt", ";L_{T} (GeV);M_{WZ} (GeV)", 5000, 0, 1000, 5000, 0, 1500, fin, "Lt:WZMass", NoLtcuts);
   Make2DPlot("WZMassVsMeff", ";M_{eff} (GeV);M_{WZ} (GeV)", 5000, 0, 1500, 5000, 0, 1500, fin, "Lt+MET:WZMass", NoLtcuts);
   Make2DPlot("WZMassVsZDr", ";#Delta_{R}^{ll} (GeV);M_{WZ} (GeV)", 500, 0, 5, 5000, 0, 1500, fin, "ZDr:WZMass", NoLtcuts);
+  Make2DPlot("MeffVsLt", ";L_{T} (GeV);M_{eff} (GeV)", 5000, 0, 1500, 5000, 0, 1500, fin, "Lt:Lt+MET", NoLtcuts);
+  Make2DPlot("ZdrVsLt", ";L_{T} (GeV);#Delta_{R}^{ll} (GeV)", 5000, 0, 1000, 500, 0, 5, fin, "Lt:ZDr", NoLtcuts);
   Make2DPlot("ZptVsZDr", ";#Delta_{R}^{ll} (GeV);p_{T}^{Z} (GeV)", 500, 0, 5, 250, 0, 750, fin, "ZDr:Zpt", NoLtcuts);
   Make2DPlot("ZmassVsWTMass", ";M_{Z} (GeV);M_{W}^{T} (GeV)", 60, 60, 120, 100, 0, 100, fin, "ZMass:WTransMass", NoLtcuts);
 
