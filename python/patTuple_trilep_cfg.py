@@ -72,3 +72,8 @@ def trilep_config(process, reportEveryNum=100, maxEvents=-1, runOnData=False) :
     process.out.outputCommands.append('keep *_kt6PFJets_rho_PAT')
     process.out.outputCommands.append('keep *_kt6PFJets_rho_RECO')
     
+
+    # Number of events
+    process.nEventsTotal = cms.EDProducer("EventCountProducer")
+    process.p *= process.nEventsTotal
+    process.out.outputCommands.append('keep *_nEventsTotal_*_*')
