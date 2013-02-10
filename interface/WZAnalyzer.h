@@ -16,6 +16,7 @@ public:
 
   //methods for stuff to be done for each sample
   void defineHistos(const TFileDirectory& dir);
+  void defineResolutionHistos(const TFileDirectory & dir, float Mass);
 
   //methods for stuff to be done for each event
   void eventLoop(edm::EventBase const & event);
@@ -88,7 +89,7 @@ public:
   uint runNumber_;
   uint lumiNumber_;
   uint evtNumber_;
-  float WZMass_;
+  float WZMass_, WprimeGenMass_;
   float Zpt_, ZDr_;
   float ZMass_;
   float Wpt_;
@@ -170,6 +171,7 @@ public:
 // +++++++++++++++++++ Histogram Definitions
   std::vector<TH1F*> hWZMass;
   std::vector<TH1F*> hWZ3e0mMass, hWZ2e1mMass, hWZ1e2mMass, hWZ0e3mMass;
+  std::vector<TH1F*> hRes, hWprimeGenMass;
 
   std::vector<TH1F*> hQ;
   std::vector<TH1F*> hWZTransMass;
