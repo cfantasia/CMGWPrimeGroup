@@ -333,22 +333,24 @@ AnalyzerBase::print(const pat::Electron& elec) const{
 
 void AnalyzerBase::print(const TeVMuon& mu) const{
   cout << setiosflags(ios::fixed) << setprecision(2);
-  reco::TrackRef gm = mu.globalTrack();
   cout<<" Muon Pt: "  <<mu.pt()<<endl
       <<" Muon Charge: "<<mu.charge()<<endl
       <<" Muon Eta: " <<mu.eta()<<endl
       <<" Muon Phi: " <<mu.phi()<<endl
-      <<" Muon Dxy: " <<mu.dB()<<endl //Dxy
-      <<" Muon NormX2: "<<gm->normalizedChi2()<<endl //NormX2
-      <<" Muon NPix: "  <<gm->hitPattern().numberOfValidPixelHits()<<endl //Npixhit
-      <<" Muon NTrk: "  <<gm->hitPattern().numberOfValidTrackerHits()<<endl //Ntrk hit
-      <<" Muon NMatches: "<<mu.numberOfMatches()<<endl //MuonStations
-      <<" Muon Hits: "  <<gm->hitPattern().numberOfValidMuonHits()<<endl; //Muon Hits
+      <<" Muon Dxy: " <<mu.dB()<<endl; //Dxy
+  reco::TrackRef gm = mu.globalTrack();
+  if(!gm.isNull()){
+    cout<<" Muon NormX2: "<<gm->normalizedChi2()<<endl //NormX2
+        <<" Muon NPix: "  <<gm->hitPattern().numberOfValidPixelHits()<<endl //Npixhit
+        <<" Muon NTrk: "  <<gm->hitPattern().numberOfValidTrackerHits()<<endl //Ntrk hit
+        <<" Muon NMatches: "<<mu.numberOfMatches()<<endl //MuonStations
+        <<" Muon Hits: "  <<gm->hitPattern().numberOfValidMuonHits()<<endl; //Muon Hits
+  }else cout<<" Not a Global Muon\n";
   cout<<" Muon charged had: "<<mu.chargedHadronIso()
       <<" Muon Neutral Had: "<<mu.neutralHadronIso()
       <<" Muon Photon Had: "<<mu.photonIso()
       <<" Muon PUCharged: "<<mu.puChargedHadronIso()
-      <<"Muon pfIso: "<<mu.combRelPFIsolation()<<endl;
+      <<" Muon pfIso: "<<mu.combRelPFIsolation()<<endl;
 }
 
 void
