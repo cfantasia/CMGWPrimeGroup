@@ -37,9 +37,9 @@ struct Cut{
   string name;
   bool isMin;
   float cutVal;
-
-  Cut(){name=""; isMin = true; cutVal = 0;}
-  Cut(string n,bool i=true,float c=0){name = n; isMin = i; cutVal = c;}
+  float upRange;
+  Cut(){name=""; isMin = true; cutVal = 0; upRange = 2000;}
+  Cut(string n,bool i=true,float c=0,float up=2000){name = n; isMin = i; cutVal = c; upRange = up;}
 };
 
 void MakeSelection(string inName, string opt="", string outName="Selection_");
@@ -73,15 +73,15 @@ MakeSelection(string inName, string opt, string outName){
   
   if(inName.find("Wprime") != string::npos || inName.find("EWKWZ") != string::npos){
     BkgSamples.push_back("WZJetsTo3LNu");
-    BkgSamples.push_back("WJetsToLNu");
+    //BkgSamples.push_back("WJetsToLNu");
     BkgSamples.push_back("ZZ");
     BkgSamples.push_back("GVJets");
-    BkgSamples.push_back("WWTo2L2Nu");
+    //BkgSamples.push_back("WWTo2L2Nu");
     BkgSamples.push_back("TTJets");
     BkgSamples.push_back("DYJetsToLL");
 
     SigSamples.push_back("WprimeToWZTo3LNu_M-200");
-    SigSamples.push_back("WprimeToWZTo3LNu_M-250");
+    //SigSamples.push_back("WprimeToWZTo3LNu_M-250");
     SigSamples.push_back("WprimeToWZTo3LNu_M-300");
     SigSamples.push_back("WprimeToWZTo3LNu_M-400");
     SigSamples.push_back("WprimeToWZTo3LNu_M-500");
@@ -95,14 +95,20 @@ MakeSelection(string inName, string opt, string outName){
     SigSamples.push_back("WprimeToWZTo3LNu_M-1300");
     SigSamples.push_back("WprimeToWZTo3LNu_M-1400");
     SigSamples.push_back("WprimeToWZTo3LNu_M-1500");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-1600");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-1700");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-1800");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-1900");
+    SigSamples.push_back("WprimeToWZTo3LNu_M-2000");
   
-    //Cuts.push_back(Cut("Ht+MET", true));
-    Cuts.push_back(Cut("Ht", true));
+    //Cuts.push_back(Cut("Lt+MET", true));//Meff
+    //Cuts.push_back(Cut("Lt", true));
+    Cuts.push_back(Cut("ZDr", true, 0., 5.));
 
     //Cuts.push_back(Cut("Zpt", true));
     //Cuts.push_back(Cut("Wpt", true));
 
-    treeName = "tEvts_ValidWZCand";
+    treeName = "tEvts_MET";
 
   }else if(inName.find("HadVZ") != string::npos){
     BkgSamples.push_back("Summer11_ZZ");
@@ -191,8 +197,8 @@ DrawSelection(TFile* fin, Cut& thisCut){
 
   if(debug_) cout<<" cut is now "<<cutString<<endl;
 
-  TH1F hSig("hSig","hSig",90,0,900);
-  TH1F hBkg("hBkg","hBkg",90,0,900);
+  TH1F hSig("hSig","hSig",100,0,thisCut.upRange);
+  TH1F hBkg("hBkg","hBkg",100,0,thisCut.upRange);
   if(!useHists_){
     get_sum_of_hists(fin, SigSample, treeName, thisCut.name, cutString.GetTitle(), hSig);
     get_sum_of_hists(fin, BkgSamples, treeName, thisCut.name, cutString.GetTitle(), hBkg);
