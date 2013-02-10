@@ -6,50 +6,73 @@
 #include "TCanvas.h"
 #include "TMultiGraph.h"
 
+typedef pair<TGraphErrors*, TGraphErrors*> gPair;
+
+const int nch = 4;
 void
 printSysTable(string sigName, string bkgName, string outName){
-  
-  TGraphErrors* gSig = new TGraphErrors(sigName.c_str(), "%lg %lg %lg"); 
-  TGraphErrors* gBkg = new TGraphErrors(bkgName.c_str(), "%lg %lg %lg"); gBkg->SetLineColor(kRed);
-
-  //Scale the graphs
-  float scale = 100.;//100%
-  for (int i=0;i<gSig->GetN();i++){
-    gSig->GetY()[i] *= scale;
-    gSig->GetEY()[i] *= scale;
-  }
-
-  for (int i=0;i<gBkg->GetN();i++){
-    gBkg->GetY()[i] *= scale;
-    gBkg->GetEY()[i] *= scale;
-  }
-
   TCanvas* c = new TCanvas("c", outName.c_str());
-  TMultiGraph *mg = new TMultiGraph("mg", ";M_{W', #rho_{TC}} (GeV);Relative Systematic Uncertainty");
-  mg->Add(gSig,"LE*");
-  mg->Add(gBkg,"LE*");
-  
-  TLegend *leg = new TLegend(0.8, 0.79,0.9, 0.89,"");
+  TMultiGraph *mg = new TMultiGraph("mg", ";M_{W', #rho_{TC}} (GeV);Relative Systematic Uncertainty (%)");
+  TLegend *leg = new TLegend(0.6, 0.79,0.9, 0.89,"");
   prepLegend(leg);
-  leg->AddEntry(gSig, "Signal", "LE");
-  leg->AddEntry(gBkg, "Background", "LE");
+  leg->SetNColumns(2);
+  leg->SetColumnSeparation(0.05);
 
+  TGraphErrors *gSig[nch], *gBkg[nch];
+
+  for(int ch=0; ch<nch; ch++){
+    string format = "%lg";//mass
+    for(int i=0; i<ch; i++) format += " %*lg %*lg";//value and err
+    format += " %lg %lg";
+    gSig[ch] = new TGraphErrors(sigName.c_str(), format.c_str()); 
+    gBkg[ch] = new TGraphErrors(bkgName.c_str(), format.c_str()); 
+
+    gSig[ch]->SetLineColor(ch+2);
+    gBkg[ch]->SetLineColor(ch+2);
+
+    gSig[ch]->SetMarkerColor(ch+2);
+    gBkg[ch]->SetMarkerColor(ch+2);
+
+    gSig[ch]->SetMarkerStyle(kOpenCircle);
+    gBkg[ch]->SetMarkerStyle(kFullTriangleUp);
+    
+    
+    //Scale the graphs
+    float scale = 100.;//100%
+    for (int i=0;i<gSig[ch]->GetN();i++){
+      gSig[ch]->GetY()[i] *= scale;
+      gSig[ch]->GetEY()[i] *= scale;
+    }
+    
+    for (int i=0;i<gBkg[ch]->GetN();i++){
+      gBkg[ch]->GetY()[i] *= scale;
+      gBkg[ch]->GetEY()[i] *= scale;
+    }
+
+    mg->Add(gSig[ch]);
+    mg->Add(gBkg[ch]);
+  
+    leg->AddEntry(gSig[ch], Form("Sig %s", bin(ch).c_str()), "EP");
+    leg->AddEntry(gBkg[ch], Form("Bkg %s", bin(ch).c_str()), "EP");
+
+  }
   //mg->SetMinimum(0.00001);
-  mg->Draw("a*");
+  mg->Draw("alp");
   leg->Draw();
-
+  
   c->SaveAs(outName.c_str());
-
+  
 
   //Now Print Latex Table 
   //cout<<"//%Cory: Updated DATE"<<endl;
-  cout<<"\\begin{table}[!h] \\centering \\begin{tabular}{|c|c|c|} \\hline"<<endl;
-  cout<<" Mass & Signal Relative Systematic (%) & Background Relative Systematic (%)\\\\ \\hline"<<endl;
+  cout<<"\\begin{table}[!h] \\centering \\begin{tabular}{|c||*{8}{c|}} \\hline"<<endl;
+  cout<<" Mass & \\multicolumn{4}{c|}{Signal Relative Systematic (%)} & \\multicolumn{4}{c|}{Background Relative Systematic (%)} \\\\ \\hline"<<endl;
   for(int mass=200; mass<=2000; mass+=100){
-    string outString = Form(" %i & %.4f & %.4f \\\\", mass, gSig->Eval(mass), gBkg->Eval(mass));
-    cout<<outString<<endl;
+    cout<<Form("%i ",mass);
+    for(int ch=0; ch<nch; ch++) cout<<Form("& %.4f ", gSig[ch]->Eval(mass));
+    for(int ch=0; ch<nch; ch++) cout<<Form("& %.4f ", gBkg[ch]->Eval(mass));
+    cout<<"\\\\"<<endl;
   }
   cout<<"\\end{tabular} \\end{table}"<<endl;
-
 
 }

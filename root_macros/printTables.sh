@@ -18,11 +18,12 @@ then
 fi
 
 #######
-#cd ../Systematics
-#root -b -l -q 'compareYields.C+('\"$Input\"', "../../../WprimeWZMuPtRes.root",   "SysMuPtRes.dat")' 
-#root -b -l -q 'compareYields.C+('\"$Input\"', "../../../WprimeWZMuPtScale.root", "SysMuPtScale.dat")' 
-#root -b -l -q 'compareYields.C+('\"$Input\"', "../../../WprimeWZElEnScale.root", "SysElEnScale.dat")' 
-#root -b -l -q 'compareYields.C+('\"$Input\"', "../../../WprimeWZPUSys.root",     "SysPU.dat")' 
+cd ../Systematics
+root -b -l -q calcRecoilSys.C+ >> $Output
+root -b -l -q 'compareYields.C+('\"$Input\"', "../../../WprimeWZMuPtRes.root",   "SysMuPtRes.dat")' 
+root -b -l -q 'compareYields.C+('\"$Input\"', "../../../WprimeWZMuPtScale.root", "SysMuPtScale.dat")' 
+root -b -l -q 'compareYields.C+('\"$Input\"', "../../../WprimeWZElEnScale.root", "SysElEnScale.dat")' 
+root -b -l -q 'compareYields.C+('\"$Input\"', "../../../WprimeWZPUSys.root",     "SysPU.dat")' 
 
 #######
 
