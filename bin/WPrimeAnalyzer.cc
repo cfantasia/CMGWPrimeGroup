@@ -22,6 +22,7 @@
 #include "UserCode/CMGWPrimeGroup/interface/HadronicVWAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/TBAnalyzer.h"
 #include "UserCode/CMGWPrimeGroup/interface/TTbarAnalyzer.h"
+#include "UserCode/CMGWPrimeGroup/interface/TagAndProbe.h"
 
 using std::cout; using std::cerr; using std::endl;
 
@@ -68,6 +69,7 @@ AnalyzerBase* getAnalyzer(char * cfg_file, int fileToRun)
   bool runHadVZAnalysis  = cfg.getParameter<bool>("runHadVZAnalysis" );
   bool runHadVWAnalysis  = cfg.getParameter<bool>("runHadVWAnalysis" );
   bool runTTbarAnalysis  = cfg.getParameter<bool>("runTTbarAnalysis" );
+  bool runTagAndProbe  = cfg.getParameter<bool>("runTagAndProbe" );
 
   if     (runMuMETAnalysis) return new MuMETAnalyzer (cfg, fileToRun);
   else if(runElMETAnalysis) return new EleMETAnalyzer(cfg, fileToRun);
@@ -77,6 +79,7 @@ AnalyzerBase* getAnalyzer(char * cfg_file, int fileToRun)
   else if(runHadVZAnalysis) return new HadronicVZAnalyzer(cfg, fileToRun);
   else if(runHadVWAnalysis) return new HadronicVWAnalyzer(cfg, fileToRun);
   else if(runTTbarAnalysis) return new TTbarAnalyzer(cfg, fileToRun);
+  else if(runTagAndProbe) return new TagAndProbe(cfg, fileToRun);
   
   cerr<<" You haven't enabled any analysis modes!\n";
   abort();
