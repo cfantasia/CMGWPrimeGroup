@@ -3,53 +3,42 @@
 #include "TMath.h"
 #include <fstream>
 
-TGraphErrors* MakeSigEffGraph   (TFile* fIn, const string & moreCuts);
-TGraphErrors* MakeSigEffErrGraph(TFile* fIn, const string & moreCuts);
-void PrintSysErrors(const string & name, const string & type, TGraph* gSig, TGraph* gBkg, const float mass, const int nbkg, ofstream & fout);
-string bin(int ch){
-  if(ch == 0) return "eee";
-  if(ch == 1) return "eem";
-  if(ch == 2) return "mme";
-  if(ch == 3) return "mmm";
-  else abort();
-  return "";
-}
+typedef pair<TGraphErrors*, TGraphErrors*> gPair;
+
+TGraphErrors* MakeSigEffGraph   (TFile* fIn, const string & moreCuts, float LtOffset, float WindOffset);
+TGraphErrors* MakeSigEffErrGraph(TFile* fIn, const string & moreCuts, float LtOffset, float WindOffset);
+void PrintSysErrors(const string & name, const string & type, gPair* gSys, const float mass, const int nbkg, ofstream & fout);
+gPair getGraphPair(string sigFile, string bkgFile, int ch);
 const float nGen = 6688;//60192 * 4 / 9 / nch (4/9 to remove tau events, 4=number of channels
 const int nch=4;
 
 void
-makeLimitCard(string inName, int mass){
+makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float WindOffset=0.){
   TFile *fIn = TFile::Open(inName.c_str(), "read"); assert(fIn);
 
   float lumi = GetLumiUsed(fIn);
 
   TGraph* gxsec = new TGraph("../Limits/xSec_WZ.dat", "%lg %lg");
-
-  TGraph* gSigMETRes   = new TGraph("../Systematics/SysSigMETRes.dat"   , "%lg %lg");
-  TGraph* gSigMETScale = new TGraph("../Systematics/SysSigMETScale.dat" , "%lg %lg");
-  TGraph* gSigPU       = new TGraph("../Systematics/SysSigPU.dat"       , "%lg %lg");
-  TGraph* gSigMuPtRes  = new TGraph("../Systematics/SysSigMuPtRes.dat"  , "%lg %lg");
-  TGraph* gSigMuPtScale= new TGraph("../Systematics/SysSigMuPtScale.dat", "%lg %lg");
-  TGraph* gSigElEnScale= new TGraph("../Systematics/SysSigElEnScale.dat", "%lg %lg");
-  TGraph* gSigPDF      = new TGraph("../Systematics/SysSigPDF.dat"      , "%lg %lg");
-
-  TGraph* gBkgMETRes   = new TGraph("../Systematics/SysBkgMETRes.dat"  , "%lg %lg");
-  TGraph* gBkgMETScale = new TGraph("../Systematics/SysBkgMETScale.dat", "%lg %lg");
-  TGraph* gBkgPU       = new TGraph("../Systematics/SysBkgPU.dat"      , "%lg %lg");
-  TGraph* gBkgMuPtRes  = new TGraph("../Systematics/SysBkgMuPtRes.dat" , "%lg %lg");
-  TGraph* gBkgMuPtScale= new TGraph("../Systematics/SysBkgMuPtScale.dat", "%lg %lg");
-  TGraph* gBkgElEnScale= new TGraph("../Systematics/SysBkgElEnScale.dat", "%lg %lg");
-  TGraph* gBkgPDF      = new TGraph("../Systematics/SysBkgPDF.dat"     , "%lg %lg");
-
-  //Make Sig Eff Graph
-  TGraphErrors* geff   [4];
-  TGraphErrors* gefferr[4];
+  gPair gMETRes[nch], gMETScale[nch], gPU[nch], gMuPtRes[nch], gMuPtScale[nch], gElEnScale[nch], gPDF[nch];
   for(int ch=0; ch<nch; ch++){
-    geff[ch]    = MakeSigEffGraph   (fIn, Form("EvtType == %i", ch));
-    gefferr[ch] = MakeSigEffErrGraph(fIn, Form("EvtType == %i", ch));
+    gMETRes[ch]   = getGraphPair("../Systematics/SysSigMETRes.dat"   , "../Systematics/SysBkgMETRes.dat", ch);
+    gMETScale[ch] = getGraphPair("../Systematics/SysSigMETScale.dat" , "../Systematics/SysBkgMETScale.dat", ch);
+    gPU[ch]       = getGraphPair("../Systematics/SysSigPU.dat"       , "../Systematics/SysBkgPU.dat", ch);
+    gMuPtRes[ch]  = getGraphPair("../Systematics/SysSigMuPtRes.dat"  , "../Systematics/SysBkgMuPtRes.dat", ch);
+    gMuPtScale[ch]= getGraphPair("../Systematics/SysSigMuPtScale.dat", "../Systematics/SysBkgMuPtScale.dat", ch);
+    gElEnScale[ch]= getGraphPair("../Systematics/SysSigElEnScale.dat", "../Systematics/SysBkgElEnScale.dat", ch);
+    gPDF[ch]      = getGraphPair("../Systematics/SysSigPDF.dat"      , "../Systematics/SysBkgPDF.dat", ch);
   }
 
-  map<string, Value> yields[4];
+  //Make Sig Eff Graph
+  TGraphErrors* geff   [nch];
+  TGraphErrors* gefferr[nch];
+  for(int ch=0; ch<nch; ch++){
+    geff[ch]    = MakeSigEffGraph   (fIn, Form("EvtType == %i", ch), LtOffset, WindOffset);
+    gefferr[ch] = MakeSigEffErrGraph(fIn, Form("EvtType == %i", ch), LtOffset, WindOffset);
+  }
+
+  map<string, Value> yields[nch];
 
   vector<string> samples;
   samples.push_back("WZJetsTo3LNu");
@@ -58,19 +47,14 @@ makeLimitCard(string inName, int mass){
   samples.push_back("ZZ");
   samples.push_back("GVJets");
 
-  string outName = Form("card_Core_WprimeWZ_M%i.txt", mass);
   string outfile(outName.c_str());
   ofstream fout(outfile.c_str());
   if(!fout) { 
     cout << "Cannot open file " << outfile << endl; 
     abort();
   } 
-  //float winWidth = WindowWidth(mass);
-  //float minMass = mass - winWidth/2.;
-  //float maxMass = mass + winWidth/2.;
-  //float minLt   = LtCut(mass);
     
-  string analysisCuts = AnalysisCuts(mass);//Form("WZMass > %.0f && WZMass < %.0f && Lt > %.0f", minMass, maxMass, minLt);
+  string analysisCuts = AnalysisCuts(mass, LtOffset, WindOffset);//Form("WZMass > %.0f && WZMass < %.0f && Lt > %.0f", minMass, maxMass, minLt);
   fout<<"# Cuts are "<<analysisCuts<<" for mass="<<mass<<endl;
     
   for(int ch=0; ch<nch; ch++){
@@ -91,7 +75,6 @@ makeLimitCard(string inName, int mass){
 
     fout<<"# ch="<<ch
         <<"  lumi="<<lumi
-        <<"  sigxsec="<<sigxsec
         <<"  sigEff="<<sigEff
         <<"  sigEffErr="<<sigEffErr
         <<"  sigxsec="<<sigxsec
@@ -174,40 +157,35 @@ makeLimitCard(string inName, int mass){
   fout<<endl;
 
   //Print Sys Errors
-  PrintSysErrors("METRes"  , "lnN", gSigMETRes  , gBkgMETRes  , mass, samples.size(),fout);
-  PrintSysErrors("METScale", "lnN", gSigMETScale, gBkgMETScale, mass, samples.size(),fout);
-  PrintSysErrors("PU"      , "lnN", gSigPU      , gBkgPU      , mass, samples.size(),fout);
-  PrintSysErrors("MuPtRes" , "lnN", gSigMuPtRes , gBkgMuPtRes , mass, samples.size(),fout);
-  PrintSysErrors("MuPtScale", "lnN", gSigMuPtScale, gBkgMuPtScale, mass, samples.size(),fout);
-  PrintSysErrors("ElEnScale", "lnN", gSigElEnScale, gBkgElEnScale, mass, samples.size(),fout);
-  PrintSysErrors("PDF"     , "lnN", gSigPDF     , gBkgPDF     , mass, samples.size(),fout);
+  PrintSysErrors("METRes"   , "lnN", gMETRes   , mass, samples.size(),fout);
+  PrintSysErrors("METScale" , "lnN", gMETScale , mass, samples.size(),fout);
+  PrintSysErrors("PU"       , "lnN", gPU       , mass, samples.size(),fout);
+  PrintSysErrors("MuPtRes"  , "lnN", gMuPtRes  , mass, samples.size(),fout);
+  PrintSysErrors("MuPtScale", "lnN", gMuPtScale, mass, samples.size(),fout);
+  PrintSysErrors("ElEnScale", "lnN", gElEnScale, mass, samples.size(),fout);
+  PrintSysErrors("PDF"      , "lnN", gPDF      , mass, samples.size(),fout);
 
   fout.close(); 
 }
 
 void
-PrintSysErrors(const string & name, const string & type, TGraph* gSig, TGraph* gBkg, const float mass, const int nbkg, ofstream & fout){
-  fout<<"#";//Cory: take this out when its ready
+PrintSysErrors(const string & name, const string & type, gPair* gSys, const float mass, const int nbkg, ofstream & fout){
+  //fout<<"#";//Cory: take this out when its ready
   fout<<name<<"   "<<type<<" ";
   for(int ch=0; ch<nch; ch++){
-    fout<<1. + gSig->Eval(mass)<<"  ";
+    fout<<1. + gSys[ch].first->Eval(mass)<<"  ";
     for(int isample=0; isample<nbkg; isample++){
-      fout<<1. + gBkg->Eval(mass)<<"  ";
+      fout<<1. + gSys[ch].second->Eval(mass)<<"  ";
     }
   }
   fout<<endl;
 }
 
 TGraphErrors*
-MakeSigEffGraph(TFile* fIn, const string & moreCuts){
+MakeSigEffGraph(TFile* fIn, const string & moreCuts, float LtOffset, float WindOffset){
   TGraphErrors* g = new TGraphErrors(19);//??
   for(int mass=200, i=0; mass<=2000; mass+=100, ++i){
-    float winWidth = WindowWidth(mass);
-    float minMass = mass - winWidth/2.;
-    float maxMass = mass + winWidth/2.;
-    float minLt   = LtCut(mass);
-    
-    string analysisCuts = Form("WZMass > %.0f && WZMass < %.0f && Lt > %.0f", minMass, maxMass, minLt);
+    string analysisCuts = AnalysisCuts(mass, LtOffset, WindOffset);
     string cuts = "(" + analysisCuts + " && " + moreCuts + ") * weight ";
     //get tree 
     TTree* tree = getTree(fIn, Form("WprimeToWZTo3LNu_M-%i", mass), "tEvts_MET");
@@ -230,19 +208,14 @@ MakeSigEffGraph(TFile* fIn, const string & moreCuts){
 }
 
 TGraphErrors*
-MakeSigEffErrGraph(TFile* fIn, const string & moreCuts){
+MakeSigEffErrGraph(TFile* fIn, const string & moreCuts, float LtOffset, float WindOffset){
   TGraphErrors* g = new TGraphErrors(19);//??
   for(int mass=200, i=0; mass<=2000; mass+=100, ++i){
-    float winWidth = WindowWidth(mass);
-    float minMass = mass - winWidth/2.;
-    float maxMass = mass + winWidth/2.;
-    float minLt   = LtCut(mass);
-    
-    string analysisCuts = Form("WZMass > %.0f && WZMass < %.0f && Lt > %.0f", minMass, maxMass, minLt);
-    string cuts = analysisCuts + " && " + moreCuts;
+    string analysisCuts = AnalysisCuts(mass, LtOffset, WindOffset);
+    string cuts = "(" + analysisCuts + " && " + moreCuts + ") * weight ";
     //get tree 
     TTree* tree = getTree(fIn, Form("WprimeToWZTo3LNu_M-%i", mass), "tEvts_MET");
-    float nSigEvtsUnweighted = tree->Draw("WZMass", cuts.c_str());//Cory: Check that this works.
+    float nSigEvtsUnweighted = tree->Draw("WZMass", cuts.c_str());
             
     double     Eff = nSigEvtsUnweighted / nGen;
     double statEff = TMath::Sqrt(Eff * (1-Eff)/nGen); 
@@ -252,3 +225,11 @@ MakeSigEffErrGraph(TFile* fIn, const string & moreCuts){
   return g;
 }
 
+gPair
+getGraphPair(string sigFile, string bkgFile, int ch){
+  string format = "%lg";//mass
+  for(int i=0; i<ch; i++) format += " %*lg %*lg";//value and err
+  format += " %lg %lg";
+  //cout<<"for ch: "<<ch<<" format is:"<<format<<endl;
+  return make_pair(new TGraphErrors(sigFile.c_str(), format.c_str()), new TGraphErrors(bkgFile.c_str(), format.c_str()));
+}
