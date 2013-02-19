@@ -68,7 +68,17 @@ struct Value{
     err = sqrt(pow(err,2) - pow(rhs.err,2));//Cory: Wrong?  What should it be?
     return *this;
   }
-
+  Value operator*( const double &rhs ) const{
+    Value result = *this;     
+    result *= rhs;            
+    return result;
+  }
+  Value & operator*=(const double &rhs) {
+    val *= rhs;
+    err *= rhs;
+    return *this;
+  }
+  
 };
 /*
 TH1F* get_sum_of_hists(TFile* f, const std::string & sample,
@@ -358,4 +368,13 @@ string bin(int ch){
   return "";
 }
 
+vector<string> BkgSamples(){
+  vector<string> bkgSamples;
+  bkgSamples.push_back("WZJetsTo3LNu");
+  bkgSamples.push_back("DYJetsToLL");
+  bkgSamples.push_back("TTJets");
+  bkgSamples.push_back("ZZ");
+  bkgSamples.push_back("GVJets");
+  return bkgSamples;
+}
 #endif//#define _common_h_
