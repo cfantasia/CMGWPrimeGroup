@@ -5,20 +5,49 @@
 
 typedef pair<TGraphErrors*, TGraphErrors*> gPair;
 
-TGraphErrors* MakeSigEffGraph   (TFile* fIn, const string & moreCuts, float LtOffset, float WindOffset);
-TGraphErrors* MakeSigEffErrGraph(TFile* fIn, const string & moreCuts, float LtOffset, float WindOffset);
+TGraphErrors* MakeSigEffGraph   (TFile* fIn, const string & moreCuts, float LtOffset=0., float WindOffset=0.);
+TGraphErrors* MakeSigEffErrGraph(TFile* fIn, const string & moreCuts, float LtOffset=0., float WindOffset=0.);
 void PrintSysErrors(const string & name, const string & type, gPair* gSys, const float mass, const int nbkg, ofstream & fout);
 gPair getGraphPair(string sigFile, string bkgFile, int ch);
+map<string, Value>
+getYields(TFile* fIn, const int & mass, const string & cuts, const vector<string> & bkgSamples,
+          const TGraph* gxsec, const TGraphErrors* geff, const TGraphErrors* gefferr);
 const float nGen = 6688;//60192 * 4 / 9 / nch (4/9 to remove tau events, 4=number of channels
 const int nch=4;
 
 void
 makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float WindOffset=0.){
   TFile *fIn = TFile::Open(inName.c_str(), "read"); assert(fIn);
-
+  
   float lumi = GetLumiUsed(fIn);
 
   TGraph* gxsec = new TGraph("../Limits/xSec_WZ.dat", "%lg %lg");
+  //Make Sig Eff Graph
+  TGraphErrors* geff   [nch];
+  TGraphErrors* gefferr[nch];
+  for(int ch=0; ch<nch; ch++){
+    geff[ch]    = MakeSigEffGraph   (fIn, Form("EvtType == %i", ch), LtOffset, WindOffset);
+    gefferr[ch] = MakeSigEffErrGraph(fIn, Form("EvtType == %i", ch), LtOffset, WindOffset);
+  }
+  
+  map<string, Value> yields[nch];
+  vector<string> bkgSamples = BkgSamples();
+  
+  ofstream fout(outName.c_str());
+  if(!fout) { 
+    cout << "Cannot open file " << outName << endl; 
+    abort();
+  } 
+  
+  string analysisCuts = AnalysisCuts(mass, LtOffset, WindOffset);
+  fout<<"# Cuts are "<<analysisCuts<<" for mass="<<mass<<endl;
+  
+  for(int ch=0; ch<nch; ch++){
+    string chCuts = Form("EvtType == %i", ch);
+    string cuts = "(" + analysisCuts + " && " + chCuts + ") * weight"; 
+    yields[ch] = getYields(fIn, mass, cuts, bkgSamples, gxsec, geff[ch], gefferr[ch]);
+  }//Ch loop
+  
   gPair gMETRes[nch], gMETScale[nch], gPU[nch], gMuPtRes[nch], gMuPtScale[nch], gElEnScale[nch], gPDF[nch];
   for(int ch=0; ch<nch; ch++){
     gMETRes[ch]   = getGraphPair("../Systematics/SysSigMETRes.dat"   , "../Systematics/SysBkgMETRes.dat", ch);
@@ -30,76 +59,45 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
     gPDF[ch]      = getGraphPair("../Systematics/SysSigPDF.dat"      , "../Systematics/SysBkgPDF.dat", ch);
   }
 
-  //Make Sig Eff Graph
-  TGraphErrors* geff   [nch];
-  TGraphErrors* gefferr[nch];
-  for(int ch=0; ch<nch; ch++){
-    geff[ch]    = MakeSigEffGraph   (fIn, Form("EvtType == %i", ch), LtOffset, WindOffset);
-    gefferr[ch] = MakeSigEffErrGraph(fIn, Form("EvtType == %i", ch), LtOffset, WindOffset);
-  }
-
-  map<string, Value> yields[nch];
-
-  vector<string> samples;
-  samples.push_back("WZJetsTo3LNu");
-  samples.push_back("DYJetsToLL");
-  samples.push_back("TTJets");
-  samples.push_back("ZZ");
-  samples.push_back("GVJets");
-
-  string outfile(outName.c_str());
-  ofstream fout(outfile.c_str());
-  if(!fout) { 
-    cout << "Cannot open file " << outfile << endl; 
-    abort();
-  } 
-    
-  string analysisCuts = AnalysisCuts(mass, LtOffset, WindOffset);//Form("WZMass > %.0f && WZMass < %.0f && Lt > %.0f", minMass, maxMass, minLt);
-  fout<<"# Cuts are "<<analysisCuts<<" for mass="<<mass<<endl;
-    
-  for(int ch=0; ch<nch; ch++){
-    string chCuts = Form("EvtType == %i", ch);
-    string cuts = "(" + analysisCuts + " && " + chCuts + ") * weight";
-
-    yields[ch]["data"] = GetNEvtsAndError(fIn, "data", "tEvts_MET", cuts);
-    //float nDataEvt = yields[ch]["data"].val;//GetNEvts(fIn, "data", "tEvts_MET", cuts);
-    //cout<<"Done with data="<<nDataEvt<<endl;
-    //cout<<nDataEvt<<"  ";
-      
-    //nsig
-    float sigEff    = geff[ch]->Eval(mass);
-    float sigEffErr = gefferr[ch]->Eval(mass);
-    float sigxsec = gxsec->Eval(mass);
-    float nSigEvt    = lumi * sigxsec * sigEff; 
-    float nSigEvtErr = 1. + (sigEff > 0. ? sigEffErr / sigEff : 0.); 
-
-    fout<<"# ch="<<ch
-        <<"  lumi="<<lumi
-        <<"  sigEff="<<sigEff
-        <<"  sigEffErr="<<sigEffErr
-        <<"  sigxsec="<<sigxsec
-        <<"  nSigEvt="<<nSigEvt
-        <<"  nSigEvtErr="<<nSigEvtErr
-        <<endl;
-    //cout<<"Done with signal="<<nSigEvt<<endl;
-    yields[ch]["sig"] = Value(nSigEvt, nSigEvtErr);
-    //printf("%.2f  ", nSigEvt);
-
-    for(int isample=0; isample<(int)samples.size(); isample++){
-      Value v = GetNEvtsAndError(fIn, samples[isample], "tEvts_MET", cuts);
-      yields[ch][samples[isample]] = Value(v.val, 1. + (v.val > 0. ? v.err / v.val : 0.));
-      //float nevts = yields[ch][samples[isample]].val;//GetNEvts(fIn, samples[isample], "tEvts_MET", cuts);
-      //cout<<"Done with "<<samples[isample]<<"="<<nevts<<endl;
-      //cout<<nevts<<"  ";
-      //printf("%.2f  ", nevts);
+  ////////////////////////
+  /////////Print Out Table
+  ////////////////////////
+  if(true && mass%100 == 0){
+    cout<<"Channel & ";
+    for(int isample=0; isample<(int)bkgSamples.size(); isample++){
+      cout<<bkgSamples[isample]<<" & ";
     }
+    cout<<" & Data & Signal"<<endl;
 
-  }//Ch loop
+    for(int ch=0; ch<nch; ch++){
+      cout<<bin(ch)<<" & ";
+      for(int isample=0; isample<(int)bkgSamples.size(); isample++){
+        cout<<yields[ch][bkgSamples[isample]].val<<" & ";
+      }
+      cout<<yields[ch]["bkg"].val<<" & ";
+      cout<<yields[ch]["data"].val<<" & ";
+      cout<<yields[ch]["sig"].val<<"  ";
+      cout<<endl;
+    }
+  }
 
   ///////////////////////
   /////////Print Out Card
   ///////////////////////
-  fout<<"bin           eee   eem   mme   mmm"<<endl;
+  for(int ch=0; ch<nch; ch++){
+    fout<<"# ch="<<ch
+        <<"  lumi="<<lumi
+        <<"  sigEff="<<geff[ch]->Eval(mass)
+        <<"  sigEffErr="<<gefferr[ch]->Eval(mass)
+        <<"  sigxsec="<<gxsec->Eval(mass)
+        <<"  nSigEvt="<<lumi * gxsec->Eval(mass) * geff[ch]->Eval(mass)
+        <<"  nSigEvtErr="<<1. + (geff[ch]->Eval(mass) > 0. ? gefferr[ch]->Eval(mass) / geff[ch]->Eval(mass) : 0.)
+        <<endl;
+  }
+
+  fout<<"bin           ";
+  for(int ch=0; ch<nch; ch++) fout<<bin(ch)<<"   ";
+  fout<<endl;
   fout<<"observation   ";
   for(int ch=0; ch<nch; ch++){
     fout<<yields[ch]["data"].val<<"  ";
@@ -110,7 +108,7 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   //bin          eee   eee   eee   eee   eee   eee   eem   eem   eem   eem   eem   eem   emm   emm   emm   emm   emm   emm   mmm   mmm   mmm   mmm   mmm  mmm
   fout<<"bin          "; 
   for(int ch=0; ch<nch; ch++){
-    for(int isample=0; isample<(int)samples.size()+1; isample++){
+    for(int isample=0; isample<(int)bkgSamples.size()+1; isample++){
       fout<<bin(ch)<<"  ";
     }
   }
@@ -120,8 +118,8 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   fout<<"process      ";
   for(int ch=0; ch<nch; ch++){
     fout<<"sig   ";
-    for(int isample=0; isample<(int)samples.size(); isample++){
-      fout<<samples[isample].substr(0,3)<<"  ";
+    for(int isample=0; isample<(int)bkgSamples.size(); isample++){
+      fout<<bkgSamples[isample].substr(0,3)<<"  ";
     }
   }
   fout<<endl;
@@ -129,7 +127,7 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   //process       0     1     2     3     4     5     0     1     2     3     4     5     0     1     2     3     4     5     0     1     2     3     4     5
   fout<<"process      ";
   for(int ch=0; ch<nch; ch++){
-    for(int isample=0; isample<(int)samples.size()+1; isample++){
+    for(int isample=0; isample<(int)bkgSamples.size()+1; isample++){
       fout<<isample<<"    ";
     }
   }
@@ -139,8 +137,8 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   fout<<"rate         ";
   for(int ch=0; ch<nch; ch++){
     fout<<yields[ch]["sig"].val<<"  ";
-    for(int isample=0; isample<(int)samples.size(); isample++){
-      fout<<yields[ch][samples[isample]].val<<"  ";
+    for(int isample=0; isample<(int)bkgSamples.size(); isample++){
+      fout<<yields[ch][bkgSamples[isample]].val<<"  ";
     }
   }
   fout<<endl;
@@ -150,27 +148,26 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   fout<<"MCStat   lnN ";
   for(int ch=0; ch<nch; ch++){
     fout<<yields[ch]["sig"].err<<"  ";
-    for(int isample=0; isample<(int)samples.size(); isample++){
-      fout<<yields[ch][samples[isample]].err<<"  ";
+    for(int isample=0; isample<(int)bkgSamples.size(); isample++){
+      fout<<yields[ch][bkgSamples[isample]].err<<"  ";
     }
   }
   fout<<endl;
 
   //Print Sys Errors
-  PrintSysErrors("METRes"   , "lnN", gMETRes   , mass, samples.size(),fout);
-  PrintSysErrors("METScale" , "lnN", gMETScale , mass, samples.size(),fout);
-  PrintSysErrors("PU"       , "lnN", gPU       , mass, samples.size(),fout);
-  PrintSysErrors("MuPtRes"  , "lnN", gMuPtRes  , mass, samples.size(),fout);
-  PrintSysErrors("MuPtScale", "lnN", gMuPtScale, mass, samples.size(),fout);
-  PrintSysErrors("ElEnScale", "lnN", gElEnScale, mass, samples.size(),fout);
-  PrintSysErrors("PDF"      , "lnN", gPDF      , mass, samples.size(),fout);
+  PrintSysErrors("METRes"   , "lnN", gMETRes   , mass, bkgSamples.size(),fout);
+  PrintSysErrors("METScale" , "lnN", gMETScale , mass, bkgSamples.size(),fout);
+  PrintSysErrors("PU"       , "lnN", gPU       , mass, bkgSamples.size(),fout);
+  PrintSysErrors("MuPtRes"  , "lnN", gMuPtRes  , mass, bkgSamples.size(),fout);
+  PrintSysErrors("MuPtScale", "lnN", gMuPtScale, mass, bkgSamples.size(),fout);
+  PrintSysErrors("ElEnScale", "lnN", gElEnScale, mass, bkgSamples.size(),fout);
+  PrintSysErrors("PDF"      , "lnN", gPDF      , mass, bkgSamples.size(),fout);
 
   fout.close(); 
 }
 
 void
 PrintSysErrors(const string & name, const string & type, gPair* gSys, const float mass, const int nbkg, ofstream & fout){
-  //fout<<"#";//Cory: take this out when its ready
   fout<<name<<"   "<<type<<" ";
   for(int ch=0; ch<nch; ch++){
     fout<<1. + gSys[ch].first->Eval(mass)<<"  ";
@@ -189,10 +186,7 @@ MakeSigEffGraph(TFile* fIn, const string & moreCuts, float LtOffset, float WindO
     string cuts = "(" + analysisCuts + " && " + moreCuts + ") * weight ";
     //get tree 
     TTree* tree = getTree(fIn, Form("WprimeToWZTo3LNu_M-%i", mass), "tEvts_MET");
-    float nSigEvtsUnweighted = tree->Draw("WZMass", cuts.c_str());//Cory: Check that this works.
-
-    //float nSigEvtsWeighted = GetNEvts(tree, cuts);
-    //float nGenWeighted     = 18258 * 1.5554e-04 / nch;//ONLY FOR 1700 testing  nGen * lumi * xsec / nGen;
+    float nSigEvtsUnweighted = tree->Draw("WZMass", cuts.c_str(), "goff");
 
     double     Eff = nSigEvtsUnweighted / nGen;
     double statEff = TMath::Sqrt(Eff * (1-Eff)/nGen); 
@@ -215,7 +209,7 @@ MakeSigEffErrGraph(TFile* fIn, const string & moreCuts, float LtOffset, float Wi
     string cuts = "(" + analysisCuts + " && " + moreCuts + ") * weight ";
     //get tree 
     TTree* tree = getTree(fIn, Form("WprimeToWZTo3LNu_M-%i", mass), "tEvts_MET");
-    float nSigEvtsUnweighted = tree->Draw("WZMass", cuts.c_str());
+    float nSigEvtsUnweighted = tree->Draw("WZMass", cuts.c_str(), "goff");
             
     double     Eff = nSigEvtsUnweighted / nGen;
     double statEff = TMath::Sqrt(Eff * (1-Eff)/nGen); 
@@ -232,4 +226,35 @@ getGraphPair(string sigFile, string bkgFile, int ch){
   format += " %lg %lg";
   //cout<<"for ch: "<<ch<<" format is:"<<format<<endl;
   return make_pair(new TGraphErrors(sigFile.c_str(), format.c_str()), new TGraphErrors(bkgFile.c_str(), format.c_str()));
+}
+
+map<string, Value>
+getYields(TFile* fIn, const int & mass, const string & cuts, const vector<string> & bkgSamples,
+          const TGraph* gxsec, const TGraphErrors* geff, const TGraphErrors* gefferr){
+  map<string, Value> yields;
+
+  //Data
+  yields["data"] = GetNEvtsAndError(fIn, "data", "tEvts_MET", cuts);
+  
+  //Signal
+  float lumi = GetLumiUsed(fIn);
+  float sigEff    = geff->Eval(mass);
+  float sigEffErr = gefferr->Eval(mass);
+  float sigxsec = gxsec->Eval(mass);
+  float nSigEvt    = lumi * sigxsec * sigEff; 
+  float nSigEvtErr = 1. + (sigEff > 0. ? sigEffErr / sigEff : 0.); 
+  
+  yields["sig"] = Value(nSigEvt, nSigEvtErr);
+  yields["sigeff"] = Value(sigEff, sigEffErr);
+  
+  //Background
+  Value vBkg(0,0);
+  for(int isample=0; isample<(int)bkgSamples.size(); isample++){
+    Value v = GetNEvtsAndError(fIn, bkgSamples[isample], "tEvts_MET", cuts);
+    yields[bkgSamples[isample]] = Value(v.val, 1. + (v.val > 0. ? v.err / v.val : 0.));
+    vBkg += v;
+  }
+  yields["bkg"] = vBkg;
+
+  return yields;
 }
