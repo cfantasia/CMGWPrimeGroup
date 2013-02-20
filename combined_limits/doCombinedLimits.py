@@ -163,13 +163,3 @@ if __name__ == '__main__':
         makePlots()
         sys.exit(0)
 
-
-
-##########################
-#for line in txtfile:
-#    addressCore = line.split(":")[0].rstrip()
-#    currCore = line.split(":")[1].rstrip()
-#    currCorePID = line.split("tmp/")[1].rstrip()
-#############
-
- 
