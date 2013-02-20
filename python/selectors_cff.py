@@ -161,7 +161,7 @@ electronSelectors = cms.PSet(
     EWKWZLoose = cms.PSet(),
     EWKWZTight = cms.PSet(),
 
-    CiC2012Relaxed = cms.PSet(
+    CiC2012LooseRelaxed = cms.PSet(
        joint = cms.PSet(
           minPt = cms.untracked.double(10.),
           maxIsGap = cms.untracked.int32(0),
@@ -189,39 +189,9 @@ electronSelectors = cms.PSet(
            maxfabsdiffEp = cms.untracked.double(0.05),
        ),
     ),
-
-    CiC2012Loose = cms.PSet(
-       joint = cms.PSet(
-          minPt = cms.untracked.double(10.),
-          maxIsGap = cms.untracked.int32(0),
-       ),
-       barrel = cms.PSet(
-           maxMissingHits = cms.untracked.int32(1),
-           minVtxFitProb = cms.untracked.double(1e-6),
-           maxSigmaIEtaIEta = cms.untracked.double(0.01),
-           maxDeltaPhi = cms.untracked.double(0.15),
-           maxDeltaEta = cms.untracked.double(0.007),
-           maxHoverE = cms.untracked.double(0.12),
-           maxd0 = cms.untracked.double(0.02),
-           maxdz = cms.untracked.double(0.2),
-           maxfabsdiffEp = cms.untracked.double(0.05),
-           maxPFIso = cms.untracked.double(0.15),          
-       ),
-       endcap = cms.PSet(
-           maxMissingHits = cms.untracked.int32(1),
-           minVtxFitProb = cms.untracked.double(1e-6),
-           maxSigmaIEtaIEta = cms.untracked.double(0.03),
-           maxDeltaPhi = cms.untracked.double(0.10),
-           maxDeltaEta = cms.untracked.double(0.009),
-           maxHoverE = cms.untracked.double(0.10),
-           maxd0 = cms.untracked.double(0.02),
-           maxdz = cms.untracked.double(0.2),
-           maxfabsdiffEp = cms.untracked.double(0.05),
-           maxPFIso = cms.untracked.double(0.15),
-       ),
-    ),
+    CiC2012Loose = cms.PSet(),
     CiC2012LoosePt20 = cms.PSet(),
-    CiC2012Medium = cms.PSet(
+    CiC2012MediumRelaxed = cms.PSet(
        joint = cms.PSet(
           minPt = cms.untracked.double(10.),
           maxIsGap = cms.untracked.int32(0),
@@ -236,7 +206,6 @@ electronSelectors = cms.PSet(
            maxd0 = cms.untracked.double(0.02),
            maxdz = cms.untracked.double(0.1),
            maxfabsdiffEp = cms.untracked.double(0.05),
-           maxPFIso = cms.untracked.double(0.15),          
        ),
        endcap = cms.PSet(
            maxMissingHits = cms.untracked.int32(1),
@@ -248,9 +217,9 @@ electronSelectors = cms.PSet(
            maxd0 = cms.untracked.double(0.02),
            maxdz = cms.untracked.double(0.1),
            maxfabsdiffEp = cms.untracked.double(0.05),
-           maxPFIso = cms.untracked.double(0.15),
        ),
     ),
+    CiC2012Medium = cms.PSet(),
     CiC2012MediumPt20 = cms.PSet(),
     )
 
@@ -315,17 +284,22 @@ electronSelectors.EWKWZTightPt20.joint.minPt = 20.
 electronSelectors.EWKWZTightPt20.joint.maxPFIso = cms.untracked.double(0.1)
 
 #CiC2012
+
+electronSelectors.CiC2012Loose = electronSelectors.CiC2012LooseRelaxed.clone()
+electronSelectors.CiC2012Loose.joint.maxPFIso = cms.untracked.double(0.15)
+
 electronSelectors.CiC2012LoosePt20 = electronSelectors.CiC2012Loose.clone()
 electronSelectors.CiC2012LoosePt20.joint.minPt = 20.
     
+electronSelectors.CiC2012Medium = electronSelectors.CiC2012MediumRelaxed.clone()
+electronSelectors.CiC2012Medium.joint.maxPFIso = cms.untracked.double(0.15)
+
 electronSelectors.CiC2012MediumPt20 = electronSelectors.CiC2012Medium.clone()
 electronSelectors.CiC2012MediumPt20.joint.minPt = 20.
 
 ##Exotica
 electronSelectors.exoticaPt20 = electronSelectors.exotica.clone()
 electronSelectors.exoticaPt20.joint.minPt = cms.untracked.double(20.)
-
-
 
 ####################
 #####  Jets  #######
@@ -363,3 +337,4 @@ photonSelectors = cms.PSet(
        ),
     )
 
+#CiC2012Relaxed

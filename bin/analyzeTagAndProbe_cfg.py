@@ -16,7 +16,7 @@ process.WprimeAnalyzer.Cuts = WZEffCuts
 
 process.WprimeAnalyzer.CountElectronType = cms.untracked.string("CiC2012Loose")
 process.WprimeAnalyzer.TagElectronType   = cms.untracked.string("CiC2012Medium")
-process.WprimeAnalyzer.LooseProbeElectronType = cms.untracked.string("CiC2012Relaxed")
+process.WprimeAnalyzer.LooseProbeElectronType = cms.untracked.string("CiC2012LooseRelaxed")
 process.WprimeAnalyzer.TightProbeElectronType = cms.untracked.string("CiC2012Loose")
 
 process.WprimeAnalyzer.CountMuonType = cms.untracked.string("EWKWZLoose")
