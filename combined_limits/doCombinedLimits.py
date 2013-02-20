@@ -11,6 +11,12 @@ parser.add_option("-o", "--observed", action='store_true',
 parser.add_option("-p", "--plot", action='store_true',
                   dest="plot", default=False,
                   help="Print Plots")
+parser.add_option("-d", "--doDuplicates", action='store_true',
+                  dest="doDuplicates", default=False,
+                  help="Skip Limit if Card file exists")
+parser.add_option("--combine", action='store_true',
+                  dest="combine", default=True,
+                  help="Combine multiple root file")
 parser.add_option("-c", "--condor", action='store_true',
                   dest="condor", default=False,
                   help="Submit Via Condor")
@@ -26,42 +32,62 @@ parser.add_option("-w", "--WindShift",
 parser.add_option("-s", "--setup", metavar="DIR",
                   dest="setup", default="",
                   help="Directory to run in")
+parser.add_option("-i", "--input", metavar="FILE",
+                  dest="input", default="../../../WprimeWZ.root",
+                  help="Input Root File to Use")
 
 (options, args) = parser.parse_args()
 print options
 
-def run(Mass):
-    NToys=options.ntoys
-    Seed="-1"
-
+def runLimit(Mass):
     cardFile="card_"+Mode+Suffix+"_M"+Mass+".txt"
-    cardCoreFile="card_Core_"+Mode+Suffix+"_M"+Mass+".txt"
     
     if not os.path.exists(cardFile):
         print cardFile+" does not exist, creating."
-        os.system("root -b -l -q 'makeLimitCard.C+(\"../../../WprimeWZ.root\", \""+cardCoreFile+"\", "+Mass+", "+options.LtShift+", "+options.WindShift+")'")
-        os.system("cat card_Head.txt "+cardCoreFile+" card_Tail.txt > "+cardFile)
-        os.system("rm "+cardCoreFile)
-        
+        os.system("root -b -l -q 'makeLimitCard.C+(\""+options.input+"\", \""+cardFile+"\", "+Mass+", "+options.LtShift+", "+options.WindShift+")'")
+    else:
+        if not options.doDuplicates: #Card file exists
+            return
+
+    if not os.path.exists(cardFile):
+        print "Card file "+cardFile+" STILL does not exist, check for errors!"
+        sys.exit(1)
+
+
+    if options.condor:
+        return
+
+    NToys=options.ntoys
+    Seed="-1"
+    
     CombineCMD="combine -H "+HintAlgo+" -M "+Algo+" -s "+Seed+" -n "+Mode+Suffix+" -m "+Mass+" --rMax 0.1 "+cardFile  #MarkovChainMC Line
     #CombineCMD="combine -H "+HintAlgo+" -M "+Algo+" -s "+Seed+" -n "+Mode+Suffix+" -m "+Mass+" "+cardFile+" --tries 200 --iteration 30000 --burnInSteps 100 --rMax 0.1"  #MarkovChainMC Line
-
     #CombineCMD="combine -H "+HintAlgo+" -M "+Algo+" -s "+Seed+" -n "+Mode+" -m "+Mass+" "+cardFile+""
     #CombineCMD="combine -H "+HintAlgo+" --rMax 1 -M "+Algo+" -s "+Seed+" -n "+Mode+" -m "+Mass+" "+cardFile+""
     #CombineCMD="combine -H "+HintAlgo+" -V -v 2 -M "+Algo+" -s "+Seed+" -n "+Mode+" -m "+Mass+" "+cardFile+""
     print CombineCMD
+    
     if options.observed:
         os.system(CombineCMD + "              ") # >& /dev/null   #Observed Limit
     else:
         os.system(CombineCMD + " --toys "+NToys) # >& /dev/null   #Expected Limit
 
-    name="higgsCombine"+Mode+Suffix+"."+Algo+".mH"+Mass+".root"
-    os.system("hadd -f "+name+" higgsCombine"+Mode+Suffix+"."+Algo+".mH"+Mass+".*.root >& /dev/null")
+    #Combine root files
+    if options.combine:
+        name="higgsCombine"+Mode+Suffix+"."+Algo+".mH"+Mass+".root"
+        os.system("hadd -f "+name+" higgsCombine"+Mode+Suffix+"."+Algo+".mH"+Mass+".*.root >& /dev/null")
 
-
+            
 def makePlots():
+    if options.combine:
+        import glob
+        for Mass in range(200, 2001): #Combine root files
+            name="higgsCombine"+Mode+Suffix+"."+Algo+".mH"+str(Mass)+".root"
+            if len(glob.glob("higgsCombine"+Mode+Suffix+"."+Algo+".mH"+str(Mass)+".*.root")):
+                os.system("hadd -f "+name+" higgsCombine"+Mode+Suffix+"."+Algo+".mH"+str(Mass)+".*.root >& /dev/null")
+
     #Now run code to extract limts and make plots
-    extractCMD="root -b -l -q 'extractLimits.C+(\"../../../WprimeWZ.root\",\""+Mode+Suffix+"\",\""+Algo+"\")'"
+    extractCMD="root -b -l -q 'extractLimits.C+(\""+options.input+"\",\""+Mode+Suffix+"\",\""+Algo+"\")'"
     print extractCMD
     os.system(extractCMD)
     os.system("cat nLimit_"+Mode+Suffix+"_"+Algo+".txt")
@@ -70,22 +96,25 @@ def makePlots():
     os.system("root -b -l -q '../Limits/PlotLimit.C+(\"WprimeWZ\", \"../combined_limits/nLimit_"+Mode+Suffix+"_"+Algo+".txt\")'")
     os.system("scp  ../Limits/limitVsMass_WZ.pdf buphy.bu.edu:~/public_html")
 
-def submitCondor(mass):
-    condorFile="submit_M"+mass+"_LtShift"+options.LtShift+"_WindShift"+options.WindShift+".condor"
+def submitCondor(Mass):
+    cardFile="card_"+Mode+Suffix+"_M"+Mass+".txt"
+    condorFile="submit_M"+Mass+"_LtShift"+options.LtShift+"_WindShift"+options.WindShift+".condor"
     f = open(condorFile, 'w')
     f.write("universe = vanilla\n")
     f.write("Executable = condorLimits.sh\n")
     #f.write("Executable = doCombinedLimits.py\n")
     f.write('Requirements = Memory >= 199 &&OpSys == "LINUX"&& (Arch != "DUMMY" )&& Disk > 1000000\n')
+    f.write("Transfer_Input_Files = "+cardFile+", doCombinedLimits.py\n")
     f.write("Should_Transfer_Files = YES\n")
     f.write("WhenToTransferOutput = ON_EXIT\n")
-    label="M"+mass+"LtShift"+options.LtShift+"_WindShift"+options.WindShift
+    label="M"+Mass+"LtShift"+options.LtShift+"_WindShift"+options.WindShift
     f.write("Output = out_"+label+".$(Process)_$(cluster)\n")
     f.write("Error = err_"+label+".$(Process)_$(cluster)\n")
     f.write("Log = log_"+label+".$(Process)_$(cluster)\n")
-    #f.write("notify_user = fantasia@bu.edu\n")
-    f.write("Arguments = "+mass+" "+options.LtShift+" "+options.WindShift+" "+options.ntoys+" "+os.getcwd()+"\n")
-    #f.write("Arguments = -M "+mass+" --LtShift="+options.LtShift+" --WindShift="+options.WindShift+" --setup="+os.getcwd()+"\n")
+    f.write("notify_user = @bu.edu\n")
+    f.write("notification = Error\n")
+    f.write("Arguments = "+Mass+" "+options.LtShift+" "+options.WindShift+" "+options.ntoys+" "+os.getcwd()+"\n")
+    #f.write("Arguments = -M "+Mass+" --LtShift="+options.LtShift+" --WindShift="+options.WindShift+" --setup="+os.getcwd()+"\n")
     f.write("Queue 1\n")
     f.close()
     #print condorFile
@@ -114,6 +143,7 @@ if __name__ == '__main__':
 
     if options.setup != "":
         os.system("source /uscmst1/prod/sw/cms/setup/shrc prod")
+
         os.chdir(options.setup)
         os.system("eval `scramv1 runtime -sh`")
         print "Changed to "+os.getcwd()
@@ -123,8 +153,9 @@ if __name__ == '__main__':
         for M in Masses:
             print "Running mass "+M
             if not options.condor:
-                run(M)
+                runLimit(M)
             else:
+                runLimit(M)
                 submitCondor(M)
 
 

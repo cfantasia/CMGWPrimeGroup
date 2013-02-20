@@ -7,6 +7,8 @@ typedef pair<TGraphErrors*, TGraphErrors*> gPair;
 
 TGraphErrors* MakeSigEffGraph   (TFile* fIn, const string & moreCuts, float LtOffset=0., float WindOffset=0.);
 TGraphErrors* MakeSigEffErrGraph(TFile* fIn, const string & moreCuts, float LtOffset=0., float WindOffset=0.);
+void PrintCardHead(ofstream & fout);
+void PrintCardTail(const vector<string> & bkgSamples, ofstream & fout);
 void PrintSysErrors(const string & name, const string & type, gPair* gSys, const float mass, const int nbkg, ofstream & fout);
 gPair getGraphPair(string sigFile, string bkgFile, int ch);
 map<string, Value>
@@ -38,6 +40,7 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
     cout << "Cannot open file " << outName << endl; 
     abort();
   } 
+  PrintCardHead(fout);
   
   string analysisCuts = AnalysisCuts(mass, LtOffset, WindOffset);
   fout<<"# Cuts are "<<analysisCuts<<" for mass="<<mass<<endl;
@@ -59,31 +62,13 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
     gPDF[ch]      = getGraphPair("../Systematics/SysSigPDF.dat"      , "../Systematics/SysBkgPDF.dat", ch);
   }
 
-  ////////////////////////
-  /////////Print Out Table
-  ////////////////////////
-  if(true && mass%100 == 0){
-    cout<<"Channel & ";
-    for(int isample=0; isample<(int)bkgSamples.size(); isample++){
-      cout<<bkgSamples[isample]<<" & ";
-    }
-    cout<<" & Data & Signal"<<endl;
-
-    for(int ch=0; ch<nch; ch++){
-      cout<<bin(ch)<<" & ";
-      for(int isample=0; isample<(int)bkgSamples.size(); isample++){
-        cout<<yields[ch][bkgSamples[isample]].val<<" & ";
-      }
-      cout<<yields[ch]["bkg"].val<<" & ";
-      cout<<yields[ch]["data"].val<<" & ";
-      cout<<yields[ch]["sig"].val<<"  ";
-      cout<<endl;
-    }
-  }
+  //Everything is now set up and can be printed out however we want.
 
   ///////////////////////
   /////////Print Out Card
   ///////////////////////
+
+  //Some debug info
   for(int ch=0; ch<nch; ch++){
     fout<<"# ch="<<ch
         <<"  lumi="<<lumi
@@ -95,6 +80,7 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
         <<endl;
   }
 
+  //Print Data yields
   fout<<"bin           ";
   for(int ch=0; ch<nch; ch++) fout<<bin(ch)<<"   ";
   fout<<endl;
@@ -105,6 +91,7 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   fout<<endl;
   fout<<"------------"<<endl;
 
+  //Print channel (bin) labels
   //bin          eee   eee   eee   eee   eee   eee   eem   eem   eem   eem   eem   eem   emm   emm   emm   emm   emm   emm   mmm   mmm   mmm   mmm   mmm  mmm
   fout<<"bin          "; 
   for(int ch=0; ch<nch; ch++){
@@ -114,6 +101,7 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   }
   fout<<endl;
 
+  //Print Sample name
   //process      sig   wz    zjet  ttbar zz    zg    sig   wz    zjet  ttbar zz    zg    sig   wz    zjet  ttbar zz    zg    sig   wz    zjet  ttbar zz   zg
   fout<<"process      ";
   for(int ch=0; ch<nch; ch++){
@@ -124,6 +112,7 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   }
   fout<<endl;
     
+  //Print Bin number
   //process       0     1     2     3     4     5     0     1     2     3     4     5     0     1     2     3     4     5     0     1     2     3     4     5
   fout<<"process      ";
   for(int ch=0; ch<nch; ch++){
@@ -133,6 +122,7 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   }
   fout<<endl;
 
+  //Print Sig/Bkg yields
   //rate         20.   90    1     1     3     1     20.   90    1     1     3     1     20.   90    1     1     3     1     20.   90    1     1     3     1
   fout<<"rate         ";
   for(int ch=0; ch<nch; ch++){
@@ -147,9 +137,11 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   //Print Stat Errors
   fout<<"MCStat   lnN ";
   for(int ch=0; ch<nch; ch++){
-    fout<<yields[ch]["sig"].err<<"  ";
+    const Value & vSig = yields[ch]["sig"];
+    fout<<(1. + (vSig.val > 0. ? vSig.err / vSig.val : 0.))<<"  ";
     for(int isample=0; isample<(int)bkgSamples.size(); isample++){
-      fout<<yields[ch][bkgSamples[isample]].err<<"  ";
+      const Value & vBkg = yields[ch][bkgSamples[isample]];
+      fout<<(1. + (vBkg.val > 0. ? vBkg.err / vBkg.val : 0.))<<"  ";
     }
   }
   fout<<endl;
@@ -162,7 +154,7 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   PrintSysErrors("MuPtScale", "lnN", gMuPtScale, mass, bkgSamples.size(),fout);
   PrintSysErrors("ElEnScale", "lnN", gElEnScale, mass, bkgSamples.size(),fout);
   PrintSysErrors("PDF"      , "lnN", gPDF      , mass, bkgSamples.size(),fout);
-
+  PrintCardTail(bkgSamples, fout);
   fout.close(); 
 }
 
@@ -176,6 +168,74 @@ PrintSysErrors(const string & name, const string & type, gPair* gSys, const floa
     }
   }
   fout<<endl;
+}
+
+void
+PrintCardHead(ofstream & fout){
+  fout<<"# Counting experiment with multiple channels"<<endl;
+  fout<<"# Wprime with 4 channels"<<endl;
+  fout<<"imax 4  number of channels"<<endl;
+  fout<<"jmax 5  number of backgrounds ('*' = automatic)"<<endl;
+  fout<<"kmax 19  number of nuisance parameters (sources of systematical uncertainties)"<<endl;
+  fout<<"------------"<<endl;
+}
+
+void
+PrintCardTail(const vector<string> & bkgSamples, ofstream & fout){
+  fout<<"#"<<endl;
+  fout<<"ElTrig   lnN 1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02   -     -     -     -     -     -     -     -     -     -     -     -   #El Trig "<<endl;
+  fout<<"ElReco   lnN 1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02   -     -     -     -     -     -   #El Reco "<<endl;
+  fout<<"ElIDIso  lnN 1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02   -     -     -     -     -     -   #El ID/Iso "<<endl;
+  fout<<"MuTrig   lnN  -     -     -     -     -     -     -     -     -     -     -     -    1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02 #Mu Trig "<<endl;
+  fout<<"MuReco   lnN  -     -     -     -     -     -    1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02 #Mu Reco "<<endl;
+  fout<<"MuIDIso  lnN  -     -     -     -     -     -    1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02 #Mu IDIso "<<endl;
+  fout<<"#"<<endl;
+
+  const int nbkg = bkgSamples.size();
+
+  fout<<"ZGxsec   lnN ";
+  for(int ch=0; ch<nch; ch++){
+    fout<<" -    ";//for signal
+    for(int isample=0; isample<nbkg; isample++){
+      if(0 == bkgSamples[isample].compare("GVJets")) fout<<"1.13  ";
+      else               fout<<" -    ";
+    }
+  }fout<<endl;
+
+  fout<<"ZZxsec   lnN ";
+  for(int ch=0; ch<nch; ch++){
+    fout<<" -    ";//for signal
+    for(int isample=0; isample<nbkg; isample++){
+      if(0 == bkgSamples[isample].compare("ZZ")) fout<<"1.075 ";
+      else               fout<<" -    ";
+    }
+  }fout<<endl;
+
+  fout<<"WZxsec   lnN ";
+  for(int ch=0; ch<nch; ch++){
+    fout<<" -    ";//for signal
+    for(int isample=0; isample<nbkg; isample++){
+      if(0 == bkgSamples[isample].compare("WZJetsTo3LNu")) fout<<"1.17  ";
+      else               fout<<" -    ";
+    }
+  }fout<<endl;
+
+  fout<<"WZNLO    lnN ";
+  for(int ch=0; ch<nch; ch++){
+    fout<<" -    ";//for signal
+    for(int isample=0; isample<nbkg; isample++){
+      if(0 == bkgSamples[isample].compare("WZJetsTo3LNu")) fout<<"1.10  ";
+      else               fout<<" -    ";
+    }
+  }fout<<endl;
+
+  fout<<"lumi     lnN ";
+  for(int ch=0; ch<nch; ch++){
+    fout<<"1.044 ";//for signal
+    for(int isample=0; isample<nbkg; isample++){
+      fout<<"1.044 ";
+    }
+  }fout<<endl;
 }
 
 TGraphErrors*
@@ -251,7 +311,8 @@ getYields(TFile* fIn, const int & mass, const string & cuts, const vector<string
   Value vBkg(0,0);
   for(int isample=0; isample<(int)bkgSamples.size(); isample++){
     Value v = GetNEvtsAndError(fIn, bkgSamples[isample], "tEvts_MET", cuts);
-    yields[bkgSamples[isample]] = Value(v.val, 1. + (v.val > 0. ? v.err / v.val : 0.));
+    //yields[bkgSamples[isample]] = Value(v.val, 1. + (v.val > 0. ? v.err / v.val : 0.));
+    yields[bkgSamples[isample]] = v;
     vBkg += v;
   }
   yields["bkg"] = vBkg;
