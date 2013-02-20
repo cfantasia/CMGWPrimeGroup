@@ -90,7 +90,7 @@ printTable(int mode){
     break;
 
   case 1:
-    cout<<"\n\n ----After Lt Cut Table (remember to use noWind option!!!!---------------\n\n";
+    cout<<"%\n\n ----After Lt Cut Table (remember to use noWind option!!!!---------------\n\n";
     cout<<"Mass point & $L_{T}^{Min}$ & NBkgMC & Data & NSig \\\\"<<endl;
   
     //loop over signals:
