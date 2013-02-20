@@ -384,6 +384,10 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       variable.push_back("hZMass");
       variable.push_back("hZeeMass");
       variable.push_back("hZmmMass");
+      variable.push_back("hZ3e0mMass");
+      variable.push_back("hZ2e1mMass");
+      variable.push_back("hZ1e2mMass");
+      variable.push_back("hZ0e3mMass");
 
       variable.push_back("hZpt");
       variable.push_back("hZeept");
@@ -625,10 +629,26 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       DrawandSave(fin,outName,"hLt_MET","Title: Cumlative Lt before Lt Cut",1,0,1);
 
       DrawandSave(fin,outName,"hWZMass_MET","Title: WZ Mass before Lt Cut",1);
-      DrawandSave(fin,outName,"hWZMass_MET","Title: WZ Mass before Lt Cut",1,0,1);
+      DrawandSave(fin,outName,"hWZMass_MET","Title: WZ Mass before Lt Cut (Cumlative)",1,0,1);
       DrawandSave(fin,outName,"hWZMass_Lt","Title: WZ Mass After Lt Cut ",1,0,0);
       DrawandSave(fin,outName,"hWZMass_Lt","Title: WZ Mass After Lt Cut (Cumlative) ",1,0,1);
 
+      DrawandSave(fin,outName,"hWZ3e0mMass_MET","Title: WZ Mass before Lt Cut",1);
+      DrawandSave(fin,outName,"hWZ3e0mMass_MET","Title: WZ Mass before Lt Cut (Cumlative)",1,0,1);
+      DrawandSave(fin,outName,"hWZ3e0mMass_Lt","Title: WZ Mass After Lt Cut ",1,0,0);
+      DrawandSave(fin,outName,"hWZ3e0mMass_Lt","Title: WZ Mass After Lt Cut (Cumlative) ",1,0,1);
+      DrawandSave(fin,outName,"hWZ2e1mMass_MET","Title: WZ Mass before Lt Cut",1);
+      DrawandSave(fin,outName,"hWZ2e1mMass_MET","Title: WZ Mass before Lt Cut (Cumlative)",1,0,1);
+      DrawandSave(fin,outName,"hWZ2e1mMass_Lt","Title: WZ Mass After Lt Cut ",1,0,0);
+      DrawandSave(fin,outName,"hWZ2e1mMass_Lt","Title: WZ Mass After Lt Cut (Cumlative) ",1,0,1);
+      DrawandSave(fin,outName,"hWZ1e2mMass_MET","Title: WZ Mass before Lt Cut",1);
+      DrawandSave(fin,outName,"hWZ1e2mMass_MET","Title: WZ Mass before Lt Cut (Cumlative)",1,0,1);
+      DrawandSave(fin,outName,"hWZ1e2mMass_Lt","Title: WZ Mass After Lt Cut ",1,0,0);
+      DrawandSave(fin,outName,"hWZ1e2mMass_Lt","Title: WZ Mass After Lt Cut (Cumlative) ",1,0,1);
+      DrawandSave(fin,outName,"hWZ0e3mMass_MET","Title: WZ Mass before Lt Cut",1);
+      DrawandSave(fin,outName,"hWZ0e3mMass_MET","Title: WZ Mass before Lt Cut (Cumlative)",1,0,1);
+      DrawandSave(fin,outName,"hWZ0e3mMass_Lt","Title: WZ Mass After Lt Cut ",1,0,0);
+      DrawandSave(fin,outName,"hWZ0e3mMass_Lt","Title: WZ Mass After Lt Cut (Cumlative) ",1,0,1);
       ////////////////
       DrawandSave(fin,outName,"hNLLeps_MET","Title: NLepAfter MET",1);
       DrawandSave(fin,outName,"hNJets_MET","Title: NJet After MET",1);
@@ -1027,7 +1047,7 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
         float max = atof(title.substr(start, end-start).c_str());
         start = end + 4; end = string::npos;
         string obj = title.substr(start, end-start).c_str();
-        if(1 || debug_){
+        if(debug_){
           cout<<" var: "<<var
               <<" cuts: "<<cuts
               <<" nbins: "<<nbins

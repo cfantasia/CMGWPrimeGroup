@@ -1,4 +1,5 @@
-//Usage: root -b -l -q ZptVsWpt.C+
+//Usage: root -b -l -q 'ZptVsWpt.C+(string inName, string outSuffix="")'
+//Usage: root -b -l -q 'ZptVsWpt.C+("../../../WprimeWZ.root", "")'
 
 #include <iostream>
 #include <iomanip>
@@ -16,6 +17,8 @@
 
 using namespace std;
 
+string outSuffix_;
+
 void
 Make2DPlot(const string & name, const string & title, 
            const int & nx, const float & minx, const float & maxx, 
@@ -25,12 +28,13 @@ Make2DPlot(const string & name, const string & title,
 void DrawBoxes(TCanvas & c);
 
 
-void ZptVsWpt(){
+void ZptVsWpt(string inName, string outSuffix=""){
   gErrorIgnoreLevel = kWarning;
   CMSstyle();
   gStyle->SetOptStat(0);
+  outSuffix_ = outSuffix;
 
-  TFile *fin = TFile::Open("../../../WprimeWZ.root", "read"); assert(fin);
+  TFile *fin = TFile::Open(inName.c_str(), "read"); assert(fin);
   
 
   float minWindow = 0;
@@ -163,7 +167,7 @@ Make2DPlot(const string & name, const string & title,
     if(name.find("WZMassVsLt") != string::npos) DrawBoxes(c);
     legend.Draw();
     
-    c.SaveAs(Form("%s.png", name.c_str()));
+    c.SaveAs(Form("%s%s.png", name.c_str(), outSuffix_.c_str()));
   
   }//loop over samples
 }

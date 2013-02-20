@@ -81,8 +81,7 @@ void EffVsMass(string inName, int applyAnalysisCuts){
   TCanvas* c1 = new TCanvas();
   TMultiGraph* mg = new TMultiGraph("mg", ";M_{W'} (GeV); #varepsilon");
   TLegend *legend = new TLegend(0.4,0.2,0.51,0.4,"");
-	legend->SetBorderSize(0);
-  legend->SetFillStyle(0);
+  prepLegend(legend);
   for(int ch=0; ch<4; ++ch){
     g[ch]->SetMarkerColor(ch+2);
     g[ch]->SetLineColor(ch+2);

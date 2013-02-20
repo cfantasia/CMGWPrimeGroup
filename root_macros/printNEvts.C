@@ -191,18 +191,14 @@ printNEvts(string infile, int mode=-1){
     levels.push_back(make_pair("VMass", "V Selection"));
   }  
 
-  cout<<"\\begin{table}[!h]"<<endl;
   //%Cory: Updated DATE
-  //cout<"\\begin{small}"<<endl;
-  cout<<"\\centering"<<endl;
-  cout<<"\\begin{tabular}{|c||*{"<<levels.size()*evtTypes.size()<<"}{c|}} \\hline"<<endl;
+  cout<<"\\begin{table}[!h] \\centering \\begin{tabular}{|c||*{"<<levels.size()*evtTypes.size()<<"}{c|}} \\hline"<<endl;
 
   if(mode == -1){
     cout<<"Sample ";
     for(unsigned level=0; level<levels.size(); ++level){
       cout<<" & "<<levels[level].second;//Print cut names
     }
-    cout<<" \\\\ "<<endl;
   }else{//don't do if doing all channels
     cout<<"\\multirow{2}{*}{Sample} ";
     for(unsigned level=0; level<levels.size(); ++level){
@@ -300,6 +296,5 @@ printNEvts(string infile, int mode=-1){
     }//loop over cuts
     cout<<" \\\\ \\hline"<<endl;
   }//loop over samples
-  cout<<"\\end{tabular}"<<endl;
-  cout<<"\\end{table}"<<endl;
+  cout<<"\\end{tabular} \\end{table}"<<endl;
 }

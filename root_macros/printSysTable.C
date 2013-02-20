@@ -66,13 +66,16 @@ printSysTable(string sigName, string bkgName, string outName){
   //Now Print Latex Table 
   //cout<<"//%Cory: Updated DATE"<<endl;
   cout<<"\\begin{table}[!h] \\centering \\begin{tabular}{|c||*{8}{c|}} \\hline"<<endl;
-  cout<<" Mass & \\multicolumn{4}{c|}{Signal Relative Systematic (%)} & \\multicolumn{4}{c|}{Background Relative Systematic (%)} \\\\ \\hline"<<endl;
+  cout<<"\\multirow{2}{*}{Mass} & \\multicolumn{4}{c|}{Signal Relative Systematic (\\%)} & \\multicolumn{4}{c|}{Background Relative Systematic (\\%)} \\\\"<<endl;
+  for(int ch=0; ch<nch; ch++) cout<<" & "<<bin(ch);//Signal cols
+  for(int ch=0; ch<nch; ch++) cout<<" & "<<bin(ch);//Bkg cols
+  cout<<"\\\\ \\hline"<<endl;
   for(int mass=200; mass<=2000; mass+=100){
     cout<<Form("%i ",mass);
-    for(int ch=0; ch<nch; ch++) cout<<Form("& %.4f ", gSig[ch]->Eval(mass));
-    for(int ch=0; ch<nch; ch++) cout<<Form("& %.4f ", gBkg[ch]->Eval(mass));
+    for(int ch=0; ch<nch; ch++) cout<<Form("& %.2f ", gSig[ch]->Eval(mass));
+    for(int ch=0; ch<nch; ch++) cout<<Form("& %.2f ", gBkg[ch]->Eval(mass));
     cout<<"\\\\"<<endl;
   }
-  cout<<"\\end{tabular} \\end{table}"<<endl;
+  cout<<"\\hline"<<endl<<"\\end{tabular} \\end{table}"<<endl;
 
 }
