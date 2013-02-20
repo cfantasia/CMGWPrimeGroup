@@ -16,9 +16,7 @@ PlotRes(int mass){
   TPaveStats *stat1,*stat2,*stat3,*stat4; 
 
   TCanvas* cLepRes = new TCanvas("Res");
-  cLepRes->Divide(2,2);
 
-  cLepRes->cd(1);
   TH1F* WLepPt_mmm = new TH1F("WLepPt_mmm", "W Lepton; Resolution (Reco - Gen) (GeV); a.u.", 100, -500, 500); get_sum_of_hists(_file0, sample, "tEvts_MET", "WLepPt-WLepPtGen", "EvtType == 3", *WLepPt_mmm);
   WLepPt_mmm->SetMarkerColor(kYellow  ); WLepPt_mmm->SetLineColor(kYellow  ); WLepPt_mmm->Draw(); cLepRes->Update(); 
   stat1 = (TPaveStats*) (WLepPt_mmm->GetListOfFunctions()->FindObject("stats")); stat1->SetTextColor(kYellow);
@@ -35,6 +33,8 @@ PlotRes(int mass){
   stat4 = (TPaveStats*) (WLepPt_eee->GetListOfFunctions()->FindObject("stats")); stat4->SetTextColor(kRed);
   shiftStats(stat3, stat4);
   WLepPt_mmm->SetMaximum(findMax(WLepPt_mmm, WLepPt_emm, WLepPt_eem, WLepPt_eee));
+
+  cLepRes->SaveAs((outName + "_WLeptonPtResolution.png").c_str());
   ////////////////////////////////////
 
   cLepRes->cd(2);
@@ -54,6 +54,8 @@ PlotRes(int mass){
   stat4 = (TPaveStats*) (MET_eee->GetListOfFunctions()->FindObject("stats")); stat4->SetTextColor(kRed);
   shiftStats(stat3, stat4);
   MET_mmm->SetMaximum(findMax(MET_mmm, MET_emm, MET_eem, MET_eee));
+
+  cLepRes->SaveAs((outName + "_METResolution.png").c_str());
   ////////////////////////////////////
 
   cLepRes->cd(3);
@@ -73,6 +75,8 @@ PlotRes(int mass){
   stat4 = (TPaveStats*) (ZLep1Pt_eee->GetListOfFunctions()->FindObject("stats")); stat4->SetTextColor(kRed);
   shiftStats(stat3, stat4);
   ZLep1Pt_mmm->SetMaximum(findMax(ZLep1Pt_mmm, ZLep1Pt_emm, ZLep1Pt_eem, ZLep1Pt_eee));
+
+  cLepRes->SaveAs((outName + "_ZLeadingLeptonPtResolution.png").c_str());
   ////////////////////////////////////
 
   cLepRes->cd(4);
@@ -92,12 +96,10 @@ PlotRes(int mass){
   stat4 = (TPaveStats*) (ZLep2Pt_eee->GetListOfFunctions()->FindObject("stats")); stat4->SetTextColor(kRed);
   shiftStats(stat3, stat4);
   ZLep2Pt_mmm->SetMaximum(findMax(ZLep2Pt_mmm, ZLep2Pt_emm, ZLep2Pt_eem, ZLep2Pt_eee));
+
+  cLepRes->SaveAs((outName + "_ZTrailingLeptonPtResolution.png").c_str());
   ////////////////////////////////////
 
-  cLepRes->cd();
-  cLepRes->SaveAs((outName + "_LeptonResolution.png").c_str());
-
-  ////////////////////////////////////
   TCanvas* cWZRes = new TCanvas("WZ Resolution");
 
   TH1F* WZRes_mmm = new TH1F("WZRes_mmm", "WZ Mass; Resolution (Reco - Gen) (GeV); a.u.", 100, -500, 500); get_sum_of_hists(_file0, sample, "tEvts_MET", "WZMass-WprimeGenMass", "EvtType == 3", *WZRes_mmm);
@@ -117,16 +119,12 @@ PlotRes(int mass){
   shiftStats(stat3, stat4);
   WZRes_mmm->SetMaximum(findMax(WZRes_mmm, WZRes_emm, WZRes_eem, WZRes_eee));
 
-  cWZRes->cd();
   cWZRes->SaveAs((outName + "_WZResolution.png").c_str());
 
   /////////////////////////////////////
   
   TCanvas* cResPt = new TCanvas("Resolution as Function of Pt");
-  cResPt->Divide(2,2);
 
-  /////////////////////////////////////
-  cResPt->cd(1);
   TH1F* WLepPt0_100_mmm = new TH1F("WLepPt0_100_mmm", "0 < W Lepton Pt < 100; Resolution (Reco - Gen) (GeV); a.u.", 200, -200, 200); get_sum_of_hists(_file0, sample, "tEvts_MET", "WLepPt-WLepPtGen", "WLepPtGen > 0 && WLepPtGen < 100 && EvtType == 3", *WLepPt0_100_mmm);
   WLepPt0_100_mmm->SetMarkerColor(kYellow  ); WLepPt0_100_mmm->SetLineColor(kYellow  ); WLepPt0_100_mmm->Draw(); cResPt->Update(); 
   stat1 = (TPaveStats*) (WLepPt0_100_mmm->GetListOfFunctions()->FindObject("stats")); stat1->SetTextColor(kYellow);
@@ -144,8 +142,9 @@ PlotRes(int mass){
   shiftStats(stat3, stat4);
   WLepPt0_100_mmm->SetMaximum(findMax(WLepPt0_100_mmm, WLepPt0_100_emm, WLepPt0_100_eem, WLepPt0_100_eee));
 
+  cResPt->SaveAs((outName + "_WLeptonPtResolution_0-100.png").c_str());
   /////////////////////////////////////
-  cResPt->cd(2);
+
   TH1F* WLepPt100_200_mmm = new TH1F("WLepPt100_200_mmm", "100 < W Lepton Pt < 200; Resolution (Reco - Gen) (GeV); a.u.", 200, -200, 200); get_sum_of_hists(_file0, sample, "tEvts_MET", "WLepPt-WLepPtGen", "WLepPtGen > 100 && WLepPtGen < 200 && EvtType == 3", *WLepPt100_200_mmm);
   WLepPt100_200_mmm->SetMarkerColor(kYellow  ); WLepPt100_200_mmm->SetLineColor(kYellow  ); WLepPt100_200_mmm->Draw(); cResPt->Update(); 
   stat1 = (TPaveStats*) (WLepPt100_200_mmm->GetListOfFunctions()->FindObject("stats")); stat1->SetTextColor(kYellow);
@@ -163,8 +162,9 @@ PlotRes(int mass){
   shiftStats(stat3, stat4);
   WLepPt100_200_mmm->SetMaximum(findMax(WLepPt100_200_mmm, WLepPt100_200_emm, WLepPt100_200_eem, WLepPt100_200_eee));
 
+  cResPt->SaveAs((outName + "_WLeptonPtResolution_100-200.png").c_str());
   /////////////////////////////////////
-  cResPt->cd(3);
+
   TH1F* WLepPt200_400_mmm = new TH1F("WLepPt200_400_mmm", "200 < W Lepton Pt < 400; Resolution (Reco - Gen) (GeV); a.u.", 200, -200, 200); get_sum_of_hists(_file0, sample, "tEvts_MET", "WLepPt-WLepPtGen", "WLepPtGen > 200 && WLepPtGen < 400 && EvtType == 3", *WLepPt200_400_mmm);
   WLepPt200_400_mmm->SetMarkerColor(kYellow  ); WLepPt200_400_mmm->SetLineColor(kYellow  ); WLepPt200_400_mmm->Draw(); cResPt->Update(); 
   stat1 = (TPaveStats*) (WLepPt200_400_mmm->GetListOfFunctions()->FindObject("stats")); stat1->SetTextColor(kYellow);
@@ -182,8 +182,9 @@ PlotRes(int mass){
   shiftStats(stat3, stat4);
   WLepPt200_400_mmm->SetMaximum(findMax(WLepPt200_400_mmm, WLepPt200_400_emm, WLepPt200_400_eem, WLepPt200_400_eee));
 
+  cResPt->SaveAs((outName + "_WLeptonPtResolution_200-400.png").c_str());
   /////////////////////////////////////
-  cResPt->cd(4);
+
   TH1F* WLepPt400_5000_mmm = new TH1F("WLepPt400_5000_mmm", "400 < W Lepton < 5000; Resolution (Reco - Gen) (GeV); a.u.", 200, -200, 200); get_sum_of_hists(_file0, sample, "tEvts_MET", "WLepPt-WLepPtGen", "WLepPtGen > 400 && WLepPtGen < 5000 && EvtType == 3", *WLepPt400_5000_mmm);
   WLepPt400_5000_mmm->SetMarkerColor(kYellow  ); WLepPt400_5000_mmm->SetLineColor(kYellow  ); WLepPt400_5000_mmm->Draw(); cResPt->Update(); 
   stat1 = (TPaveStats*) (WLepPt400_5000_mmm->GetListOfFunctions()->FindObject("stats")); stat1->SetTextColor(kYellow);
@@ -201,9 +202,8 @@ PlotRes(int mass){
   shiftStats(stat3, stat4);
   WLepPt400_5000_mmm->SetMaximum(findMax(WLepPt400_5000_mmm, WLepPt400_5000_emm, WLepPt400_5000_eem, WLepPt400_5000_eee));
 
+  cResPt->SaveAs((outName + "_WLeptonPtResolution_400-5000.png").c_str());
   /////////////////////////////////////
-  cResPt->cd();
-  cResPt->SaveAs((outName + "_ResolutionVsPt.png").c_str());
 
 }
 
