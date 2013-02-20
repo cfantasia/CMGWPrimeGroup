@@ -27,12 +27,12 @@ compareYields(const string origName, const string modName, const string outName)
   } 
 
   for(int mass=200; mass<=2000; mass+=100){
-    string sample = "WZJetsTo3LNu";
+    vector<string> bkgSamples = BkgSamples();
     fBkg<<mass;
     for(int ch=0; ch<nch; ++ch){
       string cuts = Form("weight*(%s)*(EvtType == %i)", AnalysisCuts(mass).c_str(), ch);
-      Value origYield = GetNEvtsAndError(fOrig, sample, "tEvts_MET", cuts);
-      Value  modYield = GetNEvtsAndError(fMod , sample, "tEvts_MET", cuts);
+      Value origYield = GetNEvtsAndError(fOrig, bkgSamples, "tEvts_MET", cuts);
+      Value  modYield = GetNEvtsAndError(fMod , bkgSamples, "tEvts_MET", cuts);
       Value sys = ShiftErr(origYield, modYield);
       fBkg<<"\t"<<sys.val<<" "<<sys.err;
     }
