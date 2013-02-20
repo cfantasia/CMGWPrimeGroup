@@ -30,7 +30,6 @@
 #include "SHarper/HEEPAnalyzer/interface/HEEPEleSelector.h"
 #include "SHarper/HEEPAnalyzer/interface/HEEPEle.h"
 
-
 #include "UserCode/CMGWPrimeGroup/interface/util.h"
 
 class BosonCandidate : public reco::CompositeCandidate {

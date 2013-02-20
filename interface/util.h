@@ -51,7 +51,6 @@
 #include "UserCode/CMGWPrimeGroup/interface/NewElec.h"
 #include "SHarper/HEEPAnalyzer/interface/HEEPEle.h"
 
-
 typedef unsigned int uint;
 typedef std::vector<int> vint;
 typedef std::vector<std::string> vstring;
@@ -234,21 +233,21 @@ struct highestJetPt {
   }
 };
 
-inline bool areIdentical(const heep::Ele & a, const heep::Ele & b)
-{
-  return areIdentical(a.patEle(), b.patEle());
-}
-
 template<class C, class D>
 inline bool areIdentical(const C & p1, const D & p2)
 {
-  float tolerance = 0.0001;
+  float tolerance = 0.001;
   if (p1.pdgId() == p2.pdgId() &&
       fabs(p1.eta() - p2.eta()) < tolerance &&
-      fabs(p1.phi() - p2.phi()) < tolerance &&
+      fabs(reco::deltaPhi(p1.phi(),p2.phi())) < tolerance &&
       fabs(p1.pt () - p2.pt ()) < 0.1*p1.pt())
     return true;
   return false;
+}
+
+inline bool areIdentical(const heep::Ele & a, const heep::Ele & b)
+{
+  return areIdentical(a.patEle(), b.patEle());
 }
 
 template<class C, class D>

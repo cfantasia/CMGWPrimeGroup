@@ -47,13 +47,13 @@ TagAndProbe::TagAndProbe(const edm::ParameterSet & cfg, int fileToRun) :
   string countElectronType = cfg.getUntrackedParameter<string>("CountElectronType", "wp95");
   cout<<"Using "<<countElectronType<<" for count electrons "<<endl;
   countElectron_ = ElectronSelector(eSelectorPset, countElectronType);
-  string TagElectronType = cfg.getUntrackedParameter<string>("LooseZElectronType", "wp95");
+  string TagElectronType = cfg.getUntrackedParameter<string>("TagElectronType", "wp95");
   cout<<"Using "<<TagElectronType<<" for Tag electrons "<<endl;
   TagElectron_ = ElectronSelector(eSelectorPset, TagElectronType);
-  string looseProbeElectronType = cfg.getUntrackedParameter<string>("LooseWElectronType", "wp95");
+  string looseProbeElectronType = cfg.getUntrackedParameter<string>("LooseProbeElectronType", "wp95");
   cout<<"Using "<<looseProbeElectronType<<" for loose Probe electrons "<<endl;
   looseProbeElectron_ = ElectronSelector(eSelectorPset, looseProbeElectronType);
-  string tightProbeElectronType = cfg.getUntrackedParameter<string>("TightWElectronType", "wp95");
+  string tightProbeElectronType = cfg.getUntrackedParameter<string>("TightProbeElectronType", "wp95");
   cout<<"Using "<<tightProbeElectronType<<" for tight Probe electrons "<<endl;
   tightProbeElectron_ = ElectronSelector(eSelectorPset, tightProbeElectronType);
 
@@ -61,13 +61,13 @@ TagAndProbe::TagAndProbe(const edm::ParameterSet & cfg, int fileToRun) :
   string countMuonType = cfg.getUntrackedParameter<string>("CountMuonType", "exotica");
   cout<<"Using "<<countMuonType<<" for count muons"<<endl;
   countMuon_ = MuonSelector(mSelectorPset, countMuonType);
-  string TagMuonType = cfg.getUntrackedParameter<string>("LooseZMuonType", "exotica");
+  string TagMuonType = cfg.getUntrackedParameter<string>("TagMuonType", "exotica");
   cout<<"Using "<<TagMuonType<<" for Tag muons"<<endl;
   TagMuon_ = MuonSelector(mSelectorPset, TagMuonType);
-  string looseProbeMuonType = cfg.getUntrackedParameter<string>("LooseWMuonType", "exotica");
+  string looseProbeMuonType = cfg.getUntrackedParameter<string>("LooseProbeMuonType", "exotica");
   cout<<"Using "<<looseProbeMuonType<<" for loose Probe muons"<<endl;
   looseProbeMuon_ = MuonSelector(mSelectorPset, looseProbeMuonType);
-  string tightProbeMuonType = cfg.getUntrackedParameter<string>("TightWMuonType", "exotica");
+  string tightProbeMuonType = cfg.getUntrackedParameter<string>("TightProbeMuonType", "exotica");
   cout<<"Using "<<tightProbeMuonType<<" for tight Probe muons"<<endl;
   tightProbeMuon_ = MuonSelector(mSelectorPset, tightProbeMuonType);
 
@@ -264,6 +264,7 @@ TagAndProbe::eventLoop(edm::EventBase const & event){
 
     if (tightProbeElectron_(p, pu, primaryVertex))
       tightProbeElectrons_.push_back(allElectrons_[i]);
+
   }
 
   for (size_t i = 0; i < allMuons_.size(); i++) {
@@ -284,6 +285,16 @@ TagAndProbe::eventLoop(edm::EventBase const & event){
 
     if (tightProbeMuon_(p, pu, primaryVertex))
       tightProbeMuons_.push_back(p);
+  }
+
+  for(size_t i = 0; i < TagMuons_.size(); i++) {
+    const TeVMuon & m = TagMuons_[i];
+    if(!WPrimeUtil::Contains(m, tightProbeMuons_)){
+      cout<<"This tag muon isn't a probe muon!"<<endl;
+      print(TagMuons_,     "Tag Muons");
+      print(tightProbeMuons_,     "Tight Probe Muons");
+      abort();
+    }
   }
 
   if(debug_){
@@ -408,19 +419,18 @@ TagAndProbe::countZCands(ZCandV & Zs) const{
 
 void
 TagAndProbe::calcZVariables(){
-  if (debug_) cout<<"In calc Z Variables\n";
+  if (debug_) cout<<"In calc Z Variables"<<endl;
   // Reconstruct the Z
-
   ZCandV zeeCands = ZCandsAsym(TagElectrons_, tightProbeElectrons_);
   if(zeeCands.size() == 0){
-    if(debug_) cout<<" Making Z out of loose probe electrons\n";
+    if(debug_) cout<<" Making Z out of loose probe electrons"<<endl;
     zeeCands = ZCandsAsym(TagElectrons_, looseProbeElectrons_);
   }
   removeLowLepPtCands(zeeCands, minZeePt1_, minZeePt2_);
 
   ZCandV zmmCands = ZCandsAsym(TagMuons_, tightProbeMuons_);
   if(zmmCands.size() == 0){
-    if(debug_) cout<<" Making Z out of loose probe muons\n";
+    if(debug_) cout<<" Making Z out of loose probe muons"<<endl;
     zmmCands = ZCandsAsym(TagMuons_,     looseProbeMuons_);
   }
   removeLowLepPtCands(zmmCands, minZmmPt1_, minZmmPt2_);
@@ -553,8 +563,6 @@ inline float
 
 inline float
 TagAndProbe::MuonPU(const TeVMuon & m) const{
-  //return (*rhoFastJetH_)*effectiveMuonArea_[inEE(m)];
-  return 0.;//Cory: Please take this out!!!
     float pu = 0;
     for (size_t j = 0; j < allMuons_.size(); j++) {
       if(areIdentical(m, allMuons_[j])) continue;//same muon
