@@ -25,7 +25,7 @@ struct SignalSample{
   TGraph* gXsecBand;
 
   SignalSample(){}
-  SignalSample(string n, string xsec, string mass, string cut, string leg, int lc=kBlack, int ls=1, int bc=-1){
+  SignalSample(string n, string xsec, string mass, string cut, string leg, int lc=kBlack, int ls=1, int bc=-1, double xsecsc=1.){
     name = n;
     sigXsec = xsec;
     massString = mass;
@@ -41,27 +41,26 @@ struct SignalSample{
 };
 
 void
-PlotLimit(string inName, string inFile="nLimit.txt"){
+PlotLimit(string inName, string inFile="nLimit.txt", string outFile="", float xSecScale=1.){
   //gErrorIgnoreLevel = kWarning;
   //CMSstyle();
   setTDRStyle();
   gROOT->ForceStyle();
 
-  string outFile;
   vector<SignalSample> sigs;
   if(inName.find("WprimeWZ") != string::npos){
     sigs.push_back(SignalSample("W'","xSec_WZ.dat",  "Mass:Xsec",  "Mass>=172", "\\sigma_{W'}", kBlack, 1, kGray));
     //sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{2}","xSec_TCWZ-sinchi1d2.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{2}}", kRed, kDashed));
     //sigs.push_back(SignalSample("TC",                      "xSec_TCWZ-sinchi1d3.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{3}}", kRed));
     //sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{4}","xSec_TCWZ-sinchi1d4.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{4}}", kRed, 3));
-    outFile = "limitVsMass_WZ.pdf";
+    if(outFile.empty()) outFile = "limitVsMass_WZ.pdf";
   }else if(inName.find("HadVZ") != string::npos){
     sigs.push_back(SignalSample("W'","xSec_WprimeVZ.dat", "Mass:Xsec", "", "\\sigma_{W'}"));
     sigs.push_back(SignalSample("RS","xSec_RSZZ.dat", "Mass:Xsec", "", "\\sigma_{RS}", kRed));
-    outFile = "limitVsMass_VZ.pdf";
+    if(outFile.empty()) outFile = "limitVsMass_VZ.pdf";
   }else if(inName.find("LNu") != string::npos){
     sigs.push_back(SignalSample("W'","xSec_SSMWprimeToLNu.dat", "Mass:Xsec", "", "\\sigma_{W'}"));
-    outFile = "limitVsMass_LNu.pdf";
+    if(outFile.empty()) outFile = "limitVsMass_LNu.pdf";
   }
 
   ////Load Trees////////
@@ -147,6 +146,8 @@ PlotLimit(string inName, string inFile="nLimit.txt"){
       x[i] = sigs[iSig].tXsec->GetV1()[i];
       y[i] = sigs[iSig].tXsec->GetV2()[i];
 
+      y[i] *= xSecScale;
+
       //Fill theory band around xsec curve
       if(drawBand){
         sxSec[i] = sigs[iSig].tXsec->GetV3()[i] / 100.;
@@ -213,8 +214,6 @@ PlotLimit(string inName, string inFile="nLimit.txt"){
 
   cout<<"Saving as "<<outFile<<endl;
   c1->SaveAs(outFile.c_str());
-  c1->SaveAs("limitVsMass_WZ.C");
-  c1->SaveAs("limitVsMass_WZ.png");
 
   return;
 }
@@ -243,14 +242,14 @@ FindLimit(const TGraph* xsec, const TGraph* limit, const bool findUpper){
   float upper = max(xsec->GetX()[xsec->GetN()-1], limit->GetX()[limit->GetN()-1]);
   const float INC = 1;
   for(float mass=upper; mass>=lower; mass-=INC){
-    if(xsec->Eval(mass, 0, "S") > limit->Eval(mass, 0, "S")){
+    if(xsec->Eval(mass) > limit->Eval(mass)){
       upLimit = mass+1;
       break;
     }
   }
   if(findUpper) return upLimit;
   for(float mass=upLimit-1; mass>=lower; mass-=INC){
-    if(xsec->Eval(mass, 0, "S") < limit->Eval(mass, 0, "S")) return mass+1;
+    if(xsec->Eval(mass) < limit->Eval(mass)) return mass+1;
   }
   
 

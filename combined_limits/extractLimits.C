@@ -8,7 +8,7 @@ double getMedian(TTree* tree, const string & cuts);
 double getMedian(TTree* tree, const string & cuts, double & lo95,double & lo68,double & hi68,double & hi95);
 
 void
-extractLimits(string inName, string modeName, string algoName){
+extractLimits(string inName, string modeName, string algoName, float xSecScale=1.){
   TFile *fLumi = TFile::Open(inName.c_str(), "read"); assert(fLumi);
   float lumi = GetLumiUsed(fLumi);
 
@@ -72,6 +72,7 @@ extractLimits(string inName, string modeName, string algoName){
        hi95 = getMedian(tree, "0.9 < quantileExpected && quantileExpected < 1.0");      
     }
     double xsec = gxsec->Eval(mass);
+    xsec *= xSecScale;
     out<<setprecision(0)
        <<mass<<"\t"
        <<setprecision(9)
