@@ -4,18 +4,18 @@
 #include <fstream>
 
 typedef pair<TGraphErrors*, TGraphErrors*> gPair;
+const float nGen = 6688;//60192 * 4 / 9 / nch (4/9 to remove tau events, 4=number of channels
+const int nch=4;
 
-TGraphErrors* MakeSigEffGraph   (TFile* fIn, const string & moreCuts, float LtOffset=0., float WindOffset=0.);
-TGraphErrors* MakeSigEffErrGraph(TFile* fIn, const string & moreCuts, float LtOffset=0., float WindOffset=0.);
-void PrintCardHead(ofstream & fout);
-void PrintCardTail(const vector<string> & bkgSamples, ofstream & fout);
-void PrintSysErrors(const string & name, const string & type, gPair* gSys, const float mass, const int nbkg, ofstream & fout);
+TGraphErrors* MakeSigEffGraph   (TFile* fIn, const string & moreCuts, float LtOffset=0., float WindOffset=0., int nChUsed=1);
+TGraphErrors* MakeSigEffErrGraph(TFile* fIn, const string & moreCuts, float LtOffset=0., float WindOffset=0., int nChUsed=1);
+void PrintCardHead(ofstream & fout, int nChUsed=nch);
+void PrintCardTail(const vector<string> & bkgSamples, ofstream & fout, int startCh=0, int endCh=nch);
+void PrintSysErrors(const string & name, const string & type, gPair* gSys, const float mass, const int nbkg, ofstream & fout, int startCh=0, int endCh=nch);
 gPair getGraphPair(string sigFile, string bkgFile, int ch);
 map<string, Value>
 getYields(TFile* fIn, const int & mass, const string & cuts, const vector<string> & bkgSamples,
           const TGraph* gxsec, const TGraphErrors* geff, const TGraphErrors* gefferr);
-const float nGen = 6688;//60192 * 4 / 9 / nch (4/9 to remove tau events, 4=number of channels
-const int nch=4;
 
 void
 makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float WindOffset=0.){
@@ -68,6 +68,90 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   /////////Print Out Card
   ///////////////////////
 
+  //First the indivual channel card
+  for(int ch=0; ch<nch; ch++){
+    string outChName = outName;
+    outChName.replace(outChName.find("WZ_"), 3, Form("WZCh%i_", ch));
+    ofstream fCh(outChName.c_str());
+    if(!fCh) { 
+      cout << "Cannot open file " << outChName << endl; 
+      abort();
+    } 
+    PrintCardHead(fCh, 1);
+
+    fCh<<"# ch="<<ch
+        <<"  lumi="<<lumi
+        <<"  sigEff="<<geff[ch]->Eval(mass)
+        <<"  sigEffErr="<<gefferr[ch]->Eval(mass)
+        <<"  sigxsec="<<gxsec->Eval(mass)
+        <<"  nSigEvt="<<lumi * gxsec->Eval(mass) * geff[ch]->Eval(mass)
+        <<"  nSigEvtErr="<<1. + (geff[ch]->Eval(mass) > 0. ? gefferr[ch]->Eval(mass) / geff[ch]->Eval(mass) : 0.)
+        <<endl;
+    //Print Data yields
+    fCh<<"bin           "<<bin(ch)<<"   "<<endl;
+    fCh<<"observation   "<<yields[ch]["data"].val<<"  "<<endl;
+    fCh<<"------------"<<endl;
+
+    //Print channel (bin) labels
+    //bin          eee   eee   eee   eee   eee   eee   eem   eem   eem   eem   eem   eem   emm   emm   emm   emm   emm   emm   mmm   mmm   mmm   mmm   mmm  mmm
+    fCh<<"bin          "; 
+    for(int isample=0; isample<(int)bkgSamples.size()+1; isample++){
+      fCh<<bin(ch)<<"  ";
+    }
+    fCh<<endl;
+
+    //Print Sample name
+    //process      sig   wz    zjet  ttbar zz    zg    sig   wz    zjet  ttbar zz    zg    sig   wz    zjet  ttbar zz    zg    sig   wz    zjet  ttbar zz   zg
+    fCh<<"process      ";
+    fCh<<"sig   ";
+    for(int isample=0; isample<(int)bkgSamples.size(); isample++){
+      fCh<<bkgSamples[isample].substr(0,3)<<"  ";
+    }
+    fCh<<endl;
+    
+    //Print Bin number
+    //process       0     1     2     3     4     5     0     1     2     3     4     5     0     1     2     3     4     5     0     1     2     3     4     5
+    fCh<<"process      ";
+    for(int isample=0; isample<(int)bkgSamples.size()+1; isample++){
+      fCh<<isample<<"    ";
+    }
+    fCh<<endl;
+
+    //Print Sig/Bkg yields
+    //rate         20.   90    1     1     3     1     20.   90    1     1     3     1     20.   90    1     1     3     1     20.   90    1     1     3     1
+    fCh<<"rate         ";
+    fCh<<yields[ch]["sig"].val<<"  ";
+    for(int isample=0; isample<(int)bkgSamples.size(); isample++){
+      fCh<<yields[ch][bkgSamples[isample]].val<<"  ";
+    }
+    fCh<<endl;
+    fCh<<"------------"<<endl;
+
+    //Print Stat Errors
+    fCh<<"MCStat     lnN ";
+    const Value & vSig = yields[ch]["sig"];
+    fCh<<Value(1. + (vSig.val > 0. ? vSig.err / vSig.val : 0.), -4)<<"  ";
+    for(int isample=0; isample<(int)bkgSamples.size(); isample++){
+      const Value & vBkg = yields[ch][bkgSamples[isample]];
+      fCh<<Value(1. + (vBkg.val > 0. ? vBkg.err / vBkg.val : 0.), -4)<<"  ";
+    }
+    fCh<<endl;
+
+    //Print Sys Errors
+    PrintSysErrors("METRes   ", "lnN", gMETRes   , mass, bkgSamples.size(),fCh,ch,ch+1);
+    PrintSysErrors("METScale ", "lnN", gMETScale , mass, bkgSamples.size(),fCh,ch,ch+1);
+    PrintSysErrors("PU       ", "lnN", gPU       , mass, bkgSamples.size(),fCh,ch,ch+1);
+    PrintSysErrors("MuPtRes  ", "lnN", gMuPtRes  , mass, bkgSamples.size(),fCh,ch,ch+1);
+    PrintSysErrors("MuPtScale", "lnN", gMuPtScale, mass, bkgSamples.size(),fCh,ch,ch+1);
+    PrintSysErrors("ElEnScale", "lnN", gElEnScale, mass, bkgSamples.size(),fCh,ch,ch+1);
+    PrintSysErrors("PDF      ", "lnN", gPDF      , mass, bkgSamples.size(),fCh,ch,ch+1);
+    PrintCardTail(bkgSamples, fCh, ch, ch+1);
+    fCh.close(); 
+  
+  }//Ch card loop
+  
+  //Next the merged card
+
   //Some debug info
   for(int ch=0; ch<nch; ch++){
     fout<<"# ch="<<ch
@@ -76,7 +160,7 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
         <<"  sigEffErr="<<gefferr[ch]->Eval(mass)
         <<"  sigxsec="<<gxsec->Eval(mass)
         <<"  nSigEvt="<<lumi * gxsec->Eval(mass) * geff[ch]->Eval(mass)
-        <<"  nSigEvtErr="<<1. + (geff[ch]->Eval(mass) > 0. ? gefferr[ch]->Eval(mass) / geff[ch]->Eval(mass) : 0.)
+        <<"  nSigEvtErr="<<lumi * gxsec->Eval(mass) * gefferr[ch]->Eval(mass)
         <<endl;
   }
 
@@ -138,63 +222,105 @@ makeLimitCard(string inName, string outName, int mass, float LtOffset=0., float 
   fout<<"MCStat   lnN ";
   for(int ch=0; ch<nch; ch++){
     const Value & vSig = yields[ch]["sig"];
-    fout<<(1. + (vSig.val > 0. ? vSig.err / vSig.val : 0.))<<"  ";
+    fout<<Value(1. + (vSig.val > 0. ? vSig.err / vSig.val : 0.), -4)<<"  ";
     for(int isample=0; isample<(int)bkgSamples.size(); isample++){
       const Value & vBkg = yields[ch][bkgSamples[isample]];
-      fout<<(1. + (vBkg.val > 0. ? vBkg.err / vBkg.val : 0.))<<"  ";
+      fout<<Value(1. + (vBkg.val > 0. ? vBkg.err / vBkg.val : 0.), -4)<<"  ";
     }
   }
   fout<<endl;
 
   //Print Sys Errors
-  PrintSysErrors("METRes"   , "lnN", gMETRes   , mass, bkgSamples.size(),fout);
-  PrintSysErrors("METScale" , "lnN", gMETScale , mass, bkgSamples.size(),fout);
-  PrintSysErrors("PU"       , "lnN", gPU       , mass, bkgSamples.size(),fout);
-  PrintSysErrors("MuPtRes"  , "lnN", gMuPtRes  , mass, bkgSamples.size(),fout);
+  PrintSysErrors("METRes   ", "lnN", gMETRes   , mass, bkgSamples.size(),fout);
+  PrintSysErrors("METScale ", "lnN", gMETScale , mass, bkgSamples.size(),fout);
+  PrintSysErrors("PU       ", "lnN", gPU       , mass, bkgSamples.size(),fout);
+  PrintSysErrors("MuPtRes  ", "lnN", gMuPtRes  , mass, bkgSamples.size(),fout);
   PrintSysErrors("MuPtScale", "lnN", gMuPtScale, mass, bkgSamples.size(),fout);
   PrintSysErrors("ElEnScale", "lnN", gElEnScale, mass, bkgSamples.size(),fout);
-  PrintSysErrors("PDF"      , "lnN", gPDF      , mass, bkgSamples.size(),fout);
+  PrintSysErrors("PDF      ", "lnN", gPDF      , mass, bkgSamples.size(),fout);
   PrintCardTail(bkgSamples, fout);
   fout.close(); 
 }
 
 void
-PrintSysErrors(const string & name, const string & type, gPair* gSys, const float mass, const int nbkg, ofstream & fout){
-  fout<<name<<"   "<<type<<" ";
-  for(int ch=0; ch<nch; ch++){
-    fout<<1. + gSys[ch].first->Eval(mass)<<"  ";
+PrintSysErrors(const string & name, const string & type, gPair* gSys, const float mass, const int nbkg, ofstream & fout, int startCh, int endCh){
+  fout<<name<<" "<<type<<" ";
+  for(int ch=startCh; ch<endCh; ch++){
+    fout<<Value(1. + gSys[ch].first->Eval(mass), -4)<<"  ";
     for(int isample=0; isample<nbkg; isample++){
-      fout<<1. + gSys[ch].second->Eval(mass)<<"  ";
+      fout<<Value(1. + gSys[ch].second->Eval(mass), -4)<<"  ";
     }
   }
   fout<<endl;
 }
 
 void
-PrintCardHead(ofstream & fout){
+PrintCardHead(ofstream & fout, int nChUsed){
   fout<<"# Counting experiment with multiple channels"<<endl;
   fout<<"# Wprime with 4 channels"<<endl;
-  fout<<"imax 4  number of channels"<<endl;
+  fout<<"imax "<<nChUsed<<"  number of channels"<<endl;
   fout<<"jmax 5  number of backgrounds ('*' = automatic)"<<endl;
   fout<<"kmax 19  number of nuisance parameters (sources of systematical uncertainties)"<<endl;
   fout<<"------------"<<endl;
 }
 
 void
-PrintCardTail(const vector<string> & bkgSamples, ofstream & fout){
-  fout<<"#"<<endl;
-  fout<<"ElTrig   lnN 1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02   -     -     -     -     -     -     -     -     -     -     -     -   #El Trig "<<endl;
-  fout<<"ElReco   lnN 1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02   -     -     -     -     -     -   #El Reco "<<endl;
-  fout<<"ElIDIso  lnN 1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02   -     -     -     -     -     -   #El ID/Iso "<<endl;
-  fout<<"MuTrig   lnN  -     -     -     -     -     -     -     -     -     -     -     -    1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02 #Mu Trig "<<endl;
-  fout<<"MuReco   lnN  -     -     -     -     -     -    1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02 #Mu Reco "<<endl;
-  fout<<"MuIDIso  lnN  -     -     -     -     -     -    1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02  1.02 #Mu IDIso "<<endl;
-  fout<<"#"<<endl;
-
+PrintCardTail(const vector<string> & bkgSamples, ofstream & fout, int startCh, int endCh){
   const int nbkg = bkgSamples.size();
 
+  fout<<"#"<<endl;
+  fout<<"ElTrig   lnN ";
+  for(int ch=startCh; ch<endCh; ch++){
+    for(int isample=0; isample<nbkg+1; isample++){
+      if(ch<=1) fout<<"1.02  ";
+      else      fout<<" -    ";
+    }
+  }fout<<endl;
+  
+  fout<<"ElReco   lnN ";
+  for(int ch=startCh; ch<endCh; ch++){
+    for(int isample=0; isample<nbkg+1; isample++){
+      if(ch<=2) fout<<"1.02  ";
+      else      fout<<" -    ";
+    }
+  }fout<<endl;
+
+  fout<<"ElIdIso  lnN ";
+  for(int ch=startCh; ch<endCh; ch++){
+    for(int isample=0; isample<nbkg+1; isample++){
+      if(ch<=2) fout<<"1.02  ";
+      else      fout<<" -    ";
+    }
+  }fout<<endl;
+
+  fout<<"MuTrig   lnN ";
+  for(int ch=startCh; ch<endCh; ch++){
+    for(int isample=0; isample<nbkg+1; isample++){
+      if(ch>=2) fout<<"1.02  ";
+      else      fout<<" -    ";
+    }
+  }fout<<endl;
+
+  fout<<"MuReco   lnN ";
+  for(int ch=startCh; ch<endCh; ch++){
+    for(int isample=0; isample<nbkg+1; isample++){
+      if(ch>=1) fout<<"1.02  ";
+      else      fout<<" -    ";
+    }
+  }fout<<endl;
+
+  fout<<"MuIDIso  lnN ";
+  for(int ch=startCh; ch<endCh; ch++){
+    for(int isample=0; isample<nbkg+1; isample++){
+      if(ch>=1) fout<<"1.02  ";
+      else      fout<<" -    ";
+    }
+  }fout<<endl;
+
+  fout<<"#"<<endl;
+
   fout<<"ZGxsec   lnN ";
-  for(int ch=0; ch<nch; ch++){
+  for(int ch=startCh; ch<endCh; ch++){
     fout<<" -    ";//for signal
     for(int isample=0; isample<nbkg; isample++){
       if(0 == bkgSamples[isample].compare("GVJets")) fout<<"1.13  ";
@@ -202,26 +328,26 @@ PrintCardTail(const vector<string> & bkgSamples, ofstream & fout){
     }
   }fout<<endl;
 
-  fout<<"ZZxsec   lnN ";
-  for(int ch=0; ch<nch; ch++){
-    fout<<" -    ";//for signal
-    for(int isample=0; isample<nbkg; isample++){
-      if(0 == bkgSamples[isample].compare("ZZ")) fout<<"1.075 ";
-      else               fout<<" -    ";
-    }
-  }fout<<endl;
+    fout<<"ZZxsec   lnN ";
+    for(int ch=startCh; ch<endCh; ch++){
+      fout<<" -    ";//for signal
+      for(int isample=0; isample<nbkg; isample++){
+        if(0 == bkgSamples[isample].compare("ZZ")) fout<<"1.075 ";
+        else               fout<<" -    ";
+      }
+    }fout<<endl;
 
-  fout<<"WZxsec   lnN ";
-  for(int ch=0; ch<nch; ch++){
-    fout<<" -    ";//for signal
-    for(int isample=0; isample<nbkg; isample++){
-      if(0 == bkgSamples[isample].compare("WZJetsTo3LNu")) fout<<"1.17  ";
-      else               fout<<" -    ";
-    }
-  }fout<<endl;
+    fout<<"WZxsec   lnN ";
+    for(int ch=startCh; ch<endCh; ch++){
+      fout<<" -    ";//for signal
+      for(int isample=0; isample<nbkg; isample++){
+        if(0 == bkgSamples[isample].compare("WZJetsTo3LNu")) fout<<"1.17  ";
+        else               fout<<" -    ";
+      }
+    }fout<<endl;
 
   fout<<"WZNLO    lnN ";
-  for(int ch=0; ch<nch; ch++){
+  for(int ch=startCh; ch<endCh; ch++){
     fout<<" -    ";//for signal
     for(int isample=0; isample<nbkg; isample++){
       if(0 == bkgSamples[isample].compare("WZJetsTo3LNu")) fout<<"1.10  ";
@@ -230,7 +356,7 @@ PrintCardTail(const vector<string> & bkgSamples, ofstream & fout){
   }fout<<endl;
 
   fout<<"lumi     lnN ";
-  for(int ch=0; ch<nch; ch++){
+  for(int ch=startCh; ch<endCh; ch++){
     fout<<"1.044 ";//for signal
     for(int isample=0; isample<nbkg; isample++){
       fout<<"1.044 ";
@@ -239,7 +365,7 @@ PrintCardTail(const vector<string> & bkgSamples, ofstream & fout){
 }
 
 TGraphErrors*
-MakeSigEffGraph(TFile* fIn, const string & moreCuts, float LtOffset, float WindOffset){
+MakeSigEffGraph(TFile* fIn, const string & moreCuts, float LtOffset, float WindOffset, int nChUsed){
   TGraphErrors* g = new TGraphErrors(19);//??
   for(int mass=200, i=0; mass<=2000; mass+=100, ++i){
     string analysisCuts = AnalysisCuts(mass, LtOffset, WindOffset);
@@ -248,21 +374,17 @@ MakeSigEffGraph(TFile* fIn, const string & moreCuts, float LtOffset, float WindO
     TTree* tree = getTree(fIn, Form("WprimeToWZTo3LNu_M-%i", mass), "tEvts_MET");
     float nSigEvtsUnweighted = tree->Draw("WZMass", cuts.c_str(), "goff");
 
-    double     Eff = nSigEvtsUnweighted / nGen;
-    double statEff = TMath::Sqrt(Eff * (1-Eff)/nGen); 
+    double     Eff = nSigEvtsUnweighted / (nChUsed*nGen);
+    double statEff = TMath::Sqrt(Eff * (1-Eff)/(nChUsed*nGen)); 
 
-    //cout<<" cuts: "<<cuts<<" Unweighted:"<<nSigEvtsUnweighted<<" Weighted:"<<nSigEvtsWeighted<<" ratio:"<<nSigEvtsWeighted/nSigEvtsUnweighted
-    //    <<" effW:"<<nSigEvtsWeighted/nGenWeighted<<" effU:"<<Eff<<endl;
-            
     g->SetPoint     (  i, mass, Eff);
     g->SetPointError(  i, 0., statEff);
-    
   }
   return g;
 }
 
 TGraphErrors*
-MakeSigEffErrGraph(TFile* fIn, const string & moreCuts, float LtOffset, float WindOffset){
+MakeSigEffErrGraph(TFile* fIn, const string & moreCuts, float LtOffset, float WindOffset, int nChUsed){
   TGraphErrors* g = new TGraphErrors(19);//??
   for(int mass=200, i=0; mass<=2000; mass+=100, ++i){
     string analysisCuts = AnalysisCuts(mass, LtOffset, WindOffset);
@@ -271,8 +393,8 @@ MakeSigEffErrGraph(TFile* fIn, const string & moreCuts, float LtOffset, float Wi
     TTree* tree = getTree(fIn, Form("WprimeToWZTo3LNu_M-%i", mass), "tEvts_MET");
     float nSigEvtsUnweighted = tree->Draw("WZMass", cuts.c_str(), "goff");
             
-    double     Eff = nSigEvtsUnweighted / nGen;
-    double statEff = TMath::Sqrt(Eff * (1-Eff)/nGen); 
+    double     Eff = nSigEvtsUnweighted / (nChUsed*nGen);
+    double statEff = TMath::Sqrt(Eff * (1-Eff)/(nChUsed*nGen)); 
 
     g->SetPoint(  i, mass, statEff);
   }
@@ -302,7 +424,7 @@ getYields(TFile* fIn, const int & mass, const string & cuts, const vector<string
   float sigEffErr = gefferr->Eval(mass);
   float sigxsec = gxsec->Eval(mass);
   float nSigEvt    = lumi * sigxsec * sigEff; 
-  float nSigEvtErr = 1. + (sigEff > 0. ? sigEffErr / sigEff : 0.); 
+  float nSigEvtErr = lumi * sigxsec * sigEffErr;
   
   yields["sig"] = Value(nSigEvt, nSigEvtErr);
   yields["sigeff"] = Value(sigEff, sigEffErr);
