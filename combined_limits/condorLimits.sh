@@ -1,5 +1,7 @@
 #!/bin/bash -f
 
+echo "Arguments are $*"
+
 if [ $# -ne 5 ]; then
     echo "Usage: $0 mass ltshift windshift NToys dir"
     exit 1
@@ -18,5 +20,6 @@ cd $_CONDOR_SCRATCH_DIR
 pwd
 date
 
-python doCombinedLimits.py -M $1 --LtShift=$2 --WindShift=$3 --ntoys=$4 --doDuplicates #--setup=`pwd` 
+#python doCombinedLimits.py -M $1 --LtShift=$2 --WindShift=$3 --ntoys=$4 --doDuplicates
+python doCombinedLimits.py -M $1 --LtShift=$2 --WindShift=$3 --ntoys=$4 --doDuplicates --doSepCh
 
