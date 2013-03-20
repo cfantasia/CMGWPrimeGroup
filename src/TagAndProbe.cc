@@ -19,8 +19,6 @@ TagAndProbe::TagAndProbe(const edm::ParameterSet & cfg, int fileToRun) :
       <<"muScaleFactor:"<<muScaleFactor_<<endl;
 
   rhoFastJetLabel_ = cfg.getParameter<edm::InputTag>("rhoFastJet");
-  effectiveElecArea_ = cfg.getParameter<vector<double> >("effectiveElecArea");
-  effectiveMuonArea_ = cfg.getParameter<vector<double> >("effectiveMuonArea");
   
 // +++++++++++++++++++General Cut values
   maxNumZs_ = cfg.getParameter<uint>("maxNumZs");

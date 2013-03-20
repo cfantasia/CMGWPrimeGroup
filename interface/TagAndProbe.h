@@ -54,9 +54,6 @@ public:
 /////Variables////
 //////////////////
 
-  std::vector<double> effectiveElecArea_;
-  std::vector<double> effectiveMuonArea_;
-  
   bool removeTauEvents_, adjustMETPhi_;
   float elScaleFactor_, muScaleFactor_;
 
