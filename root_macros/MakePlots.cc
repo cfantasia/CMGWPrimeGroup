@@ -216,7 +216,10 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     Bkg.push_back(Sample("TTJets"  , kViolet+4, 1, kViolet+2));
 
     vector<string> ZJets; 
-    ZJets.push_back("DYJetsToLL");
+    //ZJets.push_back("DYJetsToLL");
+    ZJets.push_back("DY1JetsToLL");
+    ZJets.push_back("DY2JetsToLL");
+    ZJets.push_back("DY3JetsToLL");
     Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
     
     Bkg.push_back(Sample("WZJetsTo3LNu"       , kOrange+3, 1, kOrange-2));
@@ -710,6 +713,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       ZMass4Channels.push_back("hZ0e3mMass_MET");
       DrawandSave(fin,outName,ZMass4Channels,"Title: Z Mass By 4 Channels",1,0,0,0);
 
+      //W Lep Eta
       DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS30_MIN-3_MAX3_OBJtEvts_ValidW","Title: W Wlepton Eta ch 0 After W",0);
       DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS30_MIN-3_MAX3_OBJtEvts_ValidW","Title: W Wlepton Eta ch 1 After W",0);
       DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS30_MIN-3_MAX3_OBJtEvts_ValidW","Title: W Wlepton Eta ch 2 After W",0);
@@ -720,16 +724,69 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{1e#2mu};Events_CUTSweight*(EvtType==2)_NBINS30_MIN-3_MAX3_OBJtEvts_MET","Title: W Wlepton Eta ch 2 After MET",0);
       DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{0e#3mu};Events_CUTSweight*(EvtType==3)_NBINS30_MIN-3_MAX3_OBJtEvts_MET","Title: W Wlepton Eta ch 3 After MET",0);
 
-      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS30_MIN0_MAX30_OBJtEvts_ValidW","Title: Number of Vertices ch 0 After ValidW",0);
-      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS30_MIN0_MAX30_OBJtEvts_ValidW","Title: Number of Vertices ch 1 After ValidW",0);
-      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS30_MIN0_MAX30_OBJtEvts_ValidW","Title: Number of Vertices ch 2 After ValidW",0);
-      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS30_MIN0_MAX30_OBJtEvts_ValidW","Title: Number of Vertices ch 3 After ValidW",0);
+      //NVtx
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS30_MIN0_MAX30_OBJtEvts_ValidW","Title: Number of Vertices ch 0 After ValidW",1);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS30_MIN0_MAX30_OBJtEvts_ValidW","Title: Number of Vertices ch 1 After ValidW",1);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS30_MIN0_MAX30_OBJtEvts_ValidW","Title: Number of Vertices ch 2 After ValidW",1);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS30_MIN0_MAX30_OBJtEvts_ValidW","Title: Number of Vertices ch 3 After ValidW",1);
 
-      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS30_MIN0_MAX30_OBJtEvts_MET","Title: Number of Vertices ch 0 After MET",0);
-      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS30_MIN0_MAX30_OBJtEvts_MET","Title: Number of Vertices ch 1 After MET",0);
-      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS30_MIN0_MAX30_OBJtEvts_MET","Title: Number of Vertices ch 2 After MET",0);
-      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS30_MIN0_MAX30_OBJtEvts_MET","Title: Number of Vertices ch 3 After MET",0);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS30_MIN0_MAX30_OBJtEvts_MET","Title: Number of Vertices ch 0 After MET",1);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS30_MIN0_MAX30_OBJtEvts_MET","Title: Number of Vertices ch 1 After MET",1);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS30_MIN0_MAX30_OBJtEvts_MET","Title: Number of Vertices ch 2 After MET",1);
+      DrawandSave(fin,outName,"TREENVtxs_LABEL;N_{Vtx}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS30_MIN0_MAX30_OBJtEvts_MET","Title: Number of Vertices ch 3 After MET",1);
 
+      //NLep
+      DrawandSave(fin,outName,"TREENLeps_LABEL;N_{l}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS10_MIN0_MAX10_OBJtEvts_MET","Title: Number of Leps ch 0 After MET",1);
+      DrawandSave(fin,outName,"TREENLeps_LABEL;N_{l}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS10_MIN0_MAX10_OBJtEvts_MET","Title: Number of Leps ch 1 After MET",1);
+      DrawandSave(fin,outName,"TREENLeps_LABEL;N_{l}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS10_MIN0_MAX10_OBJtEvts_MET","Title: Number of Leps ch 2 After MET",1);
+      DrawandSave(fin,outName,"TREENLeps_LABEL;N_{l}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS10_MIN0_MAX10_OBJtEvts_MET","Title: Number of Leps ch 3 After MET",1);
+
+      //NJet
+      DrawandSave(fin,outName,"TREENJets_LABEL;N_{j}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS10_MIN0_MAX10_OBJtEvts_MET","Title: Number of Jets ch 0 After MET",1);
+      DrawandSave(fin,outName,"TREENJets_LABEL;N_{j}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS10_MIN0_MAX10_OBJtEvts_MET","Title: Number of Jets ch 1 After MET",1);
+      DrawandSave(fin,outName,"TREENJets_LABEL;N_{j}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS10_MIN0_MAX10_OBJtEvts_MET","Title: Number of Jets ch 2 After MET",1);
+      DrawandSave(fin,outName,"TREENJets_LABEL;N_{j}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS10_MIN0_MAX10_OBJtEvts_MET","Title: Number of Jets ch 3 After MET",1);
+
+      //Trilep
+      DrawandSave(fin,outName,"TREETriLepMass_LABEL;M_{lll}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS50_MIN0_MAX500_OBJtEvts_MET","Title: Trilep Mass ch 0 After MET",1);
+      DrawandSave(fin,outName,"TREETriLepMass_LABEL;M_{lll}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS50_MIN0_MAX500_OBJtEvts_MET","Title: Trilep Mass ch 1 After MET",1);
+      DrawandSave(fin,outName,"TREETriLepMass_LABEL;M_{lll}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS50_MIN0_MAX500_OBJtEvts_MET","Title: Trilep Mass ch 2 After MET",1);
+      DrawandSave(fin,outName,"TREETriLepMass_LABEL;M_{lll}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS50_MIN0_MAX500_OBJtEvts_MET","Title: Trilep Mass ch 3 After MET",1);
+      
+      //Trilep w/ dR cyt
+      DrawandSave(fin,outName,"TREETriLepMass_LABEL;M_{lll}^{3e0#mu};Events_CUTSweight*(EvtType==0)*(min(WZ1LepDr,WZ2LepDr)>0.3)_NBINS50_MIN0_MAX500_OBJtEvts_MET","Title: Trilep Mass ch 0 After MET dr cut",1);
+      DrawandSave(fin,outName,"TREETriLepMass_LABEL;M_{lll}^{2e1#mu};Events_CUTSweight*(EvtType==1)*(min(WZ1LepDr,WZ2LepDr)>0.3)_NBINS50_MIN0_MAX500_OBJtEvts_MET","Title: Trilep Mass ch 1 After MET dr cut",1);
+      DrawandSave(fin,outName,"TREETriLepMass_LABEL;M_{lll}^{1e2#mu};Events_CUTSweight*(EvtType==2)*(min(WZ1LepDr,WZ2LepDr)>0.3)_NBINS50_MIN0_MAX500_OBJtEvts_MET","Title: Trilep Mass ch 2 After MET dr cut",1);
+      DrawandSave(fin,outName,"TREETriLepMass_LABEL;M_{lll}^{0e3#mu};Events_CUTSweight*(EvtType==3)*(min(WZ1LepDr,WZ2LepDr)>0.3)_NBINS50_MIN0_MAX500_OBJtEvts_MET","Title: Trilep Mass ch 3 After MET dr cut",1);
+
+      //DR
+      DrawandSave(fin,outName,"TREEmin(WZ1LepDr,WZ2LepDr)_LABEL;#Delta_{R}^{3e0#mu} (l_W, l_Z);Events_CUTSweight*(EvtType==0)_NBINS25_MIN0_MAX5_OBJtEvts_MET","Title: Min dR W and Z lep ch 0 After MET",1);
+      DrawandSave(fin,outName,"TREEmin(WZ1LepDr,WZ2LepDr)_LABEL;#Delta_{R}^{2e1#mu} (l_W, l_Z);Events_CUTSweight*(EvtType==1)_NBINS25_MIN0_MAX5_OBJtEvts_MET","Title: Min dR W and Z lep ch 1 After MET",1);
+      DrawandSave(fin,outName,"TREEmin(WZ1LepDr,WZ2LepDr)_LABEL;#Delta_{R}^{1e2#mu} (l_W, l_Z);Events_CUTSweight*(EvtType==2)_NBINS25_MIN0_MAX5_OBJtEvts_MET","Title: Min dR W and Z lep ch 2 After MET",1);
+      DrawandSave(fin,outName,"TREEmin(WZ1LepDr,WZ2LepDr)_LABEL;#Delta_{R}^{0e3#mu} (l_W, l_Z);Events_CUTSweight*(EvtType==3)_NBINS25_MIN0_MAX5_OBJtEvts_MET","Title: Min dR W and Z lep ch 3 After MET",1);
+      
+      //DR w/ Trilep Cut
+      DrawandSave(fin,outName,"TREEmin(WZ1LepDr,WZ2LepDr)_LABEL;#Delta_{R}^{3e0#mu} (l_W, l_Z);Events_CUTSweight*(EvtType==0)*(TriLepMass>120)_NBINS25_MIN0_MAX5_OBJtEvts_MET","Title: Min dR W and Z lep ch 0 After MET trilep cut",1);
+      DrawandSave(fin,outName,"TREEmin(WZ1LepDr,WZ2LepDr)_LABEL;#Delta_{R}^{2e1#mu} (l_W, l_Z);Events_CUTSweight*(EvtType==1)*(TriLepMass>120)_NBINS25_MIN0_MAX5_OBJtEvts_MET","Title: Min dR W and Z lep ch 1 After MET trilep cut",1);
+      DrawandSave(fin,outName,"TREEmin(WZ1LepDr,WZ2LepDr)_LABEL;#Delta_{R}^{1e2#mu} (l_W, l_Z);Events_CUTSweight*(EvtType==2)*(TriLepMass>120)_NBINS25_MIN0_MAX5_OBJtEvts_MET","Title: Min dR W and Z lep ch 2 After MET trilep cut",1);
+      DrawandSave(fin,outName,"TREEmin(WZ1LepDr,WZ2LepDr)_LABEL;#Delta_{R}^{0e3#mu} (l_W, l_Z);Events_CUTSweight*(EvtType==3)*(TriLepMass>120)_NBINS25_MIN0_MAX5_OBJtEvts_MET","Title: Min dR W and Z lep ch 3 After MET trilep cut",1);
+
+      //Others
+      DrawandSave(fin,outName,"TREEZMass_LABEL;M_{Z}^{0e3#mu};Events_CUTSweight*(EvtType==3)*(TriLepMass>0)_NBINS30_MIN60_MAX120_OBJtEvts_MET","Title: Z Mass with trilep cut of 0 ch 3 After MET",1);
+      DrawandSave(fin,outName,"TREEZMass_LABEL;M_{Z}^{0e3#mu};Events_CUTSweight*(EvtType==3)*(TriLepMass>111)_NBINS30_MIN60_MAX120_OBJtEvts_MET","Title: Z Mass with trilep cut of 111 ch 3 After MET",1);
+      DrawandSave(fin,outName,"TREEZMass_LABEL;M_{Z}^{0e3#mu};Events_CUTSweight*(EvtType==3)*(TriLepMass>120)_NBINS30_MIN60_MAX120_OBJtEvts_MET","Title: Z Mass with trilep cut of 120 ch 3 After MET",1);
+
+      //Modified MET
+      DrawandSave(fin,outName,"TREEmin(MET,(80.1/WTransMass)^2*MET)_LABEL;#slash{E}_{T}^{Mod} (GeV) (3e0#mu);Events_CUTSweight*(EvtType==0)_NBINS50_MIN0_MAX500_OBJtEvts_ValidW","Title: Modified MET ch 0 After W",1);
+      DrawandSave(fin,outName,"TREEmin(MET,(80.1/WTransMass)^2*MET)_LABEL;#slash{E}_{T}^{Mod} (GeV) (2e1#mu);Events_CUTSweight*(EvtType==1)_NBINS50_MIN0_MAX500_OBJtEvts_ValidW","Title: Modified MET ch 1 After W",1);
+      DrawandSave(fin,outName,"TREEmin(MET,(80.1/WTransMass)^2*MET)_LABEL;#slash{E}_{T}^{Mod} (GeV) (1e2#mu);Events_CUTSweight*(EvtType==2)_NBINS50_MIN0_MAX500_OBJtEvts_ValidW","Title: Modified MET ch 2 After W",1);
+      DrawandSave(fin,outName,"TREEmin(MET,(80.1/WTransMass)^2*MET)_LABEL;#slash{E}_{T}^{Mod} (GeV) (0e3#mu);Events_CUTSweight*(EvtType==3)_NBINS50_MIN0_MAX500_OBJtEvts_ValidW","Title: Modified MET ch 3 After W",1);
+
+      //Lt with Modified MET
+      DrawandSave(fin,outName,"TREELt_LABEL;L_{T}^{Mod} (GeV) (3e0#mu);Events_CUTSweight*(EvtType==0)*(min(Lt,(80.1/WTransMass)^2*MET) > 30.)_NBINS40_MIN0_MAX800_OBJtEvts_MET","Title: Modified Lt ch 0 After MET",1);
+      DrawandSave(fin,outName,"TREELt_LABEL;L_{T}^{Mod} (GeV) (2e1#mu);Events_CUTSweight*(EvtType==1)*(min(MET,(80.1/WTransMass)^2*MET) > 30.)_NBINS40_MIN0_MAX800_OBJtEvts_MET","Title: Modified Lt ch 1 After MET",1);
+      DrawandSave(fin,outName,"TREELt_LABEL;L_{T}^{Mod} (GeV) (1e2#mu);Events_CUTSweight*(EvtType==2)*(min(MET,(80.1/WTransMass)^2*MET) > 30.)_NBINS40_MIN0_MAX800_OBJtEvts_MET","Title: Modified Lt ch 2 After MET",1);
+      DrawandSave(fin,outName,"TREELt_LABEL;L_{T}^{Mod} (GeV) (0e3#mu);Events_CUTSweight*(EvtType==3)*(min(MET,(80.1/WTransMass)^2*MET) > 30.)_NBINS40_MIN0_MAX800_OBJtEvts_MET","Title: Modified Lt ch 3 After MET",1);
     }
   }else if(mode_ == kEWKWZ){
       vector<string> NVtxs2Channels;
@@ -824,6 +881,12 @@ DrawandSave(TFile* fin, string pdfName, string title, string bookmark, bool logy
 void
 DrawandSave(TFile* fin, string pdfName, vstring title, string bookmark, bool logy, bool eff, bool cum, bool pull, TLine* line){
   string filename = "plots/" + title[0];
+  if(title[0].find("TREE") != string::npos){//if find TREE take bookmark and replace spaces with 
+    filename = bookmark;
+    replace(filename.begin(), filename.end(), ' ', '_');
+    filename.replace(filename.find("Title:_"), 7, "plots/");
+    //cout<<" title should now be "<<filename<<endl;
+  }
   if(title.size()>1) filename += "_Channels";
   if(!logy) filename += "_Linear"; 
   if(cum)  filename += "_Cumlative";
@@ -1213,10 +1276,10 @@ void
 ChangeAxisRange(const string & filename, TAxis* xaxis){
   if(debug_) cout<<"Changing axis range\n";
   //This fn changes the range of the X axis
-  if (filename.find("hWZ3e0muMass_") != string::npos ||
-      filename.find("hWZ2e1muMass_") != string::npos ||
-      filename.find("hWZ1e2muMass_") != string::npos ||
-      filename.find("hWZ0e3muMass_") != string::npos ||
+  if (filename.find("hWZ3e0mMass_") != string::npos ||
+      filename.find("hWZ2e1mMass_") != string::npos ||
+      filename.find("hWZ1e2mMass_") != string::npos ||
+      filename.find("hWZ0e3mMass_") != string::npos ||
       filename.find("hWZMass_") != string::npos){
     xaxis->SetRangeUser(0,1500); return;
     //hpull->SetAxisRange( -3., 3., "Y");
@@ -1229,7 +1292,7 @@ ChangeAxisRange(const string & filename, TAxis* xaxis){
             filename.find("hMET2e1m_") != string::npos ||
             filename.find("hMET1e2m_") != string::npos ||
             filename.find("hMET0e3m_") != string::npos){
-    xaxis->SetRangeUser(0,300);//Cory: Change this to 500
+    xaxis->SetRangeUser(0,500);//Cory: Change this to 500
     //hpull->SetAxisRange( -3., 3., "Y");
   }else if (filename.find("hLeadMuonPt_") != string::npos ||
             filename.find("hLeadElecPt_") != string::npos){

@@ -55,14 +55,18 @@ void ZptVsWpt(string inName, string outSuffix=""){
 
   
   //Make2DPlot(name, title, nx, minx, maxx, ny, miny, maxy, fin, plots, cuts, outname);
-  Make2DPlot("ZptVsWpt", ";p_{T}^{W} (GeV);p_{T}^{Z} (GeV)", 250, 0, 750, 250, 0, 750, fin, "Wpt:Zpt", cuts);
+  //Make2DPlot("ZptVsWpt", ";p_{T}^{W} (GeV);p_{T}^{Z} (GeV)", 150, 0, 750, 150, 0, 750, fin, "Wpt:Zpt", cuts);
+  Make2DPlot("ZptVsWpt", ";p_{T}^{W} (GeV);p_{T}^{Z} (GeV)", 150, 0, 750, 150, 0, 750, fin, "Wpt:Zpt", NoLtcuts);
   Make2DPlot("WZMassVsLt", ";L_{T} (GeV);M_{WZ} (GeV)", 5000, 0, 1000, 5000, 0, 1500, fin, "Lt:WZMass", NoLtcuts);
   Make2DPlot("WZMassVsMeff", ";M_{eff} (GeV);M_{WZ} (GeV)", 5000, 0, 1500, 5000, 0, 1500, fin, "Lt+MET:WZMass", NoLtcuts);
+  Make2DPlot("WZMassVsZpt", ";p_{T}^{Z} (GeV);M_{WZ} (GeV)", 150, 0, 750, 5000, 0, 1500, fin, "Zpt:WZMass", NoLtcuts);
+  Make2DPlot("WZMassVsWpt", ";p_{T}^{W} (GeV);M_{WZ} (GeV)", 150, 0, 750, 5000, 0, 1500, fin, "Wpt:WZMass", NoLtcuts);
   Make2DPlot("WZMassVsZDr", ";#Delta_{R}^{ll} (GeV);M_{WZ} (GeV)", 500, 0, 5, 5000, 0, 1500, fin, "ZDr:WZMass", NoLtcuts);
   Make2DPlot("MeffVsLt", ";L_{T} (GeV);M_{eff} (GeV)", 5000, 0, 1500, 5000, 0, 1500, fin, "Lt:Lt+MET", NoLtcuts);
   Make2DPlot("ZdrVsLt", ";L_{T} (GeV);#Delta_{R}^{ll} (GeV)", 5000, 0, 1000, 500, 0, 5, fin, "Lt:ZDr", NoLtcuts);
-  Make2DPlot("ZptVsZDr", ";#Delta_{R}^{ll} (GeV);p_{T}^{Z} (GeV)", 500, 0, 5, 250, 0, 750, fin, "ZDr:Zpt", NoLtcuts);
-  Make2DPlot("ZmassVsWTMass", ";M_{Z} (GeV);M_{W}^{T} (GeV)", 60, 60, 120, 100, 0, 100, fin, "ZMass:WTransMass", NoLtcuts);
+  Make2DPlot("ZptVsZDr", ";#Delta_{R}^{ll} (GeV);p_{T}^{Z} (GeV)", 500, 0, 5, 150, 0, 750, fin, "ZDr:Zpt", NoLtcuts);
+  Make2DPlot("ZmassVsWTMass", ";M_{Z} (GeV);M_{W}^{T} (GeV)", 60, 60, 120, 50, 0, 100, fin, "ZMass:WTransMass", NoLtcuts);
+
 
 
 /*
@@ -175,7 +179,7 @@ Make2DPlot(const string & name, const string & title,
 void
 DrawBoxes(TCanvas & c){
   float maxLt = 1000;//upper end of the box
-  for(int mass=200; mass<1000; mass+=100){
+  for(int mass=200; mass<=1000; mass+=100){
     TBox* b = new TBox(LtCut(mass),mass - WindowWidth(mass)/2.,maxLt,mass + WindowWidth(mass)/2.); 
     
     b->SetFillStyle(0);
