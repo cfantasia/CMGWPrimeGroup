@@ -713,6 +713,24 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       ZMass4Channels.push_back("hZ0e3mMass_MET");
       DrawandSave(fin,outName,ZMass4Channels,"Title: Z Mass By 4 Channels",1,0,0,0);
 
+      //Z Leading Lepton Pt
+      DrawandSave(fin,outName,"TREEZLep1Pt_LABEL;p_{T, Z Leading Lep}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS40_MIN0_MAX400_OBJtEvts_MET","Title: Z leading lepton Pt ch 0 After MET",1);
+      DrawandSave(fin,outName,"TREEZLep1Pt_LABEL;p_{T, Z Leading Lep}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS40_MIN0_MAX400_OBJtEvts_MET","Title: z leading lepton Pt ch 1 After MET",1);
+      DrawandSave(fin,outName,"TREEZLep1Pt_LABEL;p_{T, Z Leading Lep}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS40_MIN0_MAX400_OBJtEvts_MET","Title: z leading lepton Pt ch 2 After MET",1);
+      DrawandSave(fin,outName,"TREEZLep1Pt_LABEL;p_{T, Z Leading Lep}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS40_MIN0_MAX400_OBJtEvts_MET","Title: z leading lepton Pt ch 3 After MET",1);
+
+      //Z Trailing Lepton Pt
+      DrawandSave(fin,outName,"TREEZLep2Pt_LABEL;p_{T, Z Trailing Lep}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS40_MIN0_MAX400_OBJtEvts_MET","Title: z trailing lepton Pt ch 0 After MET",1);
+      DrawandSave(fin,outName,"TREEZLep2Pt_LABEL;p_{T, Z Trailing Lep}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS40_MIN0_MAX400_OBJtEvts_MET","Title: z trailing lepton Pt ch 1 After MET",1);
+      DrawandSave(fin,outName,"TREEZLep2Pt_LABEL;p_{T, Z Trailing Lep}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS40_MIN0_MAX400_OBJtEvts_MET","Title: z trailing lepton Pt ch 2 After MET",1);
+      DrawandSave(fin,outName,"TREEZLep2Pt_LABEL;p_{T, Z Trailing Lep}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS40_MIN0_MAX400_OBJtEvts_MET","Title: z trailing lepton Pt ch 3 After MET",1);
+
+      //W Lepton Pt
+      DrawandSave(fin,outName,"TREEWLepPt_LABEL;p_{T, W Lep}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS40_MIN0_MAX400_OBJtEvts_MET","Title: W lepton Pt ch 0 After MET",1);
+      DrawandSave(fin,outName,"TREEWLepPt_LABEL;p_{T, W Lep}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS40_MIN0_MAX400_OBJtEvts_MET","Title: W lepton Pt ch 1 After MET",1);
+      DrawandSave(fin,outName,"TREEWLepPt_LABEL;p_{T, W Lep}^{1e2#mu};Events_CUTSweight*(EvtType==2)_NBINS40_MIN0_MAX400_OBJtEvts_MET","Title: W lepton Pt ch 2 After MET",1);
+      DrawandSave(fin,outName,"TREEWLepPt_LABEL;p_{T, W Lep}^{0e3#mu};Events_CUTSweight*(EvtType==3)_NBINS40_MIN0_MAX400_OBJtEvts_MET","Title: W lepton Pt ch 3 After MET",1);
+
       //W Lep Eta
       DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{3e0#mu};Events_CUTSweight*(EvtType==0)_NBINS30_MIN-3_MAX3_OBJtEvts_ValidW","Title: W Wlepton Eta ch 0 After W",0);
       DrawandSave(fin,outName,"TREEWLepEta_LABEL;#eta_{W Lep}^{2e1#mu};Events_CUTSweight*(EvtType==1)_NBINS30_MIN-3_MAX3_OBJtEvts_ValidW","Title: W Wlepton Eta ch 1 After W",0);
