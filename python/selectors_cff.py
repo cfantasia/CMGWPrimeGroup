@@ -17,7 +17,7 @@ muonSelectors = cms.PSet(
        minNMuonHits = cms.untracked.int32(1),
        minNMatches = cms.untracked.int32(2),
     ),
-    PFIsoHighPtBoostedZ = cms.PSet(
+    PFIsoHighPtBoostedZRelaxed = cms.PSet(
        minPt = cms.untracked.double(10.),
        maxEta = cms.untracked.double(2.4),
        minIsGblOrTrk = cms.untracked.int32(1),
@@ -35,7 +35,20 @@ muonSelectors = cms.PSet(
        minIsGlobal = cms.untracked.int32(1),
        maxDxy = cms.untracked.double(0.2),
        maxDz = cms.untracked.double(0.5),
-#       maxNormalizedChi2 = cms.untracked.double(10.0), #Cory: Remove for highpt
+       maxRelPtErr = cms.untracked.double(0.3),
+       minNPixelHits = cms.untracked.int32(1),
+       minNMuonHits = cms.untracked.int32(1), 
+       minNTrackerLayers = cms.untracked.int32(6),
+       minNMatches = cms.untracked.int32(2),
+       #maxPFIso = cms.untracked.double(???),#Added below in clones
+    ),
+    PFIsoRelaxed = cms.PSet(
+       minPt = cms.untracked.double(10.),
+       maxEta = cms.untracked.double(2.4),
+       minIsGlobal = cms.untracked.int32(1),
+       maxDxy = cms.untracked.double(0.2),
+       maxDz = cms.untracked.double(0.5),
+       maxNormalizedChi2 = cms.untracked.double(10.0), 
        maxRelPtErr = cms.untracked.double(0.3),
        minNPixelHits = cms.untracked.int32(1),
        minNMuonHits = cms.untracked.int32(1), 
@@ -46,11 +59,6 @@ muonSelectors = cms.PSet(
     Reco = cms.PSet(
        minPt = cms.untracked.double(10.),
     ),
-    WZLoose = cms.PSet(),
-    WZRelaxed = cms.PSet(),
-    WZTight = cms.PSet(),
-    HadVZLoose = cms.PSet(),
-    HadVZTight = cms.PSet(),
     exotica = cms.PSet(
        maxEta = cms.untracked.double(2.4),
        minIsGlobal = cms.untracked.int32(1),
@@ -81,7 +89,7 @@ muonSelectors.WZTightPt20 = muonSelectors.WZTight.clone(
     minPt = 20.,
     )
 ###EWKWZ
-muonSelectors.EWKWZRelaxed = muonSelectors.PFIsoHighPtBoostedZ.clone(
+muonSelectors.EWKWZRelaxed = muonSelectors.PFIsoRelaxed.clone(
     )
 muonSelectors.EWKWZRelaxedPt20 = muonSelectors.EWKWZRelaxed.clone(
     minPt = 20.
@@ -96,6 +104,23 @@ muonSelectors.EWKWZTight = muonSelectors.EWKWZRelaxed.clone(
     maxPFIso = cms.untracked.double(0.12)
     )
 muonSelectors.EWKWZTightPt20 = muonSelectors.EWKWZTight.clone(
+    minPt = 20.,
+    )
+
+###High Pt PfIso Boosted Z
+muonSelectors.PFIsoHighPtBoostedZRelaxedPt20 = muonSelectors.PFIsoHighPtBoostedZRelaxed.clone(
+    minPt = 20.
+    )
+muonSelectors.PFIsoHighPtBoostedZLoose = muonSelectors.PFIsoHighPtBoostedZRelaxed.clone(
+    maxPFIso = cms.untracked.double(0.2)
+    )
+muonSelectors.PFIsoHighPtBoostedZLoosePt20 = muonSelectors.PFIsoHighPtBoostedZLoose.clone(
+    minPt = 20.,
+    )
+muonSelectors.PFIsoHighPtBoostedZTight = muonSelectors.PFIsoHighPtBoostedZRelaxed.clone(
+    maxPFIso = cms.untracked.double(0.12)
+    )
+muonSelectors.PFIsoHighPtBoostedZTightPt20 = muonSelectors.PFIsoHighPtBoostedZTight.clone(
     minPt = 20.,
     )
 
