@@ -19,7 +19,11 @@
 
 const int nch = 4;
 
-void CalcMETSys(TFile* fIn, const string & name, const int mass, ofstream & fRes, ofstream & fScale);
+void CalcMETSys(TFile* fIn, const vector<string> & names, const int mass, ofstream & fRes, ofstream & fScale);
+void CalcMETSys(TFile* fIn, const string & name, const int mass, ofstream & fRes, ofstream & fScale){
+  vector<string> names(1,name);
+  CalcMETSys(TFile* fIn, const vector<string> & names, const int mass, ofstream & fRes, ofstream & fScale);
+}
 Value NEvtsCorMET(TTree* tEvts, int seed, const string & moreCuts);
 Value ShiftErr(const Value & orig, const Value & mod);
 
@@ -54,14 +58,15 @@ calcRecoilSys(){
   fBkgScale  << setiosflags(ios::fixed) << setprecision(4) << setiosflags(ios::left);
   fBkgScale<<"Mass/F:SysErr/F"<<endl;
   for(int mass=200; mass<=2000; mass+=100){
-    CalcMETSys(fIn, "WZJetsTo3LNu", mass, fBkgRes, fBkgScale);
+    CalcMETSys(fIn, BkgSamples(), mass, fBkgRes, fBkgScale);
   }
 
 }
 
 void
-CalcMETSys(TFile* fIn, const string & name, const int mass, ofstream & fRes, ofstream & fScale){
+CalcMETSys(TFile* fIn, const vector<string> & names, const int mass, ofstream & fRes, ofstream & fScale){
   string analyiscuts = AnalysisCuts(mass);
+  string & name = (names[0] == "WZJetsTo3LNu") ? "Bkg" : names[0];
 
   cout<<name;
   fScale<<mass;
@@ -69,12 +74,12 @@ CalcMETSys(TFile* fIn, const string & name, const int mass, ofstream & fRes, ofs
   for(int ch=0; ch<nch; ++ch){
     string cuts = analyiscuts + Form(" && EvtType == %i", ch);
     //get number of base events
-    TTree* tMET = getTree(fIn, name, "tEvts_MET"); assert(tMET);
+    TTree* tMET = getTree(fIn, names, "tEvts_MET"); assert(tMET);
     Value vEvtsUncorMET = GetNEvtsAndError(tMET, Form("weight*(%s)", cuts.c_str()));
     cout<<"For "<<name<<" found "<<vEvtsUncorMET<<" events passing uncorrected met "<<endl;
 
     //Now count number of mod met events
-    TTree* tValidW = getTree(fIn, name, "tEvts_ValidW"); assert(tValidW);
+    TTree* tValidW = getTree(fIn, names, "tEvts_ValidW"); assert(tValidW);
     
     //get number of scaled met events
     Value vEvtsScaledMET = NEvtsCorMET(tValidW, 0, cuts);
