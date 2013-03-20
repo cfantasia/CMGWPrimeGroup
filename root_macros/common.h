@@ -343,11 +343,13 @@ prepLegend(TLegend* leg){
 
 ///WprimeWZ Specific Stuff
 float WindowWidth(float mass){
-  return max(50., 0.5*mass - 100);
+  return max(0.2*mass-20., 1.45*mass - 1500);
+  //return max(50., 0.5*mass - 100);
 }
 
 float LtCut(float mass){
-  return min(400., 0.6*mass - 50.);
+  return min(500., 0.5*mass+25.);
+  //return min(400., 0.6*mass - 50.);
 }
 
 string 
