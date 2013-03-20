@@ -9,8 +9,8 @@ process.WprimeAnalyzer.sample_cross_sections = "samples_cross_sections_WZ.txt"
 
 process.WprimeAnalyzer.doRecoilCorrectionForW = False
 process.WprimeAnalyzer.useAdjustedMET = False
-process.WprimeAnalyzer.muonReconstructor = 7 #kPat
-#process.WprimeAnalyzer.muonReconstructor = 3 #kCocktail
+#process.WprimeAnalyzer.muonReconstructor = 7 #kPat
+process.WprimeAnalyzer.muonReconstructor = 3 #kCocktail
 
 process.WprimeAnalyzer.useJSON = True
 process.WprimeAnalyzer.countGenEvts = False
@@ -32,11 +32,8 @@ process.WprimeAnalyzer.rhoFastJet = cms.InputTag('kt6PFJets:rho')
 
 process.WprimeAnalyzer.preselect = True
 
-process.WprimeAnalyzer.minDeltaR = cms.double(0.)
+process.WprimeAnalyzer.minDeltaR = cms.double(0.3)
 process.WprimeAnalyzer.maxZMassDiff = cms.double(999999.)
-
-process.WprimeAnalyzer.effectiveElecArea = cms.vdouble(0.0997,0.1123)#Not using Recommended PI*0.3*0.3
-process.WprimeAnalyzer.effectiveMuonArea = cms.vdouble(0.1057,0.0769)
 
 ###Analysis Cuts
 EWKWZCuts = cms.vstring(

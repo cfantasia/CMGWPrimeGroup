@@ -13,12 +13,12 @@ process.WprimeAnalyzer.TightWElectronType = cms.untracked.string("CiC2012MediumP
 
 process.WprimeAnalyzer.LooseZMuonType = cms.untracked.string("EWKWZLoose")
 process.WprimeAnalyzer.TightZMuonType = cms.untracked.string("EWKWZTight")
-process.WprimeAnalyzer.LooseWMuonType = cms.untracked.string("EWKWZLoosePt20")
-process.WprimeAnalyzer.TightWMuonType = cms.untracked.string("EWKWZTightPt20")
+process.WprimeAnalyzer.LooseWMuonType = cms.untracked.string("PFIsoHighPtLoosePt20")
+process.WprimeAnalyzer.TightWMuonType = cms.untracked.string("PFIsoHighPtTightPt20")
 
 
 
 # +++++++++++++++++++Analysis Cuts
-process.WprimeAnalyzer.minLt = cms.untracked.double(290.) #W'600 Cut
+process.WprimeAnalyzer.minLt = cms.untracked.double(500.) #W'1000 Cut
 process.WprimeAnalyzer.minZpt =  cms.untracked.double(0.)
 process.WprimeAnalyzer.minWpt = cms.untracked.double(0.)
