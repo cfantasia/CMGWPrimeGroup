@@ -43,6 +43,9 @@ muonSelectors = cms.PSet(
        minNMatches = cms.untracked.int32(2),
        #maxPFIso = cms.untracked.double(???),#Added below in clones
     ),
+    Reco = cms.PSet(
+       minPt = cms.untracked.double(10.),
+    ),
     WZLoose = cms.PSet(),
     WZRelaxed = cms.PSet(),
     WZTight = cms.PSet(),
@@ -215,6 +218,13 @@ electronSelectors = cms.PSet(
            maxdz = cms.untracked.double(0.2),
            maxfabsdiffEp = cms.untracked.double(0.05),
        ),
+    ),
+    Reco = cms.PSet(
+       joint = cms.PSet(
+          minPt = cms.untracked.double(10.),
+       ),
+       barrel = cms.PSet(),
+       endcap = cms.PSet(),
     ),
     CiC2012Loose = cms.PSet(),
     CiC2012LoosePt20 = cms.PSet(),
