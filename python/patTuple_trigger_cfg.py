@@ -9,6 +9,7 @@ singleMuonPaths = [
     'HLT_Mu40_v*',
     'HLT_Mu40_eta2p1_v*',
     'HLT_Mu50_eta2p1_v*',
+    'HLT_IsoMu24_v*',
     ]
 
 doubleMuonPaths = [
@@ -21,6 +22,7 @@ doubleMuonPaths = [
     ]
 
 singleElectronPaths = [
+    'HLT_Ele27_WP80_v11',
     ]
 
 doubleElectronPaths = [
@@ -57,14 +59,12 @@ def addHLTFilter(process, hltProcess='HLT', mode='mc'):
     if mode == 'doubleelectron':
         process.hltFilter = cms.Sequence(process.doubleElectronFilter *
                                          ~process.doubleMuonFilter)
+    #Single Triggers studies are indep of Double lep triggers
     if mode == 'singlemu':
-        process.hltFilter = cms.Sequence(process.singleMuonFilter *
-                                         ~process.doubleMuonFilter *
-                                         ~process.doubleElectronFilter)
+        process.hltFilter = cms.Sequence(process.singleMuonFilter
+                                         )
     if mode == 'singleelectron':
         process.hltFilter = cms.Sequence(process.singleElectronFilter *
-                                         ~process.doubleMuonFilter *
-                                         ~process.doubleElectronFilter *
                                          ~process.singleMuonFilter)
         
         
