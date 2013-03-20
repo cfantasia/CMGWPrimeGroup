@@ -11,8 +11,8 @@ process.WprimeAnalyzer.TightZElectronType = cms.untracked.string("CiC2012Loose")
 process.WprimeAnalyzer.LooseWElectronType = cms.untracked.string("CiC2012MediumPt20")
 process.WprimeAnalyzer.TightWElectronType = cms.untracked.string("CiC2012MediumPt20")
 
-process.WprimeAnalyzer.LooseZMuonType = cms.untracked.string("EWKWZLoose")
-process.WprimeAnalyzer.TightZMuonType = cms.untracked.string("EWKWZTight")
+process.WprimeAnalyzer.LooseZMuonType = cms.untracked.string("PFIsoHighPtBoostedZLoose")
+process.WprimeAnalyzer.TightZMuonType = cms.untracked.string("PFIsoHighPtBoostedZTight")
 process.WprimeAnalyzer.LooseWMuonType = cms.untracked.string("PFIsoHighPtLoosePt20")
 process.WprimeAnalyzer.TightWMuonType = cms.untracked.string("PFIsoHighPtTightPt20")
 
