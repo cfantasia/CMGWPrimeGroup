@@ -172,12 +172,17 @@ printNEvts(string infile, int mode=-1){
       evtTypes.push_back(Channel("ee", 0,1));
       evtTypes.push_back(Channel("$\\mu\\mu$", 2,3));
       levels.push_back(make_pair("ValidZ", "Z Selection"));
-    }else{
+    }else if(mode == -4){
       evtTypes.push_back(Channel("3e", 0));
       evtTypes.push_back(Channel("2e1$\\mu$", 1));
       evtTypes.push_back(Channel("1e2$\\mu$", 2));
       evtTypes.push_back(Channel("3$\\mu$", 3));
       levels.push_back(make_pair("ValidW", "W Selection"));
+    }else{
+      evtTypes.push_back(Channel("3e", 0));
+      evtTypes.push_back(Channel("2e1$\\mu$", 1));
+      evtTypes.push_back(Channel("1e2$\\mu$", 2));
+      evtTypes.push_back(Channel("3$\\mu$", 3));
       levels.push_back(make_pair("MET", "\\MET"));
     }
   }else if(infile.find("HadVZ") != string::npos){
