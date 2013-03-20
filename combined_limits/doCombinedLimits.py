@@ -58,11 +58,11 @@ def runLimit(Mode, Mass, LtShift, WindShift):
     NToys=options.ntoys
     Seed="-1"
     
-    CombineCMD="combine -H "+HintAlgo+" -M "+Algo+" -s "+Seed+" -n "+Mode+" -m "+Mass+" --rMax 0.1 --tries 100 "+cardFile  #MarkovChainMC Line
+    CombineCMD="combine -H "+HintAlgo+" -M "+Algo+" -s "+Seed+" -n "+Mode+" -m "+Mass+" --rMax 0.1 "+cardFile  #MarkovChainMC Line
     print CombineCMD
     
     if options.observed:
-        os.system(CombineCMD                   ) # >& /dev/null   #Observed Limit
+        os.system(CombineCMD + " --tries 100"  ) # >& /dev/null   #Observed Limit
     else:
         os.system(CombineCMD + " --toys "+NToys) # >& /dev/null   #Expected Limit
 
@@ -76,7 +76,7 @@ def makePlots(Mode, Factor):
     if options.combine:
         print "Merging root files now ..."
         import glob
-        for Mass in range(200, 2001): #Combine root files
+        for Mass in range(200, 2001, 10): #Combine root files
             name="higgsCombine"+Mode+"."+Algo+".mH"+str(Mass)+".root"
             if len(glob.glob("higgsCombine"+Mode+"."+Algo+".mH"+str(Mass)+".*.root")):
                 os.system("hadd -f "+name+" higgsCombine"+Mode+"."+Algo+".mH"+str(Mass)+".*.root >& /dev/null")
@@ -111,7 +111,7 @@ def submitCondor(Mass):
     f.write("notify_user = @bu.edu\n")
     f.write("notification = Error\n")
     f.write("Arguments = "+Mass+" "+options.LtShifts+" "+options.WindShifts+" "+options.ntoys+" "+os.getcwd()+"\n")
-    f.write("Queue 1\n")
+    f.write("Queue 10\n")
     f.close()
     #print condorFile
     os.system("/opt/condor/bin/condor_submit "+ condorFile)
