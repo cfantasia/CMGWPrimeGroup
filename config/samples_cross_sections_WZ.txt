@@ -316,7 +316,7 @@ description = DoublePhotonHighPt-Run2012D-PromptReco-v1
 pathname = filelists_WZ/DataPatTrilepton-W07-03-00-DoublePhotonHighPt-Run2012D-PromptReco-v1.txt
 splitInto = 2
 
-DONE
+#DONE
 
 ###TESTING
 
@@ -380,13 +380,22 @@ k-factor = 1.
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WWJetTo2L2Nu_8TeV-powheg-pythia6.txt
 Nprod_evt = 999864
 
-#samplename = ZZ1Jets
-#description = ZZ1Jets_madgraph_8TeV_Private 
-#x-section = 0.5
-##k-factor = UNKNOWN
-#pathname = filelists_WZ/MCPatTrilepton-W07-03-01-ZZ1Jets_madgraph_8TeV_Private.txt
+samplename = ZZ1Jets
+description = ZZ1Jets_madgraph_8TeV_Private
+x-section = 0.5
+#k-factor = UNKNOWN
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-ZZ1Jets_madgraph_8TeV_Private.txt
+Nprod_evt = 67250
 #Nprod_evt = 102506
-#splitInto = 3
+splitInto = 15
+
+DONE
+
+###TESTING
+
+samplename = data-Testing
+description = Skimmed Events
+pathname = UserCode/CMGWPrimeGroup/macros/candEvts_PAT.root
 
 DONE
 
