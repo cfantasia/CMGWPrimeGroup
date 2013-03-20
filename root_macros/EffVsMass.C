@@ -43,9 +43,6 @@ void EffVsMass(string inName, int applyAnalysisCuts){
     float sample_weight = GetSampleInfo(hInfo, "Sample Weight");
     sample_tot = GetSampleInfo(hInfo, "Number of Events Produced");
     sample_tot *= (4./9.); //remove tau contribution from denom
-    //TH1F* hNumEvts = (TH1F*) fin->Get(Form("%s/hNumEvts", name.c_str())); 
-    //if(!hNumEvts) continue;  //assert(hNumEvts);
-    //sample_tot = hNumEvts->GetBinContent(1);
     
     //get tree from file
     TTree* t = getTree(fin, name, "tEvts_MET"); assert(t);
@@ -64,9 +61,9 @@ void EffVsMass(string inName, int applyAnalysisCuts){
       pass /= sample_weight;
       sample_pass += pass;
       
-      float mean    = tot>0 ? pass / tot : 0.;//hFakeRateEff->GetY()       [bin-1];
-      float errUp   = TEfficiency::ClopperPearson(tot, pass, 0.68, true) - mean;//hFakeRateEff->GetErrorYhigh(bin-1);
-      float errDown = mean - TEfficiency::ClopperPearson(tot, pass, 0.68, false);//hFakeRateEff->GetErrorYlow(bin-1);
+      float mean    = tot>0 ? pass / tot : 0.;
+      float errUp   = TEfficiency::ClopperPearson(tot, pass, 0.68, true) - mean;
+      float errDown = mean - TEfficiency::ClopperPearson(tot, pass, 0.68, false);
       
       errDown = std::max(errDown, (float) 0.);
       float err = (errUp + errDown)/2;
