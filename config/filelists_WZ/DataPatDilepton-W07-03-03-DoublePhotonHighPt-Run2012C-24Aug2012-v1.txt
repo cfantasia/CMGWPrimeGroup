@@ -1,0 +1,13 @@
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_8_1_nOm.root
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_4_1_7fH.root
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_1_1_Fs7.root
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_12_1_xZp.root
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_7_1_5KV.root
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_2_1_XRr.root
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_9_1_juN.root
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_6_1_owS.root
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_11_1_bVq.root
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_3_1_QOw.root
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_5_1_J7y.root
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_10_1_Jjz.root
+/store/user/fantasia/53X/DataPatDilepton-W07-03-03-DoublePhotonHighPt-Run2012C-24Aug2012-v1/patTuple_13_1_8nR.root
