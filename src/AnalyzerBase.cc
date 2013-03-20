@@ -326,6 +326,7 @@ AnalyzerBase::print(const pat::Electron& elec) const{
       <<" E1x5/E5x5: "<<elec.e1x5() / elec.e5x5()<<endl
       <<" Depth1: "<<elec.dr03EcalRecHitSumEt() + elec.dr03HcalDepth1TowerSumEt()<<endl
       <<" ECal Driven: "<<elec.ecalDrivenSeed()<<endl
+      <<" passConvVeto: "<<elec.passConversionVeto()<<endl
       <<" Track Iso: "<<elec.dr03TkSumPt()<<endl
       <<" 2012 pfIso: "<<(elec.chargedHadronIso() + std::max(0., elec.neutralHadronIso() + elec.photonIso()-0.5*elec.puChargedHadronIso())) / elec.pt()
       <<" user pfIso: "<<(std::max(elec.userFloat("pfIsoNeutral04")+elec.userFloat("pfIsoPhotons04")-1.*elec.userFloat("pfAEff04"),0.) + elec.userFloat("pfIsoCharged04") ) / elec.pt()<<endl;
@@ -391,7 +392,7 @@ inline bool AnalyzerBase::passNoCut() const{
 }
 
 inline bool AnalyzerBase::passTriggersCut() const{
-  return WPrimeUtil::passTriggersCut(*triggerEventH_,triggersToUse_);
+  return triggerEventH_.failedToGet() || WPrimeUtil::passTriggersCut(*triggerEventH_,triggersToUse_);
 }//--- passTriggersCut
 
 inline bool
