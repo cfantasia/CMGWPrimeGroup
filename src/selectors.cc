@@ -16,6 +16,7 @@ ElectronSelectorBase::ElectronSelectorBase(Pset const params) {
   loadFromPset<int>(params, "minPassEX5overE55", true);
   loadFromPset<int>(params, "minPassEMHadDepth1Iso", true);
   loadFromPset<int>(params, "maxIsGap", true);
+  loadFromPset<int>(params, "minPassConvVeto", true);
   loadFromPset<double>(params, "maxPFIso", true);
   loadFromPset<double>(params, "maxHoverE", true);
   loadFromPset<double>(params, "maxd0", true);
@@ -37,6 +38,7 @@ bool ElectronSelectorBase::operator()(const pat::Electron & p, const float pu, c
   if(ignoreCut("minConv") || 
      fabs(p.convDist()) >= cut("minConv", double()) || fabs(p.convDcot()) >= cut("minConv", double()))
     passCut(bitmask, "minConv");
+  setpassCut("minPassConvVeto", p.passConversionVeto(), bitmask);
   setpassCut("maxSigmaIEtaIEta", p.sigmaIetaIeta(), bitmask);
   setpassCut("maxDeltaEta", fabs(p.deltaEtaSuperClusterTrackAtVtx()), bitmask);
   setpassCut("maxDeltaPhi", fabs(p.deltaPhiSuperClusterTrackAtVtx()), bitmask);   
@@ -88,7 +90,7 @@ bool ElectronSelectorBase::operator()(const heep::Ele & p, const float pu) {
   return (bool) bitmask;
 }
   
-float ElectronSelectorBase::pfIso(const pat::Electron & p, const float & pu) const{
+float ElectronSelectorBase::pfIso(const pat::Electron & p, const float & pu){
   //Effective Area Correction
   //isocorr = PFChargedIso (PFNoPU) + max(PFIso(.+NH) - rho * Aeff(.+NH), 0.)
   return (p.chargedHadronIso() + std::max(0., p.neutralHadronIso() + p.photonIso() - (double)pu)) / p.pt();

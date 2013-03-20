@@ -60,7 +60,7 @@ public:
   virtual bool operator()(const heep::Ele & p, pat::strbitset & ret);
   virtual bool operator()(const heep::Ele & p, const float pu);
   
-  float pfIso(const pat::Electron & p, const float & pu) const;
+  static float pfIso(const pat::Electron & p, const float & pu);
 };
 
 /// A wrapper to handle the barrel/endcap split for electrons
