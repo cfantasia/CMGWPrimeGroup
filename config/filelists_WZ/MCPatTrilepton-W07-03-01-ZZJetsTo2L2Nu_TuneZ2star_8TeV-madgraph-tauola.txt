@@ -1,0 +1,15 @@
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_11_1_Lp9.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_4_1_llN.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_10_1_hH1.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_8_1_nHf.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_6_1_8tQ.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_7_1_vsm.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_13_1_zX2.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_12_1_0N4.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_1_1_8NJ.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_2_1_QPl.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_5_1_jsq.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_9_1_1Pi.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_15_1_dyg.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_14_1_1NR.root
+/store/user/fantasia/53X/MCPatTrilepton-W07-03-01-ZZJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/patTuple_3_1_Bjo.root
