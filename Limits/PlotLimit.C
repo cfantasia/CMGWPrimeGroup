@@ -176,6 +176,10 @@ PlotLimit(string inName, string inFile="nLimit.txt", string outFile="", float xS
   cout<<"Drawing multigraph"<<endl;
   mg->SetMinimum(0.00001);
   mg->Draw("a");
+  cout<<"ndiv is "<<mg->GetXaxis()->GetNdivisions()<<endl;
+  mg->GetXaxis()->SetNdivisions(505);
+  cout<<"ndiv is "<<mg->GetXaxis()->GetNdivisions()<<endl;
+  mg->Draw("a");
 
   for(unsigned iSig=0; iSig<sigs.size(); ++iSig){
     float lowObsLimit(-1), upObsLimit(-1);
