@@ -78,9 +78,6 @@ public:
 //////////////////
 /////Variables////
 //////////////////
-
-  std::vector<double> effectiveElecArea_;
-  std::vector<double> effectiveMuonArea_;
   
   bool doSystematics_, doMatrix_, removeTauEvents_, adjustMETPhi_;
   float elScaleFactor_, muScaleFactor_;
@@ -90,6 +87,7 @@ public:
   uint lumiNumber_;
   uint evtNumber_;
   float WZMass_, WprimeGenMass_;
+  float WZ1LepDr_, WZ2LepDr_;
   float Zpt_, ZDr_;
   float ZMass_;
   float Wpt_;
@@ -99,16 +97,17 @@ public:
   float TriLepMass_;
   float Q_;
   float Discriminant_;
-  float MET_, METPhi_, METSig_;
+  float MET_, METPz_, METErr_, METPhi_, METSig_;
   uint evtType_;
   uint numZs_; 
-  uint NVtxs_;
+  uint NVtxs_, NJets_, NLeps_;
   float LeadPt_;
   float LeadElecPt_;
   float LeadMuonPt_;
   bool TT, TF, FT, FF;
   int ZTightCode_, WTightCode_;
-  float ZLep1Pt_, ZLep1Eta_, ZLep1Phi_, ZLep2Pt_, ZLep2Eta_, ZLep2Phi_, WLepPt_, WLepEta_, WLepPhi_;
+  int ZFlavorGen_, WFlavorGen_;
+  float ZLep1Pt_, ZLep1PtErr_, ZLep1Eta_, ZLep1Phi_, ZLep2Pt_, ZLep2PtErr_, ZLep2Eta_, ZLep2Phi_, WLepPt_, WLepPtErr_, WLepEta_, WLepPhi_;
   float ZLep1PtGen_, ZLep1EtaGen_, ZLep1PhiGen_, ZLep2PtGen_, ZLep2EtaGen_, ZLep2PhiGen_;
   float WLepPtGen_, WLepEtaGen_, WLepPhiGen_, WNeuPtGen_, WNeuEtaGen_, WNeuPhiGen_;
 
