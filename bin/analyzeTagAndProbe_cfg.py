@@ -17,8 +17,8 @@ process.WprimeAnalyzer.Cuts = WZEffCuts
 #Object Def
 process.WprimeAnalyzer.CountElectronType = cms.untracked.string("CiC2012Loose")
 process.WprimeAnalyzer.TagElectronType   = cms.untracked.string("CiC2012Medium")
-process.WprimeAnalyzer.CountMuonType = cms.untracked.string("PFIsoHighPtBoostedZLoose")
-process.WprimeAnalyzer.TagMuonType   = cms.untracked.string("PFIsoHighPtBoostedZTight")
+process.WprimeAnalyzer.CountMuonType = cms.untracked.string("EWKWZLoose")
+process.WprimeAnalyzer.TagMuonType   = cms.untracked.string("EWKWZTight")
 
 ### Choose 1 block #########
 # Z Lepton ID:
