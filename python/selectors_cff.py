@@ -46,6 +46,7 @@ muonSelectors = cms.PSet(
        minPt = cms.untracked.double(10.),
        maxEta = cms.untracked.double(2.4),
        minIsGlobal = cms.untracked.int32(1),
+       minIsPF = cms.untracked.int32(1),
        maxDxy = cms.untracked.double(0.2),
        maxDz = cms.untracked.double(0.5),
        maxNormalizedChi2 = cms.untracked.double(10.0), 
