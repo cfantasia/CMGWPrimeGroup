@@ -216,6 +216,35 @@ electronSelectors = cms.PSet(
     EWKWZLoose = cms.PSet(),
     EWKWZTight = cms.PSet(),
 
+    CiC2012VetoRelaxed = cms.PSet(
+       joint = cms.PSet(
+          minPt = cms.untracked.double(10.),
+          maxIsGap = cms.untracked.int32(0),
+          minPassConvVeto = cms.untracked.int32(1),
+       ),
+       barrel = cms.PSet(
+           #maxMissingHits = cms.untracked.int32(1),
+           #minVtxFitProb = cms.untracked.double(1e-6),
+           maxSigmaIEtaIEta = cms.untracked.double(0.01),
+           maxDeltaPhi = cms.untracked.double(0.8),
+           maxDeltaEta = cms.untracked.double(0.007),
+           maxHoverE = cms.untracked.double(0.15),
+           maxd0 = cms.untracked.double(0.04),
+           maxdz = cms.untracked.double(0.2),
+           #maxfabsdiffEp = cms.untracked.double(0.05),
+       ),
+       endcap = cms.PSet(
+           #maxMissingHits = cms.untracked.int32(1),
+           #minVtxFitProb = cms.untracked.double(1e-6),
+           maxSigmaIEtaIEta = cms.untracked.double(0.03),
+           maxDeltaPhi = cms.untracked.double(0.7),
+           maxDeltaEta = cms.untracked.double(0.01),
+           #maxHoverE = cms.untracked.double(0.10),
+           maxd0 = cms.untracked.double(0.04),
+           maxdz = cms.untracked.double(0.2),
+           #maxfabsdiffEp = cms.untracked.double(0.05),
+       ),
+    ),
     CiC2012LooseRelaxed = cms.PSet(
        joint = cms.PSet(
           minPt = cms.untracked.double(10.),
@@ -348,6 +377,12 @@ electronSelectors.EWKWZTightPt20.joint.minPt = 20.
 electronSelectors.EWKWZTightPt20.joint.maxPFIso = cms.untracked.double(0.1)
 
 #CiC2012
+
+electronSelectors.CiC2012Veto = electronSelectors.CiC2012VetoRelaxed.clone()
+electronSelectors.CiC2012Veto.joint.maxPFIso = cms.untracked.double(0.15)
+
+electronSelectors.CiC2012VetoPt20 = electronSelectors.CiC2012Veto.clone()
+electronSelectors.CiC2012VetoPt20.joint.minPt = 20.
 
 electronSelectors.CiC2012Loose = electronSelectors.CiC2012LooseRelaxed.clone()
 electronSelectors.CiC2012Loose.joint.maxPFIso = cms.untracked.double(0.15)
