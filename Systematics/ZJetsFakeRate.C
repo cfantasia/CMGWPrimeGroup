@@ -15,8 +15,9 @@ const bool tex = false;
 
 void
 ZJetsFakeRate(string infile, bool useData=true, bool doSystematics=false){  
-  bool doWLep = infile.find("-TF") == string::npos; //TF means Z lepton rates, FT means W lepton rates
-  
+  bool doWLep = (infile.find("-Wiso") != string::npos); 
+  cout<<"Do W Lep = "<<doWLep<<endl;
+
   //open file
   TFile *f = TFile::Open(infile.c_str(), "read"); assert(f);
   
@@ -108,7 +109,7 @@ ZJetsFakeRate(string infile, bool useData=true, bool doSystematics=false){
     int neta = 0;
     float etaElec[] = {0., 1.5, 2.5}; int netaElec = 3;
     //float etaMuon[] = {0., 1.0, 1.479, 2.0, 2.5}; int netaMuon = 5;
-    float etaMuon[] = {0., 2.5}; int netaMuon = 2;
+    float etaMuon[] = {0., 2.1, 2.5}; int netaMuon = 3;
 
     if(useElectrons){
       eta = etaElec; neta = netaElec;
@@ -135,7 +136,7 @@ ZJetsFakeRate(string infile, bool useData=true, bool doSystematics=false){
 
       //loop over pt bins
       //float pt [] = {10., 15., 20., 25., 30., 100}; const int npt  = 6;//to match Alicia
-      float pt [] = {10., 15., 25., 40., 100}; const int npt  = 5;
+      float pt [] = {10., 15., 40., 100}; const int npt  = 4;
       //float pt [] = {10., 15., 25., 35., 50., 1000}; const int npt  = 6;
       TGraphAsymmErrors* hFakeRatePt = new TGraphAsymmErrors(npt);
       hFakeRatePt->SetMaximum(1.1);
@@ -144,7 +145,7 @@ ZJetsFakeRate(string infile, bool useData=true, bool doSystematics=false){
       for(int ipt=npt-2; ipt>=0; --ipt){
 
         float tot(0), pass(0);
-        string cuts = Form("weight*(ZTightCode==3)*(EvtType==%i)*(MET<30)*(WTransMass<30.)*(WLepPt >= %.0f && WLepPt < %.0f)*(abs(WLepEta) >= %.3f && abs(WLepEta) < %.3f)", 
+        string cuts = Form("weight*(ZTightCode==3)*(EvtType==%i)*(MET<30)*(WTransMass<30.)*(NLeps<4)*(WLepPt >= %.0f && WLepPt < %.0f)*(abs(WLepEta) >= %.3f && abs(WLepEta) < %.3f)", 
                            ichannel, pt[ipt], pt[ipt+1], eta[ieta], eta[ieta+1]);
         //cout<<"Cuts are : "<<cuts<<endl;
         t->Draw("WTightCode", cuts.c_str(), "goff");
