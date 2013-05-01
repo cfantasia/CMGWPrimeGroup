@@ -22,10 +22,9 @@ const int nch = 4;
 void CalcMETSys(TFile* fIn, const vector<string> & names, const int mass, ofstream & fRes, ofstream & fScale);
 void CalcMETSys(TFile* fIn, const string & name, const int mass, ofstream & fRes, ofstream & fScale){
   vector<string> names(1,name);
-  CalcMETSys(TFile* fIn, const vector<string> & names, const int mass, ofstream & fRes, ofstream & fScale);
+  CalcMETSys(fIn, names, mass, fRes, fScale);
 }
 Value NEvtsCorMET(TTree* tEvts, int seed, const string & moreCuts);
-Value ShiftErr(const Value & orig, const Value & mod);
 
 
 void
@@ -66,7 +65,7 @@ calcRecoilSys(){
 void
 CalcMETSys(TFile* fIn, const vector<string> & names, const int mass, ofstream & fRes, ofstream & fScale){
   string analyiscuts = AnalysisCuts(mass);
-  string & name = (names[0] == "WZJetsTo3LNu") ? "Bkg" : names[0];
+  const string name = (names[0] == "WZJetsTo3LNu") ? "Bkg" : names[0];
 
   cout<<name;
   fScale<<mass;
@@ -208,10 +207,10 @@ NEvtsCorMET(TTree* tEvts, int seed, const string & moreCuts){
     double Met_modified = sqrt( pow(Met_Px_corr,2) + pow(Met_Py_corr,2) );
 
     if(Met_modified > 30.) hist.Fill(1, weight);
+    //if(MET > 30.) hist.Fill(1, weight);//Idiot check
 
-//  cout<<" Orig met: "<<MET
-//      <<" Corr met: "<<Met_modified
-//      <<endl;
+    //printf(" Orig met: %.2f Corr met: %.2f\n", MET, Met_modified);
+
   }//loop over nevts
   //cout<<" Number of events passing modified met is "<<hist.GetBinContent(1)<<endl;
   return Value(hist.GetBinContent(1), hist.GetBinError(1));
