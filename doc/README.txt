@@ -5,19 +5,21 @@
 =========================================================================
 
 (1) Copy and run the installation script: 
+o You can download it here: http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh?view=markup
 UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 It will:
 
-o Setup a new working area (Default name: V405, release:
-CMSSW_5_3_7_patch4)
+o Setup a new working area (e.g dir: V405, e.g. release: CMSSW_5_3_7_patch4)
 
-o Check out the UserCode/CMGWPrimeGroup package (default version:
-V00-04-05)
+o Check out the UserCode/CMGWPrimeGroup package (e.g. version: V00-04-05)
 
-o Check out the recommended versions of DataFormats/PatCandidates,
-PhysicsTools/PatAlgos, PhysicsTools/Utilities, RecoLuminosity/LumiDB and
-UserCode/SHarper/HEEPAnalyzer, etc
+o Check out the recommended versions of needed packages:
+  DataFormats/PatCandidates
+  PhysicsTools/PatAlgos
+  PhysicsTools/Utilities
+  RecoLuminosity/LumiDB
+  UserCode/SHarper/HEEPAnalyzer
 
 o Compile the code
 
@@ -82,9 +84,9 @@ To run:
 
 
 Options:
-- enable/disable analyzers for Mu+MET (available), W(mu)+gamma (available),
-El+MET (available), WZ (available), hadV+Z (available), hadV + W
-(available), tb (available)
+- enable/disable analyzers for Mu+MET (available), El+MET (available), 
+WZ (available), W(mu)+gamma (available), hadV+Z (available), 
+hadV + W (available), tb (available)
 - specify input collections 
 - specify parameters for specific analysis
 
@@ -151,4 +153,5 @@ A subdirectory can be specified for all root files for a given sample.
  -UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
 
 4) Tag the package
+cd $CMSSW_BASE/src
 cvs rtag <THETAGNAME> UserCode/CMGWPrimeGroup

@@ -22,6 +22,8 @@ dcache:///pnfs/cms/WAX/11/store/user/christos/wprime/V310/ (LPC)
 See config/samples_cross_sections_ElMET.txt
 
 
+Pat-tuples made with V00-04-05:
+
 (3) WZ->3 ell analysis
 
 See config/samples_cross_sections_WZ.txt

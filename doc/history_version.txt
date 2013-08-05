@@ -1,3 +1,10 @@
+05-Aug-12 (Cory), V00-04-10
+=============================================
+o Approved analysis versions
+o Updated limit calculator for 4 separate channels 
+o Remove Electron SC gap
+o Updated figures for 2012
+
 24-Dec-12 (Cory), V00-04-05
 =============================================
 o Updated to 537patch4
