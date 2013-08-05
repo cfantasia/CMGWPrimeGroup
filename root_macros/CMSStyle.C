@@ -1,7 +1,7 @@
 //##########################################################################
 // Initialization code executed at the start of a ROOT session.
 //
-// File: $Id: CMSStyle.C,v 1.1 2005/11/10 15:46:14 ganzhur Exp $
+// File: $Id: CMSStyle.C,v 1.1 2011/09/02 11:52:21 fantasia Exp $
 //##########################################################################
 
 //#include <iostream>
@@ -40,17 +40,25 @@ void CMSstyle(){
   cmsStyle->SetPadLeftMargin(0.17);
 
   // use large Times-Roman fonts
-  cmsStyle->SetTextFont(132);
+  cmsStyle->SetTextFont(42);
   cmsStyle->SetTextSize(0.08);
-  cmsStyle->SetLabelFont(132,"x");
-  cmsStyle->SetLabelFont(132,"y");
-  cmsStyle->SetLabelFont(132,"z");
+  cmsStyle->SetLabelFont(42,"x");
+  cmsStyle->SetLabelFont(42,"y");
+  cmsStyle->SetLabelFont(42,"z");
   cmsStyle->SetLabelSize(0.05,"x");
   cmsStyle->SetTitleSize(0.06,"x");
   cmsStyle->SetLabelSize(0.05,"y");
   cmsStyle->SetTitleSize(0.06,"y");
   cmsStyle->SetLabelSize(0.05,"z");
   cmsStyle->SetTitleSize(0.06,"z");
+
+  cmsStyle->SetTitleFont(42, "XYZ");
+  //cmsStyle->SetTitleSize(0.06, "XYZ");
+  //cmsStyle->SetLabelColor(1, "XYZ");
+  //cmsStyle->SetLabelFont(42, "XYZ");
+  //cmsStyle->SetLabelOffset(0.007, "XYZ");
+  //cmsStyle->SetLabelSize(0.05, "XYZ");
+
 
   // use bold lines and markers
   cmsStyle->SetMarkerStyle(8);
