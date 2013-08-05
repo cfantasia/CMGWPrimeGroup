@@ -67,15 +67,16 @@ CalcMETSys(TFile* fIn, const vector<string> & names, const int mass, ofstream & 
   string analyiscuts = AnalysisCuts(mass);
   const string name = (names[0] == "WZJetsTo3LNu") ? "Bkg" : names[0];
 
-  cout<<name;
+  //cout<<name;
   fScale<<mass;
   fRes  <<mass;
   for(int ch=0; ch<nch; ++ch){
-    string cuts = analyiscuts + Form(" && EvtType == %i", ch);
+    string cuts = analyiscuts + Form(" && EvtType == %i", ch) + "&& (ZLep1PtGen>0. && ZLep2PtGen>0. && WLepPtGen>0. && WNeuPtGen>0. && ZFlavorGen && WFlavorGen)";
+    cuts = Form("weight*(%s)", cuts.c_str());
     //get number of base events
     TTree* tMET = getTree(fIn, names, "tEvts_MET"); assert(tMET);
-    Value vEvtsUncorMET = GetNEvtsAndError(tMET, Form("weight*(%s)", cuts.c_str()));
-    cout<<"For "<<name<<" found "<<vEvtsUncorMET<<" events passing uncorrected met "<<endl;
+    Value vEvtsUncorMET = GetNEvtsAndError(tMET, cuts);
+    cout<<"\nFor "<<name<<" ch "<<ch<<" found "<<vEvtsUncorMET<<" events passing uncorrected met "<<endl;
 
     //Now count number of mod met events
     TTree* tValidW = getTree(fIn, names, "tEvts_ValidW"); assert(tValidW);
@@ -114,7 +115,7 @@ NEvtsCorMET(TTree* tEvts, int seed, const string & moreCuts){
   TH1F hist("hist", "Dummy Hist", 1, 0, 10);
   hist.Sumw2();
   //cout<<" Seed is "<<seed<<endl;
-  tEvts->Draw("ZLep1PtGen:ZLep1PhiGen:ZLep2PtGen:ZLep2PhiGen:WLepPtGen:WLepPhiGen:WNeuPtGen:WNeuPhiGen:ZLep1Pt:ZLep1Phi:ZLep2Pt:ZLep2Phi:WLepPt:WLepPhi:MET:METPhi", Form("weight*(%s)", moreCuts.c_str()), "para goff");
+  tEvts->Draw("ZLep1PtGen:ZLep1PhiGen:ZLep2PtGen:ZLep2PhiGen:WLepPtGen:WLepPhiGen:WNeuPtGen:WNeuPhiGen:ZLep1Pt:ZLep1Phi:ZLep2Pt:ZLep2Phi:WLepPt:WLepPhi:MET:METPhi", moreCuts.c_str(), "para goff");
   double n = tEvts->GetSelectedRows(); 
   //if(1) cout<<"Found "<<n<<" input gen events "<<endl;
   for(int ievt=0; ievt<n; ++ievt){
@@ -142,12 +143,12 @@ NEvtsCorMET(TTree* tEvts, int seed, const string & moreCuts){
        ZLep2PtGen == 0 ||
        WLepPtGen  == 0){
       //cout<<"Skipping event b/c not 3 leptons"<<endl;
-      continue;
+      abort();//continue;
     }
     
     if(WNeuPtGen  == 0){
       cout<<"Skipping event b/c no gen neutrino"<<endl;
-      continue;
+      abort();//continue;
     }
 
     TVector2 zLep1, zLep2, wLep, met;
@@ -157,7 +158,7 @@ NEvtsCorMET(TTree* tEvts, int seed, const string & moreCuts){
     met.SetMagPhi(MET, METPhi);
     TVector2 zrec = zLep1 + zLep2;
     TVector2 wrec = wLep + met;
-
+    TVector2 wzrec = zrec + wrec;
 
     TVector2 zLep1Gen, zLep2Gen, wLepGen, wNeuGen;
     zLep1Gen.SetMagPhi(ZLep1PtGen, ZLep1PhiGen);
@@ -171,8 +172,13 @@ NEvtsCorMET(TTree* tEvts, int seed, const string & moreCuts){
 
     //Then ux and uy components of recoil are calculated:
 
+    //Srecko's Code
     double ux= -wrec.Mod()*cos(wrec.Phi()-wz_gen.Phi())-zrec.Mod()*cos(zrec.Phi()-wz_gen.Phi());
     double uy= -wrec.Mod()*sin(wrec.Phi()-wz_gen.Phi())-zrec.Mod()*sin(zrec.Phi()-wz_gen.Phi());
+
+    //Cory's cleaner code
+    //double ux= -wzrex.Rotate(-wz_gen.Phi()).Px();
+    //double uy= -wzrec.Rotate(-wz_gen.Phi()).Py();
 
     //cout<<"Ux="<<ux<<" and uy="<<uy<<endl;
     //double recoilScale = wz_gen->Mod(); //this is no longer necessary
@@ -196,6 +202,11 @@ NEvtsCorMET(TTree* tEvts, int seed, const string & moreCuts){
 
     //After it is scaled or smeared, it is applied back on gen-level 2-vector:
   
+    TVector2 u_corr(ux_corr, uy_corr);
+    //TVector2 ux_v2corr = u_corr.Rotate(wz_gen.Phi());
+    //TVector2 uy_v2corr(0., 0.);
+
+    //Srecko's Original
     TVector2 ux_v2corr( ux_corr*cos(wz_gen.Phi()), ux_corr*sin(wz_gen.Phi()));
     TVector2 uy_v2corr(-uy_corr*sin(wz_gen.Phi()), uy_corr*cos(wz_gen.Phi()));
 
