@@ -37,13 +37,12 @@ compareYields(const string origName, const string modName, const string outName)
       Value origYield = GetNEvtsAndError(fOrig, bkgSamples, "tEvts_MET", cuts);
       Value  modYield = GetNEvtsAndError(fMod , bkgSamples, "tEvts_MET", cuts);
       Value sys = ShiftErr(origYield, modYield, corrCoef);
-      fBkg<<"\t"<<Form("%.4f %.4f", sys.val, sys.err);
+      fBkg<<"\t"<<Form("%7.4f %7.4f", sys.val, sys.err);
       origYield.setPrintErr(1); modYield.setPrintErr(1); sys.setPrintErr(1);
       //cout<<" : "<<origYield<<" : "<<modYield<<" : "<<sys<<endl;
     }
     fBkg<<endl;
   }
-
   for(int mass=200; mass<=2000; mass+=100){
     string sample = Form("WprimeToWZTo3LNu_M-%i", mass);
     fSig<<mass;
@@ -55,7 +54,7 @@ compareYields(const string origName, const string modName, const string outName)
       Value origYield = GetNEvtsAndError(fOrig, sample, "tEvts_MET", cuts);
       Value  modYield = GetNEvtsAndError(fMod , sample, "tEvts_MET", cuts);
       Value sys = ShiftErr(origYield, modYield, corrCoef);
-      fSig<<"\t"<<Form("%.4f %.4f", sys.val, sys.err);
+      fSig<<"\t"<<Form("%7.4f %7.4f", sys.val, sys.err);
       origYield.setPrintErr(1); modYield.setPrintErr(1); sys.setPrintErr(1);
       //cout<<" : "<<origYield<<" : "<<modYield<<" : "<<sys<<endl;
     }
