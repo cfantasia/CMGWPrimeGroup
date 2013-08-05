@@ -6,7 +6,7 @@
 #include "consts.h"
 #include "TGraph2D.h"
 
-const float minSINX = 0.20;
+const float minSINX = 0.05;
 const float maxSINX = 0.50;
 const float maxRHO = 300;
 const float minRHO = 280;
@@ -22,20 +22,20 @@ void PlotLimitTC_SinX(float MPi=160) {
   TCanvas* c1 = new TCanvas("TC-RhoVsSinX","");
 
   TTree* tLimit = new TTree("tLimit", "Limits");
-  tLimit->ReadFile("nLimit.txt");
-  tLimit->Draw("SignalCode:Mass:Lumi:ObsLimit:ExpLimit", "", "para goff");
+  tLimit->ReadFile("../combined_limits/nLimit_WprimeWZ_MarkovChainMC.txt");
+  tLimit->Draw("Mass:Lumi:ObsLimit:ExpLimit", "", "para goff");
   int n = tLimit->GetSelectedRows(); assert(n); 
-  const Double_t* mass = tLimit->GetVal(1);
-  const Double_t* lumi = tLimit->GetVal(2);
-  const Double_t* ObsLimit = tLimit->GetVal(3);
-  const Double_t* ExpLimit = tLimit->GetVal(4);
+  const Double_t* mass = tLimit->GetVal(0);
+  const Double_t* lumi = tLimit->GetVal(1);
+  const Double_t* ObsLimit = tLimit->GetVal(2);
+  const Double_t* ExpLimit = tLimit->GetVal(3);
   TGraph* gExpLim = new TGraph(n, mass, ExpLimit);
   TGraph* gObsLim = new TGraph(n, mass, ObsLimit);
   cout<<"Done with importing limits.  There were "<<n<<endl;
 
   //Fill Xsec 2D graph
   TTree* tXsec = new TTree("tXsec", "X Sec");
-  tXsec->ReadFile("list.dat");
+  tXsec->ReadFile("xSec_TCWZVarySinX_8TeV.dat");
   //tXsec->ReadFile("xSec_TCWZ-RhoSinX.dat");
   tXsec->Draw("Rho:SinX:Xsec", Form("Pi==%.0f",MPi), "para goff");
   int nXsec = tXsec->GetSelectedRows(); assert(nXsec); 
@@ -172,8 +172,8 @@ void PlotLimitTC_SinX(float MPi=160) {
   TMultiGraph *mg = new TMultiGraph("mg", ";M(#rho_{TC}) (GeV);sin #chi");
   mg->Add(obs,"F");
   mg->Add(exp,"F");
-  mg->Add(obs,"C");
-  mg->Add(exp,"C");
+  mg->Add(obs,"L");
+  mg->Add(exp,"L");
   mg->SetMinimum(minSINX);
   mg->SetMaximum(maxSINX);
   mg->Draw("a");
@@ -201,8 +201,8 @@ void PlotLimitTC_SinX(float MPi=160) {
   latexLabel.SetTextSize(0.05);
   latexLabel.SetTextFont(42);
 
-  latexLabel.DrawLatex(0.33, 0.96, "CMS Preliminary 2011");
-  latexLabel.DrawLatex(0.67, 0.8, "#sqrt{s} = 7 TeV");
+  latexLabel.DrawLatex(0.33, 0.96, "CMS Preliminary 2012");
+  latexLabel.DrawLatex(0.67, 0.8, "#sqrt{s} = 8 TeV");
   latexLabel.DrawLatex(0.62, 0.65, Form("#intL dt = %.1f fb^{-1}",lumi[0]/1000.));
 
   TLine* line1 = new TLine(minRHO, 0.3333, maxRHO, 0.3333);
