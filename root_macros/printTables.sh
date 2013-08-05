@@ -36,7 +36,7 @@ root -b -l -q 'printNEvts.C+('\"$Input\"', -5)' >> $Output
 
 cd ../combined_limits
 echo "% Final Yield, Limit Tables" >> $Output
-root -b -l -q 'printTables.C+' >> $Output
+root -b -l -q 'printTables.C+('\"$Input\"')' >> $Output
 
 ####################
 ###  Calc Sys ######
