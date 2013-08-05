@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import sys,os
+import glob
 
 from optparse import OptionParser
 parser = OptionParser()
@@ -11,15 +12,23 @@ parser.add_option("-o", "--observed", action='store_true',
 parser.add_option("-p", "--plot", action='store_true',
                   dest="plot", default=False,
                   help="Print Plots")
+parser.add_option("--nocombine", action='store_true',
+                  dest="nocombine", default=False,
+                  help="Don't combine outputs (quicker if no new jobs)")
+parser.add_option("--noextract", action='store_true',
+                  dest="noextract", default=False,
+                  help="Don't extract limits, just plot")
 parser.add_option("-d", "--doDuplicates", action='store_true',
                   dest="doDuplicates", default=False,
                   help="Skip Limit if Card file exists")
-parser.add_option("--combine", action='store_true',
-                  dest="combine", default=True,
-                  help="Combine multiple root file")
+parser.add_option("--onlyMakeCards", action='store_true',
+                  dest="onlyMakeCards", default=False,
+                  help="Skip Limit if Card file exists")
 parser.add_option("-c", "--condor", action='store_true',
                   dest="condor", default=False,
                   help="Submit Via Condor")
+parser.add_option("--njobs", dest="njobs", default="10",
+                  help="Number of jobs for Condor")
 parser.add_option("--doSepCh", action='store_true',
                   dest="doSepCh", default=False,
                   help="Calculate limit for separately")
@@ -43,49 +52,68 @@ def runLimit(Mode, Mass, LtShift, WindShift):
     if not os.path.exists(cardFile):
         print cardFile+" does not exist, creating."
         os.system("root -b -l -q 'makeLimitCard.C+(\""+options.input+"\", \""+cardFile+"\", "+Mass+", "+LtShift+", "+WindShift+")'")
-    else:
-        if not options.doDuplicates: #Card file exists
-            return
 
     if not os.path.exists(cardFile):
         print "Card file "+cardFile+" STILL does not exist, check for errors!"
         sys.exit(1)
-
-
+    elif options.onlyMakeCards: #Card file exists
+        print "Card file exists and you only want to make those, returning..."
+        return
+    elif not options.doDuplicates and len(glob.glob("higgsCombine"+Mode+"."+Algo+".mH"+str(Mass)+".*.root")):
+        print "You don't want duplicates run and files exist, returning..."
+        return
+        
     if options.condor:
+        print "Won't run limits here b/c you want condor, returning..."
         return
 
     NToys=options.ntoys
     Seed="-1"
-    
-    CombineCMD="combine -H "+HintAlgo+" -M "+Algo+" -s "+Seed+" -n "+Mode+" -m "+Mass+" --rMax 0.1 "+cardFile  #MarkovChainMC Line
+
+    if Algo=="MarkovChainMC":
+        CombineCMD="combine -H "+HintAlgo+" -M "+Algo+" -s "+Seed+" -n "+Mode+" -m "+Mass+" --rMax 0.1 "+cardFile  #MarkovChainMC Line
+        #CombineCMD="combine -H "+HintAlgo+" -M "+Algo+" -s "+Seed+" -n "+Mode+" -m "+Mass+" --rMax 0.1 --systematics=0 --tries 100 "+cardFile  #MarkovChainMC Line
+    else:
+        CombineCMD="combine -H "+HintAlgo+" -M "+Algo+" -s "+Seed+" -n "+Mode+" -m "+Mass+" --rMax 0.1 --systematics=0 "+cardFile  #CLs Line
+
     print CombineCMD
     
     if options.observed:
-        os.system(CombineCMD + " --tries 100"  ) # >& /dev/null   #Observed Limit
+        if Algo=="MarkovChainMC":
+            os.system(CombineCMD + " --tries 100"  ) # >& /dev/null   #Observed Limit
+        else:
+            os.system(CombineCMD + "            "  ) # >& /dev/null   #Observed Limit
+
     else:
         os.system(CombineCMD + " --toys "+NToys) # >& /dev/null   #Expected Limit
 
     #Combine root files
-    if options.combine:
+    if not options.nocombine:
         name="higgsCombine"+Mode+"."+Algo+".mH"+Mass+".root"
         os.system("hadd -f "+name+" higgsCombine"+Mode+"."+Algo+".mH"+Mass+".*.root >& /dev/null")
 
             
 def makePlots(Mode, Factor):
-    if options.combine:
+    if not options.nocombine:
         print "Merging root files now ..."
-        import glob
-        for Mass in range(200, 2001, 10): #Combine root files
+        for Mass in range(100, 2001, 5): #Combine root files
             name="higgsCombine"+Mode+"."+Algo+".mH"+str(Mass)+".root"
             if len(glob.glob("higgsCombine"+Mode+"."+Algo+".mH"+str(Mass)+".*.root")):
                 os.system("hadd -f "+name+" higgsCombine"+Mode+"."+Algo+".mH"+str(Mass)+".*.root >& /dev/null")
+    else:
+        print "Not merging root files, hopefully no new jobs exist"
 
     #Now run code to extract limts and make plots
-    extractCMD="root -b -l -q 'extractLimits.C+(\""+options.input+"\",\""+Mode+"\",\""+Algo+"\", "+Factor+")'"
-    print extractCMD
-    os.system(extractCMD)
-    os.system("cat nLimit_"+Mode+"_"+Algo+".txt")
+    if not options.noextract:
+        if   Ch == "Sum" or Ch == "":
+            extractScale = "1."
+        else:
+            extractScale = "0.25"
+        
+        extractCMD="root -b -l -q 'extractLimits.C+(\""+options.input+"\",\""+Mode+"\",\""+Algo+"\", "+extractScale+")'"
+        print extractCMD
+        os.system(extractCMD)
+        os.system("cat nLimit_"+Mode+"_"+Algo+".txt")
 
     os.chdir("../Limits")
     os.system("root -b -l -q '../Limits/PlotLimit.C+(\"WprimeWZ\", \"../combined_limits/nLimit_"+Mode+"_"+Algo+".txt\", \"limitVsMass_"+Mode+".pdf\", "+Factor+")'")
@@ -105,13 +133,13 @@ def submitCondor(Mass):
     f.write("Transfer_Input_Files = "+inputFiles+"\n")
     f.write("Should_Transfer_Files = YES\n")
     f.write("WhenToTransferOutput = ON_EXIT\n")
-    f.write("Output = out_"+cardFile+".$(Process)_$(cluster)\n")
-    f.write("Error = err_"+cardFile+".$(Process)_$(cluster)\n")
-    f.write("Log = log_"+cardFile+".$(Process)_$(cluster)\n")
+    f.write("Output = Logs/out_"+cardFile+".$(Process)_$(cluster)\n")
+    f.write("Error = Logs/err_"+cardFile+".$(Process)_$(cluster)\n")
+    f.write("Log = Logs/log_"+cardFile+".$(Process)_$(cluster)\n")
     f.write("notify_user = @bu.edu\n")
     f.write("notification = Error\n")
     f.write("Arguments = "+Mass+" "+options.LtShifts+" "+options.WindShifts+" "+options.ntoys+" "+os.getcwd()+"\n")
-    f.write("Queue 10\n")
+    f.write("Queue "+options.njobs+" \n")
     f.close()
     #print condorFile
     os.system("/opt/condor/bin/condor_submit "+ condorFile)
@@ -126,12 +154,13 @@ if __name__ == '__main__':
     #Algo=BayesianToyMC
     Algo="MarkovChainMC"      #Bayesian
     #Algo=ProfileLikelihood  #?
-    #Algo=Asymptotic          #Asymptotic CLs
+    #Algo="Asymptotic"          #Asymptotic CLs
 
     
     Channels = [""]
     if options.doSepCh:
         Channels += ["Ch0", "Ch1", "Ch2", "Ch3"]
+        #Channels += ["Ch0", "Ch1", "Ch2", "Ch3", "Sum"]
     print "Channels are "
     print Channels
 
@@ -170,7 +199,7 @@ if __name__ == '__main__':
 
 
                 if options.plot:
-                    if Ch == "":
+                    if Ch == "" or Ch == "Sum":
                         Scale="1."
                     else:
                         Scale="0.25"
