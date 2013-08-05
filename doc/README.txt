@@ -20,6 +20,7 @@ o Check out the recommended versions of needed packages:
   PhysicsTools/Utilities
   RecoLuminosity/LumiDB
   UserCode/SHarper/HEEPAnalyzer
+  etc...
 
 o Compile the code
 
@@ -92,7 +93,9 @@ hadV + W (available), tb (available)
 
 
 
-Code structure:
+======================
+=== Code Structure ===
+======================
 
 (a) In directory UserCode/CMGWPrimeGroup/bin/
 - WPrimeAnalyzer.cc (dummy wrapper)
@@ -137,7 +140,71 @@ same file.
 
 If the filename given for a sample ends in .txt, it will be read in as a list of root files to be analyzed.
 
-A subdirectory can be specified for all root files for a given sample.
+a subdirectory can be specified for all root files for a given sample.
+
+===========================
+=== Directory Structure ===
+===========================
+
+- JSON
+Contains scripts for making JSON files containing good lumi sections and 
+previously made json files
+
+- Limits
+Directory for plotting limits 
+
+- PAT_hack
+(Outdated) Contains methods for adding a new pt algorithm into a pat muon
+
+- SHarper_hack
+Sam Harper's wrapper package for calculating HEEP variables
+
+- Systematics
+Directory for calculating and analysing systematics
+
+- bin
+Contains executable WPrimeAnalyzer and input python config files
+
+- combined_limits
+Calculate combined (multi-channel) limits including scripts for submitting 
+jobs to the grid
+
+- config
+Input filelists for each analysis and files with cross sections, lumi info etc
+
+- doc
+Documentation
+
+- fitting
+Background fitting scripts
+
+- interface
+Header files for analyzers
+
+- macros
+Useful scripts for skimming events, converting pdfs to pngs etc
+
+- pileup
+Scripts for generating PU dists for reweighting PU
+
+- python
+Directory with input base config files for patTuples and analyzers
+
+- root_macros
+Useful root macros for making plots etc
+
+- skimming_crab
+Directory with CRAB scripts to run on the grid
+
+- src
+Source files for analyzers
+
+- statistics
+Empty for now
+
+- test
+scripts to create patTuples
+
 
 ==================
 === How to Tag ===
@@ -148,6 +215,7 @@ A subdirectory can be specified for all root files for a given sample.
 2) Update documentation
  -UserCode/CMGWPrimeGroup/doc/README.txt
  -UserCode/CMGWPrimeGroup/doc/history_version.txt
+ -UserCode/CMGWPrimeGroup/VERSION
 
 3) Update installation script
  -UserCode/CMGWPrimeGroup/macros/setup_Wprime.sh
