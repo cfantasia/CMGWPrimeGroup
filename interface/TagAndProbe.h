@@ -61,7 +61,7 @@ public:
   uint runNumber_;
   uint lumiNumber_;
   uint evtNumber_;
-  float ZMass_;
+  float ZMass_, Zpt_, ZDr_;
   uint numZs_, evtType_; 
   uint NVtxs_;
   float LeadPt_;

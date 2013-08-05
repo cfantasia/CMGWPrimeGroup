@@ -118,6 +118,8 @@ void TagAndProbe::defineHistos(const TFileDirectory & dir){
       tEvts[i]->Branch("Event", &evtNumber_);
       tEvts[i]->Branch("EvtType", &evtType_);
       tEvts[i]->Branch("ZMass", &ZMass_);
+      tEvts[i]->Branch("ZDr", &ZDr_);
+      tEvts[i]->Branch("Zpt", &Zpt_);
       tEvts[i]->Branch("MET", &MET_);
       tEvts[i]->Branch("NVtxs", &NVtxs_);
       tEvts[i]->Branch("weight", &weight_);
@@ -284,7 +286,7 @@ TagAndProbe::eventLoop(edm::EventBase const & event){
     if (tightProbeMuon_(p, pu, primaryVertex))
       tightProbeMuons_.push_back(p);
   }
-
+  /*
   for(size_t i = 0; i < TagMuons_.size(); i++) {
     const TeVMuon & m = TagMuons_[i];
     if(!WPrimeUtil::Contains(m, tightProbeMuons_)){
@@ -294,7 +296,7 @@ TagAndProbe::eventLoop(edm::EventBase const & event){
       abort();
     }
   }
-
+  */
   if(debug_){
     printf("    Contains: %lu count electron(s), %lu count muon(s)\n",
            countElectrons_.size(), countMuons_.size());
@@ -475,8 +477,10 @@ TagAndProbe::calcZVariables(){
   removeOverlapping(zCandsAll);
   numZs_ = countZCands(zCandsAll); 
   ZMass_ = zCand_.mass();
+  Zpt_ = zCand_.pt();
   if(zCand_){
     evtType_ = 2 * (zCand_.flavor() != 11);
+    ZDr_ = deltaR(*zCand_.daughter(0), *zCand_.daughter(1));
     ZLep1Pt_  = zCand_.daughter(0)->pt();
     ZLep1Eta_ = zCand_.daughter(0)->eta();
     ZLep1Phi_ = zCand_.daughter(0)->phi();
@@ -530,7 +534,7 @@ TagAndProbe::clearEvtVariables(){
   evtType_ = -999;
   LeadElecPt_ = -999;
   LeadMuonPt_ = -999;
-  ZMass_ = -999;
+  ZMass_ = Zpt_ = ZDr_ = -999;
   ZTightCode_ = 0;
   runNumber_ = 0;
   lumiNumber_ = 0;
