@@ -59,7 +59,7 @@ extractLimits(string inName, string modeName, string algoName, float xSecScale=1
     double obs_limit,medianLimit,lo95,lo68,hi68,hi95;
     obs_limit = medianLimit = lo95 = lo68 = hi68 = hi95 = 0;
 
-    if(algoName == "MarkovChainMC"){
+    if(algoName == "MarkovChainMC" || algoName == "Asymptotic"){
       obs_limit = getMedian(tree, "iToy==0");
       medianLimit = getMedian(tree, "iToy>0", lo95,lo68,hi68,hi95);
     }else{//Not MarkovChainMC
