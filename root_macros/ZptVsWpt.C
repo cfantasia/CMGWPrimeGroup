@@ -10,9 +10,11 @@
 #include "TError.h"
 #include "TStyle.h"
 #include "TLine.h"
+#include "TLatex.h"
 
 #include "common.h"
 #include "CMSStyle.C"
+#include "setTDR_modified.C"
 
 
 using namespace std;
@@ -28,14 +30,17 @@ Make2DPlot(const string & name, const string & title,
 void DrawBoxes(TCanvas & c);
 
 
-void ZptVsWpt(string inName, string outSuffix=""){
+void ZptVsWpt(string inName="../../../WprimeWZ.root", string outSuffix=""){
   gErrorIgnoreLevel = kWarning;
-  CMSstyle();
+  setTDRStyle();
+  //CMSstyle();
   gStyle->SetOptStat(0);
+  gROOT->ForceStyle();
   outSuffix_ = outSuffix;
 
   TFile *fin = TFile::Open(inName.c_str(), "read"); assert(fin);
   
+  TFile *fout = TFile::Open("Wprime-2DPlots.root", "recreate"); assert(fout);
 
   float minWindow = 0;
   float maxWindow = 20000;
@@ -56,16 +61,17 @@ void ZptVsWpt(string inName, string outSuffix=""){
   
   //Make2DPlot(name, title, nx, minx, maxx, ny, miny, maxy, fin, plots, cuts, outname);
   //Make2DPlot("ZptVsWpt", ";p_{T}^{W} (GeV);p_{T}^{Z} (GeV)", 150, 0, 750, 150, 0, 750, fin, "Wpt:Zpt", cuts);
-  Make2DPlot("ZptVsWpt", ";p_{T}^{W} (GeV);p_{T}^{Z} (GeV)", 150, 0, 750, 150, 0, 750, fin, "Wpt:Zpt", NoLtcuts);
-  Make2DPlot("WZMassVsLt", ";L_{T} (GeV);M_{WZ} (GeV)", 5000, 0, 1000, 5000, 0, 1500, fin, "Lt:WZMass", NoLtcuts);
-  Make2DPlot("WZMassVsMeff", ";M_{eff} (GeV);M_{WZ} (GeV)", 5000, 0, 1500, 5000, 0, 1500, fin, "Lt+MET:WZMass", NoLtcuts);
-  Make2DPlot("WZMassVsZpt", ";p_{T}^{Z} (GeV);M_{WZ} (GeV)", 150, 0, 750, 5000, 0, 1500, fin, "Zpt:WZMass", NoLtcuts);
-  Make2DPlot("WZMassVsWpt", ";p_{T}^{W} (GeV);M_{WZ} (GeV)", 150, 0, 750, 5000, 0, 1500, fin, "Wpt:WZMass", NoLtcuts);
-  Make2DPlot("WZMassVsZDr", ";#Delta_{R}^{ll} (GeV);M_{WZ} (GeV)", 500, 0, 5, 5000, 0, 1500, fin, "ZDr:WZMass", NoLtcuts);
-  Make2DPlot("MeffVsLt", ";L_{T} (GeV);M_{eff} (GeV)", 5000, 0, 1500, 5000, 0, 1500, fin, "Lt:Lt+MET", NoLtcuts);
-  Make2DPlot("ZdrVsLt", ";L_{T} (GeV);#Delta_{R}^{ll} (GeV)", 5000, 0, 1000, 500, 0, 5, fin, "Lt:ZDr", NoLtcuts);
-  Make2DPlot("ZptVsZDr", ";#Delta_{R}^{ll} (GeV);p_{T}^{Z} (GeV)", 500, 0, 5, 150, 0, 750, fin, "ZDr:Zpt", NoLtcuts);
-  Make2DPlot("ZmassVsWTMass", ";M_{Z} (GeV);M_{W}^{T} (GeV)", 60, 60, 120, 50, 0, 100, fin, "ZMass:WTransMass", NoLtcuts);
+
+  //Make2DPlot("ZptVsWpt", ";p_{T}^{W} (GeV);p_{T}^{Z} (GeV)", 150, 0, 750, 150, 0, 750, fin, "Wpt:Zpt", NoLtcuts);
+  Make2DPlot("WZMassVsLt", ";L_{T} (GeV);M_{WZ} (GeV)", 1000, 0, 1000, 1500, 0, 1500, fin, "Lt:WZMass", NoLtcuts);
+  //Make2DPlot("WZMassVsMeff", ";M_{eff} (GeV);M_{WZ} (GeV)", 5000, 0, 1500, 5000, 0, 1500, fin, "Lt+MET:WZMass", NoLtcuts);
+  //Make2DPlot("WZMassVsZpt", ";p_{T}^{Z} (GeV);M_{WZ} (GeV)", 150, 0, 750, 5000, 0, 1500, fin, "Zpt:WZMass", NoLtcuts);
+  //Make2DPlot("WZMassVsWpt", ";p_{T}^{W} (GeV);M_{WZ} (GeV)", 150, 0, 750, 5000, 0, 1500, fin, "Wpt:WZMass", NoLtcuts);
+  //Make2DPlot("WZMassVsZDr", ";#Delta_{R}^{ll} (GeV);M_{WZ} (GeV)", 500, 0, 5, 5000, 0, 1500, fin, "ZDr:WZMass", NoLtcuts);
+  //Make2DPlot("MeffVsLt", ";L_{T} (GeV);M_{eff} (GeV)", 5000, 0, 1500, 5000, 0, 1500, fin, "Lt:Lt+MET", NoLtcuts);
+  //Make2DPlot("ZdrVsLt", ";L_{T} (GeV);#Delta_{R}^{ll} (GeV)", 5000, 0, 1000, 500, 0, 5, fin, "Lt:ZDr", NoLtcuts);
+  //Make2DPlot("ZptVsZDr", ";#Delta_{R}^{ll} (GeV);p_{T}^{Z} (GeV)", 500, 0, 5, 150, 0, 750, fin, "ZDr:Zpt", NoLtcuts);
+  //Make2DPlot("ZmassVsWTMass", ";M_{Z} (GeV);M_{W}^{T} (GeV)", 60, 60, 120, 50, 0, 100, fin, "ZMass:WTransMass", NoLtcuts);
 
 
 
@@ -87,6 +93,8 @@ void ZptVsWpt(string inName, string outSuffix=""){
 //  cutNew.Draw();
   }
 */
+
+  fout->Close();
 
 }
 
@@ -116,13 +124,12 @@ Make2DPlot(const string & name, const string & title,
 
   vector<TH2D> h2D(samples.size(),TH2D(name.c_str(), title.c_str(), nx, minx, maxx, ny, miny, maxy));
 
-  TCanvas c; 
-  c.Divide(2,1);
-  TLegend legend(0.0,0.02,0.40,0.11,"");
-	legend.SetBorderSize(0);
-  legend.SetFillStyle(0);
-  legend.SetNColumns(3);
-  legend.SetTextSize(0.05);
+  TCanvas c(name.c_str());
+  //c.Divide(2,1);
+  //TLegend legend(0.0,0.02,0.40,0.11,"");
+  TLegend legend(0.17,0.7,0.37,0.93,"");
+  prepLegend(&legend);
+  //legend.SetNColumns(3);
 
   for(unsigned i=0; i<samples.size(); ++i){
     int color = kGray;
@@ -147,7 +154,7 @@ Make2DPlot(const string & name, const string & title,
     }
     
     cout<<"sample now is "<<samples[i]<<endl;
-    
+    h2D[i].SetStats(0);
     get_sum_of_hists(fin, names, "tEvts_MET", plot.c_str(), cuts, h2D[i]);
     
     h2D[i].SetMarkerColor(color);
@@ -157,25 +164,51 @@ Make2DPlot(const string & name, const string & title,
     if(samples[i] == "Sig") h2D[i].SetMarkerSize(0.6);
     if(samples[i] == "data") h2D[i].SetMarkerSize(0.4);
     
-    legend.AddEntry(&h2D[i],legendName.c_str(), "F");
+    legend.AddEntry(&h2D[i],legendName.c_str(), samples[i] == "data" ? "P" : "F");
     
     string opt = samples[i] == "data" ? "scat" : "box";
     opt += i==0 ? "" : "same";
     
-    c.cd(1); h2D[i].Draw(opt.c_str());
-    if(samples[i] != "Sig"){
-      c.cd(2); h2D[i].Draw(opt.c_str());
+    //c.cd(1); 
+    h2D[i].Draw(opt.c_str());
+    if(0 && samples[i] != "Sig"){
+      c.cd(2); 
+      h2D[i].Draw(opt.c_str());
     }
+    h2D[i].GetXaxis()->SetNdivisions(505);
     
-    c.cd();
-    if(name.find("WZMassVsLt") != string::npos) DrawBoxes(c);
-    legend.Draw();
-    
-    c.SaveAs(Form("%s%s.png", name.c_str(), outSuffix_.c_str()));
-  
+    //c.cd();
+    if(i == (samples.size()-1)){
+      if(name.find("WZMassVsLt") != string::npos) DrawBoxes(c);
+
+      legend.Draw();
+
+      TLatex latexLabel;
+      latexLabel.SetNDC();
+      latexLabel.SetTextSize(0.05);
+      latexLabel.SetTextFont(42);
+      latexLabel.DrawLatex(0.33, 0.96, "CMS Preliminary 2012");
+      latexLabel.DrawLatex(0.37, 0.84, "#sqrt{s} = 8 TeV");
+      latexLabel.DrawLatex(0.60, 0.84, Form("#intL dt = 19.6 fb^{-1}"));
+    }
+
   }//loop over samples
+  c.SaveAs(Form("%s%s.png", name.c_str(), outSuffix_.c_str()));
+  c.Write();
 }
 
+void
+DrawBox(TCanvas & c, int mass){
+  float maxLt = 1000;//upper end of the box
+  TBox* b = new TBox(LtCut(mass),mass - WindowWidth(mass)/2.,maxLt,mass + WindowWidth(mass)/2.); 
+  
+  b->SetFillStyle(0);
+  b->SetLineColor(kBlue);
+  for(int i=0; i<2; ++i){
+    c.cd(i+1);
+    b->Draw("l");
+  }
+}
 void
 DrawBoxes(TCanvas & c){
   float maxLt = 1000;//upper end of the box
@@ -189,4 +222,18 @@ DrawBoxes(TCanvas & c){
       b->Draw("l");
     }
   }
+  DrawBox(c, 170);
+  DrawBox(c, 180);
+  DrawBox(c, 190);
+  DrawBox(c, 210);
+  DrawBox(c, 220);
+  DrawBox(c, 230);
+  DrawBox(c, 240);
+  DrawBox(c, 250);
+  DrawBox(c, 275);
+  DrawBox(c, 325);
+  DrawBox(c, 350);
+  DrawBox(c, 450);
+  DrawBox(c, 550);
+  
 }
