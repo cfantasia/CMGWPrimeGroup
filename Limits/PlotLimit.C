@@ -8,6 +8,7 @@
 #include "../root_macros/setTDR_modified.C"
 #include "consts.h"
 
+void RemoveZeros(TGraph* g);
 int GetEndPoints(int & start, int& end, Double_t* y, float line);
 float FindLimit(const TGraph* xsec, const TGraph* limit, const bool findUpper);
 
@@ -25,7 +26,7 @@ struct SignalSample{
   TGraph* gXsecBand;
 
   SignalSample(){}
-  SignalSample(string n, string xsec, string mass, string cut, string leg, int lc=kBlack, int ls=1, int bc=-1, double xsecsc=1.){
+  SignalSample(string n, string xsec, string mass, string cut, string leg, int lc=kBlack, int ls=1, int bc=-1){
     name = n;
     sigXsec = xsec;
     massString = mass;
@@ -49,10 +50,25 @@ PlotLimit(string inName, string inFile="nLimit.txt", string outFile="", float xS
 
   vector<SignalSample> sigs;
   if(inName.find("WprimeWZ") != string::npos){
-    sigs.push_back(SignalSample("W'","xSec_WZ.dat",  "Mass:Xsec",  "Mass>=172", "\\sigma_{W'}", kBlack, 1, kGray));
+    sigs.push_back(SignalSample("W'","xSec_WZ.dat",  "Mass:Xsec:percentError",  "Mass>=172", "\\sigma_{W'}", kBlue));
+    sigs.push_back(SignalSample("W'LO","test.dat",  "Mass:Xsec:percentError",  "Mass>=172", "\\sigma_{W'}^{LO}", kGreen));
+    //sigs.push_back(SignalSample("W'","xSec_WZ.dat",  "Mass:Xsec:percentError",  "Mass>=172", "\\sigma_{W'}", kBlack, 1, kGray));
     //sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{2}","xSec_TCWZ-sinchi1d2.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{2}}", kRed, kDashed));
-    //sigs.push_back(SignalSample("TC",                      "xSec_TCWZ-sinchi1d3.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{3}}", kRed));
+    sigs.push_back(SignalSample("TC",                      "xSec_TCWZ-sinchi1d3.dat",  "Rho:Xsec:percentError",  "Rho>=172",  "\\sigma_{TC sin(#chi)=#frac{1}{3}}", kRed));
+    sigs.push_back(SignalSample("TCLO",                      "tc8TeVLO.dat",  "Rho:Xsec:percentError",  "Rho>=172",  "\\sigma_{TCLO sin(#chi)=#frac{1}{3}}", kOrange));
     //sigs.push_back(SignalSample("TC,sin(#chi)=#frac{1}{4}","xSec_TCWZ-sinchi1d4.dat",  "Rho:Xsec",  "Rho>=200",  "\\sigma_{TC sin(#chi)=#frac{1}{4}}", kRed, 3));
+    //sigs.push_back(SignalSample("NoBkgObs",                 "../combined_limits/2013-05-20-NoBkg/nLimit_WprimeWZ_MarkovChainMC.txt",  "Mass:ObsLimit",  "",  "Obs_{NoBkg}", kBlue, 1));
+    //sigs.push_back(SignalSample("NoBkg",                    "../combined_limits/2013-05-20-NoBkg/nLimit_WprimeWZ_MarkovChainMC.txt",  "Mass:ExpLimit",  "",  "Exp_{NoBkg}", kBlue, 2));
+    //sigs.push_back(SignalSample("ZG50Percent",              "../combined_limits/2013-05-17-ZGamma50Percent/nLimit_WprimeWZ_MarkovChainMC.txt",  "Mass:ExpLimit",  "",  "Exp_{ZG50Percent}", kGreen, 2));
+    //sigs.push_back(SignalSample("ZZ30Percent",              "../combined_limits/2013-05-28-ZZ30Percent/nLimit_WprimeWZ_MarkovChainMC.txt",  "Mass:ExpLimit",  "",  "Exp_{ZZ30Percent}", kGray, 2));
+    //sigs.push_back(SignalSample("TT15DY30",                 "../combined_limits/2013-05-31-TT15DY30/nLimit_WprimeWZ_MarkovChainMC.txt",  "Mass:ExpLimit",  "",  "Exp_{TT15DY30}", kViolet, 2));
+    //sigs.push_back(SignalSample("TT15DY50",                 "../combined_limits/2013-05-25-TT15DY50/nLimit_WprimeWZ_MarkovChainMC.txt",  "Mass:ExpLimit",  "",  "Exp_{TT15DY50}", kRed, 2));
+    //sigs.push_back(SignalSample("TT15DY100",                "../combined_limits/2013-05-25-TT15DY100/nLimit_WprimeWZ_MarkovChainMC.txt",  "Mass:ExpLimit",  "",  "Exp_{TT15DY100}", kCyan, 2));
+    //sigs.push_back(SignalSample("BinnedSys",                "../combined_limits/2013-05-28-BinnedSys/nLimit_WprimeWZ_MarkovChainMC.txt",  "Mass:ExpLimit",  "",  "Exp_{BinnedSys}", kOrange, 2));
+    //sigs.push_back(SignalSample("LastApproval",                "../combined_limits/2013-05-10-Approval/nLimit_WprimeWZ_MarkovChainMC.txt",  "Mass:ExpLimit",  "",  "Exp_{Approval}", kBlue, 2));
+    //sigs.push_back(SignalSample("5PercentMuPtUncert",         "../combined_limits/2013-06-12-5PercentMuPtScale/nLimit_WprimeWZ_MarkovChainMC.txt",  "Mass:ExpLimit",  "",  "Exp_{5PercentMuPtUncert}", kBlue, 2));
+    //sigs.push_back(SignalSample("0p2PercentMuPtUncert",         "../combined_limits/2013-06-12-0p2PercentMuPtScale/nLimit_WprimeWZ_MarkovChainMC.txt",  "Mass:ExpLimit",  "",  "Exp_{0.2PercentMuPtUncert}", kRed, 2));
+
     if(outFile.empty()) outFile = "limitVsMass_WZ.pdf";
   }else if(inName.find("HadVZ") != string::npos){
     sigs.push_back(SignalSample("W'","xSec_WprimeVZ.dat", "Mass:Xsec", "", "\\sigma_{W'}"));
@@ -80,14 +96,14 @@ PlotLimit(string inName, string inFile="nLimit.txt", string outFile="", float xS
   cout<<"Now Plot Limit vs Mass\n";
   TCanvas* c1 = new TCanvas("c1", "Exclusion Limit vs Mass");
   TMultiGraph *mg = new TMultiGraph("mg", ";M_{W', #rho_{TC}} (GeV);\\sigma #upoint BR (pb)");
-  TLegend *leg = new TLegend(0.6, 0.43,0.9, 0.89,"");
+  TLegend *leg = new TLegend(0.57, 0.45,0.85, 0.91,"");
   //TLegend *leg = new TLegend(0.6, 0.63,0.9, 0.89,"");
   c1->SetLogy();
   int n=0;
   float* x; 
   float* y;
   
-  TGraph *glumi;
+  TGraph *gexp;
   TGraph *g1Sigma, *g2Sigma;
   TGraph* gData;
 
@@ -104,8 +120,9 @@ PlotLimit(string inName, string inFile="nLimit.txt", string outFile="", float xS
   const Double_t* ExpLimitP2 = tLimit->GetVal(treeIdx++);
   const Double_t* ExpLimitM2 = tLimit->GetVal(treeIdx++);
   
-  glumi = new TGraph(n, mass, ExpLimit);
-  glumi->Sort();
+  gexp = new TGraph(n, mass, ExpLimit);
+  gexp->Sort();
+  RemoveZeros(gexp);
   g2Sigma = new TGraph(2*n);
   g1Sigma = new TGraph(2*n);
   for (int i=0;i<n;i++) {
@@ -114,24 +131,28 @@ PlotLimit(string inName, string inFile="nLimit.txt", string outFile="", float xS
     g1Sigma->SetPoint(  i,mass[i]    ,ExpLimitP1[i]    );
     g1Sigma->SetPoint(n+i,mass[n-i-1],ExpLimitM1[n-i-1]);
   }
+  RemoveZeros(g2Sigma);
+  RemoveZeros(g1Sigma);
   
   g2Sigma->SetFillColor(kYellow);
-  mg->Add(g2Sigma, "F");
+  mg->Add(g2Sigma, "F");//Cory
   g1Sigma->SetFillColor(kGreen);
-  mg->Add(g1Sigma, "F");
+  mg->Add(g1Sigma, "F");//Cory
   
-  glumi->SetLineColor(kBlack);
-  glumi->SetLineStyle(kDashed);//dashed
-  mg->Add(glumi, "L");
+  gexp->SetLineColor(kBlack);
+  gexp->SetLineStyle(kDashed);//dashed
+  gexp->SetLineWidth(3);
+  mg->Add(gexp, "C");
 
   gData = new TGraph(n, mass, ObsLimit);
   gData->SetMarkerStyle(20);
-  mg->Add(gData, "P");
-  leg->AddEntry(gData,"Obs. Limit", "P");
+  gData->SetLineWidth(3);
+  mg->Add(gData, "CP");//Cory
+  leg->AddEntry(gData,"Obs. 95% C.L.", "LP");//Cory
 
-  leg->AddEntry(glumi,"Exp. Limit", "L");
-  leg->AddEntry(g1Sigma,"Exp. \\pm 1\\sigma", "F");
-  leg->AddEntry(g2Sigma,"Exp. \\pm 2\\sigma", "F");
+  leg->AddEntry(gexp,"Exp. 95% C.L.", "L");
+  leg->AddEntry(g1Sigma,"Exp. #pm 1#sigma", "F");//Cory
+  leg->AddEntry(g2Sigma,"Exp. #pm 2#sigma", "F");//Cory
    
   //////
   
@@ -174,11 +195,12 @@ PlotLimit(string inName, string inFile="nLimit.txt", string outFile="", float xS
   }
 
   cout<<"Drawing multigraph"<<endl;
+  mg->SetMaximum(2.);
   mg->SetMinimum(0.00001);
   mg->Draw("a");
-  cout<<"ndiv is "<<mg->GetXaxis()->GetNdivisions()<<endl;
+  //cout<<"ndiv is "<<mg->GetXaxis()->GetNdivisions()<<endl;
   mg->GetXaxis()->SetNdivisions(505);
-  cout<<"ndiv is "<<mg->GetXaxis()->GetNdivisions()<<endl;
+  //cout<<"ndiv is "<<mg->GetXaxis()->GetNdivisions()<<endl;
   mg->Draw("a");
 
   for(unsigned iSig=0; iSig<sigs.size(); ++iSig){
@@ -194,8 +216,8 @@ PlotLimit(string inName, string inFile="nLimit.txt", string outFile="", float xS
       //latexLabel.DrawLatex(0.20, 0.3-iSig*0.04, Form("#font[42]{Limit_{%s} = %.0f GeV}",sigs[iSig].name.c_str(),upObsLimit));
     }  
     float lowExpLimit(-1), upExpLimit(-1);
-    lowExpLimit = FindLimit(sigs[iSig].gXsec, glumi, false); 
-    upExpLimit  = FindLimit(sigs[iSig].gXsec, glumi, true); 
+    lowExpLimit = FindLimit(sigs[iSig].gXsec, gexp, false); 
+    upExpLimit  = FindLimit(sigs[iSig].gXsec, gexp, true); 
     if(0){
       lowExpLimit = roundToNearest(lowExpLimit, 10);
       upExpLimit = roundToNearest(upExpLimit, 10);
@@ -205,7 +227,7 @@ PlotLimit(string inName, string inFile="nLimit.txt", string outFile="", float xS
 
   latexLabel.DrawLatex(0.33, 0.96, "CMS Preliminary 2012");
   latexLabel.DrawLatex(0.19, 0.30, "#sqrt{s} = 8 TeV");
-  latexLabel.DrawLatex(0.17, 0.20, Form("#intL dt = %.2f fb^{-1}",lumi[0]/1000.));
+  latexLabel.DrawLatex(0.17, 0.20, Form("#intL dt = %.1f fb^{-1}",lumi[0]/1000.));
   
   //cout<<"Drawing legend"<<endl;
   leg->SetTextSize(0.05);
@@ -218,6 +240,9 @@ PlotLimit(string inName, string inFile="nLimit.txt", string outFile="", float xS
 
   cout<<"Saving as "<<outFile<<endl;
   c1->SaveAs(outFile.c_str());
+  string pngoutFile = outFile;
+  pngoutFile.replace(pngoutFile.find(".pdf"), 4, ".png"); 
+  c1->SaveAs(pngoutFile.c_str());
 
   return;
 }
@@ -261,3 +286,13 @@ FindLimit(const TGraph* xsec, const TGraph* limit, const bool findUpper){
 }
 
              
+void
+RemoveZeros(TGraph* g){
+  for(int i=0; i<g->GetN(); ++i){
+    if(g->GetY()[i] < 1.e-9){
+      cout<<"Removing point "<<i<<" with value "<<g->GetY()[i]<<endl;
+      g->RemovePoint(i);
+      i--;
+    }
+  }
+}
