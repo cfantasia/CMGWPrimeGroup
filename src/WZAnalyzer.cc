@@ -610,7 +610,7 @@ void WZAnalyzer::fillHistos(const int& index, const float& weight){
       }
     }  
     
-    if(index > 4) tEvts[index]->Fill();//trying to keep the file size down
+    if(index > 2) tEvts[index]->Fill();//trying to keep the file size down
   }else{//Systematics plots
     if(zCand_){
       if(zCand_.flavor() == PDG_ID_ELEC){
@@ -719,18 +719,22 @@ WZAnalyzer::calcZVariables(){
   if (debug_) cout<<"In calc Z Variables\n";
   // Reconstruct the Z
   float matchptcut = 0.;
+
+  const pat::TriggerObjectCollection* triggerObjs = triggerEventH_.failedToGet() ? NULL : triggerEventH_->objects();
   
   matchptcut = 8.;
   vector<bool> zElectronsMask(looseZElectrons_.size(), false);
   for (size_t i=0; i < looseZElectrons_.size(); i++)
-    if(1 || WPrimeUtil::passTriggerMatch(looseZElectrons_[i], matchptcut, triggersToUse_))
-      zElectronsMask[i] = true;
+    if(1 || WPrimeUtil::passTriggerMatch(looseZElectrons_[i].patEle(), triggerObjs))
+       //if(1 || WPrimeUtil::passTriggerMatch(looseZElectrons_[i], matchptcut, triggersToUse_))
+       zElectronsMask[i] = true;
 
   matchptcut = 8.;
   vector<bool> zMuonsMask(looseZMuons_.size(), false);
   for (size_t i=0; i < looseZMuons_.size(); i++)
-    if(1 || WPrimeUtil::passTriggerMatch(looseZMuons_[i], matchptcut, triggersToUse_))
-      zMuonsMask[i] = true;
+    if(1 || WPrimeUtil::passTriggerMatch(looseZMuons_[i], triggerObjs))
+       //if(1 || WPrimeUtil::passTriggerMatch(looseZMuons_[i], matchptcut, triggersToUse_))
+       zMuonsMask[i] = true;
 
 //  if(debug_) printf("    Contains: %lu z electron(s), %lu z muon(s)\n",
 //                     zElectronsMask.size(), zMuonsMask.size());
@@ -755,7 +759,7 @@ WZAnalyzer::calcZVariables(){
     const TeVMuon& m1 = *i->muon1();
     const TeVMuon& m2 = *i->muon2();
     if(!m1.isGlobalMuon() && !m2.isGlobalMuon()){
-      cout<<"Removing Z b/c no global muon!\n";
+      if(debug_) cout<<"Removing Z b/c no global muon!\n";
       zmmCands.erase(i);
       i--;
     }
@@ -883,7 +887,7 @@ WZAnalyzer::calcEventVariables(){
   if(debug_) printEventDetails();
   if(TriLepMass_ < 120.){
     if(debug_) cout<<"Trilep mass too low, removing\n";
-    wCand_ = WCandidate();
+    wCand_ = WCandidate();//Cory: temp commented out to show special ZZ sample
   }
 }
 
@@ -908,6 +912,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   }
 
   if(removeTauEvents_ && !wprimeUtil_->runningOnData()){//Don't do this for data
+    if(debug_) cout<<"Removing Taus"<<endl;
     GenParticleV genParticles = getProduct<GenParticleV>(event, "prunedGenParticles");
       for (size_t i = 0; i < genParticles.size(); i++){
         if (abs(genParticles[i].pdgId()) == PDG_ID_TAU ||
@@ -919,6 +924,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   }//Remove Tau Events
  
   if(wprimeUtil_->isSignalSample()){
+    if(debug_) cout<<"Getting W' Gen Mass"<<endl;
     GenParticleV genParticles = getProduct<GenParticleV>(event, "prunedGenParticles");
     for (size_t i = 0; i < genParticles.size(); i++){
       if (abs(genParticles[i].pdgId()) == PDG_ID_WPRIME){
@@ -930,16 +936,21 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
     
 
   // get leptons
+  if(debug_) cout<<"Getting leptons"<<endl;
   event.getByLabel(electronsLabel_,patElectronsH_);
+  if(debug_) cout<<"Getting muons"<<endl;
   event.getByLabel(muonsLabel_,patMuonsH_);
+  if(debug_) cout<<"Getting met"<<endl;
   event.getByLabel(metLabel_, metH_);
 
+  if(debug_) cout<<"Converting leptons"<<endl;
   if(useAdjustedMET_) event.getByLabel(pfCandsLabel_, pfCandidatesH_);
   WPrimeUtil::getLeptonsMET(patElectronsH_, allElectrons_,
                             patMuonsH_, muReconstructor_, allMuons_,
                             metH_, useAdjustedMET_, met_,
                             pfCandidatesH_);
   
+  if(debug_) cout<<"Getting vertices"<<endl;
   //get Vertex
   event.getByLabel(vertexLabel_, verticesH_);
 
@@ -1070,7 +1081,7 @@ WZAnalyzer::eventLoop(edm::EventBase const & event){
   // Preselection - skip events that don't look promising
   if (doPreselect_){
     if(debug_) cout<<"Testing Preselection...\n";
-    if(looseZElectrons_.size() + looseZMuons_.size() == 0) return;
+    if(looseZElectrons_.size() + looseZMuons_.size() <= 2) return;
   }
 
   //get Jets
@@ -1497,13 +1508,13 @@ inline float
   WZAnalyzer::ElecPU(const heep::Ele & e) const{
   float effArea = 0.;
   float abs_eta = fabs(e.patEle().eta());
-  if     (                 abs_eta<1.0  )   effArea = 0.13 ; //+/- 0.001
-  else if(abs_eta>1.0   && abs_eta<1.479)   effArea = 0.14 ; //+/- 0.002
-  else if(abs_eta>1.479 && abs_eta<2.0  )   effArea = 0.07 ; //+/- 0.001
-  else if(abs_eta>2.0   && abs_eta<2.2  )   effArea = 0.09 ; //+/- 0.001
-  else if(abs_eta>2.2   && abs_eta<2.3  )   effArea = 0.11 ; //+/- 0.002
-  else if(abs_eta>2.3   && abs_eta<2.4  )   effArea = 0.11 ; //+/- 0.003
-  else if(abs_eta>2.4                   )   effArea = 0.14 ; //+/- 0.004 
+  if     (                  abs_eta<1.0  )   effArea = 0.13 ; //+/- 0.001
+  else if(abs_eta>=1.0   && abs_eta<1.479)   effArea = 0.14 ; //+/- 0.002
+  else if(abs_eta>=1.479 && abs_eta<2.0  )   effArea = 0.07 ; //+/- 0.001
+  else if(abs_eta>=2.0   && abs_eta<2.2  )   effArea = 0.09 ; //+/- 0.001
+  else if(abs_eta>=2.2   && abs_eta<2.3  )   effArea = 0.11 ; //+/- 0.002
+  else if(abs_eta>=2.3   && abs_eta<2.4  )   effArea = 0.11 ; //+/- 0.003
+  else if(abs_eta>=2.4                   )   effArea = 0.14 ; //+/- 0.004 
   else{ cout<<"Electron with eta out of range: "<<abs_eta<<endl; abort();}
   return (*rhoFastJetH_)*effArea;
 }

@@ -16,6 +16,7 @@ ElectronSelectorBase::ElectronSelectorBase(Pset const params) {
   loadFromPset<int>(params, "minPassEX5overE55", true);
   loadFromPset<int>(params, "minPassEMHadDepth1Iso", true);
   loadFromPset<int>(params, "maxIsGap", true);
+  loadFromPset<int>(params, "maxIsSCGap", true);
   loadFromPset<int>(params, "minPassConvVeto", true);
   loadFromPset<double>(params, "maxPFIso", true);
   loadFromPset<double>(params, "maxHoverE", true);
@@ -57,6 +58,8 @@ bool ElectronSelectorBase::operator()(const pat::Electron & p, const float pu, c
   setpassCut("maxfabsdiffEp", fabs(1.0/p.ecalEnergy() - p.eSuperClusterOverP()/p.ecalEnergy()), bitmask);
 
   setpassCut("maxIsGap", p.isEBEEGap(), bitmask);
+  double scEta = fabs(p.superCluster()->eta());
+  setpassCut("maxIsSCGap", (1.442 < scEta && scEta < 1.566) || scEta > 2.5, bitmask);
   setpassCut("minIsEcalDriven", p.ecalDrivenSeed(), bitmask);
   setpassCut("maxTrackIso", p.dr03TkSumPt(), bitmask);
   if(ignoreCut("minPassEX5overE55") || (p.e2x5Max()  > p.e5x5()*0.94 || p.e1x5() > p.e5x5()*0.83)) passCut(bitmask, "minPassEX5overE55"); 
