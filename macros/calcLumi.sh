@@ -5,16 +5,18 @@
 #Run2012B-13Jul2012.json       196531  4.429 fb-1
 #Run2012C-ReReco.json          198913    495.003 pb-1
 #Run2012C-PromptReco-v2.json   203746  6.401 fb -1
-#Run2012D-PromptReco-v1.json   207898  6.043 fb-1
+#Run2012C-EcalRecover.json     201191    134.242 pb-1
+#Run2012D-PromptReco-v1.json   207898  7.274 fb-1
 ####################################################
 #Run2012A                      193621    891.6 fb-1
 #Run2012B                      196531  4.429 fb-1
-#Run2012C                      203746  6.896 fb -1
-#Run2012D                      207898  6.043 fb-1
+#Run2012C                      203746  7.030 fb-1
+#Run2012D                      207898  7.274 fb-1
 ####################################################
-#Total Up to run               207898 18.258 inv fb
+#Total Up to run               207898 18.258 inv fb (doesn't include ecal recover)
+#Total Up to run               208686 19.624 inv fb
 
-PROMPTJSON=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/Prompt/Cert_190456-207898_8TeV_PromptReco_Collisions12_JSON.txt
+PROMPTJSON=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/Prompt/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt
 
 MINRUN=190456
 MAXRUN=193621
@@ -41,8 +43,13 @@ MAXRUN=203746
 INPUTJSON=${PROMPTJSON}
 ./jsonrunsel.py $MINRUN $MAXRUN $INPUTJSON Run2012C-PromptReco-v2.json
 
+MINRUN=201191
+MAXRUN=201191
+INPUTJSON=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/Reprocessing/Cert_201191-201191_8TeV_11Dec2012ReReco-recover_Collisions12_JSON.txt
+./jsonrunsel.py $MINRUN $MAXRUN $INPUTJSON Run2012C-EcalRecover.json
+
 MINRUN=203768 
-MAXRUN=207898
+MAXRUN=208686
 INPUTJSON=${PROMPTJSON}
 ./jsonrunsel.py $MINRUN $MAXRUN $INPUTJSON Run2012D-PromptReco-v1.json
 
@@ -54,7 +61,8 @@ compareJSON.py --or Run2012A-13Jul2012.json Run2012A-06Aug2012ReReco.json finalA
 compareJSON.py --or Run2012B-13Jul2012.json      finalA.json finalB.json
 compareJSON.py --or Run2012C-ReReco.json         finalB.json finalC.json
 compareJSON.py --or Run2012C-PromptReco-v2.json  finalC.json finalD.json
-compareJSON.py --or Run2012D-PromptReco-v1.json  finalD.json final.json
+compareJSON.py --or Run2012C-EcalRecover.json    finalD.json finalE.json
+compareJSON.py --or Run2012D-PromptReco-v1.json  finalE.json final.json
 
 lumiCalc2.py -i final.json -o final.csv -b stable overview
 #pixelLumi doesn't have all the latest numbers so don't use for now

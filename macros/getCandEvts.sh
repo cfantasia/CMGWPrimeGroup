@@ -10,17 +10,19 @@ do
   LUMI=${LUMI##*:}
 #  echo Run:Lumi  ${RUN}:${LUMI}
 
-for ERA in \
-    Run2012A-13Jul2012-v1 \
-    Run2012A-recover-06Aug2012-v1\
-    Run2012B-13Jul2012-v4 \
-    Run2012B-13Jul2012-v1 \
-    Run2012C-24Aug2012-v1 \
-    Run2012C-PromptReco-v2 \
-    Run2012D-PromptReco-v1
+  for PD in \
+      DoubleMu DoublePhotonHighPt DoublePhoton #DoubleElectron  #SingleMu SingleElectron
     do
-    for PD in \
-        DoubleMu DoublePhotonHighPt DoublePhoton DoubleElectron  #SingleMu SingleElectron
+    
+    for ERA in \
+        Run2012A-13Jul2012-v1 \
+        Run2012A-recover-06Aug2012-v1\
+        Run2012B-13Jul2012-v4 \
+        Run2012B-13Jul2012-v1 \
+        Run2012C-24Aug2012-v1 \
+        Run2012C-PromptReco-v2 \
+        Run2012C-EcalRecover_11Dec2012-v1 \
+        Run2012D-PromptReco-v1
       do
       
       DATASET=/${PD}/${ERA}/AOD
@@ -31,6 +33,7 @@ for ERA in \
       if [ "$NFILE" -ge "1" ]; then
 #        echo File num $NFILE
           echo $LIST >> fileList.txt
+          break
       fi
     done
   done
