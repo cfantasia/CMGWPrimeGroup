@@ -6,6 +6,10 @@ process.WprimeAnalyzer.candEvtFile = "WprimeWZ.evt"
 
 process.WprimeAnalyzer.Cuts = WprimeWZCuts
 
+process.WprimeAnalyzer.ExtraElectronType = cms.untracked.string("CiC2012Veto")
+process.WprimeAnalyzer.ExtraMuonType = cms.untracked.string("PFIsoHighPtLoose")
+
+
 process.WprimeAnalyzer.LooseZElectronType = cms.untracked.string("CiC2012Loose")
 process.WprimeAnalyzer.TightZElectronType = cms.untracked.string("CiC2012Loose")
 process.WprimeAnalyzer.LooseWElectronType = cms.untracked.string("CiC2012MediumPt20")

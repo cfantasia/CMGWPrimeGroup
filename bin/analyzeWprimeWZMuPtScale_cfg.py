@@ -7,4 +7,4 @@ process.WprimeAnalyzer.logFile     = "WprimeWZMuPtScale.dat"
 process.WprimeAnalyzer.candEvtFile = "WprimeWZMuPtScale.evt"
 
 # +++++++++++++++++++Options
-process.WprimeAnalyzer.muScaleFactor = 1.002
+process.WprimeAnalyzer.muScaleFactor = 1.05

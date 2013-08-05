@@ -18,4 +18,9 @@ process.WprimeAnalyzer.met = "patMETsPFType1"
 
 process.WprimeAnalyzer.doMatrix = cms.untracked.bool(True)
 
+#process.WprimeAnalyzer.minZmass =   71.188
+#process.WprimeAnalyzer.maxZmass =  111.188
+
+process.WprimeAnalyzer.minZmass =   60.
+process.WprimeAnalyzer.maxZmass =  120.
     
