@@ -97,7 +97,10 @@ PlotResolution(string inName="", int mass=2000){
 
   WZRes_mmm->SetMaximum(findMax(WZRes_mmm, WZRes_emm, WZRes_eem, WZRes_eee));
   cWZRes->SaveAs((outName + "_WZResolution.pdf").c_str());
-
+  printf(" mass %i maxRes %.0f\n", mass, max(
+           max(WZRes_mmm->GetRMS(), WZRes_emm->GetRMS()), 
+           max(WZRes_eem->GetRMS(), WZRes_eee->GetRMS())
+           ));
   /////////////////////////////////////
   
   TCanvas* cResPt = new TCanvas("Resolution as Function of Pt");
