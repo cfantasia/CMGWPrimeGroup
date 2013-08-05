@@ -19,6 +19,7 @@ printSysTable(string sigName, string bkgName, string outName){
   leg->SetColumnSeparation(0.05);
 
   TGraphErrors *gSig[nch], *gBkg[nch];
+  TGraphErrors *gSigErr[nch], *gBkgErr[nch];
 
   for(int ch=0; ch<nch; ch++){
     string format = "%lg";//mass
@@ -26,6 +27,8 @@ printSysTable(string sigName, string bkgName, string outName){
     format += " %lg %lg";
     gSig[ch] = new TGraphErrors(sigName.c_str(), format.c_str()); 
     gBkg[ch] = new TGraphErrors(bkgName.c_str(), format.c_str()); 
+    gSigErr[ch] = new TGraphErrors(sigName.c_str(), format.c_str()); 
+    gBkgErr[ch] = new TGraphErrors(bkgName.c_str(), format.c_str()); 
 
     gSig[ch]->SetLineColor(ch+2);
     gBkg[ch]->SetLineColor(ch+2);
@@ -42,11 +45,13 @@ printSysTable(string sigName, string bkgName, string outName){
     for (int i=0;i<gSig[ch]->GetN();i++){
       gSig[ch]->GetY()[i] *= scale;
       gSig[ch]->GetEY()[i] *= scale;
+      gSigErr[ch]->GetY()[i] = gSig[ch]->GetEY()[i];
     }
     
     for (int i=0;i<gBkg[ch]->GetN();i++){
       gBkg[ch]->GetY()[i] *= scale;
       gBkg[ch]->GetEY()[i] *= scale;
+      gBkgErr[ch]->GetY()[i] = gBkg[ch]->GetEY()[i];
     }
 
     mg->Add(gSig[ch]);
@@ -56,10 +61,11 @@ printSysTable(string sigName, string bkgName, string outName){
     leg->AddEntry(gBkg[ch], Form("Bkg %s", bin(ch).c_str()), "EP");
 
   }
-  //mg->SetMinimum(0.00001);
+  mg->SetMinimum(0.);
   mg->Draw("alp");
   leg->Draw();
   
+  //c->SetLogy();
   c->SaveAs(outName.c_str());
   
 
@@ -70,12 +76,15 @@ printSysTable(string sigName, string bkgName, string outName){
   for(int ch=0; ch<nch; ch++) cout<<" & "<<bin(ch);//Signal cols
   for(int ch=0; ch<nch; ch++) cout<<" & "<<bin(ch);//Bkg cols
   cout<<"\\\\ \\hline"<<endl;
-  for(int mass=200; mass<=2000; mass+=100){
+  for(int mass=200; mass<=1000; mass+=100){
     cout<<Form("%i ",mass);
-    for(int ch=0; ch<nch; ch++) cout<<Form("& %.2f ", gSig[ch]->Eval(mass));
-    for(int ch=0; ch<nch; ch++) cout<<Form("& %.2f ", gBkg[ch]->Eval(mass));
+    for(int ch=0; ch<nch; ch++) cout<<Form(" & %.1f $\\pm$ %.1f", gSig[ch]->Eval(mass), gSigErr[ch]->Eval(mass));
+    for(int ch=0; ch<nch; ch++) cout<<Form(" & %.1f $\\pm$ %.1f", gBkg[ch]->Eval(mass), gBkgErr[ch]->Eval(mass));
     cout<<"\\\\"<<endl;
   }
-  cout<<"\\hline"<<endl<<"\\end{tabular} \\end{table}"<<endl;
+  cout<<"\\hline"<<endl<<"\\end{tabular} "<<endl;
+  cout<<"\\caption{"<<outName<<" Systematic uncertainties for signal and background broken down by channel.}"<<endl;
+  cout<<"\\label{tab:sys-"<<outName<<"}"<<endl;
+  cout<<"\\end{table}"<<endl;
 
 }
