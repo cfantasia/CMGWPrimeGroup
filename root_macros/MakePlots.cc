@@ -91,6 +91,7 @@ void MakePlots(string inName, string outName="", string opt="", float lumiWanted
 void DrawandSave(TFile* fin, std::string pdfName, std::string title, std::string bookmark, bool logy=1, bool eff=0, bool cum=0, bool pull=0, TLine* line=NULL);
 void DrawandSave(TFile* fin, std::string pdfName, vstring title, std::string bookmark, bool logy=1, bool eff=0, bool cum=0, bool pull=1, TLine* line=NULL);
 TH1F* FillCum(TH1F* h);
+void AddOverflow(TH1F *h);
 bool GetHistograms(TFile* fin, std::string title, bool eff=0, bool cum=0);
 void CheckSamples(TFile* fin, std::vector<Sample> & sample);
 void ScaleSampleLumi(std::vector<Sample> & sample);
@@ -117,10 +118,11 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
   if(opt.find("identify") != string::npos) identifyPlot_ = true;
   if(opt.find("useDataDriven") != string::npos) useDataDrive_ = true;
 
-  if(paperMode_) setTDRStyle();
+  gStyle->SetOptStat(0);
+  if(paperMode_) 
+    setTDRStyle();
   else{
     CMSstyle();
-    gStyle->SetOptStat(0);
   }
   gROOT->ForceStyle();
   
@@ -208,6 +210,7 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       Bkg.push_back(Sample("WWTo2L2Nu", kOrange+3, 1, kOrange+10));
     }else{
       vector<string> VV;
+      //VV.push_back("ZZ1Jets"); VV.push_back("ZZ1Jets");
       VV.push_back("ZZ");
       VV.push_back("GVJets");
       //VV.push_back("WWTo2L2Nu");
@@ -216,10 +219,10 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
     Bkg.push_back(Sample("TTJets"  , kViolet+4, 1, kViolet+2));
 
     vector<string> ZJets; 
-    //ZJets.push_back("DYJetsToLL");
-    ZJets.push_back("DY1JetsToLL");
-    ZJets.push_back("DY2JetsToLL");
-    ZJets.push_back("DY3JetsToLL");
+    ZJets.push_back("DYJetsToLL");
+    //ZJets.push_back("DY1JetsToLL");
+    //ZJets.push_back("DY2JetsToLL");
+    //ZJets.push_back("DY3JetsToLL");
     Bkg.push_back(Sample("ZJets", ZJets, kOrange+3, 1, kOrange+7));
     
     Bkg.push_back(Sample("WZJetsTo3LNu"       , kOrange+3, 1, kOrange-2));
@@ -248,10 +251,10 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
 
   if(mode_ == kWprimeWZ){
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-200", kBlue, 1, 0));
-    Sig.push_back(Sample("WprimeToWZTo3LNu_M-500", kRed, 1, 0));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-500", kOrange, 1, 0));
     Sig.push_back(Sample("WprimeToWZTo3LNu_M-1000", kGreen, 1, 0));
-    Sig.push_back(Sample("WprimeToWZTo3LNu_M-1500", kOrange, 1, 0));
-    Sig.push_back(Sample("WprimeToWZTo3LNu_M-2000", kCyan, 1, 0));
+    Sig.push_back(Sample("WprimeToWZTo3LNu_M-1500", kRed, 1, 0));
+    //Sig.push_back(Sample("WprimeToWZTo3LNu_M-2000", kCyan, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-1900-MyGen", kGreen, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-250", kRed, 1, 0));
     //Sig.push_back(Sample("WprimeToWZTo3LNu_M-300", kGreen, 1, 0));
@@ -502,6 +505,8 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       variable.push_back("hWpt");
       variable.push_back("hWenupt");
       variable.push_back("hWmupt");//Cory: typo, fix
+      variable.push_back("hWenuCombRelIso");
+      variable.push_back("hWmnuCombRelIso");
       variable.push_back("hNLLeps");
       variable.push_back("hNJets");
       variable.push_back("hNVtxs");
@@ -619,6 +624,10 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       DrawandSave(fin,outName,"hMET_ValidW","Title: MET After Valid W",1,0,1);
       DrawandSave(fin,outName,"hMETee_ValidW","Title: MET After Valid W (zee)",1,0,1);
       DrawandSave(fin,outName,"hMETmm_ValidW","Title: MET After Valid W (Zmm)",1,0,1);
+      DrawandSave(fin,outName,"hMET3e0m_ValidW","Title: MET 3e0m After Valid W",1,0,1);
+      DrawandSave(fin,outName,"hMET2e1m_ValidW","Title: MET 2e1m After Valid W",1,0,1);
+      DrawandSave(fin,outName,"hMET1e2m_ValidW","Title: MET 1e2m After Valid W",1,0,1);
+      DrawandSave(fin,outName,"hMET0e3m_ValidW","Title: MET 0e3m After Valid W",1,0,1);
 
       DrawandSave(fin,outName,"hMET_ValidW","Title: MET After Valid W",0);
       DrawandSave(fin,outName,"hMETee_ValidW","Title: MET After Valid W (zee)",0);
@@ -630,6 +639,17 @@ MakePlots(string inName, string outName, string opt, float lumiWanted){
       //End MET
 
       DrawandSave(fin,outName,"hLt_MET","Title: Cumlative Lt before Lt Cut",1,0,1);
+      DrawandSave(fin,outName,"hLt3e0m_MET","Title: Cumlative Lt 3e0m before Lt Cut",1,0,1);
+      DrawandSave(fin,outName,"hLt2e1m_MET","Title: Cumlative Lt 2e1m before Lt Cut",1,0,1);
+      DrawandSave(fin,outName,"hLt1e2m_MET","Title: Cumlative Lt 1e2m before Lt Cut",1,0,1);
+      DrawandSave(fin,outName,"hLt0e3m_MET","Title: Cumlative Lt 0e3m before Lt Cut",1,0,1);
+
+      //WTrans Mass Cumlative
+      DrawandSave(fin,outName,"hWTransMass_MET","Title: Cumlative MTW after MET cut",1,0,1);
+      DrawandSave(fin,outName,"hW3e0mTransMass_MET","Title: Cumlative MTW 3e0m after MET cut",1,0,1);
+      DrawandSave(fin,outName,"hW2e1mTransMass_MET","Title: Cumlative MTW 2e1m after MET cut",1,0,1);
+      DrawandSave(fin,outName,"hW1e2mTransMass_MET","Title: Cumlative MTW 1e2m after MET cut",1,0,1);
+      DrawandSave(fin,outName,"hW0e3mTransMass_MET","Title: Cumlative MTW 0e3m after MET cut",1,0,1);
 
       DrawandSave(fin,outName,"hWZMass_MET","Title: WZ Mass before Lt Cut",1);
       DrawandSave(fin,outName,"hWZMass_MET","Title: WZ Mass before Lt Cut (Cumlative)",1,0,1);
@@ -962,6 +982,7 @@ DrawandSave(TFile* fin, string pdfName, vstring title, string bookmark, bool log
       pad->SetLogy(logy);
 
       //Find Maximum
+      //TH1F* hSum;// = (TH1F*) sBkg->GetStack()->Last();
       Double_t max = sBkg->GetMaximum();
       sBkg->Draw("HIST");
 
@@ -986,11 +1007,33 @@ DrawandSave(TFile* fin, string pdfName, vstring title, string bookmark, bool log
       }
 
       if(debug_) cout<<" max is "<<max<<" for logy = "<<logy<<endl;
+      double maxBkg = sBkg->GetMaximum();
       sBkg->SetMaximum(logy ? 100*max : 1.5*max);
-      sBkg->SetMinimum(logy ? 0.5 : 0.);
+      sBkg->SetMinimum(logy ? std::min(maxBkg/10, 0.1) : 0.);
 
       //This changes the range of the X axis
       ChangeAxisRange(title[i], sBkg->GetXaxis());
+      //sBkg->GetXaxis()->SetNdivisions(505);
+
+      TH1F* hSum = (TH1F*) sBkg->GetStack()->Last();
+      //Draw MC Uncert
+      if(0 && hSum){
+        for(int ibin=0; i<=hSum->GetNbinsX()+1; ++i){
+          float uncert_xsec = hSum->GetBinContent(ibin) * 1.50;
+          float uncert_stat = hSum->GetBinError  (ibin);
+          float uncert = AddInQuad(uncert_xsec, uncert_stat);
+          hSum->SetBinError(ibin,uncert);
+        }
+        //gStyle->SetErrorMarker(20);   
+        //gStyle->SetErrorX(0.);
+
+        hSum->SetMarkerStyle(0);
+        hSum->SetFillStyle(3344);
+        hSum->SetFillColor(1);
+        gStyle->SetHatchesLineWidth(1);
+        hSum->Draw("same e2");
+      }
+
 
       if(line) line->Draw();
       pad->RedrawAxis(); 
@@ -1147,6 +1190,7 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
         validHist = true;
       curSample.hist->SetLineStyle(curSample.style);
       curSample.hist->SetLineColor(curSample.line); 
+      if(samples_[i] == &Sig) curSample.hist->SetLineWidth(2); 
 
       //if(samples_[i] != &Data) curSample.hist->Scale(lumiWanted_/lumiUsed_); //Don't scale data
 
@@ -1159,6 +1203,8 @@ GetHistograms(TFile* fin, string title, bool eff, bool cum){
           string newtitle = "Cumlative ";
           newtitle += curSample.hist->GetYaxis()->GetTitle();
           curSample.hist->SetYTitle(newtitle.c_str());
+        }else if(true){
+          //AddOverflow(curSample.hist);
         }
       }else{//Eff Histos
         if     (samples_[i] == &Sig) curSample.hist->SetMarkerStyle(kOpenCircle);//Sig
@@ -1290,6 +1336,23 @@ FillCum(TH1F* h){
   return cumhist;
 }
 
+void 
+AddOverflow(TH1F *h){
+  // Fill the new hitogram including the extra bin for overflows
+
+  int nx    = h->GetNbinsX();
+  int overFlowBin = nx+1;
+  float newVal = h->GetBinContent(nx) + h->GetBinContent(overFlowBin);
+  float newErr = AddInQuad(h->GetBinError(nx), h->GetBinError(overFlowBin));
+
+  h->SetBinContent(nx, newVal);
+  h->SetBinError  (nx, newErr);
+
+  //Clear overflow
+  h->SetBinContent(overFlowBin, 0.);
+  h->SetBinError  (overFlowBin, 0.);
+}
+
 void
 ChangeAxisRange(const string & filename, TAxis* xaxis){
   if(debug_) cout<<"Changing axis range\n";
@@ -1411,7 +1474,7 @@ void
 DrawLegend(TH1F* hData, bool eff){//Cory: is this a problem?
   if(debug_) cout<<"Creating Legend\n";
   float legMinX = paperMode_ ? 0.55 : 0.43;
-  float legMinY = paperMode_ ? 0.65 : 0.68;
+  float legMinY = paperMode_ ? 0.60 : 0.68;
   TLegend *legend = new TLegend(legMinX,legMinY,0.91,0.92,"");
   
   if(Data.size()) legend->AddEntry(hData, "Data", "PE");
@@ -1439,14 +1502,14 @@ int GetRebin(string title){
      title.find("WZ3e0mMass") != string::npos ||
      title.find("WZ2e1mMass") != string::npos ||
      title.find("WZ1e2mMass") != string::npos ||
-     title.find("WZ0e3mMass") != string::npos) rebin = 5;
+     title.find("WZ0e3mMass") != string::npos) rebin = 10;
   if(title.find("hLt_") != string::npos || 
      title.find("hLt3e0m_") != string::npos ||
      title.find("hLt2e1m_") != string::npos ||
      title.find("hLt1e2m_") != string::npos ||
-     title.find("hLt0e3m_") != string::npos) return 2;
+     title.find("hLt0e3m_") != string::npos) rebin = 10;
   //if(title.find("TransMass_") != string::npos) return 2;
-  if(title.find("hMETPhi_") != string::npos) return 2;
+  if(title.find("hMETPhi_") != string::npos) rebin = 2;
 
   if(title.find("VZMass") != string::npos ||
      title.find("VZeeMass") != string::npos ||
@@ -1456,7 +1519,7 @@ int GetRebin(string title){
   if(title.find("mmVMass") != string::npos) rebin = 3;
 
   if(title.find("hMET_") != string::npos) rebin = 1;
-  if(title.find("hLt_") != string::npos) rebin = 1;
+  //if(title.find("hLt_") != string::npos) rebin = 1;
   if(title.find("hWZTransMass_") != string::npos) rebin = 2;
   if(title.find("hWZpt_") != string::npos) rebin = 2;
   
