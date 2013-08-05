@@ -1068,10 +1068,6 @@ DrawandSave(TFile* fin, string pdfName, vstring title, string bookmark, bool log
   }
 
   canvas->SaveAs(filename.c_str());
-  if(paperMode_){
-    filename.replace(filename.find(".pdf"), 4, ".png"); 
-    canvas->SaveAs(filename.c_str());
-  }
 
   //string bookmark = string Form("Title: %s",bookmark.c_str());
   canvas->Print(pdfName.c_str(), bookmark.c_str());
