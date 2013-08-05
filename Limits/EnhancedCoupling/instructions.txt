@@ -1,0 +1,9 @@
+The tarred/zipped version of my working area that makes the plot.
+Here are the instructions
+1. Unzip/untar
+2. Copy your text file with the info except for the first line (header) to this directory and name it "test"
+3. python replace.py
+4. python analyze.py
+
+That's it. Item 3 replaces \t in your text file with space separation, and 4 just identifies the position
+of the intersection in W'WZ coupling space and plots the result out.
