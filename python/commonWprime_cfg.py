@@ -7,7 +7,7 @@ from SHarper.HEEPAnalyzer.WP80SelectionCuts_cfi import wp80BarrelCuts, wp80Endca
 
 process = cms.Process("WPrimeAnalysis")
 # get JSON file correctly parsed 
-goldenJSONfile = 'UserCode/CMGWPrimeGroup/JSON/json_190456_207898_analysis.txt'
+goldenJSONfile = 'UserCode/CMGWPrimeGroup/JSON/json_190456_208686_analysis.txt'
 dcsJSONfile = 'UserCode/CMGWPrimeGroup/JSON/json_190456-194912.txt'
 MuonPhysJSONfile = 'UserCode/CMGWPrimeGroup/JSON/Cert_160404-180252_7TeV_PromptReco_Collisions11_JSON_MuonPhys.txt'
 goldenJSONList = LumiList.LumiList (filename = goldenJSONfile).getCMSSWString().split(',')

@@ -1,4 +1,5 @@
 from UserCode.CMGWPrimeGroup.patTuple_common_cfg import *
+from PhysicsTools.PatAlgos.tools.jetTools import *
 
 def met_config(process) :
     ## select events with pfMET
@@ -23,3 +24,5 @@ def met_config(process) :
     process.out.outputCommands.append('keep *_pfType1CorrectedMet_*_*')
     process.out.outputCommands.append('keep *_pfType1p2CorrectedMet_*_*')
     
+
+ 

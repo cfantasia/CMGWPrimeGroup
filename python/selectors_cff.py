@@ -221,6 +221,7 @@ electronSelectors = cms.PSet(
           minPt = cms.untracked.double(10.),
           maxIsGap = cms.untracked.int32(0),
           minPassConvVeto = cms.untracked.int32(1),
+          maxIsSCGap = cms.untracked.int32(0),
        ),
        barrel = cms.PSet(
            #maxMissingHits = cms.untracked.int32(1),
@@ -250,6 +251,7 @@ electronSelectors = cms.PSet(
           minPt = cms.untracked.double(10.),
           maxIsGap = cms.untracked.int32(0),
           minPassConvVeto = cms.untracked.int32(1),
+          maxIsSCGap = cms.untracked.int32(0),
        ),
        barrel = cms.PSet(
            maxMissingHits = cms.untracked.int32(1),
@@ -277,6 +279,9 @@ electronSelectors = cms.PSet(
     Reco = cms.PSet(
        joint = cms.PSet(
           minPt = cms.untracked.double(10.),
+          maxIsGap = cms.untracked.int32(0),
+          minPassConvVeto = cms.untracked.int32(1),
+          maxIsSCGap = cms.untracked.int32(0),
        ),
        barrel = cms.PSet(),
        endcap = cms.PSet(),
@@ -288,6 +293,7 @@ electronSelectors = cms.PSet(
           minPt = cms.untracked.double(10.),
           maxIsGap = cms.untracked.int32(0),
           minPassConvVeto = cms.untracked.int32(1),
+          maxIsSCGap = cms.untracked.int32(0),
        ),
        barrel = cms.PSet(
            maxMissingHits = cms.untracked.int32(1),
@@ -320,6 +326,7 @@ for i, s in enumerate(["wp95", "wp90", "wp85", "wp80", "wp70", "wp60"]):
     pset = cms.PSet(
         joint = cms.PSet(
            minPt = cms.untracked.double(10.),
+           maxIsSCGap = cms.untracked.int32(0),
         ),
         barrel = cms.PSet(
            maxMissingHits = cms.untracked.int32(cutsMissingHits[i]),
@@ -377,7 +384,6 @@ electronSelectors.EWKWZTightPt20.joint.minPt = 20.
 electronSelectors.EWKWZTightPt20.joint.maxPFIso = cms.untracked.double(0.1)
 
 #CiC2012
-
 electronSelectors.CiC2012Veto = electronSelectors.CiC2012VetoRelaxed.clone()
 electronSelectors.CiC2012Veto.joint.maxPFIso = cms.untracked.double(0.15)
 
@@ -390,8 +396,12 @@ electronSelectors.CiC2012Loose.joint.maxPFIso = cms.untracked.double(0.15)
 electronSelectors.CiC2012LoosePt20 = electronSelectors.CiC2012Loose.clone()
 electronSelectors.CiC2012LoosePt20.joint.minPt = 20.
     
+electronSelectors.CiC2012MediumRelaxedPt20 = electronSelectors.CiC2012MediumRelaxed.clone()
+electronSelectors.CiC2012MediumRelaxedPt20.joint.minPt = 20.
+
 electronSelectors.CiC2012Medium = electronSelectors.CiC2012MediumRelaxed.clone()
 electronSelectors.CiC2012Medium.joint.maxPFIso = cms.untracked.double(0.15)
+#electronSelectors.CiC2012Medium.joint.maxTrackIso = cms.untracked.double(2)
 
 electronSelectors.CiC2012MediumPt20 = electronSelectors.CiC2012Medium.clone()
 electronSelectors.CiC2012MediumPt20.joint.minPt = 20.

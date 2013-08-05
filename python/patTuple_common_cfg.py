@@ -1,6 +1,6 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 from PhysicsTools.PatAlgos.tools.coreTools import *
-from PhysicsTools.PatAlgos.tools.trigTools import switchOnTrigger
+from PhysicsTools.PatAlgos.tools.trigTools import switchOnTrigger, switchOnTriggerMatchEmbedding
 from PhysicsTools.PatAlgos.tools.metTools import addPfMET
 from PhysicsTools.PatAlgos.tools.pfTools import addPFCandidates
 from PhysicsTools.PatAlgos.tools.pfTools import *
@@ -15,6 +15,7 @@ def common_config(process, reportEveryNum=100, maxEvents=-1, runOnData=False) :
 
     switchOnTrigger(process)
     process.patTrigger.addL1Algos = cms.bool(True)
+#    switchOnTriggerMatchEmbedding(process)
                 
     # this is needed so we can correct the pfMET by adjusting the e/mu-pt
     # when switching to one of the dedicated Heep/TeV muon reconstructors

@@ -3,6 +3,7 @@ from UserCode.CMGWPrimeGroup.patTuple_el_cfg import *
 from UserCode.CMGWPrimeGroup.patTuple_mu_cfg import *
 from UserCode.CMGWPrimeGroup.patTuple_met_cfg import *
 from UserCode.CMGWPrimeGroup.patTuple_jetlep_cfg import addFastJet
+from PhysicsTools.PatUtils.tools.metUncertaintyTools import runMEtUncertainties
 
 
 def trilep_config(process, reportEveryNum=100, maxEvents=-1, runOnData=False) :
@@ -77,3 +78,21 @@ def trilep_config(process, reportEveryNum=100, maxEvents=-1, runOnData=False) :
     process.nEventsTotal = cms.EDProducer("EventCountProducer")
     process.p *= process.nEventsTotal
     process.out.outputCommands.append('keep *_nEventsTotal_*_*')
+
+
+# ##MET Uncertainties
+#        # switch pat::Jets to use ak5PFJets as input
+#     switchJetCollection(
+#             process,
+#                 cms.InputTag('ak5PFJets'),
+#                 doJTA = True,
+#                 doBTagging = False,
+#                 jetCorrLabel = ( 'AK5PF', cms.vstring([ 'L1FastJet', 'L2Relative', 'L3Absolute' ]) ),
+#                 doType1MET = False,
+#                 doJetID = True,
+#                 jetIdLabel = "ak5",
+#             )
+#     # and estimate systematic uncertainties on MET
+#     runMEtUncertainties(process)
+
+    process.out.outputCommands.append('keep *_*_*_*')
