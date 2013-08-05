@@ -1,3 +1,5 @@
+//Author: Cory Fantasia 2012
+//Purpose: Calculate fake rates on z+jets sample
 //Usage: root -b -l -q 'ZJetsFakeRate.C+(file, useData, doSystematics)'
 //e.g. root -b -l -q 'ZJetsFakeRate.C+("../../../EWKWZ-FF.root", 1)'
 

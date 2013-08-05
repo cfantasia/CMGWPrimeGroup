@@ -1,3 +1,5 @@
+//Author: Cory Fantasia 2011
+//Purpose: Plot limit of of TC on 2D plane of MPi vs MRho
 //Usage: root -b -l -q 'PlotLimit2D.C+()'
 
 #include "TROOT.h"

@@ -1,4 +1,7 @@
+//Author: Cory Fantasia 2012
+//Purpose: Calculate Matrix method output (data driven bkg estimate)
 //Usage: root -b -l -q 'MatrixCalc.C+(useEWK, doSystematics)'
+
 #include <iostream>
 #include <iomanip>
 

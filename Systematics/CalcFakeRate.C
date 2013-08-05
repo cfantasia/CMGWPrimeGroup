@@ -1,3 +1,5 @@
+//Author: Cory Fantasia 2011
+//Purpose: Calculate Fake rates on w+jets sample and plot it
 //Usage: root -b -l -q 'CalcFakeRate.C+(file, useData, doSystematics)'
 //e.g. root -b -l -q 'CalcFakeRate.C+("../../../WZFakeRateMuon.root", 1)'
 

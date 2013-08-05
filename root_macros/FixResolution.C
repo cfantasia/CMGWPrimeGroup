@@ -1,4 +1,7 @@
+//Author: Cory Fantasia 2013
+//Purpose: Plot resolution of new mass
 //Usage: root -b -l -q 'FixResolution.C+(2000)'
+
 #include "UserCode/CMGWPrimeGroup/root_macros/common.h"
 #include "TPaveStats.h"
 #include "TCanvas.h"

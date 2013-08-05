@@ -1,3 +1,5 @@
+//Author: Cory Fantasia 2012
+//Purpose: Plot 2D plots e.g. Zpt vs Wpt
 //Usage: root -b -l -q 'ZptVsWpt.C+(string inName, string outSuffix="")'
 //Usage: root -b -l -q 'ZptVsWpt.C+("../../../WprimeWZ.root", "")'
 

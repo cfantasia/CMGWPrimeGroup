@@ -1,3 +1,8 @@
+//Author: Cory Fantasia 2011
+//Purpose: Plot limit of TC versus SinX
+//Usage: root -b -l -q 'PlotLimitTC_SinX.C+(MPi)'
+//e.g.: root -b -l -q 'PlotLimitTC_SinX.C+(160)'
+
 #include "TROOT.h"
 #include "TStyle.h"
 #include "TLatex.h"

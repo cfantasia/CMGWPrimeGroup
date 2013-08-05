@@ -1,3 +1,7 @@
+//Author: Cory Fantasia 2012
+//Purpose: Add extra column for pdf (band) uncertainties on cross sections
+//Usage: root -b -l -q 'AddBand.C+(string inFile, string outFile)'
+
 #include "consts.h"
 #include "TROOT.h"
 #include "TTree.h"

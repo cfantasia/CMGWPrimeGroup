@@ -1,3 +1,7 @@
+//Author: Cory Fantasia 2012
+//Purpose: Plot resolution of fixed pt
+//Usage: root -b -l -q plotRecoMass.C
+
 #include "common.h"
 //#include "UserCode/CMGWPrimeGroup/root_macros/common.h"
 

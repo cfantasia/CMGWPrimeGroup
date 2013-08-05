@@ -1,3 +1,5 @@
+//Author: Cory Fantasia 2012
+//Purpose: Print latex tables of systematic errors
 //Usage: root -b -l -q 'printSysTable.C+("SysSigPDF.dat", "SysBkgPDF.dat", "SysPDF.pdf")'
 
 #include <fstream>

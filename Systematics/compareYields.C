@@ -1,4 +1,7 @@
-//Usage: root -b -l -q 'printSysTable.C+("../Systematics/SysBkgPDF.dat")'
+//Author: Cory Fantasia 2012
+//Purpose: Utility to compare yields for systematics
+//Usage: root -b -l -q 'compareYields.C+(origName, modName, outName)'
+//e.g.: root -b -l -q 'compareYields.C+("Old.root", "New.root", "output.log")'
 
 #include <fstream>
 #include "../root_macros/common.h"

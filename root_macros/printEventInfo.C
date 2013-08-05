@@ -1,3 +1,7 @@
+//Author: Cory Fantasia 2013
+//Purpose: Print important event info for select events
+//Usage: root -b -l -q printEventInfo.C
+
 #include "TFile.h"
 #include "TTree.h"
 

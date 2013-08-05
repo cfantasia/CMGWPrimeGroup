@@ -1,4 +1,7 @@
+//Author: Cory Fantasia 2013
+//Purpose: Plot resolution of lepton pt, met, wz mass
 //Usage: root -b -l -q 'PlotResolution.C+("../../../WprimeWZ.root", 2000)'
+
 #include "UserCode/CMGWPrimeGroup/root_macros/common.h"
 #include "TPaveStats.h"
 #include "TCanvas.h"

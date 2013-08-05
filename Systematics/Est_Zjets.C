@@ -1,3 +1,5 @@
+//Author: Edgar Carrera, Cory Fantasia 2010
+//Purpose: Calculate zjets contribution on data sample
 //Usage: root -b -l -q 'Est_Zjets.C+(file, useElec, useData)'
 //eg:  root -b -l -q 'Est_Zjets.C+("../../../WZEffRate.root", 0, 1)'
 

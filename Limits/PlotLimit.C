@@ -1,4 +1,6 @@
-//Usage: root -l PlotLimit.C++
+//Author: Cory Fantasia 2011
+//Purpose: Plot limit versus mass based on input files
+//Usage: root -l PlotLimit.C+(string inName, string inFile="nLimit.txt", string outFile="", float xSecScale=1.)'
 
 #include "TROOT.h"
 #include "TStyle.h"

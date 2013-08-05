@@ -2,7 +2,7 @@
    Author: Cory Fantasia
    Script to print important numbers in LaTex form
    To Use: 
-   root -b -l -q 'printTable.C+("../../../WprimeWZ.root")'
+   root -b -l -q 'printBkgTable.C+("../../../WprimeWZ.root")'
 */
 
 //#include "consts.h"

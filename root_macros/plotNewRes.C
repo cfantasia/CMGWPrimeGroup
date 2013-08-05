@@ -1,3 +1,7 @@
+//Author: Cory Fantasia 2013
+//Purpose: Plot resolution of fixed pt
+//Usage: root -b -l -q plotNewRes.C
+
 #include "UserCode/CMGWPrimeGroup/root_macros/common.h"
 #include "TPaveStats.h"
 #include "TCanvas.h"

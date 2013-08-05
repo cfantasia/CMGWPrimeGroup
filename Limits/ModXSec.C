@@ -1,3 +1,7 @@
+//Author: Cory Fantasia 2012
+//Purpose: Modify input file cross sections to account for tau or k-factors
+//Usage: root -b -l -q 'ModXSec.C+(string inFile, string outFile, bool removeTaus=true, bool applyKFactors=true)'
+
 #include "consts.h"
 #include "TROOT.h"
 #include "TTree.h"

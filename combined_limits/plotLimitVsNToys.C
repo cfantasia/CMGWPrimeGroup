@@ -1,3 +1,7 @@
+//Author: Cory Fantasia 2013
+//Purpose: Plot limit vs number of toys for test purposes
+//Usage: root -b -l -q plotLimitVsNToys.C+
+
 #include "../root_macros/common.h"
 #include "TSystem.h"
 #include "TGraphErrors.h"

@@ -1,4 +1,6 @@
-//Usage: root -b -l -q 'printSysTable.C+("../Systematics/SysBkgPDF.dat")'
+//Author: Cory Fantasia 2012
+//Purpose: Print final background yield plot
+//Usage: root -b -l -q 'printYieldPlot.C+("../../../WprimeWZ.root")'
 
 #include <fstream>
 #include "../root_macros/common.h"

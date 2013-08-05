@@ -1,3 +1,7 @@
+//Author: Cory Fantasia 2013
+//Purpose: Plot Fixed Resolution
+//Usage: root -b -l -q plotFix.C
+
 {
 
   TGraphErrors* gBil = new TGraphErrors(10); gBil->SetLineColor(kGreen);

@@ -1,4 +1,7 @@
+//Author: Cory Fantasia 2013
+//Purpose: Plot resolution of fixed w lepton pt
 //Usage: root -b -l -q 'FixWResolution.C+(2000)'
+
 #include "UserCode/CMGWPrimeGroup/root_macros/common.h"
 #include "TPaveStats.h"
 #include "TCanvas.h"

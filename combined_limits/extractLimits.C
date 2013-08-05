@@ -1,3 +1,7 @@
+//Author: Cory Fantasia 2012
+//Purpose: Extract limits from higgs output for later plotting
+//Usage: root -b -l -q 'extractLimits.C+(string inName, string modeName, string algoName, float xSecScale=1)'
+
 #include "../root_macros/common.h"
 #include "TSystem.h"
 #include "TGraphErrors.h"

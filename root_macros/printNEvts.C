@@ -1,3 +1,5 @@
+//Author: Cory Fantasia 2012
+//Purpose: Print latex tables of number of events and errors
 //Usage: root -b -l -q 'printNEvts.C+(file, mode)'
 //eg: root -b -l -q 'printNEvts.C+("../../../EWKWZ.root", -1)'
 

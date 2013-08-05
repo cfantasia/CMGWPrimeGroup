@@ -1,3 +1,5 @@
+//Author: Cory Fantasia 2012
+//Purpose: Plot efficiency versus W' mass
 //Usage: root -b -l -q 'EffVsMass.C+(string inName, int applyAnalysisCuts)'
 //e.g. : root -b -l -q 'EffVsMass.C+("../../../WprimeWZ.root", 1)'
 

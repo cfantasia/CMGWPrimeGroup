@@ -1,3 +1,7 @@
+//Author: Cory Fantasia 2012
+//Purpose: Make histograms of number of vertices for 2012 data
+//Usage: root -b -l -q 'makePUHistsMC.C+'
+
 #include <iostream>
 #include "TFile.h"
 #include "TH1.h"

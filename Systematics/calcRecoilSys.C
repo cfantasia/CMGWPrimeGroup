@@ -1,4 +1,7 @@
+//Author: Cory Fantasia 2012
+//Purpose: Calculate sys error from hadronic recoil method
 //Usage: root -b -l -q calcRecoilSys.C+
+
 #include "TROOT.h"
 #include <iomanip>
 #include <iostream>

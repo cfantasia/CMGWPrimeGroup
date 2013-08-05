@@ -1,3 +1,5 @@
+//Author: Cory Fantasia 2011
+//Purpose: Calculated expected signal, bkg and data events from input files
 //Usage: root -b -q 'ExpectedEvts.C+("inName.root", window)'
 
 #include "consts.h"

@@ -1,3 +1,7 @@
+//Author: Cory Fantasia 2012
+//Purpose: Make input card for limit calculator
+//Usage: root -b -l -q 'makeLimitCard.C+(string inName, string outName, int mass, float LtOffset=0., float WindOffset=0.)'
+
 #include "../root_macros/common.h"
 #include "TGraphErrors.h"
 #include "TMath.h"
