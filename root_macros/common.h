@@ -87,6 +87,10 @@ struct Value{
   
 };
 
+
+
+//////////////
+
 float
 AddInQuad(float a, float b){
   return sqrt(a*a + b*b);
@@ -200,6 +204,7 @@ void get_sum_of_hists(TFile* f, const std::vector<std::string> & samples,
     }
     tree->Draw(variable.c_str(), cuts.c_str(), "goff");
     int n = tree->GetSelectedRows();
+    assert(n<2000000);
     for(int ientry=0; ientry<n; ++ientry){
       float weight = tree->GetW()[ientry];
       if(doWeight) weight *= weights[j];
@@ -317,7 +322,9 @@ GetNEvtsAndError(TTree* tree, const string & cuts, const bool useScaleFactors=fa
 Value
 GetNEvtsAndError(TFile* f, const vector<string> & samples, const string & tName, const string & cuts, const bool useScaleFactors=false){
   TTree* t = getTree(f, samples, tName);
-  return GetNEvtsAndError(t, cuts, useScaleFactors);
+  Value v = GetNEvtsAndError(t, cuts, useScaleFactors);
+  delete t;
+  return v;  
 }
 
 Value
@@ -336,7 +343,9 @@ float
 GetNEvts(TFile* f, const vector<string> & samples, const string & tName, const string & cuts, const bool useScaleFactors=false){
   TTree* t = getTree(f, samples, tName);
   assert(t);
-  return GetNEvts(t, cuts, useScaleFactors);
+  float v = GetNEvts(t, cuts, useScaleFactors);
+  delete t;
+  return v;
 }
 
 float
@@ -362,13 +371,18 @@ float
 CalcCorrCoef(TTree* t1, TTree* t2, const string & cuts){
   TH1F hTT("hTT", "", 1, 0, 10), hTF("hTF", "", 1, 0, 10), hFT("hFT", "", 1, 0, 10);
   //cout<<"cuts are "<<cuts<<endl;
+  //ofstream fout1("tempA.dat");
   int n = t1->Draw("Run:Lumi:Event", cuts.c_str(), "goff");
+  Double_t* runs    = t1->GetVal(0);
+  Double_t* lumis   = t1->GetVal(1);
+  Double_t* events  = t1->GetVal(2);
+  Double_t* weights = t1->GetW();
   for(int ientry=0; ientry<n; ++ientry){
-    int idx = 0;
-    unsigned long int run    = round(t1->GetVal(idx++)[ientry]);
-    unsigned long int lumi   = round(t1->GetVal(idx++)[ientry]);
-    unsigned long int event  = round(t1->GetVal(idx++)[ientry]);
-    float weight = t1->GetW()[ientry];
+    unsigned long int run    = round(runs  [ientry]);
+    unsigned long int lumi   = round(lumis [ientry]);
+    unsigned long int event  = round(events[ientry]);
+    float weight             =      weights[ientry];
+    //fout1<<run<<" "<<lumi<<" "<<event<<" "<<weight<<endl;
     
     string newCuts = cuts + Form("*(Run==%lu && Lumi==%lu && Event==%lu)", run, lumi, event);
     if(t2->Draw("Run:Lumi:Event", newCuts.c_str(), "goff")){
@@ -378,13 +392,18 @@ CalcCorrCoef(TTree* t1, TTree* t2, const string & cuts){
     }
   }
 
+  //ofstream fout2("tempB.dat");
   n = t2->Draw("Run:Lumi:Event", cuts.c_str(), "goff");
+  runs    = t2->GetVal(0);
+  lumis   = t2->GetVal(1);
+  events  = t2->GetVal(2);
+  weights = t2->GetW();
   for(int ientry=0; ientry<n; ++ientry){
-    int idx = 0;
-    unsigned long int run    = round(t2->GetVal(idx++)[ientry]);
-    unsigned long int lumi   = round(t2->GetVal(idx++)[ientry]);
-    unsigned long int event  = round(t2->GetVal(idx++)[ientry]);
-    float weight = t2->GetW()[ientry];
+    unsigned long int run    = round(runs  [ientry]);
+    unsigned long int lumi   = round(lumis [ientry]);
+    unsigned long int event  = round(events[ientry]);
+    float weight             =      weights[ientry];
+    //fout2<<run<<" "<<lumi<<" "<<event<<" "<<weight<<endl;
     
     string newCuts = cuts + Form("*(Run==%lu && Lumi==%lu && Event==%lu)", run, lumi, event);
     if(t1->Draw("Run:Lumi:Event", newCuts.c_str(), "goff")){
@@ -394,9 +413,9 @@ CalcCorrCoef(TTree* t1, TTree* t2, const string & cuts){
     }
   }
 
-  //printf("TT: %.2f\n",hTT.GetBinContent(1));
-  //printf("TF: %.2f\n",hTF.GetBinContent(1));
-  //printf("FT: %.2f\n",hFT.GetBinContent(1));
+  printf("TT: %.2f\n",hTT.GetBinContent(1));
+  printf("TF: %.2f\n",hTF.GetBinContent(1));
+  printf("FT: %.2f\n",hFT.GetBinContent(1));
 
   float sigma_TT = hTT.GetBinError(1);
   float sigma_TF = hTF.GetBinError(1);
@@ -460,13 +479,22 @@ string bin(int ch){
   return "";
 }
 
+string binLatex(int ch){
+  if(ch == 0) return "eee";
+  if(ch == 1) return "ee#mu";
+  if(ch == 2) return "#mu#mue";
+  if(ch == 3) return "#mu#mu#mu";
+  else abort();
+  return "";
+}
+
 vector<string> BkgSamples(){
   vector<string> bkgSamples;
   bkgSamples.push_back("WZJetsTo3LNu");
   bkgSamples.push_back("DYJetsToLL");
   bkgSamples.push_back("TTJets");
-  bkgSamples.push_back("ZZ");
   bkgSamples.push_back("GVJets");
+  bkgSamples.push_back("ZZ");
   return bkgSamples;
 }
 
@@ -478,8 +506,7 @@ float laserTurnOnClusEt(float et);
 float noLaserTurnOnClusEt(float et);
 float barrelTurnOnClusEt(float et);
 
-//float totalClusEtTurnOn(float et,float detEta,float totLumi=19300)
-float totalClusEtTurnOn(float et,float detEta,float totLumi=18258)
+float totalClusEtTurnOn(float et,float detEta,float totLumi=19300)
 {
   if(fabs(detEta)<1.5) return barrelTurnOnClusEt(et);
   else{
