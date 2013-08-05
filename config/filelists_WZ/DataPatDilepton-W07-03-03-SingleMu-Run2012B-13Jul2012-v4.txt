@@ -1,0 +1,6 @@
+/store/user/clint/53X/DataPatDilepton-W07-03-03-SingleMu-Run2012B-13Jul2012-v4/patTuple_39_1_obi.root
+/store/user/clint/53X/DataPatDilepton-W07-03-03-SingleMu-Run2012B-13Jul2012-v4/patTuple_13_1_nYS.root
+/store/user/clint/53X/DataPatDilepton-W07-03-03-SingleMu-Run2012B-13Jul2012-v4/patTuple_11_1_Yfv.root
+/store/user/clint/53X/DataPatDilepton-W07-03-03-SingleMu-Run2012B-13Jul2012-v4/patTuple_87_1_wHO.root
+/store/user/clint/53X/DataPatDilepton-W07-03-03-SingleMu-Run2012B-13Jul2012-v4/patTuple_5_1_ICO.root
+/store/user/clint/53X/DataPatDilepton-W07-03-03-SingleMu-Run2012B-13Jul2012-v4/patTuple_6_1_BLK.root

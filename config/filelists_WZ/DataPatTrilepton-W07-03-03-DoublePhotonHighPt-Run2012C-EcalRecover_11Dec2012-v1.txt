@@ -1,0 +1,4 @@
+/store/user/clint/53X/DataPatTrilepton-W07-03-03-DoublePhotonHighPt-Run2012C-EcalRecover_11Dec2012-v1/patTuple_3_1_vUN.root
+/store/user/clint/53X/DataPatTrilepton-W07-03-03-DoublePhotonHighPt-Run2012C-EcalRecover_11Dec2012-v1/patTuple_2_1_tfH.root
+/store/user/clint/53X/DataPatTrilepton-W07-03-03-DoublePhotonHighPt-Run2012C-EcalRecover_11Dec2012-v1/patTuple_4_1_hOC.root
+/store/user/clint/53X/DataPatTrilepton-W07-03-03-DoublePhotonHighPt-Run2012C-EcalRecover_11Dec2012-v1/patTuple_1_1_sje.root

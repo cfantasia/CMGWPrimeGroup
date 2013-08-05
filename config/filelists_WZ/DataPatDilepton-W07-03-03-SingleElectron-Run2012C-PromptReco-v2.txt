@@ -1,0 +1,4 @@
+/store/user/clint/53X/DataPatDilepton-W07-03-03-SingleElectron-Run2012C-PromptReco-v2/patTuple_122_1_A15.root
+/store/user/clint/53X/DataPatDilepton-W07-03-03-SingleElectron-Run2012C-PromptReco-v2/patTuple_158_1_weV.root
+/store/user/clint/53X/DataPatDilepton-W07-03-03-SingleElectron-Run2012C-PromptReco-v2/patTuple_117_1_840.root
+/store/user/clint/53X/DataPatDilepton-W07-03-03-SingleElectron-Run2012C-PromptReco-v2/patTuple_146_1_8Dz.root

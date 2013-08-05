@@ -1,0 +1,2 @@
+/store/user/clint/53X/DataPatDilepton-W07-03-03-SingleElectron-Run2012B-13Jul2012-v1/patTuple_86_2_yaA.root
+/store/user/clint/53X/DataPatDilepton-W07-03-03-SingleElectron-Run2012B-13Jul2012-v1/patTuple_53_2_4q6.root

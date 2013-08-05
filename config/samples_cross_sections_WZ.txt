@@ -1,6 +1,6 @@
 Top Level Dir = dcache:/pnfs/cms/WAX/11
 #Top Level Dir = 
-integrated lumi = 18258 pb^-1
+integrated lumi = 19624 pb^-1
 
 ################
 ## Background ##
@@ -8,40 +8,28 @@ integrated lumi = 18258 pb^-1
 
 samplename = WZJetsTo3LNu
 description = WZJetsTo3LNu_TuneZ2_8TeV-madgraph-tauola
-x-section =   0.8674
-k-factor = 1.22
+x-section = 1.092
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WZJetsTo3LNu_TuneZ2_8TeV-madgraph-tauola.txt
 Nprod_evt = 2017979
 splitInto = 3
 
-#samplename = TTJets
-#description = TTJets_TuneZ2_8TeV-madgraph-tauola
-#x-section = 136.3
-#k-factor = 1.66
-#pathname = filelists_WZ/MCPatTrilepton-W07-03-01-TTJets_MassiveBinDECAY_TuneZ2star_8TeV-madgraph-tauola.txt
-#Nprod_evt = 6923750
-#splitInto = 5
-
 samplename = TTJets
 description = TTJets_TuneZ2_8TeV-madgraph-tauola
-x-section = 13.43
-k-factor = 1.66
+x-section = 24.823
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-TTJets_FullLeptMGDecays_8TeV-madgraph.txt
 Nprod_evt = 12119013
 splitInto = 5
 
 samplename = DYJetsToLL
 description = DYJetsToLL_TuneZ2_M-50_8TeV-madgraph-tauola
-x-section = 2950.0
-k-factor = 1.23
+x-section = 3503.71
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-DYJetsToLL_M-50_TuneZ2Star_8TeV-madgraph-tarball.txt
 Nprod_evt = 30459503
 splitInto = 5
 
 samplename = GVJets
 description = ZGToLLG_8TeV-madgraph
-x-section = 132.6
-k-factor = 1.
+x-section = 159.1
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-ZGToLLG_8TeV-madgraph.txt
 Nprod_evt = 6588161
 splitInto = 2
@@ -95,23 +83,15 @@ Nprod_evt = 824466
 samplename = WprimeToWZTo3LNu_M-200
 description = WprimeToWZToLLLNu_M-200_TuneZ2star_8TeV-pythia6-tauola
 x-section = 1.606
-k-factor = 1.191
+k-factor = 1.347
 signalMass = 0.200
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-200_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
 
-# samplename = WprimeToWZTo3LNu_M-250
-# description = WprimeToWZToLLLNu_M-250_TuneZ2star_8TeV-pythia6-tauola
-# x-section = 1.356
-# k-factor = 1.357
-# signalMass = 0.250
-# pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-250_TuneZ2star_8TeV-pythia6-tauola.txt
-# Nprod_evt = 60192
-
 samplename = WprimeToWZTo3LNu_M-300
 description = WprimeToWZToLLLNu_M-300_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.7626
-k-factor = 1.357 
+k-factor = 1.347 
 signalMass = 0.300
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-300_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -119,7 +99,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-400
 description = WprimeToWZToLLLNu_M-400_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.2544
-k-factor = 1.357
+k-factor = 1.355
 signalMass = 0.400
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-400_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -127,7 +107,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-500
 description = WprimeToWZToLLLNu_M-500_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.1013
-k-factor = 1.357
+k-factor = 1.363
 signalMass = 0.500
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-500_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -135,7 +115,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-600
 description = WprimeToWZToLLLNu_M-600_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.04672
-k-factor = 1.351
+k-factor = 1.357
 signalMass = 0.600
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-600_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -143,7 +123,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-700
 description = WprimeToWZToLLLNu_M-700_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.02411
-k-factor = 1.352
+k-factor = 1.351
 signalMass = 0.700
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-700_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -151,7 +131,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-800
 description = WprimeToWZToLLLNu_M-800_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.01322
-k-factor = 1.347
+k-factor = 1.349
 signalMass = 0.800
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-800_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -159,7 +139,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-900
 description = WprimeToWZToLLLNu_M-900_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.007764
-k-factor = 1.341
+k-factor = 1.347
 signalMass = 0.900
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-900_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -167,7 +147,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-1000
 description = WprimeToWZToLLLNu_M-1000_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.004699
-k-factor = 1.332
+k-factor = 1.339
 signalMass = 1.000
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-1000_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -175,7 +155,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-1100
 description = WprimeToWZToLLLNu_M-1100_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.002938
-k-factor = 1.325
+k-factor = 1.331
 signalMass = 1.100
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-1100_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -183,7 +163,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-1200
 description = WprimeToWZToLLLNu_M-1200_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.001909
-k-factor = 1.311
+k-factor = 1.324
 signalMass = 1.200
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-1200_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -192,7 +172,7 @@ samplename = WprimeToWZTo3LNu_M-1300
 description = WprimeToWZToLLLNu_M-1300_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.001279
 k-factor = 1.298
-signalMass = 1.300
+signalMass = 1.317
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-1300_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
 
@@ -200,14 +180,14 @@ samplename = WprimeToWZTo3LNu_M-1400
 description = WprimeToWZToLLLNu_M-1400_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.0008678
 k-factor = 1.279
-signalMass = 1.400
+signalMass = 1.305
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-1400_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
 
 samplename = WprimeToWZTo3LNu_M-1500
 description = WprimeToWZToLLLNu_M-1500_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.0005825
-k-factor = 1.265
+k-factor = 1.293
 signalMass = 1.500
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-1500_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -215,7 +195,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-1600
 description = WprimeToWZToLLLNu_M-1600_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.0004018
-k-factor = 1.255
+k-factor = 1.275
 signalMass = 1.600
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-1600_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -223,7 +203,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-1700
 description = WprimeToWZToLLLNu_M-1700_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.0002836
-k-factor = 1.234
+k-factor = 1.257
 signalMass = 1.700
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-1700_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -231,7 +211,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-1800
 description = WprimeToWZToLLLNu_M-1800_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.0002006
-k-factor = 1.211
+k-factor = 1.244
 signalMass = 1.800
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-1800_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -239,7 +219,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-1900
 description = WprimeToWZToLLLNu_M-1900_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.0001438
-k-factor = 1.191
+k-factor = 1.230
 signalMass = 1.900
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-1900_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -247,7 +227,7 @@ Nprod_evt = 60192
 samplename = WprimeToWZTo3LNu_M-2000
 description = WprimeToWZToLLLNu_M-2000_TuneZ2star_8TeV-pythia6-tauola
 x-section = 0.0001033
-k-factor = 1.184
+k-factor = 1.214
 signalMass = 2.000
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WprimeToWZToLLLNu_M-2000_TuneZ2star_8TeV-pythia6-tauola.txt
 Nprod_evt = 60192
@@ -305,18 +285,74 @@ description = DoublePhotonHighPt-Run2012C-PromptReco-v2
 pathname = filelists_WZ/DataPatTrilepton-W07-03-00-DoublePhotonHighPt-Run2012C-PromptReco-v2.txt
 splitInto = 3
 
+######Run2012C-Ecal-Recover############
+samplename = data
+description = DoubleMu-Run2012C-EcalRecover_11Dec2012-v1
+pathname = filelists_WZ/DataPatTrilepton-W07-03-03-DoubleMu-Run2012C-EcalRecover_11Dec2012-v1.txt
+
+samplename = data
+description = DoublePhotonHighPt-Run2012C-EcalRecover_11Dec2012-v1
+pathname = filelists_WZ/DataPatTrilepton-W07-03-03-DoublePhotonHighPt-Run2012C-EcalRecover_11Dec2012-v1.txt
+
 #######Run2012D-PromptReco#####
 samplename = data
 description = DoubleMu-Run2012D-PromptReco-v1
-pathname = filelists_WZ/DataPatTrilepton-W07-03-00-DoubleMu-Run2012D-PromptReco-v1.txt
-splitInto = 2
+pathname = filelists_WZ/DataPatTrilepton-W07-03-03-DoubleMu-Run2012D-PromptReco-v1.txt
+splitInto = 4
 
 samplename = data
 description = DoublePhotonHighPt-Run2012D-PromptReco-v1
-pathname = filelists_WZ/DataPatTrilepton-W07-03-00-DoublePhotonHighPt-Run2012D-PromptReco-v1.txt
+pathname = filelists_WZ/DataPatTrilepton-W07-03-03-DoublePhotonHighPt-Run2012D-PromptReco-v1.txt
+splitInto = 4
+
+##Bonus Samples
+
+samplename = ZZ1Jets
+description = ZZ1Jets_madgraph_8TeV_Private
+x-section = 0.5
+#k-factor = UNKNOWN
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-ZZ1Jets_madgraph_8TeV_Private.txt
+Nprod_evt = 67250
+#Nprod_evt = 102506
+splitInto = 15
+
+samplename = DY1JetsToLL
+description = DY1JetsToLL_M-50_TuneZ2Star_8TeV-madgraph
+x-section = 561.0
+k-factor = 1.23
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-DY1JetsToLL_M-50_TuneZ2Star_8TeV-madgraph.txt
+Nprod_evt = 24045248
+splitInto = 7
+
+samplename = DY2JetsToLL
+description = DY2JetsToLL_M-50_TuneZ2Star_8TeV-madgraph
+x-section = 181.0
+k-factor = 1.23
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-DY2JetsToLL_M-50_TuneZ2Star_8TeV-madgraph.txt
+Nprod_evt = 21852156
 splitInto = 2
 
-#DONE
+samplename = DY3JetsToLL
+description = DY3JetsToLL_M-50_TuneZ2Star_8TeV-madgraph
+x-section = 51.1
+k-factor = 1.23
+pathname = filelists_WZ/MCPatTrilepton-W07-03-01-DY3JetsToLL_M-50_TuneZ2Star_8TeV-madgraph.txt
+Nprod_evt = 21852156
+splitInto = 10
+
+DONE
+
+samplename = data-Testing
+description = Skimmed Events
+pathname = UserCode/CMGWPrimeGroup/macros/candEvts_PAT.root
+
+DONE
+
+
+samplename = data-testing
+description = DoublePhotonHighPt-Run2012D-PromptReco-v1
+pathname = filelists_WZ/DataPatTrilepton-W07-03-00-DoublePhotonHighPt-Run2012D-PromptReco-v1.txt
+splitInto = 4
 
 ###TESTING
 
@@ -349,30 +385,6 @@ x-section = 0.1296
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-ZZJetsTo4L_TuneZ2star_8TeV-madgraph-tauola.txt
 Nprod_evt = 4807893
 
-samplename = DY1JetsToLL
-description = DY1JetsToLL_M-50_TuneZ2Star_8TeV-madgraph
-x-section = 561.0
-k-factor = 1.23
-pathname = filelists_WZ/MCPatTrilepton-W07-03-01-DY1JetsToLL_M-50_TuneZ2Star_8TeV-madgraph.txt
-Nprod_evt = 24045248
-splitInto = 7
-
-samplename = DY2JetsToLL
-description = DY2JetsToLL_M-50_TuneZ2Star_8TeV-madgraph
-x-section = 181.0
-k-factor = 1.23
-pathname = filelists_WZ/MCPatTrilepton-W07-03-01-DY2JetsToLL_M-50_TuneZ2Star_8TeV-madgraph.txt
-Nprod_evt = 21852156
-splitInto = 2
-
-samplename = DY3JetsToLL
-description = DY3JetsToLL_M-50_TuneZ2Star_8TeV-madgraph
-x-section = 51.1
-k-factor = 1.23
-pathname = filelists_WZ/MCPatTrilepton-W07-03-01-DY3JetsToLL_M-50_TuneZ2Star_8TeV-madgraph.txt
-Nprod_evt = 21852156
-splitInto = 10
-
 samplename = WWJetTo2L2Nu
 description = WWJetTo2L2Nu_8TeV-powheg-pythia6
 x-section = 5.3845
@@ -380,22 +392,9 @@ k-factor = 1.
 pathname = filelists_WZ/MCPatTrilepton-W07-03-01-WWJetTo2L2Nu_8TeV-powheg-pythia6.txt
 Nprod_evt = 999864
 
-samplename = ZZ1Jets
-description = ZZ1Jets_madgraph_8TeV_Private
-x-section = 0.5
-#k-factor = UNKNOWN
-pathname = filelists_WZ/MCPatTrilepton-W07-03-01-ZZ1Jets_madgraph_8TeV_Private.txt
-Nprod_evt = 67250
-#Nprod_evt = 102506
-splitInto = 15
-
 DONE
 
 ###TESTING
-
-samplename = data-Testing
-description = Skimmed Events
-pathname = UserCode/CMGWPrimeGroup/macros/candEvts_PAT.root
 
 DONE
 

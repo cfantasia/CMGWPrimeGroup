@@ -9,13 +9,18 @@ fi
 echo Checking Directory $Ver
 #Base=/hdfs/store/user/jklukas
 #Base=/pnfs/cms/WAX/11/store/user/clint/53X
-Base=/pnfs/cms/WAX/11/store/user/fantasia/53X
+#Base=/pnfs/cms/WAX/11/store/user/fantasia/53X
 #Base=~/nobackup/42X/filelists
 
-for Directory in `ls ${Base}/ | grep ${Ver}`
+for Base in `echo /pnfs/cms/WAX/11/store/user/{fantasia,clint}/53X`
+#for Base in `echo /pnfs/cms/WAX/11/store/user/fantasia/53X`
   do
-  echo Directory is $Directory
-  find ${Base}/${Directory} | grep .root >& ${Directory}.txt
+  echo $Base
+  for Directory in `ls ${Base}/ | grep ${Ver}`
+    do
+    echo Directory is $Directory
+    find ${Base}/${Directory} | grep .root >& ${Directory}.txt
+  done
 done
 
 #Strip off prefix

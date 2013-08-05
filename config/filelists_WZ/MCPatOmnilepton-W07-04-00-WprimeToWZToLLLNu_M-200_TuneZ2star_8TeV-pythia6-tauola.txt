@@ -1,0 +1,3 @@
+/store/user/clint/53X/MCPatOmnilepton-W07-04-00-WprimeToWZToLLLNu_M-200_TuneZ2star_8TeV-pythia6-tauola/patTuple_1_1_eno.root
+/store/user/clint/53X/MCPatOmnilepton-W07-04-00-WprimeToWZToLLLNu_M-200_TuneZ2star_8TeV-pythia6-tauola/patTuple_1_1_hPN.root
+/store/user/clint/53X/MCPatOmnilepton-W07-04-00-WprimeToWZToLLLNu_M-200_TuneZ2star_8TeV-pythia6-tauola/patTuple_1_1_XHP.root
