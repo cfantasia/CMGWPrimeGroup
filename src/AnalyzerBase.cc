@@ -295,6 +295,7 @@ void
 AnalyzerBase::print(const heep::Ele& elec) const{
   cout << setiosflags(ios::fixed) << setprecision(2);
   cout<<" Elec ScEt: "<<elec.et()<<endl; //ScEt
+  cout<<" Elec ScEt Eta: "<<elec.scEta()<<endl; //ScEta
   if(!elec.isPatEle()){
     cout<<"Not a pat electron, why???\n";
     return;
@@ -305,7 +306,7 @@ AnalyzerBase::print(const heep::Ele& elec) const{
 void
 AnalyzerBase::print(const pat::Electron& elec) const{
   cout << setiosflags(ios::fixed) << setprecision(2);
-  cout<<" Elec Pt: "<<elec.pt()<<endl
+  cout<<" Elec Pt: "<<elec.pt()<<" +- "<<elec.gsfTrack()->ptError()<<endl
       <<" Elec P4Pt: "<<elec.p4().Pt()<<endl
       <<" Elec energy: "<<elec.energy()<<endl
       <<" Elec Charge: "<<elec.charge()<<endl
@@ -319,7 +320,13 @@ AnalyzerBase::print(const pat::Electron& elec) const{
       <<" Elec dEta: "<<elec.deltaEtaSuperClusterTrackAtVtx()<<endl //DeltaEta
       <<" Elec HoverE: "<<elec.hadronicOverEm()<<endl// H/E
       <<" Elec EoverP: "<<elec.eSuperClusterOverP()<<endl// E/P
-      <<" Elec dxy: "<<elec.gsfTrack()->dxy()<<endl
+      <<" Elec fBrem: "<<elec.fbrem()<<endl
+      <<" Elec isGap: "<<elec.isGap()<<endl
+      <<" Elec isEBEEGap: "<<elec.isEBEEGap()<<endl
+      <<" Elec 1/E-1/P: "<<1.0/elec.ecalEnergy() - elec.eSuperClusterOverP()/elec.ecalEnergy()<<endl
+      <<" Elec dB: "<<elec.dB()<<endl
+      <<" Elec dxy: "<<elec.gsfTrack()->dxy(elec.vertex())<<endl
+      <<" Elec dz : "<<elec.gsfTrack()->dz (elec.vertex())<<endl
       <<" PassMVAPresel: "<<elec.userInt("passPreselMVA2011")<<endl
       <<" PassMVATrig: "<<elec.userInt("BDT_MVA_HWW2011_Trig_pass")<<endl
       <<" E2x5/E5x5: "<<elec.e2x5Max() / elec.e5x5()

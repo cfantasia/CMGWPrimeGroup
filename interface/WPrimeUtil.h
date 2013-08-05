@@ -315,6 +315,25 @@ static bool Contains(const T1 & p, const std::vector<T2>& vec){
 
 template<class P>
 static bool 
+passTriggerMatch(const P & p, const pat::TriggerObjectCollection* triggerObjs){
+  for (size_t j=0; j < triggerObjs->size(); ++j){
+    const pat::TriggerObject & trigObj = triggerObjs->at(j);
+    if(trigObj.pdgId() == p.pdgId() &&
+       deltaR(trigObj, p) < 0.5 &&
+       fabs(trigObj.pt() - p.pt()) < 0.5 * p.pt()){
+      //printf("pt %.2f pt %.2f == eta %.2f eta %.2f == phi %.2f phi %.2f ==\n",
+      //       looseZMuons_[i].pt(), triggerObjs->at(j).pt(),
+      //       looseZMuons_[i].eta(), triggerObjs->at(j).eta(),
+      //       looseZMuons_[i].phi(), triggerObjs->at(j).phi()
+      //    );
+      return true;
+    }//IF
+  }//trig obj
+  return false;
+}
+
+template<class P>
+static bool 
 passTriggerMatch(const P & p, const float cut, const vstring& triggers){
   for(uint i=0; i<p.triggerObjectMatches().size(); ++i){
     const vstring & names = p.triggerObjectMatches()[i].pathNames(true, false);
