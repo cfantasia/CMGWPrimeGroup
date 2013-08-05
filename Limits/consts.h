@@ -21,7 +21,7 @@
 #include "TMath.h"
 
 #include "../root_macros/common.h"
-const float sLumiFrac = 0.044;
+const float sLumiFrac = 0.044;//2012
 
 vector<string>
 SampleName(float code){
@@ -198,11 +198,6 @@ XSec(std::string sample, float mass){
   std::cout<<"Didn't find sample named "<<sample<<std::endl;
   abort();
   return 0;
-}
-
-float
-AddInQuad(float a, float b){
-  return sqrt(a*a + b*b);
 }
 
 const float FitWind_low = 70;
